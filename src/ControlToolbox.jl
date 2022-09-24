@@ -1,17 +1,27 @@
 module ControlToolbox
 
     using ForwardDiff
-    using OrdinaryDiffEq
-    using LinearAlgebra
+    using OrdinaryDiffEq #: ODEProblem, solve
+    using LinearAlgebra #: norm
+
+    import Plots: plot, plot!
 
     include("utils.jl")
-    include("flow.jl")
+    include("Flows.jl"); using .Flows
     include("ocp.jl")
     include("steepest.jl")
 
-    export hello
-    export osolve
     export OptimalControlProblem
-    export ROCP
+    export RegularOptimalControlProblem
+
+    export OptimalControlSolution
+    export SteepestOCPSol
+
+    export OptimalControlInit
+    export SteepestOCPInit
+
+    export plot, plot!
+
+    export solve
 
 end
