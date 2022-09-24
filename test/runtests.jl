@@ -1,7 +1,10 @@
 using ControlToolbox
 using Test
 
-@testset "ControlToolbox.jl" begin
-    @test ControlToolbox.hello() == "Hello ControlToolbox"
-    @test ControlToolbox.hello() != "Hello world!"
+for name in (
+    "utils",
+)
+    @testset "$name" begin
+        include("test_$name.jl")
+    end
 end

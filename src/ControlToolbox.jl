@@ -11,5 +11,7 @@ module ControlToolbox
 
     export hello
     export osolve
+    export OptimalControlProblem
+    export ROCP
 
 end

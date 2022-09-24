@@ -29,13 +29,13 @@ function steepest_descent_ocp(ocp::ROCP; init::Union{Nothing, Vector{<:Number}, 
     sd_solution = sd_solver(sd_problem, sd_init, iterations, step_length)
 
     # step 3: transcription of the solution
-    T, X, U = sd2ocp_solution(sd_solution, grid_size)
+    T, X, U = sd2ocp_solution(ocp, sd_solution, grid_size)
 
     return T, X, U
 
 end
 
-function sd2ocp_solution(sd_solution, grid_size)
+function sd2ocp_solution(ocp, sd_solution, grid_size)
 
     U = sd_solution
 
