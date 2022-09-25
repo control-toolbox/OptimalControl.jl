@@ -1,6 +1,5 @@
-# --------------------------------------------------------------------------------------------
-# types of controls
-#@enum CONTROL umin=1 umax=2 usingular=3 uboundary=4 #uregular=5
+
+# todo: add Types and parameters to flow
 
 # --------------------------------------------------------------------------------------------
 # Single input and affine Mayer system 
@@ -119,7 +118,7 @@ function Hamiltonian(ocp::SIMayer, control::Symbol)
     end    
 end
 
-function Control(ocp::SIMayer, control::Symbol)
+function control(ocp::SIMayer, control::Symbol)
     if control==:singular
         return __singular_control(ocp)
     elseif control==:min
@@ -133,23 +132,23 @@ function Control(ocp::SIMayer, control::Symbol)
     end    
 end
 
-function Multiplier(ocp::SIMayer)
+function multiplier(ocp::SIMayer)
    return __boundary_multiplier(ocp)
 end
 
 # --------------------------------------------------------------------------------------------
 # Flow
 # --------------------------------------------------------------------------------------------
-function __flow(rhs!, tspan, x0, p0; abstol, reltol, saveat)
+function __flow(rhs!, tspan, x0, p0; method, abstol, reltol, saveat)
     z0 = [ x0 ; p0 ]
     n = size(x0, 1)
-    ode = ODEProblem(rhs!, z0, tspan, n)
-    sol = OrdinaryDiffEq.solve(ode, Tsit5(), abstol=abstol, reltol=reltol, saveat=saveat)
+    ode = OrdinaryDiffEq.ODEProblem(rhs!, z0, tspan, n)
+    sol = OrdinaryDiffEq.solve(ode, method, abstol=abstol, reltol=reltol, saveat=saveat)
     return sol
 end
 
-function __flow(rhs!, t0, x0, p0, tf; abstol, reltol, saveat)
-    sol = __flow(rhs!, (t0, tf), x0, p0, abstol=abstol, reltol=reltol, saveat=saveat)
+function __flow(rhs!, t0, x0, p0, tf; method, abstol, reltol, saveat)
+    sol = __flow(rhs!, (t0, tf), x0, p0, method=method, abstol=abstol, reltol=reltol, saveat=saveat)
     n = size(x0, 1)
     return sol[1:n, end], sol[n+1:2n, end]
 end
@@ -196,12 +195,12 @@ function __FlowMIN(ocp::SIMayer)
         dz[1:2n] = hv0 + u*hv1
     end
     
-    function f(tspan, x0, p0; abstol=__abstol(), reltol=__reltol(), saveat=__saveat())
-        return __flow(rhs!, tspan, x0, p0, abstol=abstol, reltol=reltol, saveat=saveat)
+    function f(tspan, x0, p0; method=__method(), abstol=__abstol(), reltol=__reltol(), saveat=__saveat())
+        return __flow(rhs!, tspan, x0, p0, method=method, abstol=abstol, reltol=reltol, saveat=saveat)
     end
     
-    function f(t0, x0, p0, tf; abstol=__abstol(), reltol=__reltol(), saveat=__saveat())
-        return __flow(rhs!, t0, x0, p0, tf, abstol=abstol, reltol=reltol, saveat=saveat)
+    function f(t0, x0, p0, tf; method=__method(), abstol=__abstol(), reltol=__reltol(), saveat=__saveat())
+        return __flow(rhs!, t0, x0, p0, tf, method=method, abstol=abstol, reltol=reltol, saveat=saveat)
     end
     
     return f
@@ -224,12 +223,12 @@ function __FlowMAX(ocp::SIMayer)
         dz[1:2n] = hv0 + u*hv1
     end
     
-    function f(tspan, x0, p0; abstol=__abstol(), reltol=__reltol(), saveat=__saveat())
-        return __flow(rhs!, tspan, x0, p0, abstol=abstol, reltol=reltol, saveat=saveat)
+    function f(tspan, x0, p0; method=__method(), abstol=__abstol(), reltol=__reltol(), saveat=__saveat())
+        return __flow(rhs!, tspan, x0, p0, method=method, abstol=abstol, reltol=reltol, saveat=saveat)
     end
     
-    function f(t0, x0, p0, tf; abstol=__abstol(), reltol=__reltol(), saveat=__saveat())
-        return __flow(rhs!, t0, x0, p0, tf, abstol=abstol, reltol=reltol, saveat=saveat)
+    function f(t0, x0, p0, tf; method=__method(), abstol=__abstol(), reltol=__reltol(), saveat=__saveat())
+        return __flow(rhs!, t0, x0, p0, tf, method=method, abstol=abstol, reltol=reltol, saveat=saveat)
     end
     
     return f
@@ -256,12 +255,12 @@ function __FlowSING(ocp::SIMayer)
         dz[1:2n] = hv0 + u*hv1
     end
     
-    function f(tspan, x0, p0; abstol=__abstol(), reltol=__reltol(), saveat=__saveat())
-        return __flow(rhs!, tspan, x0, p0, abstol=abstol, reltol=reltol, saveat=saveat)
+    function f(tspan, x0, p0; method=__method(), abstol=__abstol(), reltol=__reltol(), saveat=__saveat())
+        return __flow(rhs!, tspan, x0, p0, method=method, abstol=abstol, reltol=reltol, saveat=saveat)
     end
     
-    function f(t0, x0, p0, tf; abstol=__abstol(), reltol=__reltol(), saveat=__saveat())
-        return __flow(rhs!, t0, x0, p0, tf, abstol=abstol, reltol=reltol, saveat=saveat)
+    function f(t0, x0, p0, tf; method=__method(), abstol=__abstol(), reltol=__reltol(), saveat=__saveat())
+        return __flow(rhs!, t0, x0, p0, tf, method=method, abstol=abstol, reltol=reltol, saveat=saveat)
     end
     
     return f, us
@@ -293,12 +292,12 @@ function __FlowBOUND(ocp::SIMayer)
         dz[n+1:2n] = dz[n+1:2n] - μ*∇g(x)
     end
     
-    function f(tspan, x0, p0; abstol=__abstol(), reltol=__reltol(), saveat=__saveat())
-        return __flow(rhs!, tspan, x0, p0, abstol=abstol, reltol=reltol, saveat=saveat)
+    function f(tspan, x0, p0; method=__method(), abstol=__abstol(), reltol=__reltol(), saveat=__saveat())
+        return __flow(rhs!, tspan, x0, p0, method=method, abstol=abstol, reltol=reltol, saveat=saveat)
     end
     
-    function f(t0, x0, p0, tf; abstol=__abstol(), reltol=__reltol(), saveat=__saveat())
-        return __flow(rhs!, t0, x0, p0, tf, abstol=abstol, reltol=reltol, saveat=saveat)
+    function f(t0, x0, p0, tf; method=__method(), abstol=__abstol(), reltol=__reltol(), saveat=__saveat())
+        return __flow(rhs!, t0, x0, p0, tf, method=method, abstol=abstol, reltol=reltol, saveat=saveat)
     end
     
     return f, ub, μb

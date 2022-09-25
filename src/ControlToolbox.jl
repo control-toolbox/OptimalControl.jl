@@ -1,8 +1,7 @@
 module ControlToolbox
 
-    using ForwardDiff
-    using OrdinaryDiffEq #: ODEProblem, solve
-    using LinearAlgebra #: norm
+    using ForwardDiff: jacobian, gradient, ForwardDiff
+    #using LinearAlgebra
 
     import Plots: plot, plot!
 
