@@ -1,4 +1,5 @@
 using ControlToolbox
+using Plots
 using Test
 
 for name in (

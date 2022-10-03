@@ -1,55 +1,126 @@
 # --------------------------------------------------------------------------------------------------
 # Aliases for types
 #
-const Times = Union{Vector{<:Number}, StepRangeLen}
-const States = Union{Vector{<:Number}, Vector{<:Vector{<:Number}}, Matrix{<:Vector{<:Number}}}
-const Controls = Union{Vector{<:Number}, Vector{<:Vector{<:Number}}}
+const Times       = Union{Vector{<:Number}, StepRangeLen}
+const States      = Vector{<:Vector{<:Number}}
+const Adjoints    = Vector{<:Vector{<:Number}} #Union{Vector{<:Number}, Vector{<:Vector{<:Number}}, Matrix{<:Vector{<:Number}}}
+const Controls    = Vector{<:Vector{<:Number}} #Union{Vector{<:Number}, Vector{<:Vector{<:Number}}}
+const Time        = Number
+const State       = Vector{<:Number}
+const Adjoint     = Vector{<:Number}
+const Dimension   = Integer
+const DescVarArg  = Vararg{Symbol} # or Symbol...
+const Description = Tuple{DescVarArg}
 
-const Time = Number
-const State = Vector{<:Number}
+# -------------------------------------------------------------------------------------------------- 
+# Description of the variants of the methods
+#
+makeDescription(desc::DescVarArg)  = Tuple(desc)
+makeDescription(desc::Description) = desc
+
+# default is autonomous
+isnonautonomous(desc::Description) = :nonautonomous in desc
 
 # --------------------------------------------------------------------------------------------------
 # Optimal control problems
 #
 abstract type OptimalControlProblem end
 
-# TODO : améliorer constructeur
-# ajouter pretty print : https://docs.julialang.org/en/v1/manual/types/#man-custom-pretty-printing
-mutable struct RegularOptimalControlProblem <: OptimalControlProblem
-    integrand_cost::Function 
-    dynamics::Function
-    initial_time::Time
-    initial_condition::State
-    final_time::Time
-    final_constraints::Function
+# pretty print : https://docs.julialang.org/en/v1/manual/types/#man-custom-pretty-printing
+mutable struct SimpleRegularOCP <: OptimalControlProblem
+    description                 :: Description
+    state_dimension             :: Union{Dimension, Nothing}
+    control_dimension           :: Union{Dimension, Nothing}
+    final_constraint_dimension  :: Union{Dimension, Nothing}
+    Lagrange_cost               :: Function 
+    dynamics                    :: Function
+    initial_time                :: Time
+    initial_condition           :: State
+    final_time                  :: Time
+    final_constraint            :: Function
 end
 
 const OCP = OptimalControlProblem
-const ROCP = RegularOptimalControlProblem
+const SROCP = SimpleRegularOCP
+
+# instantiation of the ocp: choose the right type depending upon the inputs
+function OCP(   description...; # keyword arguments from here
+                control_dimension           :: Dimension,
+                Lagrange_cost               :: Function, 
+                dynamics                    :: Function, 
+                initial_condition           :: State, 
+                final_time                  :: Time, 
+                final_constraint            :: Function, # optional from here
+                final_constraint_dimension  :: Union{Dimension, Nothing}=nothing,
+                state_dimension             :: Union{Dimension, Nothing}=nothing,
+                initial_time                :: Time=0.0)
+
+    # create the right ocp type depending on inputs
+    state_dimension = state_dimension===nothing ? length(initial_condition) : state_dimension 
+    ocp = SimpleRegularOCP(makeDescription(description...), state_dimension, control_dimension, 
+                final_constraint_dimension, Lagrange_cost, dynamics, initial_time, initial_condition, 
+                final_time, final_constraint)
+    
+    return ocp
+
+end
+
+# --------------------------------------------------------------------------------------------------
+# Display: text/html ?  
+# Base.show, Base.print
+function Base.show(io::IO, ocp::SimpleRegularOCP)
+
+    dimx = ocp.state_dimension===nothing ? "n" : ocp.state_dimension
+    dimu = ocp.control_dimension===nothing ? "m" : ocp.control_dimension
+    dimc = ocp.final_constraint_dimension===nothing ? "p" : ocp.final_constraint_dimension
+
+    desc = ocp.description
+
+    println(io, "Optimal control problem of the form:")
+    println(io, "")
+    print(io, " minimize  J(x, u) = ")
+    isnonautonomous(desc) ? 
+          println(io, '\u222B', " L(t, x(t), u(t)) dt, over [t0, tf]") : 
+          println(io, '\u222B', " L(x(t), u(t)) dt, over [t0, tf]")
+    println(io, "")
+    println(io, " subject to")
+    println(io, "")
+    isnonautonomous(desc) ? 
+          println(io, "     x", '\u0307', "(t) = f(t, x(t), u(t)), t in [t0, tf] a.e.,") : 
+          println(io, "     x", '\u0307', "(t) = f(x(t), u(t)), t in [t0, tf] a.e.,")
+    println(io, "")
+    println(io, "     c(x(tf)) = 0,")
+    println(io, "")
+    println(io, " where x(t) ", '\u2208' ," R", dimx==1 ? "" : Base.string("^", dimx),
+          ", u(t) ", '\u2208' ," R", dimu==1 ? "" : Base.string("^", dimu),
+          " and c(x) ", '\u2208' ," R", dimc==1 ? "" : Base.string("^", dimc),
+           ".")
+    println(io, "")
+    println(io, " Besides, t0, tf and x0 are fixed. ")
+    println(io, "")
+
+end
 
 # --------------------------------------------------------------------------------------------------
 # Initialization
 #
 abstract type OptimalControlInit end
 
-mutable struct SteepestOCPInit <: OptimalControlInit
-    U::Controls
-end
-
-const SOCPInit = SteepestOCPInit
-
 # --------------------------------------------------------------------------------------------------
 # Solution
 #
 abstract type OptimalControlSolution end
 
-mutable struct SteepestOCPSol <: OptimalControlSolution
-    T::Times
-    X::States
-    U::Controls
+# --------------------------------------------------------------------------------------------------
+# Resolution
+#
+function solve(ocp::OCP, method::Symbol=:steepest_descent; kwargs...)
+    if method==:steepest_descent
+        return solve_by_steepest_descent(ocp; kwargs...)
+    else
+        nothing
+    end  
 end
-
-const SOCPSol = SteepestOCPSol
 
 # --------------------------------------------------------------------------------------------------
 # Description of the methods
@@ -57,73 +128,3 @@ const SOCPSol = SteepestOCPSol
 methods_desc = Dict(
     :steepest_descent => "Steepest descent method for optimal control problem"
 )
-
-# --------------------------------------------------------------------------------------------------
-# Resolution
-#
-function solve(ocp::OCP, method::Symbol=:steepest_descent; kwargs...)
-    if method==:steepest_descent
-        return steepest_descent_ocp(ocp; kwargs...)
-    else
-        nothing
-    end  
-end
-
-# --------------------------------------------------------------------------------------------------
-# Plot solution
-#
-function get(ocp_sol::SteepestOCPSol, xx::Union{Symbol, Tuple{Symbol, Integer}})
-
-    T = ocp_sol.T
-    X = ocp_sol.X
-    U = ocp_sol.U
-
-    m = length(T)
-
-    if typeof(xx) == Symbol
-        if xx == :time
-            x = T
-        elseif xx == :state
-            x = [ X[i][1] for i=1:m ]
-        else
-            x = vcat([ U[i][1] for i=1:m-1 ], U[m-1][1])
-        end
-    else
-        vv = xx[1]
-        ii = xx[2]
-        if vv == :time
-            x = T
-        elseif vv == :state
-            x = [ X[i][ii] for i=1:m ]
-        else
-            x = vcat([ U[i][ii] for i=1:m-1 ], U[m-1][ii])
-        end
-    end
-
-    return x
-
-end
-
-function plot(ocp_sol::SteepestOCPSol, 
-    xx::Union{Symbol, Tuple{Symbol, Integer}}, 
-    yy::Union{Symbol, Tuple{Symbol, Integer}}, args...; kwargs...)
-
-    x = get(ocp_sol, xx)
-    y = get(ocp_sol, yy)
-
-    return plot(x, y, args...; kwargs...)
-
-end
-
-function plot!(p, ocp_sol::SteepestOCPSol, 
-    xx::Union{Symbol, Tuple{Symbol, Integer}}, 
-    yy::Union{Symbol, Tuple{Symbol, Integer}}, args...; kwargs...)
-
-    x = get(ocp_sol, xx)
-    y = get(ocp_sol, yy)
-
-    plot!(p, x, y, args...; kwargs...)
-
-end
-
-#println(methods_desc[:steepest_descent])

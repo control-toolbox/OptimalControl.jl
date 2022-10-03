@@ -3,7 +3,7 @@ module ControlToolbox
     using ForwardDiff: jacobian, gradient, ForwardDiff
     #using LinearAlgebra
 
-    import Plots: plot, plot!
+    import Plots: plot, plot!, Plots
 
     include("utils.jl")
     include("Flows.jl"); using .Flows
@@ -11,7 +11,9 @@ module ControlToolbox
     include("steepest.jl")
 
     export OptimalControlProblem
-    export RegularOptimalControlProblem
+    export SimpleRegularOCP
+
+    export OCP
 
     export OptimalControlSolution
     export SteepestOCPSol
@@ -19,7 +21,7 @@ module ControlToolbox
     export OptimalControlInit
     export SteepestOCPInit
 
-    export plot, plot!
+    #export plot, plot! # pas besoin semble-t-il car je rédéfinis Plots.plot et Plots.plot!
 
     export solve
 

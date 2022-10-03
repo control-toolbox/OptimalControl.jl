@@ -1,40 +1,49 @@
-include("../src/ControlToolbox.jl"); 
+include("../src/ControlToolbox.jl"); # nécessaire tant que pas un vrai package
+import .ControlToolbox: plot , plot! # nécessaire tant que include et using relatif
 using .ControlToolbox
-#using Plots
-using Plots.PlotMeasures
+using Plots
 
-t0 = 0.0
-tf = 1.0
-x0 = [-1.0; 0.0]
-xf = [ 0.0; 0.0]
-A  = [0.0 1.0
-      0.0 0.0]
-B  = [0.0; 1.0]
-
-dy(x, u) = A*x+B*u[1];
-co(u) = 0.5*u[1]^2
-cf(x) = x-xf
-
-# OCP definition
-ocp = RegularOptimalControlProblem(co, dy, t0, x0, tf, cf)
-
+# ocp solution to use a close init to the solution
 N  = 1001
 U⁺ = range(6.0, -6.0, N); # solution
 U⁺ = U⁺[1:end-1];
-U_init = U⁺-1e0*ones(N-1)
-U_init = [ [U_init[i]] for i=1:N-1 ]
+
+# ocp description
+t0 = 0.0                # t0 is fixed
+tf = 1.0                # tf is fixed
+x0 = [-1.0; 0.0]        # the initial condition is fixed
+xf = [ 0.0; 0.0]        # the target
+A  = [0.0 1.0
+      0.0 0.0]
+B  = [0.0; 1.0]
+dy(x, u) = A*x+B*u[1];  # dynamics
+co(x, u) = 0.5*u[1]^2   # integrand of the Lagrange cost
+cf(x) = x-xf            # final condition
+
+# ocp definition
+ocp = OCP(  :autonomous,
+            control_dimension=1,
+            Lagrange_cost=co, 
+            dynamics=dy, 
+            initial_time=t0, 
+            initial_condition=x0, 
+            final_time=tf, 
+            final_constraint=cf)
+
+# ocp print
+display(ocp)
+
+# initial iterate
+U_init = U⁺-1e0*ones(N-1); U_init = [ [U_init[i]] for i=1:N-1 ]
 
 # resolution
-ocp_sol = solve(ocp, :steepest_descent, init=U_init, grid_size=N, penalty_constraint=1e4, iterations=10, step_length=1e-1)
+ocp_sol = solve(ocp, :steepest_descent, init=U_init, 
+                  grid_size=N, penalty_constraint=1e4, iterations=10, step_length=1e-1)
 
 # plot solution
-x1_plot = plot(ocp_sol, :time,  (:state, 1), xlabel = "t", ylabel = "x₁",  legend = false)
-x2_plot = plot(ocp_sol, :time,  (:state, 2), xlabel = "t", ylabel = "x₂",  legend = false)
-x1x2_plot = plot(ocp_sol, (:state, 1),  (:state, 2), xlabel = "x₁", ylabel = "x₂",  legend = false)
-u_plot = plot(ocp_sol, :time,  :control, xlabel = "t", ylabel = "u",   legend = false, linetype=:steppre)
+ps = plot(ocp_sol, size=(810, 400))
 
-plot!(x1_plot, [tf], [xf[1]], color=:blue, seriestype=:scatter, markersize=3, markerstrokewidth=0, legend=false)
-plot!(x2_plot, [tf], [xf[2]], color=:blue, seriestype=:scatter, markersize=3, markerstrokewidth=0, legend=false)
-plot!(x1x2_plot, [xf[1]], [xf[2]], color=:blue, seriestype=:scatter, markersize=3, markerstrokewidth=0, legend=false)
-
-plot(x1_plot, x2_plot, x1x2_plot, u_plot, layout = (2,2), size=(800,600), left_margin=5mm)
+# plot target
+point_style = (color=:black, seriestype=:scatter, markersize=3, markerstrokewidth=0, label="")
+plot!(ps[1], [tf], [xf[1]]; point_style...)
+plot!(ps[1], [tf], [xf[2]]; point_style...)
