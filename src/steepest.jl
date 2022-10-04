@@ -2,6 +2,7 @@
 # Definition of a general steepest descent problem
 mutable struct SteepestDescentProblem
     ∇f::Function
+    f::Function
 end
 const SDProblem = SteepestDescentProblem
 
@@ -44,13 +45,16 @@ function solve_by_steepest_descent(ocp::SROCP;
     grid_size::Integer=100, 
     penalty_constraint::Number=1e1, 
     iterations::Integer=100, 
-    step_length::Number=1e-1)
+    step_length::Number=1e0)
 
     # step 1: transcription from ocp to sd problem and init
     sd_init    = ocp2sd_init(init, grid_size, ocp.control_dimension)
     sd_problem = ocp2sd_problem(ocp, grid_size, penalty_constraint)
 
     # step 2: resolution of the problem
+    #todo : ajouter ces options dans les entrées de la fonction parente
+    direction = :gradient
+    step_search = :backtracking
     sd_sol = sd_solver(sd_problem, sd_init, iterations, step_length)
 
     # step 3: transcription of the solution
@@ -120,17 +124,30 @@ function ocp2sd_problem(ocp::SROCP, grid_size::Integer, penalty_constraint::Numb
     T = range(t0, tf, grid_size)
 
     # gradient function
-    function ∇J(U)
+    function ∇J(U::Controls)
         xₙ, _ = model(x0, T, U, f)
         pₙ = p⁰*αₚ*transpose(Jcf(xₙ))*cf(xₙ)
         _, _, X, P = adjoint(xₙ, pₙ, T, U, fh)
         g = [ -Hu(T[i], X[i], P[i], U[i]).*(T[i+1]-T[i]) for i=1:length(T)-1 ]
         return g
     end
+    ∇J(x::Vector{<:Number}) = vec2vec(∇J(vec2vec(x, ocp.control_dimension)))
+
+    L(t, x, u ) = isnonautonomous(desc) ? co(t, x, u) : co(x, u)
+    function J(U::Controls)
+        xₙ, X = model(x0, T, U, f)
+        y = 0.0
+        for i ∈ range(1, length(U))
+            y = y + L(T[i], X[i], U[i])*(T[i+1]-T[i])
+        end
+        y = y + 0.5*αₚ*norm(cf(xₙ))^2
+        return y
+    end
+    J(x::Vector{<:Number}) = J(vec2vec(x, ocp.control_dimension))
 
     # steepest descent problem
     # vec2vec permet de passer d'un vecteur de vecteur à simplement un vecteur
-    sdp = SDProblem(x -> vec2vec(∇J(vec2vec(x, ocp.control_dimension))))
+    sdp = SDProblem(∇J, J)
 
     return sdp
 
@@ -138,14 +155,71 @@ end
 
 # --------------------------------------------------------------------------------------------------
 function sd_solver(sdp::SDProblem, init::SDInit, iterations::Integer, step_length::Number)
-    # steepest descent solver
+    # general descent solver data
     ∇f = sdp.∇f
-    α  = step_length
+    f  = sdp.f
     xᵢ = init.x
+    s₀ = step_length
+
+    # for BFGS and steepest descent (ie gradient method)
+    n  = length(xᵢ)
+    Iₙ = Matrix{Float64}(I, n, n)
+    Hᵢ = Iₙ
+    gᵢ = ∇f(xᵢ); 
+    dᵢ = -Hᵢ*gᵢ
+
+    #
     for i ∈ range(1, iterations)
-        xᵢ = xᵢ - α*∇f(xᵢ)
+        # step length computation - inputs: xᵢ, dᵢ, gᵢ, f - outputs: sᵢ
+        sᵢ = backtracking(xᵢ, dᵢ, gᵢ, f, s₀)
+
+        # iterate update 
+        xᵢ = xᵢ + sᵢ*dᵢ  # xᵢ₊₁
+
+        # new gradient
+        gᵢ₊₁ = ∇f(xᵢ)      # ∇f(xᵢ₊₁)
+
+        # direction computation - inputs: sᵢ, dᵢ, gᵢ, gᵢ₊₁, Hᵢ - outputs: dᵢ₊₁, Hᵢ₊₁
+        dᵢ, Hᵢ = BFGS(sᵢ, dᵢ, gᵢ, gᵢ₊₁, Hᵢ, Iₙ)
+
+        # update of the current gradient
+        gᵢ = gᵢ₊₁          # ∇f(xᵢ₊₁)
+
+        # print
+        println("Gradient : ", norm(dᵢ)/norm(xᵢ), "  -  Variable : ", norm(sᵢ*dᵢ)/norm(xᵢ))
     end
     return SDSol(xᵢ)
+end
+
+# todo: improve memory consumption by updating inputs - add !, ie BFGS!
+function BFGS(sᵢ, dᵢ, gᵢ, gᵢ₊₁, Hᵢ, Iₙ)
+    #
+    yᵢ = gᵢ₊₁ - gᵢ  # ∇f(xᵢ₊₁) - ∇f(xᵢ)
+    nᵢ = dᵢ'*yᵢ
+    Aᵢ = dᵢ*yᵢ'
+    Hᵢ₊₁ = (Iₙ-Aᵢ/nᵢ)*Hᵢ*(Iₙ-Aᵢ'/nᵢ)+sᵢ*dᵢ*dᵢ'/nᵢ # Hᵢ₊₁ - BFGS update - approx of the inverse of ∇²f(xᵢ₊₁)
+    dᵢ₊₁ = -Hᵢ₊₁*gᵢ₊₁        # new direction
+    #
+    return dᵢ₊₁, Hᵢ₊₁
+end
+
+function backtracking(x, d, g, f, s₀)
+
+    # parameters
+    ρ  = 0.5 # for backtraking
+    c₁ = 1e-4
+    smin = 1e-8
+
+    #
+    φ(s) = f(x+s*d); dTg = d'*g; wolfe1(s) = f(x)+c₁*s*dTg
+    s = s₀
+    k = 1
+    while φ(s)>wolfe1(s) && s>smin && k<10  # Weak first Wolfe condition
+        s = ρ*s
+        k = k+1
+    end
+
+    return s
 end
 
 function sd2ocp_solution(sd_sol::SDSol, ocp::SROCP, grid_size::Integer, penalty_constraint::Number)

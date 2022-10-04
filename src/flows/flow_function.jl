@@ -3,6 +3,6 @@
 # --------------------------------------------------------------------------------------------
 
 # Flow from a function
-function Flow(f::Function, args...; kwargs_Flow...)
-    return Flow(Hamiltonian(f), args...; kwargs_Flow...)
+function Flow(f::Function, description...; kwargs_Flow...)
+    return Flow(Hamiltonian(f), description...; kwargs_Flow...)
 end

@@ -12,10 +12,10 @@ function (vf::VectorField)(t::Time, x::State, λ...)
  end
 
 # Flow of a vector field
-function Flow(vf::VectorField, args...; kwargs_Flow...)
+function Flow(vf::VectorField, description...; kwargs_Flow...)
     
-    description = makeDescription(args...)
-    vf_(t, x, λ...) = isnonautonomous(description) ? vf(t, x, λ...) : vf(x, λ...)
+    vf_(t, x, λ...) = isnonautonomous(makeDescription(description...)) ? 
+        vf(t, x, λ...) : vf(x, λ...)
 
     function rhs!(dx::DState, x::State, λ, t::Time)
         dx[:] = vf_(t, x, λ...)

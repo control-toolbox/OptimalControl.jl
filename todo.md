@@ -10,9 +10,10 @@
     * [x] ajouter struct pour init et sol Steepest + améliorer les transcriptions
     * [x] faire en sorte que la partie sd_solver résout un problème d'opti à définir, indépendant de OCP
     * [ ] rendre plus général le genre de problème que l'on peut résoudre par steepest : on calcule simplement le gradient si on ne sait pas faire intelligemment
-    * [ ] améliorer le code de la steepest pour ajouter des variantes et ajouter description des variantes
+    * [ ] améliorer le code de la steepest pour ajouter des variantes et ajouter description des variantes : mettre le backtracking vs none et le bfgs vs gradient
+    * [ ] ajouter tests d'arrêts
     * [ ] ajouter callbacks et gestion des erreurs
-    * [ ] vérifier signe adjoint et valeur (division par le pas ?)  
+    * [x] vérifier signe adjoint et valeur (division par le pas ?)  - c'était bon !
 - [ ] ajouter un autre type de problème ocp avec gestion du type par inputs + check par description
 - [ ] améliorer affichage du problème ocp : text/html ou makdown ou latex
 - [ ] ajouter des tests unitaires + docstrings + documentation

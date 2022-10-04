@@ -1,7 +1,7 @@
 module ControlToolbox
 
     using ForwardDiff: jacobian, gradient, ForwardDiff
-    #using LinearAlgebra
+    using LinearAlgebra
 
     import Plots: plot, plot!, Plots
 

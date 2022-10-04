@@ -15,10 +15,10 @@ end
 # Flow from a Hamiltonian
 # On peut mettre les options d'intégration dans Flow
 # ou à l'appel de f par la suite
-function Flow(h::Hamiltonian, args...; kwargs_Flow...)
+function Flow(h::Hamiltonian, description...; kwargs_Flow...)
     
-    description = makeDescription(args...)
-    h_(t, x, p, λ...) = isnonautonomous(description) ? h(t, x, p, λ...) : h(x, p, λ...)
+    h_(t, x, p, λ...) = isnonautonomous(makeDescription(description...)) ? 
+        h(t, x, p, λ...) : h(x, p, λ...)
 
     function rhs!(dz::DCoTangent, z::CoTangent, λ, t::Time)
         n = size(z, 1)÷2
