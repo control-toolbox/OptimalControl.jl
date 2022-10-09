@@ -10,21 +10,10 @@ module Flows
     # --------------------------------------------------------------------------------------------
     # Default options for flows
     # --------------------------------------------------------------------------------------------
-    function __abstol()
-        return 1e-10
-    end
-
-    function __reltol()
-        return 1e-10
-    end
-
-    function __saveat()
-        return []
-    end
-
-    function __method()
-        return OrdinaryDiffEq.Tsit5()
-    end
+    __abstol() = 1e-10
+    __reltol() = 1e-10
+    __saveat() = []
+    __method() = OrdinaryDiffEq.Tsit5()
 
     # -------------------------------------------------------------------------------------------------- 
     # Description of the variants of the methods

@@ -4,7 +4,7 @@ using Test
 
 for name in (
     "utils",
-    "steepest",
+    "descent",
 )
     @testset "$name" begin
         include("test_$name.jl")

@@ -9,17 +9,6 @@ const Time        = Number
 const State       = Vector{<:Number}
 const Adjoint     = Vector{<:Number}
 const Dimension   = Integer
-const DescVarArg  = Vararg{Symbol} # or Symbol...
-const Description = Tuple{DescVarArg}
-
-# -------------------------------------------------------------------------------------------------- 
-# Description of the variants of the methods
-#
-makeDescription(desc::DescVarArg)  = Tuple(desc)
-makeDescription(desc::Description) = desc
-
-# default is autonomous
-isnonautonomous(desc::Description) = :nonautonomous in desc
 
 # --------------------------------------------------------------------------------------------------
 # Optimal control problems
@@ -39,9 +28,6 @@ mutable struct SimpleRegularOCP <: OptimalControlProblem
     final_time                  :: Time
     final_constraint            :: Function
 end
-
-const OCP = OptimalControlProblem
-const SROCP = SimpleRegularOCP
 
 # instantiation of the ocp: choose the right type depending upon the inputs
 function OCP(   description...; # keyword arguments from here
@@ -114,9 +100,10 @@ abstract type OptimalControlSolution end
 # --------------------------------------------------------------------------------------------------
 # Resolution
 #
-function solve(ocp::OCP, method::Symbol=:steepest_descent; kwargs...)
-    if method==:steepest_descent
-        return solve_by_steepest_descent(ocp; kwargs...)
+function solve(ocp::OptimalControlProblem, description...; kwargs...)
+    method = getCompleteSolverDescription(makeDescription(description...))
+    if :descent in method
+        return solve_by_descent(ocp, method; kwargs...)
     else
         nothing
     end  
@@ -125,6 +112,6 @@ end
 # --------------------------------------------------------------------------------------------------
 # Description of the methods
 #
-methods_desc = Dict(
-    :steepest_descent => "Steepest descent method for optimal control problem"
-)
+#methods_desc = Dict(
+#    :descent => "Descent method for optimal control problem"
+#)

@@ -37,8 +37,8 @@ display(ocp)
 U_init = U⁺-1e0*ones(N-1); U_init = [ [U_init[i]] for i=1:N-1 ]
 
 # resolution
-ocp_sol = solve(ocp, :steepest_descent, init=U_init, 
-                  grid_size=N, penalty_constraint=1e4, iterations=5, step_length=1.0) #, step_length=1e-1)
+ocp_sol = solve(ocp, :bfgs, init=U_init, 
+                  grid_size=N, penalty_constraint=1e4, iterations=5)
 
 # plot solution
 ps = plot(ocp_sol, size=(800, 400))

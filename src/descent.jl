@@ -1,29 +1,26 @@
 # --------------------------------------------------------------------------------------------------
-# Definition of a general steepest descent problem
-mutable struct SteepestDescentProblem
+# Definition of a general descent problem
+mutable struct DescentProblem
     ∇f::Function
     f::Function
 end
-const SDProblem = SteepestDescentProblem
 
 # --------------------------------------------------------------------------------------------------
-# Definition of an initialization for the steepest descent method
-mutable struct SteepestOCPInit <: OptimalControlInit
+# Definition of an initialization for the descent method
+mutable struct DescentOCPInit <: OptimalControlInit
     U::Controls
 end
-const SOCPInit = SteepestOCPInit
 
-mutable struct SteepestDescentInit
+mutable struct DescentInit
     x::Union{Vector{<:Number}, Controls}
-    function SteepestDescentInit(U::Controls)
+    function DescentInit(U::Controls)
         new(vec2vec(U))
     end
 end
-const SDInit = SteepestDescentInit
 
 # --------------------------------------------------------------------------------------------------
-# Definition of a solution for the steepest descent method
-mutable struct SteepestOCPSol <: OptimalControlSolution
+# Definition of a solution for the descent method
+mutable struct DescentOCPSol <: OptimalControlSolution
     T::Times
     X::States
     U::Controls
@@ -31,46 +28,80 @@ mutable struct SteepestOCPSol <: OptimalControlSolution
     state_dimension   :: Dimension
     control_dimension :: Dimension
 end
-const SOCPSol = SteepestOCPSol
 
-mutable struct SteepestDescentSol
+mutable struct DescentSol
     x::Union{Vector{<:Number}, Controls}
 end
-const SDSol = SteepestDescentSol
 
 # --------------------------------------------------------------------------------------------------
-# Solver of an ocp by steepest descent method
-function solve_by_steepest_descent(ocp::SROCP; 
-    init::Union{Nothing, Controls, SOCPInit, SOCPSol}=nothing, 
-    grid_size::Integer=100, 
-    penalty_constraint::Number=1e1, 
-    iterations::Integer=100, 
-    step_length::Number=1e0)
+# Default options
+__grid_size() = 200
+__penalty_constraint() = 1e2
+__iterations() = 100
+__step_length() = nothing
+function __step_length(step_search::Symbol, step_length::Union{Number, Nothing})
+    if step_length == __step_length() && step_search==:fixedstep
+        return 1e-1
+    elseif step_length == __step_length() && step_search==:backtracking
+        return 1e0
+    else
+        return step_length
+    end
+end
+
+# --------------------------------------------------------------------------------------------------
+# Solver of an ocp by descent method
+function solve_by_descent(ocp::SimpleRegularOCP, method::Description; 
+    init::Union{Nothing, Controls, DescentOCPInit, DescentOCPSol}=nothing, 
+    grid_size::Integer=__grid_size(), 
+    penalty_constraint::Number=__penalty_constraint(), 
+    iterations::Integer=__iterations(), 
+    step_length::Union{Number, Nothing}=__step_length())
+
+    # print chosen method
+    println("Method = ", method)
+
+    # we suppose the description of the method is complete
+    direction, step_search = read(method)
+
+    # get default options depending on the method
+    step_length = __step_length(step_search, step_length)
 
     # step 1: transcription from ocp to sd problem and init
-    sd_init    = ocp2sd_init(init, grid_size, ocp.control_dimension)
-    sd_problem = ocp2sd_problem(ocp, grid_size, penalty_constraint)
+    descent_init    = ocp2descent_init(init, grid_size, ocp.control_dimension)
+    descent_problem = ocp2descent_problem(ocp, grid_size, penalty_constraint)
 
     # step 2: resolution of the problem
-    #todo : ajouter ces options dans les entrées de la fonction parente
-    direction = :gradient
-    step_search = :backtracking
-    sd_sol = sd_solver(sd_problem, sd_init, iterations, step_length)
+    descent_sol = descent_solver(descent_problem, descent_init, direction, step_search,
+        iterations, step_length)
 
     # step 3: transcription of the solution
-    ocp_sol = sd2ocp_solution(sd_sol, ocp, grid_size, penalty_constraint)
+    ocp_sol = descent2ocp_solution(descent_sol, ocp, grid_size, penalty_constraint)
 
     return ocp_sol
 
 end
 
+function read(method::Description)
+    #
+    direction = nothing
+    direction = :gradient ∈ method ? :gradient : direction
+    direction = :bfgs ∈ method ? :bfgs : direction
+    #
+    step_search = nothing
+    step_search = :fixedstep ∈ method ? :fixedstep : step_search
+    step_search = :backtracking ∈ method ? :backtracking : step_search
+    #
+    return direction, step_search
+end
+
 # --------------------------------------------------------------------------------------------------
 # step 1: transcription of the initialization
-ocp2sd_init(init::Nothing,  grid_size::Integer, control_dimension::Dimension) = 
-    SDInit([ zeros(control_dimension) for i in 1:grid_size-1])
-ocp2sd_init(init::Controls, args...) = SDInit(init)
-ocp2sd_init(init::SOCPInit, args...) = SDInit(init.U)
-ocp2sd_init(init::SOCPSol,  args...) = SDInit(init.U)
+ocp2descent_init(init::Nothing,  grid_size::Integer, control_dimension::Dimension) = 
+    DescentInit([ zeros(control_dimension) for i in 1:grid_size-1])
+ocp2descent_init(init::Controls, args...) = DescentInit(init)
+ocp2descent_init(init::DescentOCPInit, args...) = DescentInit(init.U)
+ocp2descent_init(init::DescentOCPSol,  args...) = DescentInit(init.U)
 
 # --------------------------------------------------------------------------------------------------
 # Utils for the transcription from ocp to sd
@@ -92,7 +123,7 @@ function adjoint(xₙ, pₙ, T, U, f)
 end
 
 # --------------------------------------------------------------------------------------------------
-function ocp2sd_problem(ocp::SROCP, grid_size::Integer, penalty_constraint::Number)
+function ocp2descent_problem(ocp::SimpleRegularOCP, grid_size::Integer, penalty_constraint::Number)
 
     # ocp data
     dy = ocp.dynamics
@@ -133,7 +164,7 @@ function ocp2sd_problem(ocp::SROCP, grid_size::Integer, penalty_constraint::Numb
     end
     ∇J(x::Vector{<:Number}) = vec2vec(∇J(vec2vec(x, ocp.control_dimension)))
 
-    L(t, x, u ) = isnonautonomous(desc) ? co(t, x, u) : co(x, u)
+    L(t, x, u) = isnonautonomous(desc) ? co(t, x, u) : co(x, u)
     function J(U::Controls)
         xₙ, X = model(x0, T, U, f)
         y = 0.0
@@ -145,16 +176,19 @@ function ocp2sd_problem(ocp::SROCP, grid_size::Integer, penalty_constraint::Numb
     end
     J(x::Vector{<:Number}) = J(vec2vec(x, ocp.control_dimension))
 
-    # steepest descent problem
+    # descent problem
     # vec2vec permet de passer d'un vecteur de vecteur à simplement un vecteur
-    sdp = SDProblem(∇J, J)
+    sdp = DescentProblem(∇J, J)
 
     return sdp
 
 end
 
 # --------------------------------------------------------------------------------------------------
-function sd_solver(sdp::SDProblem, init::SDInit, iterations::Integer, step_length::Number)
+function descent_solver(sdp::DescentProblem, init::DescentInit, 
+    direction::Symbol, step_search::Symbol,
+    iterations::Integer, step_length::Number)
+
     # general descent solver data
     ∇f = sdp.∇f
     f  = sdp.f
@@ -168,10 +202,19 @@ function sd_solver(sdp::SDProblem, init::SDInit, iterations::Integer, step_lengt
     gᵢ = ∇f(xᵢ); 
     dᵢ = -Hᵢ*gᵢ
 
+    # init print
+    println("\n     Calls  ‖∇f(x)‖         ‖x‖             Stagnation      \n")
+
     #
     for i ∈ range(1, iterations)
         # step length computation - inputs: xᵢ, dᵢ, gᵢ, f - outputs: sᵢ
-        sᵢ = backtracking(xᵢ, dᵢ, gᵢ, f, s₀)
+        if step_search == :backtracking
+            sᵢ = backtracking(xᵢ, dᵢ, gᵢ, f, s₀)
+        elseif step_search == :fixedstep
+            sᵢ = s₀
+        else
+            error("No such step search method.")
+        end
 
         # iterate update 
         xᵢ = xᵢ + sᵢ*dᵢ  # xᵢ₊₁
@@ -180,15 +223,26 @@ function sd_solver(sdp::SDProblem, init::SDInit, iterations::Integer, step_lengt
         gᵢ₊₁ = ∇f(xᵢ)      # ∇f(xᵢ₊₁)
 
         # direction computation - inputs: sᵢ, dᵢ, gᵢ, gᵢ₊₁, Hᵢ - outputs: dᵢ₊₁, Hᵢ₊₁
-        dᵢ, Hᵢ = BFGS(sᵢ, dᵢ, gᵢ, gᵢ₊₁, Hᵢ, Iₙ)
+        if direction == :bfgs
+            dᵢ, Hᵢ = BFGS(sᵢ, dᵢ, gᵢ, gᵢ₊₁, Hᵢ, Iₙ)
+        elseif direction == :gradient
+            dᵢ = -gᵢ₊₁
+        else
+            error("No such direction method.")
+        end
 
         # update of the current gradient
         gᵢ = gᵢ₊₁          # ∇f(xᵢ₊₁)
 
         # print
-        println("Gradient : ", norm(dᵢ)/norm(xᵢ), "  -  Variable : ", norm(sᵢ*dᵢ)/norm(xᵢ))
+        @printf("%10d", i) # Iterations or calls
+        @printf("%16.8e", norm(gᵢ)) # ‖∇f(x)‖
+        @printf("%16.8e", norm(xᵢ)) # ‖x‖
+        @printf("%16.8e", norm(sᵢ*dᵢ)/norm(xᵢ)) # Stagnation
+        println()
+
     end
-    return SDSol(xᵢ)
+    return DescentSol(xᵢ)
 end
 
 # todo: improve memory consumption by updating inputs - add !, ie BFGS!
@@ -222,7 +276,7 @@ function backtracking(x, d, g, f, s₀)
     return s
 end
 
-function sd2ocp_solution(sd_sol::SDSol, ocp::SROCP, grid_size::Integer, penalty_constraint::Number)
+function descent2ocp_solution(sd_sol::DescentSol, ocp::SimpleRegularOCP, grid_size::Integer, penalty_constraint::Number)
 
     # ocp data
     dy = ocp.dynamics
@@ -253,11 +307,11 @@ function sd2ocp_solution(sd_sol::SDSol, ocp::SROCP, grid_size::Integer, penalty_
 
     # get state and adjoint
     T = range(t0, tf, grid_size)
-    xₙ, X = model(x0, T, U⁺, f)
+    xₙ, _ = model(x0, T, U⁺, f)
     pₙ = p⁰*αₚ*transpose(Jcf(xₙ))*cf(xₙ)
-    _, _, X, P = adjoint(xₙ, pₙ, T, U⁺, fh)
+    _, _, X⁺, P⁺ = adjoint(xₙ, pₙ, T, U⁺, fh)
 
-    return SOCPSol(T, X, U⁺, P, ocp.state_dimension, ocp.control_dimension)
+    return DescentOCPSol(T, X⁺, U⁺, P⁺, ocp.state_dimension, ocp.control_dimension)
 
 end
 
@@ -265,12 +319,12 @@ end
 # Plot solution
 # print("x", '\u2080'+9) : x₉ 
 #
-function Plots.plot(ocp_sol::SteepestOCPSol, args...; 
+function Plots.plot(ocp_sol::DescentOCPSol, args...; 
     state_style=(), 
     control_style=(), 
     adjoint_style=(), kwargs...)
 
-    # todo : gérer le cas dans les labels où m,n > 9
+    # todo : gérer le cas dans les labels où m, n > 9
 
     n = ocp_sol.state_dimension
     m = ocp_sol.control_dimension
@@ -308,7 +362,7 @@ function Plots.plot(ocp_sol::SteepestOCPSol, args...;
 
 end
 
-function Plots.plot(ocp_sol::SteepestOCPSol, 
+function Plots.plot(ocp_sol::DescentOCPSol, 
     xx::Union{Symbol, Tuple{Symbol, Integer}}, 
     yy::Union{Symbol, Tuple{Symbol, Integer}}, args...; kwargs...)
 
@@ -319,7 +373,7 @@ function Plots.plot(ocp_sol::SteepestOCPSol,
 
 end
 
-function Plots.plot!(p::Plots.Plot{<:Plots.AbstractBackend}, ocp_sol::SteepestOCPSol, 
+function Plots.plot!(p::Plots.Plot{<:Plots.AbstractBackend}, ocp_sol::DescentOCPSol, 
     xx::Union{Symbol, Tuple{Symbol, Integer}}, 
     yy::Union{Symbol, Tuple{Symbol, Integer}}, args...; kwargs...)
 
@@ -331,7 +385,7 @@ function Plots.plot!(p::Plots.Plot{<:Plots.AbstractBackend}, ocp_sol::SteepestOC
 end
 #plot!(p, x, y, args...; kwargs...) = Plots.plot!(p, x, y, args...; kwargs...)
 
-function get(ocp_sol::SteepestOCPSol, xx::Union{Symbol, Tuple{Symbol, Integer}})
+function get(ocp_sol::DescentOCPSol, xx::Union{Symbol, Tuple{Symbol, Integer}})
 
     T = ocp_sol.T
     X = ocp_sol.X

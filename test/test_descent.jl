@@ -1,5 +1,5 @@
 # ocp solution to use a close init to the solution
-N  = 101
+N  = 1001
 U⁺ = range(6.0, -6.0, N); # solution
 U⁺ = U⁺[1:end-1];
 
@@ -8,7 +8,6 @@ t0 = 0.0                # t0 is fixed
 tf = 1.0                # tf is fixed
 x0 = [-1.0; 0.0]        # the initial condition is fixed
 xf = [ 0.0; 0.0]        # the target
-
 A  = [0.0 1.0
       0.0 0.0]
 B  = [0.0; 1.0]
@@ -30,11 +29,11 @@ ocp = OCP(  :autonomous,
 U_init = U⁺-1e0*ones(N-1); U_init = [ [U_init[i]] for i=1:N-1 ]
 
 # resolution
-ocp_sol = solve(ocp, :steepest_descent, init=U_init, 
-                  grid_size=N, penalty_constraint=1e2, iterations=10, step_length=1e-1)
+ocp_sol = solve(ocp, :descent, init=U_init, 
+                  grid_size=N, penalty_constraint=1e4, iterations=5, step_length=1)
 
 plot(ocp_sol)
 
-@testset "Steepest descent - Solve" begin
-    @test typeof(ocp_sol) == SteepestOCPSol
+@testset "Descent - Solve" begin
+    @test typeof(ocp_sol) == DescentOCPSol
 end
