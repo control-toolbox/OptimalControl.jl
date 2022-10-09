@@ -1,6 +1,6 @@
 # ocp solution to use a close init to the solution
 N  = 1001
-U⁺ = range(start=6.0, stop=-6.0, length=N); # solution
+U⁺ = range(6.0, stop=-6.0, length=N); # solution
 U⁺ = U⁺[1:end-1];
 
 # ocp description
