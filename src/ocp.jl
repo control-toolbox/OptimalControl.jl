@@ -1,6 +1,5 @@
 # --------------------------------------------------------------------------------------------------
 # Aliases for types
-#
 const Times       = Union{Vector{<:Number}, StepRangeLen}
 const States      = Vector{<:Vector{<:Number}}
 const Adjoints    = Vector{<:Vector{<:Number}} #Union{Vector{<:Number}, Vector{<:Vector{<:Number}}, Matrix{<:Vector{<:Number}}}
@@ -12,7 +11,6 @@ const Dimension   = Integer
 
 # --------------------------------------------------------------------------------------------------
 # Optimal control problems
-#
 abstract type OptimalControlProblem end
 
 # pretty print : https://docs.julialang.org/en/v1/manual/types/#man-custom-pretty-printing
@@ -89,17 +87,14 @@ end
 
 # --------------------------------------------------------------------------------------------------
 # Initialization
-#
 abstract type OptimalControlInit end
 
 # --------------------------------------------------------------------------------------------------
 # Solution
-#
 abstract type OptimalControlSolution end
 
 # --------------------------------------------------------------------------------------------------
 # Resolution
-#
 function solve(ocp::OptimalControlProblem, description...; kwargs...)
     method = getCompleteSolverDescription(makeDescription(description...))
     if :descent in method

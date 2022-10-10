@@ -1,19 +1,19 @@
 # --------------------------------------------------------------------------------------------------
 # Definition of a general descent problem
 mutable struct DescentProblem
-    ∇f::Function
-    f::Function
+    ∇f::Function # gradient of the function
+    f::Function # function to minimize
 end
 
 # --------------------------------------------------------------------------------------------------
 # Definition of an initialization for the descent method
 mutable struct DescentOCPInit <: OptimalControlInit
-    U::Controls
+    U::Controls # the optimization variable U of the ocp for the descent method
 end
 
 mutable struct DescentInit
-    x::Union{Vector{<:Number}, Controls}
-    function DescentInit(U::Controls)
+    x::Vector{<:Number} # the optimization variable x of the descent method
+    function DescentInit(U::Controls) # to transcribe U in x
         new(vec2vec(U))
     end
 end
@@ -21,42 +21,42 @@ end
 # --------------------------------------------------------------------------------------------------
 # Definition of a solution for the descent method
 mutable struct DescentOCPSol <: OptimalControlSolution
-    T::Times
-    X::States
-    U::Controls
-    P::Adjoints
-    state_dimension   :: Dimension
-    control_dimension :: Dimension
-    stopping::Symbol
-    success::Bool
-    iterations::Integer
+    T::Times # the times
+    X::States # the states at the times T
+    U::Controls # the controls at T
+    P::Adjoints # the adjoint at T
+    state_dimension   :: Dimension # the dimension of the state
+    control_dimension :: Dimension # the dimension of the control
+    stopping::Symbol # the stopping criterion at the end of the descent method
+    success::Bool # whether or not the method has finished successfully: CN1, stagnation vs iterations max
+    iterations::Integer # the number of iterations
 end
 
 mutable struct DescentSol
-    x::Union{Vector{<:Number}, Controls}
-    stopping::Symbol
-    success::Bool
-    iterations::Integer
+    x::Vector{<:Number} # the optimization variable solution
+    stopping::Symbol # the stopping criterion at the end of the descent method
+    success::Bool # whether or not the method has finished successfully: CN1, stagnation vs iterations max
+    iterations::Integer # the number of iterations
 end
 
 # --------------------------------------------------------------------------------------------------
 # Default options
-__grid_size() = 200
-__penalty_constraint() = 1e4
-__iterations() = 100
-__step_length() = nothing
-function __step_length(step_search::Symbol, step_length::Union{Number, Nothing})
-    if step_length == __step_length() && step_search==:fixedstep
-        return 1e-1
-    elseif step_length == __step_length() && step_search==:backtracking
-        return 1e0
+__grid_size() = 200 # the length of the time discretization grid
+__penalty_constraint() = 1e4 # the penalty term in front of final constraints
+__iterations() = 100 # number of maximal iterations
+__step_length() = nothing # the step length of the line search method
+function __step_length(line_search::Symbol, step_length::Union{Number, Nothing})
+    if step_length == __step_length() && line_search==:fixedstep
+        return 1e-1 # fixed step length, small enough
+    elseif step_length == __step_length() && line_search==:backtracking
+        return 1e0 # initial step length for backtracking
     else
         return step_length
     end
 end
-__absoluteTolerance() = sqrt(eps())
-__optimalityTolerance() = 1e-8
-__stagnationTolerance() = 1e-8
+__absoluteTolerance() = sqrt(eps()) # absolute tolerance for the stopping criterion
+__optimalityTolerance() = 1e-8 # optimality relative tolerance for the CN1
+__stagnationTolerance() = 1e-8 # step stagnation relative tolerance
 
 # --------------------------------------------------------------------------------------------------
 # Solver of an ocp by descent method
@@ -72,23 +72,27 @@ function solve_by_descent(ocp::SimpleRegularOCP, method::Description;
     display::Bool=true)
 
     # print chosen method
-    println("Method = ", method)
+    if display
+        println("")
+        println("Method = ", method)
+    end
 
     # we suppose the description of the method is complete
-    direction, step_search = read(method)
+    # we get the direction search and line search methods
+    direction, line_search = read(method)
 
-    # get default options depending on the method
-    step_length = __step_length(step_search, step_length)
+    # get the default options for those which depend on the method
+    step_length = __step_length(line_search, step_length)
 
-    # step 1: transcription from ocp to sd problem and init
+    # step 1: transcription from ocp to descent problem and init
     descent_init    = ocp2descent_init(init, grid_size, ocp.control_dimension)
     descent_problem = ocp2descent_problem(ocp, grid_size, penalty_constraint)
 
     # step 2: resolution of the problem
-    descent_sol = descent_solver(descent_problem, descent_init, direction, step_search,
+    descent_sol = descent_solver(descent_problem, descent_init, direction, line_search,
         iterations, step_length, absoluteTolerance, optimalityTolerance, stagnationTolerance, display)
 
-    # step 3: transcription of the solution
+    # step 3: transcription of the solution, from descent to ocp
     ocp_sol = descent2ocp_solution(descent_sol, ocp, grid_size, penalty_constraint)
 
     # step 4: print convergence result
@@ -100,11 +104,15 @@ function solve_by_descent(ocp::SimpleRegularOCP, method::Description;
 
 end
 
+# --------------------------------------------------------------------------------------------------
+# 
+# some texts related to methods...
 texts = Dict(
     :optimality => "optimality necessary conditions reached up to numerical tolerances",
     :stagnation => "the step length became too small"
 )
 
+# final print after resolution
 function print_convergence(ocp_sol::DescentOCPSol)
     println("")
     println("Descent solver result:")
@@ -113,29 +121,35 @@ function print_convergence(ocp_sol::DescentOCPSol)
     println("   convergence: ", ocp_sol.success)
 end
 
+# --------------------------------------------------------------------------------------------------
+# read the description to get the chosen methods
+# we assume the description is complete
 function read(method::Description)
     #
     direction = nothing
     direction = :gradient ∈ method ? :gradient : direction
     direction = :bfgs ∈ method ? :bfgs : direction
     #
-    step_search = nothing
-    step_search = :fixedstep ∈ method ? :fixedstep : step_search
-    step_search = :backtracking ∈ method ? :backtracking : step_search
+    line_search = nothing
+    line_search = :fixedstep ∈ method ? :fixedstep : line_search
+    line_search = :backtracking ∈ method ? :backtracking : line_search
     #
-    return direction, step_search
+    return direction, line_search
 end
 
 # --------------------------------------------------------------------------------------------------
 # step 1: transcription of the initialization
+# this step depends on the type of the init
 ocp2descent_init(init::Nothing,  grid_size::Integer, control_dimension::Dimension) = 
-    DescentInit([ zeros(control_dimension) for i in 1:grid_size-1])
+    DescentInit([ zeros(control_dimension) for i in 1:grid_size-1]) # default init
 ocp2descent_init(init::Controls, args...) = DescentInit(init)
 ocp2descent_init(init::DescentOCPInit, args...) = DescentInit(init.U)
 ocp2descent_init(init::DescentOCPSol,  args...) = DescentInit(init.U)
 
 # --------------------------------------------------------------------------------------------------
-# Utils for the transcription from ocp to sd
+# Utils for the transcription from ocp to descent problem
+
+# forward integration of the state
 function model(x0, T, U, f)
     xₙ = x0
     X = [xₙ]
@@ -145,6 +159,7 @@ function model(x0, T, U, f)
     return xₙ, X
 end
 
+# backward integration of state and costate
 function adjoint(xₙ, pₙ, T, U, f)
     X = [xₙ]; P = [pₙ]
     for n ∈ range(length(T), 2, step=-1)
@@ -154,6 +169,7 @@ function adjoint(xₙ, pₙ, T, U, f)
 end
 
 # --------------------------------------------------------------------------------------------------
+# step 1: transcription of the problem, from ocp to descent
 function ocp2descent_problem(ocp::SimpleRegularOCP, grid_size::Integer, penalty_constraint::Number)
 
     # ocp data
@@ -168,24 +184,26 @@ function ocp2descent_problem(ocp::SimpleRegularOCP, grid_size::Integer, penalty_
     # Jacobian of the constraints
     Jcf(x) = Jac(cf, x)
 
-    # penalty term for final condition
+    # penalty term for the final constraints
     αₚ = penalty_constraint
 
-    # flows
+    # state flow
     vf(t, x, u) = isnonautonomous(desc) ? dy(t, x, u) : dy(x, u)
     f  = Flow(VectorField(vf), :nonautonomous); # we always give a non autonomous Vector Field
 
+    # state-costate flow
     p⁰ = -1.0;
     H(t, x, p, u) = isnonautonomous(desc) ? p⁰*co(t, x, u) + p'*dy(t, x, u) : p⁰*co(x, u) + p'*dy(x, u)
     fh = Flow(Hamiltonian(H), :nonautonomous); # we always give a non autonomous Hamiltonian
 
-    # for the adjoint method
+    # to compute the gradient of the function by the adjoint method,
+    # we need the partial derivative of the Hamiltonian wrt to the control
     Hu(t, x, p, u) = ∇(u -> H(t, x, p, u), u)
 
     # discretization grid
     T = range(t0, tf, grid_size)
 
-    # gradient function
+    # gradient of the function J
     function ∇J(U::Controls)
         xₙ, _ = model(x0, T, U, f)
         pₙ = p⁰*αₚ*transpose(Jcf(xₙ))*cf(xₙ)
@@ -193,8 +211,10 @@ function ocp2descent_problem(ocp::SimpleRegularOCP, grid_size::Integer, penalty_
         g = [ -Hu(T[i], X[i], P[i], U[i]).*(T[i+1]-T[i]) for i=1:length(T)-1 ]
         return g
     end
-    ∇J(x::Vector{<:Number}) = vec2vec(∇J(vec2vec(x, ocp.control_dimension)))
+    # vec2vec permet de passer d'un vecteur de vecteur à simplement un vecteur
+    ∇J(x::Vector{<:Number}) = vec2vec(∇J(vec2vec(x, ocp.control_dimension))) # for desent solver
 
+    # function J, that we minimize
     L(t, x, u) = isnonautonomous(desc) ? co(t, x, u) : co(x, u)
     function J(U::Controls)
         xₙ, X = model(x0, T, U, f)
@@ -205,10 +225,9 @@ function ocp2descent_problem(ocp::SimpleRegularOCP, grid_size::Integer, penalty_
         y = y + 0.5*αₚ*norm(cf(xₙ))^2
         return y
     end
-    J(x::Vector{<:Number}) = J(vec2vec(x, ocp.control_dimension))
+    J(x::Vector{<:Number}) = J(vec2vec(x, ocp.control_dimension)) # for desent solver
 
     # descent problem
-    # vec2vec permet de passer d'un vecteur de vecteur à simplement un vecteur
     sdp = DescentProblem(∇J, J)
 
     return sdp
@@ -217,7 +236,7 @@ end
 
 # --------------------------------------------------------------------------------------------------
 function descent_solver(sdp::DescentProblem, init::DescentInit, 
-    direction::Symbol, step_search::Symbol,
+    direction::Symbol, line_search::Symbol,
     iterations::Integer, step_length::Number,
     absoluteTolerance::Number, optimalityTolerance::Number, stagnationTolerance::Number,
     display::Bool)
@@ -247,27 +266,27 @@ function descent_solver(sdp::DescentProblem, init::DescentInit,
     success = nothing
     while !stop
 
-        # step length computation - inputs: xᵢ, dᵢ, gᵢ, f - outputs: sᵢ
-        if step_search == :backtracking
+        # step length computation
+        if line_search == :backtracking
             sᵢ = backtracking(xᵢ, dᵢ, gᵢ, f, s₀)
-        elseif step_search == :fixedstep
+        elseif line_search == :fixedstep
             sᵢ = s₀
         else
-            error("No such step search method.")
+            error("No such line search method.")
         end
 
         # iterate update 
         pᵢ = sᵢ*dᵢ
-        xᵢ = xᵢ + pᵢ  # xᵢ₊₁
+        xᵢ = xᵢ + pᵢ # xᵢ₊₁
 
         # new gradient
-        gᵢ₊₁ = ∇f(xᵢ)      # ∇f(xᵢ₊₁)
+        gᵢ₊₁ = ∇f(xᵢ) # ∇f(xᵢ₊₁)
 
-        # direction computation - inputs: sᵢ, dᵢ, gᵢ, gᵢ₊₁, Hᵢ - outputs: dᵢ₊₁, Hᵢ₊₁
+        # direction computation
         if direction == :bfgs
             dᵢ, Hᵢ = BFGS(sᵢ, dᵢ, gᵢ, gᵢ₊₁, Hᵢ, Iₙ)
             if dᵢ'*gᵢ₊₁ > 0 # this is not a descent direction
-                Hᵢ = Iₙ / norm(gᵢ₊₁)
+                Hᵢ = Iₙ #/ norm(gᵢ₊₁)
                 dᵢ = -Hᵢ*gᵢ₊₁
             end
         elseif direction == :gradient
@@ -277,11 +296,11 @@ function descent_solver(sdp::DescentProblem, init::DescentInit,
         end
 
         # update of the current gradient
-        gᵢ = gᵢ₊₁          # ∇f(xᵢ₊₁)
+        gᵢ = gᵢ₊₁ # ∇f(xᵢ₊₁)
 
         # print
         if display
-            @printf("%10d", i) # Iterations or calls
+            @printf("%10d", i) # Iterations
             @printf("%16.8e", norm(gᵢ)) # ‖∇f(x)‖
             @printf("%16.8e", norm(xᵢ)) # ‖x‖
             @printf("%16.8e", norm(sᵢ*dᵢ)/norm(xᵢ)) # Stagnation
@@ -289,15 +308,15 @@ function descent_solver(sdp::DescentProblem, init::DescentInit,
         end
 
         # stopping criteria
-        if norm(gᵢ) ≤ max(optimalityTolerance*ng₀, absoluteTolerance)
+        if norm(gᵢ) ≤ max(optimalityTolerance*ng₀, absoluteTolerance) # CN1
             stopping = :optimality
             success = true
             stop = true
-        elseif norm(pᵢ) ≤ max(stagnationTolerance*norm(xᵢ), absoluteTolerance)
+        elseif norm(pᵢ) ≤ max(stagnationTolerance*norm(xᵢ), absoluteTolerance) # step stagnation
             stopping = :stagnation
             success = true
             stop = true
-        elseif i ≥ iterations
+        elseif i ≥ iterations # iterations max
             stopping = :iterations
             success = false
             stop = true
@@ -318,7 +337,7 @@ function BFGS(sᵢ, dᵢ, gᵢ, gᵢ₊₁, Hᵢ, Iₙ)
     nᵢ = dᵢ'*yᵢ
     Aᵢ = dᵢ*yᵢ'
     Hᵢ₊₁ = (Iₙ-Aᵢ/nᵢ)*Hᵢ*(Iₙ-Aᵢ'/nᵢ)+sᵢ*dᵢ*dᵢ'/nᵢ # Hᵢ₊₁ - BFGS update - approx of the inverse of ∇²f(xᵢ₊₁)
-    dᵢ₊₁ = -Hᵢ₊₁*gᵢ₊₁        # new direction
+    dᵢ₊₁ = -Hᵢ₊₁*gᵢ₊₁ # new direction
     #
     return dᵢ₊₁, Hᵢ₊₁
 end
@@ -326,7 +345,7 @@ end
 function backtracking(x, d, g, f, s₀)
 
     # parameters
-    ρ  = 0.5 # for backtraking
+    ρ  = 0.5
     c₁ = 1e-4
     smin = 1e-8
 
@@ -359,14 +378,14 @@ function descent2ocp_solution(sd_sol::DescentSol, ocp::SimpleRegularOCP, grid_si
     # Jacobian of the constraints
     Jcf(x) = Jac(cf, x)
 
-    # penalty term for final condition
+    # penalty term for final constraints
     αₚ = penalty_constraint
 
     # flow for state
     vf(t, x, u) = isnonautonomous(desc) ? dy(t, x, u) : dy(x, u)
     f  = Flow(VectorField(vf), :nonautonomous); # we always give a non autonomous Vector Field
 
-    # flow for adjoint
+    # flow for state-adjoint
     p⁰ = -1.0;
     H(t, x, p, u) = isnonautonomous(desc) ? p⁰*co(t, x, u) + p'*dy(t, x, u) : p⁰*co(x, u) + p'*dy(x, u)
     fh = Flow(Hamiltonian(H), :nonautonomous); # we always give a non autonomous Hamiltonian

@@ -1,7 +1,6 @@
 module Flows
 
     # todo: this could be a package
-    # todo: add non-autonomous rhs
 
     # Packages needed: 
     using ForwardDiff: jacobian, gradient, ForwardDiff
@@ -16,21 +15,17 @@ module Flows
     __method() = OrdinaryDiffEq.Tsit5()
 
     # -------------------------------------------------------------------------------------------------- 
-    # Description of the variants of the methods
-    #
+    # A desription is a tuple of symbols
     const DescVarArg  = Vararg{Symbol} # or Symbol...
     const Description = Tuple{DescVarArg}
     
-    function makeDescription(desc::DescVarArg)
-        return Tuple(desc)
-    end
-    
-    function makeDescription(desc::Description)
-        return desc
-    end
+    # -------------------------------------------------------------------------------------------------- 
+    # the description may be given as a tuple or a list of symbols (Vararg{Symbol})
+    makeDescription(desc::DescVarArg)  = Tuple(desc) # create a description from Vararg{Symbol}
+    makeDescription(desc::Description) = desc
     
     # default is autonomous
-    isnonautonomous(desc::Description) = :nonautonomous in desc
+    isnonautonomous(desc::Description) = :nonautonomous ∈ desc
 
     # --------------------------------------------------------------------------------------------------
     # Aliases for types
@@ -62,5 +57,6 @@ module Flows
     export VectorField
     export Hamiltonian
     export Flow
+    export isnonautonomous
 
 end
