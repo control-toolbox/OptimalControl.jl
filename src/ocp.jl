@@ -105,7 +105,7 @@ function solve(ocp::OptimalControlProblem, description...; kwargs...)
     if :descent in method
         return solve_by_descent(ocp, method; kwargs...)
     else
-        nothing
+        error("No such method.")
     end  
 end
 

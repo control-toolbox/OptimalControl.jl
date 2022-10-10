@@ -27,16 +27,22 @@ mutable struct DescentOCPSol <: OptimalControlSolution
     P::Adjoints
     state_dimension   :: Dimension
     control_dimension :: Dimension
+    stopping::Symbol
+    success::Bool
+    iterations::Integer
 end
 
 mutable struct DescentSol
     x::Union{Vector{<:Number}, Controls}
+    stopping::Symbol
+    success::Bool
+    iterations::Integer
 end
 
 # --------------------------------------------------------------------------------------------------
 # Default options
 __grid_size() = 200
-__penalty_constraint() = 1e2
+__penalty_constraint() = 1e4
 __iterations() = 100
 __step_length() = nothing
 function __step_length(step_search::Symbol, step_length::Union{Number, Nothing})
@@ -48,6 +54,9 @@ function __step_length(step_search::Symbol, step_length::Union{Number, Nothing})
         return step_length
     end
 end
+__absoluteTolerance() = sqrt(eps())
+__optimalityTolerance() = 1e-8
+__stagnationTolerance() = 1e-8
 
 # --------------------------------------------------------------------------------------------------
 # Solver of an ocp by descent method
@@ -56,7 +65,11 @@ function solve_by_descent(ocp::SimpleRegularOCP, method::Description;
     grid_size::Integer=__grid_size(), 
     penalty_constraint::Number=__penalty_constraint(), 
     iterations::Integer=__iterations(), 
-    step_length::Union{Number, Nothing}=__step_length())
+    step_length::Union{Number, Nothing}=__step_length(),
+    absoluteTolerance::Number=__absoluteTolerance(),
+    optimalityTolerance::Number=__optimalityTolerance(),
+    stagnationTolerance::Number=__stagnationTolerance(),
+    display::Bool=true)
 
     # print chosen method
     println("Method = ", method)
@@ -73,13 +86,31 @@ function solve_by_descent(ocp::SimpleRegularOCP, method::Description;
 
     # step 2: resolution of the problem
     descent_sol = descent_solver(descent_problem, descent_init, direction, step_search,
-        iterations, step_length)
+        iterations, step_length, absoluteTolerance, optimalityTolerance, stagnationTolerance, display)
 
     # step 3: transcription of the solution
     ocp_sol = descent2ocp_solution(descent_sol, ocp, grid_size, penalty_constraint)
 
+    # step 4: print convergence result
+    if display
+        print_convergence(ocp_sol)
+    end
+
     return ocp_sol
 
+end
+
+texts = Dict(
+    :optimality => "optimality necessary conditions reached up to numerical tolerances",
+    :stagnation => "the step length became too small"
+)
+
+function print_convergence(ocp_sol::DescentOCPSol)
+    println("")
+    println("Descent solver result:")
+    println("   iterations: ", ocp_sol.iterations)
+    println("   stopping: ", texts[ocp_sol.stopping])
+    println("   convergence: ", ocp_sol.success)
 end
 
 function read(method::Description)
@@ -187,7 +218,9 @@ end
 # --------------------------------------------------------------------------------------------------
 function descent_solver(sdp::DescentProblem, init::DescentInit, 
     direction::Symbol, step_search::Symbol,
-    iterations::Integer, step_length::Number)
+    iterations::Integer, step_length::Number,
+    absoluteTolerance::Number, optimalityTolerance::Number, stagnationTolerance::Number,
+    display::Bool)
 
     # general descent solver data
     ∇f = sdp.∇f
@@ -199,14 +232,21 @@ function descent_solver(sdp::DescentProblem, init::DescentInit,
     n  = length(xᵢ)
     Iₙ = Matrix{Float64}(I, n, n)
     Hᵢ = Iₙ
-    gᵢ = ∇f(xᵢ); 
+    gᵢ = ∇f(xᵢ); ng₀ = norm(gᵢ)
     dᵢ = -Hᵢ*gᵢ
 
     # init print
-    println("\n     Calls  ‖∇f(x)‖         ‖x‖             Stagnation      \n")
+    if display
+        println("\n     Calls  ‖∇f(x)‖         ‖x‖             Stagnation      \n")
+    end
 
     #
-    for i ∈ range(1, iterations)
+    i = 1
+    stop = false
+    stopping = nothing
+    success = nothing
+    while !stop
+
         # step length computation - inputs: xᵢ, dᵢ, gᵢ, f - outputs: sᵢ
         if step_search == :backtracking
             sᵢ = backtracking(xᵢ, dᵢ, gᵢ, f, s₀)
@@ -217,7 +257,8 @@ function descent_solver(sdp::DescentProblem, init::DescentInit,
         end
 
         # iterate update 
-        xᵢ = xᵢ + sᵢ*dᵢ  # xᵢ₊₁
+        pᵢ = sᵢ*dᵢ
+        xᵢ = xᵢ + pᵢ  # xᵢ₊₁
 
         # new gradient
         gᵢ₊₁ = ∇f(xᵢ)      # ∇f(xᵢ₊₁)
@@ -225,6 +266,10 @@ function descent_solver(sdp::DescentProblem, init::DescentInit,
         # direction computation - inputs: sᵢ, dᵢ, gᵢ, gᵢ₊₁, Hᵢ - outputs: dᵢ₊₁, Hᵢ₊₁
         if direction == :bfgs
             dᵢ, Hᵢ = BFGS(sᵢ, dᵢ, gᵢ, gᵢ₊₁, Hᵢ, Iₙ)
+            if dᵢ'*gᵢ₊₁ > 0 # this is not a descent direction
+                Hᵢ = Iₙ / norm(gᵢ₊₁)
+                dᵢ = -Hᵢ*gᵢ₊₁
+            end
         elseif direction == :gradient
             dᵢ = -gᵢ₊₁
         else
@@ -235,14 +280,35 @@ function descent_solver(sdp::DescentProblem, init::DescentInit,
         gᵢ = gᵢ₊₁          # ∇f(xᵢ₊₁)
 
         # print
-        @printf("%10d", i) # Iterations or calls
-        @printf("%16.8e", norm(gᵢ)) # ‖∇f(x)‖
-        @printf("%16.8e", norm(xᵢ)) # ‖x‖
-        @printf("%16.8e", norm(sᵢ*dᵢ)/norm(xᵢ)) # Stagnation
-        println()
+        if display
+            @printf("%10d", i) # Iterations or calls
+            @printf("%16.8e", norm(gᵢ)) # ‖∇f(x)‖
+            @printf("%16.8e", norm(xᵢ)) # ‖x‖
+            @printf("%16.8e", norm(sᵢ*dᵢ)/norm(xᵢ)) # Stagnation
+            println()
+        end
+
+        # stopping criteria
+        if norm(gᵢ) ≤ max(optimalityTolerance*ng₀, absoluteTolerance)
+            stopping = :optimality
+            success = true
+            stop = true
+        elseif norm(pᵢ) ≤ max(stagnationTolerance*norm(xᵢ), absoluteTolerance)
+            stopping = :stagnation
+            success = true
+            stop = true
+        elseif i ≥ iterations
+            stopping = :iterations
+            success = false
+            stop = true
+        else
+            i += 1
+        end
 
     end
-    return DescentSol(xᵢ)
+
+    return DescentSol(xᵢ, stopping, success, i)
+
 end
 
 # todo: improve memory consumption by updating inputs - add !, ie BFGS!
@@ -311,7 +377,8 @@ function descent2ocp_solution(sd_sol::DescentSol, ocp::SimpleRegularOCP, grid_si
     pₙ = p⁰*αₚ*transpose(Jcf(xₙ))*cf(xₙ)
     _, _, X⁺, P⁺ = adjoint(xₙ, pₙ, T, U⁺, fh)
 
-    return DescentOCPSol(T, X⁺, U⁺, P⁺, ocp.state_dimension, ocp.control_dimension)
+    return DescentOCPSol(T, X⁺, U⁺, P⁺, ocp.state_dimension, ocp.control_dimension, 
+                sd_sol.stopping, sd_sol.success, sd_sol.iterations)
 
 end
 
