@@ -62,24 +62,24 @@ function Base.show(io::IO, ocp::SimpleRegularOCP)
 
     println(io, "Optimal control problem of the form:")
     println(io, "")
-    print(io, " minimize  J(x, u) = ")
+    print(io, "    minimize  J(x, u) = ")
     isnonautonomous(desc) ? 
           println(io, '\u222B', " L(t, x(t), u(t)) dt, over [t0, tf]") : 
           println(io, '\u222B', " L(x(t), u(t)) dt, over [t0, tf]")
     println(io, "")
-    println(io, " subject to")
+    println(io, "    subject to")
     println(io, "")
     isnonautonomous(desc) ? 
-          println(io, "     x", '\u0307', "(t) = f(t, x(t), u(t)), t in [t0, tf] a.e.,") : 
-          println(io, "     x", '\u0307', "(t) = f(x(t), u(t)), t in [t0, tf] a.e.,")
+          println(io, "        x", '\u0307', "(t) = f(t, x(t), u(t)), t in [t0, tf] a.e.,") : 
+          println(io, "        x", '\u0307', "(t) = f(x(t), u(t)), t in [t0, tf] a.e.,")
+    #println(io, "")
+    println(io, "        c(x(tf)) = 0,")
     println(io, "")
-    println(io, "     c(x(tf)) = 0,")
-    println(io, "")
-    println(io, " where x(t) ", '\u2208' ," R", dimx==1 ? "" : Base.string("^", dimx),
+    print(io, "    where x(t) ", '\u2208' ," R", dimx==1 ? "" : Base.string("^", dimx),
           ", u(t) ", '\u2208' ," R", dimu==1 ? "" : Base.string("^", dimu),
           " and c(x) ", '\u2208' ," R", dimc==1 ? "" : Base.string("^", dimc),
            ".")
-    println(io, "")
+    #println(io, "")
     println(io, " Besides, t0, tf and x0 are fixed. ")
     println(io, "")
 
