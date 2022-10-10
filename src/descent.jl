@@ -118,7 +118,7 @@ function print_convergence(ocp_sol::DescentOCPSol)
     println("Descent solver result:")
     println("   iterations: ", ocp_sol.iterations)
     println("   stopping: ", texts[ocp_sol.stopping])
-    println("   convergence: ", ocp_sol.success)
+    println("   success: ", ocp_sol.success)
 end
 
 # --------------------------------------------------------------------------------------------------
