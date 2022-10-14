@@ -40,6 +40,23 @@ mutable struct DescentSol
 end
 
 # --------------------------------------------------------------------------------------------------
+# read the description to get the chosen methods
+# we assume the description is complete
+function read(method::Description)
+    #
+    direction = nothing
+    direction = :gradient ∈ method ? :gradient : direction
+    direction = :bfgs ∈ method ? :bfgs : direction
+    #
+    line_search = nothing
+    line_search = :fixedstep ∈ method ? :fixedstep : line_search
+    line_search = :backtracking ∈ method ? :backtracking : line_search
+    line_search = :bissection ∈ method ? :bissection : line_search
+    #
+    return direction, line_search
+end
+
+# --------------------------------------------------------------------------------------------------
 # Default options
 __grid_size() = 200 # the length of the time discretization grid
 __penalty_constraint() = 1e4 # the penalty term in front of final constraints
@@ -48,7 +65,7 @@ __step_length() = nothing # the step length of the line search method
 function __step_length(line_search::Symbol, step_length::Union{Number, Nothing})
     if step_length == __step_length() && line_search==:fixedstep
         return 1e-1 # fixed step length, small enough
-    elseif step_length == __step_length() && line_search==:backtracking
+    elseif step_length == __step_length() #&& line_search==:backtracking
         return 1e0 # initial step length for backtracking
     else
         return step_length
@@ -106,10 +123,11 @@ end
 
 # --------------------------------------------------------------------------------------------------
 # 
-# some texts related to methods...
+# some texts related to results...
 texts = Dict(
     :optimality => "optimality necessary conditions reached up to numerical tolerances",
-    :stagnation => "the step length became too small"
+    :stagnation => "the step length became too small",
+    :iterations => "maximal number of iterations reached"
 )
 
 # final print after resolution
@@ -119,22 +137,6 @@ function print_convergence(ocp_sol::DescentOCPSol)
     println("   iterations: ", ocp_sol.iterations)
     println("   stopping: ", texts[ocp_sol.stopping])
     println("   success: ", ocp_sol.success)
-end
-
-# --------------------------------------------------------------------------------------------------
-# read the description to get the chosen methods
-# we assume the description is complete
-function read(method::Description)
-    #
-    direction = nothing
-    direction = :gradient ∈ method ? :gradient : direction
-    direction = :bfgs ∈ method ? :bfgs : direction
-    #
-    line_search = nothing
-    line_search = :fixedstep ∈ method ? :fixedstep : line_search
-    line_search = :backtracking ∈ method ? :backtracking : line_search
-    #
-    return direction, line_search
 end
 
 # --------------------------------------------------------------------------------------------------
@@ -191,6 +193,11 @@ function ocp2descent_problem(ocp::SimpleRegularOCP, grid_size::Integer, penalty_
     vf(t, x, u) = isnonautonomous(desc) ? dy(t, x, u) : dy(x, u)
     f  = Flow(VectorField(vf), :nonautonomous); # we always give a non autonomous Vector Field
 
+    # augmented state flow
+    vfa(t, x, u) = isnonautonomous(desc) ? [dy(t, x[1:end-1], u)[:]; co(t, x[1:end-1], u)]  : 
+        [dy(x[1:end-1], u)[:]; co(x[1:end-1], u)]
+    fa  = Flow(VectorField(vfa), :nonautonomous); # we always give a non autonomous Vector Field
+
     # state-costate flow
     p⁰ = -1.0;
     H(t, x, p, u) = isnonautonomous(desc) ? p⁰*co(t, x, u) + p'*dy(t, x, u) : p⁰*co(x, u) + p'*dy(x, u)
@@ -217,15 +224,12 @@ function ocp2descent_problem(ocp::SimpleRegularOCP, grid_size::Integer, penalty_
     # function J, that we minimize
     L(t, x, u) = isnonautonomous(desc) ? co(t, x, u) : co(x, u)
     function J(U::Controls)
-        xₙ, X = model(x0, T, U, f)
-        y = 0.0
-        for i ∈ range(1, length(U))
-            y = y + L(T[i], X[i], U[i])*(T[i+1]-T[i])
-        end
-        y = y + 0.5*αₚ*norm(cf(xₙ))^2
-        return y
+        # via augmented system
+        xₙ, X = model([x0[:]; 0.0], T, U, fa)
+        cost = xₙ[end] + 0.5*αₚ*norm(cf(xₙ[1:end-1]))^2
+        return cost
     end
-    J(x::Vector{<:Number}) = J(vec2vec(x, ocp.control_dimension)) # for desent solver
+    J(x::Vector{<:Number}) = J(vec2vec(x, ocp.control_dimension)) # for descent solver
 
     # descent problem
     sdp = DescentProblem(∇J, J)
@@ -234,7 +238,9 @@ function ocp2descent_problem(ocp::SimpleRegularOCP, grid_size::Integer, penalty_
 
 end
 
+
 # --------------------------------------------------------------------------------------------------
+# step 2: solver
 function descent_solver(sdp::DescentProblem, init::DescentInit, 
     direction::Symbol, line_search::Symbol,
     iterations::Integer, step_length::Number,
@@ -271,6 +277,8 @@ function descent_solver(sdp::DescentProblem, init::DescentInit,
             sᵢ = backtracking(xᵢ, dᵢ, gᵢ, f, s₀)
         elseif line_search == :fixedstep
             sᵢ = s₀
+        elseif line_search == :bissection
+            sᵢ = bissection(xᵢ, dᵢ, gᵢ, f, ∇f, s₀)
         else
             error("No such line search method.")
         end
@@ -348,19 +356,64 @@ function backtracking(x, d, g, f, s₀)
     ρ  = 0.5
     c₁ = 1e-4
     smin = 1e-8
+    iₘₐₓ = 20
 
     #
     φ(s) = f(x+s*d); dTg = d'*g; wolfe1(s) = f(x)+c₁*s*dTg
     s = s₀
     k = 1
-    while φ(s)>wolfe1(s) && s>smin && k<10  # Weak first Wolfe condition
+    while φ(s)>wolfe1(s) && s>smin && k<iₘₐₓ  # Weak first Wolfe condition
         s = ρ*s
         k = k+1
+    end
+
+    if s ≤ smin
+        s = s₀
     end
 
     return s
 end
 
+function bissection(x, d, g, f, ∇f, s₀)
+
+    # parameters
+    ρ  = 0.5
+    c₁ = 1e-4
+    c₂ = 0.9
+    smin = 1e-8
+    α = 0
+    β = Inf
+    iₘₐₓ = 20
+
+    #
+    φ(s) = f(x+s*d); dTg = d'*g; wolfe1(s) = f(x)+c₁*s*dTg
+    ∂φ(s) = d'*∇f(x+s*d); wolfe20 = c₂*d'*g #c₂*∂φ(0)
+    s = s₀
+    k = 1
+    stop=false
+    while !stop && s>smin && k<iₘₐₓ
+
+        if φ(s)>wolfe1(s) # Weak first Wolfe condition not satisfied
+            β = s; s = ρ*(α+β)
+        elseif ∂φ(s)<wolfe20 # second Wolfe condition not satisfied
+            α = s; β == Inf ? s = α/ρ : s = ρ*(α+β)
+        else # first and second ok
+            stop = true
+        end
+        k = k+1
+
+    end
+
+    if s ≤ smin
+        s = s₀
+    end
+
+    return s
+
+end
+
+# --------------------------------------------------------------------------------------------------
+# step 3: transcription of the solution, from descent to ocp
 function descent2ocp_solution(sd_sol::DescentSol, ocp::SimpleRegularOCP, grid_size::Integer, penalty_constraint::Number)
 
     # ocp data

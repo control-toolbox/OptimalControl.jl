@@ -15,8 +15,12 @@ add(x::Tuple{Vararg{Description}}, y::Description) = (x..., y)
 
 # by order of preference
 algorithmes = ()
+
+# descent methods
+algorithmes = add(algorithmes, (:descent, :bfgs, :bissection))
 algorithmes = add(algorithmes, (:descent, :bfgs, :backtracking))
 algorithmes = add(algorithmes, (:descent, :bfgs, :fixedstep))
+algorithmes = add(algorithmes, (:descent, :gradient, :bissection))
 algorithmes = add(algorithmes, (:descent, :gradient, :backtracking))
 algorithmes = add(algorithmes, (:descent, :gradient, :fixedstep))
 

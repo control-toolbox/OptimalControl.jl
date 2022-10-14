@@ -28,4 +28,4 @@ ocp = OCP(  control_dimension=1,
 ocp_sol = solve(ocp)
 
 # plot solution
-ps = plot(ocp_sol)
+plot(ocp_sol)
