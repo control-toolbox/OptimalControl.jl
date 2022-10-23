@@ -44,9 +44,23 @@ function OCP(   description...; # keyword arguments from here
     ocp = SimpleRegularOCP(makeDescription(description...), state_dimension, control_dimension, 
                 final_constraint_dimension, Lagrange_cost, dynamics, initial_time, initial_condition, 
                 final_time, final_constraint)
-    
     return ocp
+end
 
+function OCP(Lagrange_cost      :: Function, 
+    dynamics                    :: Function, 
+    initial_time                :: Time,
+    initial_condition           :: State,
+    final_time                  :: Time,
+    final_constraint            :: Function,
+    state_dimension             :: Dimension,
+    control_dimension           :: Dimension,
+    final_constraint_dimension  :: Dimension,
+    description...)
+ocp = SimpleRegularOCP(makeDescription(description...), state_dimension, control_dimension, 
+    final_constraint_dimension, Lagrange_cost, dynamics, initial_time, initial_condition, 
+    final_time, final_constraint)
+return ocp
 end
 
 # --------------------------------------------------------------------------------------------------
