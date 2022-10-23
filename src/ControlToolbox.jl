@@ -10,6 +10,7 @@ module ControlToolbox
     include("Flows.jl"); using .Flows
     include("description.jl")
     include("ocp.jl")
+    include("convert.jl")
     include("descent.jl")
 
     export OCP # method to construct an ocp
@@ -19,7 +20,8 @@ module ControlToolbox
     export OptimalControlSolution # solution of an ocp (abstract)
     export OptimalControlInit # initialization of an ocp (abstract)
 
-    export SimpleRegularOCP # interface of a simple and regular ocp
+    export RegularOCPFinalConstraint # interface of a regular ocp with final constraint
+    export RegularOCPFinalCondition
 
     export DescentOCPSol # solution of an ocp from the descent method
     export DescentOCPInit # initialization of an ocp for the descent method

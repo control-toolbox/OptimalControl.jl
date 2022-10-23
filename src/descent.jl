@@ -77,7 +77,7 @@ __stagnationTolerance() = 1e-8 # step stagnation relative tolerance
 
 # --------------------------------------------------------------------------------------------------
 # Solver of an ocp by descent method
-function solve_by_descent(ocp::SimpleRegularOCP, method::Description; 
+function solve_by_descent(ocp::RegularOCPFinalConstraint, method::Description; 
     init::Union{Nothing, Controls, DescentOCPInit, DescentOCPSol}=nothing, 
     grid_size::Integer=__grid_size(), 
     penalty_constraint::Number=__penalty_constraint(), 
@@ -90,8 +90,8 @@ function solve_by_descent(ocp::SimpleRegularOCP, method::Description;
 
     # print chosen method
     if display
-        println("")
-        println("Method = ", method)
+        #println("")
+        println("     Method = ", method)
     end
 
     # we suppose the description of the method is complete
@@ -118,6 +118,32 @@ function solve_by_descent(ocp::SimpleRegularOCP, method::Description;
     end
 
     return ocp_sol
+
+end
+
+function solve_by_descent(ocp::RegularOCPFinalCondition, method::Description; 
+    init::Union{Nothing, Controls, DescentOCPInit, DescentOCPSol}=nothing, 
+    grid_size::Integer=__grid_size(), 
+    penalty_constraint::Number=__penalty_constraint(), 
+    iterations::Integer=__iterations(), 
+    step_length::Union{Number, Nothing}=__step_length(),
+    absoluteTolerance::Number=__absoluteTolerance(),
+    optimalityTolerance::Number=__optimalityTolerance(),
+    stagnationTolerance::Number=__stagnationTolerance(),
+    display::Bool=true)
+
+    ocp_new = convert(ocp, RegularOCPFinalConstraint)
+
+    return solve_by_descent(ocp_new, method, 
+                init=init, 
+                grid_size=grid_size, 
+                penalty_constraint=penalty_constraint, 
+                iterations=iterations, 
+                step_length=step_length,
+                absoluteTolerance=absoluteTolerance,
+                optimalityTolerance=optimalityTolerance,
+                stagnationTolerance=stagnationTolerance,
+                display=display)
 
 end
 
@@ -172,7 +198,7 @@ end
 
 # --------------------------------------------------------------------------------------------------
 # step 1: transcription of the problem, from ocp to descent
-function ocp2descent_problem(ocp::SimpleRegularOCP, grid_size::Integer, penalty_constraint::Number)
+function ocp2descent_problem(ocp::RegularOCPFinalConstraint, grid_size::Integer, penalty_constraint::Number)
 
     # ocp data
     dy = ocp.dynamics
@@ -414,7 +440,7 @@ end
 
 # --------------------------------------------------------------------------------------------------
 # step 3: transcription of the solution, from descent to ocp
-function descent2ocp_solution(sd_sol::DescentSol, ocp::SimpleRegularOCP, grid_size::Integer, penalty_constraint::Number)
+function descent2ocp_solution(sd_sol::DescentSol, ocp::RegularOCPFinalConstraint, grid_size::Integer, penalty_constraint::Number)
 
     # ocp data
     dy = ocp.dynamics

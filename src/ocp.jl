@@ -14,7 +14,7 @@ const Dimension   = Integer
 abstract type OptimalControlProblem end
 
 # pretty print : https://docs.julialang.org/en/v1/manual/types/#man-custom-pretty-printing
-mutable struct SimpleRegularOCP <: OptimalControlProblem
+mutable struct RegularOCPFinalConstraint <: OptimalControlProblem
     description                 :: Description
     state_dimension             :: Union{Dimension, Nothing}
     control_dimension           :: Union{Dimension, Nothing}
@@ -27,7 +27,20 @@ mutable struct SimpleRegularOCP <: OptimalControlProblem
     final_constraint            :: Function
 end
 
+mutable struct RegularOCPFinalCondition <: OptimalControlProblem
+    description                 :: Description
+    state_dimension             :: Union{Dimension, Nothing}
+    control_dimension           :: Union{Dimension, Nothing}
+    Lagrange_cost               :: Function 
+    dynamics                    :: Function
+    initial_time                :: Time
+    initial_condition           :: State
+    final_time                  :: Time
+    final_condition             :: State
+end
+
 # instantiation of the ocp: choose the right type depending upon the inputs
+# todo : à voir de ce que l'on fait de cette méthode avec des arguments en keywords
 function OCP(   description...; # keyword arguments from here
                 control_dimension           :: Dimension,
                 Lagrange_cost               :: Function, 
@@ -41,7 +54,7 @@ function OCP(   description...; # keyword arguments from here
 
     # create the right ocp type depending on inputs
     state_dimension = state_dimension===nothing ? length(initial_condition) : state_dimension 
-    ocp = SimpleRegularOCP(makeDescription(description...), state_dimension, control_dimension, 
+    ocp = RegularOCPFinalConstraint(makeDescription(description...), state_dimension, control_dimension, 
                 final_constraint_dimension, Lagrange_cost, dynamics, initial_time, initial_condition, 
                 final_time, final_constraint)
     return ocp
@@ -57,46 +70,24 @@ function OCP(Lagrange_cost      :: Function,
     control_dimension           :: Dimension,
     final_constraint_dimension  :: Dimension,
     description...)
-ocp = SimpleRegularOCP(makeDescription(description...), state_dimension, control_dimension, 
+ocp = RegularOCPFinalConstraint(makeDescription(description...), state_dimension, control_dimension, 
     final_constraint_dimension, Lagrange_cost, dynamics, initial_time, initial_condition, 
     final_time, final_constraint)
 return ocp
 end
 
-# --------------------------------------------------------------------------------------------------
-# Display: text/html ?  
-# Base.show, Base.print
-function Base.show(io::IO, ocp::SimpleRegularOCP)
-
-    dimx = ocp.state_dimension===nothing ? "n" : ocp.state_dimension
-    dimu = ocp.control_dimension===nothing ? "m" : ocp.control_dimension
-    dimc = ocp.final_constraint_dimension===nothing ? "p" : ocp.final_constraint_dimension
-
-    desc = ocp.description
-
-    println(io, "Optimal control problem of the form:")
-    println(io, "")
-    print(io, "    minimize  J(x, u) = ")
-    isnonautonomous(desc) ? 
-          println(io, '\u222B', " L(t, x(t), u(t)) dt, over [t0, tf]") : 
-          println(io, '\u222B', " L(x(t), u(t)) dt, over [t0, tf]")
-    println(io, "")
-    println(io, "    subject to")
-    println(io, "")
-    isnonautonomous(desc) ? 
-          println(io, "        x", '\u0307', "(t) = f(t, x(t), u(t)), t in [t0, tf] a.e.,") : 
-          println(io, "        x", '\u0307', "(t) = f(x(t), u(t)), t in [t0, tf] a.e.,")
-    #println(io, "")
-    println(io, "        c(x(tf)) = 0,")
-    println(io, "")
-    print(io, "    where x(t) ", '\u2208' ," R", dimx==1 ? "" : Base.string("^", dimx),
-          ", u(t) ", '\u2208' ," R", dimu==1 ? "" : Base.string("^", dimu),
-          " and c(x) ", '\u2208' ," R", dimc==1 ? "" : Base.string("^", dimc),
-           ".")
-    #println(io, "")
-    println(io, " Besides, t0, tf and x0 are fixed. ")
-    println(io, "")
-
+function OCP(Lagrange_cost      :: Function, 
+    dynamics                    :: Function, 
+    initial_time                :: Time,
+    initial_condition           :: State,
+    final_time                  :: Time,
+    final_condition             :: State,
+    state_dimension             :: Dimension,
+    control_dimension           :: Dimension,
+    description...)
+ocp = RegularOCPFinalCondition(makeDescription(description...), state_dimension, control_dimension, 
+    Lagrange_cost, dynamics, initial_time, initial_condition, final_time, final_condition)
+return ocp
 end
 
 # --------------------------------------------------------------------------------------------------
@@ -124,3 +115,70 @@ end
 #methods_desc = Dict(
 #    :descent => "Descent method for optimal control problem"
 #)
+
+# --------------------------------------------------------------------------------------------------
+# Display: text/html ?  
+# Base.show, Base.print
+function Base.show(io::IO, ocp::RegularOCPFinalConstraint)
+
+    dimx = ocp.state_dimension===nothing ? "n" : ocp.state_dimension
+    dimu = ocp.control_dimension===nothing ? "m" : ocp.control_dimension
+    dimc = ocp.final_constraint_dimension===nothing ? "p" : ocp.final_constraint_dimension
+
+    desc = ocp.description
+
+    println(io, "Optimal control problem of the form:")
+    println(io, "")
+    print(io, "    minimize  J(x, u) = ")
+    isnonautonomous(desc) ? 
+          println(io, '\u222B', " L(t, x(t), u(t)) dt, over [t0, tf]") : 
+          println(io, '\u222B', " L(x(t), u(t)) dt, over [t0, tf]")
+    println(io, "")
+    println(io, "    subject to")
+    println(io, "")
+    isnonautonomous(desc) ? 
+          println(io, "        x", '\u0307', "(t) = f(t, x(t), u(t)), t in [t0, tf] a.e.,") : 
+          println(io, "        x", '\u0307', "(t) = f(x(t), u(t)), t in [t0, tf] a.e.,")
+    println(io, "")
+    println(io, "        x(t0) = x0, c(x(tf)) = 0,")
+    println(io, "")
+    print(io, "    where x(t) ", '\u2208' ," R", dimx==1 ? "" : Base.string("^", dimx),
+          ", u(t) ", '\u2208' ," R", dimu==1 ? "" : Base.string("^", dimu),
+          " and c(x) ", '\u2208' ," R", dimc==1 ? "" : Base.string("^", dimc),
+           ".")
+    #println(io, "")
+    println(io, " Besides, t0, tf and x0 are fixed. ")
+    #println(io, "")
+
+end
+
+function Base.show(io::IO, ocp::RegularOCPFinalCondition)
+
+    dimx = ocp.state_dimension===nothing ? "n" : ocp.state_dimension
+    dimu = ocp.control_dimension===nothing ? "m" : ocp.control_dimension
+
+    desc = ocp.description
+
+    println(io, "Optimal control problem of the form:")
+    println(io, "")
+    print(io, "    minimize  J(x, u) = ")
+    isnonautonomous(desc) ? 
+          println(io, '\u222B', " L(t, x(t), u(t)) dt, over [t0, tf]") : 
+          println(io, '\u222B', " L(x(t), u(t)) dt, over [t0, tf]")
+    println(io, "")
+    println(io, "    subject to")
+    println(io, "")
+    isnonautonomous(desc) ? 
+          println(io, "        x", '\u0307', "(t) = f(t, x(t), u(t)), t in [t0, tf] a.e.,") : 
+          println(io, "        x", '\u0307', "(t) = f(x(t), u(t)), t in [t0, tf] a.e.,")
+    println(io, "")
+    println(io, "        x(t0) = x0, x(tf) = xf,")
+    println(io, "")
+    print(io, "    where x(t) ", '\u2208' ," R", dimx==1 ? "" : Base.string("^", dimx),
+          " and u(t) ", '\u2208' ," R", dimu==1 ? "" : Base.string("^", dimu),
+           ".")
+    #println(io, "")
+    println(io, " Besides, t0, tf, x0 and xf are fixed. ")
+    #println(io, "")
+
+end
