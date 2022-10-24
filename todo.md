@@ -1,22 +1,23 @@
 # Todo list
 
-## Septembre - octobre
+## Général
 
-- [x] examples/steepest.jl : essayer dynamique non autonome
-- [x] examples/steepest.jl : faire une méthode générique de plot paramétrable
-- [ ] test/test_steepest.jl : reprendre les tests
-- [x] src/ocp.jl : revoir la gestion de description + revoir ensuite dans src/Flows.jl
-- [ ] src/steepest.jl : 
-    * [x] ajouter struct pour init et sol Steepest + améliorer les transcriptions
-    * [x] faire en sorte que la partie sd_solver résout un problème d'opti à définir, indépendant de OCP
-    * [ ] rendre plus général le genre de problème que l'on peut résoudre par steepest : on calcule simplement le gradient si on ne sait pas faire intelligemment
-    * [ ] améliorer le code de la steepest pour ajouter des variantes et ajouter description des variantes : mettre le backtracking vs none et le bfgs vs gradient
-    * [ ] ajouter tests d'arrêts
-    * [ ] ajouter callbacks et gestion des erreurs
-    * [x] vérifier signe adjoint et valeur (division par le pas ?)  - c'était bon !
-- [ ] ajouter un autre type de problème ocp avec gestion du type par inputs + check par description
+- [x] ajouter d'autres types d'ocp - commencer par la possiblité de donner une condition terminale fixée. Dans ce cas, c'est au solveur de transformer le problème dans la formulation intéressante pour lui. Il faut donc une méhode `convert(ocp::TypeOCP, newType)`.
+- [ ] ajouter des variantes au solveur descent.
+- [ ] ajouter callbacks et gestion des erreurs - commencer par le solveur descent.
+- [ ] faire un notebook tutoriel
 - [ ] améliorer affichage du problème ocp : text/html ou makdown ou latex
 - [ ] ajouter des tests unitaires + docstrings + documentation
-- [x] Flows : on pourrait ajouter un kwargs  
-- [x] Flows : est-ce qu'on ne fixerait pas les méthodes et tolérances à la création du flots ? ou les deux ?
-- [x] Créer le flot d'une "function" : flot d'un hamiltonien par défaut
+- [ ] ajouter une méthode indirecte avec création de la fonction de tir et calcul d'un $\lambda$ initial à partir de $p_0$. 
+- [ ] ajouter des formulations d'ocp et continuer à résoudre via `descent` et `indirect` en faisant une bonne transcription.
+- [ ] faire du benchmarck + dataframe
+- [ ] concepts : convert, description d'algo et de transcription
+- [ ] description : ajouter la possiblilté d'afficher les descriptions possibles, afficher les options qui existent... C'est sûrement dans la doc ça.
+- [ ] ajouter un affichage du type de problème vraiment résolu par le solveur pour expliquer aussi comme ça 
+les options possibles - à voir si ça ne va pas directement dans la doc. Il y a les paramètres du solveur et 
+ceux qui apparaissent dans la transcription du problème, c'est ces derniers qu'il faut mettre en avant aussi.
+- [ ] pourquoi pas créer un type abstrait Description pour gérer l'affichage d'une méthode...
+ 
+## Tests unitaires
+
+- [ ] description : voir si cela marche avec des description de tailles différentes dans la base

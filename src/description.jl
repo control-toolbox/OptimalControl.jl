@@ -1,17 +1,12 @@
 # -------------------------------------------------------------------------------------------------- 
-# 
-#
+# A desription is a tuple of symbols
 const DescVarArg  = Vararg{Symbol} # or Symbol...
 const Description = Tuple{DescVarArg}
 
 # -------------------------------------------------------------------------------------------------- 
-# Description of the variants of the methods
-#
-makeDescription(desc::DescVarArg)  = Tuple(desc)
+# the description may be given as a tuple or a list of symbols (Vararg{Symbol})
+makeDescription(desc::DescVarArg)  = Tuple(desc) # create a description from Vararg{Symbol}
 makeDescription(desc::Description) = desc
-
-# default is autonomous
-isnonautonomous(desc::Description) = :nonautonomous ∈ desc
 
 # -------------------------------------------------------------------------------------------------- 
 # Possible algorithms
@@ -20,11 +15,16 @@ add(x::Tuple{Vararg{Description}}, y::Description) = (x..., y)
 
 # by order of preference
 algorithmes = ()
+
+# descent methods
+algorithmes = add(algorithmes, (:descent, :bfgs, :bissection))
 algorithmes = add(algorithmes, (:descent, :bfgs, :backtracking))
 algorithmes = add(algorithmes, (:descent, :bfgs, :fixedstep))
+algorithmes = add(algorithmes, (:descent, :gradient, :bissection))
 algorithmes = add(algorithmes, (:descent, :gradient, :backtracking))
 algorithmes = add(algorithmes, (:descent, :gradient, :fixedstep))
 
+# this function transform an incomplete description to a complete one
 function getCompleteSolverDescription(desc::Description)::Description
     # todo : vérifier si fonctionne si des descriptions de différentes tailles
     n = length(algorithmes)
