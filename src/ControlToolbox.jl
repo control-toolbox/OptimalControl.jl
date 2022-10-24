@@ -7,6 +7,7 @@ module ControlToolbox
     import Plots: plot, plot!, Plots # import instead of using to overload the plot and plot! functions, to plot ocp solution
 
     include("utils.jl")
+    include("callbacks.jl")
     include("Flows.jl"); using .Flows
     include("description.jl")
     include("ocp.jl")
@@ -25,6 +26,9 @@ module ControlToolbox
 
     export DescentOCPSol # solution of an ocp from the descent method
     export DescentOCPInit # initialization of an ocp for the descent method
+
+    export CTCallback
+    export PrintCallback
 
     #export plot, plot! # pas besoin semble-t-il car je rédéfinis Plots.plot et Plots.plot!
 

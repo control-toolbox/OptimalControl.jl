@@ -75,6 +75,18 @@ __absoluteTolerance() = sqrt(eps()) # absolute tolerance for the stopping criter
 __optimalityTolerance() = 1e-8 # optimality relative tolerance for the CN1
 __stagnationTolerance() = 1e-8 # step stagnation relative tolerance
 __display() = true # print output during resolution
+__callbacks() = ()
+
+# callback for ocp resolution by descent method
+function printOCPDescent(i, sᵢ, dᵢ, Uᵢ, gᵢ, fᵢ)
+    if i==0
+        println("\n     Calls  ‖∇F(U)‖         ‖U‖             Stagnation      \n")
+    end
+    @printf("%10d", i) # Iterations
+    @printf("%16.8e", norm(gᵢ)) # ‖∇F(U)‖
+    @printf("%16.8e", norm(Uᵢ)) # ‖U‖
+    @printf("%16.8e", norm(Uᵢ)>1e-14 ? norm(sᵢ*dᵢ)/norm(Uᵢ) : norm(sᵢ*dᵢ)) # Stagnation
+end
 
 # --------------------------------------------------------------------------------------------------
 # Solver of an ocp by descent method
@@ -87,36 +99,40 @@ function solve_by_descent(ocp::RegularOCPFinalConstraint, method::Description;
     absoluteTolerance::Number=__absoluteTolerance(),
     optimalityTolerance::Number=__optimalityTolerance(),
     stagnationTolerance::Number=__stagnationTolerance(),
-    display::Bool=__display())
+    display::Bool=__display(),
+    callbacks::CTCallbacks=__callbacks())
 
+    # --------------------------------------------------------------------------------------------------
     # print chosen method
-    if display
-        #println("")
-        println("     Method = ", method)
-    end
+    display ? println("\nMethod = ", method) : nothing
 
     # we suppose the description of the method is complete
     # we get the direction search and line search methods
     direction, line_search = read(method)
 
+    # --------------------------------------------------------------------------------------------------
     # get the default options for those which depend on the method
     step_length = __step_length(line_search, step_length)
 
+    # --------------------------------------------------------------------------------------------------
     # step 1: transcription from ocp to descent problem and init
     descent_init    = ocp2descent_init(init, grid_size, ocp.control_dimension)
     descent_problem = ocp2descent_problem(ocp, grid_size, penalty_constraint)
 
+    # --------------------------------------------------------------------------------------------------
     # step 2: resolution of the problem
+    cbs_print = get_priority_print_callbacks((PrintCallback(printOCPDescent, priority=0), callbacks...))
     descent_sol = descent_solver(descent_problem, descent_init, direction, line_search,
-        iterations, step_length, absoluteTolerance, optimalityTolerance, stagnationTolerance, display)
+        iterations, step_length, absoluteTolerance, optimalityTolerance, stagnationTolerance, display,
+        callbacks=cbs_print)
 
+    # --------------------------------------------------------------------------------------------------
     # step 3: transcription of the solution, from descent to ocp
     ocp_sol = descent2ocp_solution(descent_sol, ocp, grid_size, penalty_constraint)
 
+    # --------------------------------------------------------------------------------------------------
     # step 4: print convergence result
-    if display
-        print_convergence(ocp_sol)
-    end
+    display ? print_convergence(ocp_sol) : nothing
 
     return ocp_sol
 
@@ -243,15 +259,14 @@ function ocp2descent_problem(ocp::RegularOCPFinalConstraint, grid_size::Integer,
 end
 
 # Print callback during descent solver
-function printDescent(i, sᵢ, dᵢ, xᵢ, gᵢ)
+function printDescent(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ)
     if i==0
         println("\n     Calls  ‖∇f(x)‖         ‖x‖             Stagnation      \n")
     end
     @printf("%10d", i) # Iterations
     @printf("%16.8e", norm(gᵢ)) # ‖∇f(x)‖
     @printf("%16.8e", norm(xᵢ)) # ‖x‖
-    @printf("%16.8e", norm(sᵢ*dᵢ)/norm(xᵢ)) # Stagnation
-    println()
+    @printf("%16.8e", norm(xᵢ)>1e-14 ? norm(sᵢ*dᵢ)/norm(xᵢ) : norm(sᵢ*dᵢ)) # Stagnation
 end
 
 # --------------------------------------------------------------------------------------------------
@@ -260,13 +275,19 @@ function descent_solver(sdp::DescentProblem, init::DescentInit,
     direction::Symbol, line_search::Symbol,
     iterations::Integer, step_length::Number,
     absoluteTolerance::Number, optimalityTolerance::Number, stagnationTolerance::Number,
-    display::Bool)
+    display::Bool;
+    callbacks::Union{PrintCallbacks, Nothing}=nothing)
+
+    # print callbacks: replace callback if callbacks not empty
+    cbs_print = callbacks === nothing ? (PrintCallback(printDescent, priority=0),) : callbacks
+    myprint(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ) = [cb(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ) for cb in cbs_print]
 
     # general descent solver data
     ∇f = sdp.∇f
     f  = sdp.f
     xᵢ = init.x
     s₀ = step_length
+    fᵢ = f(xᵢ)
 
     # for BFGS and steepest descent (ie gradient method)
     n  = length(xᵢ)
@@ -277,7 +298,7 @@ function descent_solver(sdp::DescentProblem, init::DescentInit,
 
     # init print
     i = 0
-    display ? printDescent(i, 0.0, dᵢ, xᵢ, gᵢ) : nothing
+    display ? (myprint(i, 0.0, dᵢ, xᵢ, gᵢ, fᵢ), println()) : nothing
     i += 1
 
     #
@@ -318,10 +339,11 @@ function descent_solver(sdp::DescentProblem, init::DescentInit,
         end
 
         # update of the current gradient
-        gᵢ = gᵢ₊₁ # ∇f(xᵢ₊₁)
+        gᵢ = gᵢ₊₁  # ∇f(xᵢ₊₁)
+        fᵢ = f(xᵢ) # f(xᵢ₊₁)
 
         # print
-        display ? printDescent(i, sᵢ, dᵢ, xᵢ, gᵢ) : nothing
+        display ? (myprint(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ), println()) : nothing
 
         # stopping criteria
         if norm(gᵢ) ≤ max(optimalityTolerance*ng₀, absoluteTolerance) # CN1
@@ -466,6 +488,8 @@ end
 # Plot solution
 # print("x", '\u2080'+9) : x₉ 
 #
+
+# General plot
 function Plots.plot(ocp_sol::DescentOCPSol, args...; 
     state_style=(), 
     control_style=(), 
@@ -509,6 +533,7 @@ function Plots.plot(ocp_sol::DescentOCPSol, args...;
 
 end
 
+# specific plot
 function Plots.plot(ocp_sol::DescentOCPSol, 
     xx::Union{Symbol, Tuple{Symbol, Integer}}, 
     yy::Union{Symbol, Tuple{Symbol, Integer}}, args...; kwargs...)

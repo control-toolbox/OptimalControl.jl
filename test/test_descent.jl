@@ -22,7 +22,7 @@ U_init = U⁺-1e0*ones(N-1); U_init = [ [U_init[i]] for i=1:N-1 ]
 
 # resolution
 sol = solve(ocp, :descent, init=U_init, 
-                  grid_size=N, penalty_constraint=1e4, iterations=5, step_length=1)
+                  grid_size=N, penalty_constraint=1e4, iterations=5, step_length=1, display=false)
 
 plot(sol)
 
