@@ -74,6 +74,7 @@ end
 __absoluteTolerance() = sqrt(eps()) # absolute tolerance for the stopping criterion
 __optimalityTolerance() = 1e-8 # optimality relative tolerance for the CN1
 __stagnationTolerance() = 1e-8 # step stagnation relative tolerance
+__display() = true # print output during resolution
 
 # --------------------------------------------------------------------------------------------------
 # Solver of an ocp by descent method
@@ -86,7 +87,7 @@ function solve_by_descent(ocp::RegularOCPFinalConstraint, method::Description;
     absoluteTolerance::Number=__absoluteTolerance(),
     optimalityTolerance::Number=__optimalityTolerance(),
     stagnationTolerance::Number=__stagnationTolerance(),
-    display::Bool=true)
+    display::Bool=__display())
 
     # print chosen method
     if display
@@ -121,31 +122,8 @@ function solve_by_descent(ocp::RegularOCPFinalConstraint, method::Description;
 
 end
 
-function solve_by_descent(ocp::RegularOCPFinalCondition, method::Description; 
-    init::Union{Nothing, Controls, DescentOCPInit, DescentOCPSol}=nothing, 
-    grid_size::Integer=__grid_size(), 
-    penalty_constraint::Number=__penalty_constraint(), 
-    iterations::Integer=__iterations(), 
-    step_length::Union{Number, Nothing}=__step_length(),
-    absoluteTolerance::Number=__absoluteTolerance(),
-    optimalityTolerance::Number=__optimalityTolerance(),
-    stagnationTolerance::Number=__stagnationTolerance(),
-    display::Bool=true)
-
-    ocp_new = convert(ocp, RegularOCPFinalConstraint)
-
-    return solve_by_descent(ocp_new, method, 
-                init=init, 
-                grid_size=grid_size, 
-                penalty_constraint=penalty_constraint, 
-                iterations=iterations, 
-                step_length=step_length,
-                absoluteTolerance=absoluteTolerance,
-                optimalityTolerance=optimalityTolerance,
-                stagnationTolerance=stagnationTolerance,
-                display=display)
-
-end
+solve_by_descent(ocp::RegularOCPFinalCondition, args...; kwargs...) =
+    solve_by_descent(convert(ocp, RegularOCPFinalConstraint), args...; kwargs...)
 
 # --------------------------------------------------------------------------------------------------
 # 
@@ -264,6 +242,17 @@ function ocp2descent_problem(ocp::RegularOCPFinalConstraint, grid_size::Integer,
 
 end
 
+# Print callback during descent solver
+function printDescent(i, sᵢ, dᵢ, xᵢ, gᵢ)
+    if i==0
+        println("\n     Calls  ‖∇f(x)‖         ‖x‖             Stagnation      \n")
+    end
+    @printf("%10d", i) # Iterations
+    @printf("%16.8e", norm(gᵢ)) # ‖∇f(x)‖
+    @printf("%16.8e", norm(xᵢ)) # ‖x‖
+    @printf("%16.8e", norm(sᵢ*dᵢ)/norm(xᵢ)) # Stagnation
+    println()
+end
 
 # --------------------------------------------------------------------------------------------------
 # step 2: solver
@@ -287,12 +276,11 @@ function descent_solver(sdp::DescentProblem, init::DescentInit,
     dᵢ = -Hᵢ*gᵢ
 
     # init print
-    if display
-        println("\n     Calls  ‖∇f(x)‖         ‖x‖             Stagnation      \n")
-    end
+    i = 0
+    display ? printDescent(i, 0.0, dᵢ, xᵢ, gᵢ) : nothing
+    i += 1
 
     #
-    i = 1
     stop = false
     stopping = nothing
     success = nothing
@@ -333,13 +321,7 @@ function descent_solver(sdp::DescentProblem, init::DescentInit,
         gᵢ = gᵢ₊₁ # ∇f(xᵢ₊₁)
 
         # print
-        if display
-            @printf("%10d", i) # Iterations
-            @printf("%16.8e", norm(gᵢ)) # ‖∇f(x)‖
-            @printf("%16.8e", norm(xᵢ)) # ‖x‖
-            @printf("%16.8e", norm(sᵢ*dᵢ)/norm(xᵢ)) # Stagnation
-            println()
-        end
+        display ? printDescent(i, sᵢ, dᵢ, xᵢ, gᵢ) : nothing
 
         # stopping criteria
         if norm(gᵢ) ≤ max(optimalityTolerance*ng₀, absoluteTolerance) # CN1

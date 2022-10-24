@@ -21,5 +21,5 @@ ocp1 = OCP(L, f, t0, x0, tf, c, 2, 1, 2)
 ocp2 = OCP(L, f, t0, x0, tf, xf, 2, 1)
 
 # resolution
-ocp_sol1 = solve(ocp1)
-ocp_sol2 = solve(ocp2);
+sol1 = solve(ocp1)
+sol2 = solve(ocp2);

@@ -1,8 +1,8 @@
 # Todo list
 
-## Septembre - octobre
+## Général
 
-- [ ] ajouter d'autres types d'ocp - commencer par la possiblité de donner une condition terminale fixée. Dans ce cas, c'est au solveur de transformer le problème dans la formulation intéressante pour lui. Il faut donc une méhode `convert(ocp::TypeOCP, newType)`.
+- [x] ajouter d'autres types d'ocp - commencer par la possiblité de donner une condition terminale fixée. Dans ce cas, c'est au solveur de transformer le problème dans la formulation intéressante pour lui. Il faut donc une méhode `convert(ocp::TypeOCP, newType)`.
 - [ ] ajouter des variantes au solveur descent.
 - [ ] ajouter callbacks et gestion des erreurs - commencer par le solveur descent.
 - [ ] faire un notebook tutoriel
@@ -13,4 +13,11 @@
 - [ ] faire du benchmarck + dataframe
 - [ ] concepts : convert, description d'algo et de transcription
 - [ ] description : ajouter la possiblilté d'afficher les descriptions possibles, afficher les options qui existent... C'est sûrement dans la doc ça.
-- [ ] ajouter un affichage du type de problème vraiment résolu par le solveur pour expliquer aussi comme ça les options possibles - à voir si ça ne va pas directement dans la doc. Il y a les paramètres du solveur et ceux qui apparaissent dans la transcription du problème, c'est ces derniers qu'il faut mettre en avant aussi. 
+- [ ] ajouter un affichage du type de problème vraiment résolu par le solveur pour expliquer aussi comme ça 
+les options possibles - à voir si ça ne va pas directement dans la doc. Il y a les paramètres du solveur et 
+ceux qui apparaissent dans la transcription du problème, c'est ces derniers qu'il faut mettre en avant aussi.
+- [ ] pourquoi pas créer un type abstrait Description pour gérer l'affichage d'une méthode...
+ 
+## Tests unitaires
+
+- [ ] description : voir si cela marche avec des description de tailles différentes dans la base

@@ -29,10 +29,10 @@ display(ocp)
 U_init = U⁺-1e0*ones(N-1); U_init = [ [U_init[i]] for i=1:N-1 ]
 
 # resolution
-ocp_sol = solve(ocp, :bfgs, :backtracking, init=U_init, grid_size=N)
+sol = solve(ocp, :bfgs, :backtracking, init=U_init, grid_size=N)
 
 # plot solution
-ps = plot(ocp_sol, size=(800, 400))
+ps = plot(sol, size=(800, 400))
 
 # plot target
 point_style = (color=:black, seriestype=:scatter, markersize=3, markerstrokewidth=0, label="")

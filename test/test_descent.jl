@@ -21,11 +21,11 @@ ocp = OCP(L, f, t0, x0, tf, xf, 2, 1)
 U_init = U⁺-1e0*ones(N-1); U_init = [ [U_init[i]] for i=1:N-1 ]
 
 # resolution
-ocp_sol = solve(ocp, :descent, init=U_init, 
+sol = solve(ocp, :descent, init=U_init, 
                   grid_size=N, penalty_constraint=1e4, iterations=5, step_length=1)
 
-plot(ocp_sol)
+plot(sol)
 
 @testset "Descent - Solve" begin
-    @test typeof(ocp_sol) == DescentOCPSol
+    @test typeof(sol) == DescentOCPSol
 end

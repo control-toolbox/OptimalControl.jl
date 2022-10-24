@@ -13,7 +13,7 @@ const Dimension   = Integer
 # Optimal control problems
 abstract type OptimalControlProblem end
 
-# pretty print : https://docs.julialang.org/en/v1/manual/types/#man-custom-pretty-printing
+# Regular OCP with final constrainst
 mutable struct RegularOCPFinalConstraint <: OptimalControlProblem
     description                 :: Description
     state_dimension             :: Union{Dimension, Nothing}
@@ -27,6 +27,7 @@ mutable struct RegularOCPFinalConstraint <: OptimalControlProblem
     final_constraint            :: Function
 end
 
+# Regular OCP with final condition
 mutable struct RegularOCPFinalCondition <: OptimalControlProblem
     description                 :: Description
     state_dimension             :: Union{Dimension, Nothing}
@@ -39,7 +40,39 @@ mutable struct RegularOCPFinalCondition <: OptimalControlProblem
     final_condition             :: State
 end
 
-# instantiation of the ocp: choose the right type depending upon the inputs
+# Creation of a regular OCP with final constrainst
+function OCP(Lagrange_cost      :: Function, 
+    dynamics                    :: Function, 
+    initial_time                :: Time,
+    initial_condition           :: State,
+    final_time                  :: Time,
+    final_constraint            :: Function,
+    state_dimension             :: Dimension,
+    control_dimension           :: Dimension,
+    final_constraint_dimension  :: Dimension,
+    description...)
+ocp = RegularOCPFinalConstraint(makeDescription(description...), state_dimension, control_dimension, 
+    final_constraint_dimension, Lagrange_cost, dynamics, initial_time, initial_condition, 
+    final_time, final_constraint)
+return ocp
+end
+
+# Creation of a regular OCP with final condition
+function OCP(Lagrange_cost      :: Function, 
+    dynamics                    :: Function, 
+    initial_time                :: Time,
+    initial_condition           :: State,
+    final_time                  :: Time,
+    final_condition             :: State,
+    state_dimension             :: Dimension,
+    control_dimension           :: Dimension,
+    description...)
+ocp = RegularOCPFinalCondition(makeDescription(description...), state_dimension, control_dimension, 
+    Lagrange_cost, dynamics, initial_time, initial_condition, final_time, final_condition)
+return ocp
+end
+
+#= # instantiation of the ocp: choose the right type depending upon the inputs
 # todo : à voir de ce que l'on fait de cette méthode avec des arguments en keywords
 function OCP(   description...; # keyword arguments from here
                 control_dimension           :: Dimension,
@@ -58,37 +91,7 @@ function OCP(   description...; # keyword arguments from here
                 final_constraint_dimension, Lagrange_cost, dynamics, initial_time, initial_condition, 
                 final_time, final_constraint)
     return ocp
-end
-
-function OCP(Lagrange_cost      :: Function, 
-    dynamics                    :: Function, 
-    initial_time                :: Time,
-    initial_condition           :: State,
-    final_time                  :: Time,
-    final_constraint            :: Function,
-    state_dimension             :: Dimension,
-    control_dimension           :: Dimension,
-    final_constraint_dimension  :: Dimension,
-    description...)
-ocp = RegularOCPFinalConstraint(makeDescription(description...), state_dimension, control_dimension, 
-    final_constraint_dimension, Lagrange_cost, dynamics, initial_time, initial_condition, 
-    final_time, final_constraint)
-return ocp
-end
-
-function OCP(Lagrange_cost      :: Function, 
-    dynamics                    :: Function, 
-    initial_time                :: Time,
-    initial_condition           :: State,
-    final_time                  :: Time,
-    final_condition             :: State,
-    state_dimension             :: Dimension,
-    control_dimension           :: Dimension,
-    description...)
-ocp = RegularOCPFinalCondition(makeDescription(description...), state_dimension, control_dimension, 
-    Lagrange_cost, dynamics, initial_time, initial_condition, final_time, final_condition)
-return ocp
-end
+end =#
 
 # --------------------------------------------------------------------------------------------------
 # Initialization
@@ -119,6 +122,7 @@ end
 # --------------------------------------------------------------------------------------------------
 # Display: text/html ?  
 # Base.show, Base.print
+# pretty print : https://docs.julialang.org/en/v1/manual/types/#man-custom-pretty-printing
 function Base.show(io::IO, ocp::RegularOCPFinalConstraint)
 
     dimx = ocp.state_dimension===nothing ? "n" : ocp.state_dimension
