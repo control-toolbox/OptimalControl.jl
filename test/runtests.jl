@@ -2,6 +2,7 @@ using ControlToolbox
 using Plots
 using Test
 using LinearAlgebra
+#using Logging
 
 @testset verbose=true showtiming=true "Control Toolbox" begin
     for name in (

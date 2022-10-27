@@ -420,9 +420,9 @@ function descent_solver(sdp::DescentProblem,
             sᵢ = s₀
         elseif line_search == :bissection
             sᵢ = bissection(xᵢ, dᵢ, gᵢ, f, ∇f, s₀)
-        else # plus tard, on pourra peut-être changer de line search en cours d'algo
-             # donc je laisse ceci malgré le test déjà fait. Idem pour la direction.
-            throw(MethodValueError(line_search))
+        #else # plus tard, on pourra peut-être changer de line search en cours d'algo
+        #     # donc je laisse ceci malgré le test déjà fait. Idem pour la direction.
+        #    throw(MethodValueError(line_search))
         end
 
         # iterate update 
@@ -440,8 +440,8 @@ function descent_solver(sdp::DescentProblem,
             end
         elseif direction == :gradient
             dᵢ = -gᵢ₊₁
-        else
-            throw(MethodValueError(direction))
+        #else
+        #    throw(MethodValueError(direction))
         end
 
         # update of the current gradient
