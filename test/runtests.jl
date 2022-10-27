@@ -6,6 +6,7 @@ for name in (
     "utils",
     "descent",
     "ocp-def",
+    "exceptions",
 )
     @testset "$name" begin
         include("test_$name.jl")

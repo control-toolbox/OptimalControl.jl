@@ -8,18 +8,14 @@ A  = [0.0 1.0
 B  = [0.0; 1.0]
 f(x, u) = A*x+B*u[1];  # dynamics
 L(x, u) = 0.5*u[1]^2   # integrand of the Lagrange cost
-c(x) = x-xf            # final condition
-
-# ocp definition
-ocp = OCP(L, f, t0, x0, tf, c, 2, 1, 2)
-
-#@testset "OCP-def - Final constraint" begin
-    @test typeof(ocp) == RegularOCPFinalConstraint
-#end
 
 # ocp definition
 ocp = OCP(L, f, t0, x0, tf, xf, 2, 1)
 
-#@testset "OCP-def - Final condition" begin
-    @test typeof(ocp) == RegularOCPFinalCondition
+# resolution
+#@testset "Type of exceptions" begin
+    @test_throws AmbiguousDescriptionError solve(ocp, :ttt)
+    @test_throws AmbiguousDescriptionError solve(ocp, :descent, :ttt)
+    @test_throws AmbiguousDescriptionError solve(ocp, :descent, :backtracking, :ttt)
+    @test_throws AmbiguousDescriptionError solve(ocp, :descent, :backtracking, :bfgs, :ttt)
 #end

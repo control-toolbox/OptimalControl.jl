@@ -34,7 +34,7 @@ function getCompleteSolverDescription(desc::Description)::Description
         table[i, 2] = desc ⊆ algorithmes[i] ? 1 : 0
     end
     if maximum(table[:,2]) == 0
-        error("The description of the method is ambiguous.")
+        throw(AmbiguousDescriptionError(desc))
     end
     # argmax : Return the index or key of the maximal element in a collection.
     # If there are multiple maximal elements, then the first one will be returned.

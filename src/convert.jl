@@ -6,7 +6,7 @@ function convert(ocp::RegularOCPFinalCondition, ocp_type::DataType)
         ocp.final_time, c, ocp.state_dimension, ocp.control_dimension, ocp.state_dimension,
         ocp.description...)
     else
-        error("No such a conversion")
+        throw(MethodError(Symbol(ocp_type)))
     end
     return ocp_new
 end
