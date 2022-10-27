@@ -26,6 +26,6 @@ sol = solve(ocp, :descent, init=U_init,
 
 plot(sol)
 
-@testset "Descent - Solve" begin
+#@testset "Type of ocp solution" begin
     @test typeof(sol) == DescentOCPSol
-end
+#end

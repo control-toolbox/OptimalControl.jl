@@ -6,10 +6,13 @@ module ControlToolbox
 
     import Plots: plot, plot!, Plots # import instead of using to overload the plot and plot! functions, to plot ocp solution
 
-    include("utils.jl")
-    include("callbacks.jl")
+    #
     include("Flows.jl"); using .Flows
+    #
+    include("utils.jl")
     include("description.jl")
+    include("callbacks.jl")
+    include("exceptions.jl")
     include("ocp.jl")
     include("convert.jl")
     include("descent.jl")
@@ -29,6 +32,11 @@ module ControlToolbox
 
     export CTCallback
     export PrintCallback
+    export StopCallback
+
+    export CTException
+    export AmbiguousDescriptionError
+    export MethodError
 
     #export plot, plot! # pas besoin semble-t-il car je rédéfinis Plots.plot et Plots.plot!
 

@@ -105,10 +105,9 @@ abstract type OptimalControlSolution end
 # Resolution
 function solve(ocp::OptimalControlProblem, description...; kwargs...)
     method = getCompleteSolverDescription(makeDescription(description...))
+    # if no error before, then the method is correct: no need of else
     if :descent in method
         return solve_by_descent(ocp, method; kwargs...)
-    else
-        error("No such method.")
     end  
 end
 

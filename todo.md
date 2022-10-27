@@ -4,7 +4,7 @@
 
 - [x] ajouter d'autres types d'ocp - commencer par la possiblité de donner une condition terminale fixée. Dans ce cas, c'est au solveur de transformer le problème dans la formulation intéressante pour lui. Il faut donc une méhode `convert(ocp::TypeOCP, newType)`.
 - [ ] ajouter des variantes au solveur descent.
-- [ ] ajouter callbacks arrêt de l'algorithme et gestion des erreurs - commencer par le solveur descent.
+- [x] ajouter callbacks arrêt de l'algorithme et gestion des erreurs - commencer par le solveur descent.
 - [ ] faire un notebook tutoriel
 - [ ] améliorer affichage du problème ocp : text/html ou makdown ou latex
 - [ ] ajouter des tests unitaires + docstrings + documentation

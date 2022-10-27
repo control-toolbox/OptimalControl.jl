@@ -20,28 +20,29 @@ L(x, u) = 0.5*u[1]^2   # integrand of the Lagrange cost
 ocp = OCP(L, f, t0, x0, tf, xf, 2, 1)
 
 # replace default callback
-function myprint(i, sᵢ, dᵢ, Uᵢ, gᵢ, fᵢ)
-    if i==0
-        println("\n     Calls  ‖∇F(U)‖         Stagnation      \n")
+function mystop(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, ng₀, oTol, aTol, sTol, iterations)
+    stop     = false
+    stopping = nothing
+    success  = nothing
+    message  = nothing
+    if i==10
+        stop = true
+        stopping = :mystop
+        message = "mystop"
+        success = true
     end
-    @printf("%10d", i) # Iterations
-    @printf("%16.8e", norm(gᵢ)) # ‖∇F(U)‖
-    @printf("%16.8e", norm(Uᵢ)>1e-14 ? norm(sᵢ*dᵢ)/norm(Uᵢ) : norm(sᵢ*dᵢ)) # Stagnation
+    return stop, stopping, message, success
 end
-cbs = (PrintCallback(myprint), )
+cbs = (StopCallback(mystop), )
 sol = solve(ocp, callbacks=cbs);
 
-# add text to default print callback
-function myprint2(i, sᵢ, dᵢ, Uᵢ, gᵢ, fᵢ)
-    symbols=("--", "\\", "|", "/")
-    print(" ", symbols[mod(i, 4)+1])
-end
-cbs = (PrintCallback(myprint2, priority=0), )
+# add callback
+cbs = (StopCallback(mystop, priority=0), )
 sol = solve(ocp, callbacks=cbs);
 
-# add text to default print callback, saving old value of f
+# print (not replacing) and stop (replacing) callbacks
 global old_f = 0.0
-function myprint3(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ)
+function myprint(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ)
     global old_f
     symbols=("🔽", "--", "🔺")
     if i > 0
@@ -49,5 +50,7 @@ function myprint3(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ)
     end
     old_f = fᵢ
 end
-cbs = (PrintCallback(myprint3, priority=0), )
+cbs = (PrintCallback(myprint, priority=0), StopCallback(mystop, priority=1))
 sol = solve(ocp, callbacks=cbs);
+
+

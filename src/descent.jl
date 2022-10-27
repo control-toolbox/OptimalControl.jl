@@ -28,6 +28,7 @@ mutable struct DescentOCPSol <: OptimalControlSolution
     state_dimension   :: Dimension # the dimension of the state
     control_dimension :: Dimension # the dimension of the control
     stopping::Symbol # the stopping criterion at the end of the descent method
+    message::String # the message corresponding to the stopping criterion
     success::Bool # whether or not the method has finished successfully: CN1, stagnation vs iterations max
     iterations::Integer # the number of iterations
 end
@@ -35,6 +36,7 @@ end
 mutable struct DescentSol
     x::Vector{<:Number} # the optimization variable solution
     stopping::Symbol # the stopping criterion at the end of the descent method
+    message::String # the message corresponding to the stopping criterion
     success::Bool # whether or not the method has finished successfully: CN1, stagnation vs iterations max
     iterations::Integer # the number of iterations
 end
@@ -76,6 +78,10 @@ __optimalityTolerance() = 1e-8 # optimality relative tolerance for the CN1
 __stagnationTolerance() = 1e-8 # step stagnation relative tolerance
 __display() = true # print output during resolution
 __callbacks() = ()
+
+# default for descent_solver
+__line_search() = :bissection
+__direction() = :bfgs
 
 # callback for ocp resolution by descent method
 function printOCPDescent(i, sᵢ, dᵢ, Uᵢ, gᵢ, fᵢ)
@@ -122,9 +128,14 @@ function solve_by_descent(ocp::RegularOCPFinalConstraint, method::Description;
     # --------------------------------------------------------------------------------------------------
     # step 2: resolution of the problem
     cbs_print = get_priority_print_callbacks((PrintCallback(printOCPDescent, priority=0), callbacks...))
-    descent_sol = descent_solver(descent_problem, descent_init, direction, line_search,
-        iterations, step_length, absoluteTolerance, optimalityTolerance, stagnationTolerance, display,
-        callbacks=cbs_print)
+    cbs_stop  = get_priority_stop_callbacks(callbacks)
+    descent_sol = descent_solver(descent_problem, descent_init, 
+        direction=direction, line_search=line_search,
+        iterations=iterations, step_length=step_length, 
+        absoluteTolerance=absoluteTolerance, optimalityTolerance=optimalityTolerance, 
+        stagnationTolerance=stagnationTolerance, 
+        display=display,
+        callbacks=(cbs_print..., cbs_stop...))
 
     # --------------------------------------------------------------------------------------------------
     # step 3: transcription of the solution, from descent to ocp
@@ -144,7 +155,7 @@ solve_by_descent(ocp::RegularOCPFinalCondition, args...; kwargs...) =
 # --------------------------------------------------------------------------------------------------
 # 
 # some texts related to results...
-texts = Dict(
+textsStopping = Dict(
     :optimality => "optimality necessary conditions reached up to numerical tolerances",
     :stagnation => "the step length became too small",
     :iterations => "maximal number of iterations reached"
@@ -155,7 +166,7 @@ function print_convergence(ocp_sol::DescentOCPSol)
     println("")
     println("Descent solver result:")
     println("   iterations: ", ocp_sol.iterations)
-    println("   stopping: ", texts[ocp_sol.stopping])
+    println("   stopping: ", ocp_sol.message)
     println("   success: ", ocp_sol.success)
 end
 
@@ -269,18 +280,98 @@ function printDescent(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ)
     @printf("%16.8e", norm(xᵢ)>1e-14 ? norm(sᵢ*dᵢ)/norm(xᵢ) : norm(sᵢ*dᵢ)) # Stagnation
 end
 
+function stop_optimality(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, 
+    ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
+
+    stop = false
+    stopping = nothing
+    success = nothing
+    message = nothing
+
+    if norm(gᵢ) ≤ max(optimalityTolerance*ng₀, absoluteTolerance) # CN1
+        stopping = :optimality
+        message = textsStopping[stopping]
+        success = true
+        stop = true
+    end
+
+    return stop, stopping, message, success
+
+end
+
+function stop_stagnation(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, 
+    ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
+
+    stop = false
+    stopping = nothing
+    success = nothing
+    message = nothing
+
+    if norm(sᵢ*dᵢ) ≤ max(stagnationTolerance*norm(xᵢ), absoluteTolerance) # step stagnation
+        stopping = :stagnation
+        message = textsStopping[stopping]
+        success = true
+        stop = true
+    end
+
+    return stop, stopping, message, success
+
+end
+
+function stop_iterations(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, 
+    ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
+
+    stop = false
+    stopping = nothing
+    success = nothing
+    message = nothing
+
+    if i ≥ iterations # iterations max
+        stopping = :iterations
+        message = textsStopping[stopping]
+        success = false
+        stop = true
+    end
+
+    return stop, stopping, message, success
+
+end
+
 # --------------------------------------------------------------------------------------------------
 # step 2: solver
-function descent_solver(sdp::DescentProblem, init::DescentInit, 
-    direction::Symbol, line_search::Symbol,
-    iterations::Integer, step_length::Number,
-    absoluteTolerance::Number, optimalityTolerance::Number, stagnationTolerance::Number,
-    display::Bool;
-    callbacks::Union{PrintCallbacks, Nothing}=nothing)
+function descent_solver(sdp::DescentProblem, 
+    init::DescentInit; 
+    direction::Symbol=__direction(), 
+    line_search::Symbol=__line_search(),
+    iterations::Integer=__iterations(), 
+    step_length::Union{Number, Nothing}=__step_length(),
+    absoluteTolerance::Number=__absoluteTolerance(), 
+    optimalityTolerance::Number=__optimalityTolerance(), 
+    stagnationTolerance::Number=__stagnationTolerance(),
+    display::Bool=__display(),
+    callbacks::CTCallbacks=__callbacks())
 
-    # print callbacks: replace callback if callbacks not empty
-    cbs_print = callbacks === nothing ? (PrintCallback(printDescent, priority=0),) : callbacks
+    # print callbacks
+    cbs_print = get_priority_print_callbacks((PrintCallback(printDescent, priority=-1), callbacks...))
     myprint(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ) = [cb(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ) for cb in cbs_print]
+
+    # stop callbacks
+    cbs_stop = ()
+    cbs_stop = (StopCallback(stop_optimality, priority=0), cbs_stop...)
+    cbs_stop = (StopCallback(stop_stagnation, priority=0), cbs_stop...)
+    cbs_stop = (StopCallback(stop_iterations, priority=0), cbs_stop...)
+    cbs_stop = get_priority_stop_callbacks((cbs_stop..., callbacks...))
+    function mystop(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, 
+        ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
+        stop = false; stopping = nothing; success = nothing; message = nothing
+        for cb in cbs_stop
+            if !stop
+                stop, stopping, message, success = cb(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, 
+                    ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
+            end
+        end
+        return stop, stopping, message, success
+    end
 
     # general descent solver data
     ∇f = sdp.∇f
@@ -305,6 +396,7 @@ function descent_solver(sdp::DescentProblem, init::DescentInit,
     stop = false
     stopping = nothing
     success = nothing
+    message = nothing
     while !stop
 
         # step length computation
@@ -315,12 +407,11 @@ function descent_solver(sdp::DescentProblem, init::DescentInit,
         elseif line_search == :bissection
             sᵢ = bissection(xᵢ, dᵢ, gᵢ, f, ∇f, s₀)
         else
-            error("No such line search method.")
+            throw(MethodError(line_search))
         end
 
         # iterate update 
-        pᵢ = sᵢ*dᵢ
-        xᵢ = xᵢ + pᵢ # xᵢ₊₁
+        xᵢ = xᵢ + sᵢ*dᵢ # xᵢ₊₁
 
         # new gradient
         gᵢ₊₁ = ∇f(xᵢ) # ∇f(xᵢ₊₁)
@@ -335,7 +426,7 @@ function descent_solver(sdp::DescentProblem, init::DescentInit,
         elseif direction == :gradient
             dᵢ = -gᵢ₊₁
         else
-            error("No such direction method.")
+            throw(MethodError(direction))
         end
 
         # update of the current gradient
@@ -346,25 +437,15 @@ function descent_solver(sdp::DescentProblem, init::DescentInit,
         display ? (myprint(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ), println()) : nothing
 
         # stopping criteria
-        if norm(gᵢ) ≤ max(optimalityTolerance*ng₀, absoluteTolerance) # CN1
-            stopping = :optimality
-            success = true
-            stop = true
-        elseif norm(pᵢ) ≤ max(stagnationTolerance*norm(xᵢ), absoluteTolerance) # step stagnation
-            stopping = :stagnation
-            success = true
-            stop = true
-        elseif i ≥ iterations # iterations max
-            stopping = :iterations
-            success = false
-            stop = true
-        else
-            i += 1
+        stop, stopping, message, success = mystop(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, 
+            ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
+        if !stop
+            i+=1
         end
 
     end
 
-    return DescentSol(xᵢ, stopping, success, i)
+    return DescentSol(xᵢ, stopping, message, success, i)
 
 end
 
@@ -480,7 +561,7 @@ function descent2ocp_solution(sd_sol::DescentSol, ocp::RegularOCPFinalConstraint
     _, _, X⁺, P⁺ = adjoint(xₙ, pₙ, T, U⁺, fh)
 
     return DescentOCPSol(T, X⁺, U⁺, P⁺, ocp.state_dimension, ocp.control_dimension, 
-                sd_sol.stopping, sd_sol.success, sd_sol.iterations)
+                sd_sol.stopping, sd_sol.message, sd_sol.success, sd_sol.iterations)
 
 end
 
