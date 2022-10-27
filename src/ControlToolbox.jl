@@ -36,7 +36,7 @@ module ControlToolbox
 
     export CTException
     export AmbiguousDescriptionError
-    export MethodError
+    export MethodValueError
 
     #export plot, plot! # pas besoin semble-t-il car je rédéfinis Plots.plot et Plots.plot!
 

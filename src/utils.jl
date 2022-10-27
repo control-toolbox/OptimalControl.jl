@@ -1,9 +1,3 @@
-function hello()
-    hello = "Hello Control Toolbox!"
-    println(hello)
-    return hello
-end
-
 # method to compute gradient and Jacobian
 ∇(f::Function, x) = ForwardDiff.gradient(f, x)
 Jac(f::Function, x) = ForwardDiff.jacobian(f, x)

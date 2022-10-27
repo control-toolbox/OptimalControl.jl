@@ -1,3 +1,36 @@
+# --------------------------------------------------------------------------------------------------
+#
+f(x) = (1/2)*norm(x)^2
+g(x) = x
+dp = ControlToolbox.DescentProblem(g, f)
+x0 = [1.0; 0.0]
+di = ControlToolbox.DescentInit(x0)
+s  = [0.0; 0.0]
+
+@test typeof(dp) == ControlToolbox.DescentProblem
+@test typeof(di) == ControlToolbox.DescentInit
+
+ds = ControlToolbox.descent_solver(dp, di, direction=:gradient, line_search=:backtracking, display=false)
+@test ds.x ≈ s atol=1e-8
+
+ds = ControlToolbox.descent_solver(dp, di, direction=:gradient, line_search=:bissection, display=false)
+@test ds.x ≈ s atol=1e-8
+
+ds = ControlToolbox.descent_solver(dp, di, direction=:bfgs, line_search=:backtracking, display=false)
+@test ds.x ≈ s atol=1e-8
+
+ds = ControlToolbox.descent_solver(dp, di, direction=:bfgs, line_search=:bissection, display=false)
+@test ds.x ≈ s atol=1e-8
+
+# --------------------------------------------------------------------------------------------------
+#
+
+direction, line_search = ControlToolbox.read((:gradient, :bissection, :tata))
+@test direction === :gradient
+@test line_search === :bissection
+
+# --------------------------------------------------------------------------------------------------
+#
 # ocp solution to use a close init to the solution
 N  = 1001
 U⁺ = range(6.0, stop=-6.0, length=N); # solution
@@ -24,8 +57,8 @@ U_init = U⁺-1e0*ones(N-1); U_init = [ [U_init[i]] for i=1:N-1 ]
 sol = solve(ocp, :descent, init=U_init, 
                   grid_size=N, penalty_constraint=1e4, iterations=5, step_length=1, display=false)
 
-plot(sol)
+#
+@test typeof(DescentOCPInit(U_init)) == DescentOCPInit
+@test typeof(sol) == DescentOCPSol
 
-#@testset "Type of ocp solution" begin
-    @test typeof(sol) == DescentOCPSol
-#end
+#plot(sol)
