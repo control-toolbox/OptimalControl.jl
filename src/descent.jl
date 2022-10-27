@@ -13,6 +13,9 @@ end
 
 mutable struct DescentInit
     x::Vector{<:Number} # the optimization variable x of the descent method
+    function DescentInit(x::Vector{<:Number}) # to transcribe U in x
+        new(x)
+    end
     function DescentInit(U::Controls) # to transcribe U in x
         new(vec2vec(U))
     end
@@ -73,7 +76,7 @@ function __step_length(line_search::Symbol, step_length::Union{Number, Nothing})
         return step_length
     end
 end
-__absoluteTolerance() = sqrt(eps()) # absolute tolerance for the stopping criterion
+__absoluteTolerance() = 10*eps() # absolute tolerance for the stopping criterion
 __optimalityTolerance() = 1e-8 # optimality relative tolerance for the CN1
 __stagnationTolerance() = 1e-8 # step stagnation relative tolerance
 __display() = true # print output during resolution
@@ -373,6 +376,17 @@ function descent_solver(sdp::DescentProblem,
         return stop, stopping, message, success
     end
 
+    # update step_length according to line_search method if step_length has default value
+    step_length = __step_length(line_search, step_length)
+
+    # test if the chosen method are correct
+    if line_search ∉ (:backtracking, :fixedstep, :bissection)
+        throw(MethodValueError(line_search))
+    end
+    if direction ∉ (:gradient, :bfgs)
+        throw(MethodValueError(direction))
+    end
+
     # general descent solver data
     ∇f = sdp.∇f
     f  = sdp.f
@@ -406,8 +420,9 @@ function descent_solver(sdp::DescentProblem,
             sᵢ = s₀
         elseif line_search == :bissection
             sᵢ = bissection(xᵢ, dᵢ, gᵢ, f, ∇f, s₀)
-        else
-            throw(MethodError(line_search))
+        else # plus tard, on pourra peut-être changer de line search en cours d'algo
+             # donc je laisse ceci malgré le test déjà fait. Idem pour la direction.
+            throw(MethodValueError(line_search))
         end
 
         # iterate update 
@@ -426,7 +441,7 @@ function descent_solver(sdp::DescentProblem,
         elseif direction == :gradient
             dᵢ = -gᵢ₊₁
         else
-            throw(MethodError(direction))
+            throw(MethodValueError(direction))
         end
 
         # update of the current gradient
