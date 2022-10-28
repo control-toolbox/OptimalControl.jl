@@ -20,8 +20,6 @@ U_init = U⁺-1e0*ones(N-1); U_init = [ [U_init[i]] for i=1:N-1 ]
 # ocp definition
 ocp = OCP(L, f, t0, x0, tf, c, 2, 1, 2)
 @test typeof(ocp) == RegularOCPFinalConstraint
-#f(ocp) = @info print(ocp)
-#@test_logs (:info,) match_mode=:any f(ocp)
 @test print(ocp) === nothing
 
 sol = solve(ocp, :bfgs, :backtracking, init=U_init, grid_size=N, display=false)
@@ -31,7 +29,6 @@ sol = solve(ocp, :bfgs, :backtracking, init=U_init, grid_size=N, display=false)
 # ocp definition
 ocp = OCP(L, f, t0, x0, tf, xf, 2, 1)
 @test typeof(ocp) == RegularOCPFinalCondition
-#@test_logs (:info,) match_mode=:any f(ocp)
 @test print(ocp) === nothing
 
 sol = solve(ocp, :bfgs, :backtracking, init=U_init, grid_size=N, display=false)
