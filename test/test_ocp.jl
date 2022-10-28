@@ -11,7 +11,7 @@ L(x, u) = 0.5*u[1]^2   # integrand of the Lagrange cost
 c(x) = x-xf            # final condition
 
 #
-N  = 1001
+N  = 101
 U⁺ = range(6.0, stop=-6.0, length=N); # solution
 U⁺ = U⁺[1:end-1];
 U_init = U⁺-1e0*ones(N-1); U_init = [ [U_init[i]] for i=1:N-1 ]
@@ -20,14 +20,19 @@ U_init = U⁺-1e0*ones(N-1); U_init = [ [U_init[i]] for i=1:N-1 ]
 # ocp definition
 ocp = OCP(L, f, t0, x0, tf, c, 2, 1, 2)
 @test typeof(ocp) == RegularOCPFinalConstraint
+#f(ocp) = @info print(ocp)
+#@test_logs (:info,) match_mode=:any f(ocp)
+@test print(ocp) === nothing
 
 sol = solve(ocp, :bfgs, :backtracking, init=U_init, grid_size=N, display=false)
-@test abs.(ControlToolbox.vec2vec(sol.U)-Vector(U⁺)) ≈ zeros(Float64, N-1) atol=5e-1
+@test abs.(ControlToolbox.vec2vec(sol.U)-Vector(U⁺)) ≈ zeros(Float64, N-1) atol=1.0
 
 # RegularOCPFinalCondition
 # ocp definition
 ocp = OCP(L, f, t0, x0, tf, xf, 2, 1)
 @test typeof(ocp) == RegularOCPFinalCondition
+#@test_logs (:info,) match_mode=:any f(ocp)
+@test print(ocp) === nothing
 
 sol = solve(ocp, :bfgs, :backtracking, init=U_init, grid_size=N, display=false)
-@test abs.(ControlToolbox.vec2vec(sol.U)-Vector(U⁺)) ≈ zeros(Float64, N-1) atol=5e-1
+@test abs.(ControlToolbox.vec2vec(sol.U)-Vector(U⁺)) ≈ zeros(Float64, N-1) atol=1.0

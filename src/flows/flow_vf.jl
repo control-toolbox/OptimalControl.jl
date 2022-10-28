@@ -18,13 +18,21 @@ function Flow(vf::VectorField, description...; kwargs_Flow...)
         vf(t, x, λ...) : vf(x, λ...)
 
     function rhs!(dx::DState, x::State, λ, t::Time)
-        dx[:] = vf_(t, x, λ...)
+        if isempty(λ)
+            dx[:] = vf_(t, x)
+        else
+            dx[:] = vf_(t, x, λ...)
+        end
     end
     
     function f(tspan::Tuple{Time, Time}, x0::State, λ...; 
                 method=__method(), abstol=__abstol(), reltol=__reltol(), saveat=__saveat(),
                 kwargs...)
-        ode = OrdinaryDiffEq.ODEProblem(rhs!, x0, tspan, λ)
+        if isempty(λ)
+            ode = OrdinaryDiffEq.ODEProblem(rhs!, x0, tspan)
+        else
+            ode = OrdinaryDiffEq.ODEProblem(rhs!, x0, tspan, λ)
+        end
         sol = OrdinaryDiffEq.solve(ode, method, abstol=abstol, reltol=reltol, saveat=saveat;
                 kwargs..., kwargs_Flow...)
         return sol

@@ -4,7 +4,7 @@
 
 struct Hamiltonian f::Function end
 
-function (h::Hamiltonian)(x::State, p::Adjoint, λ...) # https://docs.julialang.org/en/v1/manual/methods/#Function-like-objects
+function (h::Hamiltonian)(x::State, p::Adjoint, λ...)
    return h.f(x, p, λ...)
 end
 
@@ -22,7 +22,11 @@ function Flow(h::Hamiltonian, description...; kwargs_Flow...)
 
     function rhs!(dz::DCoTangent, z::CoTangent, λ, t::Time)
         n = size(z, 1)÷2
-        foo = z -> h_(t, z[1:n], z[n+1:2*n], λ...)
+        if isempty(λ)
+            foo = z -> h_(t, z[1:n], z[n+1:2*n])
+        else
+            foo = z -> h_(t, z[1:n], z[n+1:2*n], λ...)
+        end
         dh = ForwardDiff.gradient(foo, z)
         dz[1:n] = dh[n+1:2n]
         dz[n+1:2n] = -dh[1:n]
@@ -32,7 +36,11 @@ function Flow(h::Hamiltonian, description...; kwargs_Flow...)
                 method=__method(), abstol=__abstol(), reltol=__reltol(), saveat=__saveat(),
                 kwargs...)
         z0  = [ x0 ; p0 ]
-        ode = OrdinaryDiffEq.ODEProblem(rhs!, z0, tspan, λ)
+        if isempty(λ)
+            ode = OrdinaryDiffEq.ODEProblem(rhs!, z0, tspan)
+        else
+            ode = OrdinaryDiffEq.ODEProblem(rhs!, z0, tspan, λ)
+        end
         sol = OrdinaryDiffEq.solve(ode, method, abstol=abstol, reltol=reltol, saveat=saveat;
                 kwargs..., kwargs_Flow...)
         return sol

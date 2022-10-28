@@ -4,7 +4,6 @@
 
 - [x] ajouter d'autres types d'ocp - commencer par la possiblité de donner une condition terminale fixée. Dans ce cas, c'est au solveur de transformer le problème dans la formulation intéressante pour lui. Il faut donc une méhode `convert(ocp::TypeOCP, newType)`.
 - [ ] ajouter des variantes au solveur descent.
-- [x] ajouter callbacks arrêt de l'algorithme et gestion des erreurs - commencer par le solveur descent.
 - [ ] faire un notebook tutoriel
 - [ ] améliorer affichage du problème ocp : text/html ou makdown ou latex
 - [ ] ajouter des tests unitaires + docstrings + documentation
@@ -24,5 +23,7 @@ ceux qui apparaissent dans la transcription du problème, c'est ces derniers qu'
  
 ## Tests unitaires
 
+- [ ] ajouter des tests pour `Flow` et les méthodes du style `backtracking`...
+- [ ] ajouter des tests de validation car j'ai mis beaucoup de tests simples du genre vérifier les types.
 - [ ] description : voir si cela marche avec des description de tailles différentes dans la base
 - [ ] faire un fichier test qui pour chaque algo ou autre, fait tous les appels qui sont obligatoires, ie. plot, formulation...

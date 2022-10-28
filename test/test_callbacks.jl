@@ -6,10 +6,14 @@ function mystop(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, ng₀, oTol, aTol, sTol, iterat
     message  = nothing
     return stop, stopping, message, success
 end
-@test typeof(StopCallback(mystop)) == StopCallback 
+cb = StopCallback(mystop)
+@test typeof(cb) == StopCallback 
+cb(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 
 # print (not replacing) and stop (replacing) callbacks
 function myprint(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ)
     nothing
 end
-@test typeof(PrintCallback(myprint)) == PrintCallback
+cb = PrintCallback(myprint)
+@test typeof(cb) == PrintCallback
+cb(1, 1, 1, 1, 1, 1)

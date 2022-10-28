@@ -5,6 +5,10 @@ module Flows
     # Packages needed: 
     using ForwardDiff: jacobian, gradient, ForwardDiff
     using OrdinaryDiffEq: ODEProblem, solve, Tsit5, OrdinaryDiffEq
+    import Base: isempty
+
+    #
+    isempty(p::OrdinaryDiffEq.SciMLBase.NullParameters) = true
 
     # --------------------------------------------------------------------------------------------
     # Default options for flows

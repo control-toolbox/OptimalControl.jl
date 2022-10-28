@@ -1,3 +1,11 @@
+e = MethodValueError(:e)
+@test_throws ErrorException error(e)
+@test typeof(sprint(showerror, e)) == String
+
+e = AmbiguousDescriptionError((:e,))
+@test_throws ErrorException error(e)
+@test typeof(sprint(showerror, e)) == String
+
 # ocp description
 t0 = 0.0                # t0 is fixed
 tf = 1.0                # tf is fixed

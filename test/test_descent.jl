@@ -10,17 +10,28 @@ s  = [0.0; 0.0]
 @test typeof(dp) == ControlToolbox.DescentProblem
 @test typeof(di) == ControlToolbox.DescentInit
 
+ds = ControlToolbox.descent_solver(dp, di, display=false)
+@test ds.x ≈ s atol=1e-8
+
 ds = ControlToolbox.descent_solver(dp, di, direction=:gradient, line_search=:backtracking, display=false)
 @test ds.x ≈ s atol=1e-8
 
 ds = ControlToolbox.descent_solver(dp, di, direction=:gradient, line_search=:bissection, display=false)
 @test ds.x ≈ s atol=1e-8
 
+ds = ControlToolbox.descent_solver(dp, di, direction=:gradient, line_search=:fixedstep,
+      optimalityTolerance=1e-3, display=true)
+@test ds.x ≈ s atol=1e-3
+
 ds = ControlToolbox.descent_solver(dp, di, direction=:bfgs, line_search=:backtracking, display=false)
 @test ds.x ≈ s atol=1e-8
 
 ds = ControlToolbox.descent_solver(dp, di, direction=:bfgs, line_search=:bissection, display=false)
 @test ds.x ≈ s atol=1e-8
+
+ds = ControlToolbox.descent_solver(dp, di, direction=:bfgs, line_search=:fixedstep,
+      optimalityTolerance=1e-3, display=true)
+@test ds.x ≈ s atol=1e-3
 
 # --------------------------------------------------------------------------------------------------
 #
@@ -32,7 +43,7 @@ direction, line_search = ControlToolbox.read((:gradient, :bissection, :tata))
 # --------------------------------------------------------------------------------------------------
 #
 # ocp solution to use a close init to the solution
-N  = 1001
+N  = 101
 U⁺ = range(6.0, stop=-6.0, length=N); # solution
 U⁺ = U⁺[1:end-1];
 
@@ -55,10 +66,17 @@ U_init = U⁺-1e0*ones(N-1); U_init = [ [U_init[i]] for i=1:N-1 ]
 
 # resolution
 sol = solve(ocp, :descent, init=U_init, 
-                  grid_size=N, penalty_constraint=1e4, iterations=5, step_length=1, display=false)
+                  grid_size=N, penalty_constraint=1e4, iterations=5, step_length=1, display=true)
 
 #
 @test typeof(DescentOCPInit(U_init)) == DescentOCPInit
 @test typeof(sol) == DescentOCPSol
 
-#plot(sol)
+#
+@test typeof(ControlToolbox.ocp2descent_init(nothing, 10, 2)) == ControlToolbox.DescentInit
+@test typeof(ControlToolbox.ocp2descent_init(U_init)) == ControlToolbox.DescentInit
+@test typeof(ControlToolbox.ocp2descent_init(DescentOCPInit(U_init))) == ControlToolbox.DescentInit
+@test typeof(ControlToolbox.ocp2descent_init(sol)) == ControlToolbox.DescentInit
+
+#
+@test typeof(plot(sol)) == Plots.Plot{Plots.GRBackend}
