@@ -19,14 +19,22 @@ function Flow(hv::HamiltonianVectorField, description...; kwargs_Flow...)
 
     function rhs!(dz::DCoTangent, z::CoTangent, λ, t::Time)
         n = size(z, 1)÷2
-        dz[:] = hv_(t, z[1:n], z[n+1:2*n], λ...)
+        if isempty(λ)
+            dz[:] = hv_(t, z[1:n], z[n+1:2*n])
+        else
+            dz[:] = hv_(t, z[1:n], z[n+1:2*n], λ...)
+        end
     end
     
     function f(tspan::Tuple{Time, Time}, x0::State, p0::Adjoint, λ...; 
                 method=__method(), abstol=__abstol(), reltol=__reltol(), saveat=__saveat(),
                 kwargs...)
         z0 = [ x0 ; p0 ]
-        ode = OrdinaryDiffEq.ODEProblem(rhs!, z0, tspan, λ)
+        if isempty(λ)
+            ode = OrdinaryDiffEq.ODEProblem(rhs!, z0, tspan)
+        else
+            ode = OrdinaryDiffEq.ODEProblem(rhs!, z0, tspan, λ)
+        end
         sol = OrdinaryDiffEq.solve(ode, method, abstol=abstol, reltol=reltol, saveat=saveat;
                 kwargs..., kwargs_Flow...)
         return sol

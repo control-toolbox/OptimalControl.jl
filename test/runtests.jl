@@ -13,6 +13,7 @@ using LinearAlgebra
         "ocp",
         "convert",
         "descent",
+        "flows",
     )
         @testset "$name" begin
             include("test_$name.jl")
