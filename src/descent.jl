@@ -62,8 +62,36 @@ function read(method::Description)
 end
 
 # --------------------------------------------------------------------------------------------------
+#
+__grid_size(U::Controls) = length(U)+1
+__grid_size(I::DescentOCPInit) = __grid_size(I.U)
+__grid_size(S::DescentOCPSol) = __grid_size(S.U)
+
+# --------------------------------------------------------------------------------------------------
 # Default options
-__grid_size() = 200 # the length of the time discretization grid
+__grid_size() = nothing # the length of the time discretization grid
+function __grid_size(init::Union{Nothing, Controls, DescentOCPInit, DescentOCPSol}, 
+    grid_size::Union{Integer, Nothing})
+    if init === nothing
+        if grid_size === nothing
+            return 200 # default value
+        else
+            return grid_size
+        end
+    else
+        if grid_size === nothing
+            return __grid_size(init)
+        else
+            if grid_size == __grid_size(init)
+                return __grid_size(init)
+            else # incompatible
+                # todo: gérer le choix d'une grille de taille différente de celle en init
+                println("grid_size has been updated to the size of the init grid")
+                return __grid_size(init)
+            end
+        end
+    end
+end
 __penalty_constraint() = 1e4 # the penalty term in front of final constraints
 __iterations() = 100 # number of maximal iterations
 __step_length() = nothing # the step length of the line search method
@@ -101,7 +129,7 @@ end
 # Solver of an ocp by descent method
 function solve_by_descent(ocp::RegularOCPFinalConstraint, method::Description; 
     init::Union{Nothing, Controls, DescentOCPInit, DescentOCPSol}=nothing, 
-    grid_size::Integer=__grid_size(), 
+    grid_size::Union{Integer, Nothing}=__grid_size(), 
     penalty_constraint::Number=__penalty_constraint(), 
     iterations::Integer=__iterations(), 
     step_length::Union{Number, Nothing}=__step_length(),
@@ -122,6 +150,7 @@ function solve_by_descent(ocp::RegularOCPFinalConstraint, method::Description;
     # --------------------------------------------------------------------------------------------------
     # get the default options for those which depend on the method
     step_length = __step_length(line_search, step_length)
+    grid_size   = __grid_size(init, grid_size)
 
     # --------------------------------------------------------------------------------------------------
     # step 1: transcription from ocp to descent problem and init
@@ -434,10 +463,11 @@ function descent_solver(sdp::DescentProblem,
         # direction computation
         if direction == :bfgs
             dᵢ, Hᵢ = BFGS(sᵢ, dᵢ, gᵢ, gᵢ₊₁, Hᵢ, Iₙ)
-            if dᵢ'*gᵢ₊₁ > 0 # this is not a descent direction
-                Hᵢ = Iₙ #/ norm(gᵢ₊₁)
-                dᵢ = -Hᵢ*gᵢ₊₁
-            end
+            # todo: trouver un exemple qui rentre dans le if
+            #if dᵢ'*gᵢ₊₁ > 0 # this is not a descent direction
+            #    Hᵢ = Iₙ #/ norm(gᵢ₊₁)
+            #    dᵢ = -Hᵢ*gᵢ₊₁
+            #end
         elseif direction == :gradient
             dᵢ = -gᵢ₊₁
         #else
@@ -493,9 +523,9 @@ function backtracking(x, d, g, f, s₀)
         k = k+1
     end
 
-    if s ≤ smin
-        s = s₀
-    end
+    #if s ≤ smin
+    #    s = s₀
+    #end
 
     return s
 end
@@ -530,9 +560,9 @@ function bissection(x, d, g, f, ∇f, s₀)
 
     end
 
-    if s ≤ smin
-        s = s₀
-    end
+    #if s ≤ smin
+    #    s = s₀
+    #end
 
     return s
 
