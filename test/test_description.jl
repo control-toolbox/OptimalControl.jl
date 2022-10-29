@@ -11,13 +11,13 @@ a = ControlToolbox.add(a, (:toto,))
 
 # get the complete description of the chosen method
 gCSD = ControlToolbox.getCompleteSolverDescription
-@test gCSD((:descent,))==(:descent, :bfgs, :bissection)
-@test gCSD((:bfgs,))==(:descent, :bfgs, :bissection)
-@test gCSD((:bissection,))==(:descent, :bfgs, :bissection)
-@test gCSD((:backtracking,))==(:descent, :bfgs, :backtracking)
-@test gCSD((:fixedstep,))==(:descent, :bfgs, :fixedstep)
-@test gCSD((:fixedstep, :gradient))==(:descent, :gradient, :fixedstep)
+@test gCSD((:descent,)) == (:descent, :bfgs, :bissection)
+@test gCSD((:bfgs,)) == (:descent, :bfgs, :bissection)
+@test gCSD((:bissection,)) == (:descent, :bfgs, :bissection)
+@test gCSD((:backtracking,)) == (:descent, :bfgs, :backtracking)
+@test gCSD((:fixedstep,)) == (:descent, :bfgs, :fixedstep)
+@test gCSD((:fixedstep, :gradient)) == (:descent, :gradient, :fixedstep)
 
 # incorrect description
-@test_throws AmbiguousDescriptionError gCSD((:ttt, ))
+@test_throws AmbiguousDescriptionError gCSD((:ttt,))
 @test_throws AmbiguousDescriptionError gCSD((:descent, :ttt))

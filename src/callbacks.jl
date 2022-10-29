@@ -9,16 +9,16 @@ mutable struct PrintCallback <: CTCallback
     callback::Function
     priority::Integer
     """
-    PrintCallback(cb::Function; priority::Integer=1)
+   	PrintCallback(cb::Function; priority::Integer=1)
 
-TBW
-"""
-function PrintCallback(cb::Function; priority::Integer=1)
+   TBW
+   """
+    function PrintCallback(cb::Function; priority::Integer=1)
         new(cb, priority)
     end
 end
 """
-    (cb::PrintCallback)(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ)
+	(cb::PrintCallback)(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ)
 
 TBW
 """
@@ -29,14 +29,14 @@ const PrintCallbacks = Tuple{Vararg{PrintCallback}}
 
 #
 """
-    get_priority_print_callbacks(cbs::CTCallbacks)
+	get_priority_print_callbacks(cbs::CTCallbacks)
 
 TBW
 """
 function get_priority_print_callbacks(cbs::CTCallbacks)
     callbacks_print = ()
     priority = -Inf
-    
+
     # search highest priority
     for cb in cbs
         if typeof(cb) === PrintCallback && cb.priority ≥ priority
@@ -58,37 +58,35 @@ mutable struct StopCallback <: CTCallback
     callback::Function
     priority::Integer
     """
-    StopCallback(cb::Function; priority::Integer=1)
+   	StopCallback(cb::Function; priority::Integer=1)
 
-TBW
-"""
-function StopCallback(cb::Function; priority::Integer=1)
+   TBW
+   """
+    function StopCallback(cb::Function; priority::Integer=1)
         new(cb, priority)
     end
 end
 """
-    (cb::StopCallback)(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, 
-    ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
+	(cb::StopCallback)(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, 
+	ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
 
 TBW
 """
-function (cb::StopCallback)(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, 
-    ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
-    return cb.callback(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, 
-    ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
+function (cb::StopCallback)(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
+    return cb.callback(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
 end
 const StopCallbacks = Tuple{Vararg{StopCallback}}
 
 #
 """
-    get_priority_stop_callbacks(cbs::CTCallbacks)
+	get_priority_stop_callbacks(cbs::CTCallbacks)
 
 TBW
 """
 function get_priority_stop_callbacks(cbs::CTCallbacks)
     callbacks_stop = ()
     priority = -Inf
-    
+
     # search highest priority
     for cb in cbs
         if typeof(cb) === StopCallback && cb.priority ≥ priority

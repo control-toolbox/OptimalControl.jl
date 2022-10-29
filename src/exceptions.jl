@@ -3,26 +3,25 @@
 abstract type CTException <: Exception end
 
 # Incorrect method
-struct MethodValueError <: CTException 
+struct MethodValueError <: CTException
     var::Symbol
 end
 
 """
-    Base.showerror(io::IO, e::MethodValueError)
+	Base.showerror(io::IO, e::MethodValueError)
 
 TBW
 """
 Base.showerror(io::IO, e::MethodValueError) = print(io, e.var, " is not an existing method")
 
 # Ambiguous description
-struct AmbiguousDescriptionError <: CTException 
+struct AmbiguousDescriptionError <: CTException
     var::Description
 end
 
 """
-    Base.showerror(io::IO, e::AmbiguousDescriptionError)
+	Base.showerror(io::IO, e::AmbiguousDescriptionError)
 
 TBW
 """
-Base.showerror(io::IO, e::AmbiguousDescriptionError) = print(io, "the description ", 
-    e.var, " is ambiguous / incorrect")
+Base.showerror(io::IO, e::AmbiguousDescriptionError) = print(io, "the description ", e.var, " is ambiguous / incorrect")
