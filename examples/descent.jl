@@ -1,11 +1,5 @@
-try
-      methods(OCP)
-catch
-      include("../src/ControlToolbox.jl"); # nécessaire tant que pas un vrai package
-      import .ControlToolbox: plot, plot! # nécessaire tant que include et using relatif
-      using .ControlToolbox
-      using Plots
-end
+using ControlToolbox
+using Plots
 
 # ocp solution to use a close init to the solution
 N = 1001

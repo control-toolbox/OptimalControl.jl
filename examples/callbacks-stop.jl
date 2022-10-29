@@ -1,13 +1,7 @@
-try
-    methods(OCP)
-catch
-    include("../src/ControlToolbox.jl"); # nécessaire tant que pas un vrai package
-    import .ControlToolbox: plot, plot! # nécessaire tant que include et using relatif
-    using .ControlToolbox
-    using Plots
-    using Printf
-    using LinearAlgebra
-end
+using ControlToolbox
+using Plots
+using Printf
+using LinearAlgebra
 
 # ocp description
 t0 = 0.0                # t0 is fixed
