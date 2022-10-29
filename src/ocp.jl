@@ -41,6 +41,20 @@ mutable struct RegularOCPFinalCondition <: OptimalControlProblem
 end
 
 # Creation of a regular OCP with final constrainst
+"""
+    OCP(Lagrange_cost      :: Function, 
+    dynamics                    :: Function, 
+    initial_time                :: Time,
+    initial_condition           :: State,
+    final_time                  :: Time,
+    final_constraint            :: Function,
+    state_dimension             :: Dimension,
+    control_dimension           :: Dimension,
+    final_constraint_dimension  :: Dimension,
+    description...)
+
+TBW
+"""
 function OCP(Lagrange_cost      :: Function, 
     dynamics                    :: Function, 
     initial_time                :: Time,
@@ -58,6 +72,19 @@ return ocp
 end
 
 # Creation of a regular OCP with final condition
+"""
+    OCP(Lagrange_cost      :: Function, 
+    dynamics                    :: Function, 
+    initial_time                :: Time,
+    initial_condition           :: State,
+    final_time                  :: Time,
+    final_condition             :: State,
+    state_dimension             :: Dimension,
+    control_dimension           :: Dimension,
+    description...)
+
+TBW
+"""
 function OCP(Lagrange_cost      :: Function, 
     dynamics                    :: Function, 
     initial_time                :: Time,
@@ -103,6 +130,11 @@ abstract type OptimalControlSolution end
 
 # --------------------------------------------------------------------------------------------------
 # Resolution
+"""
+    solve(ocp::OptimalControlProblem, description...; kwargs...)
+
+TBW
+"""
 function solve(ocp::OptimalControlProblem, description...; kwargs...)
     method = getCompleteSolverDescription(makeDescription(description...))
     # if no error before, then the method is correct: no need of else
@@ -122,6 +154,11 @@ end
 # Display: text/html ?  
 # Base.show, Base.print
 # pretty print : https://docs.julialang.org/en/v1/manual/types/#man-custom-pretty-printing
+"""
+    Base.show(io::IO, ocp::RegularOCPFinalConstraint)
+
+TBW
+"""
 function Base.show(io::IO, ocp::RegularOCPFinalConstraint)
 
     dimx = ocp.state_dimension===nothing ? "n" : ocp.state_dimension
@@ -155,6 +192,11 @@ function Base.show(io::IO, ocp::RegularOCPFinalConstraint)
 
 end
 
+"""
+    Base.show(io::IO, ocp::RegularOCPFinalCondition)
+
+TBW
+"""
 function Base.show(io::IO, ocp::RegularOCPFinalCondition)
 
     dimx = ocp.state_dimension===nothing ? "n" : ocp.state_dimension

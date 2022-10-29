@@ -13,10 +13,20 @@ end
 
 mutable struct DescentInit
     x::Vector{<:Number} # the optimization variable x of the descent method
-    function DescentInit(x::Vector{<:Number}) # to transcribe U in x
+    """
+    DescentInit(x::Vector{<:Number})
+
+TBW
+"""
+function DescentInit(x::Vector{<:Number}) # to transcribe U in x
         new(x)
     end
-    function DescentInit(U::Controls) # to transcribe U in x
+    """
+    DescentInit(U::Controls)
+
+TBW
+"""
+function DescentInit(U::Controls) # to transcribe U in x
         new(vec2vec(U))
     end
 end
@@ -47,6 +57,11 @@ end
 # --------------------------------------------------------------------------------------------------
 # read the description to get the chosen methods
 # we assume the description is complete
+"""
+    read(method::Description)
+
+TBW
+"""
 function read(method::Description)
     #
     direction = nothing
@@ -115,6 +130,11 @@ __line_search() = :bissection
 __direction() = :bfgs
 
 # callback for ocp resolution by descent method
+"""
+    printOCPDescent(i, sᵢ, dᵢ, Uᵢ, gᵢ, fᵢ)
+
+TBW
+"""
 function printOCPDescent(i, sᵢ, dᵢ, Uᵢ, gᵢ, fᵢ)
     if i==0
         println("\n     Calls  ‖∇F(U)‖         ‖U‖             Stagnation      \n")
@@ -127,6 +147,21 @@ end
 
 # --------------------------------------------------------------------------------------------------
 # Solver of an ocp by descent method
+"""
+    solve_by_descent(ocp::RegularOCPFinalConstraint, method::Description; 
+    init::Union{Nothing, Controls, DescentOCPInit, DescentOCPSol}=nothing, 
+    grid_size::Union{Integer, Nothing}=__grid_size(), 
+    penalty_constraint::Number=__penalty_constraint(), 
+    iterations::Integer=__iterations(), 
+    step_length::Union{Number, Nothing}=__step_length(),
+    absoluteTolerance::Number=__absoluteTolerance(),
+    optimalityTolerance::Number=__optimalityTolerance(),
+    stagnationTolerance::Number=__stagnationTolerance(),
+    display::Bool=__display(),
+    callbacks::CTCallbacks=__callbacks())
+
+TBW
+"""
 function solve_by_descent(ocp::RegularOCPFinalConstraint, method::Description; 
     init::Union{Nothing, Controls, DescentOCPInit, DescentOCPSol}=nothing, 
     grid_size::Union{Integer, Nothing}=__grid_size(), 
@@ -181,6 +216,11 @@ function solve_by_descent(ocp::RegularOCPFinalConstraint, method::Description;
 
 end
 
+"""
+    solve_by_descent(ocp::RegularOCPFinalCondition, args...; kwargs...)
+
+TBW
+"""
 solve_by_descent(ocp::RegularOCPFinalCondition, args...; kwargs...) =
     solve_by_descent(convert(ocp, RegularOCPFinalConstraint), args...; kwargs...)
 
@@ -194,6 +234,11 @@ textsStopping = Dict(
 )
 
 # final print after resolution
+"""
+    print_convergence(ocp_sol::DescentOCPSol)
+
+TBW
+"""
 function print_convergence(ocp_sol::DescentOCPSol)
     println("")
     println("Descent solver result:")
@@ -205,16 +250,41 @@ end
 # --------------------------------------------------------------------------------------------------
 # step 1: transcription of the initialization
 # this step depends on the type of the init
+"""
+    ocp2descent_init(init::Nothing,  grid_size::Integer, control_dimension::Dimension)
+
+TBW
+"""
 ocp2descent_init(init::Nothing,  grid_size::Integer, control_dimension::Dimension) = 
     DescentInit([ zeros(control_dimension) for i in 1:grid_size-1]) # default init
+"""
+    ocp2descent_init(init::Controls, args...)
+
+TBW
+"""
 ocp2descent_init(init::Controls, args...) = DescentInit(init)
+"""
+    ocp2descent_init(init::DescentOCPInit, args...)
+
+TBW
+"""
 ocp2descent_init(init::DescentOCPInit, args...) = DescentInit(init.U)
+"""
+    ocp2descent_init(init::DescentOCPSol,  args...)
+
+TBW
+"""
 ocp2descent_init(init::DescentOCPSol,  args...) = DescentInit(init.U)
 
 # --------------------------------------------------------------------------------------------------
 # Utils for the transcription from ocp to descent problem
 
 # forward integration of the state
+"""
+    model(x0, T, U, f)
+
+TBW
+"""
 function model(x0, T, U, f)
     xₙ = x0
     X = [xₙ]
@@ -225,6 +295,11 @@ function model(x0, T, U, f)
 end
 
 # backward integration of state and costate
+"""
+    adjoint(xₙ, pₙ, T, U, f)
+
+TBW
+"""
 function adjoint(xₙ, pₙ, T, U, f)
     X = [xₙ]; P = [pₙ]
     for n ∈ range(length(T), 2, step=-1)
@@ -235,6 +310,11 @@ end
 
 # --------------------------------------------------------------------------------------------------
 # step 1: transcription of the problem, from ocp to descent
+"""
+    ocp2descent_problem(ocp::RegularOCPFinalConstraint, grid_size::Integer, penalty_constraint::Number)
+
+TBW
+"""
 function ocp2descent_problem(ocp::RegularOCPFinalConstraint, grid_size::Integer, penalty_constraint::Number)
 
     # ocp data
@@ -302,6 +382,11 @@ function ocp2descent_problem(ocp::RegularOCPFinalConstraint, grid_size::Integer,
 end
 
 # Print callback during descent solver
+"""
+    printDescent(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ)
+
+TBW
+"""
 function printDescent(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ)
     if i==0
         println("\n     Calls  ‖∇f(x)‖         ‖x‖             Stagnation      \n")
@@ -312,6 +397,12 @@ function printDescent(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ)
     @printf("%16.8e", norm(xᵢ)>1e-14 ? norm(sᵢ*dᵢ)/norm(xᵢ) : norm(sᵢ*dᵢ)) # Stagnation
 end
 
+"""
+    stop_optimality(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, 
+    ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
+
+TBW
+"""
 function stop_optimality(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, 
     ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
 
@@ -331,6 +422,12 @@ function stop_optimality(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ,
 
 end
 
+"""
+    stop_stagnation(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, 
+    ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
+
+TBW
+"""
 function stop_stagnation(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, 
     ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
 
@@ -350,6 +447,12 @@ function stop_stagnation(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ,
 
 end
 
+"""
+    stop_iterations(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, 
+    ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
+
+TBW
+"""
 function stop_iterations(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, 
     ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
 
@@ -371,6 +474,21 @@ end
 
 # --------------------------------------------------------------------------------------------------
 # step 2: solver
+"""
+    descent_solver(sdp::DescentProblem, 
+    init::DescentInit; 
+    direction::Symbol=__direction(), 
+    line_search::Symbol=__line_search(),
+    iterations::Integer=__iterations(), 
+    step_length::Union{Number, Nothing}=__step_length(),
+    absoluteTolerance::Number=__absoluteTolerance(), 
+    optimalityTolerance::Number=__optimalityTolerance(), 
+    stagnationTolerance::Number=__stagnationTolerance(),
+    display::Bool=__display(),
+    callbacks::CTCallbacks=__callbacks())
+
+TBW
+"""
 function descent_solver(sdp::DescentProblem, 
     init::DescentInit; 
     direction::Symbol=__direction(), 
@@ -495,6 +613,11 @@ function descent_solver(sdp::DescentProblem,
 end
 
 # todo: improve memory consumption by updating inputs - add !, ie BFGS!
+"""
+    BFGS(sᵢ, dᵢ, gᵢ, gᵢ₊₁, Hᵢ, Iₙ)
+
+TBW
+"""
 function BFGS(sᵢ, dᵢ, gᵢ, gᵢ₊₁, Hᵢ, Iₙ)
     #
     yᵢ = gᵢ₊₁ - gᵢ  # ∇f(xᵢ₊₁) - ∇f(xᵢ)
@@ -506,6 +629,11 @@ function BFGS(sᵢ, dᵢ, gᵢ, gᵢ₊₁, Hᵢ, Iₙ)
     return dᵢ₊₁, Hᵢ₊₁
 end
 
+"""
+    backtracking(x, d, g, f, s₀)
+
+TBW
+"""
 function backtracking(x, d, g, f, s₀)
 
     # parameters
@@ -530,6 +658,11 @@ function backtracking(x, d, g, f, s₀)
     return s
 end
 
+"""
+    bissection(x, d, g, f, ∇f, s₀)
+
+TBW
+"""
 function bissection(x, d, g, f, ∇f, s₀)
 
     # parameters
@@ -570,6 +703,11 @@ end
 
 # --------------------------------------------------------------------------------------------------
 # step 3: transcription of the solution, from descent to ocp
+"""
+    descent2ocp_solution(sd_sol::DescentSol, ocp::RegularOCPFinalConstraint, grid_size::Integer, penalty_constraint::Number)
+
+TBW
+"""
 function descent2ocp_solution(sd_sol::DescentSol, ocp::RegularOCPFinalConstraint, grid_size::Integer, penalty_constraint::Number)
 
     # ocp data
@@ -616,6 +754,14 @@ end
 #
 
 # General plot
+"""
+    Plots.plot(ocp_sol::DescentOCPSol, args...; 
+    state_style=(), 
+    control_style=(), 
+    adjoint_style=(), kwargs...)
+
+TBW
+"""
 function Plots.plot(ocp_sol::DescentOCPSol, args...; 
     state_style=(), 
     control_style=(), 
@@ -660,6 +806,13 @@ function Plots.plot(ocp_sol::DescentOCPSol, args...;
 end
 
 # specific plot
+"""
+    Plots.plot(ocp_sol::DescentOCPSol, 
+    xx::Union{Symbol, Tuple{Symbol, Integer}}, 
+    yy::Union{Symbol, Tuple{Symbol, Integer}}, args...; kwargs...)
+
+TBW
+"""
 function Plots.plot(ocp_sol::DescentOCPSol, 
     xx::Union{Symbol, Tuple{Symbol, Integer}}, 
     yy::Union{Symbol, Tuple{Symbol, Integer}}, args...; kwargs...)
@@ -671,6 +824,13 @@ function Plots.plot(ocp_sol::DescentOCPSol,
 
 end
 
+"""
+    Plots.plot!(p::Plots.Plot{<:Plots.AbstractBackend}, ocp_sol::DescentOCPSol, 
+    xx::Union{Symbol, Tuple{Symbol, Integer}}, 
+    yy::Union{Symbol, Tuple{Symbol, Integer}}, args...; kwargs...)
+
+TBW
+"""
 function Plots.plot!(p::Plots.Plot{<:Plots.AbstractBackend}, ocp_sol::DescentOCPSol, 
     xx::Union{Symbol, Tuple{Symbol, Integer}}, 
     yy::Union{Symbol, Tuple{Symbol, Integer}}, args...; kwargs...)
@@ -683,6 +843,11 @@ function Plots.plot!(p::Plots.Plot{<:Plots.AbstractBackend}, ocp_sol::DescentOCP
 end
 #plot!(p, x, y, args...; kwargs...) = Plots.plot!(p, x, y, args...; kwargs...)
 
+"""
+    get(ocp_sol::DescentOCPSol, xx::Union{Symbol, Tuple{Symbol, Integer}})
+
+TBW
+"""
 function get(ocp_sol::DescentOCPSol, xx::Union{Symbol, Tuple{Symbol, Integer}})
 
     T = ocp_sol.T

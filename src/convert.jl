@@ -1,4 +1,9 @@
 #
+"""
+    convert(ocp::RegularOCPFinalCondition, ocp_type::DataType)
+
+TBW
+"""
 function convert(ocp::RegularOCPFinalCondition, ocp_type::DataType)
     if ocp_type==RegularOCPFinalConstraint
         c(x) = x-ocp.final_condition

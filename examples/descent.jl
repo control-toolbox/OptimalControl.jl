@@ -29,7 +29,7 @@ display(ocp)
 U_init = U⁺-1e0*ones(N-1); U_init = [ [U_init[i]] for i=1:N-1 ]
 
 # resolution
-sol = solve(ocp, :bfgs, :backtracking, init=U_init, grid_size=N)
+sol = solve(ocp, init=U_init)
 
 # plot solution
 ps = plot(sol, size=(800, 400))

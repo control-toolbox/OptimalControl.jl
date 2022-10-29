@@ -8,7 +8,12 @@ module Flows
     import Base: isempty
 
     #
-    isempty(p::OrdinaryDiffEq.SciMLBase.NullParameters) = true
+    """
+    isempty(p::OrdinaryDiffEq.SciMLBase.NullParameters)
+
+TBW
+"""
+isempty(p::OrdinaryDiffEq.SciMLBase.NullParameters) = true
 
     # --------------------------------------------------------------------------------------------
     # Default options for flows
@@ -25,11 +30,26 @@ module Flows
     
     # -------------------------------------------------------------------------------------------------- 
     # the description may be given as a tuple or a list of symbols (Vararg{Symbol})
-    makeDescription(desc::DescVarArg)  = Tuple(desc) # create a description from Vararg{Symbol}
-    makeDescription(desc::Description) = desc
+    """
+    makeDescription(desc::DescVarArg)
+
+TBW
+"""
+makeDescription(desc::DescVarArg)  = Tuple(desc) # create a description from Vararg{Symbol}
+    """
+    makeDescription(desc::Description)
+
+TBW
+"""
+makeDescription(desc::Description) = desc
     
     # default is autonomous
-    isnonautonomous(desc::Description) = :nonautonomous ∈ desc
+    """
+    isnonautonomous(desc::Description)
+
+TBW
+"""
+isnonautonomous(desc::Description) = :nonautonomous ∈ desc
 
     # --------------------------------------------------------------------------------------------------
     # Aliases for types
