@@ -1,9 +1,10 @@
 name = "ControlToolbox"
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
-authors = ["Olivier Cots", "Jean-Baptiste Caillau"]
+authors = ["Olivier Cots"]
 version = "0.1.0"
 
 [deps]
+DocumenterTools = "35a29f4d-8980-5a13-9543-d66fff28ecb8"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
@@ -12,9 +13,3 @@ Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
 [compat]
 julia = "1"
-
-[extras]
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-
-[targets]
-test = ["Test"]
