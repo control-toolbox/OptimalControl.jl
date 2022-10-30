@@ -11,6 +11,6 @@ makedocs(
 )
 
 deploydocs(
-    repo = "https://github.com/control-toolbox/ControlToolbox.jl.git",
+    repo = "github.com/control-toolbox/ControlToolbox.jl.git",
     devbranch = "main"
 )
