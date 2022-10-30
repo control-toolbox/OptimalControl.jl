@@ -65,6 +65,12 @@ ocp = OCP(L, f, t0, x0, tf, xf, 2, 1)
 U_init = U⁺ - 1e0 * ones(N - 1);
 U_init = [[U_init[i]] for i = 1:N-1];
 
+# todo: check the init
+
+# resolution with different init
+sol = solve(ocp, :descent, iterations=5, display=true)
+
+#=
 # resolution
 sol = solve(ocp, :descent, init=U_init, iterations=5, display=true)
 
@@ -73,10 +79,11 @@ sol = solve(ocp, :descent, init=U_init, iterations=5, display=true)
 @test typeof(sol) == DescentOCPSol
 
 # init
-@test typeof(ControlToolbox.ocp2descent_init(nothing, 10, 2)) == ControlToolbox.DescentInit
+@test typeof(ControlToolbox.ocp2descent_init(10, 2)) == ControlToolbox.DescentInit
 @test typeof(ControlToolbox.ocp2descent_init(U_init)) == ControlToolbox.DescentInit
 @test typeof(ControlToolbox.ocp2descent_init(DescentOCPInit(U_init))) == ControlToolbox.DescentInit
 @test typeof(ControlToolbox.ocp2descent_init(sol)) == ControlToolbox.DescentInit
+@test typeof(ControlToolbox.ocp2descent_init(t -> 6-12*t, range(t0, tf, 100))) == ControlToolbox.DescentInit
 
 @test typeof(solve(ocp, display=false, iterations=3)) == DescentOCPSol
 @test typeof(solve(ocp, grid_size=100, display=false, iterations=3)) == DescentOCPSol
@@ -84,7 +91,9 @@ sol = solve(ocp, :descent, init=U_init, iterations=5, display=true)
 @test typeof(solve(ocp, init=sol, grid_size=N, display=false, iterations=3)) == DescentOCPSol
 @test typeof(solve(ocp, init=sol, grid_size=2 * N, display=false, iterations=3)) == DescentOCPSol
 @test typeof(solve(ocp, init=DescentOCPInit(U_init), display=false, iterations=3)) == DescentOCPSol
+@test typeof(solve(ocp, init=(t -> 6-12*t), display=false, iterations=3)) == DescentOCPSol
 
 #
 @test typeof(plot(sol)) == Plots.Plot{Plots.GRBackend}
 @test typeof(plot(sol, :time, (:control, 1))) == Plots.Plot{Plots.GRBackend}
+=#

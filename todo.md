@@ -2,6 +2,7 @@
 
 ## Général
 
+- [ ] mettre la structure OCP non mutable
 - [ ] mettre dans un module à part les algos d'optimisation indépendant du point de vue contrôle optimal.
 - [ ] améliorer affichage du problème ocp : text/html ou makdown ou latex
 - [ ] ajouter une méthode indirecte avec création de la fonction de tir et calcul d'un $\lambda$ initial à partir de $p_0$. 
@@ -23,10 +24,13 @@
 
 ## Descent
 
+- [ ] ajouter une init via une fonction $t \mapsto u(t)$.
 - [ ] pouvoir choisir une grille de taille différente de la grille en init.
 - [ ] ajouter `interpolation` + `approche finition`.
 - [ ] pouvoir choisir l'intégrateur et la taille de la sous-grille si on utilise du pas fixe, sinon les tolérances.
 - [ ] généraliser le problème de contrôle que l'on peut résoudre et généraliser le calcul de l'adjoint, qui est ici explicite mais qui pourrait être implicite dans certains cas plus difficile, par exemple si on a des contraintes qui mélangent $x_0$ et $x_f$. 
+- [ ] faire un exemple avec les différentes init possibles
+- [ ] ajouter cpu time
 
 ## Tests unitaires
 
