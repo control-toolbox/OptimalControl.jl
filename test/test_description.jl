@@ -19,5 +19,5 @@ gCSD = ControlToolbox.getCompleteSolverDescription
 @test gCSD((:fixedstep, :gradient)) == (:descent, :gradient, :fixedstep)
 
 # incorrect description
-@test_throws AmbiguousDescriptionError gCSD((:ttt,))
-@test_throws AmbiguousDescriptionError gCSD((:descent, :ttt))
+@test_throws AmbiguousDescription gCSD((:ttt,))
+@test_throws AmbiguousDescription gCSD((:descent, :ttt))

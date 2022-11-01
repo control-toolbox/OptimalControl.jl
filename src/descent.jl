@@ -57,7 +57,7 @@ end
 # --------------------------------------------------------------------------------------------------
 # read the description to get the chosen methods
 # we assume the description is complete
-__update(e::Union{Nothing, Symbol}, s::Symbol, d::Description) = s ∈ d ? s : e
+update_method(e::Union{Nothing, Symbol}, s::Symbol, d::Description) = s ∈ d ? s : e
 """
 	read(method::Description)
 
@@ -66,19 +66,19 @@ TBW
 function read(method::Description)
     #
     direction = nothing
-    direction = __update(direction, :gradient, method)
-    direction = __update(direction, :bfgs, method)
+    direction = update_method(direction, :gradient, method)
+    direction = update_method(direction, :bfgs, method)
     #
     line_search = nothing
-    line_search = __update(line_search, :fixedstep, method)
-    line_search = __update(line_search, :backtracking, method)
-    line_search = __update(line_search, :bissection, method)
+    line_search = update_method(line_search, :fixedstep, method)
+    line_search = update_method(line_search, :backtracking, method)
+    line_search = update_method(line_search, :bissection, method)
     #
     return direction, line_search
 end
 
 # --------------------------------------------------------------------------------------------------
-#
+# defaults values
 __penalty_constraint() = 1e4 # the penalty term in front of final constraints
 __iterations() = 100 # number of maximal iterations
 __step_length() = nothing # the step length of the line search method
@@ -96,6 +96,9 @@ __optimalityTolerance() = 1e-8 # optimality relative tolerance for the CN1
 __stagnationTolerance() = 1e-8 # step stagnation relative tolerance
 __display() = true # print output during resolution
 __callbacks() = ()
+
+# default for interpolation of the initialization
+__init_interpolation() = (T, U) -> extrapolate(scale(interpolate(U, BSpline(Linear())), T), Line())
 
 # default for descent_solver
 __line_search() = :bissection
@@ -131,7 +134,8 @@ function solve_by_descent(
     optimalityTolerance::Number=__optimalityTolerance(),
     stagnationTolerance::Number=__stagnationTolerance(),
     display::Bool=__display(),
-    callbacks::CTCallbacks=__callbacks()
+    callbacks::CTCallbacks=__callbacks(),
+    init_interpolation::Function=__init_interpolation()
 )
 
     # --------------------------------------------------------------------------------------------------
@@ -149,7 +153,7 @@ function solve_by_descent(
     # --------------------------------------------------------------------------------------------------
     # step 1: transcription from ocp to descent problem and init
     #
-    descent_init, grid = ocp2descent_init(ocp, init, grid)
+    descent_init, grid = ocp2descent_init(ocp, init, grid, init_interpolation)
     descent_problem = ocp2descent_problem(ocp, grid, penalty_constraint)
 
     # --------------------------------------------------------------------------------------------------
@@ -210,24 +214,86 @@ end
 
 # --------------------------------------------------------------------------------------------------
 # step 1: transcription of the initialization
-# this step depends on the type of the init
-__grid_size() = 200
-__grid(t0, tf, N) = range(t0, tf, N+1)
-__init(m, N) = [zeros(m) for i in 1:N]
-function ocp2descent_init(ocp::RegularOCPFinalConstraint, init::Nothing, grid::Nothing)
+
+function __check_grid_validity(ocp::RegularOCPFinalConstraint, T::Times)
+    # T: t0 ≤ t1 ≤ ... ≤ tf
     t0 = ocp.initial_time
     tf = ocp.final_time
+    valid = true
+    valid = (t0==T[1]) & valid
+    valid = (tf==T[end]) & valid
+    valid = (T==sort(T)) & valid
+    return valid
+end
+
+function __check_grid_validity(U::Controls, T::Times)
+    # length(U) == length(T) - 1
+    return length(U) == (length(T) - 1)
+end
+
+# default values
+__grid_size() = 201
+function __grid(ocp::RegularOCPFinalConstraint, N::Integer=__grid_size()) 
+    t0 = ocp.initial_time
+    tf = ocp.final_time
+    return range(t0, tf, N)
+end
+function __init(ocp::RegularOCPFinalConstraint, N::Integer=__grid_size())
     m = ocp.control_dimension
-    N = __grid_size()
-    return DescentInit(__init(m, N)), __grid(t0, tf, N) # default init
+    return [zeros(m) for i in 1:N-1]
+end
+
+#
+function my_interpolation(interp::Function, T::Times, U::Controls, T_::Times)
+    u_lin = interp(T, U)
+    return u_lin.(T_)
+end
+
+# init=nothing, grid=nothing => init=default, grid=range(t0, tf, N), with N=__grid_size()
+function ocp2descent_init(ocp::RegularOCPFinalConstraint, init::Nothing, grid::Nothing, args...)
+    return DescentInit(__init(ocp)), __grid(ocp)
+end
+
+# init=nothing, grid=T => init=zeros(m, N-1), grid=T, with N=length(T) (check validity)
+function ocp2descent_init(ocp::RegularOCPFinalConstraint, init::Nothing, grid::Times, args...)
+    if !__check_grid_validity(ocp, grid)
+        throw(InconsistentArgument("grid argument is inconsistent with ocp argument"))
+    end
+    return DescentInit(__init(ocp, length(grid))), grid
+end
+
+# init=U, grid=nothing => init=U, grid=range(t0, tf, N), with N=__grid_size()
+function ocp2descent_init(ocp::RegularOCPFinalConstraint, init::Controls, grid::Nothing, args...)
+    return DescentInit(init), __grid(ocp, length(init)+1)
+end
+
+# init=U, grid=T => init=U, grid=T (check validity with ocp and with init)
+function ocp2descent_init(ocp::RegularOCPFinalConstraint, init::Controls, grid::Times, args...)
+    if !__check_grid_validity(ocp, grid)
+        throw(InconsistentArgument("grid argument is inconsistent with ocp argument"))
+    end
+    if !__check_grid_validity(init, grid)
+        throw(InconsistentArgument("grid argument is inconsistent with init argument"))
+    end
+    return DescentInit(init), grid
+end
+
+# init=(T,U), grid=nothing => init=U, grid=range(t0, tf, N), with N=__grid_size() (check validity with ocp and with U)
+function ocp2descent_init(ocp::RegularOCPFinalConstraint, init::Tuple{Times,Controls}, grid::Nothing, interp::Function)
+    T = init[1]
+    U = init[2]
+    if !__check_grid_validity(ocp, T)
+        throw(InconsistentArgument("init[1] argument is inconsistent with ocp argument"))
+    end
+    if !__check_grid_validity(U, T)
+        throw(InconsistentArgument("init[1] argument is inconsistent with init[2] argument"))
+    end
+    T_ = __grid(ocp) # default grid
+    U_ = my_interpolation(interp, T[1:end-1], U, T_)
+    return DescentInit(U_[1:end-1]), T_
 end
 
 
-#ocp2descent_init(u::Function, T::Times) =
-#    DescentInit([ [u(T[i])] for i in 1:length(T)-1]) 
-#    ocp2descent_init(U::Controls) = DescentInit(U)
-#ocp2descent_init(init::DescentOCPInit) = DescentInit(init.U)
-#ocp2descent_init(init::DescentOCPSol) = DescentInit(init.U)
 
 # --------------------------------------------------------------------------------------------------
 # Utils for the transcription from ocp to descent problem
@@ -477,10 +543,10 @@ function descent_solver(
 
     # test if the chosen method are correct
     if line_search ∉ (:backtracking, :fixedstep, :bissection)
-        throw(MethodValueError(line_search))
+        throw(IncorrectMethod(line_search))
     end
     if direction ∉ (:gradient, :bfgs)
-        throw(MethodValueError(direction))
+        throw(IncorrectMethod(direction))
     end
 
     # general descent solver data
@@ -519,7 +585,7 @@ function descent_solver(
             sᵢ = bissection(xᵢ, dᵢ, gᵢ, f, ∇f, s₀)
             #else # plus tard, on pourra peut-être changer de line search en cours d'algo
             #     # donc je laisse ceci malgré le test déjà fait. Idem pour la direction.
-            #    throw(MethodValueError(line_search))
+            #    throw(IncorrectMethod(line_search))
         end
 
         # iterate update 
@@ -539,7 +605,7 @@ function descent_solver(
         elseif direction == :gradient
             dᵢ = -gᵢ₊₁
             #else
-            #    throw(MethodValueError(direction))
+            #    throw(IncorrectMethod(direction))
         end
 
         # update of the current gradient

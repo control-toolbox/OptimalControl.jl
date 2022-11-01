@@ -1,4 +1,5 @@
 # --------------------------------------------------------------------------------------------------
+# descent solver
 #
 f(x) = (1 / 2) * norm(x)^2
 g(x) = x
@@ -35,19 +36,14 @@ ds = ControlToolbox.descent_solver(dp, di, direction=:bfgs, line_search=:fixedst
 
 # --------------------------------------------------------------------------------------------------
 #
-
 direction, line_search = ControlToolbox.read((:gradient, :bissection, :tata))
 @test direction === :gradient
 @test line_search === :bissection
 
 # --------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 #
-# ocp solution to use a close init to the solution
-N = 101
-U⁺ = range(6.0, stop=-6.0, length=N); # solution
-U⁺ = U⁺[1:end-1];
-
-# ocp description
+# ocp
 t0 = 0.0                # t0 is fixed
 tf = 1.0                # tf is fixed
 x0 = [-1.0; 0.0]        # the initial condition is fixed
@@ -57,43 +53,85 @@ A = [0.0 1.0
 B = [0.0; 1.0]
 f(x, u) = A * x + B * u[1];  # dynamics
 L(x, u) = 0.5 * u[1]^2   # integrand of the Lagrange cost
-
-# ocp definition
 ocp = OCP(L, f, t0, x0, tf, xf, 2, 1)
 
-# initial iterate
-U_init = U⁺ - 1e0 * ones(N - 1);
-U_init = [[U_init[i]] for i = 1:N-1];
+# solution
+u_sol(t) = 6.0-12.0*t
 
-# todo: check the init
+# --------------------------------------------------------------------------------------------------
+#
+# initialization
+ocp_c = ControlToolbox.convert(ocp, RegularOCPFinalConstraint)
+ocp2descent_init = ControlToolbox.ocp2descent_init
+__grid_size = ControlToolbox.__grid_size
+__init = ControlToolbox.__init
+__grid = ControlToolbox.__grid
+__init_interpolation = ControlToolbox.__init_interpolation
+
+# init=nothing, grid=nothing => init=zeros(m, N-1), grid=range(t0, tf, N), with N=__grid_size()
+init_, grid_ = ocp2descent_init(ocp_c, nothing, nothing)
+@test init_.x == ControlToolbox.DescentInit(__init(ocp_c)).x
+@test grid_ == __grid(ocp_c)
+
+# init=nothing, grid=T => init=zeros(m, N-1), grid=T, with N=length(T) (check validity)
+N = floor(Int64, __grid_size()/2) # pour avoir un N différent de __grid_size()
+grid = range(t0, tf, N)
+init_, grid_ = ocp2descent_init(ocp_c, nothing, grid)
+N = length(grid)
+@test init_.x == ControlToolbox.DescentInit(__init(ocp_c, N)).x
+@test grid_ == grid
+@test_throws InconsistentArgument ocp2descent_init(ocp_c, nothing, range(t0-1, tf, N))
+@test_throws InconsistentArgument ocp2descent_init(ocp_c, nothing, range(t0, tf+1, N))
+@test_throws InconsistentArgument ocp2descent_init(ocp_c, nothing, range(tf, t0, N))
+
+# init=U, grid=nothing => init=U, grid=range(t0, tf, N), with N=__grid_size()
+N = floor(Int64, __grid_size()/2) # pour avoir un N différent de __grid_size()
+T = range(t0, tf, N)
+U = [[u_sol(T[i])-1.0] for i = 1:N-1]
+init_, grid_ = ocp2descent_init(ocp_c, U, nothing)
+@test init_.x == ControlToolbox.DescentInit(U).x
+@test grid_ == range(t0, tf, length(U)+1)
+
+# init=U, grid=T => init=U, grid=T (check validity with ocp and with init)
+N = floor(Int64, __grid_size()/2) # pour avoir un N différent de __grid_size()
+T = range(t0, tf, N)
+U = [[u_sol(T[i])-1.0] for i = 1:N-1]
+init_, grid_ = ocp2descent_init(ocp_c, U, T)
+@test init_.x == ControlToolbox.DescentInit(U).x
+@test grid_ == T
+@test_throws InconsistentArgument ocp2descent_init(ocp_c, U, range(t0-1, tf, N))
+@test_throws InconsistentArgument ocp2descent_init(ocp_c, U, range(t0, tf+1, N))
+@test_throws InconsistentArgument ocp2descent_init(ocp_c, U, range(tf, t0, N))
+@test_throws InconsistentArgument ocp2descent_init(ocp_c, U, range(t0, tf, 2*N))
+
+# init=(T,U), grid=nothing => init=U, grid=range(t0, tf, N), with N=__grid_size() (check validity with ocp and with U)
+N = floor(Int64, __grid_size()/2) # pour avoir un N différent de __grid_size()
+T = range(t0, tf, N)
+U = [[u_sol(T[i])-1.0] for i = 1:N-1]
+init_, grid_ = ocp2descent_init(ocp_c, (T,U), nothing, __init_interpolation())
+@test init_.x ≈ ControlToolbox.DescentInit([[u_sol(grid_[i])-1.0] for i = 1:__grid_size()-1]).x atol=1e-4
+@test grid_ == __grid(ocp_c)
+@test_throws InconsistentArgument ocp2descent_init(ocp_c, (range(t0-1, tf, N), U), nothing, __init_interpolation())
+@test_throws InconsistentArgument ocp2descent_init(ocp_c, (range(t0, tf+1, N), U), nothing, __init_interpolation())
+@test_throws InconsistentArgument ocp2descent_init(ocp_c, (range(tf, t0, N), U), nothing, __init_interpolation())
+@test_throws InconsistentArgument ocp2descent_init(ocp_c, (range(t0, tf, 2*N), U), nothing, __init_interpolation())
+
+# --------------------------------------------------------------------------------------------------
+# resolution
+#
+# init, grid
+N = floor(Int64, __grid_size()/2)
+T = range(t0, tf, N)
+U = [[u_sol(T[i])-1.0] for i = 1:N-1]
 
 # resolution with different init
-sol = solve(ocp, :descent, iterations=5, display=true)
+common_args = (iterations=5, display=true)
+sol = solve(ocp, :descent, init=nothing, grid=nothing; common_args...); @test typeof(sol) == DescentOCPSol;
+sol = solve(ocp, :descent, init=nothing, grid=T; common_args...); @test typeof(sol) == DescentOCPSol;
+sol = solve(ocp, :descent, init=U, grid=nothing; common_args...); @test typeof(sol) == DescentOCPSol;
+sol = solve(ocp, :descent, init=U, grid=T; common_args...); @test typeof(sol) == DescentOCPSol;
+sol = solve(ocp, :descent, init=(T,U), grid=nothing; common_args...); @test typeof(sol) == DescentOCPSol;
 
-#=
-# resolution
-sol = solve(ocp, :descent, init=U_init, iterations=5, display=true)
-
-#
-@test typeof(DescentOCPInit(U_init)) == DescentOCPInit
-@test typeof(sol) == DescentOCPSol
-
-# init
-@test typeof(ControlToolbox.ocp2descent_init(10, 2)) == ControlToolbox.DescentInit
-@test typeof(ControlToolbox.ocp2descent_init(U_init)) == ControlToolbox.DescentInit
-@test typeof(ControlToolbox.ocp2descent_init(DescentOCPInit(U_init))) == ControlToolbox.DescentInit
-@test typeof(ControlToolbox.ocp2descent_init(sol)) == ControlToolbox.DescentInit
-@test typeof(ControlToolbox.ocp2descent_init(t -> 6-12*t, range(t0, tf, 100))) == ControlToolbox.DescentInit
-
-@test typeof(solve(ocp, display=false, iterations=3)) == DescentOCPSol
-@test typeof(solve(ocp, grid_size=100, display=false, iterations=3)) == DescentOCPSol
-@test typeof(solve(ocp, init=sol, display=false, iterations=3)) == DescentOCPSol
-@test typeof(solve(ocp, init=sol, grid_size=N, display=false, iterations=3)) == DescentOCPSol
-@test typeof(solve(ocp, init=sol, grid_size=2 * N, display=false, iterations=3)) == DescentOCPSol
-@test typeof(solve(ocp, init=DescentOCPInit(U_init), display=false, iterations=3)) == DescentOCPSol
-@test typeof(solve(ocp, init=(t -> 6-12*t), display=false, iterations=3)) == DescentOCPSol
-
-#
+# plots
 @test typeof(plot(sol)) == Plots.Plot{Plots.GRBackend}
 @test typeof(plot(sol, :time, (:control, 1))) == Plots.Plot{Plots.GRBackend}
-=#
