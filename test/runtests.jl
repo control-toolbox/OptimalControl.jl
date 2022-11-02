@@ -5,14 +5,14 @@ using LinearAlgebra
 
 @testset verbose = true showtiming = true "Control Toolbox" begin
     for name in (
-        #"utils", 
-        #"description", 
-        #"callbacks", 
-        #"exceptions", 
-        #"ocp", 
-        #"convert", 
+        "utils", 
+        "description", 
+        "callbacks", 
+        "exceptions", 
+        "ocp", 
+        "convert", 
         "descent", 
-        #"flows"
+        "flows"
         )
         @testset "$name" begin
             include("test_$name.jl")

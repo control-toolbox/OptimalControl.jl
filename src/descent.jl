@@ -98,7 +98,9 @@ __display() = true # print output during resolution
 __callbacks() = ()
 
 # default for interpolation of the initialization
-__init_interpolation() = (T, U) -> extrapolate(scale(interpolate(U, BSpline(Linear())), T), Line())
+#__init_interpolation() = (T, U) -> extrapolate(scale(interpolate(U, BSpline(Linear())), T), Line())
+__init_interpolation() = (T, U) -> linear_interpolation(T, U, extrapolation_bc = Line())
+#extrapolate(interpolate(T, U, BSpline(Linear())), Line())
 
 # default for descent_solver
 __line_search() = :bissection
@@ -263,8 +265,11 @@ function ocp2descent_init(ocp::RegularOCPFinalConstraint, init::Nothing, grid::T
 end
 
 # init=U, grid=nothing => init=U, grid=range(t0, tf, N), with N=__grid_size()
-function ocp2descent_init(ocp::RegularOCPFinalConstraint, init::Controls, grid::Nothing, args...)
-    return DescentInit(init), __grid(ocp, length(init)+1)
+function ocp2descent_init(ocp::RegularOCPFinalConstraint, U::Controls, grid::Nothing, interp::Function)
+    T  = __grid(ocp, length(U)+1)
+    T_ = __grid(ocp)
+    U_ = my_interpolation(interp, T[1:end-1], U, T_)
+    return DescentInit(U_[1:end-1]), T_
 end
 
 # init=U, grid=T => init=U, grid=T (check validity with ocp and with init)
@@ -293,7 +298,55 @@ function ocp2descent_init(ocp::RegularOCPFinalConstraint, init::Tuple{Times,Cont
     return DescentInit(U_[1:end-1]), T_
 end
 
+# init=(T1,U), grid=T2 => init=U, grid=T2 (check validity with ocp (T1, T2) and with U (T1))
+function ocp2descent_init(ocp::RegularOCPFinalConstraint, init::Tuple{Times,Controls}, grid::Times, interp::Function)
+    T1 = init[1]
+    U  = init[2]
+    T2 = grid
+    if !__check_grid_validity(ocp, T2)
+        throw(InconsistentArgument("grid argument is inconsistent with ocp argument"))
+    end
+    if !__check_grid_validity(ocp, T1)
+        throw(InconsistentArgument("init[1] argument is inconsistent with ocp argument"))
+    end
+    if !__check_grid_validity(U, T1)
+        throw(InconsistentArgument("init[1] argument is inconsistent with init[2] argument"))
+    end
+    U_ = my_interpolation(interp, T1[1:end-1], U, T2)
+    return DescentInit(U_[1:end-1]), T2
+end
 
+# init=S, grid=nothing => init=S.U, grid=range(t0, tf, N), with N=__grid_size()
+function ocp2descent_init(ocp::RegularOCPFinalConstraint, S::DescentOCPSol, grid::Nothing, interp::Function)
+    T_ = __grid(ocp) # default grid
+    U_ = my_interpolation(interp, S.T[1:end-1], S.U, T_)
+    return DescentInit(U_[1:end-1]), T_
+end
+
+# init=S, grid=T => init=S.U, grid=T (check validity with ocp)
+function ocp2descent_init(ocp::RegularOCPFinalConstraint, S::DescentOCPSol, T::Times, interp::Function)
+    if !__check_grid_validity(ocp, T)
+        throw(InconsistentArgument("grid argument is inconsistent with ocp argument"))
+    end
+    U_ = my_interpolation(interp, S.T[1:end-1], S.U, T)
+    return DescentInit(U_[1:end-1]), T
+end
+
+# init=u, grid=nothing => init=u(T), grid=T=range(t0, tf, N), with N=__grid_size()
+function ocp2descent_init(ocp::RegularOCPFinalConstraint, u::Function, grid::Nothing, args...)
+    T = __grid(ocp) # default grid
+    U = u.(T)
+    return DescentInit(U[1:end-1]), T
+end
+
+# init=u, grid=T => init=u(T), grid=T (check validity with ocp)
+function ocp2descent_init(ocp::RegularOCPFinalConstraint, u::Function, T::Times, args...)
+    if !__check_grid_validity(ocp, T)
+        throw(InconsistentArgument("grid argument is inconsistent with ocp argument"))
+    end
+    U = u.(T)
+    return DescentInit(U[1:end-1]), T
+end
 
 # --------------------------------------------------------------------------------------------------
 # Utils for the transcription from ocp to descent problem
@@ -526,10 +579,7 @@ function descent_solver(
     cbs_stop = (StopCallback(stop_iterations, priority=0), cbs_stop...)
     cbs_stop = get_priority_stop_callbacks((cbs_stop..., callbacks...))
     function mystop(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
-        stop = false
-        stopping = nothing
-        success = nothing
-        message = nothing
+        stop = false; stopping = nothing; success = nothing; message = nothing
         for cb in cbs_stop
             if !stop
                 stop, stopping, message, success = cb(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
@@ -554,6 +604,7 @@ function descent_solver(
     f = sdp.f
     xᵢ = init.x
     s₀ = step_length
+    sᵢ = s₀
     fᵢ = f(xᵢ)
 
     # for BFGS and steepest descent (ie gradient method)
@@ -567,13 +618,15 @@ function descent_solver(
     # init print
     i = 0
     display ? (myprint(i, 0.0, dᵢ, xᵢ, gᵢ, fᵢ), println()) : nothing
-    i += 1
+    
+    # stopping criteria
+    stop = false; stopping = nothing; success = nothing; message = nothing
+    stop, stopping, message, success = mystop(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ, ng₀, optimalityTolerance, absoluteTolerance, stagnationTolerance, iterations)
+    if !stop
+        i += 1
+    end
 
     #
-    stop = false
-    stopping = nothing
-    success = nothing
-    message = nothing
     while !stop
 
         # step length computation
