@@ -20,4 +20,4 @@ ocp2 = OCP(L, f, t0, x0, tf, xf, 2, 1)
 
 # resolution
 sol1 = solve(ocp1)
-@profview sol2 = solve(ocp2);
+sol2 = solve(ocp2);

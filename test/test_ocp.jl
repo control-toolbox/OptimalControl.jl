@@ -11,7 +11,7 @@ L(x, u) = 0.5 * u[1]^2   # integrand of the Lagrange cost
 c(x) = x - xf            # final condition
 
 #
-N = 101
+N = 201
 U⁺ = range(6.0, stop=-6.0, length=N); # solution
 U⁺ = U⁺[1:end-1];
 U_init = U⁺ - 1e0 * ones(N - 1);
@@ -23,7 +23,7 @@ ocp = OCP(L, f, t0, x0, tf, c, 2, 1, 2)
 @test typeof(ocp) == RegularOCPFinalConstraint
 @test print(ocp) === nothing
 
-sol = solve(ocp, :bfgs, :backtracking, init=U_init, grid_size=N, display=false)
+sol = solve(ocp, :bfgs, :backtracking, display=false)
 @test abs.(ControlToolbox.vec2vec(sol.U) - Vector(U⁺)) ≈ zeros(Float64, N - 1) atol = 1.0
 
 # RegularOCPFinalCondition
@@ -32,5 +32,5 @@ ocp = OCP(L, f, t0, x0, tf, xf, 2, 1)
 @test typeof(ocp) == RegularOCPFinalCondition
 @test print(ocp) === nothing
 
-sol = solve(ocp, :bfgs, :backtracking, init=U_init, grid_size=N, display=false)
+sol = solve(ocp, :bfgs, :backtracking, display=false)
 @test abs.(ControlToolbox.vec2vec(sol.U) - Vector(U⁺)) ≈ zeros(Float64, N - 1) atol = 1.0
