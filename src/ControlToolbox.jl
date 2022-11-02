@@ -3,6 +3,7 @@ module ControlToolbox
 using ForwardDiff: jacobian, gradient, ForwardDiff # automatic differentiation
 using LinearAlgebra # for the norm for instance
 using Printf # to print iterations results
+using Interpolations
 
 import Plots: plot, plot!, Plots # import instead of using to overload the plot and plot! functions, to plot ocp solution
 
@@ -36,9 +37,10 @@ export PrintCallback
 export StopCallback
 
 export CTException
-export AmbiguousDescriptionError
-export MethodValueError
+export AmbiguousDescription
+export IncorrectMethod
+export InconsistentArgument
 
-#export plot, plot! # pas besoin semble-t-il car je rédéfinis Plots.plot et Plots.plot!
+export plot, plot!
 
 end

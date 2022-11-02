@@ -14,7 +14,7 @@ const Dimension = Integer
 abstract type OptimalControlProblem end
 
 # Regular OCP with final constrainst
-mutable struct RegularOCPFinalConstraint <: OptimalControlProblem
+struct RegularOCPFinalConstraint <: OptimalControlProblem
     description::Description
     state_dimension::Union{Dimension,Nothing}
     control_dimension::Union{Dimension,Nothing}
@@ -28,7 +28,7 @@ mutable struct RegularOCPFinalConstraint <: OptimalControlProblem
 end
 
 # Regular OCP with final condition
-mutable struct RegularOCPFinalCondition <: OptimalControlProblem
+struct RegularOCPFinalCondition <: OptimalControlProblem
     description::Description
     state_dimension::Union{Dimension,Nothing}
     control_dimension::Union{Dimension,Nothing}

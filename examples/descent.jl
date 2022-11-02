@@ -1,11 +1,6 @@
 using ControlToolbox
 using Plots
 
-# ocp solution to use a close init to the solution
-N = 1001
-U⁺ = range(6.0, stop=-6.0, length=N); # solution
-U⁺ = U⁺[1:end-1];
-
 # ocp description
 t0 = 0.0                # t0 is fixed
 tf = 1.0                # tf is fixed
@@ -24,8 +19,10 @@ ocp = OCP(L, f, t0, x0, tf, xf, 2, 1, :autonomous)
 display(ocp)
 
 # initial iterate
-U_init = U⁺ - 1e0 * ones(N - 1);
-U_init = [[U_init[i]] for i = 1:N-1];
+u_sol(t) = 6.0-12.0*t # solution
+N = 501
+T = range(t0, tf, N)
+U_init = [[u_sol(T[i])-1.0] for i = 1:N-1]
 
 # resolution
 sol = solve(ocp, init=U_init)
