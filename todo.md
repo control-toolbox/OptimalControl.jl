@@ -26,7 +26,7 @@
 
 ## Descent
 
-- [ ] Finaliser init : ajouter une init via une fonction $t \mapsto u(t)$, via une solution, interpolation... Faire des tests unitaires et un exemple.
+- [x] Finaliser init : ajouter une init via une fonction $t \mapsto u(t)$, via une solution, interpolation... Faire des tests unitaires et un exemple.
 - [ ] pouvoir choisir l'intégrateur et la taille de la sous-grille si on utilise du pas fixe, sinon les tolérances.
 - [ ] ajouter cpu time
 - [ ] revoir les plots pour gérer mieux quand y'aura d'autres solveurs. Il faut une méthode ne prenant pas une solution en argument mais `T, X, U, P`.
@@ -37,7 +37,7 @@
 
 ## Tests unitaires
 
-- [ ] faire 0 itérations
+- [x] faire 0 itérations
 - [ ] revoir les tests d'appels au solveur
 - [ ] trouver un exemple où la `bissection` a une utilité, cf covering.
 - [ ] trouver un exemple tel que lors d'une itération, pour `bfgs`, on n'a pas une direction de descente.
