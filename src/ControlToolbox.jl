@@ -3,7 +3,7 @@ module ControlToolbox
 using ForwardDiff: jacobian, gradient, ForwardDiff # automatic differentiation
 using LinearAlgebra # for the norm for instance
 using Printf # to print iterations results
-using Interpolations
+using Interpolations: linear_interpolation, Line, Interpolations
 
 import Plots: plot, plot!, Plots # import instead of using to overload the plot and plot! functions, to plot ocp solution
 
@@ -17,7 +17,9 @@ include("callbacks.jl")
 include("exceptions.jl")
 include("ocp.jl")
 include("convert.jl")
-include("descent.jl")
+include("Optim.jl")
+include("optim/descent.jl")
+include("ocp-descent.jl")
 
 export OCP # method to construct an ocp
 export solve # solver of optimal control problems

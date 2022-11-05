@@ -1,5 +1,4 @@
 module Flows
-
 # todo: this could be a package
 
 # Packages needed: 
@@ -21,7 +20,7 @@ isempty(p::OrdinaryDiffEq.SciMLBase.NullParameters) = true
 __abstol() = 1e-10
 __reltol() = 1e-10
 __saveat() = []
-__method() = OrdinaryDiffEq.Tsit5()
+__alg() = OrdinaryDiffEq.Tsit5()
 
 # -------------------------------------------------------------------------------------------------- 
 # A desription is a tuple of symbols
