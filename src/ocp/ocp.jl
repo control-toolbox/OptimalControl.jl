@@ -41,20 +41,6 @@ struct RegularOCPFinalCondition <: OptimalControlProblem
 end
 
 # Creation of a regular OCP with final constrainst
-"""
-	OCP(Lagrange_cost      :: Function, 
-	dynamics                    :: Function, 
-	initial_time                :: Time,
-	initial_condition           :: State,
-	final_time                  :: Time,
-	final_constraint            :: Function,
-	state_dimension             :: Dimension,
-	control_dimension           :: Dimension,
-	final_constraint_dimension  :: Dimension,
-	description...)
-
-TBW
-"""
 function OCP(
     Lagrange_cost::Function,
     dynamics::Function,
@@ -67,49 +53,20 @@ function OCP(
     final_constraint_dimension::Dimension,
     description...,
 )
-    ocp = RegularOCPFinalConstraint(makeDescription(description...), state_dimension, control_dimension, final_constraint_dimension, Lagrange_cost, dynamics, initial_time, initial_condition, final_time, final_constraint)
+    ocp = RegularOCPFinalConstraint(makeDescription(description...), state_dimension, control_dimension, 
+        final_constraint_dimension, Lagrange_cost, dynamics, initial_time, initial_condition, 
+        final_time, final_constraint)
     return ocp
 end
 
 # Creation of a regular OCP with final condition
-"""
-	OCP(Lagrange_cost      :: Function, 
-	dynamics                    :: Function, 
-	initial_time                :: Time,
-	initial_condition           :: State,
-	final_time                  :: Time,
-	final_condition             :: State,
-	state_dimension             :: Dimension,
-	control_dimension           :: Dimension,
-	description...)
-
-TBW
-"""
-function OCP(Lagrange_cost::Function, dynamics::Function, initial_time::Time, initial_condition::State, final_time::Time, final_condition::State, state_dimension::Dimension, control_dimension::Dimension, description...)
-    ocp = RegularOCPFinalCondition(makeDescription(description...), state_dimension, control_dimension, Lagrange_cost, dynamics, initial_time, initial_condition, final_time, final_condition)
+function OCP(Lagrange_cost::Function, dynamics::Function, initial_time::Time, initial_condition::State,
+            final_time::Time, final_condition::State, state_dimension::Dimension, 
+            control_dimension::Dimension, description...)
+    ocp = RegularOCPFinalCondition(makeDescription(description...), state_dimension, control_dimension, 
+            Lagrange_cost, dynamics, initial_time, initial_condition, final_time, final_condition)
     return ocp
 end
-
-#= # instantiation of the ocp: choose the right type depending upon the inputs
-# todo : à voir de ce que l'on fait de cette méthode avec des arguments en keywords
-function OCP(   description...; # keyword arguments from here
-				control_dimension           :: Dimension,
-				Lagrange_cost               :: Function, 
-				dynamics                    :: Function, 
-				initial_condition           :: State, 
-				final_time                  :: Time, 
-				final_constraint            :: Function, # optional from here
-				final_constraint_dimension  :: Union{Dimension, Nothing}=nothing,
-				state_dimension             :: Union{Dimension, Nothing}=nothing,
-				initial_time                :: Time=0.0)
-
-	# create the right ocp type depending on inputs
-	state_dimension = state_dimension===nothing ? length(initial_condition) : state_dimension 
-	ocp = RegularOCPFinalConstraint(makeDescription(description...), state_dimension, control_dimension, 
-				final_constraint_dimension, Lagrange_cost, dynamics, initial_time, initial_condition, 
-				final_time, final_constraint)
-	return ocp
-end =#
 
 # --------------------------------------------------------------------------------------------------
 # Initialization
@@ -121,13 +78,20 @@ abstract type OptimalControlSolution end
 
 # --------------------------------------------------------------------------------------------------
 # Resolution
-"""
-	solve(ocp::OptimalControlProblem, description...; kwargs...)
 
-TBW
-"""
+# by order of preference
+algorithmes = ()
+
+# descent methods
+algorithmes = add(algorithmes, (:descent, :bfgs, :bissection))
+algorithmes = add(algorithmes, (:descent, :bfgs, :backtracking))
+algorithmes = add(algorithmes, (:descent, :bfgs, :fixedstep))
+algorithmes = add(algorithmes, (:descent, :gradient, :bissection))
+algorithmes = add(algorithmes, (:descent, :gradient, :backtracking))
+algorithmes = add(algorithmes, (:descent, :gradient, :fixedstep))
+
 function solve(ocp::OptimalControlProblem, description...; kwargs...)
-    method = getCompleteSolverDescription(makeDescription(description...))
+    method = getFullDescription(makeDescription(description...), algorithmes)
     # if no error before, then the method is correct: no need of else
     if :descent in method
         return solve_by_descent(ocp, method; kwargs...)

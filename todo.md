@@ -1,5 +1,9 @@
 # Todo list
 
+* voir ce que j'exporte vraiment depuis ControlToolbox
+* ne mettre que ce qui est indispensable dans les using
+* utiliser Recipe au lieu de plot pour l'affichage.
+
 ## Général
 
 - [ ] dans flow, on passe un `kwargs_flow` qui a la priorité car mis à droite. Ce n'est pas le comportement voulu. On doit mettre les options par défaut dans `Flow` puis les options de `f` sont prioritaires.
