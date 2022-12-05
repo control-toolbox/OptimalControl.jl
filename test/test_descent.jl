@@ -3,7 +3,7 @@
 #
 f(x) = (1 / 2) * norm(x)^2
 g(x) = x
-dp = ControlToolbox.DescentProblem(g, f)
+dp = ControlToolbox.DescentProblem(f, g)
 x0 = [1.0; 0.0]
 di = ControlToolbox.DescentInit(x0)
 s = [0.0; 0.0]

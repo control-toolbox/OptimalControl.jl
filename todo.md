@@ -1,7 +1,12 @@
 # Todo list
 
+* voir ce que j'exporte vraiment depuis ControlToolbox
+* ne mettre que ce qui est indispensable dans les using
+* utiliser Recipe au lieu de plot pour l'affichage.
+
 ## Général
 
+- [ ] dans flow, on passe un `kwargs_flow` qui a la priorité car mis à droite. Ce n'est pas le comportement voulu. On doit mettre les options par défaut dans `Flow` puis les options de `f` sont prioritaires.
 - [ ] mettre dans un module à part les algos d'optimisation indépendant du point de vue contrôle optimal.
 - [ ] ajouter des formulations d'ocp.
 - [ ] faire un callback pour afficher la solution au cours des itérations avec une superposition de n plots par exemple et la possibilité de rejouer en mode player les itérations.
@@ -26,7 +31,7 @@
 
 ## Descent
 
-- [ ] Finaliser init : ajouter une init via une fonction $t \mapsto u(t)$, via une solution, interpolation... Faire des tests unitaires et un exemple.
+- [x] Finaliser init : ajouter une init via une fonction $t \mapsto u(t)$, via une solution, interpolation... Faire des tests unitaires et un exemple.
 - [ ] pouvoir choisir l'intégrateur et la taille de la sous-grille si on utilise du pas fixe, sinon les tolérances.
 - [ ] ajouter cpu time
 - [ ] revoir les plots pour gérer mieux quand y'aura d'autres solveurs. Il faut une méthode ne prenant pas une solution en argument mais `T, X, U, P`.
@@ -37,7 +42,7 @@
 
 ## Tests unitaires
 
-- [ ] faire 0 itérations
+- [x] faire 0 itérations
 - [ ] revoir les tests d'appels au solveur
 - [ ] trouver un exemple où la `bissection` a une utilité, cf covering.
 - [ ] trouver un exemple tel que lors d'une itération, pour `bfgs`, on n'a pas une direction de descente.
