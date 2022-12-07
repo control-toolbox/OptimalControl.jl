@@ -344,16 +344,16 @@ function ocp2descent_problem(ocp::RegularOCPFinalConstraint, grid::Times, penalt
 
     # state flow
     vf(t, x, u) = isnonautonomous(desc) ? dy(t, x, u) : dy(x, u)
-    f = Flow(VectorField(vf), :nonautonomous) # we always give a non autonomous Vector Field
+    f = flow(VectorField(vf), :nonautonomous) # we always give a non autonomous Vector Field
 
     # augmented state flow
     vfa(t, x, u) = isnonautonomous(desc) ? [dy(t, x[1:end-1], u)[:]; co(t, x[1:end-1], u)] : [dy(x[1:end-1], u)[:]; co(x[1:end-1], u)]
-    fa = Flow(VectorField(vfa), :nonautonomous) # we always give a non autonomous Vector Field
+    fa = flow(VectorField(vfa), :nonautonomous) # we always give a non autonomous Vector Field
 
     # state-costate flow
     p⁰ = -1.0
     H(t, x, p, u) = isnonautonomous(desc) ? p⁰ * co(t, x, u) + p' * dy(t, x, u) : p⁰ * co(x, u) + p' * dy(x, u)
-    fh = Flow(Hamiltonian(H), :nonautonomous) # we always give a non autonomous Hamiltonian
+    fh = flow(Hamiltonian(H), :nonautonomous) # we always give a non autonomous Hamiltonian
 
     # to compute the gradient of the function by the adjoint method,
     # we need the partial derivative of the Hamiltonian wrt to the control
@@ -417,12 +417,12 @@ function descent2ocp_solution(sd_sol::DescentSol, ocp::RegularOCPFinalConstraint
 
     # flow for state
     vf(t, x, u) = isnonautonomous(desc) ? dy(t, x, u) : dy(x, u)
-    f = Flow(VectorField(vf), :nonautonomous) # we always give a non autonomous Vector Field
+    f = flow(VectorField(vf), :nonautonomous) # we always give a non autonomous Vector Field
 
     # flow for state-adjoint
     p⁰ = -1.0
     H(t, x, p, u) = isnonautonomous(desc) ? p⁰ * co(t, x, u) + p' * dy(t, x, u) : p⁰ * co(x, u) + p' * dy(x, u)
-    fh = Flow(Hamiltonian(H), :nonautonomous) # we always give a non autonomous Hamiltonian
+    fh = flow(Hamiltonian(H), :nonautonomous) # we always give a non autonomous Hamiltonian
 
     # get state and adjoint
     T = grid

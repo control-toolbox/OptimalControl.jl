@@ -14,7 +14,9 @@ import Plots: plot, plot!, Plots # import instead of using to overload the plot 
 Jac(f::Function, x) = ForwardDiff.jacobian(f, x)
 
 #
-include("flows/Flows.jl"); using .Flows
+# dev packages
+using Flows
+#
 #
 include("common/callbacks.jl")
 include("common/description.jl")

@@ -11,8 +11,7 @@ using LinearAlgebra
         "exceptions", 
         "ocp", 
         "convert", 
-        "descent", 
-        "flows"
+        "descent"
         )
         @testset "$name" begin
             include("test_$name.jl")
