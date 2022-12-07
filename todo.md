@@ -1,12 +1,13 @@
 # Todo list
 
+* pour l'instant j'ai fait un add de [Flows](https://github.com/control-toolbox/Flows.jl) via l'url github. Il faudra avoir un vrai packages à l'avenir.
 * voir ce que j'exporte vraiment depuis ControlToolbox
 * ne mettre que ce qui est indispensable dans les using
 * utiliser Recipe au lieu de plot pour l'affichage.
 
 ## Général
 
-- [ ] dans flow, on passe un `kwargs_flow` qui a la priorité car mis à droite. Ce n'est pas le comportement voulu. On doit mettre les options par défaut dans `Flow` puis les options de `f` sont prioritaires.
+- [x] utiliser le nouveau package Flows : dans la branche `flows-pkg`
 - [ ] mettre dans un module à part les algos d'optimisation indépendant du point de vue contrôle optimal.
 - [ ] ajouter des formulations d'ocp.
 - [ ] faire un callback pour afficher la solution au cours des itérations avec une superposition de n plots par exemple et la possibilité de rejouer en mode player les itérations.

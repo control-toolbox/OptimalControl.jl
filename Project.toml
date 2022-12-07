@@ -5,6 +5,7 @@ version = "0.1.0"
 
 [deps]
 DocumenterTools = "35a29f4d-8980-5a13-9543-d66fff28ecb8"
+Flows = "5fb78580-10a0-4606-82bc-07a60f425ab3"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 Interpolations = "a98d9a8b-a2ab-59e6-89dd-64a1c18fca59"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
