@@ -6,6 +6,7 @@
 
 ## Général
 
+- [ ] utiliser le nouveau package Flows
 - [ ] dans flow, on passe un `kwargs_flow` qui a la priorité car mis à droite. Ce n'est pas le comportement voulu. On doit mettre les options par défaut dans `Flow` puis les options de `f` sont prioritaires.
 - [ ] mettre dans un module à part les algos d'optimisation indépendant du point de vue contrôle optimal.
 - [ ] ajouter des formulations d'ocp.
