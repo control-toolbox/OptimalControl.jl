@@ -16,10 +16,10 @@ Jac(f::Function, x) = ForwardDiff.jacobian(f, x)
 #
 # dev packages
 using Flows
+using Descriptions
 #
 #
 include("common/callbacks.jl")
-include("common/description.jl")
 include("common/exceptions.jl")
 include("common/utils.jl")
 #
@@ -34,7 +34,7 @@ export OptimalControlProblem, OptimalControlSolution, OptimalControlInit
 export RegularOCPFinalConstraint, RegularOCPFinalCondition
 export DescentOCPSol, DescentOCPInit
 export CTCallback, PrintCallback, StopCallback
-export CTException, AmbiguousDescription, IncorrectMethod, InconsistentArgument
+export CTException, IncorrectMethod, InconsistentArgument
 export plot, plot!
 
 end

@@ -26,15 +26,3 @@ end
 TBW
 """
 Base.showerror(io::IO, e::IncorrectMethod) = print(io, e.var, " is not an existing method")
-
-# ambiguous description
-struct AmbiguousDescription <: CTException
-    var::Description
-end
-
-"""
-	Base.showerror(io::IO, e::AmbiguousDescription)
-
-TBW
-"""
-Base.showerror(io::IO, e::AmbiguousDescription) = print(io, "the description ", e.var, " is ambiguous / incorrect")
