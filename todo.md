@@ -1,6 +1,6 @@
 # Todo list
 
-* pour l'instant j'ai fait un add de [Flows](https://github.com/control-toolbox/Flows.jl) via l'url github. Il faudra avoir un vrai packages à l'avenir.
+* pour l'instant j'ai fait un add de [Flows](https://github.com/control-toolbox/Flows.jl) via l'url github. Il faudra avoir un vrai packages à l'avenir. Surtout que la CI ne fonctionne pas si pas un package officiel.
 * voir ce que j'exporte vraiment depuis ControlToolbox
 * ne mettre que ce qui est indispensable dans les using
 * utiliser Recipe au lieu de plot pour l'affichage.

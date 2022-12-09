@@ -6,7 +6,6 @@ using LinearAlgebra
 @testset verbose = true showtiming = true "Control Toolbox" begin
     for name in (
         "utils", 
-        "description", 
         "callbacks", 
         "exceptions", 
         "ocp", 
