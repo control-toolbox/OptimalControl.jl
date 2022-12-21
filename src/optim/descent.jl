@@ -221,7 +221,7 @@ function descent_solver(
 
     # general descent solver data
     ∇f = sdp.∇f
-    f = sdp.f
+    f  = sdp.f
     xᵢ = init.x
     s₀ = step_length
     sᵢ = s₀

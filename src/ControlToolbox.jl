@@ -15,8 +15,8 @@ Jac(f::Function, x) = ForwardDiff.jacobian(f, x)
 
 #
 # dev packages
-using Flows
-using Descriptions
+using CTFlows
+using CTDescriptions
 #
 #
 include("common/callbacks.jl")

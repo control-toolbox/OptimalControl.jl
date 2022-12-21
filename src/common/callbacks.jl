@@ -12,6 +12,7 @@ mutable struct PrintCallback <: CTCallback
         new(cb, priority)
     end
 end
+# todo: essayer de mettre args... pour éviter de fixer ici les arguments
 function (cb::PrintCallback)(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ)
     return cb.callback(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ)
 end
