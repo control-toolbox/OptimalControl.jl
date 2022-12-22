@@ -5,7 +5,7 @@ using Plots
 t0 = 0.0                # t0 is fixed
 tf = 1.0                # tf is fixed
 x0 = [-1.0; 0.0]        # the initial condition is fixed
-xf = [0.0; 0.0]        # the target
+xf = [0.0; 0.0]         # the target
 A = [0.0 1.0
       0.0 0.0]
 B = [0.0; 1.0]

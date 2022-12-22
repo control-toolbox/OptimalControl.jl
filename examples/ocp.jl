@@ -15,8 +15,8 @@ c(x) = x - xf            # final condition
 
 # ocp definition
 ocp1 = OCP(L, f, t0, x0, tf, c, 2, 1, 2)
-# or
-ocp2 = OCP(L, f, t0, x0, tf, xf, 2, 1)
+# or                         |        |
+ocp2 = OCP(L, f, t0, x0, tf, xf, 2, 1  )
 
 # resolution
 sol1 = solve(ocp1)
