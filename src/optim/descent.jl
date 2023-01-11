@@ -9,19 +9,9 @@ end
 # definition of an initialization for the descent method
 mutable struct DescentInit
     x::Vector{<:Number} # the optimization variable x of the descent method
-    """
-      	DescentInit(x::Vector{<:Number})
-
-      TBW
-    """
     function DescentInit(x::Vector{<:Number})
         new(x)
     end
-    """
-      	DescentInit(x::Vector{<:Vector{<:Number}})
-
-      TBW
-    """
     function DescentInit(x::Vector{<:Vector{<:Number}})
         new(vec2vec(x))
     end
