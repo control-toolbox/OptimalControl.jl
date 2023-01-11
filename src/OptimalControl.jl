@@ -1,4 +1,4 @@
-module ControlToolbox
+module OptimalControl
 
 using ForwardDiff: jacobian, gradient, ForwardDiff # automatic differentiation
 using LinearAlgebra # for the norm for instance
@@ -15,8 +15,8 @@ Jac(f::Function, x) = ForwardDiff.jacobian(f, x)
 
 #
 # dev packages
-using Flows
-using Descriptions
+using HamiltonianFlows
+using ControlToolboxTools
 #
 #
 include("common/callbacks.jl")

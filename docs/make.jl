@@ -1,8 +1,8 @@
 using Documenter
-using ControlToolbox
+using OptimalControl
 
 makedocs(
-    sitename = "ControlToolbox.jl",
+    sitename = "OptimalControl.jl",
     format = Documenter.HTML(prettyurls = false),
     pages = [
         "Introduction" => "index.md",
@@ -11,6 +11,6 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/control-toolbox/ControlToolbox.jl.git",
+    repo = "github.com/control-toolbox/OptimalControl.jl.git",
     devbranch = "main"
 )

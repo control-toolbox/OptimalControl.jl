@@ -26,8 +26,8 @@ cb_print_2 = PrintCallback(myprint, priority=0)
 
 cbs = (cb_stop_1, cb_print_1, cb_stop_2, cb_print_2)
 
-callbacks_print = ControlToolbox.get_priority_print_callbacks(cbs)
-callbacks_stop = ControlToolbox.get_priority_stop_callbacks(cbs)
+callbacks_print = OptimalControl.get_priority_print_callbacks(cbs)
+callbacks_stop = OptimalControl.get_priority_stop_callbacks(cbs)
 
 @test callbacks_print[1] == cb_print_1
 @test callbacks_stop[1] == cb_stop_2

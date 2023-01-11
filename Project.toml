@@ -1,12 +1,12 @@
-name = "ControlToolbox"
+name = "OptimalControl"
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
 authors = ["Olivier Cots <olivier.cots@toulouse-inp.fr>"]
 version = "0.1.0"
 
 [deps]
-Descriptions = "3a0bcf43-9180-47f3-913c-e71e0d69f39f"
-Flows = "5fb78580-10a0-4606-82bc-07a60f425ab3"
+ControlToolboxTools = "3a0bcf43-9180-47f3-913c-e71e0d69f39f"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+HamiltonianFlows = "5fb78580-10a0-4606-82bc-07a60f425ab3"
 Interpolations = "a98d9a8b-a2ab-59e6-89dd-64a1c18fca59"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
