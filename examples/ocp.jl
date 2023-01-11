@@ -1,4 +1,4 @@
-using ControlToolbox
+using OptimalControl
 using Plots
 
 # ocp description

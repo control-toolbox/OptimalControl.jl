@@ -1,4 +1,4 @@
-using ControlToolbox
+using OptimalControl
 using Plots
 using Printf
 using LinearAlgebra

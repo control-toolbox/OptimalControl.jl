@@ -24,7 +24,7 @@ ocp = OCP(L, f, t0, x0, tf, c, 2, 1, 2)
 @test print(ocp) === nothing
 
 sol = solve(ocp, :bfgs, :backtracking, display=false)
-@test abs.(ControlToolbox.vec2vec(sol.U) - Vector(U⁺)) ≈ zeros(Float64, N - 1) atol = 1.0
+@test abs.(OptimalControl.vec2vec(sol.U) - Vector(U⁺)) ≈ zeros(Float64, N - 1) atol = 1.0
 
 # RegularOCPFinalCondition
 # ocp definition
@@ -33,4 +33,4 @@ ocp = OCP(L, f, t0, x0, tf, xf, 2, 1)
 @test print(ocp) === nothing
 
 sol = solve(ocp, :bfgs, :backtracking, display=false)
-@test abs.(ControlToolbox.vec2vec(sol.U) - Vector(U⁺)) ≈ zeros(Float64, N - 1) atol = 1.0
+@test abs.(OptimalControl.vec2vec(sol.U) - Vector(U⁺)) ≈ zeros(Float64, N - 1) atol = 1.0

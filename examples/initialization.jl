@@ -1,4 +1,4 @@
-using ControlToolbox
+using OptimalControl
 using Plots
 using Printf
 using LinearAlgebra
@@ -51,7 +51,7 @@ end
 # --------------------------------------------------------------------------------------------------
 # resolution
 
-T_default = ControlToolbox.__grid(ControlToolbox.convert(ocp, RegularOCPFinalConstraint))
+T_default = OptimalControl.__grid(OptimalControl.convert(ocp, RegularOCPFinalConstraint))
 
 # init=nothing, grid=nothing
 sol = solve(ocp, :descent, callbacks=(PrintCallback(my_cb_print(T_default)),))
