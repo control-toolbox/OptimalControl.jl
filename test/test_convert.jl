@@ -10,12 +10,12 @@ f(x, u) = A * x + B * u[1];  # dynamics
 L(x, u) = 0.5 * u[1]^2   # integrand of the Lagrange cost
 
 # ocp definition
-ocp = OCP(L, f, t0, x0, tf, xf, 2, 1)
+ocp = OptimalControlProblem(L, f, t0, x0, tf, xf, 2, 1)
 
 #
-@test_throws IncorrectMethod OptimalControl.convert(ocp, Integer)
+@test_throws IncorrectMethod convert(ocp, Integer)
 
 #
-ocp_new = OptimalControl.convert(ocp, RegularOCPFinalConstraint)
+ocp_new = convert(ocp, RegularOCPFinalConstraint)
 @test typeof(ocp_new) == RegularOCPFinalConstraint
 @test ocp_new.final_constraint(xf) ≈ [0.0; 0.0] atol = 1e-8

@@ -19,18 +19,18 @@ U_init = [[U_init[i]] for i = 1:N-1];
 
 # RegularOCPFinalConstraint 
 # ocp definition
-ocp = OCP(L, f, t0, x0, tf, c, 2, 1, 2)
+ocp = OptimalControlProblem(L, f, t0, x0, tf, c, 2, 1, 2)
 @test typeof(ocp) == RegularOCPFinalConstraint
 @test print(ocp) === nothing
 
 sol = solve(ocp, :bfgs, :backtracking, display=false)
-@test abs.(OptimalControl.vec2vec(sol.U) - Vector(U⁺)) ≈ zeros(Float64, N - 1) atol = 1.0
+@test abs.(vec2vec(sol.U) - Vector(U⁺)) ≈ zeros(Float64, N - 1) atol = 1.0
 
 # RegularOCPFinalCondition
 # ocp definition
-ocp = OCP(L, f, t0, x0, tf, xf, 2, 1)
+ocp = OptimalControlProblem(L, f, t0, x0, tf, xf, 2, 1)
 @test typeof(ocp) == RegularOCPFinalCondition
 @test print(ocp) === nothing
 
 sol = solve(ocp, :bfgs, :backtracking, display=false)
-@test abs.(OptimalControl.vec2vec(sol.U) - Vector(U⁺)) ≈ zeros(Float64, N - 1) atol = 1.0
+@test abs.(vec2vec(sol.U) - Vector(U⁺)) ≈ zeros(Float64, N - 1) atol = 1.0
