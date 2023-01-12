@@ -41,7 +41,7 @@ struct RegularOCPFinalCondition <: OptimalControlProblem
 end
 
 # Creation of a regular OCP with final constrainst
-function OCP(
+function OptimalControlProblem(
     Lagrange_cost::Function,
     dynamics::Function,
     initial_time::Time,
@@ -60,7 +60,7 @@ function OCP(
 end
 
 # Creation of a regular OCP with final condition
-function OCP(Lagrange_cost::Function, dynamics::Function, initial_time::Time, initial_condition::State,
+function OptimalControlProblem(Lagrange_cost::Function, dynamics::Function, initial_time::Time, initial_condition::State,
             final_time::Time, final_condition::State, state_dimension::Dimension, 
             control_dimension::Dimension, description...)
     ocp = RegularOCPFinalCondition(makeDescription(description...), state_dimension, control_dimension, 
@@ -75,28 +75,6 @@ abstract type OptimalControlInit end
 # --------------------------------------------------------------------------------------------------
 # Solution
 abstract type OptimalControlSolution end
-
-# --------------------------------------------------------------------------------------------------
-# Resolution
-
-# by order of preference
-algorithmes = ()
-
-# descent methods
-algorithmes = add(algorithmes, (:descent, :bfgs, :bissection))
-algorithmes = add(algorithmes, (:descent, :bfgs, :backtracking))
-algorithmes = add(algorithmes, (:descent, :bfgs, :fixedstep))
-algorithmes = add(algorithmes, (:descent, :gradient, :bissection))
-algorithmes = add(algorithmes, (:descent, :gradient, :backtracking))
-algorithmes = add(algorithmes, (:descent, :gradient, :fixedstep))
-
-function solve(ocp::OptimalControlProblem, description...; kwargs...)
-    method = getFullDescription(makeDescription(description...), algorithmes)
-    # if no error before, then the method is correct: no need of else
-    if :descent in method
-        return solve_by_descent(ocp, method; kwargs...)
-    end
-end
 
 # --------------------------------------------------------------------------------------------------
 # Description of the methods

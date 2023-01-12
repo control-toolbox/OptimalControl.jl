@@ -15,24 +15,30 @@ Jac(f::Function, x) = ForwardDiff.jacobian(f, x)
 
 #
 # dev packages
-using HamiltonianFlows
+using CommonSolveOptimisation
 using ControlToolboxTools
+using HamiltonianFlows
 #
 #
 include("common/callbacks.jl")
 include("common/exceptions.jl")
 include("common/utils.jl")
+include("common/default.jl")
 #
-include("optim/descent.jl")
+include("optim-old/descent.jl")
 #
-include("ocp/ocp.jl")
-include("ocp/convert.jl")
-include("ocp/descent.jl")
+include("OptimalControlProblem.jl")
+include("OptimalControlSolve.jl")
+#
+include("common/convert.jl")
+#
+include("descent/structs.jl")
+include("descent/interface.jl")
 
-export OCP, solve
+export solve
 export OptimalControlProblem, OptimalControlSolution, OptimalControlInit
 export RegularOCPFinalConstraint, RegularOCPFinalCondition
-export DescentOCPSol, DescentOCPInit
+#export DescentOCPSol, DescentOCPInit
 export CTCallback, PrintCallback, StopCallback
 export CTException, IncorrectMethod, InconsistentArgument
 export plot, plot!

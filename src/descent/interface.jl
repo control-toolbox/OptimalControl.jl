@@ -1,88 +1,4 @@
 # --------------------------------------------------------------------------------------------------
-# Definition of an initialization for the descent method
-mutable struct DescentOCPInit <: OptimalControlInit
-    U::Controls # the optimization variable U of the ocp for the descent method
-end
-
-# --------------------------------------------------------------------------------------------------
-# Definition of a solution for the descent method
-mutable struct DescentOCPSol <: OptimalControlSolution
-    T::Times # the times
-    X::States # the states at the times T
-    U::Controls # the controls at T
-    P::Adjoints # the adjoint at T
-    state_dimension::Dimension # the dimension of the state
-    control_dimension::Dimension # the dimension of the control
-    stopping::Symbol # the stopping criterion at the end of the descent method
-    message::String # the message corresponding to the stopping criterion
-    success::Bool # whether or not the method has finished successfully: CN1, stagnation vs iterations max
-    iterations::Integer # the number of iterations
-end
-
-# --------------------------------------------------------------------------------------------------
-# read the description to get the chosen methods
-# we assume the description is complete
-update_method(e::Union{Nothing, Symbol}, s::Symbol, d::Description) = s ∈ d ? s : e
-"""
-	read(method::Description)
-
-TBW
-"""
-function read(method::Description)
-    #
-    direction = nothing
-    direction = update_method(direction, :gradient, method)
-    direction = update_method(direction, :bfgs, method)
-    #
-    line_search = nothing
-    line_search = update_method(line_search, :fixedstep, method)
-    line_search = update_method(line_search, :backtracking, method)
-    line_search = update_method(line_search, :bissection, method)
-    #
-    return direction, line_search
-end
-
-# --------------------------------------------------------------------------------------------------
-# defaults values
-__penalty_constraint() = 1e4 # the penalty term in front of final constraints
-__iterations() = 100 # number of maximal iterations
-__step_length() = nothing # the step length of the line search method
-function __step_length(line_search::Symbol, step_length::Union{Number,Nothing})
-    if step_length == __step_length() && line_search == :fixedstep
-        return 1e-1 # fixed step length, small enough
-    elseif step_length == __step_length() #&& line_search==:backtracking
-        return 1e0 # initial step length for backtracking
-    else
-        return step_length
-    end
-end
-__absoluteTolerance() = 10 * eps() # absolute tolerance for the stopping criterion
-__optimalityTolerance() = 1e-8 # optimality relative tolerance for the CN1
-__stagnationTolerance() = 1e-8 # step stagnation relative tolerance
-__display() = true # print output during resolution
-__callbacks() = ()
-
-# default for interpolation of the initialization
-__init_interpolation() = (T, U) -> Interpolations.linear_interpolation(T, U, extrapolation_bc = Interpolations.Line())
-
-#--------------------------------------------------------------------------------------------------
-# print callback for ocp resolution by descent method
-"""
-	printOCPDescent(i, sᵢ, dᵢ, Uᵢ, gᵢ, fᵢ)
-
-TBW
-"""
-function printOCPDescent(i, sᵢ, dᵢ, Uᵢ, gᵢ, fᵢ)
-    if i == 0
-        println("\n     Calls  ‖∇F(U)‖         ‖U‖             Stagnation      \n")
-    end
-    @printf("%10d", i) # Iterations
-    @printf("%16.8e", norm(gᵢ)) # ‖∇F(U)‖
-    @printf("%16.8e", norm(Uᵢ)) # ‖U‖
-    @printf("%16.8e", norm(Uᵢ) > 1e-14 ? norm(sᵢ * dᵢ) / norm(Uᵢ) : norm(sᵢ * dᵢ)) # Stagnation
-end
-
-# --------------------------------------------------------------------------------------------------
 # Solver of an ocp by descent method
 function solve_by_descent(
     ocp::RegularOCPFinalConstraint,
@@ -106,7 +22,7 @@ function solve_by_descent(
 
     # we suppose the description of the method is complete
     # we get the direction search and line search methods
-    direction, line_search = read(method)
+    direction, line_search = descent_read(method)
 
     # --------------------------------------------------------------------------------------------------
     # get the default options for those which depend on the method
@@ -155,6 +71,50 @@ TBW
 """
 solve_by_descent(ocp::RegularOCPFinalCondition, args...; kwargs...) = 
     solve_by_descent(convert(ocp, RegularOCPFinalConstraint), args...; kwargs...)
+
+#--------------------------------------------------------------------------------------------------
+# print callback for ocp resolution by descent method
+"""
+	printOCPDescent(i, sᵢ, dᵢ, Uᵢ, gᵢ, fᵢ)
+
+TBW
+"""
+function printOCPDescent(i, sᵢ, dᵢ, Uᵢ, gᵢ, fᵢ)
+    if i == 0
+        println("\n     Calls  ‖∇F(U)‖         ‖U‖             Stagnation      \n")
+    end
+    @printf("%10d", i) # Iterations
+    @printf("%16.8e", norm(gᵢ)) # ‖∇F(U)‖
+    @printf("%16.8e", norm(Uᵢ)) # ‖U‖
+    @printf("%16.8e", norm(Uᵢ) > 1e-14 ? norm(sᵢ * dᵢ) / norm(Uᵢ) : norm(sᵢ * dᵢ)) # Stagnation
+end
+
+# --------------------------------------------------------------------------------------------------
+# read the description to get the chosen methods
+# we assume the description is complete
+update(e::Union{Nothing, Symbol}, s::Symbol, d::Description) = s ∈ d ? s : e
+"""
+	read(method::Description)
+
+TBW
+"""
+function descent_read(method::Description)
+    #
+    direction = nothing
+    direction = update(direction, :gradient, method)
+    direction = update(direction, :bfgs, method)
+    #
+    line_search = nothing
+    line_search = update(line_search, :fixedstep, method)
+    line_search = update(line_search, :backtracking, method)
+    line_search = update(line_search, :bissection, method)
+    #
+    return direction, line_search
+end
+
+
+# --------------------------------------------------------------------------------------------------
+# Init
 
 # --------------------------------------------------------------------------------------------------
 # step 1: transcription of the initialization
