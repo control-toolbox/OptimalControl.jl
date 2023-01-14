@@ -25,22 +25,24 @@ include("common/exceptions.jl")
 include("common/utils.jl")
 include("common/default.jl")
 #
-include("optim-old/descent.jl")
-#
 include("OptimalControlProblem.jl")
 include("OptimalControlSolve.jl")
 #
-include("common/convert.jl")
-#
-include("descent/structs.jl")
-include("descent/interface.jl")
+include("direct/simple-shooting/init.jl")
+include("direct/simple-shooting/utils.jl")
+include("direct/simple-shooting/problem.jl")
+include("direct/simple-shooting/solution.jl")
+include("direct/simple-shooting/interface.jl")
 
 export solve
+# problems
 export OptimalControlProblem, OptimalControlSolution, OptimalControlInit
-export RegularOCPFinalConstraint, RegularOCPFinalCondition
-#export DescentOCPSol, DescentOCPInit
+export UncFreeXfProblem, UncFreeXfInit, UncFreeXfSolution
+export UncFixedXfProblem, UncFixedXfInit, UncFixedXfSolution
+#
 export CTCallback, PrintCallback, StopCallback
 export CTException, IncorrectMethod, InconsistentArgument
+#
 export plot, plot!
 
 end

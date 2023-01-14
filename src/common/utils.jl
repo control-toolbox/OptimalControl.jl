@@ -7,6 +7,13 @@ function vec2vec(x::Vector{<:Vector{<:Number}})
     return y
 end
 
+function expand(x::Vector{<:Vector{<:Number}})
+    return vec2vec(x)
+end
+function expand(x::Vector{<:Number})
+    return x
+end
+
 # transform a Vector{<:Number} to a Vector{<:Vector{<:Number}}
 function vec2vec(x::Vector{<:Number}, n::Integer)
     y = [x[1:n]]

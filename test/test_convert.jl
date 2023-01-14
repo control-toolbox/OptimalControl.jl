@@ -16,6 +16,6 @@ ocp = OptimalControlProblem(L, f, t0, x0, tf, xf, 2, 1)
 @test_throws IncorrectMethod convert(ocp, Integer)
 
 #
-ocp_new = convert(ocp, RegularOCPFinalConstraint)
-@test typeof(ocp_new) == RegularOCPFinalConstraint
+ocp_new = convert(ocp, UncFreeXfProblem)
+@test typeof(ocp_new) == UncFreeXfProblem
 @test ocp_new.final_constraint(xf) ≈ [0.0; 0.0] atol = 1e-8
