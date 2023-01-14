@@ -13,6 +13,6 @@ f(x, u) = A * x + B * u[1];  # dynamics
 L(x, u) = 0.5 * u[1]^2   # integrand of the Lagrange cost
 
 # 
-ocp = OCP(L, f, t0, x0, tf, xf, 2, 1)     # ocp definition
-sol = solve(ocp)                          # ocp resolution
-plot(sol)                                 # plot ocp solution
+prob = OptimalControlProblem(L, f, t0, x0, tf, xf, 2, 1)    # ocp definition
+sol = solve(prob)                                           # ocp resolution
+plot(sol)                                                   # plot ocp solution
