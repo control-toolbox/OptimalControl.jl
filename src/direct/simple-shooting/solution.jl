@@ -10,7 +10,7 @@
 #end
 
 function make_udss_solution(sol::CommonSolveOptimisation.UnconstrainedSolution,
-    ocp::UncFreeXfProblem, grid::Times, penalty_constraint::Number)
+    ocp::UncFreeXfProblem, grid::Times, penalty_constraint::Real)
 
     # ocp data
     dy = ocp.dynamics

@@ -113,14 +113,14 @@ function make_udss_init(ocp::UncFreeXfProblem, init::Tuple{Times,Controls}, grid
 end
 
 # init=S, grid=nothing => init=S.U, grid=range(t0, tf, N), with N=__grid_size()
-function make_udss_init(ocp::UncFreeXfProblem, S::DescentOCPSol, grid::Nothing, interp::Function)
+function make_udss_init(ocp::UncFreeXfProblem, S::UncFreeXfSolution, grid::Nothing, interp::Function)
     T_ = __grid(ocp) # default grid
     U_ = my_interpolation(interp, S.T[1:end-1], S.U, T_)
     return convert_init(U_[1:end-1]), T_
 end
 
 # init=S, grid=T => init=S.U, grid=T (check validity with ocp)
-function make_udss_init(ocp::UncFreeXfProblem, S::DescentOCPSol, T::Times, interp::Function)
+function make_udss_init(ocp::UncFreeXfProblem, S::UncFreeXfSolution, T::Times, interp::Function)
     if !__check_grid_validity(ocp, T)
         throw(InconsistentArgument("grid argument is inconsistent with ocp argument"))
     end

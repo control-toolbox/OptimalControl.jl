@@ -1,7 +1,7 @@
 # --------------------------------------------------------------------------------------------------
 # make an OptimisationProblem (Unconstrained) from UncFreeXfProblem
 # direct simple shooting
-function make_udss_problem(ocp::UncFreeXfProblem, grid::Times, penalty_constraint::Number)
+function make_udss_problem(ocp::UncFreeXfProblem, grid::Times, penalty_constraint::Real)
 
     # ocp data
     dy = ocp.dynamics
@@ -45,7 +45,7 @@ function make_udss_problem(ocp::UncFreeXfProblem, grid::Times, penalty_constrain
         return g
     end
     # vec2vec permet de passer d'un vecteur de vecteur à simplement un vecteur
-    ∇J(x::Vector{<:Number}) = vec2vec(∇J(vec2vec(x, ocp.control_dimension))) # for desent solver
+    ∇J(x::Vector{<:Real}) = vec2vec(∇J(vec2vec(x, ocp.control_dimension))) # for desent solver
 
     # function J, that we minimize
     L(t, x, u) = isnonautonomous(desc) ? co(t, x, u) : co(x, u)
@@ -55,7 +55,7 @@ function make_udss_problem(ocp::UncFreeXfProblem, grid::Times, penalty_constrain
         cost = xₙ[end] + 0.5 * αₚ * norm(cf(xₙ[1:end-1]))^2
         return cost
     end
-    J(x::Vector{<:Number}) = J(vec2vec(x, ocp.control_dimension)) # for descent solver
+    J(x::Vector{<:Real}) = J(vec2vec(x, ocp.control_dimension)) # for descent solver
 
     # Optimisation (Unconstrained) problem
     prob = OptimisationProblem(J, gradient=∇J, dimension=length(grid)*ocp.control_dimension)

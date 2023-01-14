@@ -1,12 +1,12 @@
 # --------------------------------------------------------------------------------------------------
 # Aliases for types
-const Times = Union{Vector{<:Number},StepRangeLen}
-const States = Vector{<:Vector{<:Number}}
-const Adjoints = Vector{<:Vector{<:Number}} #Union{Vector{<:Number}, Vector{<:Vector{<:Number}}, Matrix{<:Vector{<:Number}}}
-const Controls = Vector{<:Vector{<:Number}} #Union{Vector{<:Number}, Vector{<:Vector{<:Number}}}
-const Time = Number
-const State = Vector{<:Number}
-const Adjoint = Vector{<:Number}
+const Times = Union{Vector{<:Real},StepRangeLen}
+const States = Vector{<:Vector{<:Real}}
+const Adjoints = Vector{<:Vector{<:Real}} #Union{Vector{<:Real}, Vector{<:Vector{<:Real}}, Matrix{<:Vector{<:Real}}}
+const Controls = Vector{<:Vector{<:Real}} #Union{Vector{<:Real}, Vector{<:Vector{<:Real}}}
+const Time = Real
+const State = Vector{<:Real}
+const Adjoint = Vector{<:Real}
 const Dimension = Integer
 
 # --------------------------------------------------------------------------------------------------
@@ -132,8 +132,18 @@ function convert(ocp::UncFixedXfProblem, ocp_type::DataType)
     return ocp_new
 end
 
-function convert(sol::UncFreeXfSolution, ocp_type:DataType)
+function convert(sol::UncFreeXfSolution, ocp_type::DataType)
     if ocp_type == UncFixedXfSolution
+        sol_new = UncFixedXfSolution(sol.T, sol.X, sol.U, sol.P, sol.state_dimension, sol.control_dimension,
+            sol.stopping, sol.message, sol.success, sol.iterations)
+    else
+        throw(IncorrectMethod(Symbol(ocp_type)))
+    end
+    return sol_new
+end
+
+function convert(sol::UncFixedXfSolution, ocp_type::DataType)
+    if ocp_type == UncFreeXfSolution
         sol_new = UncFreeXfSolution(sol.T, sol.X, sol.U, sol.P, sol.state_dimension, sol.control_dimension,
             sol.stopping, sol.message, sol.success, sol.iterations)
     else

@@ -3,7 +3,7 @@
 __penalty_constraint() = 1e4 # the penalty term in front of final constraints
 __iterations() = 100 # number of maximal iterations
 #__step_length() = nothing # the step length of the line search method
-#function __step_length(line_search::Symbol, step_length::Union{Number,Nothing})
+#function __step_length(line_search::Symbol, step_length::Union{Real,Nothing})
 #    if step_length == __step_length() && line_search == :fixedstep
 #        return 1e-1 # fixed step length, small enough
 #    elseif step_length == __step_length() #&& line_search==:backtracking

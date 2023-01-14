@@ -16,14 +16,14 @@ Jac(f::Function, x) = ForwardDiff.jacobian(f, x)
 #
 # dev packages
 using CommonSolveOptimisation
+import CommonSolveOptimisation: solve, CommonSolveOptimisation
 using ControlToolboxTools
+const ControlToolboxCallbacks = Tuple{Vararg{ControlToolboxCallback}}
 using HamiltonianFlows
 #
 #
-include("common/callbacks.jl")
-include("common/exceptions.jl")
-include("common/utils.jl")
-include("common/default.jl")
+include("./utils.jl")
+include("./default.jl")
 #
 include("OptimalControlProblem.jl")
 include("OptimalControlSolve.jl")
@@ -33,15 +33,13 @@ include("direct/simple-shooting/utils.jl")
 include("direct/simple-shooting/problem.jl")
 include("direct/simple-shooting/solution.jl")
 include("direct/simple-shooting/interface.jl")
+include("direct/simple-shooting/plot.jl")
 
 export solve
 # problems
 export OptimalControlProblem, OptimalControlSolution, OptimalControlInit
 export UncFreeXfProblem, UncFreeXfInit, UncFreeXfSolution
 export UncFixedXfProblem, UncFixedXfInit, UncFixedXfSolution
-#
-export CTCallback, PrintCallback, StopCallback
-export CTException, IncorrectMethod, InconsistentArgument
 #
 export plot, plot!
 
