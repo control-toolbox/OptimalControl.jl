@@ -1,21 +1,23 @@
 using OptimalControl
+using ControlToolboxTools
+#
 using Plots
 using Printf
 using LinearAlgebra
 
-# ocp description
+# description of the optimal control problem
 t0 = 0.0                # t0 is fixed
 tf = 1.0                # tf is fixed
 x0 = [-1.0; 0.0]        # the initial condition is fixed
-xf = [0.0; 0.0]        # the target
+xf = [0.0; 0.0]         # the target is fixed
 A = [0.0 1.0
-      0.0 0.0]
+    0.0 0.0]
 B = [0.0; 1.0]
 f(x, u) = A * x + B * u[1];  # dynamics
 L(x, u) = 0.5 * u[1]^2   # integrand of the Lagrange cost
 
-# ocp definition
-ocp = OCP(L, f, t0, x0, tf, xf, 2, 1)
+# problem definition
+ocp = OptimalControlProblem(L, f, t0, x0, tf, xf, 2, 1)
 
 # solution
 u_sol(t) = 6.0-12.0*t # solution
@@ -51,7 +53,7 @@ end
 # --------------------------------------------------------------------------------------------------
 # resolution
 
-T_default = OptimalControl.__grid(OptimalControl.convert(ocp, RegularOCPFinalConstraint))
+T_default = OptimalControl.__grid(OptimalControl.convert(ocp, UncFreeXfProblem))
 
 # init=nothing, grid=nothing
 sol = solve(ocp, :descent, callbacks=(PrintCallback(my_cb_print(T_default)),))

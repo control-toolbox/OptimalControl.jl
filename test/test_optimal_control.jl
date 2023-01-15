@@ -1,4 +1,4 @@
-# ocp description
+# prob description
 t0 = 0.0                # t0 is fixed
 tf = 1.0                # tf is fixed
 x0 = [-1.0; 0.0]        # the initial condition is fixed
@@ -17,20 +17,36 @@ U⁺ = U⁺[1:end-1];
 U_init = U⁺ - 1e0 * ones(N - 1);
 U_init = [[U_init[i]] for i = 1:N-1];
 
-# RegularOCPFinalConstraint 
-# ocp definition
-ocp = OptimalControlProblem(L, f, t0, x0, tf, c, 2, 1, 2)
-@test typeof(ocp) == RegularOCPFinalConstraint
-@test print(ocp) === nothing
+# UncFreeXfProblem 
+# prob definition
+prob = OptimalControlProblem(L, f, t0, x0, tf, c, 2, 1, 2)
+@test typeof(prob) == UncFreeXfProblem
+@test print(prob) === nothing
 
-sol = solve(ocp, :bfgs, :backtracking, display=false)
+sol = solve(prob, :bfgs, :backtracking, display=false)
 @test abs.(vec2vec(sol.U) - Vector(U⁺)) ≈ zeros(Float64, N - 1) atol = 1.0
 
-# RegularOCPFinalCondition
-# ocp definition
-ocp = OptimalControlProblem(L, f, t0, x0, tf, xf, 2, 1)
-@test typeof(ocp) == RegularOCPFinalCondition
-@test print(ocp) === nothing
+# UncFixedXfProblem
+# prob definition
+prob = OptimalControlProblem(L, f, t0, x0, tf, xf, 2, 1)
+@test typeof(prob) == UncFixedXfProblem
+@test print(prob) === nothing
 
-sol = solve(ocp, :bfgs, :backtracking, display=false)
+sol = solve(prob, :bfgs, :backtracking, display=false)
 @test abs.(vec2vec(sol.U) - Vector(U⁺)) ≈ zeros(Float64, N - 1) atol = 1.0
+
+# --------------------------------------------------------------------------------------------------
+# convert
+#
+# prob definition
+prob = OptimalControlProblem(L, f, t0, x0, tf, xf, 2, 1)
+
+#
+struct DummyProblem <: OptimalControlProblem
+end
+@test_throws IncorrectMethod convert(prob, DummyProblem)
+
+#
+prob_new = convert(prob, UncFreeXfProblem)
+@test typeof(prob_new) == UncFreeXfProblem
+@test prob_new.final_constraint(xf) ≈ [0.0; 0.0] atol = 1e-8

@@ -1,20 +1,41 @@
 # --------------------------------------------------------------------------------------------------
 # Aliases for types
-const Times = Union{Vector{<:Number},StepRangeLen}
-const States = Vector{<:Vector{<:Number}}
-const Adjoints = Vector{<:Vector{<:Number}} #Union{Vector{<:Number}, Vector{<:Vector{<:Number}}, Matrix{<:Vector{<:Number}}}
-const Controls = Vector{<:Vector{<:Number}} #Union{Vector{<:Number}, Vector{<:Vector{<:Number}}}
-const Time = Number
-const State = Vector{<:Number}
-const Adjoint = Vector{<:Number}
+const Times = Union{Vector{<:Real},StepRangeLen}
+const States = Vector{<:Vector{<:Real}}
+const Adjoints = Vector{<:Vector{<:Real}} #Union{Vector{<:Real}, Vector{<:Vector{<:Real}}, Matrix{<:Vector{<:Real}}}
+const Controls = Vector{<:Vector{<:Real}} #Union{Vector{<:Real}, Vector{<:Vector{<:Real}}}
+const Time = Real
+const State = Vector{<:Real}
+const Adjoint = Vector{<:Real}
 const Dimension = Integer
 
 # --------------------------------------------------------------------------------------------------
-# Optimal control problems
+# Abstract Optimal control problem, init and solution
 abstract type OptimalControlProblem end
+abstract type OptimalControlInit end
+abstract type OptimalControlSolution end
 
-# Regular OCP with final constrainst
-struct RegularOCPFinalConstraint <: OptimalControlProblem
+# --------------------------------------------------------------------------------------------------
+# OCP possibilities
+# 1. cost: Lagrange, Mayer, Bolza
+# 2. control constraints: yes, no
+# 3. state constraints: yes, no
+# 4. fixed or free: t0, tf, x0, xf
+
+# Remark: for the moment, 
+#   everything is fixed, except xf
+#   we consider only Lagrange cost
+
+# --------------------------------------------------------------------------------------------------
+# OCP:
+# Lagrange cost
+# Unconstrained: 
+#   no control constraints
+#   no state constraints
+# fixed: t0, tf, x0
+# free: xf (final constraint)
+#
+struct UncFreeXfProblem <: OptimalControlProblem
     description::Description
     state_dimension::Union{Dimension,Nothing}
     control_dimension::Union{Dimension,Nothing}
@@ -27,8 +48,42 @@ struct RegularOCPFinalConstraint <: OptimalControlProblem
     final_constraint::Function
 end
 
-# Regular OCP with final condition
-struct RegularOCPFinalCondition <: OptimalControlProblem
+function OptimalControlProblem(Lagrange_cost::Function, dynamics::Function, initial_time::Time, 
+    initial_condition::State, final_time::Time, final_constraint::Function, 
+    state_dimension::Dimension, control_dimension::Dimension, final_constraint_dimension::Dimension,
+    description...)
+    ocp = UncFreeXfProblem(makeDescription(description...), state_dimension, 
+        control_dimension, final_constraint_dimension, Lagrange_cost, dynamics, initial_time, 
+        initial_condition, final_time, final_constraint)
+    return ocp
+end
+
+struct UncFreeXfInit <: OptimalControlInit
+    U::Controls
+end
+
+struct UncFreeXfSolution <: OptimalControlSolution
+    T::Times # the times
+    X::States # the states at the times T
+    U::Controls # the controls at T
+    P::Adjoints # the adjoint at T
+    state_dimension::Dimension # the dimension of the state
+    control_dimension::Dimension # the dimension of the control
+    stopping::Symbol # the stopping criterion
+    message::String # the message corresponding to the stopping criterion
+    success::Bool # whether or not the method has finished successfully: CN1, stagnation vs iterations max
+    iterations::Integer # the number of iterations
+end
+
+# --------------------------------------------------------------------------------------------------
+# OCP:
+# Lagrange cost
+# Unconstrained: 
+#   no control constraints
+#   no state constraints
+# fixed: t0, tf, x0, xf
+#
+struct UncFixedXfProblem <: OptimalControlProblem
     description::Description
     state_dimension::Union{Dimension,Nothing}
     control_dimension::Union{Dimension,Nothing}
@@ -40,59 +95,68 @@ struct RegularOCPFinalCondition <: OptimalControlProblem
     final_condition::State
 end
 
-# Creation of a regular OCP with final constrainst
-function OptimalControlProblem(
-    Lagrange_cost::Function,
-    dynamics::Function,
-    initial_time::Time,
-    initial_condition::State,
-    final_time::Time,
-    final_constraint::Function,
-    state_dimension::Dimension,
-    control_dimension::Dimension,
-    final_constraint_dimension::Dimension,
-    description...,
-)
-    ocp = RegularOCPFinalConstraint(makeDescription(description...), state_dimension, control_dimension, 
-        final_constraint_dimension, Lagrange_cost, dynamics, initial_time, initial_condition, 
-        final_time, final_constraint)
+function OptimalControlProblem(Lagrange_cost::Function, dynamics::Function, initial_time::Time,
+    initial_condition::State, final_time::Time, final_condition::State, state_dimension::Dimension, 
+    control_dimension::Dimension, description...)
+    ocp = UncFixedXfProblem(makeDescription(description...), state_dimension, 
+        control_dimension, Lagrange_cost, dynamics, initial_time, initial_condition, 
+        final_time, final_condition)
     return ocp
 end
 
-# Creation of a regular OCP with final condition
-function OptimalControlProblem(Lagrange_cost::Function, dynamics::Function, initial_time::Time, initial_condition::State,
-            final_time::Time, final_condition::State, state_dimension::Dimension, 
-            control_dimension::Dimension, description...)
-    ocp = RegularOCPFinalCondition(makeDescription(description...), state_dimension, control_dimension, 
-            Lagrange_cost, dynamics, initial_time, initial_condition, final_time, final_condition)
-    return ocp
+struct UncFixedXfInit <: OptimalControlInit
+    U::Controls
 end
 
-# --------------------------------------------------------------------------------------------------
-# Initialization
-abstract type OptimalControlInit end
+struct UncFixedXfSolution <: OptimalControlSolution
+    T::Times # the times
+    X::States # the states at the times T
+    U::Controls # the controls at T
+    P::Adjoints # the adjoint at T
+    state_dimension::Dimension # the dimension of the state
+    control_dimension::Dimension # the dimension of the control
+    stopping::Symbol # the stopping criterion
+    message::String # the message corresponding to the stopping criterion
+    success::Bool # whether or not the method has finished successfully: CN1, stagnation vs iterations max
+    iterations::Integer # the number of iterations
+end
 
-# --------------------------------------------------------------------------------------------------
-# Solution
-abstract type OptimalControlSolution end
+# convert
+function convert(ocp::UncFixedXfProblem, ocp_type::DataType)
+    if ocp_type == UncFreeXfProblem
+        c(x) = x - ocp.final_condition
+        ocp_new = OptimalControlProblem(ocp.Lagrange_cost, ocp.dynamics, ocp.initial_time, ocp.initial_condition, ocp.final_time, c, ocp.state_dimension, ocp.control_dimension, ocp.state_dimension, ocp.description...)
+    else
+        throw(IncorrectMethod(Symbol(ocp_type)))
+    end
+    return ocp_new
+end
 
-# --------------------------------------------------------------------------------------------------
-# Description of the methods
-#
-#methods_desc = Dict(
-#    :descent => "Descent method for optimal control problem"
-#)
+function convert(sol::UncFreeXfSolution, ocp_type::DataType)
+    if ocp_type == UncFixedXfSolution
+        sol_new = UncFixedXfSolution(sol.T, sol.X, sol.U, sol.P, sol.state_dimension, sol.control_dimension,
+            sol.stopping, sol.message, sol.success, sol.iterations)
+    else
+        throw(IncorrectMethod(Symbol(ocp_type)))
+    end
+    return sol_new
+end
+
+function convert(sol::UncFixedXfSolution, ocp_type::DataType)
+    if ocp_type == UncFreeXfSolution
+        sol_new = UncFreeXfSolution(sol.T, sol.X, sol.U, sol.P, sol.state_dimension, sol.control_dimension,
+            sol.stopping, sol.message, sol.success, sol.iterations)
+    else
+        throw(IncorrectMethod(Symbol(ocp_type)))
+    end
+    return sol_new
+end
 
 # --------------------------------------------------------------------------------------------------
 # Display: text/html ?  
 # Base.show, Base.print
 # pretty print : https://docs.julialang.org/en/v1/manual/types/#man-custom-pretty-printing
-"""
-	Base.show(io::IO, ocp::RegularOCPFinalConstraint)
-
-TBW
-"""
-function Base.show(io::IO, ocp::RegularOCPFinalConstraint)
+function Base.show(io::IO, ocp::UncFreeXfProblem)
 
     dimx = ocp.state_dimension === nothing ? "n" : ocp.state_dimension
     dimu = ocp.control_dimension === nothing ? "m" : ocp.control_dimension
@@ -118,12 +182,7 @@ function Base.show(io::IO, ocp::RegularOCPFinalConstraint)
 
 end
 
-"""
-	Base.show(io::IO, ocp::RegularOCPFinalCondition)
-
-TBW
-"""
-function Base.show(io::IO, ocp::RegularOCPFinalCondition)
+function Base.show(io::IO, ocp::UncFixedXfProblem)
 
     dimx = ocp.state_dimension === nothing ? "n" : ocp.state_dimension
     dimu = ocp.control_dimension === nothing ? "m" : ocp.control_dimension
