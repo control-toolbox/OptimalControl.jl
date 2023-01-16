@@ -22,7 +22,7 @@ jobs:
           - x64
     steps:
       - uses: actions/checkout@v1
-      - uses: julia-actions/add-julia-registry@latest
+      - uses: julia-actions/add-julia-registry@v1
         with:
           key: ${{ secrets.SSH_KEY }}
           registry: control-toolbox/ct-registry
