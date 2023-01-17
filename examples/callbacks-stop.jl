@@ -1,7 +1,5 @@
 using OptimalControl
-using ControlToolboxTools
 #
-using Plots
 using Printf
 using LinearAlgebra
 
