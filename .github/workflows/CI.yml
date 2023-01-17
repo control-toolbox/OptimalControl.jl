@@ -22,14 +22,14 @@ jobs:
           - x64
     steps:
       - uses: actions/checkout@v1
-      - uses: julia-actions/add-julia-registry@v1
-        with:
-          key: ${{ secrets.SSH_KEY }}
-          registry: control-toolbox/ct-registry
       - uses: julia-actions/setup-julia@latest
         with:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
+      - uses: julia-actions/add-julia-registry@v1
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          registry: control-toolbox/ct-registry
       - uses: julia-actions/julia-runtest@latest
       - uses: julia-actions/julia-uploadcodecov@latest
         env:
