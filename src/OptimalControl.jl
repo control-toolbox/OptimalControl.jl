@@ -4,6 +4,7 @@ using ForwardDiff: jacobian, gradient, ForwardDiff # automatic differentiation
 using LinearAlgebra # for the norm for instance
 using Printf # to print iterations results
 using Interpolations: linear_interpolation, Line, Interpolations
+using Reexport
 
 # todo: use RecipesBase instead of plot
 import Plots: plot, plot!, Plots # import instead of using to overload the plot and plot! functions, to plot ocp solution
@@ -17,7 +18,7 @@ Jac(f::Function, x) = ForwardDiff.jacobian(f, x)
 # dev packages
 using CommonSolveOptimisation
 import CommonSolveOptimisation: solve, CommonSolveOptimisation
-using ControlToolboxTools
+@reexport using ControlToolboxTools
 const ControlToolboxCallbacks = Tuple{Vararg{ControlToolboxCallback}}
 using HamiltonianFlows
 #

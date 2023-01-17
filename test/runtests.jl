@@ -2,7 +2,6 @@ using OptimalControl
 using Test
 using Plots
 using LinearAlgebra
-using ControlToolboxTools
 
 # functions and types that are not exported
 const convert               = OptimalControl.convert

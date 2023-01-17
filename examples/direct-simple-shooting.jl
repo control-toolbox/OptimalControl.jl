@@ -1,5 +1,4 @@
 using OptimalControl
-using Plots
 
 # description of the optimal control problem
 t0 = 0.0                # t0 is fixed
