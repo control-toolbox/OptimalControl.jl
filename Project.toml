@@ -1,7 +1,7 @@
 name = "OptimalControl"
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
 authors = ["Olivier Cots <olivier.cots@toulouse-inp.fr>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 CommonSolveOptimisation = "22f08de8-270f-4470-8fba-397dbc90d8e0"
