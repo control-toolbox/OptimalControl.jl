@@ -24,7 +24,7 @@ T = range(t0, tf, N)
 U_init = [[u_sol(T[i])-1.0] for i = 1:N-1]
 
 # resolution
-sol = solve(ocp, :direct, :simple_shooting, init=U_init)
+sol = solve(ocp, :direct, :shooting, init=U_init)
 
 # plot solution
 ps = plot(sol, size=(800, 400))

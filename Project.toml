@@ -1,10 +1,10 @@
 name = "OptimalControl"
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
 authors = ["Olivier Cots <olivier.cots@toulouse-inp.fr>"]
-version = "0.1.1"
+version = "0.1.0"
 
 [deps]
-CommonSolveOptimisation = "22f08de8-270f-4470-8fba-397dbc90d8e0"
+CTOptimization = "22f08de8-270f-4470-8fba-397dbc90d8e0"
 ControlToolboxTools = "3a0bcf43-9180-47f3-913c-e71e0d69f39f"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 HamiltonianFlows = "5fb78580-10a0-4606-82bc-07a60f425ab3"

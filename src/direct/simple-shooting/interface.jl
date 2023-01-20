@@ -17,7 +17,7 @@ function solve_by_udss(
     display ? println("\nMethod = ", method) : nothing
 
     # --------------------------------------------------------------------------------------------------
-    # transcription from optimal control to optimisation problem and init
+    # transcription from optimal control to CTOptimization problem and init
     opti_init, grid = make_udss_init(prob, init, grid, init_interpolation)
     opti_prob = make_udss_problem(prob, grid, penalty_constraint)
 
@@ -28,7 +28,7 @@ function solve_by_udss(
     cbs_print = get_priority_print_callbacks((PrintCallback(printOCPDescent, priority=0), callbacks...))
     cbs_stop = get_priority_stop_callbacks(callbacks)
     #
-    opti_sol = CommonSolveOptimisation.solve(
+    opti_sol = CTOptimization.solve(
         opti_prob,
         clean_description(method),
         init=opti_init,
