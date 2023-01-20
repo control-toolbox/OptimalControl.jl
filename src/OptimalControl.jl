@@ -16,8 +16,8 @@ Jac(f::Function, x) = ForwardDiff.jacobian(f, x)
 
 #
 # dev packages
-using CommonSolveOptimisation
-import CommonSolveOptimisation: solve, CommonSolveOptimisation
+using CTOptimization
+import CTOptimization: solve, CTOptimization
 @reexport using ControlToolboxTools
 const ControlToolboxCallbacks = Tuple{Vararg{ControlToolboxCallback}}
 using HamiltonianFlows
