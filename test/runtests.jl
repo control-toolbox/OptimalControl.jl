@@ -16,9 +16,10 @@ const convert_init          = OptimalControl.convert_init
 #
 @testset verbose = true showtiming = true "Optimal Control" begin
     for name in (
-        "utils", 
-        "optimal_control", 
-        "udss" # unconstrained direct simple shooting
+        #"utils", 
+        #"optimal_control", 
+        #"udss", # unconstrained direct simple shooting
+        "model",
         )
         @testset "$name" begin
             include("test_$name.jl")

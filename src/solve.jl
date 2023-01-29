@@ -12,7 +12,7 @@ algorithmes = add(algorithmes, (:direct, :simple_shooting, :descent, :gradient, 
 algorithmes = add(algorithmes, (:direct, :simple_shooting, :descent, :gradient, :backtracking))
 algorithmes = add(algorithmes, (:direct, :simple_shooting, :descent, :gradient, :fixedstep))
 
-function solve(prob::OptimalControlProblem, description...; kwargs...)
+function solve(prob::AbstractOptimalControlProblem, description...; kwargs...)
     method = getFullDescription(makeDescription(description...), algorithmes)
     # if no error before, then the method is correct: no need of else
     if :direct ∈ method

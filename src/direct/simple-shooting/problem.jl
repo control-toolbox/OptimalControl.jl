@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------------------------------------
-# make an OptimisationProblem (Unconstrained) from UncFreeXfProblem
+# make an CTOptimizationProblem (Unconstrained) from UncFreeXfProblem
 # direct simple shooting
 function make_udss_problem(ocp::UncFreeXfProblem, grid::Times, penalty_constraint::Real)
 
@@ -58,7 +58,7 @@ function make_udss_problem(ocp::UncFreeXfProblem, grid::Times, penalty_constrain
     J(x::Vector{<:Real}) = J(vec2vec(x, ocp.control_dimension)) # for descent solver
 
     # Optimisation (Unconstrained) problem
-    prob = OptimisationProblem(J, gradient=∇J, dimension=length(grid)*ocp.control_dimension)
+    prob = CTOptimizationProblem(J, gradient=∇J, dimension=length(grid)*ocp.control_dimension)
 
     return prob
 

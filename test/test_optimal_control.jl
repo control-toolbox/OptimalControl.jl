@@ -42,7 +42,7 @@ sol = solve(prob, :bfgs, :backtracking, display=false)
 prob = OptimalControlProblem(L, f, t0, x0, tf, xf, 2, 1)
 
 #
-struct DummyProblem <: OptimalControlProblem
+struct DummyProblem <: AbstractOptimalControlProblem
 end
 @test_throws IncorrectMethod convert(prob, DummyProblem)
 
