@@ -2,14 +2,14 @@
 # make an UncFreeXfSolution (Unconstrained) from OptimalControlSolution
 # direct simple shooting
 
-#struct UnconstrainedSolution <: OptimisationSolution
+#struct UnconstrainedSolution <: CTOptimizationSolution
 #    x::Primal
 #    stopping::Symbol
 #    message::String
 #    iterations::Integer
 #end
 
-function make_udss_solution(sol::CommonSolveOptimisation.UnconstrainedSolution,
+function make_udss_solution(sol::CTOptimization.UnconstrainedSolution,
     ocp::UncFreeXfProblem, grid::Times, penalty_constraint::Real)
 
     # ocp data

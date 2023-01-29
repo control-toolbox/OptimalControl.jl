@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------------------------------------
-# make an OptimisationInit (Unconstrained) from UncFreeXfInit and others
+# make an CTOptimizationInit (Unconstrained) from UncFreeXfInit and others
 # direct simple shooting
 
 # --------------------------------------------------------------------------------------------------
