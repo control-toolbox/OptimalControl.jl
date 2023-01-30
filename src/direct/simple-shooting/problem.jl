@@ -57,7 +57,7 @@ function make_udss_problem(ocp::UncFreeXfProblem, grid::Times, penalty_constrain
     end
     J(x::Vector{<:Real}) = J(vec2vec(x, ocp.control_dimension)) # for descent solver
 
-    # Optimisation (Unconstrained) problem
+    # CTOptimization (Unconstrained) problem
     prob = CTOptimizationProblem(J, gradient=∇J, dimension=length(grid)*ocp.control_dimension)
 
     return prob

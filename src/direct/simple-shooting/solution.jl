@@ -2,7 +2,7 @@
 # make an UncFreeXfSolution (Unconstrained) from AbstractOptimalControlSolution
 # direct simple shooting
 
-#struct UnconstrainedSolution <: OptimisationSolution
+#struct UnconstrainedSolution <: CTOptimizationSolution
 #    x::Primal
 #    stopping::Symbol
 #    message::String

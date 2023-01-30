@@ -17,7 +17,7 @@ function solve_by_udss(
     display ? println("\nMethod = ", method) : nothing
 
     # --------------------------------------------------------------------------------------------------
-    # transcription from optimal control to optimisation problem and init
+    # transcription from optimal control to CTOptimization problem and init
     opti_init, grid = make_udss_init(prob, init, grid, init_interpolation)
     opti_prob = make_udss_problem(prob, grid, penalty_constraint)
 
