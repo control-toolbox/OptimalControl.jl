@@ -32,7 +32,7 @@ const Adjoints = Vector{<:Vector{<:Real}} #Union{Vector{<:Real}, Vector{<:Vector
 const Controls = Vector{<:Vector{<:Real}} #Union{Vector{<:Real}, Vector{<:Vector{<:Real}}}
 const Time = Real
 const State = Vector{<:Real}
-const Adjoint = Vector{<:Real}
+const Adjoint = Vector{<:Real} # todo: ajouter type adjoint pour faire par exemple p*f(x, u) au lieu de p'*f(x,u)
 const Dimension = Integer
 
 #

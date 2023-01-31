@@ -7,7 +7,7 @@ abstract type AbstractOptimalControlModel end
     final_time::Union{Time,Nothing}=nothing
     initial_condition::Union{State,Nothing}=nothing
     final_condition::Union{State,Nothing}=nothing
-    Lagrange::Union{Function,Nothing}=nothing
+    lagrange::Union{Function,Nothing}=nothing
     dynamics::Union{Function,Nothing}=nothing
 end
 
@@ -40,7 +40,7 @@ end
 
 function objective!(ocp::OptimalControlModel, o::Symbol, f::Function)
     if o == :lagrangian || o == :Lagrangian
-        ocp.Lagrange = f
+        ocp.lagrange = f
     else
         error("this objective is not valid")
     end

@@ -28,7 +28,7 @@ constraint!(ocp, :Dynamics, (x, u) -> A*x + B*u)
 
 #
 objective!(ocp, :Lagrangian, (x, u) -> 0.5*u^2) # default is to minimise
-@test ocp.Lagrange([0.; 0.], 1.0) ≈ 0.5 atol=1e-8
+@test ocp.lagrange([0.; 0.], 1.0) ≈ 0.5 atol=1e-8
 
 # from model to problem
 # tbd
