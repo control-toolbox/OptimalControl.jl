@@ -38,3 +38,29 @@ constraint!(ocp, :state, (x, u) -> x[2], 0., vmax, :state_con2)
 constraint!(ocp, :state, (x, u) -> x[3], m0, mf, :state_con3)
 
 @test constraint(ocp, :state_con1_lower)(x0, 0.) ≈ 0. atol=1e-8
+
+#
+objective!(ocp, :mayer,  (t0, x0, tf, xf) -> xf[1], :max)
+
+#
+function F0(x)
+      r, v, m = x
+      D = Cd * v^2 * exp(-β*(r-1.))
+      F = [ v, -D/m-1.0/r^2, 0. ]
+      return F
+  end
+  
+function F1(x)
+      r, v, m = x
+      F = [ 0., Tmax/m, -b*Tmax ]
+      return F
+end
+
+function f!(dx, x, u)
+      dx[:] = F0(x(t)) + u*F1(x(t))
+end
+
+constraint!(ocp, :dynamics!, f!) # dynamics can be in place
+
+#
+remove_constraint!(ocp, :state_con1)
