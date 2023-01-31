@@ -5,7 +5,7 @@ using LinearAlgebra # for the norm for instance
 using Printf # to print iterations results
 using Interpolations: linear_interpolation, Line, Interpolations
 using Reexport
-using Parameters
+using Parameters # @with_kw
 
 # todo: use RecipesBase instead of plot
 import Plots: plot, plot!, Plots # import instead of using to overload the plot and plot! functions, to plot ocp solution

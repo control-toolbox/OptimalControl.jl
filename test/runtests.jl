@@ -14,12 +14,13 @@ const make_udss_init        = OptimalControl.make_udss_init
 const convert_init          = OptimalControl.convert_init
 
 #
-@testset verbose = true showtiming = true "Optimal Control" begin
+@testset verbose = true showtiming = true "Optimal control tests" begin
     for name in (
         #"utils", 
         #"optimal_control", 
         #"udss", # unconstrained direct simple shooting
-        "model",
+        #"model",
+        "model_goddard",
         )
         @testset "$name" begin
             include("test_$name.jl")

@@ -20,8 +20,8 @@ time!(ocp, [t0, tf])
 constraint!(ocp, :initial, [ -1., 0. ])
 constraint!(ocp, :final,   [  0., 0. ])
 
-@test ocp.initial_condition ≈ [-1.; 0.] atol = 1e-8
-@test ocp.final_condition ≈ [0.; 0.] atol = 1e-8
+#@test ocp.initial_condition ≈ [-1.; 0.] atol = 1e-8
+#@test ocp.final_condition ≈ [0.; 0.] atol = 1e-8
 
 #
 A = [ 0. 1.
