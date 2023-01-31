@@ -1,7 +1,7 @@
 # --------------------------------------------------------------------------------------------------
 # make an CTOptimizationProblem (Unconstrained) from UncFreeXfProblem
 # direct simple shooting
-function make_udss_problem(ocp::UncFreeXfProblem, grid::Times, penalty_constraint::Real)
+function make_udss_problem(ocp::UncFreeXfProblem, grid::TimesDisc, penalty_constraint::Real)
 
     # ocp data
     dy = ocp.dynamics

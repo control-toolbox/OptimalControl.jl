@@ -26,7 +26,8 @@ using HamiltonianFlows
 
 # --------------------------------------------------------------------------------------------------
 # Aliases for types
-const Times = Union{Vector{<:Real},StepRangeLen}
+const TimesDisc = Union{Vector{<:Real},StepRangeLen}
+const Times = Vector{<:Real}
 const States = Vector{<:Vector{<:Real}}
 const Adjoints = Vector{<:Vector{<:Real}} #Union{Vector{<:Real}, Vector{<:Vector{<:Real}}, Matrix{<:Vector{<:Real}}}
 const Controls = Vector{<:Vector{<:Real}} #Union{Vector{<:Real}, Vector{<:Vector{<:Real}}}
@@ -54,7 +55,7 @@ export solve
 
 # model
 export AbstractOptimalControlModel, OptimalControlModel
-export Model, time!, constraint!, objective!
+export Model, time!, constraint!, objective!, state!, control!
 
 # problems
 export AbstractOptimalControlProblem, AbstractOptimalControlSolution, AbstractOptimalControlInit

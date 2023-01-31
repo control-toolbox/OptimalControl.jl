@@ -52,7 +52,7 @@ struct UncFreeXfInit <: AbstractOptimalControlInit
 end
 
 struct UncFreeXfSolution <: AbstractOptimalControlSolution
-    T::Times # the times
+    T::TimesDisc # the times
     X::States # the states at the times T
     U::Controls # the controls at T
     P::Adjoints # the adjoint at T
@@ -98,7 +98,7 @@ struct UncFixedXfInit <: AbstractOptimalControlInit
 end
 
 struct UncFixedXfSolution <: AbstractOptimalControlSolution
-    T::Times # the times
+    T::TimesDisc # the times
     X::States # the states at the times T
     U::Controls # the controls at T
     P::Adjoints # the adjoint at T
@@ -156,7 +156,7 @@ function Base.show(io::IO, ocp::UncFreeXfProblem)
     println(io, "Optimal control problem of the form:")
     println(io, "")
     print(io, "    minimize  J(x, u) = ")
-    isnonautonomous(desc) ? println(io, '\u222B', " L(t, x(t), u(t)) dt, over [t0, tf]") : println(io, '\u222B', " L(x(t), u(t)) dt, over [t0, tf]")
+    isnonautonomous(desc) ? println(io, '\u222B', " f⁰(t, x(t), u(t)) dt, over [t0, tf]") : println(io, '\u222B', " f⁰(x(t), u(t)) dt, over [t0, tf]")
     println(io, "")
     println(io, "    subject to")
     println(io, "")
@@ -181,7 +181,7 @@ function Base.show(io::IO, ocp::UncFixedXfProblem)
     println(io, "Optimal control problem of the form:")
     println(io, "")
     print(io, "    minimize  J(x, u) = ")
-    isnonautonomous(desc) ? println(io, '\u222B', " L(t, x(t), u(t)) dt, over [t0, tf]") : println(io, '\u222B', " L(x(t), u(t)) dt, over [t0, tf]")
+    isnonautonomous(desc) ? println(io, '\u222B', " f⁰(t, x(t), u(t)) dt, over [t0, tf]") : println(io, '\u222B', " f⁰(x(t), u(t)) dt, over [t0, tf]")
     println(io, "")
     println(io, "    subject to")
     println(io, "")
