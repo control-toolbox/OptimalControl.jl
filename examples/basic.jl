@@ -1,25 +1,30 @@
 using OptimalControl, NLPModelsIpopt, ADNLPModels
 
+ocp = Model()
+#
+state!(ocp, 2)
+control!(ocp, 1)
+#
+time!(ocp, [0., 1.])
+#
+constraint!(ocp, :initial, [ -1., 0. ])
+constraint!(ocp, :final,   [  0., 0. ])
+#
+A = [ 0. 1.
+      0. 0.]
+B = [ 0.
+      1. ]
+constraint!(ocp, :dynamics, (x, u) -> A*x + B*u)
+#
+objective!(ocp, :lagrangian, (x, u) -> 0.5*u^2) # default is to minimise
 
-# description of the optimal control problem
-t0 = 0.0                # t0 is fixed
-tf = 1.0                # tf is fixed
-n = 2                   # state dimension
-m = 1                   # control dimension
-x0 = [-1.0; 0.0]        # the initial condition is fixed
-xf = [0.0; 0.0]         # the target is fixed
-A = [0.0 1.0
-      0.0 0.0]
-B = [0.0; 1.0]
-f(x, u) = A * x + B * u[1];  # dynamics
-L(x, u) = 0.5 * u[1]^2   # integrand of the Lagrange cost
 
-# 
-# ocp = OptimalControlProblem(L, f, t0, x0, tf, xf, 2, 1)     # problem definition
-#  sol = solve(ocp)                                            # resolution
-# plot(sol)                                                   # plot solution
 
+
+# transcription ocp -> NLP
 N = 10 # time steps
+n = ocp.state_dimension
+m = ocp.control_dimension
 # layout of the nlp unknown xu for Euler discretization 
 # additional state variable x_{n+1}(t) for the objective (Lagrange to Mayer formulation)
 # [x_1(t_0), ... , x_{n+1}(t_0),
@@ -29,12 +34,43 @@ N = 10 # time steps
 #  ... , 
 #  u_m(t_{N-1}), ..., u_m(t_{N-1})]
 
-f_Mayer(x,u) = [f(x,u); L(x,u)]   # second member of the ode for the Mayer formulation
+
 
 xu0 = zeros((N+1)*(n+1)+N*m)                                 #
 objective(xu) = xu[(N+1)*(n+1)]
 
-function constraint(xu::Vector{<:Real},n,m,N,x0,xf)::Vector{<:Real}
+function constraint(ocp, xu::Vector{<:Real},N)::Vector{<:Real}
+  """
+  compute the constraints for the NLP : 
+    - discretization of the dynamics via the Euler method
+    - boundary conditions
+  inputs
+  ocp :: ocp model
+  xu :: 
+    layout of the nlp unknown xu for Euler discretization 
+    additional state variable x_{n+1}(t) for the objective (Lagrange to Mayer formulation)
+    [x_1(t_0), ... , x_{n+1}(t_0),
+     ... , 
+     x_{1}(t_N), ... , x_{n+1}(t_N),
+     u_1(t_0), ... , u_m(t_0), 
+     ... , 
+     u_m(t_{N-1}), ..., u_m(t_{N-1})]
+  return
+  c :: 
+  """
+    t0 = ocp.initial_time
+    tf = ocp.final_time
+    n = ocp.state_dimension
+    m = ocp.control_dimension
+  
+    x0 = ocp.initial_condition
+    xf = ocp.final_condition
+  
+    f = ocp.dynamics
+    L = ocp.lagrange 
+    f_Mayer(x,u) = [f(x,u); L(x,u)]   # second member of the ode for the Mayer formulation
+
+    h = (tf-t0)/N
     c = zeros(N*(n+1)+2*n+1)
     for i in 0:N-1
       xi = xu[1+i*(n+1):(i+1)*(n+1)]
@@ -47,7 +83,10 @@ function constraint(xu::Vector{<:Real},n,m,N,x0,xf)::Vector{<:Real}
     return c
 end
 
-constraint_Ipopt(xu) = constraint(xu,n,m,N)
-nlp = ADNLPModel(objective, xu0, [-1.2; 1.0])
+# bounds for the constraints
+lb = zeros(N*(n+1)+2*n+1)
+ub = zeros(N*(n+1)+2*n+1)
+constraint_Ipopt(xu) = constraint(ocp,xu,N)
+nlp = ADNLPModel(objective, xu0, constraint_Ipopt,lb,ub)
 stats = ipopt(nlp)
 print(stats)
