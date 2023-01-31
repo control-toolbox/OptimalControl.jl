@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------------------------------------
-# make an UncFreeXfSolution (Unconstrained) from OptimalControlSolution
+# make an UncFreeXfSolution (Unconstrained) from AbstractOptimalControlSolution
 # direct simple shooting
 
 #struct UnconstrainedSolution <: CTOptimizationSolution

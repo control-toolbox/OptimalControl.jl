@@ -66,7 +66,7 @@ function solve_by_udss(prob::UncFixedXfProblem, args...;
     return new_sol
 end
 
-function solve_by_udss(prob::OptimalControlProblem, args...; kwargs...)
+function solve_by_udss(prob::AbstractOptimalControlProblem, args...; kwargs...)
     throw(InconsistentArgument("this problem can not be solved by direct simple shooting."))
 end
 
