@@ -56,6 +56,7 @@ export solve
 # model
 export AbstractOptimalControlModel, OptimalControlModel
 export Model, time!, constraint!, objective!, state!, control!
+export constraint
 
 # problems
 export AbstractOptimalControlProblem, AbstractOptimalControlSolution, AbstractOptimalControlInit

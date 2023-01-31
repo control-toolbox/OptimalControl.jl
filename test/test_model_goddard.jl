@@ -31,3 +31,10 @@ constraint!(ocp, :initial, x0)
 
 #
 constraint!(ocp, :control, u -> u[1], 0., 1.)
+
+#
+constraint!(ocp, :state, (x, u) -> x[1], r0, Inf, :state_con1)
+constraint!(ocp, :state, (x, u) -> x[2], 0., vmax, :state_con2)
+constraint!(ocp, :state, (x, u) -> x[3], m0, mf, :state_con3)
+
+@test constraint(ocp, :state_con1_lower)(x0, 0.) ≈ 0. atol=1e-8

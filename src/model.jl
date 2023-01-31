@@ -70,17 +70,26 @@ end
 function constraint!(ocp::OptimalControlModel, type::Symbol, f::Function, lb::Real, ub::Real, label::Symbol=gensym(:anonymous))
     if type == :control
         if lb > -Inf
-            ocp.constraints[label] = (Symbol(type, :_lower), :ineq, u->u-lb)
+            ocp.constraints[Symbol(label, :_lower)] = (type, :ineq, u->f(u)-lb)
         end
         if ub < Inf
-            ocp.constraints[label] = (Symbol(type, :_upper), :ineq, u->ub-u)
+            ocp.constraints[Symbol(label, :_lower)] = (type, :ineq, u->ub-f(u))
+        end
+    elseif type == :state
+        if lb > -Inf
+            ocp.constraints[Symbol(label, :_lower)] = (type, :ineq, (x,u)->f(x,u)-lb)
+        end
+        if ub < Inf
+            ocp.constraints[Symbol(label, :_lower)] = (type, :ineq, (x,u)->ub-f(x,u))
         end
     else
         error("this constraint is not valid")
     end
 end
 
-#function constraint(ocp::OptimalControlModel, )
+function constraint(ocp::OptimalControlModel, label::Symbol)
+    return ocp.constraints[label][3]
+end
 
 # -------------------------------------------------------------------------------------------
 # 
