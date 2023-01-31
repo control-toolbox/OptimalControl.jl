@@ -22,13 +22,32 @@ L(x, u) = 0.5 * u[1]^2   # integrand of the Lagrange cost
 N = 10 # time steps
 # layout of the nlp unknown xu for Euler discretization 
 # additional state variable x_{n+1}(t) for the objective (Lagrange to Mayer formulation)
-# [x_1(t_0), ... , x_1(t_N), ... , x_n(t_0), ..., x_n(t_N)
-#  x_{n+1}(t_0), ... , x_{n+1}(t_N),
-#  u_1(t_0), ... , u_1(t_{N-1}), ... , u_m(t_0), ..., u_m(t_{N-1})]
+# [x_1(t_0), ... , x_{n+1}(t_0),
+#  ... , 
+#  x_{1}(t_N), ... , x_{n+1}(t_N),
+#  u_1(t_0), ... , u_m(t_0), 
+#  ... , 
+#  u_m(t_{N-1}), ..., u_m(t_{N-1})]
+
+f_Mayer(x,u) = [f(x,u); L(x,u)]   # second member of the ode for the Mayer formulation
 
 xu0 = zeros((N+1)*(n+1)+N*m)                                 #
-obj(xu) = xu[(N+1)*(n+1)]
+objective(xu) = xu[(N+1)*(n+1)]
 
-nlp = ADNLPModel(obj, xu0, [-1.2; 1.0])
+function constraint(xu::Vector{<:Real},n,m,N,x0,xf)::Vector{<:Real}
+    c = zeros(N*(n+1)+2*n+1)
+    for i in 0:N-1
+      xi = xu[1+i*(n+1):(i+1)*(n+1)]
+      xip1 = xu[1+(i+1)*(n+1):(i+2)*(n+1)]
+      ui = xu[1+(N+1)*(n+1):m+(N+1)*(n+1)]
+      c[1+i*(n+1):(i+1)*(n+1)] = xip1 - (xi + h*f_Mayer(xi, ui))
+    end
+    c[1+N*(n+1):n+N*(n+1)] = xu[1:n] - x0
+    c[n+1+N*(n+1):2*n+N*(n+1)] = xu[1+N*(n+1):(N+1)*(n+1)-1] - xf
+    return c
+end
+
+constraint_Ipopt(xu) = constraint(xu,n,m,N)
+nlp = ADNLPModel(objective, xu0, [-1.2; 1.0])
 stats = ipopt(nlp)
 print(stats)
