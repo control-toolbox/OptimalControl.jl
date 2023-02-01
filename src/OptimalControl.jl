@@ -6,7 +6,7 @@ using Printf # to print iterations results
 using Interpolations: linear_interpolation, Line, Interpolations
 using Reexport
 using Parameters # @with_kw
-using StaticArrays, LabelledArrays
+#using StaticArrays, LabelledArrays
 
 # todo: use RecipesBase instead of plot
 import Plots: plot, plot!, Plots # import instead of using to overload the plot and plot! functions, to plot ocp solution
@@ -36,9 +36,9 @@ const Time = MyNumber
 const Times = MyVector
 const TimesDisc = Union{MyVector,StepRangeLen}
 
-const States = Vector{MyVector}
-const Adjoints = Vector{MyVector}
-const Controls = Vector{MyVector}
+const States = Vector{<:MyVector}
+const Adjoints = Vector{<:MyVector}
+const Controls = Vector{<:MyVector}
 
 const State = MyVector
 const Adjoint = MyVector # todo: ajouter type adjoint pour faire par exemple p*f(x, u) au lieu de p'*f(x,u)
