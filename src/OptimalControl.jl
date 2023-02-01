@@ -6,6 +6,7 @@ using Printf # to print iterations results
 using Interpolations: linear_interpolation, Line, Interpolations
 using Reexport
 using Parameters # @with_kw
+using StaticArrays, LabelledArrays
 
 # todo: use RecipesBase instead of plot
 import Plots: plot, plot!, Plots # import instead of using to overload the plot and plot! functions, to plot ocp solution
@@ -21,19 +22,25 @@ using CTOptimization
 import CTOptimization: solve, CTOptimization
 @reexport using ControlToolboxTools
 const ControlToolboxCallbacks = Tuple{Vararg{ControlToolboxCallback}}
-using HamiltonianFlows
+@reexport using HamiltonianFlows
+import HamiltonianFlows: flows, HamiltonianFlows
 #
 
 # --------------------------------------------------------------------------------------------------
 # Aliases for types
-const TimesDisc = Union{Vector{<:Real},StepRangeLen}
-const Times = Vector{<:Real}
-const States = Vector{<:Vector{<:Real}}
-const Adjoints = Vector{<:Vector{<:Real}} #Union{Vector{<:Real}, Vector{<:Vector{<:Real}}, Matrix{<:Vector{<:Real}}}
-const Controls = Vector{<:Vector{<:Real}} #Union{Vector{<:Real}, Vector{<:Vector{<:Real}}}
-const Time = Real
-const State = Vector{<:Real}
-const Adjoint = Vector{<:Real} # todo: ajouter type adjoint pour faire par exemple p*f(x, u) au lieu de p'*f(x,u)
+const MyNumber = Real
+const MyVector = Union{Vector{<:MyNumber}, StaticArray{S, <:MyNumber, N} where {S, N}, DenseArray{<:MyNumber, N} where {N}}
+
+const Time = MyNumber
+const Times = MyVector
+const TimesDisc = Union{MyVector,StepRangeLen}
+
+const States = Vector{MyVector}
+const Adjoints = Vector{MyVector}
+const Controls = Vector{MyVector}
+
+const State = MyVector
+const Adjoint = MyVector # todo: ajouter type adjoint pour faire par exemple p*f(x, u) au lieu de p'*f(x,u)
 const Dimension = Integer
 
 #

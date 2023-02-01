@@ -2,6 +2,7 @@ using OptimalControl
 using Test
 using Plots
 using LinearAlgebra
+using LabelledArrays
 
 # functions and types that are not exported
 const convert               = OptimalControl.convert
@@ -19,8 +20,8 @@ const convert_init          = OptimalControl.convert_init
         #"utils", 
         #"optimal_control", 
         #"udss", # unconstrained direct simple shooting
-        #"model",
-        "model_goddard",
+        #"basic",
+        "goddard",
         )
         @testset "$name" begin
             include("test_$name.jl")
