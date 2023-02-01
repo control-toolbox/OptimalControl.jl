@@ -102,6 +102,42 @@ function constraint(ocp::OptimalControlModel, label::Symbol)
     return ocp.constraints[label][3]
 end
 
+#
+function NLPConstraints(ocp::OptimalControlModel)
+    constraints = ocp.constraints
+    
+    ξf = Vector{Any}(); ξl = Vector{Any}(); ξu = Vector{Any}()
+    ψf = Vector{Any}(); ψl = Vector{Any}(); ψu = Vector{Any}()
+    ϕf = Vector{Any}(); ϕl = Vector{Any}(); ϕu = Vector{Any}()
+
+    for (key, c) ∈ constraints
+        if c[1] == :control
+            push!(ξf, c[3])
+            push!(ξl, 0.)
+            c[2] == :eq ? push!(ξu, 0.) : push!(ξu, Inf)
+        elseif c[1] == :state
+            push!(ψf, c[3])
+            push!(ψl, 0.)
+            c[2] == :eq ? push!(ψu, 0.) : push!(ψu, Inf)
+        elseif c[1] == :initial
+            push!(ϕf, (t0, x0, tf, xf) -> c[3](x0))
+            append!(ϕl, zeros(Float64, ocp.state_dimension))
+            c[2] == :eq ? append!(ϕu, zeros(Float64, ocp.state_dimension)) : push!(ϕu, Inf)
+        elseif c[1] == :final
+            push!(ϕf, (t0, x0, tf, xf) -> c[3](xf))
+            append!(ϕl, zeros(Float64, ocp.state_dimension))
+            c[2] == :eq ? append!(ϕu, zeros(Float64, ocp.state_dimension)) : push!(ϕu, Inf)
+        end
+    end
+
+    ξ!(val, u) = [ val[i] = ξf[i](u) for i in 1:length(ξf) ]
+    ψ!(val, x, u) = [ val[i] = ψf[i](x, u) for i in 1:length(ψf) ]
+    ϕ!(val, t0, x0, tf, xf) = [ val[i] = ϕf[i](t0, x0, tf, xf) for i in 1:length(ϕf) ]
+
+    return (ξ!, ξl, ξu), (ψ!, ψl, ψu), (ϕ!, ϕl, ϕu)
+
+end
+
 # -------------------------------------------------------------------------------------------
 # 
 function objective!(ocp::OptimalControlModel, type::Symbol, f::Function, criterion::Symbol=:min)
