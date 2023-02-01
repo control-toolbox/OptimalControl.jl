@@ -49,7 +49,7 @@ function F0(x)
       F = [ v, -D/m-1.0/r^2, 0. ]
       return F
   end
-  
+
 function F1(x)
       r, v, m = x
       F = [ 0., Tmax/m, -b*Tmax ]
