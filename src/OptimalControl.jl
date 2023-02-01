@@ -23,13 +23,14 @@ import CTOptimization: solve, CTOptimization
 @reexport using ControlToolboxTools
 const ControlToolboxCallbacks = Tuple{Vararg{ControlToolboxCallback}}
 @reexport using HamiltonianFlows
-import HamiltonianFlows: flows, HamiltonianFlows
+import HamiltonianFlows: Flow, HamiltonianFlows
 #
 
 # --------------------------------------------------------------------------------------------------
 # Aliases for types
+# const AbstractVector{T} = AbstractArray{T,1}.
 const MyNumber = Real
-const MyVector = Union{Vector{<:MyNumber}, StaticArray{S, <:MyNumber, N} where {S, N}, DenseArray{<:MyNumber, N} where {N}}
+const MyVector = AbstractVector{<:MyNumber}
 
 const Time = MyNumber
 const Times = MyVector
