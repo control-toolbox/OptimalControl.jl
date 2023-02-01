@@ -19,7 +19,7 @@ B = [ 0.
 constraint!(ocp, :dynamics, (x, u) -> A*x + B*u)
 objective!(ocp, :lagrangian, (x, u) -> 0.5*u^2) # default is to minimise
 
-ξ, ψ, ϕ = NLPConstraints(ocp)
+ξ, ψ, ϕ = nlp_constraints(ocp)
 
 #
 @test ocp.state_dimension == 2

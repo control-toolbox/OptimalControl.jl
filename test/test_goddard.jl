@@ -53,7 +53,7 @@ constraint!(ocp, :dynamics!, f!) # dynamics can be in place
 @test typeof(ocp) == OptimalControlModel
 @test ocp.initial_time == t0
 
-ξ, ψ, ϕ = NLPConstraints(ocp)
+ξ, ψ, ϕ = nlp_constraints(ocp)
 
 # --------------------------------------------------------
 # Direct

@@ -118,7 +118,7 @@ function constraint(ocp::OptimalControlModel, label::Symbol)
 end
 
 #
-function NLPConstraints(ocp::OptimalControlModel)
+function nlp_constraints(ocp::OptimalControlModel)
     #
     constraints = ocp.constraints
     n = ocp.state_dimension
