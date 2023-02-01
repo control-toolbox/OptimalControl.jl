@@ -80,13 +80,13 @@ function constraint(ocp, xu, N)
     for i in 0:N-1
       xi = xu[1+i*(n+1):(i+1)*(n+1)]
       xip1 = xu[1+(i+1)*(n+1):(i+2)*(n+1)]
-      ui = xu[1+(N+1)*(n+1):m+(N+1)*(n+1)]
+      ui = xu[1+(N+1)*(n+1)+i*m:m+(N+1)*(n+1)+i*m]
       c[1+i*(n+1):(i+1)*(n+1)] = xip1 - (xi + h*f_Mayer(xi, ui))
-      c[1+i*(n+1):(i+1)*(n+1)] = xu[1+(i+1)*(n+1):(i+2)*(n+1)] - (xu[1+i*(n+1):(i+1)*(n+1)] + h*f_Mayer(xu[1+i*(n+1):(i+1)*(n+1)], xu[1+(N+1)*(n+1):m+(N+1)*(n+1)]))
+      #c[1+i*(n+1):(i+1)*(n+1)] = xu[1+(i+1)*(n+1):(i+2)*(n+1)] - (xu[1+i*(n+1):(i+1)*(n+1)] + h*f_Mayer(xu[1+i*(n+1):(i+1)*(n+1)], xu[1+(N+1)*(n+1):m+(N+1)*(n+1)]))
 
     end
-    c[1+N*(n+1):n+N*(n+1)] = xu[1:n] - x0
-    c[n+1+N*(n+1):2*n+N*(n+1)] = xu[1+N*(n+1):(N+1)*(n+1)-1] - xf
+    c[1+N*(n+1):n+1+N*(n+1)] = xu[1:n+1] - [x0 ; 0]
+    c[n+2+N*(n+1):2*n+1+N*(n+1)] = xu[1+N*(n+1):(N+1)*(n+1)-1] - xf
  
     return c
 end
