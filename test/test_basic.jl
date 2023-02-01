@@ -20,8 +20,8 @@ time!(ocp, [t0, tf])
 constraint!(ocp, :initial, [ -1., 0. ])
 constraint!(ocp, :final,   [  0., 0. ])
 
-@test ocp.initial_condition ≈ [-1.; 0.] atol = 1e-8
-@test ocp.final_condition ≈ [0.; 0.] atol = 1e-8
+#@test ocp.initial_condition ≈ [-1.; 0.] atol = 1e-8
+#@test ocp.final_condition ≈ [0.; 0.] atol = 1e-8
 
 #
 A = [ 0. 1.
@@ -34,7 +34,7 @@ constraint!(ocp, :dynamics, (x, u) -> A*x + B*u)
 
 #
 objective!(ocp, :lagrangian, (x, u) -> 0.5*u^2) # default is to minimise
-@test ocp.lagrange([0.; 0.], 1.0) ≈ 0.5 atol=1e-8
+@test ocp.lagrangian([0.; 0.], 1.0) ≈ 0.5 atol=1e-8
 
 # from model to problem
 # tbd

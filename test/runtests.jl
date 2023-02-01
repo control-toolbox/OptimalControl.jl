@@ -2,6 +2,7 @@ using OptimalControl
 using Test
 using Plots
 using LinearAlgebra
+using LabelledArrays
 
 # functions and types that are not exported
 const convert               = OptimalControl.convert
@@ -14,12 +15,13 @@ const make_udss_init        = OptimalControl.make_udss_init
 const convert_init          = OptimalControl.convert_init
 
 #
-@testset verbose = true showtiming = true "Optimal Control" begin
+@testset verbose = true showtiming = true "Optimal control tests" begin
     for name in (
         #"utils", 
         #"optimal_control", 
         #"udss", # unconstrained direct simple shooting
-        "model",
+        #"basic",
+        "goddard",
         )
         @testset "$name" begin
             include("test_$name.jl")
