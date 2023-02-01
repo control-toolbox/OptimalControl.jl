@@ -18,7 +18,7 @@ constraint!(ocp, :dynamics, (x, u) -> A*x + B*u)
 #
 objective!(ocp, :lagrangian, (x, u) -> 0.5*u^2) # default is to minimise
 
-include("basic_mayer.jl")
+include("basic_lagrange.jl")
 
 sol = solve(ocp,100)
 #println(sol)
