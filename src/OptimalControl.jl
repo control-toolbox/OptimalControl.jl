@@ -22,6 +22,7 @@ import CTOptimization: solve, CTOptimization
 @reexport using ControlToolboxTools
 const ControlToolboxCallbacks = Tuple{Vararg{ControlToolboxCallback}}
 using HamiltonianFlows
+const flow = Flow
 #
 
 # --------------------------------------------------------------------------------------------------
