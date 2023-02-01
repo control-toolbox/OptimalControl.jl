@@ -87,6 +87,21 @@ function constraint!(ocp::OptimalControlModel, type::Symbol, f::Function, lb::Re
     elseif type == :state
         lb > -Inf ? ocp.constraints[ll] = (type, :ineq, (x,u)->f(x,u)-lb) : nothing
         ub <  Inf ? ocp.constraints[lu] = (type, :ineq, (x,u)->ub-f(x,u)) : nothing
+    elseif type == :boundary
+        lb > -Inf ? ocp.constraints[ll] = (type, :ineq, (t0,x0,tf,xf)->f(t0,x0,tf,xf)-lb) : nothing
+        ub <  Inf ? ocp.constraints[lu] = (type, :ineq, (t0,x0,tf,xfu)->ub-f(t0,x0,tf,xf)) : nothing
+    else
+        error("this constraint is not valid")
+    end
+end
+
+function constraint!(ocp::OptimalControlModel, type::Symbol, f::Function, val::Real, label::Symbol=gensym(:anonymous))
+    if type == :control
+        ocp.constraints[label] = (type, :eq, u->f(u)-val)
+    elseif type == :state
+        ocp.constraints[label] = (type, :eq, (x,u)->f(x,u)-val)
+    elseif type == :boundary
+        ocp.constraints[label] = (type, :eq, (t0,x0,tf,xf)->f(t0,x0,tf,xf)-val)
     else
         error("this constraint is not valid")
     end
@@ -104,13 +119,15 @@ end
 
 #
 function NLPConstraints(ocp::OptimalControlModel)
+    #
     constraints = ocp.constraints
+    n = ocp.state_dimension
     
     ξf = Vector{Any}(); ξl = Vector{Any}(); ξu = Vector{Any}()
     ψf = Vector{Any}(); ψl = Vector{Any}(); ψu = Vector{Any}()
     ϕf = Vector{Any}(); ϕl = Vector{Any}(); ϕu = Vector{Any}()
 
-    for (key, c) ∈ constraints
+    for (_, c) ∈ constraints
         if c[1] == :control
             push!(ξf, c[3])
             push!(ξl, 0.)
@@ -121,12 +138,16 @@ function NLPConstraints(ocp::OptimalControlModel)
             c[2] == :eq ? push!(ψu, 0.) : push!(ψu, Inf)
         elseif c[1] == :initial
             push!(ϕf, (t0, x0, tf, xf) -> c[3](x0))
-            c[2] == :eq ? append!(ϕl, zeros(Float64, ocp.state_dimension)) : push!(ϕl, 0.)
-            c[2] == :eq ? append!(ϕu, zeros(Float64, ocp.state_dimension)) : push!(ϕu, Inf)
+            c[2] == :eq ? append!(ϕl, zeros(Float64, n)) : push!(ϕl, 0.)
+            c[2] == :eq ? append!(ϕu, zeros(Float64, n)) : push!(ϕu, Inf)
         elseif c[1] == :final
             push!(ϕf, (t0, x0, tf, xf) -> c[3](xf))
-            c[2] == :eq ? append!(ϕl, zeros(Float64, ocp.state_dimension)) : push!(ϕl, 0.)
-            c[2] == :eq ? append!(ϕu, zeros(Float64, ocp.state_dimension)) : push!(ϕu, Inf)
+            c[2] == :eq ? append!(ϕl, zeros(Float64, n)) : push!(ϕl, 0.)
+            c[2] == :eq ? append!(ϕu, zeros(Float64, n)) : push!(ϕu, Inf)
+        elseif c[1] == :boundary
+            push!(ϕf, (t0, x0, tf, xf) -> c[3](t0, x0, tf, xf))
+            push!(ϕl, 0.)
+            c[2] == :eq ? push!(ϕu, 0.) : push!(ϕu, Inf)
         end
     end
 

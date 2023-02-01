@@ -6,7 +6,6 @@ using Printf # to print iterations results
 using Interpolations: linear_interpolation, Line, Interpolations
 using Reexport
 using Parameters # @with_kw
-#using StaticArrays, LabelledArrays
 
 # todo: use RecipesBase instead of plot
 import Plots: plot, plot!, Plots # import instead of using to overload the plot and plot! functions, to plot ocp solution
@@ -51,6 +50,7 @@ include("./default.jl")
 include("model.jl")
 include("problem.jl")
 include("solve.jl")
+include("flows.jl")
 #
 include("direct/simple-shooting/init.jl")
 include("direct/simple-shooting/utils.jl")

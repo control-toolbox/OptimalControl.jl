@@ -1,3 +1,16 @@
+Ad(X, f) = ∇(f, x)'*X(x)
+function Poisson(f, g)
+    function fg(x, p)
+        n = size(x, 1)
+        ff = z -> f(z[1:n], z[n+1:2n])
+        gg = z -> g(z[1:n], z[n+1:2n])
+        df = ∇(ff, [ x ; p ])
+        dg = ∇(gg, [ x ; p ])
+        return df[n+1:2n]'*dg[1:n] - df[1:n]'*dg[n+1:2n]
+    end
+    return fg
+end
+
 #
 State = @SLVector (:r, :v, :m)
 
@@ -40,10 +53,36 @@ constraint!(ocp, :dynamics!, f!) # dynamics can be in place
 @test typeof(ocp) == OptimalControlModel
 @test ocp.initial_time == t0
 
+ξ, ψ, ϕ = NLPConstraints(ocp)
+
+# --------------------------------------------------------
 # Direct
 
-
+# --------------------------------------------------------
 # Indirect
 
-#
+# Bang controls
+u0(x, p) = 0.
+u1(x, p) = 1.
+
+# Computation of singular control of order 1
+H0(x, p) = p' * F0(x)
+H1(x, p) = p' * F1(x)
+H01 = Poisson(H0, H1)
+H001 = Poisson(H0, H01)
+H101 = Poisson(H1, H01)
+us(x, p) = -H001(x, p) / H101(x, p)
+
+# Computation of boundary control
 remove_constraint!(ocp, :state_con1)
+remove_constraint!(ocp, :state_con3)
+constraint!(ocp, :boundary, (t0, x0, tf, xf) -> xf[3], mf, :final_con) # one value => equality (not boxed inequality)
+
+g(x) = constraint(ocp, :state_con2_upper)(x, 0.) # g(x, u) ≥ 0 (cf. nonnegative multiplier)
+ub(x, p) = -Ad(F0, g)(x) / Ad(F1, g)(x)
+μb(x, p) = H01(x, p) / Ad(F1, g)(x)
+
+f0 = Flow(ocp, u0)
+f1 = Flow(ocp, u1)
+fs = Flow(ocp, us)
+fb = Flow(ocp, ub, :state_con2_upper, μb)
