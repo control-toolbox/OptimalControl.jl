@@ -121,11 +121,11 @@ function NLPConstraints(ocp::OptimalControlModel)
             c[2] == :eq ? push!(ψu, 0.) : push!(ψu, Inf)
         elseif c[1] == :initial
             push!(ϕf, (t0, x0, tf, xf) -> c[3](x0))
-            append!(ϕl, zeros(Float64, ocp.state_dimension))
+            append!(ϕl, zeros(Float64, ocp.state_dimension)) # todo: 
             c[2] == :eq ? append!(ϕu, zeros(Float64, ocp.state_dimension)) : push!(ϕu, Inf)
         elseif c[1] == :final
             push!(ϕf, (t0, x0, tf, xf) -> c[3](xf))
-            append!(ϕl, zeros(Float64, ocp.state_dimension))
+            append!(ϕl, zeros(Float64, ocp.state_dimension)) # todo:
             c[2] == :eq ? append!(ϕu, zeros(Float64, ocp.state_dimension)) : push!(ϕu, Inf)
         end
     end
