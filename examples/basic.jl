@@ -24,10 +24,11 @@ objective!(ocp, :lagrangian, (x, u) -> 0.5*u^2) # default is to minimise
 
 # Module
 
-mutable struct direct_sol2
+mutable struct direct_sol3
   time::Vector{<:Real}
   X::Matrix{<:Real}
   U::Matrix{<:Real}
+  P::Matrix{<:Real}
   n::Int
   m::Int
   N::Int
@@ -78,12 +79,15 @@ function solve(ocp,N)
     return xu[1+(N+1)*(n+1)+i*m:m+(N+1)*(n+1)+i*m]
   end
 
-  function parse_sol(xu)
+  function parse_sol(stats)
     """
       return
         X : matrix(N+1,n+1)
         U : matrix(N,m)
+        P : matrix(N,n+1)
     """
+      # states and controls
+      xu = stats.solution
       X = zeros(N+1,n+1)
       U = zeros(N,m)
       for i in 1:N
@@ -91,7 +95,14 @@ function solve(ocp,N)
         U[i,:] = get_control_at_time_step(xu,i-1)
       end
       X[N+1,:] = get_state_at_time_step(xu,N)
-    return X, U
+
+      # adjoints
+      P = zeros(N,n+1)
+      lambda = stats.multipliers
+      for i in 1:N
+        P[i,:] = lambda[1+(i-1)*(n+1):i*(n+1)]
+      end
+    return X, U, P
   end
 
   # Mayer formulation
@@ -188,15 +199,15 @@ function solve(ocp,N)
   #nlp = ADNLPModel(objective, xu0, constraint_Ipopt,lb,ub)
   nlp = ADNLPModel(objective, xu0, xu -> constraint(ocp,xu,N),lb,ub)
   stats = ipopt(nlp, print_level=3)
-  X, U = parse_sol(stats.solution)
+  X, U, P = parse_sol(stats)
   time = collect(t0:(tf-t0)/N:tf)
-  sol  = direct_sol2(time,X,U,n,m,N)
+  sol  = direct_sol3(time,X,U,P,n,m,N)
 return sol
 end
 
 
 
-function plot_sol(sol::direct_sol2)
+function plot_sol(sol::direct_sol3)
   """
      Plot the solution
 
@@ -206,6 +217,7 @@ function plot_sol(sol::direct_sol2)
   time = sol.time
   X = sol.X
   U = sol.U
+  P = sol.P
   n = sol.n
   m = sol.m
   N = sol.N
@@ -215,13 +227,22 @@ function plot_sol(sol::direct_sol2)
   for i in 1:n+1
     plot!(px[i],ylabel = string("x_",i))
   end
+
+  pp = plot(time[1:N], P,layout = (n+1,1))
+  plot!(pp[1],title="costate")
+  plot!(pp[n+1], xlabel="t")
+  for i in 1:n+1
+    plot!(pp[i],ylabel = string("p_",i))
+  end
+
   pu = plot(time[1:N],U,lc=:red,layout = (m,1))
   for i in 1:m
     plot!(pu[i],ylabel = string("u_",i))
   end
   plot!(pu[1],title = "control")
   plot!(pu[m],xlabel = "t")
-  plot(px,pu,legend = false)
+
+  plot(px,pp,pu,layout = (1,3),legend = false)
 end
 
 
