@@ -27,10 +27,17 @@ function solve(ocp::OptimalControlModel,N)
     sol : solution of the discretized problem
           (time, X, U, n, m, N)
   """
-
+  # transcription ocp -> NLP
   t0 = ocp.initial_time
   tf = ocp.final_time
-
+  if isnothing(tf)
+    has_free_final_time = true
+    # multiplier la dynamique par (tf-t0)
+    # travailler avec le nouveau temps s dans (0., 1.)
+    # une fonction t(s)
+  else 
+    has_free_final_time = false
+  end
 
   n_x = ocp.state_dimension
   m = ocp.control_dimension
@@ -100,7 +107,9 @@ function solve(ocp::OptimalControlModel,N)
   end
 
   dim_xu = (N+1)*(n_x+1)+N*m                  # dimension the the unknown xu
-
+  if has_free_final_time
+    dim_xu = dim_xu + 1
+  end
 
   function f_Mayer(x,u)
     if hasLagrangianCost
@@ -209,7 +218,12 @@ function solve(ocp::OptimalControlModel,N)
     c :: 
     """
       t0 = ocp.initial_time
-      tf = ocp.final_time
+      if has_free_final_time
+        tf = xu[end]
+      else
+        tf = ocp.final_time
+      end
+      
       h = (tf-t0)/N
       c = zeros(eltype(xu),nc)
       #
@@ -292,19 +306,27 @@ function solve(ocp::OptimalControlModel,N)
   end
 
   xu0 = zeros(dim_xu)
+  l_var = -Inf*ones(dim_xu)
+  u_var = Inf*ones(dim_xu)
 
-
-
+  if has_free_final_time
+    xu0[end] = 1.
+    l_var[end] = 1.e-3
+  end
 
 
   lb, ub = l_u_b(ocp,xu0,N)
   constraint_Ipopt(xu) = constraint(ocp,xu,N)
 
-  nlp = ADNLPModel(xu -> objective(ocp,xu,N), xu0, xu -> constraint(ocp,xu,N),lb,ub)
+  nlp = ADNLPModel(xu -> objective(ocp,xu,N), xu0, l_var, u_var, xu -> constraint(ocp,xu,N),lb,ub)
   stats = ipopt(nlp, print_level=3)
   X, U, P = parse_sol(stats)
   t0 = ocp.initial_time
-  tf = ocp.final_time
+  if has_free_final_time
+    tf = ### 
+  else
+    tf = ocp.final_time
+  end
   time = collect(t0:(tf-t0)/N:tf)
   sol  = direct_sol(time,X,U,P,n_x,m,N)
 return sol
