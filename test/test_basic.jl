@@ -19,7 +19,7 @@ B = [ 0.0
 constraint!(ocp, :dynamics, (x, u) -> A*x + B*u)
 objective!(ocp, :lagrangian, (x, u) -> 0.5*u^2) # default is to minimise
 
-(ξf, ξl, ξu), (ψf, ψl, ψu), (ϕf, ϕl, ϕu) = nlp_constraints(ocp)
+(ξl, ξf, ξu), (ψl, ψf, ψu), (ϕl, ϕf, ϕu) = nlp_constraints(ocp)
 val = ϕf(0.0, [ -1.0, 0.0 ], 1.0, [ 0.0, 0.0 ])
 println("ϕf = ", val)
 @test length(val) == 4 
