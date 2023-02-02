@@ -1,5 +1,5 @@
-using OptimalControl, NLPModelsIpopt, ADNLPModels
-using Plots
+#using OptimalControl, NLPModelsIpopt, ADNLPModels
+#using Plots
 
 # Module
 
@@ -188,7 +188,7 @@ end
 
 
 
-function plot_sol(sol::direct_sol)
+function plot(sol::direct_sol)
   """
      Plot the solution
 

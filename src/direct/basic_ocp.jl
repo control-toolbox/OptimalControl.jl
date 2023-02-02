@@ -1,5 +1,4 @@
-using OptimalControl, NLPModelsIpopt, ADNLPModels
-using Plots
+using OptimalControl
 ocp = Model()
 #
 state!(ocp, 2)
@@ -18,9 +17,7 @@ constraint!(ocp, :dynamics, (x, u) -> A*x + B*u)
 #
 objective!(ocp, :lagrangian, (x, u) -> 0.5*u^2) # default is to minimise
 
-include("basic_lagrange.jl")
-
 sol = solve(ocp,100)
 #println(sol)
-plot_sol(sol)
+plot(sol)
 
