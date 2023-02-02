@@ -1,6 +1,3 @@
-using OptimalControl, NLPModelsIpopt, ADNLPModels
-using Plots
-
 # Module
 
 mutable struct direct_sol
@@ -17,7 +14,7 @@ end
 
 
 
-function solve(ocp,N)
+function solve(ocp::OptimalControlModel,N)
   """
     Solve the optimal control problem
 
@@ -34,13 +31,31 @@ function solve(ocp,N)
   n_x = ocp.state_dimension
   m = ocp.control_dimension
   f = ocp.dynamics
-  L = ocp.lagrange
-  if isnothing(ocp.lagrange)
+
+
+
+  if isnothing(ocp.lagrangian)
     hasLagrangianCost = false
   else
     hasLagrangianCost = true
+    L = ocp.lagrangian
   end  
 
+  if isnothing(ocp.mayer)
+    hasMayerCost = false
+  else
+    hasMayerCost = true
+    g = ocp.mayer
+  end  
+  println("hasLagrangien : ", hasLagrangianCost)
+  println("Mayer = ", hasMayerCost)
+  #x0 = get_state_at_time_step(xu,0)
+    
+  #xf = get_state_at_time_step(xu,N)
+  t0 = ocp.initial_time
+  tf = ocp.final_time
+
+  println(g(t0, [-1., 0], tf, [0.,0.]))
 
    # Mayer formulation
   # use an additional state for the Lagrangian cost
@@ -52,12 +67,19 @@ function solve(ocp,N)
 
   if hasLagrangianCost
     dim_x = n_x + 1
-    f_Mayer(x,u) = [f(x[1:n_x],u[1]); L(x[1:n_x],u[1])]
     nc = N*dim_x+2*n_x+1               # dimension of the constraints
   else
     dim_x = n_x
-    f_Mayer(x,u) = f(x,u[1])
     nc = N*dim_x+2*n_x               # dimension of the constraints
+  end
+
+  function f_Mayer(x,u)
+    if hasLagrangianCost
+      f_val = [f(x[1:n_x],u[1]); L(x[1:n_x],u[1])]
+    else
+      f_val = f(x,u[1])
+    end
+    return f_val
   end
 
   # layout of the nlp unknown xu for Euler discretization 
@@ -121,16 +143,21 @@ function solve(ocp,N)
 
  
 
- 
-
-
-
-                                #
-
-
-
-
-  objective(xu) = xu[(N+1)*dim_x]        # ajouter le critère de Mayer s'il existe et ne pas ajouter xu[(N+1)*dim_x] s'il n'existe pas de critère de Lagrange
+  function objective(ocp, xu, N)
+    
+    obj = 0.
+    if hasMayerCost
+      t0 = ocp.initial_time
+      tf = ocp.final_time
+      x0 = get_state_at_time_step(xu,0)
+      xf = get_state_at_time_step(xu,N)
+      obj = obj + g(t0, x0[1:n_x], tf, xf[1:n_x])
+    end
+    if hasLagrangianCost
+      obj = obj + xu[(N+1)*dim_x]
+    end
+    return obj
+  end
 
   #function constraint(ocp, xu::Vector{<:Real},N)::Vector{<:Real}
   function constraint(ocp, xu, N)
@@ -173,9 +200,9 @@ function solve(ocp,N)
       end
 
       c[1+N*dim_x:n_x+N*dim_x] = xu[1:n_x] - x0
-      c[n_x+1+N*dim_x:2*n_x+1+N*dim_x] = xu[1+N*dim_x:n_x+N*dim_x] - xf
+      c[n_x+1+N*dim_x:2*n_x+N*dim_x] = xu[1+N*dim_x:n_x+N*dim_x] - xf
       if hasLagrangianCost
-        c[2*n_x+2+N*dim_x] = xu[dim_x]
+        c[2*n_x+1+N*dim_x] = xu[dim_x]
       end
   
       return c
@@ -189,21 +216,23 @@ function solve(ocp,N)
   ub = zeros(nc)
 
   constraint_Ipopt(xu) = constraint(ocp,xu,N)
-  xu0 = zeros((N+1)*(n+1)+N*m)  
+  xu0 = zeros((N+1)*(n_x+1)+N*m)  
   #println(get_state_at_time_step(xu0,1))
 
   #nlp = ADNLPModel(objective, xu0, constraint_Ipopt,lb,ub)
-  nlp = ADNLPModel(objective, xu0, xu -> constraint(ocp,xu,N),lb,ub)
+  nlp = ADNLPModel(xu -> objective(ocp,xu,N), xu0, xu -> constraint(ocp,xu,N),lb,ub)
   stats = ipopt(nlp, print_level=3)
   X, U, P = parse_sol(stats)
+  t0 = ocp.initial_time
+  tf = ocp.final_time
   time = collect(t0:(tf-t0)/N:tf)
-  sol  = direct_sol3(time,X,U,P,n,m,N)
+  sol  = direct_sol(time,X,U,P,n_x,m,N)
 return sol
 end
 
 
 
-function plot_sol(sol::direct_sol)
+function plot(sol::direct_sol)
   """
      Plot the solution
 
@@ -217,28 +246,28 @@ function plot_sol(sol::direct_sol)
   n = sol.n
   m = sol.m
   N = sol.N
-  px = plot(time, X,layout = (n+1,1))
-  plot!(px[1],title="state")
-  plot!(px[n+1], xlabel="t")
+  px = Plots.plot(time, X,layout = (n+1,1))
+  Plots.plot!(px[1],title="state")
+  Plots.plot!(px[n+1], xlabel="t")
   for i in 1:n+1
-    plot!(px[i],ylabel = string("x_",i))
+    Plots.plot!(px[i],ylabel = string("x_",i))
   end
 
-  pp = plot(time[1:N], P,layout = (n+1,1))
-  plot!(pp[1],title="costate")
-  plot!(pp[n+1], xlabel="t")
+  pp = Plots.plot(time[1:N], P,layout = (n+1,1))
+  Plots.plot!(pp[1],title="costate")
+  Plots.plot!(pp[n+1], xlabel="t")
   for i in 1:n+1
-    plot!(pp[i],ylabel = string("p_",i))
+    Plots.plot!(pp[i],ylabel = string("p_",i))
   end
 
-  pu = plot(time[1:N],U,lc=:red,layout = (m,1))
+  pu = Plots.plot(time[1:N],U,lc=:red,layout = (m,1))
   for i in 1:m
-    plot!(pu[i],ylabel = string("u_",i))
+    Plots.plot!(pu[i],ylabel = string("u_",i))
   end
-  plot!(pu[1],title = "control")
-  plot!(pu[m],xlabel = "t")
+  Plots.plot!(pu[1],title = "control")
+  Plots.plot!(pu[m],xlabel = "t")
 
-  plot(px,pp,pu,layout = (1,3),legend = false)
+  Plots.plot(px,pp,pu,layout = (1,3),legend = false)
 end
 
 

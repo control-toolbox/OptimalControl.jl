@@ -62,7 +62,7 @@ include("direct-shooting/interface.jl")
 include("direct-shooting/plot.jl")
 
 # Direct methods
-include("direct/basic_lagrange.jl")     #  --> module for using ?
+#include("direct/basic_bolza.jl")     #  --> module for using ?
 
 export solve
 
