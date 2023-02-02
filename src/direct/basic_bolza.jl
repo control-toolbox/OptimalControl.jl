@@ -33,9 +33,10 @@ function solve(ocp::OptimalControlModel,N)
   f = ocp.dynamics
 
   ξ, ψ, ϕ = OptimalControl.nlp_constraints(ocp)
+  dim_ξ = length(ξ[1])      # dimension of the boundary constraints
+  dim_ψ = length(ψ[1])
+  dim_ϕ = length(ϕ[1])
 
-  println("ξ(...) = ", ϕ[2](0.,[1.,0],1.,[5.,8]))
-  
   if isempty(ξ[1])
     has_ξ = false
   else
@@ -83,9 +84,6 @@ function solve(ocp::OptimalControlModel,N)
   # and we consider vectors for x and u in the discretized problem. Note that the same would apply for a scalar x.
   # question : how determine if u and x are scalar or vector ?
   # second member of the ode for the Mayer formulation
-
-  dim_ϕ = length(ϕ[1])      # dimension of the boundary constraints
-  println("dim_ϕ = ", dim_ϕ)
   
   if hasLagrangianCost
     dim_x = n_x + 1  
@@ -219,6 +217,14 @@ function solve(ocp::OptimalControlModel,N)
         # state equation
         c[index:index+dim_x-1] = xip1 - (xi + h*f_Mayer(xi, ui))
         index = index + dim_x
+        if has_ξ
+          c[index:index+dim_ξ-1] = ξ[2](ui)        # ui vector
+          index = index + dim_ξ
+        end
+        if has_ψ
+          c[index:index+dim_ψ-1] = ψ[2](xi[1:n_x],ui)        # ui vector
+          index = index + dim_ψ
+        end
 
       end
 
@@ -227,7 +233,7 @@ function solve(ocp::OptimalControlModel,N)
       x0 = get_state_at_time_step(xu,0)
       xf = get_state_at_time_step(xu,N)
       
-      c[index:index+dim_ϕ-1] = ϕ[2](t0,x0,tf,xf)
+      c[index:index+dim_ϕ-1] = ϕ[2](t0,x0[1:n_x],tf,xf[1:n_x])  # because Lagrangian cost possible
       index = index + dim_ϕ
       if hasLagrangianCost
         c[index] = xu[dim_x]
@@ -253,13 +259,19 @@ function solve(ocp::OptimalControlModel,N)
       # state equation
       #c[index:index+dim_x-1] = xip1 - (xi + h*f_Mayer(xi, ui))
       index = index + dim_x
+      if has_ξ
+        lb[index:index+dim_ξ-1] = ξ[1]
+        ub[index:index+dim_ξ-1] = ξ[3]
+        index = index + dim_ξ
+      end
+      if has_ψ
+        lb[index:index+dim_ψ-1] = ψ[1]
+        ub[index:index+dim_ψ-1] = ψ[3]
+        index = index + dim_ψ
+      end
+
     end  
     # boundary conditions
-    println("ϕ[1] = ", ϕ[1])
-    println("index:index+dim_ϕ = ", index:index + dim_ϕ -1)
-    println("typeof ...", typeof(index+dim_ϕ))
-    println("nc = ", nc)
-    println("lb =  ", lb[index:index+dim_ϕ-1])
     lb[index:index+dim_ϕ-1] = ϕ[1]
     ub[index:index+dim_ϕ-1] = ϕ[3]
     index = index + dim_ϕ
