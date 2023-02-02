@@ -4,7 +4,7 @@
 
 # --------------------------------------------------------------------------------------------------
 # check if the given grid (to the interface to the solver) is valid
-function __check_grid_validity(ocp::UncFreeXfProblem, T::Times)
+function __check_grid_validity(ocp::UncFreeXfProblem, T::TimesDisc)
     # T: t0 ≤ t1 ≤ ... ≤ tf
     t0 = ocp.initial_time
     tf = ocp.final_time
@@ -15,7 +15,7 @@ function __check_grid_validity(ocp::UncFreeXfProblem, T::Times)
     return valid
 end
 
-function __check_grid_validity(U::Controls, T::Times)
+function __check_grid_validity(U::Controls, T::TimesDisc)
     # length(U) == length(T) - 1
     return length(U) == (length(T) - 1)
 end
@@ -34,7 +34,7 @@ function __init(ocp::UncFreeXfProblem, N::Integer=__grid_size())
 end
 
 #
-function my_interpolation(interp::Function, T::Times, U::Controls, T_::Times)
+function my_interpolation(interp::Function, T::TimesDisc, U::Controls, T_::TimesDisc)
     u_lin = interp(T, U)
     return u_lin.(T_)
 end
@@ -53,7 +53,7 @@ function make_udss_init(ocp::UncFreeXfProblem, init::Nothing, grid::Nothing, arg
 end
 
 # init=nothing, grid=T => init=zeros(m, N-1), grid=T, with N=length(T) (check validity)
-function make_udss_init(ocp::UncFreeXfProblem, init::Nothing, grid::Times, args...)
+function make_udss_init(ocp::UncFreeXfProblem, init::Nothing, grid::TimesDisc, args...)
     if !__check_grid_validity(ocp, grid)
         throw(InconsistentArgument("grid argument is inconsistent with ocp argument"))
     end
@@ -69,7 +69,7 @@ function make_udss_init(ocp::UncFreeXfProblem, U::Controls, grid::Nothing, inter
 end
 
 # init=U, grid=T => init=U, grid=T (check validity with ocp and with init)
-function make_udss_init(ocp::UncFreeXfProblem, init::Controls, grid::Times, args...)
+function make_udss_init(ocp::UncFreeXfProblem, init::Controls, grid::TimesDisc, args...)
     if !__check_grid_validity(ocp, grid)
         throw(InconsistentArgument("grid argument is inconsistent with ocp argument"))
     end
@@ -80,7 +80,7 @@ function make_udss_init(ocp::UncFreeXfProblem, init::Controls, grid::Times, args
 end
 
 # init=(T,U), grid=nothing => init=U, grid=range(t0, tf, N), with N=__grid_size() (check validity with ocp and with U)
-function make_udss_init(ocp::UncFreeXfProblem, init::Tuple{Times,Controls}, grid::Nothing, interp::Function)
+function make_udss_init(ocp::UncFreeXfProblem, init::Tuple{TimesDisc,Controls}, grid::Nothing, interp::Function)
     T = init[1]
     U = init[2]
     if !__check_grid_validity(ocp, T)
@@ -95,7 +95,7 @@ function make_udss_init(ocp::UncFreeXfProblem, init::Tuple{Times,Controls}, grid
 end
 
 # init=(T1,U), grid=T2 => init=U, grid=T2 (check validity with ocp (T1, T2) and with U (T1))
-function make_udss_init(ocp::UncFreeXfProblem, init::Tuple{Times,Controls}, grid::Times, interp::Function)
+function make_udss_init(ocp::UncFreeXfProblem, init::Tuple{TimesDisc,Controls}, grid::TimesDisc, interp::Function)
     T1 = init[1]
     U  = init[2]
     T2 = grid
@@ -120,7 +120,7 @@ function make_udss_init(ocp::UncFreeXfProblem, S::UncFreeXfSolution, grid::Nothi
 end
 
 # init=S, grid=T => init=S.U, grid=T (check validity with ocp)
-function make_udss_init(ocp::UncFreeXfProblem, S::UncFreeXfSolution, T::Times, interp::Function)
+function make_udss_init(ocp::UncFreeXfProblem, S::UncFreeXfSolution, T::TimesDisc, interp::Function)
     if !__check_grid_validity(ocp, T)
         throw(InconsistentArgument("grid argument is inconsistent with ocp argument"))
     end
@@ -136,7 +136,7 @@ function make_udss_init(ocp::UncFreeXfProblem, u::Function, grid::Nothing, args.
 end
 
 # init=u, grid=T => init=u(T), grid=T (check validity with ocp)
-function make_udss_init(ocp::UncFreeXfProblem, u::Function, T::Times, args...)
+function make_udss_init(ocp::UncFreeXfProblem, u::Function, T::TimesDisc, args...)
     if !__check_grid_validity(ocp, T)
         throw(InconsistentArgument("grid argument is inconsistent with ocp argument"))
     end

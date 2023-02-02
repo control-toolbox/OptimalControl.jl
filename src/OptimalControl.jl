@@ -5,7 +5,7 @@ using LinearAlgebra # for the norm for instance
 using Printf # to print iterations results
 using Interpolations: linear_interpolation, Line, Interpolations
 using Reexport
-using Parameters
+using Parameters # @with_kw
 
 # todo: use RecipesBase instead of plot
 import Plots: plot, plot!, Plots # import instead of using to overload the plot and plot! functions, to plot ocp solution
@@ -21,18 +21,26 @@ using CTOptimization
 import CTOptimization: solve, CTOptimization
 @reexport using ControlToolboxTools
 const ControlToolboxCallbacks = Tuple{Vararg{ControlToolboxCallback}}
-using HamiltonianFlows
+@reexport using HamiltonianFlows
+import HamiltonianFlows: Flow, HamiltonianFlows
 #
 
 # --------------------------------------------------------------------------------------------------
 # Aliases for types
-const Times = Union{Vector{<:Real},StepRangeLen}
-const States = Vector{<:Vector{<:Real}}
-const Adjoints = Vector{<:Vector{<:Real}} #Union{Vector{<:Real}, Vector{<:Vector{<:Real}}, Matrix{<:Vector{<:Real}}}
-const Controls = Vector{<:Vector{<:Real}} #Union{Vector{<:Real}, Vector{<:Vector{<:Real}}}
-const Time = Real
-const State = Vector{<:Real}
-const Adjoint = Vector{<:Real} # todo: ajouter type adjoint pour faire par exemple p*f(x, u) au lieu de p'*f(x,u)
+# const AbstractVector{T} = AbstractArray{T,1}.
+const MyNumber = Real
+const MyVector = AbstractVector{<:MyNumber}
+
+const Time = MyNumber
+const Times = MyVector
+const TimesDisc = Union{MyVector,StepRangeLen}
+
+const States = Vector{<:MyVector}
+const Adjoints = Vector{<:MyVector}
+const Controls = Vector{<:MyVector}
+
+const State = MyVector
+const Adjoint = MyVector # todo: ajouter type adjoint pour faire par exemple p*f(x, u) au lieu de p'*f(x,u)
 const Dimension = Integer
 
 #
@@ -42,19 +50,22 @@ include("./default.jl")
 include("model.jl")
 include("problem.jl")
 include("solve.jl")
+include("flows.jl")
 #
-include("direct/simple-shooting/init.jl")
-include("direct/simple-shooting/utils.jl")
-include("direct/simple-shooting/problem.jl")
-include("direct/simple-shooting/solution.jl")
-include("direct/simple-shooting/interface.jl")
-include("direct/simple-shooting/plot.jl")
+include("direct-shooting/init.jl")
+include("direct-shooting/utils.jl")
+include("direct-shooting/problem.jl")
+include("direct-shooting/solution.jl")
+include("direct-shooting/interface.jl")
+include("direct-shooting/plot.jl")
 
 export solve
 
 # model
 export AbstractOptimalControlModel, OptimalControlModel
-export Model, time!, constraint!, objective!
+export Model, time!, constraint!, objective!, state!, control!
+export remove_constraint!
+export constraint
 
 # problems
 export AbstractOptimalControlProblem, AbstractOptimalControlSolution, AbstractOptimalControlInit
