@@ -48,21 +48,27 @@ const Dimension = Integer
 #
 include("./utils.jl")
 include("./default.jl")
-#
+
+# general
 include("model.jl")
 include("problem.jl")
 include("solve.jl")
 include("flows.jl")
-#
+
+# direct shooting
 include("direct-shooting/init.jl")
 include("direct-shooting/utils.jl")
 include("direct-shooting/problem.jl")
+include("direct-shooting/solve.jl")
 include("direct-shooting/solution.jl")
-include("direct-shooting/interface.jl")
 include("direct-shooting/plot.jl")
 
-# Direct methods
-#include("direct/basic_bolza.jl")     #  --> module for using ?
+# direct ipopt methods
+include("direct/utils.jl")
+include("direct/problem.jl")
+include("direct/solve.jl")
+include("direct/solution.jl")
+include("direct/plot.jl")
 
 export solve
 
