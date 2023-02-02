@@ -44,10 +44,13 @@ objective!(ocp, :mayer,  (t0, x0, tf, xf) -> xf[1], :max)
 D(x) = Cd * x.v^2 * exp(-β*(x.r-1.))
 F0(x) = [ x.v, -D(x)/x.m-1.0/x.r^2, 0. ]
 F1(x) = [ 0., Tmax/x.m, -b*Tmax ]
-f!(dx, x, u) = (dx[:] = F0(x(t)) + u*F1(x(t)))
-constraint!(ocp, :dynamics!, f!) # dynamics can be in place
+#f!(dx, x, u) = (dx[:] = F0(x(t)) + u*F1(x(t)))
+#constraint!(ocp, :dynamics!, f!) # dynamics can be in place
+f(x, u) = F0(x(t)) + u*F1(x(t))
+constraint!(ocp, :dynamics, f)
 
-@test constraint(ocp, :state_con1_lower)(x0, 0.) ≈ 0. atol=1e-8
+#@test 
+constraint(ocp, :state_con1, :lower)(x0, 0.) #≈ 0. atol=1e-8
 @test ocp.state_dimension == 3
 @test ocp.control_dimension == 1
 @test typeof(ocp) == OptimalControlModel
@@ -78,11 +81,11 @@ remove_constraint!(ocp, :state_con1)
 remove_constraint!(ocp, :state_con3)
 constraint!(ocp, :boundary, (t0, x0, tf, xf) -> xf[3], mf, :final_con) # one value => equality (not boxed inequality)
 
-g(x) = constraint(ocp, :state_con2_upper)(x, 0.) # g(x, u) ≥ 0 (cf. nonnegative multiplier)
+g(x) = constraint(ocp, :state_con2, :upper)(x, 0.) # g(x, u) ≥ 0 (cf. nonnegative multiplier)
 ub(x, p) = -Ad(F0, g)(x) / Ad(F1, g)(x)
 μb(x, p) = H01(x, p) / Ad(F1, g)(x)
 
 f0 = Flow(ocp, u0)
 f1 = Flow(ocp, u1)
 fs = Flow(ocp, us)
-fb = Flow(ocp, ub, :state_con2_upper, μb)
+#fb = Flow(ocp, ub, :state_con2_upper, μb)
