@@ -128,7 +128,7 @@ function constraint(ocp::OptimalControlModel, label::Symbol, bound::Symbol)
     end
     if (bound == :lower && lb == -Inf) || (bound == :upper && ub == Inf)
         error("this constraint is not valid")
-    end 
+    end
     if type in [ :initial, :final ]
         return bound == :lower ? x -> f(x) - lb : x -> ub - f(x)
     elseif type == :boundary
