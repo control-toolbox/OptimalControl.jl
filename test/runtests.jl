@@ -13,6 +13,7 @@ const __init_interpolation  = OptimalControl.__init_interpolation
 const vec2vec               = OptimalControl.vec2vec
 const make_udss_init        = OptimalControl.make_udss_init
 const convert_init          = OptimalControl.convert_init
+const nlp_constraints       = OptimalControl.nlp_constraints
 
 #
 @testset verbose = true showtiming = true "Optimal control tests" begin
@@ -20,7 +21,7 @@ const convert_init          = OptimalControl.convert_init
         #"utils", 
         #"optimal_control", 
         #"udss", # unconstrained direct simple shooting
-        #"basic",
+        "basic",
         "goddard",
         )
         @testset "$name" begin
