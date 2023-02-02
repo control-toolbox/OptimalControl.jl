@@ -100,8 +100,6 @@ end
 function constraint(ocp::OptimalControlModel, label::Symbol)
     con = ocp.constraints[label]
     if length(con) != 4
-        nothing
-    else
         error("this constraint is not valid")
     end
     type, _, f, val = con
@@ -122,13 +120,17 @@ end
 #
 function constraint(ocp::OptimalControlModel, label::Symbol, bound::Symbol)
     # constraints are all >= 0
-    type, _, f, lb, ub = ocp.constraints[label]
+    con = ocp.constraints[label]
+    if length(con) != 5
+        error("this constraint is not valid")
+    end
+    type, _, f, lb, ub = con
     if !( bound in [ :lower, :upper ] )
         error("this constraint is not valid")
     end
     if (bound == :lower && lb == -Inf) || (bound == :upper && ub == Inf)
         error("this constraint is not valid")
-    end 
+    end
     if type in [ :initial, :final ]
         return bound == :lower ? x -> f(x) - lb : x -> ub - f(x)
     elseif type == :boundary
@@ -149,9 +151,9 @@ function nlp_constraints(ocp::OptimalControlModel)
     constraints = ocp.constraints
     n = ocp.state_dimension
     
-    ξf = Vector{Any}(); ξl = Vector{Any}(); ξu = Vector{Any}()
-    ψf = Vector{Any}(); ψl = Vector{Any}(); ψu = Vector{Any}()
-    ϕf = Vector{Any}(); ϕl = Vector{Any}(); ϕu = Vector{Any}()
+    ξf = Vector{Function}(); ξl = Vector{MyNumber}(); ξu = Vector{MyNumber}()
+    ψf = Vector{Function}(); ψl = Vector{MyNumber}(); ψu = Vector{MyNumber}()
+    ϕf = Vector{Function}(); ϕl = Vector{MyNumber}(); ϕu = Vector{MyNumber}()
 
     for (_, c) ∈ constraints
         if c[1] == :control
@@ -181,9 +183,23 @@ function nlp_constraints(ocp::OptimalControlModel)
 #    ψ!(val, x, u) = [ val[i] = ψf[i](x, u) for i in 1:length(ψf) ]
 #    ϕ!(val, t0, x0, tf, xf) = [ val[i] = ϕf[i](t0, x0, tf, xf) for i in 1:length(ϕf) ]
 
-    ξ(u) = [ ξf[i](u) for i in 1:length(ξf) ]
-    ψ(x, u) = [ ψf[i](x, u) for i in 1:length(ψf) ]
-    ϕ(t0, x0, tf, xf) = [ ϕf[i](t0, x0, tf, xf) for i in 1:length(ϕf) ]
+    function ξ(u)
+        val = Vector{MyNumber}()
+        for i ∈ 1:length(ξf) append!(val, ξf[i](u)) end
+    return val
+    end 
+
+    function ψ(x, u)
+        val = Vector{MyNumber}()
+        for i ∈ 1:length(ψf) append!(val, ψf[i](x, u)) end
+    return val
+    end 
+
+    function ϕ(t0, x0, tf, xf)
+        val = Vector{MyNumber}()
+        for i ∈ 1:length(ϕf) append!(val, ϕf[i](t0, x0, tf, xf)) end
+    return val
+    end 
 
     return (ξl, ξ, ξu), (ψl, ψ, ψu), (ϕl, ϕ, ϕu)
 
