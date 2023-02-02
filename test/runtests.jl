@@ -3,6 +3,11 @@ using Test
 using Plots
 using LinearAlgebra
 using LabelledArrays
+using ForwardDiff: jacobian, gradient, ForwardDiff # automatic differentiation
+
+# method to compute gradient and Jacobian
+∇(f::Function, x) = ForwardDiff.gradient(f, x)
+Jac(f::Function, x) = ForwardDiff.jacobian(f, x)
 
 # functions and types that are not exported
 const convert               = OptimalControl.convert

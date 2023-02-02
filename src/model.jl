@@ -100,8 +100,6 @@ end
 function constraint(ocp::OptimalControlModel, label::Symbol)
     con = ocp.constraints[label]
     if length(con) != 4
-        nothing
-    else
         error("this constraint is not valid")
     end
     type, _, f, val = con
@@ -122,7 +120,11 @@ end
 #
 function constraint(ocp::OptimalControlModel, label::Symbol, bound::Symbol)
     # constraints are all >= 0
-    type, _, f, lb, ub = ocp.constraints[label]
+    con = ocp.constraints[label]
+    if length(con) != 5
+        error("this constraint is not valid")
+    end
+    type, _, f, lb, ub = con
     if !( bound in [ :lower, :upper ] )
         error("this constraint is not valid")
     end

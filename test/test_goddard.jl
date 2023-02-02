@@ -1,4 +1,6 @@
-Ad(X, f) = ∇(f, x)'*X(x)
+function Ad(X, f)
+    return x -> ∇(f, x)'*X(x)
+end
 function Poisson(f, g)
     function fg(x, p)
         n = size(x, 1)
@@ -41,12 +43,12 @@ constraint!(ocp, :state, (x, u) -> x[3], m0, mf, :state_con3)
 #
 objective!(ocp, :mayer,  (t0, x0, tf, xf) -> xf[1], :max)
 
-D(x) = Cd * x.v^2 * exp(-β*(x.r-1.))
-F0(x) = [ x.v, -D(x)/x.m-1.0/x.r^2, 0. ]
-F1(x) = [ 0., Tmax/x.m, -b*Tmax ]
-#f!(dx, x, u) = (dx[:] = F0(x(t)) + u*F1(x(t)))
+D(x) = Cd * x[2]^2 * exp(-β*(x[1]-1))
+F0(x) = [ x[2], -D(x)/x[3]-1/x[1]^2, 0 ]
+F1(x) = [ 0, Tmax/x[3], -b*Tmax ]
+#f!(dx, x, u) = (dx[:] = F0(x) + u*F1(x))
 #constraint!(ocp, :dynamics!, f!) # dynamics can be in place
-f(x, u) = F0(x(t)) + u*F1(x(t))
+f(x, u) = F0(x) + u*F1(x)
 constraint!(ocp, :dynamics, f)
 
 #@test 
@@ -81,11 +83,40 @@ remove_constraint!(ocp, :state_con1)
 remove_constraint!(ocp, :state_con3)
 constraint!(ocp, :boundary, (t0, x0, tf, xf) -> xf[3], mf, :final_con) # one value => equality (not boxed inequality)
 
-g(x) = constraint(ocp, :state_con2, :upper)(x, 0.) # g(x, u) ≥ 0 (cf. nonnegative multiplier)
-ub(x, p) = -Ad(F0, g)(x) / Ad(F1, g)(x)
+g(x) = constraint(ocp, :state_con2, :upper)(x, 0.0) # g(x, u) ≥ 0 (cf. nonnegative multiplier)
+ub(x, _) = -Ad(F0, g)(x) / Ad(F1, g)(x)
 μb(x, p) = H01(x, p) / Ad(F1, g)(x)
 
 f0 = Flow(ocp, u0)
 f1 = Flow(ocp, u1)
 fs = Flow(ocp, us)
-fb = Flow(ocp, ub, g, μb)
+fb = Flow(ocp, ub, (x, _) -> g(x), μb)
+
+# Starting Point: [3.9428857983400074, 0.14628855388160236, 0.05412448008321635, 0.025246759388000528, 0.061602092906721286, 0.10401664867856217, 0.20298394547952422]
+# Zero: [3.9457646587098827, 0.15039559623399817, 0.05371271294114205, 0.023509684041028683, 0.05973738090274402, 0.10157134842411215, 0.20204744057147958]
+
+# Shooting function
+function shoot!(s, p0, t1, t2, t3, tf) # B+ S C B0 structure
+
+    x1, p1 = f1(t0, x0, p0, t1)
+    x2, p2 = fs(t1, x1, p1, t2)
+    x3, p3 = fb(t2, x2, p2, t3)
+    xf, pf = f0(t3, x3, p3, tf)
+    s[1] = constraint(ocp, :final_con)(t0, x0, tf, xf)
+    s[2:3] = pf[1:2] - [ 1.0, 0.0 ]
+    s[4] = H1(x1, p1)
+    s[5] = H01(x1, p1)
+    s[6] = g(x2)
+    s[7] = H0(xf, pf) # free tf
+
+end
+
+p0 = [3.9428857983400074, 0.14628855388160236, 0.05412448008321635]
+t1 = 0.025246759388000528
+t2 = 0.061602092906721286
+t3 = 0.10401664867856217
+tf = 0.20298394547952422
+s = zeros(eltype(p0), 7)
+
+shoot!(s, p0, t1, t2, t3, tf)
+println(s)
