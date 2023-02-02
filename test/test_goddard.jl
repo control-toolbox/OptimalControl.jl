@@ -120,5 +120,25 @@ s = zeros(eltype(p0), 7)
 shoot!(s, p0, t1, t2, t3, tf)
 println(s)
 s_guess_sol = [-0.02456074767656735, -0.05699760226157302, 0.0018629693253921868, -0.027013078908634858, -0.21558816838342798, -0.0121146739026253, 0.015713236406057297]
-
 @test s ≈ s_guess_sol atol=1e-6
+
+ξ0 = [ p0 ; t1 ; t2 ; t3 ; tf ]
+
+#foo(ξ) = shoot(ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
+#jfoo(ξ) = ForwardDiff.jacobian(foo, ξ)
+#foo!(s, ξ) = ( s[:] = foo(ξ); nothing )
+#jfoo!(js, ξ) = ( js[:] = jfoo(ξ); nothing )
+
+foo!(s, ξ) = shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
+sol = fsolve(foo!, ξ0, show_trace=true); println(sol)
+
+p0 = sol.x[1:3]
+t1 = sol.x[4]
+t2 = sol.x[5]
+t3 = sol.x[6]
+tf = sol.x[7];
+
+shoot!(s, p0, t1, t2, t3, tf)
+
+@test sol.converged
+@test norm(s) < 1e-6
