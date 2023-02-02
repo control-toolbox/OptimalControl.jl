@@ -12,7 +12,7 @@ abstract type AbstractOptimalControlModel end
     dynamics!::Union{Function,Nothing}=nothing
     state_dimension::Union{Dimension,Nothing}=nothing
     control_dimension::Union{Dimension,Nothing}=nothing
-    constraints::Dict{Symbol, Tuple{Symbol, Symbol, Function}}=Dict{Symbol, Tuple{Symbol, Symbol, Function}}()
+    constraints::Dict{Symbol, Tuple{Vararg{Any}}}=Dict{Symbol, Tuple{Vararg{Any}}}()
 end
 
 #
@@ -100,28 +100,29 @@ end
 function constraint(ocp::OptimalControlModel, label::Symbol)
     con = ocp.constraints[label]
     if length(con) != 4
+        nothing
     else
         error("this constraint is not valid")
     end
     type, _, f, val = con
     if type in [ :initial, :final ]
-        c(x) = f(x) - val
+        return x -> f(x) - val
     elseif type == :boundary
-        c(t0, x0, tf, xf) = f(t0, x0, tf, xf) - val
+        return (t0, x0, tf, xf) -> f(t0, x0, tf, xf) - val
     elseif type == :control
-        c(u) = f(u) - val
+        return u -> f(u) - val
     elseif type == :state
-        c(x, u) = f(x, u) - val
+        return (x, u) -> f(x, u) - val
     else
         error("this constraint is not valid")
     end
-    return c
+    return nothing
 end
 
 #
 function constraint(ocp::OptimalControlModel, label::Symbol, bound::Symbol)
     # constraints are all >= 0
-    type, f, lb, ub = ocp.constraints[label]
+    type, _, f, lb, ub = ocp.constraints[label]
     if !( bound in [ :lower, :upper ] )
         error("this constraint is not valid")
     end
@@ -129,17 +130,17 @@ function constraint(ocp::OptimalControlModel, label::Symbol, bound::Symbol)
         error("this constraint is not valid")
     end 
     if type in [ :initial, :final ]
-        bound == :lower ? c(x) = f(x) - lb : c(x) = ub - f(x)
+        return bound == :lower ? x -> f(x) - lb : x -> ub - f(x)
     elseif type == :boundary
-        bound == :lower ? c(t0, x0, tf, xf) = f(t0, x0, tf, xf) - lb : c(t0, x0, tf, xf) = ub - f(t0, x0, tf, xf)
+        return bound == :lower ? (t0, x0, tf, xf) -> f(t0, x0, tf, xf) - lb : (t0, x0, tf, xf) -> ub - f(t0, x0, tf, xf)
     elseif type == :control
-        bound == :lower ? c(u) = f(u) - lb : c(u) = ub - f(u)
+        return bound == :lower ? u -> f(u) - lb : u -> ub - f(u)
     elseif type == :state
-        bound == :lower ? c(x, u) = f(x, u) - lb : c(x, u) = ub - f(x,u) 
+        return bound == :lower ? (x, u) -> f(x, u) - lb : (x, u) -> ub - f(x,u) 
     else
         error("this constraint is not valid")
     end
-    return c
+    return nothing
 end
 
 #
