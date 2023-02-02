@@ -1,23 +1,17 @@
-# u0(x, p)
-# f0 = Flow(ocp, u0)
-# ub(x, p)
-# μb(x, p)
-# fb = Flow(ocp, ub, :state_con2_upper, μb)
-
 function H(f::Function, u::Function)
     return (x, p) -> p'*f(x,u(x,p))
 end
 
-function H(f::Function, u::Function, f⁰::Function, p⁰::MyNumber)
-    return (x, p) -> p'*f(x,u(x,p)) + p⁰*f⁰(x,u(x,p))
+function H(f::Function, u::Function, f⁰::Function, p⁰::MyNumber, s::MyNumber)
+    return (x, p) -> p'*f(x,u(x,p)) + s*p⁰*f⁰(x,u(x,p))
 end
 
-function H(f::Function, u::Function, μ::Function, g::Function)
-    return (x, p) -> p'*f(x,u(x,p)) + μ(x,p)'*g(x,u(x,p))
+function H(f::Function, u::Function, μ::Function, c::Function)
+    return (x, p) -> p'*f(x,u(x,p)) + μ(x,p)'*c(x,u(x,p))
 end
 
-function H(f::Function, u::Function, f⁰::Function, p⁰::MyNumber, μ::Function, g::Function)
-    return (x, p) -> p'*f(x,u(x,p)) + p⁰*f⁰(x,u(x,p)) + μ(x,p)'*g(x,u(x,p))
+function H(f::Function, u::Function, f⁰::Function, p⁰::MyNumber, μ::Function, c::Function, s::MyNumber)
+    return (x, p) -> p'*f(x,u(x,p)) + s*p⁰*f⁰(x,u(x,p)) + μ(x,p)'*c(x,u(x,p))
 end
 
 function HamiltonianFlows.Flow(ocp::OptimalControlModel, u::Function)
@@ -27,17 +21,19 @@ function HamiltonianFlows.Flow(ocp::OptimalControlModel, u::Function)
     f! = ocp.dynamics!
     f⁰ = ocp.lagrangian        
 
+    s = ocp.criterion == :min ? 1.0 : -1.0 # 
+
     # construct Hamiltonian
     # autonomous case
     if f ≠ nothing
-        Ham = Hamiltonian((x, p) -> f⁰ ≠ nothing ? H(f, u, f⁰, p⁰)(x,p) : H(f, u)(x,p))
+        Ham = Hamiltonian((x, p) -> f⁰ ≠ nothing ? H(f, u, f⁰, p⁰, s)(x,p) : H(f, u)(x,p))
     elseif f! ≠ nothing
         function f_(x, u)
             dx = zeros(eltype(x), length(x))
             f!(dx, x, u)
             return dx
         end
-        Ham = Hamiltonian((x, p) -> f⁰ ≠ nothing ? H(f_, u, f⁰, p⁰)(x,p) : H(f_, u)(x,p))
+        Ham = Hamiltonian((x, p) -> f⁰ ≠ nothing ? H(f_, u, f⁰, p⁰, s)(x,p) : H(f_, u)(x,p))
     else 
         error("no dynamics in ocp")
     end
@@ -46,7 +42,7 @@ function HamiltonianFlows.Flow(ocp::OptimalControlModel, u::Function)
 
 end
 
-function HamiltonianFlows.Flow(ocp::OptimalControlModel, u::Function, g::Function, μ::Function)
+function HamiltonianFlows.Flow(ocp::OptimalControlModel, u::Function, c::Function, μ::Function)
 
     p⁰ = -1.
     f  = ocp.dynamics
@@ -56,14 +52,14 @@ function HamiltonianFlows.Flow(ocp::OptimalControlModel, u::Function, g::Functio
     # construct Hamiltonian
     # autonomous case
     if f ≠ nothing
-        Ham = Hamiltonian((x, p) -> f⁰ ≠ nothing ? H(f, u, f⁰, p⁰, μ, g)(x,p) : H(f, u, μ, g)(x,p))
+        Ham = Hamiltonian((x, p) -> f⁰ ≠ nothing ? H(f, u, f⁰, p⁰, μ, c, s)(x,p) : H(f, u, μ, c)(x,p))
     elseif f! ≠ nothing
         function f_(x, u)
             dx = zeros(eltype(x), length(x))
             f!(dx, x, u)
             return dx
         end
-        Ham = Hamiltonian((x, p) -> f⁰ ≠ nothing ? H(f_, u, f⁰, p⁰, μ, g)(x,p) : H(f_, u, μ, g)(x,p))
+        Ham = Hamiltonian((x, p) -> f⁰ ≠ nothing ? H(f_, u, f⁰, p⁰, μ, c, s)(x,p) : H(f_, u, μ, c)(x,p))
     else 
         error("no dynamics in ocp")
     end
