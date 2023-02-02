@@ -33,16 +33,30 @@ function solve(ocp::OptimalControlModel,N)
   f = ocp.dynamics
 
   ξ, ψ, ϕ = OptimalControl.nlp_constraints(ocp)
+
+  println("ξ(...) = ", ϕ[2](0.,[1.,0],1.,[5.,8]))
   
-  println("ξ = ", ξ[1])
-  println("ξ = ", ξ[2])
-  println("ξ = ", ξ[3])
-  println("ξ = ", ψ[1])
-  println("ξ = ", ψ[2])
-  println("ξ = ", ψ[3])
-  println("ξ = ", ϕ[1])
-  println("ξ = ", ϕ[2])
-  println("ξ = ", ϕ[3])
+  if isempty(ξ[1])
+    has_ξ = false
+  else
+    has_ξ = true
+  end
+
+  if isempty(ψ[1])
+    has_ψ = false
+  else
+    has_ψ = true
+  end
+
+  if isempty(ϕ[1])
+    has_ϕ = false
+  else
+    has_ϕ = true
+  end
+
+  println("has_ξ = ", has_ξ)
+  println("has_ψ = ", has_ψ)
+  println("has_ϕ = ", has_ϕ)
 
 
   if isnothing(ocp.lagrangian)
@@ -62,7 +76,7 @@ function solve(ocp::OptimalControlModel,N)
   println("Mayer = ", hasMayerCost)
 
 
-   # Mayer formulation
+  # Mayer formulation
   # use an additional state for the Lagrangian cost
   #
   # remark : we pass u[1] because in our case ocp.dynamics and ocp.lagrange are defined with a scalar u
@@ -70,13 +84,17 @@ function solve(ocp::OptimalControlModel,N)
   # question : how determine if u and x are scalar or vector ?
   # second member of the ode for the Mayer formulation
 
+  dim_ϕ = length(ϕ[1])      # dimension of the boundary constraints
+  println("dim_ϕ = ", dim_ϕ)
+  
   if hasLagrangianCost
-    dim_x = n_x + 1
-    nc = N*dim_x+2*n_x+1               # dimension of the constraints
+    dim_x = n_x + 1  
+    nc = N*dim_x + dim_ϕ + 1        # dimension of the constraints            
   else
-    dim_x = n_x
-    nc = N*dim_x+2*n_x               # dimension of the constraints
+    dim_x = n_x  
+    nc = N*dim_x + dim_ϕ        # dimension of the constraints
   end
+
 
   function f_Mayer(x,u)
     if hasLagrangianCost
@@ -186,28 +204,34 @@ function solve(ocp::OptimalControlModel,N)
     """
       t0 = ocp.initial_time
       tf = ocp.final_time
-      n = ocp.state_dimension
-      m = ocp.control_dimension
-      nc = N*(n+1)+2*n+1               # dimension of the constraints
-
-      #x0 = ocp.initial_condition
-      #xf = ocp.final_condition                                                   
-      x0 = [-1., 0.]
-      xf = [0., 0.]
 
       h = (tf-t0)/N
       c = zeros(eltype(xu),nc)
+      #
+      # state equation
+
+      index = 1 # counter for the constraints
       for i in 0:N-1
+        # state and control at the current state
         xi = get_state_at_time_step(xu,i)
         xip1 = get_state_at_time_step(xu,i+1)
         ui = get_control_at_time_step(xu,i)
-        c[1+i*dim_x:(i+1)*dim_x] = xip1 - (xi + h*f_Mayer(xi, ui))
+        # state equation
+        c[index:index+dim_x-1] = xip1 - (xi + h*f_Mayer(xi, ui))
+        index = index + dim_x
+
       end
 
-      c[1+N*dim_x:n_x+N*dim_x] = xu[1:n_x] - x0
-      c[n_x+1+N*dim_x:2*n_x+N*dim_x] = xu[1+N*dim_x:n_x+N*dim_x] - xf
+      # boundary conditions
+      # -------------------
+      x0 = get_state_at_time_step(xu,0)
+      xf = get_state_at_time_step(xu,N)
+      
+      #c[index:index+dim_ϕ-1] = ϕ[2](t0,x0,tf,xf)
+      index = index + dim_ϕ
       if hasLagrangianCost
-        c[2*n_x+1+N*dim_x] = xu[dim_x]
+        c[index] = xu[dim_x]
+        index = index + 1
       end
   
       return c
@@ -217,11 +241,41 @@ function solve(ocp::OptimalControlModel,N)
 
 
   # bounds for the constraints
-  lb = zeros(nc)
-  ub = zeros(nc)
+  function  l_u_b(ocp,xu,N)
+    lb = zeros(nc)
+    ub = zeros(nc)
 
+    index = 1 # counter for the constraints
+    for i in 0:N-1
+      # state and control at the current state
+      xi = get_state_at_time_step(xu,i)
+      ui = get_control_at_time_step(xu,i)
+      # state equation
+      #c[index:index+dim_x-1] = xip1 - (xi + h*f_Mayer(xi, ui))
+      index = index + dim_x
+    end  
+    # boundary conditions
+    println("ϕ[1] = ", ϕ[1])
+    println("index:index+dim_ϕ = ", index:index + dim_ϕ -1)
+    println("typeof ...", typeof(index+dim_ϕ))
+    println("nc = ", nc)
+    println("lb =  ", lb[index:index+dim_ϕ-1])
+    lb[index:index+dim_ϕ-1] = ϕ[1]
+    ub[index:index+dim_ϕ-1] = ϕ[3]
+    index = index + dim_ϕ
+    if hasLagrangianCost
+      lb[index] = 0.
+      ub[index] = 0.
+      index = index + 1
+    end
+
+    return lb, ub
+  end
+
+  xu0 = zeros((N+1)*(n_x+1)+N*m) 
+  lb, ub = l_u_b(ocp,xu0,N)
   constraint_Ipopt(xu) = constraint(ocp,xu,N)
-  xu0 = zeros((N+1)*(n_x+1)+N*m)  
+ 
   #println(get_state_at_time_step(xu0,1))
 
   #nlp = ADNLPModel(objective, xu0, constraint_Ipopt,lb,ub)

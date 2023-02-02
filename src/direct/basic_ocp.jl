@@ -1,6 +1,6 @@
 using OptimalControl
 using NLPModelsIpopt, ADNLPModels
-#using Plots
+using Plots
 import Plots: plot
 
 include("basic_bolza.jl") 
