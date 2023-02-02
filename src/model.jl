@@ -149,9 +149,9 @@ function nlp_constraints(ocp::OptimalControlModel)
     constraints = ocp.constraints
     n = ocp.state_dimension
     
-    ξf = Vector{Any}(); ξl = Vector{Any}(); ξu = Vector{Any}()
-    ψf = Vector{Any}(); ψl = Vector{Any}(); ψu = Vector{Any}()
-    ϕf = Vector{Any}(); ϕl = Vector{Any}(); ϕu = Vector{Any}()
+    ξf = Vector{Function}(); ξl = Vector{MyNumber}(); ξu = Vector{MyNumber}()
+    ψf = Vector{Function}(); ψl = Vector{MyNumber}(); ψu = Vector{MyNumber}()
+    ϕf = Vector{Function}(); ϕl = Vector{MyNumber}(); ϕu = Vector{MyNumber}()
 
     for (_, c) ∈ constraints
         if c[1] == :control

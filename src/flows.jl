@@ -13,11 +13,11 @@ function H(f::Function, u::Function, f⁰::Function, p⁰::MyNumber)
 end
 
 function H(f::Function, u::Function, μ::Function, g::Function)
-    return (x, p) -> p'*f(x,u(x,p)) + μ(x,p)*g(x,u(x,p))
+    return (x, p) -> p'*f(x,u(x,p)) + μ(x,p)'*g(x,u(x,p))
 end
 
 function H(f::Function, u::Function, f⁰::Function, p⁰::MyNumber, μ::Function, g::Function)
-    return (x, p) -> p'*f(x,u(x,p)) + p⁰*f⁰(x,u(x,p)) + μ(x,p)*g(x,u(x,p))
+    return (x, p) -> p'*f(x,u(x,p)) + p⁰*f⁰(x,u(x,p)) + μ(x,p)'*g(x,u(x,p))
 end
 
 function HamiltonianFlows.Flow(ocp::OptimalControlModel, u::Function)
@@ -46,7 +46,7 @@ function HamiltonianFlows.Flow(ocp::OptimalControlModel, u::Function)
 
 end
 
-function _Flow(ocp::OptimalControlModel, u::Function, g::Function, μ::Function)
+function HamiltonianFlows.Flow(ocp::OptimalControlModel, u::Function, g::Function, μ::Function)
 
     p⁰ = -1.
     f  = ocp.dynamics
@@ -72,7 +72,7 @@ function _Flow(ocp::OptimalControlModel, u::Function, g::Function, μ::Function)
 
 end
 
-function HamiltonianFlows.Flow(ocp::OptimalControlModel, u::Function, label::Symbol, bound::Symbol, μ::Function)
+#= function HamiltonianFlows.Flow(ocp::OptimalControlModel, u::Function, label::Symbol, bound::Symbol, μ::Function)
     type, _, c, lb, ub = ocp.constraints[label]
     if !( bound in [ :lower, :upper ] )
         error("this constraint is not valid")
@@ -81,7 +81,7 @@ function HamiltonianFlows.Flow(ocp::OptimalControlModel, u::Function, label::Sym
         error("this constraint is not valid")
     end
     if type == :state
-        f = _Flow(ocp, u, bound == :lower ? (x, u) -> c(x, u) - lb : (x, u) -> ub - c(x,u), μ)
+        f = HamiltonianFlows.Flow(ocp, u, bound == :lower ? (x, u) -> c(x, u) - lb : (x, u) -> ub - c(x,u), μ)
     else
         error("this constraint is not valid")
     end
@@ -97,9 +97,9 @@ function HamiltonianFlows.Flow(ocp::OptimalControlModel, u::Function, label::Sym
     end
     type, _, c, val = con
     if type == :state
-        f = _Flow(ocp, u, (x, u) -> c(x, u) - val, μ)
+        f = HamiltonianFlows.Flow(ocp, u, (x, u) -> c(x, u) - val, μ)
     else
         error("this constraint is not valid")
     end
     return f
-end
+end =#

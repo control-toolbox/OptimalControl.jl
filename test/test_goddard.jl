@@ -56,7 +56,7 @@ constraint(ocp, :state_con1, :lower)(x0, 0.) #≈ 0. atol=1e-8
 @test typeof(ocp) == OptimalControlModel
 @test ocp.initial_time == t0
 
-ξ, ψ, ϕ = nlp_constraints(ocp)
+@show ξ, ψ, ϕ = nlp_constraints(ocp)
 
 # --------------------------------------------------------
 # Direct
@@ -88,4 +88,4 @@ ub(x, p) = -Ad(F0, g)(x) / Ad(F1, g)(x)
 f0 = Flow(ocp, u0)
 f1 = Flow(ocp, u1)
 fs = Flow(ocp, us)
-fb = Flow(ocp, ub, :state_con2, :upper, μb)
+fb = Flow(ocp, ub, g, μb)
