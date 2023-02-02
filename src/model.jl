@@ -183,9 +183,23 @@ function nlp_constraints(ocp::OptimalControlModel)
 #    ψ!(val, x, u) = [ val[i] = ψf[i](x, u) for i in 1:length(ψf) ]
 #    ϕ!(val, t0, x0, tf, xf) = [ val[i] = ϕf[i](t0, x0, tf, xf) for i in 1:length(ϕf) ]
 
-    ξ(u) = [ ξf[i](u) for i in 1:length(ξf) ]
-    ψ(x, u) = [ ψf[i](x, u) for i in 1:length(ψf) ]
-    ϕ(t0, x0, tf, xf) = [ ϕf[i](t0, x0, tf, xf) for i in 1:length(ϕf) ]
+    function ξ(u)
+        val = Vector{MyNumber}()
+        for i ∈ 1:length(ξf) append!(val, ξf[i](u)) end
+    return val
+    end 
+
+    function ψ(x, u)
+        val = Vector{MyNumber}()
+        for i ∈ 1:length(ψf) append!(val, ψf[i](x, u)) end
+    return val
+    end 
+
+    function ϕ(t0, x0, tf, xf)
+        val = Vector{MyNumber}()
+        for i ∈ 1:length(ϕf) append!(val, ϕf[i](t0, x0, tf, xf)) end
+    return val
+    end 
 
     return (ξl, ξ, ξu), (ψl, ψ, ψu), (ϕl, ϕ, ϕu)
 
