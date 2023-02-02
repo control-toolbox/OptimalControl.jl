@@ -4,6 +4,7 @@ using Plots
 using LinearAlgebra
 using LabelledArrays
 using ForwardDiff: jacobian, gradient, ForwardDiff # automatic differentiation
+using MINPACK
 
 # method to compute gradient and Jacobian
 ∇(f::Function, x) = ForwardDiff.gradient(f, x)

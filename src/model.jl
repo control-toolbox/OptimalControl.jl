@@ -34,7 +34,7 @@ end
 # 
 function time!(ocp::OptimalControlModel, type::Symbol, time::Time)
     type_ = Symbol(type, :_time)
-    if type_ in [ :initial_time, :final_time ]
+    if type_ ∈ [ :initial_time, :final_time ]
         setproperty!(ocp, type_, time)
     else
         error("this time choice is not valid")
@@ -52,7 +52,7 @@ end
 # -------------------------------------------------------------------------------------------
 #
 function constraint!(ocp::OptimalControlModel, type::Symbol, val::State, label::Symbol=gensym(:anonymous))
-    if type in [ :initial, :final ]
+    if type ∈ [ :initial, :final ]
         ocp.constraints[label] = (type, :eq, x -> x, val)
     else
         error("this constraint is not valid")
@@ -60,7 +60,7 @@ function constraint!(ocp::OptimalControlModel, type::Symbol, val::State, label::
 end
 
 function constraint!(ocp::OptimalControlModel, type::Symbol, lb::Real, ub::Real, label::Symbol=gensym(:anonymous))
-    if type in [ :initial, :final ]
+    if type ∈ [ :initial, :final ]
         ocp.constraints[label] = (type, :ineq, x -> x, ub, lb)
     else
         error("this constraint is not valid")
@@ -68,7 +68,7 @@ function constraint!(ocp::OptimalControlModel, type::Symbol, lb::Real, ub::Real,
 end
 
 function constraint!(ocp::OptimalControlModel, type::Symbol, f::Function)
-    if type in [ :dynamics, :dynamics! ]
+    if type ∈ [ :dynamics, :dynamics! ]
         setproperty!(ocp, type, f)
     else
         error("this constraint is not valid")
@@ -76,7 +76,7 @@ function constraint!(ocp::OptimalControlModel, type::Symbol, f::Function)
 end
 
 function constraint!(ocp::OptimalControlModel, type::Symbol, f::Function, val::Real, label::Symbol=gensym(:anonymous))
-    if type in [ :control, :state, :boundary ]
+    if type ∈ [ :control, :state, :boundary ]
         ocp.constraints[label] = (type, :eq, f, val)
     else
         error("this constraint is not valid")
@@ -84,7 +84,7 @@ function constraint!(ocp::OptimalControlModel, type::Symbol, f::Function, val::R
 end
 
 function constraint!(ocp::OptimalControlModel, type::Symbol, f::Function, lb::Real, ub::Real, label::Symbol=gensym(:anonymous))
-    if type in [ :control, :state, :boundary ]
+    if type ∈ [ :control, :state, :boundary ]
         ocp.constraints[label] = (type, :ineq, f, lb, ub)
     else
         error("this constraint is not valid")
@@ -103,7 +103,7 @@ function constraint(ocp::OptimalControlModel, label::Symbol)
         error("this constraint is not valid")
     end
     type, _, f, val = con
-    if type in [ :initial, :final ]
+    if type ∈ [ :initial, :final ]
         return x -> f(x) - val
     elseif type == :boundary
         return (t0, x0, tf, xf) -> f(t0, x0, tf, xf) - val
@@ -125,13 +125,13 @@ function constraint(ocp::OptimalControlModel, label::Symbol, bound::Symbol)
         error("this constraint is not valid")
     end
     type, _, f, lb, ub = con
-    if !( bound in [ :lower, :upper ] )
+    if !( bound ∈ [ :lower, :upper ] )
         error("this constraint is not valid")
     end
     if (bound == :lower && lb == -Inf) || (bound == :upper && ub == Inf)
         error("this constraint is not valid")
     end
-    if type in [ :initial, :final ]
+    if type ∈ [ :initial, :final ]
         return bound == :lower ? x -> f(x) - lb : x -> ub - f(x)
     elseif type == :boundary
         return bound == :lower ? (t0, x0, tf, xf) -> f(t0, x0, tf, xf) - lb : (t0, x0, tf, xf) -> ub - f(t0, x0, tf, xf)
@@ -179,9 +179,9 @@ function nlp_constraints(ocp::OptimalControlModel)
         end
     end
 
-#    ξ!(val, u) = [ val[i] = ξf[i](u) for i in 1:length(ξf) ]
-#    ψ!(val, x, u) = [ val[i] = ψf[i](x, u) for i in 1:length(ψf) ]
-#    ϕ!(val, t0, x0, tf, xf) = [ val[i] = ϕf[i](t0, x0, tf, xf) for i in 1:length(ϕf) ]
+#    ξ!(val, u) = [ val[i] = ξf[i](u) for i ∈ 1:length(ξf) ]
+#    ψ!(val, x, u) = [ val[i] = ψf[i](x, u) for i ∈ 1:length(ψf) ]
+#    ϕ!(val, t0, x0, tf, xf) = [ val[i] = ϕf[i](t0, x0, tf, xf) for i ∈ 1:length(ϕf) ]
 
     function ξ(u)
         val = Vector{MyNumber}()
@@ -208,12 +208,12 @@ end
 # -------------------------------------------------------------------------------------------
 # 
 function objective!(ocp::OptimalControlModel, type::Symbol, f::Function, criterion::Symbol=:min)
-    if criterion in [ :min, :max ]
+    if criterion ∈ [ :min, :max ]
         ocp.criterion = criterion
     else
         error("this criterion is not valid")
     end
-    if type in [ :lagrangian, :mayer ]
+    if type ∈ [ :lagrangian, :mayer ]
         setproperty!(ocp, type, f)
     else
         error("this objective is not valid")

@@ -51,8 +51,7 @@ F1(x) = [ 0, Tmax/x[3], -b*Tmax ]
 f(x, u) = F0(x) + u*F1(x)
 constraint!(ocp, :dynamics, f)
 
-#@test 
-constraint(ocp, :state_con1, :lower)(x0, 0.) #≈ 0. atol=1e-8
+@test constraint(ocp, :state_con1, :lower)(x0, 0.) ≈ 0. atol=1e-8
 @test ocp.state_dimension == 3
 @test ocp.control_dimension == 1
 @test typeof(ocp) == OptimalControlModel
@@ -120,3 +119,6 @@ s = zeros(eltype(p0), 7)
 
 shoot!(s, p0, t1, t2, t3, tf)
 println(s)
+s_guess_sol = [-0.02456074767656735, -0.05699760226157302, 0.0018629693253921868, -0.027013078908634858, -0.21558816838342798, -0.0121146739026253, 0.015713236406057297]
+
+@test s ≈ s_guess_sol atol=1e-6
