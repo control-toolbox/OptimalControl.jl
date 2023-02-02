@@ -3,7 +3,7 @@ using Plots
 
 # Module
 
-mutable struct direct_sol3
+mutable struct direct_sol
   time::Vector{<:Real}
   X::Matrix{<:Real}
   U::Matrix{<:Real}
@@ -34,7 +34,7 @@ function solve(ocp,N)
   n = ocp.state_dimension
   m = ocp.control_dimension
   f = ocp.dynamics
-  L = ocp.lagrange 
+  L = ocp.lagrangian 
 
   function get_state_at_time_step(xu,i)
     """
@@ -179,14 +179,16 @@ function solve(ocp,N)
   nlp = ADNLPModel(objective, xu0, xu -> constraint(ocp,xu,N),lb,ub)
   stats = ipopt(nlp, print_level=3)
   X, U, P = parse_sol(stats)
+  t0 = ocp.initial_time
+  tf = ocp.final_time
   time = collect(t0:(tf-t0)/N:tf)
-  sol  = direct_sol3(time,X,U,P,n,m,N)
+  sol  = direct_sol(time,X,U,P,n,m,N)
 return sol
 end
 
 
 
-function plot_sol(sol::direct_sol3)
+function plot_sol(sol::direct_sol)
   """
      Plot the solution
 
