@@ -44,8 +44,10 @@ objective!(ocp, :mayer,  (t0, x0, tf, xf) -> xf[1], :max)
 D(x) = Cd * x.v^2 * exp(-β*(x.r-1.))
 F0(x) = [ x.v, -D(x)/x.m-1.0/x.r^2, 0. ]
 F1(x) = [ 0., Tmax/x.m, -b*Tmax ]
-f!(dx, x, u) = (dx[:] = F0(x(t)) + u*F1(x(t)))
-constraint!(ocp, :dynamics!, f!) # dynamics can be in place
+#f!(dx, x, u) = (dx[:] = F0(x(t)) + u*F1(x(t)))
+#constraint!(ocp, :dynamics!, f!) # dynamics can be in place
+f(x, u) = F0(x(t)) + u*F1(x(t))
+constraint!(ocp, :dynamics, f)
 
 #@test 
 constraint(ocp, :state_con1, :lower)(x0, 0.) #≈ 0. atol=1e-8
