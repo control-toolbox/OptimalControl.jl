@@ -227,7 +227,7 @@ function solve(ocp::OptimalControlModel,N)
       x0 = get_state_at_time_step(xu,0)
       xf = get_state_at_time_step(xu,N)
       
-      #c[index:index+dim_ϕ-1] = ϕ[2](t0,x0,tf,xf)
+      c[index:index+dim_ϕ-1] = ϕ[2](t0,x0,tf,xf)
       index = index + dim_ϕ
       if hasLagrangianCost
         c[index] = xu[dim_x]
