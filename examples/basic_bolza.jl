@@ -3,7 +3,7 @@ using Plots
 
 # Module
 
-mutable struct direct_sol3
+mutable struct direct_sol
   time::Vector{<:Real}
   X::Matrix{<:Real}
   U::Matrix{<:Real}
@@ -203,7 +203,7 @@ end
 
 
 
-function plot_sol(sol::direct_sol3)
+function plot_sol(sol::direct_sol)
   """
      Plot the solution
 
