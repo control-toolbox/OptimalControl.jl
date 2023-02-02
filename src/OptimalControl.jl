@@ -52,12 +52,12 @@ include("problem.jl")
 include("solve.jl")
 include("flows.jl")
 #
-include("direct/simple-shooting/init.jl")
-include("direct/simple-shooting/utils.jl")
-include("direct/simple-shooting/problem.jl")
-include("direct/simple-shooting/solution.jl")
-include("direct/simple-shooting/interface.jl")
-include("direct/simple-shooting/plot.jl")
+include("direct-shooting/init.jl")
+include("direct-shooting/utils.jl")
+include("direct-shooting/problem.jl")
+include("direct-shooting/solution.jl")
+include("direct-shooting/interface.jl")
+include("direct-shooting/plot.jl")
 
 export solve
 
