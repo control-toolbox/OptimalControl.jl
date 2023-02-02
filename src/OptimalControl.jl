@@ -7,6 +7,8 @@ using Interpolations: linear_interpolation, Line, Interpolations
 using Reexport
 using Parameters # @with_kw
 
+using NLPModelsIpopt, ADNLPModels    # for direct methods
+
 # todo: use RecipesBase instead of plot
 import Plots: plot, plot!, Plots # import instead of using to overload the plot and plot! functions, to plot ocp solution
 
@@ -58,6 +60,9 @@ include("direct-shooting/problem.jl")
 include("direct-shooting/solution.jl")
 include("direct-shooting/interface.jl")
 include("direct-shooting/plot.jl")
+
+# Direct methods
+#include("direct/basic_bolza.jl")     #  --> module for using ?
 
 export solve
 
