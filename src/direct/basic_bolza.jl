@@ -32,6 +32,17 @@ function solve(ocp::OptimalControlModel,N)
   m = ocp.control_dimension
   f = ocp.dynamics
 
+  ξ, ψ, ϕ = OptimalControl.nlp_constraints(ocp)
+  
+  println("ξ = ", ξ[1])
+  println("ξ = ", ξ[2])
+  println("ξ = ", ξ[3])
+  println("ξ = ", ψ[1])
+  println("ξ = ", ψ[2])
+  println("ξ = ", ψ[3])
+  println("ξ = ", ϕ[1])
+  println("ξ = ", ϕ[2])
+  println("ξ = ", ϕ[3])
 
 
   if isnothing(ocp.lagrangian)
@@ -49,13 +60,7 @@ function solve(ocp::OptimalControlModel,N)
   end  
   println("hasLagrangien : ", hasLagrangianCost)
   println("Mayer = ", hasMayerCost)
-  #x0 = get_state_at_time_step(xu,0)
-    
-  #xf = get_state_at_time_step(xu,N)
-  t0 = ocp.initial_time
-  tf = ocp.final_time
 
-  println(g(t0, [-1., 0], tf, [0.,0.]))
 
    # Mayer formulation
   # use an additional state for the Lagrangian cost
