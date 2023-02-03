@@ -14,13 +14,11 @@ function get_control_at_time_step(xu, i, dim_x, N, m)
         return
         u(t_i)
     """
-    if i > N
-        error("trying to access at (t_i) for i > N")
+    if i > N-1
+        error("trying to access at (t_i) for i > N-1")
     end
     return xu[1+(N+1)*dim_x+i*m:m+(N+1)*dim_x+i*m]
 end
-
-get_final_time(xu, tf_, has_free_final_time) = has_free_final_time ? xu[end] : tf_
 
 function direct_infos(ocp::OptimalControlModel, N::Integer)
 
@@ -51,10 +49,10 @@ function direct_infos(ocp::OptimalControlModel, N::Integer)
     #println("has_ϕ = ", has_ϕ)
 
     hasLagrangianCost = !isnothing(ocp.lagrangian)
-    L = ocp.lagrangian
+    hasLagrangianCost ? L = ocp.lagrangian : nothing
 
     hasMayerCost = !isnothing(ocp.mayer)
-    g = ocp.mayer
+    hasMayerCost ? g = ocp.mayer : nothing
     #println("hasLagrangien : ", hasLagrangianCost)
     #println("Mayer = ", hasMayerCost)
 
@@ -68,13 +66,13 @@ function direct_infos(ocp::OptimalControlModel, N::Integer)
 
     if hasLagrangianCost
         dim_x = n_x + 1  
-        nc = N*(dim_x+dim_ξ+dim_ψ) + (dim_ξ + dim_ψ) + dim_ϕ + 1       # dimension of the constraints            
+        nc = N*(dim_x+dim_ξ+dim_ψ) + dim_ϕ + 1 + dim_ψ       # dimension of the constraints            
       else
         dim_x = n_x  
-        nc = N*(dim_x+dim_ξ+dim_ψ) + (dim_ξ + dim_ψ) + dim_ϕ       # dimension of the constraints
+        nc = N*(dim_x+dim_ξ+dim_ψ) + dim_ϕ + dim_ψ        # dimension of the constraints
     end
 
-    dim_xu = (N+1)*(dim_x+m)  # dimension the the unknown xu
+    dim_xu = (N+1)*dim_x+N*m  # dimension the the unknown xu
     has_free_final_time ? dim_xu = dim_xu + 1 : nothing
 
     # todo: cas vectoriel sur u a ajouter
@@ -84,6 +82,6 @@ function direct_infos(ocp::OptimalControlModel, N::Integer)
 
     return t0, tf, n_x, m, f, ξ, ψ, ϕ, dim_ξ, dim_ψ, dim_ϕ, 
     has_ξ, has_ψ, has_ϕ, hasLagrangianCost, hasMayerCost, dim_x, nc, dim_xu, 
-    g, f_Mayer, has_free_final_time, criterion
+    f_Mayer, has_free_final_time, criterion
 
 end

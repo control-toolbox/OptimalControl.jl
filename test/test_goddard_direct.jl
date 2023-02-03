@@ -1,8 +1,3 @@
-using OptimalControl
-using NLPModelsIpopt, ADNLPModels
-using Plots
-import Plots: plot
-
 # Parameters
 Cd = 310.
 Tmax = 3.5
