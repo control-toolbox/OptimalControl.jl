@@ -14,7 +14,7 @@ function Plots.plot(sol::DirectSolution)
   N = sol.N
 
   # state
-  px = Plots.plot(time, X, layout=(n,1))
+  px = Plots.plot(T, X, layout=(n,1))
   Plots.plot!(px[1], title="state")
   Plots.plot!(px[n], xlabel="t")
   for i ∈ 1:n
@@ -22,7 +22,7 @@ function Plots.plot(sol::DirectSolution)
   end
 
   # costate
-  pp = Plots.plot(time[1:N], P,layout = (n,1))
+  pp = Plots.plot(T[1:N], P,layout = (n,1))
   Plots.plot!(pp[1], title="costate")
   Plots.plot!(pp[n], xlabel="t")
   for i ∈ 1:n
@@ -30,7 +30,7 @@ function Plots.plot(sol::DirectSolution)
   end
 
   # control
-  pu = Plots.plot(time[1:N], U, lc=:red, layout=(m,1))
+  pu = Plots.plot(T, U, lc=:red, layout=(m,1))
   for i ∈ 1:m
     Plots.plot!(pu[i], ylabel=string("u_",i))
   end
