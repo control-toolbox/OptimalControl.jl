@@ -4,6 +4,7 @@ using Plots
 using LinearAlgebra
 using LabelledArrays
 using ForwardDiff: jacobian, gradient, ForwardDiff # automatic differentiation
+using MINPACK
 
 # method to compute gradient and Jacobian
 ∇(f::Function, x) = ForwardDiff.gradient(f, x)
@@ -26,9 +27,8 @@ const nlp_constraints       = OptimalControl.nlp_constraints
         #"utils", 
         #"optimal_control", 
         #"udss", # unconstrained direct simple shooting
-        #"basic",
+        "basic",
         #"goddard",
-        "direct",
         )
         @testset "$name" begin
             include("test_$name.jl")
