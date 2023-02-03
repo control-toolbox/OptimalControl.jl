@@ -36,4 +36,4 @@ u_sol(t) = 6.0-12.0*t
 U_sol_direct = sol.U
 T_sol_direct = sol.T
 
-#@test U_sol_direct ≈ u_sol.(T_sol_direct[1:end-1]) atol=1e-1
+@test U_sol_direct ≈ u_sol.(T_sol_direct[1:end-1]) atol=1e+1

@@ -13,7 +13,7 @@ function solve(ocp::OptimalControlModel, N::Integer=100)
     """
     
       # from OCP to NLP
-      nlp = DirectProblem(ocp, N)
+      nlp = ADNLProblem(ocp, N)
     
       # solve by IPOPT
       ipopt_solution = ipopt(nlp, print_level=3)

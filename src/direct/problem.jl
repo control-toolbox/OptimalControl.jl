@@ -1,4 +1,4 @@
-function DirectProblem(ocp::OptimalControlModel, N::Integer)
+function ADNLProblem(ocp::OptimalControlModel, N::Integer)
 
     # direct_infos
     t0, tf, n_x, m, f, ξ, ψ, ϕ, dim_ξ, dim_ψ, dim_ϕ, 
