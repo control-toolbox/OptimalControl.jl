@@ -33,7 +33,9 @@ sol = solve(ocp)
 
 # solution
 u_sol(t) = 6.0-12.0*t
-U_sol_direct = sol.U
-T_sol_direct = sol.T
+U = sol.U
+T = sol.T
+dT = T[2:end]-T[1:end-1]
 
-@test U_sol_direct ≈ u_sol.(T_sol_direct[1:end-1]) atol=1e+1
+@test sum(dT .* abs.(U - u_sol.(T[1:end-1])) ≈ 0 atol=1e-1
+
