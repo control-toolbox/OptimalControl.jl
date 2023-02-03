@@ -88,4 +88,7 @@ export OptimalControlProblem
 #
 export plot, plot!
 
+#
+export Ad, Poisson
+
 end
