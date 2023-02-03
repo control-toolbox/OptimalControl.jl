@@ -3,17 +3,20 @@ mutable struct DirectSolution
     X::Matrix{<:MyNumber}
     U::Matrix{<:MyNumber}
     P::Matrix{<:MyNumber}
+    P_ξ::Matrix{<:MyNumber}
+    P_ψ::Matrix{<:MyNumber}
     n::Integer
     m::Integer
     N::Integer
+    stats  #stats::SolverCore.GenericExecutionStats
 end
 
 function DirectSolution(ocp::OptimalControlModel, N::Integer, ipopt_solution)
 
     # direct_infos
-    t0, tf, n_x, m, f, ξ, ψ, ϕ, dim_ξ, dim_ψ, dim_ϕ, 
+    t0, tf_, n_x, m, f, ξ, ψ, ϕ, dim_ξ, dim_ψ, dim_ϕ, 
     has_ξ, has_ψ, has_ϕ, hasLagrangianCost, hasMayerCost, 
-    dim_x, nc, dim_xu, f_Mayer = direct_infos(ocp, N)
+    dim_x, nc, dim_xu, f_Mayer, has_free_final_time, criterion = direct_infos(ocp, N)
 
     function parse_ipopt_sol(stats)
         """
@@ -35,20 +38,39 @@ function DirectSolution(ocp::OptimalControlModel, N::Integer, ipopt_solution)
         # adjoints
         P = zeros(N, dim_x)
         lambda = stats.multipliers
-        for i in 1:N
-            P[i,:] = lambda[1+(i-1)*dim_x:i*dim_x]
+        P_ξ = zeros(N,dim_ξ)
+        P_ψ = zeros(N+1,dim_ψ)
+        index = 1 # counter for the constraints
+        for i ∈ 1:N
+            # state equation
+            P[i,:] = lambda[index:index+dim_x-1]
+            index = index + dim_x
+            if has_ξ
+                P_ξ[i,:] =  lambda[index:index+dim_ξ-1]
+                index = index + dim_ξ
+            end
+            if has_ψ
+                P_ψ[i,:] =  lambda[index:index+dim_ψ-1]
+                index = index + dim_ψ
+            end
+            P_ψ[N+1,:] = lambda[index:index+dim_ψ-1]
         end
-        return X, U, P
+        return X, U, P, P_ξ, P_ψ
     end
 
     # state, control, adjoint
-    X, U, P = parse_ipopt_sol(ipopt_solution)
+    X, U, P, P_ξ, P_ψ = parse_ipopt_sol(ipopt_solution)
     
     # times
+    if has_free_final_time
+        tf = stats.solution[end]
+    else
+        tf = tf_
+    end
     T = collect(t0:(tf-t0)/N:tf)
 
     # DirectSolution
-    sol  = DirectSolution(T, X, U, P, n_x, m, N)
+    sol  = DirectSolution(T, X, U, P, P_ξ, P_ψ, n_x, m, N, ipopt_solution)
 
     return sol
 end

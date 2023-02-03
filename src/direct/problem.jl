@@ -1,13 +1,13 @@
 function ADNLProblem(ocp::OptimalControlModel, N::Integer)
 
     # direct_infos
-    t0, tf, n_x, m, f, ξ, ψ, ϕ, dim_ξ, dim_ψ, dim_ϕ, 
+    t0, tf_, n_x, m, f, ξ, ψ, ϕ, dim_ξ, dim_ψ, dim_ϕ, 
     has_ξ, has_ψ, has_ϕ, hasLagrangianCost, hasMayerCost, 
-    dim_x, nc, dim_xu, f_Mayer = direct_infos(ocp, N)
+    dim_x, nc, dim_xu, f_Mayer, has_free_final_time, criterion = direct_infos(ocp, N)
 
     # IPOPT objective
     function ipopt_objective(xu)
-        obj = 0.0
+        obj = 0
         if hasMayerCost
             x0 = get_state_at_time_step(xu, 0, dim_x, N)
             xf = get_state_at_time_step(xu, N, dim_x, N)
@@ -16,7 +16,7 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer)
         if hasLagrangianCost
             obj = obj + xu[(N+1)*dim_x]
         end
-        return obj
+        return criterion==:min ? obj : -obj
     end
 
     # IPOPT constraints
@@ -39,38 +39,45 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer)
         return
         c :: 
         """
-        t0 = ocp.initial_time
-        tf = ocp.final_time
+        if has_free_final_time
+            tf = xu[end]
+        else
+            tf = tf_
+        end
         h = (tf-t0)/N
         c = zeros(eltype(xu),nc)
         #
-        # state equation
 
+        # state equation
         index = 1 # counter for the constraints
         for i in 0:N-1
-        # state and control at the current state
-        xi = get_state_at_time_step(xu, i, dim_x, N)
-        xip1 = get_state_at_time_step(xu, i+1, dim_x, N)
-        ui = get_control_at_time_step(xu, i, dim_x, N, m)
-        # state equation
-        c[index:index+dim_x-1] = xip1 - (xi + h*f_Mayer(xi, ui))
-        index = index + dim_x
-        if has_ξ
-            c[index:index+dim_ξ-1] = ξ[2](ui)        # ui vector
-            index = index + dim_ξ
+            # state and control at the current state
+            xi = get_state_at_time_step(xu, i, dim_x, N)
+            xip1 = get_state_at_time_step(xu, i+1, dim_x, N)
+            ui = get_control_at_time_step(xu, i, dim_x, N, m)
+            # state equation
+            c[index:index+dim_x-1] = xip1 - (xi + h*f_Mayer(xi, ui))
+            index = index + dim_x
+            if has_ξ
+                c[index:index+dim_ξ-1] = ξ[2](ui)        # ui vector
+                index = index + dim_ξ
+            end
+            if has_ψ
+                c[index:index+dim_ψ-1] = ψ[2](xi[1:n_x],ui)        # ui vector
+                index = index + dim_ψ
+            end
         end
         if has_ψ
-            c[index:index+dim_ψ-1] = ψ[2](xi[1:n_x],ui)        # ui vector
+            xf = get_state_at_time_step(xu, N, dim_x, N)
+            uf = get_control_at_time_step(xu, N-1, dim_x, N, m)
+            c[index:index+dim_ψ-1] = ψ[2](xf,uf)        # ui is false because Euler
             index = index + dim_ψ
-        end
-
         end
 
         # boundary conditions
         # -------------------
         x0 = get_state_at_time_step(xu, 0, dim_x, N)
         xf = get_state_at_time_step(xu, N, dim_x, N)
-        
         c[index:index+dim_ϕ-1] = ϕ[2](t0,x0[1:n_x],tf,xf[1:n_x])  # because Lagrangian cost possible
         index = index + dim_ϕ
         if hasLagrangianCost
@@ -98,7 +105,12 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer)
                 ub[index:index+dim_ψ-1] = ψ[3]
                 index = index + dim_ψ
             end
-        end  
+        end
+        if has_ψ
+            lb[index:index+dim_ψ-1] = ψ[1]
+            ub[index:index+dim_ψ-1] = ψ[3]
+            index = index + dim_ψ
+        end
         # boundary conditions
         lb[index:index+dim_ϕ-1] = ϕ[1]
         ub[index:index+dim_ϕ-1] = ϕ[3]
@@ -112,9 +124,19 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer)
         return lb, ub
     end
 
-    xu0 = zeros(dim_xu) # initial guess
+    # todo: init a changer
+    xu0 = 1.1*ones(dim_xu)
+
+    l_var = -Inf*ones(dim_xu)
+    u_var = Inf*ones(dim_xu)
+    if has_free_final_time
+      xu0[end] = 1.0
+      l_var[end] = 1.e-3
+    end
+
     lb, ub = ipopt_l_u_b()
-    nlp = ADNLPModel(ipopt_objective, xu0, ipopt_constraint, lb, ub)    
+
+    nlp = ADNLPModel(ipopt_objective, xu0, l_var, u_var, ipopt_constraint, lb, ub)    
 
     return nlp
 
