@@ -72,7 +72,7 @@ function direct_infos(ocp::OptimalControlModel, N::Integer)
         nc = N*(dim_x+dim_ξ+dim_ψ) + dim_ϕ + dim_ψ        # dimension of the constraints
     end
 
-    dim_xu = (N+1)*(n_x+1)+N*m  # dimension the the unknown xu
+    dim_xu = (N+1)*dim_x+N*m  # dimension the the unknown xu
     has_free_final_time ? dim_xu = dim_xu + 1 : nothing
 
     # todo: cas vectoriel sur u a ajouter

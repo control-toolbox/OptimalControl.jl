@@ -105,7 +105,12 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer)
                 ub[index:index+dim_ψ-1] = ψ[3]
                 index = index + dim_ψ
             end
-        end  
+        end
+        if has_ψ
+            lb[index:index+dim_ψ-1] = ψ[1]
+            ub[index:index+dim_ψ-1] = ψ[3]
+            index = index + dim_ψ
+        end
         # boundary conditions
         lb[index:index+dim_ϕ-1] = ϕ[1]
         ub[index:index+dim_ϕ-1] = ϕ[3]
@@ -119,9 +124,19 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer)
         return lb, ub
     end
 
-    xu0 = zeros(dim_xu) # initial guess
+    # todo: init a changer
+    xu0 = 1.1*ones(dim_xu)
+
+    l_var = -Inf*ones(dim_xu)
+    u_var = Inf*ones(dim_xu)
+    if has_free_final_time
+      xu0[end] = 1.0
+      l_var[end] = 1.e-3
+    end
+
     lb, ub = ipopt_l_u_b()
-    nlp = ADNLPModel(ipopt_objective, xu0, ipopt_constraint, lb, ub)    
+
+    nlp = ADNLPModel(ipopt_objective, xu0, l_var, u_var, ipopt_constraint, lb, ub)    
 
     return nlp
 
