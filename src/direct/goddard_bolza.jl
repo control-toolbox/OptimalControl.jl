@@ -5,10 +5,12 @@ mutable struct direct_sol
   X::Matrix{<:Real}
   U::Matrix{<:Real}
   P::Matrix{<:Real}
+  P_ξ::Matrix{<:Real}
+  P_ψ::Matrix{<:Real}
   n::Int
   m::Int
   N::Int
-  #stats::SolverCore.GenericExecutionStats
+  stats  #stats::SolverCore.GenericExecutionStats
 end
 
 
@@ -47,6 +49,11 @@ function solve(ocp::OptimalControlModel,N)
   dim_ξ = length(ξ[1])      # dimension of the boundary constraints
   dim_ψ = length(ψ[1])
   dim_ϕ = length(ϕ[1])
+
+  println("ξ1 : ", ξ[1])
+  println("ξ3 : ", ξ[3])
+  println("ψ1 : ", ψ[1])
+  println("ψ3 : ", ψ[3])
 
   if isempty(ξ[1])
     has_ξ = false
@@ -100,11 +107,12 @@ function solve(ocp::OptimalControlModel,N)
 
   if hasLagrangianCost
     dim_x = n_x + 1  
-    nc = N*(dim_x+dim_ξ+dim_ψ) + dim_ϕ + 1        # dimension of the constraints            
+    nc = N*(dim_x+dim_ξ+dim_ψ) + dim_ϕ + 1 + dim_ψ       # dimension of the constraints            
   else
     dim_x = n_x  
-    nc = N*(dim_x+dim_ξ+dim_ψ) + dim_ϕ        # dimension of the constraints
+    nc = N*(dim_x+dim_ξ+dim_ψ) + dim_ϕ + dim_ψ        # dimension of the constraints
   end
+
 
   dim_xu = (N+1)*(n_x+1)+N*m                  # dimension the the unknown xu
   if has_free_final_time
@@ -175,10 +183,27 @@ function solve(ocp::OptimalControlModel,N)
       # adjoints
       P = zeros(N,dim_x)
       lambda = stats.multipliers
+
+      P_ξ = zeros(N,dim_ξ)
+      P_ψ = zeros(N+1,dim_ψ)
+      index = 1 # counter for the constraints
       for i in 1:N
-        P[i,:] = lambda[1+(i-1)*dim_x:i*dim_x]
+        # state equation
+        P[i,:] = lambda[index:index+dim_x-1]
+        index = index + dim_x
+        if has_ξ
+          P_ξ[i,:] =  lambda[index:index+dim_ξ-1]
+          index = index + dim_ξ
+        end
+        if has_ψ
+          P_ψ[i,:] =  lambda[index:index+dim_ψ-1]
+          index = index + dim_ψ
+        end
+        P_ψ[N+1,:] = lambda[index:index+dim_ψ-1]
+
       end
-    return X, U, P
+
+    return X, U, P, P_ξ, P_ψ
   end
 
  
@@ -194,7 +219,7 @@ function solve(ocp::OptimalControlModel,N)
     if hasLagrangianCost
       obj = obj + xu[(N+1)*dim_x]
     end
-    return obj
+    return -obj   # - if max
   end
 
   #function constraint(ocp, xu::Vector{<:Real},N)::Vector{<:Real}
@@ -246,8 +271,14 @@ function solve(ocp::OptimalControlModel,N)
           c[index:index+dim_ψ-1] = ψ[2](xi[1:n_x],ui)        # ui vector
           index = index + dim_ψ
         end
-
       end
+      if has_ψ
+        xf = get_state_at_time_step(xu,N)
+        uf = get_control_at_time_step(xu,N-1)
+        c[index:index+dim_ψ-1] = ψ[2](xf,uf)        # ui is false because Euler
+        index = index + dim_ψ
+      end
+
 
       # boundary conditions
       # -------------------
@@ -290,8 +321,12 @@ function solve(ocp::OptimalControlModel,N)
         ub[index:index+dim_ψ-1] = ψ[3]
         index = index + dim_ψ
       end
-
     end  
+    if has_ψ
+      lb[index:index+dim_ψ-1] = ψ[1]
+      ub[index:index+dim_ψ-1] = ψ[3]
+      index = index + dim_ψ
+    end
     # boundary conditions
     lb[index:index+dim_ϕ-1] = ϕ[1]
     ub[index:index+dim_ϕ-1] = ϕ[3]
@@ -305,7 +340,7 @@ function solve(ocp::OptimalControlModel,N)
     return lb, ub
   end
 
-  xu0 = zeros(dim_xu)
+  xu0 = 1.1*ones(dim_xu)
   l_var = -Inf*ones(dim_xu)
   u_var = Inf*ones(dim_xu)
 
@@ -318,17 +353,21 @@ function solve(ocp::OptimalControlModel,N)
   lb, ub = l_u_b(ocp,xu0,N)
   constraint_Ipopt(xu) = constraint(ocp,xu,N)
 
+ # println("length(lb) = ", length(lb))
+ # println("length(ub) = ", length(ub))
+ # println("length(constraint) = ", length( constraint_Ipopt(xu0)))
+
   nlp = ADNLPModel(xu -> objective(ocp,xu,N), xu0, l_var, u_var, xu -> constraint(ocp,xu,N),lb,ub)
-  stats = ipopt(nlp, print_level=3)
-  X, U, P = parse_sol(stats)
+  stats = ipopt(nlp, print_level=5)
+  X, U, P, P_ξ, P_ψ = parse_sol(stats)
   t0 = ocp.initial_time
   if has_free_final_time
-    tf = ### 
+    tf = stats.solution[end]
   else
     tf = ocp.final_time
   end
   time = collect(t0:(tf-t0)/N:tf)
-  sol  = direct_sol(time,X,U,P,n_x,m,N)
+  sol  = direct_sol(time,X,U,P,P_ξ,P_ψ,n_x,m,N,stats)
 return sol
 end
 
@@ -348,17 +387,17 @@ function plot(sol::direct_sol)
   n = sol.n
   m = sol.m
   N = sol.N
-  px = Plots.plot(time, X,layout = (n+1,1))
+  px = Plots.plot(time, X,layout = (n,1))
   Plots.plot!(px[1],title="state")
-  Plots.plot!(px[n+1], xlabel="t")
-  for i in 1:n+1
+  Plots.plot!(px[n], xlabel="t")
+  for i in 1:n
     Plots.plot!(px[i],ylabel = string("x_",i))
   end
 
-  pp = Plots.plot(time[1:N], P,layout = (n+1,1))
+  pp = Plots.plot(time[1:N], P,layout = (n,1))
   Plots.plot!(pp[1],title="costate")
-  Plots.plot!(pp[n+1], xlabel="t")
-  for i in 1:n+1
+  Plots.plot!(pp[n], xlabel="t")
+  for i in 1:n
     Plots.plot!(pp[i],ylabel = string("p_",i))
   end
 
