@@ -26,6 +26,10 @@ function direct_infos(ocp::OptimalControlModel, N::Integer)
     # times
     t0 = ocp.initial_time
     tf = ocp.final_time
+    has_free_final_time = isnothing(tf)
+        # multiplier la dynamique par (tf-t0)
+        # travailler avec le nouveau temps s dans (0., 1.)
+        # une fonction t(s)
     # dimensions
     n_x = ocp.state_dimension
     m = ocp.control_dimension
@@ -62,16 +66,22 @@ function direct_infos(ocp::OptimalControlModel, N::Integer)
 
     if hasLagrangianCost
         dim_x = n_x + 1  
-        nc = N*(dim_x+dim_ξ+dim_ψ) + dim_ϕ + 1  # dimension of the constraints            
-    else
+        nc = N*(dim_x+dim_ξ+dim_ψ) + dim_ϕ + 1 + dim_ψ       # dimension of the constraints            
+      else
         dim_x = n_x  
-        nc = N*(dim_x+dim_ξ+dim_ψ) + dim_ϕ # dimension of the constraints
+        nc = N*(dim_x+dim_ξ+dim_ψ) + dim_ϕ + dim_ψ        # dimension of the constraints
     end
 
     dim_xu = (N+1)*(n_x+1)+N*m  # dimension the the unknown xu
+    has_free_final_time ? dim_xu = dim_xu + 1 : nothing
 
-    f_Mayer(x, u) = hasLagrangianCost ? [f(x[1:n_x],u[1]); L(x[1:n_x],u[1])] : f(x,u[1])
+    # todo: cas vectoriel sur u a ajouter
+    f_Mayer(x, u) = hasLagrangianCost ? [f(x[1:n_x], u[1]); L(x[1:n_x], u[1])] : f(x,u[1])
 
-    return t0, tf, n_x, m, f, ξ, ψ, ϕ, dim_ξ, dim_ψ, dim_ϕ, has_ξ, has_ψ, has_ϕ, hasLagrangianCost, hasMayerCost, dim_x, nc, dim_xu, f_Mayer
+    criterion = ocp.criterion
+
+    return t0, tf, n_x, m, f, ξ, ψ, ϕ, dim_ξ, dim_ψ, dim_ϕ, 
+    has_ξ, has_ψ, has_ϕ, hasLagrangianCost, hasMayerCost, dim_x, nc, dim_xu, 
+    f_Mayer, has_free_final_time, criterion
 
 end
