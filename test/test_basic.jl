@@ -37,5 +37,5 @@ U = sol.U
 T = sol.T
 dT = T[2:end]-T[1:end-1]
 
-@test sum(dT .* abs.(U - u_sol.(T[1:end-1])) ≈ 0 atol=1e-1
+@test sum(dT .* abs.(U - u_sol.(T[1:end-1]))) ≈ 0 atol=1e-1
 
