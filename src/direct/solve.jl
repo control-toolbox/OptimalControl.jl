@@ -16,7 +16,7 @@ function solve(ocp::OptimalControlModel, N::Integer=100)
       nlp = ADNLProblem(ocp, N)
     
       # solve by IPOPT
-      ipopt_solution = ipopt(nlp, print_level=3)
+      ipopt_solution = ipopt(nlp, print_level=5, mu_strategy="adaptive")
 
       # from IPOPT solution to DirectSolution
       sol = DirectSolution(ocp, N, ipopt_solution)
