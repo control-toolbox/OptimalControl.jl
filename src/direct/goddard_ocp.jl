@@ -3,7 +3,7 @@ using NLPModelsIpopt, ADNLPModels
 using Plots
 import Plots: plot
 
-include("goddard_bolza.jl") 
+include("bolza_trapeze.jl") 
 
 # Parameters
 Cd = 310.
@@ -54,10 +54,10 @@ end
 
 constraint!(ocp, :dynamics, f) # dynamics can be in place
 
-sol = solve(ocp,40)
+sol = solve(ocp,100)
 
 using JLD2
-@save "./src/direct/sol_goddard_100.jld2" sol
+@save "./src/direct/sol_goddard_20.jld2" sol
 
 #println(sol)
 plot(sol)
