@@ -3,8 +3,6 @@ using NLPModelsIpopt, ADNLPModels
 using Plots
 import Plots: plot
 
-include("goddard_bolza.jl") 
-
 # Parameters
 Cd = 310.
 Tmax = 3.5
@@ -54,10 +52,10 @@ end
 
 constraint!(ocp, :dynamics, f) # dynamics can be in place
 
-sol = solve(ocp,40)
+sol = solve(ocp,20)
 
-using JLD2
-@save "./src/direct/sol_goddard_100.jld2" sol
+#using JLD2
+#@save "./src/direct/sol_goddard_20.jld2" sol
 
 #println(sol)
 plot(sol)
