@@ -1,11 +1,6 @@
 # [.github/workflows/CI.yml]
 name: CI
 on:
-  push:
-    branches:
-      - main
-      - develop
-    tags: '*'
   pull_request:
     branches:
       - main
