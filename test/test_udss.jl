@@ -17,7 +17,7 @@ ocp = OptimalControlProblem(L, f, t0, x0, tf, xf, 2, 1)
 u_sol(t) = 6.0-12.0*t
 
 # 
-struct DummyProblem <: OptimalControlProblem
+struct DummyProblem <: AbstractOptimalControlProblem
 end
 prob = DummyProblem()
 @test_throws InconsistentArgument solve(prob)

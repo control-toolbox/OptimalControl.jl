@@ -1,19 +1,8 @@
 # --------------------------------------------------------------------------------------------------
-# Aliases for types
-const Times = Union{Vector{<:Real},StepRangeLen}
-const States = Vector{<:Vector{<:Real}}
-const Adjoints = Vector{<:Vector{<:Real}} #Union{Vector{<:Real}, Vector{<:Vector{<:Real}}, Matrix{<:Vector{<:Real}}}
-const Controls = Vector{<:Vector{<:Real}} #Union{Vector{<:Real}, Vector{<:Vector{<:Real}}}
-const Time = Real
-const State = Vector{<:Real}
-const Adjoint = Vector{<:Real}
-const Dimension = Integer
-
-# --------------------------------------------------------------------------------------------------
 # Abstract Optimal control problem, init and solution
-abstract type OptimalControlProblem end
-abstract type OptimalControlInit end
-abstract type OptimalControlSolution end
+abstract type AbstractOptimalControlProblem end
+abstract type AbstractOptimalControlInit end
+abstract type AbstractOptimalControlSolution end
 
 # --------------------------------------------------------------------------------------------------
 # OCP possibilities
@@ -35,7 +24,7 @@ abstract type OptimalControlSolution end
 # fixed: t0, tf, x0
 # free: xf (final constraint)
 #
-struct UncFreeXfProblem <: OptimalControlProblem
+struct UncFreeXfProblem <: AbstractOptimalControlProblem
     description::Description
     state_dimension::Union{Dimension,Nothing}
     control_dimension::Union{Dimension,Nothing}
@@ -58,12 +47,12 @@ function OptimalControlProblem(Lagrange_cost::Function, dynamics::Function, init
     return ocp
 end
 
-struct UncFreeXfInit <: OptimalControlInit
+struct UncFreeXfInit <: AbstractOptimalControlInit
     U::Controls
 end
 
-struct UncFreeXfSolution <: OptimalControlSolution
-    T::Times # the times
+struct UncFreeXfSolution <: AbstractOptimalControlSolution
+    T::TimesDisc # the times
     X::States # the states at the times T
     U::Controls # the controls at T
     P::Adjoints # the adjoint at T
@@ -83,7 +72,7 @@ end
 #   no state constraints
 # fixed: t0, tf, x0, xf
 #
-struct UncFixedXfProblem <: OptimalControlProblem
+struct UncFixedXfProblem <: AbstractOptimalControlProblem
     description::Description
     state_dimension::Union{Dimension,Nothing}
     control_dimension::Union{Dimension,Nothing}
@@ -104,12 +93,12 @@ function OptimalControlProblem(Lagrange_cost::Function, dynamics::Function, init
     return ocp
 end
 
-struct UncFixedXfInit <: OptimalControlInit
+struct UncFixedXfInit <: AbstractOptimalControlInit
     U::Controls
 end
 
-struct UncFixedXfSolution <: OptimalControlSolution
-    T::Times # the times
+struct UncFixedXfSolution <: AbstractOptimalControlSolution
+    T::TimesDisc # the times
     X::States # the states at the times T
     U::Controls # the controls at T
     P::Adjoints # the adjoint at T
@@ -167,7 +156,7 @@ function Base.show(io::IO, ocp::UncFreeXfProblem)
     println(io, "Optimal control problem of the form:")
     println(io, "")
     print(io, "    minimize  J(x, u) = ")
-    isnonautonomous(desc) ? println(io, '\u222B', " L(t, x(t), u(t)) dt, over [t0, tf]") : println(io, '\u222B', " L(x(t), u(t)) dt, over [t0, tf]")
+    isnonautonomous(desc) ? println(io, '\u222B', " f⁰(t, x(t), u(t)) dt, over [t0, tf]") : println(io, '\u222B', " f⁰(x(t), u(t)) dt, over [t0, tf]")
     println(io, "")
     println(io, "    subject to")
     println(io, "")
@@ -192,7 +181,7 @@ function Base.show(io::IO, ocp::UncFixedXfProblem)
     println(io, "Optimal control problem of the form:")
     println(io, "")
     print(io, "    minimize  J(x, u) = ")
-    isnonautonomous(desc) ? println(io, '\u222B', " L(t, x(t), u(t)) dt, over [t0, tf]") : println(io, '\u222B', " L(x(t), u(t)) dt, over [t0, tf]")
+    isnonautonomous(desc) ? println(io, '\u222B', " f⁰(t, x(t), u(t)) dt, over [t0, tf]") : println(io, '\u222B', " f⁰(x(t), u(t)) dt, over [t0, tf]")
     println(io, "")
     println(io, "    subject to")
     println(io, "")

@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------------------------------------
-# make an UncFreeXfSolution (Unconstrained) from OptimalControlSolution
+# make an UncFreeXfSolution (Unconstrained) from AbstractOptimalControlSolution
 # direct simple shooting
 
 #struct UnconstrainedSolution <: CTOptimizationSolution
@@ -10,7 +10,7 @@
 #end
 
 function make_udss_solution(sol::CTOptimization.UnconstrainedSolution,
-    ocp::UncFreeXfProblem, grid::Times, penalty_constraint::Real)
+    ocp::UncFreeXfProblem, grid::TimesDisc, penalty_constraint::Real)
 
     # ocp data
     dy = ocp.dynamics
@@ -30,12 +30,12 @@ function make_udss_solution(sol::CTOptimization.UnconstrainedSolution,
 
     # flow for state
     vf(t, x, u) = isnonautonomous(desc) ? dy(t, x, u) : dy(x, u)
-    f = flow(VectorField(vf), :nonautonomous) # we always give a non autonomous Vector Field
+    f = Flow(VectorField(vf), :nonautonomous) # we always give a non autonomous Vector Field
 
     # flow for state-adjoint
     p⁰ = -1.0
     H(t, x, p, u) = isnonautonomous(desc) ? p⁰ * co(t, x, u) + p' * dy(t, x, u) : p⁰ * co(x, u) + p' * dy(x, u)
-    fh = flow(Hamiltonian(H), :nonautonomous) # we always give a non autonomous Hamiltonian
+    fh = Flow(Hamiltonian(H), :nonautonomous) # we always give a non autonomous Hamiltonian
 
     # get state and adjoint
     T = grid

@@ -3,8 +3,8 @@
 function solve_by_udss(
     prob::UncFreeXfProblem,
     method::Description;
-    init::Union{Nothing,Controls,Tuple{Times,Controls},Function,UncFreeXfSolution}=nothing,
-    grid::Union{Nothing,Times}=nothing,
+    init::Union{Nothing,Controls,Tuple{TimesDisc,Controls},Function,UncFreeXfSolution}=nothing,
+    grid::Union{Nothing,TimesDisc}=nothing,
     penalty_constraint::Real=__penalty_constraint(),
     display::Bool=__display(),
     callbacks::ControlToolboxCallbacks=__callbacks(),
@@ -53,7 +53,7 @@ function solve_by_udss(
 end
 
 function solve_by_udss(prob::UncFixedXfProblem, args...; 
-    init::Union{Nothing,Controls,Tuple{Times,Controls},Function,UncFixedXfSolution}=nothing, 
+    init::Union{Nothing,Controls,Tuple{TimesDisc,Controls},Function,UncFixedXfSolution}=nothing, 
     kwargs...)
     new_prob = convert(prob, UncFreeXfProblem)
     if typeof(init) == UncFixedXfSolution
@@ -66,7 +66,7 @@ function solve_by_udss(prob::UncFixedXfProblem, args...;
     return new_sol
 end
 
-function solve_by_udss(prob::OptimalControlProblem, args...; kwargs...)
+function solve_by_udss(prob::AbstractOptimalControlProblem, args...; kwargs...)
     throw(InconsistentArgument("this problem can not be solved by direct simple shooting."))
 end
 
