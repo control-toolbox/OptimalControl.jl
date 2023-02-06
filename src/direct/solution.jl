@@ -15,7 +15,7 @@ function DirectSolution(ocp::OptimalControlModel, N::Integer, ipopt_solution)
 
     # direct_infos
     t0, tf_, n_x, m, f, ξ, ψ, ϕ, dim_ξ, dim_ψ, dim_ϕ, 
-    has_ξ, has_ψ, has_ϕ, hasLagrangianCost, hasMayerCost, 
+    has_ξ, has_ψ, has_ϕ, hasLagrangeCost, hasMayerCost, 
     dim_x, nc, dim_xu, g, f_Mayer, has_free_final_time, criterion = direct_infos(ocp, N)
 
     function parse_ipopt_sol(stats)

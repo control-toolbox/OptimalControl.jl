@@ -17,7 +17,7 @@ B = [ 0.0
       1.0 ]
 
 constraint!(ocp, :dynamics, (x, u) -> A*x + B*u)
-objective!(ocp, :lagrangian, (x, u) -> 0.5*u^2) # default is to minimise
+objective!(ocp, :lagrange, (x, u) -> 0.5u^2) # default is to minimise
 
 #
 @test ocp.state_dimension == 2
@@ -26,7 +26,7 @@ objective!(ocp, :lagrangian, (x, u) -> 0.5*u^2) # default is to minimise
 @test ocp.initial_time == t0
 @test ocp.final_time == tf
 @test ocp.dynamics([0.; 1.], 1.0) ≈ [1.; 1.] atol=1e-8
-@test ocp.lagrangian([0.; 0.], 1.0) ≈ 0.5 atol=1e-8
+@test ocp.lagrange([0.; 0.], 1.0) ≈ 0.5 atol=1e-8
 
 # solve
 sol = solve(ocp)

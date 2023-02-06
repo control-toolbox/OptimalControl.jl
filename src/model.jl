@@ -5,7 +5,7 @@ abstract type AbstractOptimalControlModel end
 @with_kw mutable struct OptimalControlModel <: AbstractOptimalControlModel
     initial_time::Union{Time,Nothing}=nothing
     final_time::Union{Time,Nothing}=nothing
-    lagrangian::Union{Function,Nothing}=nothing
+    lagrange::Union{Function,Nothing}=nothing
     mayer::Union{Function,Nothing}=nothing
     criterion::Union{Symbol,Nothing}=nothing
     dynamics::Union{Function,Nothing}=nothing
@@ -208,13 +208,17 @@ end
 # -------------------------------------------------------------------------------------------
 # 
 function objective!(ocp::OptimalControlModel, type::Symbol, f::Function, criterion::Symbol=:min)
+    setproperty!(ocp, :mayer, nothing)
+    setproperty!(ocp, :lagrange, nothing)
     if criterion ∈ [ :min, :max ]
         ocp.criterion = criterion
     else
         error("this criterion is not valid")
     end
-    if type ∈ [ :lagrangian, :mayer ]
-        setproperty!(ocp, type, f)
+    if type == :mayer
+        setproperty!(ocp, :mayer, f)
+    elseif type == :lagrange
+        setproperty!(ocp, :lagrange, f)
     else
         error("this objective is not valid")
     end

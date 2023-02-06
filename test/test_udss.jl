@@ -10,7 +10,7 @@ A = [0.0 1.0
       0.0 0.0]
 B = [0.0; 1.0]
 f(x, u) = A * x + B * u[1];  # dynamics
-L(x, u) = 0.5 * u[1]^2   # integrand of the Lagrange cost
+L(x, u) = 0.5u[1]^2   # integrand of the Lagrange cost
 ocp = OptimalControlProblem(L, f, t0, x0, tf, xf, 2, 1)
 
 # solution
