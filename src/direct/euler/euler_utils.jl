@@ -48,23 +48,23 @@ function direct_infos(ocp::OptimalControlModel, N::Integer)
     #println("has_ψ = ", has_ψ)
     #println("has_ϕ = ", has_ϕ)
 
-    hasLagrangianCost = !isnothing(ocp.lagrangian)
-    hasLagrangianCost ? L = ocp.lagrangian : nothing
+    hasLagrangeCost = !isnothing(ocp.lagrange)
+    hasLagrangeCost ? L = ocp.lagrange : nothing
 
     hasMayerCost = !isnothing(ocp.mayer)
     hasMayerCost ? g = ocp.mayer : nothing
-    #println("hasLagrangien : ", hasLagrangianCost)
+    #println("hasLagrangien : ", hasLagrangeCost)
     #println("Mayer = ", hasMayerCost)
 
     # Mayer formulation
-    # use an additional state for the Lagrangian cost
+    # use an additional state for the Lagrange cost
     #
     # remark : we pass u[1] because in our case ocp.dynamics and ocp.lagrange are defined with a scalar u
     # and we consider vectors for x and u in the discretized problem. Note that the same would apply for a scalar x.
     # question : how determine if u and x are scalar or vector ?
     # second member of the ode for the Mayer formulation
 
-    if hasLagrangianCost
+    if hasLagrangeCost
         dim_x = n_x + 1  
         nc = N*(dim_x+dim_ξ+dim_ψ) + dim_ϕ + 1 + dim_ψ       # dimension of the constraints            
       else
@@ -76,12 +76,12 @@ function direct_infos(ocp::OptimalControlModel, N::Integer)
     has_free_final_time ? dim_xu = dim_xu + 1 : nothing
 
     # todo: cas vectoriel sur u a ajouter
-    f_Mayer(x, u) = hasLagrangianCost ? [f(x[1:n_x], u[1]); L(x[1:n_x], u[1])] : f(x,u[1])
+    f_Mayer(x, u) = hasLagrangeCost ? [f(x[1:n_x], u[1]); L(x[1:n_x], u[1])] : f(x,u[1])
 
     criterion = ocp.criterion
 
     return t0, tf, n_x, m, f, ξ, ψ, ϕ, dim_ξ, dim_ψ, dim_ϕ, 
-    has_ξ, has_ψ, has_ϕ, hasLagrangianCost, hasMayerCost, dim_x, nc, dim_xu, 
+    has_ξ, has_ψ, has_ϕ, hasLagrangeCost, hasMayerCost, dim_x, nc, dim_xu, 
     f_Mayer, has_free_final_time, criterion
 
 end
