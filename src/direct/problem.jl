@@ -2,7 +2,7 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer)
 
     # direct_infos
     t0, tf_, n_x, m, f, ξ, ψ, ϕ, dim_ξ, dim_ψ, dim_ϕ, 
-    has_ξ, has_ψ, has_ϕ, hasLagrangianCost, hasMayerCost, 
+    has_ξ, has_ψ, has_ϕ, hasLagrangeCost, hasMayerCost, 
     dim_x, nc, dim_xu, g, f_Mayer, has_free_final_time, criterion = direct_infos(ocp, N)
 
     # IPOPT objective
@@ -14,7 +14,7 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer)
             xf = get_state_at_time_step(xu, N, dim_x, N)
             obj = obj + g(t0, x0[1:n_x], tf, xf[1:n_x])
         end
-        if hasLagrangianCost
+        if hasLagrangeCost
             obj = obj + xu[(N+1)*dim_x]
         end
         return criterion==:min ? obj : -obj
@@ -81,9 +81,9 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer)
         # -------------------
         x0 = get_state_at_time_step(xu, 0, dim_x, N)
         xf = get_state_at_time_step(xu, N, dim_x, N)
-        c[index:index+dim_ϕ-1] = ϕ[2](t0,x0[1:n_x],tf,xf[1:n_x])  # because Lagrangian cost possible
+        c[index:index+dim_ϕ-1] = ϕ[2](t0,x0[1:n_x],tf,xf[1:n_x])  # because Lagrange cost possible
         index = index + dim_ϕ
-        if hasLagrangianCost
+        if hasLagrangeCost
             c[index] = xu[dim_x]
             index = index + 1
         end
@@ -123,7 +123,7 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer)
         lb[index:index+dim_ϕ-1] = ϕ[1]
         ub[index:index+dim_ϕ-1] = ϕ[3]
         index = index + dim_ϕ
-        if hasLagrangianCost
+        if hasLagrangeCost
             lb[index] = 0.
             ub[index] = 0.
             index = index + 1
