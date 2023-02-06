@@ -1,11 +1,12 @@
 # [.github/workflows/CI.yml]
 name: CI
 on:
-  pull_request:
+  push:
     branches:
       - main
       - develop
     tags: '*'
+  pull_request:
 jobs:
   test:
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }}
