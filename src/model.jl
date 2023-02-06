@@ -208,13 +208,17 @@ end
 # -------------------------------------------------------------------------------------------
 # 
 function objective!(ocp::OptimalControlModel, type::Symbol, f::Function, criterion::Symbol=:min)
+    setproperty!(ocp, :mayer, nothing)
+    setproperty!(ocp, :lagrange, nothing)
     if criterion ∈ [ :min, :max ]
         ocp.criterion = criterion
     else
         error("this criterion is not valid")
     end
-    if type ∈ [ :lagrange, :mayer ]
-        setproperty!(ocp, type, f)
+    if type == :mayer
+        setproperty!(ocp, :mayer, f)
+    elseif type == :lagrange
+        setproperty!(ocp, :lagrange, f)
     else
         error("this objective is not valid")
     end
