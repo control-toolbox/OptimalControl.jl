@@ -17,19 +17,19 @@ ocp = OptimalControlProblem(L, f, t0, x0, tf, xf, 2, 1)
 u_sol(t) = 6.0-12.0*t
 
 # 
-struct DummyProblem <: AbstractOptimalControlProblem
+struct DummyProblem{time_dependence} <: AbstractOptimalControlProblem{time_dependence}
 end
-prob = DummyProblem()
+prob = DummyProblem{:autonomous}()
 @test_throws InconsistentArgument solve(prob)
 
 # --------------------------------------------------------------------------------------------------
 #
 # initialization
-ocp_c = convert(ocp, UncFreeXfProblem)
+ocp_c = convert(ocp, :UncFreeXfProblem)
 
 #
-@test typeof(ocp) == UncFixedXfProblem
-@test typeof(ocp_c) == UncFreeXfProblem
+@test typeof(ocp) == UncFixedXfProblem{:autonomous}
+@test typeof(ocp_c) == UncFreeXfProblem{:autonomous}
 
 # init=nothing, grid=nothing => init=zeros(m, N-1), grid=range(t0, tf, N), with N=__grid_size()
 init_, grid_ = make_udss_init(ocp_c, nothing, nothing)

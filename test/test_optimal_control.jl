@@ -20,7 +20,7 @@ U_init = [[U_init[i]] for i = 1:N-1];
 # UncFreeXfProblem 
 # prob definition
 prob = OptimalControlProblem(L, f, t0, x0, tf, c, 2, 1, 2)
-@test typeof(prob) == UncFreeXfProblem
+@test typeof(prob) == UncFreeXfProblem{:autonomous}
 @test print(prob) === nothing
 
 sol = solve(prob, :bfgs, :backtracking, display=false)
@@ -29,7 +29,7 @@ sol = solve(prob, :bfgs, :backtracking, display=false)
 # UncFixedXfProblem
 # prob definition
 prob = OptimalControlProblem(L, f, t0, x0, tf, xf, 2, 1)
-@test typeof(prob) == UncFixedXfProblem
+@test typeof(prob) == UncFixedXfProblem{:autonomous}
 @test print(prob) === nothing
 
 sol = solve(prob, :bfgs, :backtracking, display=false)
@@ -42,11 +42,9 @@ sol = solve(prob, :bfgs, :backtracking, display=false)
 prob = OptimalControlProblem(L, f, t0, x0, tf, xf, 2, 1)
 
 #
-struct DummyProblem <: AbstractOptimalControlProblem
-end
-@test_throws IncorrectMethod convert(prob, DummyProblem)
+@test_throws IncorrectMethod convert(prob, :DummyProblem)
 
 #
-prob_new = convert(prob, UncFreeXfProblem)
-@test typeof(prob_new) == UncFreeXfProblem
+prob_new = convert(prob, :UncFreeXfProblem)
+@test typeof(prob_new) == UncFreeXfProblem{:autonomous}
 @test prob_new.final_constraint(xf) ≈ [0.0; 0.0] atol = 1e-8

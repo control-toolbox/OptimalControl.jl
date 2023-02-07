@@ -8,7 +8,6 @@ function make_udss_problem(ocp::UncFreeXfProblem, grid::TimesDisc, penalty_const
     co = ocp.Lagrange_cost
     cf = ocp.final_constraint
     x0 = ocp.initial_condition
-    desc = ocp.description
 
     # Jacobian of the constraints
     Jcf(x) = Jac(cf, x)
@@ -17,17 +16,17 @@ function make_udss_problem(ocp::UncFreeXfProblem, grid::TimesDisc, penalty_const
     αₚ = penalty_constraint
 
     # state flow
-    vf(t, x, u) = isnonautonomous(desc) ? dy(t, x, u) : dy(x, u)
-    f = Flow(VectorField(vf), :nonautonomous) # we always give a non autonomous Vector Field
+    vf(t, x, u) = isnonautonomous(ocp) ? dy(t, x, u) : dy(x, u)
+    f = Flow(VectorField{:nonautonomous}(vf)) # we always give a non autonomous Vector Field
 
     # augmented state flow
-    vfa(t, x, u) = isnonautonomous(desc) ? [dy(t, x[1:end-1], u)[:]; co(t, x[1:end-1], u)] : [dy(x[1:end-1], u)[:]; co(x[1:end-1], u)]
-    fa = Flow(VectorField(vfa), :nonautonomous) # we always give a non autonomous Vector Field
+    vfa(t, x, u) = isnonautonomous(ocp) ? [dy(t, x[1:end-1], u)[:]; co(t, x[1:end-1], u)] : [dy(x[1:end-1], u)[:]; co(x[1:end-1], u)]
+    fa = Flow(VectorField{:nonautonomous}(vfa)) # we always give a non autonomous Vector Field
 
     # state-costate flow
     p⁰ = -1.0
-    H(t, x, p, u) = isnonautonomous(desc) ? p⁰ * co(t, x, u) + p' * dy(t, x, u) : p⁰ * co(x, u) + p' * dy(x, u)
-    fh = Flow(Hamiltonian(H), :nonautonomous) # we always give a non autonomous Hamiltonian
+    H(t, x, p, u) = isnonautonomous(ocp) ? p⁰ * co(t, x, u) + p' * dy(t, x, u) : p⁰ * co(x, u) + p' * dy(x, u)
+    fh = Flow(Hamiltonian{:nonautonomous}(H)) # we always give a non autonomous Hamiltonian
 
     # to compute the gradient of the function by the adjoint method,
     # we need the partial derivative of the Hamiltonian wrt to the control
@@ -48,7 +47,7 @@ function make_udss_problem(ocp::UncFreeXfProblem, grid::TimesDisc, penalty_const
     ∇J(x::Vector{<:Real}) = vec2vec(∇J(vec2vec(x, ocp.control_dimension))) # for desent solver
 
     # function J, that we minimize
-    L(t, x, u) = isnonautonomous(desc) ? co(t, x, u) : co(x, u)
+    L(t, x, u) = isnonautonomous(ocp) ? co(t, x, u) : co(x, u)
     function J(U::Controls)
         # via augmented system
         xₙ, X = model([x0[:]; 0.0], T, U, fa)
