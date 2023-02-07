@@ -46,14 +46,14 @@ const Adjoint = MyVector # todo: ajouter type adjoint pour faire par exemple p*f
 const Dimension = Integer
 
 #
-include("./utils.jl")
-include("./default.jl")
+include("main/utils.jl")
+include("main/default.jl")
 
 # general
-include("model.jl")
-include("problem.jl")
-include("solve.jl")
-include("flows.jl")
+include("main/model.jl")
+include("main/problem.jl")
+include("main/solve.jl")
+include("main/flows.jl")
 
 # direct shooting
 include("direct-shooting/init.jl")

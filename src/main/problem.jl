@@ -1,8 +1,11 @@
 # --------------------------------------------------------------------------------------------------
 # Abstract Optimal control problem, init and solution
-abstract type AbstractOptimalControlProblem end
+abstract type AbstractOptimalControlProblem{time_dependence} end
 abstract type AbstractOptimalControlInit end
 abstract type AbstractOptimalControlSolution end
+
+isnonautonomous(time_dependence::Symbol) = :nonautonomous == time_dependence
+isnonautonomous(ocp::AbstractOptimalControlProblem{time_dependence}) where {time_dependence} = isnonautonomous(time_dependence)
 
 # --------------------------------------------------------------------------------------------------
 # OCP possibilities
@@ -24,8 +27,7 @@ abstract type AbstractOptimalControlSolution end
 # fixed: t0, tf, x0
 # free: xf (final constraint)
 #
-struct UncFreeXfProblem <: AbstractOptimalControlProblem
-    description::Description
+struct UncFreeXfProblem{time_dependence} <: AbstractOptimalControlProblem{time_dependence}
     state_dimension::Union{Dimension,Nothing}
     control_dimension::Union{Dimension,Nothing}
     final_constraint_dimension::Union{Dimension,Nothing}
@@ -37,14 +39,18 @@ struct UncFreeXfProblem <: AbstractOptimalControlProblem
     final_constraint::Function
 end
 
-function OptimalControlProblem(Lagrange_cost::Function, dynamics::Function, initial_time::Time, 
+struct OptimalControlProblem{time_dependence} end
+function OptimalControlProblem{time_dependence}(Lagrange_cost::Function, dynamics::Function, initial_time::Time, 
     initial_condition::State, final_time::Time, final_constraint::Function, 
-    state_dimension::Dimension, control_dimension::Dimension, final_constraint_dimension::Dimension,
-    description...)
-    ocp = UncFreeXfProblem(makeDescription(description...), state_dimension, 
+    state_dimension::Dimension, control_dimension::Dimension, final_constraint_dimension::Dimension) where {time_dependence}
+    ocp = UncFreeXfProblem{time_dependence}(state_dimension, 
         control_dimension, final_constraint_dimension, Lagrange_cost, dynamics, initial_time, 
         initial_condition, final_time, final_constraint)
     return ocp
+end
+
+function OptimalControlProblem(args...; kwargs...)
+    return OptimalControlProblem{:autonomous}(args...)
 end
 
 struct UncFreeXfInit <: AbstractOptimalControlInit
@@ -72,8 +78,7 @@ end
 #   no state constraints
 # fixed: t0, tf, x0, xf
 #
-struct UncFixedXfProblem <: AbstractOptimalControlProblem
-    description::Description
+struct UncFixedXfProblem{time_dependence} <: AbstractOptimalControlProblem{time_dependence}
     state_dimension::Union{Dimension,Nothing}
     control_dimension::Union{Dimension,Nothing}
     Lagrange_cost::Function
@@ -84,12 +89,11 @@ struct UncFixedXfProblem <: AbstractOptimalControlProblem
     final_condition::State
 end
 
-function OptimalControlProblem(Lagrange_cost::Function, dynamics::Function, initial_time::Time,
+function OptimalControlProblem{time_dependence}(Lagrange_cost::Function, dynamics::Function, initial_time::Time,
     initial_condition::State, final_time::Time, final_condition::State, state_dimension::Dimension, 
-    control_dimension::Dimension, description...)
-    ocp = UncFixedXfProblem(makeDescription(description...), state_dimension, 
-        control_dimension, Lagrange_cost, dynamics, initial_time, initial_condition, 
-        final_time, final_condition)
+    control_dimension::Dimension) where {time_dependence}
+    ocp = UncFixedXfProblem{time_dependence}(state_dimension, control_dimension, Lagrange_cost, dynamics, 
+        initial_time, initial_condition, final_time, final_condition)
     return ocp
 end
 
@@ -111,10 +115,11 @@ struct UncFixedXfSolution <: AbstractOptimalControlSolution
 end
 
 # convert
-function convert(ocp::UncFixedXfProblem, ocp_type::DataType)
-    if ocp_type == UncFreeXfProblem
+function convert(ocp::UncFixedXfProblem{time_dependence}, ocp_type::Symbol) where {time_dependence}
+    if ocp_type == :UncFreeXfProblem
         c(x) = x - ocp.final_condition
-        ocp_new = OptimalControlProblem(ocp.Lagrange_cost, ocp.dynamics, ocp.initial_time, ocp.initial_condition, ocp.final_time, c, ocp.state_dimension, ocp.control_dimension, ocp.state_dimension, ocp.description...)
+        ocp_new = OptimalControlProblem{time_dependence}(ocp.Lagrange_cost, ocp.dynamics, ocp.initial_time, 
+            ocp.initial_condition, ocp.final_time, c, ocp.state_dimension, ocp.control_dimension, ocp.state_dimension)
     else
         throw(IncorrectMethod(Symbol(ocp_type)))
     end
@@ -145,22 +150,20 @@ end
 # Display: text/html ?  
 # Base.show, Base.print
 # pretty print : https://docs.julialang.org/en/v1/manual/types/#man-custom-pretty-printing
-function Base.show(io::IO, ocp::UncFreeXfProblem)
+function Base.show(io::IO, ocp::UncFreeXfProblem{time_dependence}) where {time_dependence}
 
     dimx = ocp.state_dimension === nothing ? "n" : ocp.state_dimension
     dimu = ocp.control_dimension === nothing ? "m" : ocp.control_dimension
     dimc = ocp.final_constraint_dimension === nothing ? "p" : ocp.final_constraint_dimension
 
-    desc = ocp.description
-
     println(io, "Optimal control problem of the form:")
     println(io, "")
     print(io, "    minimize  J(x, u) = ")
-    isnonautonomous(desc) ? println(io, '\u222B', " f⁰(t, x(t), u(t)) dt, over [t0, tf]") : println(io, '\u222B', " f⁰(x(t), u(t)) dt, over [t0, tf]")
+    isnonautonomous(ocp) ? println(io, '\u222B', " f⁰(t, x(t), u(t)) dt, over [t0, tf]") : println(io, '\u222B', " f⁰(x(t), u(t)) dt, over [t0, tf]")
     println(io, "")
     println(io, "    subject to")
     println(io, "")
-    isnonautonomous(desc) ? println(io, "        x", '\u0307', "(t) = f(t, x(t), u(t)), t in [t0, tf] a.e.,") : println(io, "        x", '\u0307', "(t) = f(x(t), u(t)), t in [t0, tf] a.e.,")
+    isnonautonomous(ocp) ? println(io, "        x", '\u0307', "(t) = f(t, x(t), u(t)), t in [t0, tf] a.e.,") : println(io, "        x", '\u0307', "(t) = f(x(t), u(t)), t in [t0, tf] a.e.,")
     println(io, "")
     println(io, "        x(t0) = x0, c(x(tf)) = 0,")
     println(io, "")
@@ -171,21 +174,19 @@ function Base.show(io::IO, ocp::UncFreeXfProblem)
 
 end
 
-function Base.show(io::IO, ocp::UncFixedXfProblem)
+function Base.show(io::IO, ocp::UncFixedXfProblem{time_dependence}) where {time_dependence}
 
     dimx = ocp.state_dimension === nothing ? "n" : ocp.state_dimension
     dimu = ocp.control_dimension === nothing ? "m" : ocp.control_dimension
 
-    desc = ocp.description
-
     println(io, "Optimal control problem of the form:")
     println(io, "")
     print(io, "    minimize  J(x, u) = ")
-    isnonautonomous(desc) ? println(io, '\u222B', " f⁰(t, x(t), u(t)) dt, over [t0, tf]") : println(io, '\u222B', " f⁰(x(t), u(t)) dt, over [t0, tf]")
+    isnonautonomous(ocp) ? println(io, '\u222B', " f⁰(t, x(t), u(t)) dt, over [t0, tf]") : println(io, '\u222B', " f⁰(x(t), u(t)) dt, over [t0, tf]")
     println(io, "")
     println(io, "    subject to")
     println(io, "")
-    isnonautonomous(desc) ? println(io, "        x", '\u0307', "(t) = f(t, x(t), u(t)), t in [t0, tf] a.e.,") : println(io, "        x", '\u0307', "(t) = f(x(t), u(t)), t in [t0, tf] a.e.,")
+    isnonautonomous(ocp) ? println(io, "        x", '\u0307', "(t) = f(t, x(t), u(t)), t in [t0, tf] a.e.,") : println(io, "        x", '\u0307', "(t) = f(x(t), u(t)), t in [t0, tf] a.e.,")
     println(io, "")
     println(io, "        x(t0) = x0, x(tf) = xf,")
     println(io, "")

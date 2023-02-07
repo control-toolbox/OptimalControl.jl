@@ -17,7 +17,6 @@ function make_udss_solution(sol::CTOptimization.UnconstrainedSolution,
     co = ocp.Lagrange_cost
     cf = ocp.final_constraint
     x0 = ocp.initial_condition
-    desc = ocp.description
 
     # control solution
     U⁺ = vec2vec(sol.x, ocp.control_dimension)
@@ -29,13 +28,13 @@ function make_udss_solution(sol::CTOptimization.UnconstrainedSolution,
     αₚ = penalty_constraint
 
     # flow for state
-    vf(t, x, u) = isnonautonomous(desc) ? dy(t, x, u) : dy(x, u)
-    f = Flow(VectorField(vf), :nonautonomous) # we always give a non autonomous Vector Field
+    vf(t, x, u) = isnonautonomous(ocp) ? dy(t, x, u) : dy(x, u)
+    f = Flow(VectorField{:nonautonomous}(vf)) # we always give a non autonomous Vector Field
 
     # flow for state-adjoint
     p⁰ = -1.0
-    H(t, x, p, u) = isnonautonomous(desc) ? p⁰ * co(t, x, u) + p' * dy(t, x, u) : p⁰ * co(x, u) + p' * dy(x, u)
-    fh = Flow(Hamiltonian(H), :nonautonomous) # we always give a non autonomous Hamiltonian
+    H(t, x, p, u) = isnonautonomous(ocp) ? p⁰ * co(t, x, u) + p' * dy(t, x, u) : p⁰ * co(x, u) + p' * dy(x, u)
+    fh = Flow(Hamiltonian{:nonautonomous}(H)) # we always give a non autonomous Hamiltonian
 
     # get state and adjoint
     T = grid
