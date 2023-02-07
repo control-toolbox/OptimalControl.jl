@@ -78,11 +78,11 @@ function solve(ocp::OptimalControlModel,N)
   println("has_ϕ = ", has_ϕ)
 
 
-  if isnothing(ocp.lagrangian)
-    hasLagrangianCost = false
+  if isnothing(ocp.lagrange)
+    hasLagrangeCost = false
   else
-    hasLagrangianCost = true
-    L = ocp.lagrangian
+    hasLagrangeCost = true
+    L = ocp.lagrange
   end  
 
   if isnothing(ocp.mayer)
@@ -91,12 +91,12 @@ function solve(ocp::OptimalControlModel,N)
     hasMayerCost = true
     g = ocp.mayer
   end  
-  println("hasLagrangien : ", hasLagrangianCost)
+  println("hasLagrange : ", hasLagrangeCost)
   println("Mayer = ", hasMayerCost)
 
 
   # Mayer formulation
-  # use an additional state for the Lagrangian cost
+  # use an additional state for the Lagrange cost
   #
   # remark : we pass u[1] because in our case ocp.dynamics and ocp.lagrange are defined with a scalar u
   # and we consider vectors for x and u in the discretized problem. Note that the same would apply for a scalar x.
@@ -105,7 +105,7 @@ function solve(ocp::OptimalControlModel,N)
   
 
 
-  if hasLagrangianCost
+  if hasLagrangeCost
     dim_x = n_x + 1  
     nc = N*(dim_x+dim_ξ+dim_ψ) + (dim_ξ + dim_ψ) + dim_ϕ + 1        # dimension of the constraints            
   else
@@ -121,7 +121,7 @@ function solve(ocp::OptimalControlModel,N)
   end
 
   function f_Mayer(x,u)
-    if hasLagrangianCost
+    if hasLagrangeCost
       f_val = [f(x[1:n_x],u[1]); L(x[1:n_x],u[1])]
     else
       f_val = f(x,u[1])
@@ -222,7 +222,7 @@ function solve(ocp::OptimalControlModel,N)
       xf = get_state_at_time_step(xu,N)
       obj = obj + g(t0, x0[1:n_x], tf, xf[1:n_x])
     end
-    if hasLagrangianCost
+    if hasLagrangeCost
       obj = obj + xu[(N+1)*dim_x]
     end
     return -obj   # - if max
@@ -297,9 +297,9 @@ function solve(ocp::OptimalControlModel,N)
       x0 = get_state_at_time_step(xu,0)
       xf = get_state_at_time_step(xu,N)
       
-      c[index:index+dim_ϕ-1] = ϕ[2](t0,x0[1:n_x],tf,xf[1:n_x])  # because Lagrangian cost possible
+      c[index:index+dim_ϕ-1] = ϕ[2](t0,x0[1:n_x],tf,xf[1:n_x])  # because Lagrange cost possible
       index = index + dim_ϕ
-      if hasLagrangianCost
+      if hasLagrangeCost
         c[index] = xu[dim_x]
         index = index + 1
       end
@@ -348,7 +348,7 @@ function solve(ocp::OptimalControlModel,N)
     lb[index:index+dim_ϕ-1] = ϕ[1]
     ub[index:index+dim_ϕ-1] = ϕ[3]
     index = index + dim_ϕ
-    if hasLagrangianCost
+    if hasLagrangeCost
       lb[index] = 0.
       ub[index] = 0.
       index = index + 1

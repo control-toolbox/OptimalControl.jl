@@ -19,7 +19,7 @@ function HamiltonianFlows.Flow(ocp::OptimalControlModel, u::Function)
     p⁰ = -1.
     f  = ocp.dynamics
     f! = ocp.dynamics!
-    f⁰ = ocp.lagrangian        
+    f⁰ = ocp.lagrange        
 
     s = ocp.criterion == :min ? 1.0 : -1.0 # 
 
@@ -47,7 +47,7 @@ function HamiltonianFlows.Flow(ocp::OptimalControlModel, u::Function, c::Functio
     p⁰ = -1.
     f  = ocp.dynamics
     f! = ocp.dynamics!
-    f⁰ = ocp.lagrangian        
+    f⁰ = ocp.lagrange        
 
     # construct Hamiltonian
     # autonomous case
