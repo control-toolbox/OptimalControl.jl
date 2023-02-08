@@ -30,7 +30,7 @@ function DirectSolution(ocp::OptimalControlModel, N::Integer, ipopt_solution)
         X = zeros(N+1,dim_x)
         U = zeros(N+1,m)
         for i in 1:N+1
-            X[i,:] =  get_state_at_time_step(xu, i-1, dim_x, N)
+            X[i,:] = get_state_at_time_step(xu, i-1, dim_x, N)
             U[i,:] = get_control_at_time_step(xu, i-1, dim_x, N, m)
         end
 

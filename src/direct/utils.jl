@@ -78,7 +78,7 @@ function direct_infos(ocp::OptimalControlModel, N::Integer)
     has_free_final_time ? dim_xu = dim_xu + 1 : nothing
 
     # todo: cas vectoriel sur u a ajouter
-    f_Mayer(t, x, u) = hasLagrangeCost ? [f(t, x[1:n_x], u[1]); L(t, x[1:n_x], u[1])] : f(t, x, u[1])
+    f_Mayer(t, x, u) = hasLagrangeCost ? [f(t, x[1:n_x], u); L(t, x[1:n_x], u)] : f(t, x, u)
 
     criterion = ocp.criterion
 
