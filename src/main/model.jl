@@ -2,13 +2,13 @@
 # Abstract Optimal control model
 abstract type AbstractOptimalControlModel end
 
-@with_kw mutable struct OptimalControlModel <: AbstractOptimalControlModel
+@with_kw mutable struct OptimalControlModel{time_dependence} <: AbstractOptimalControlModel
     initial_time::Union{Time,Nothing}=nothing
     final_time::Union{Time,Nothing}=nothing
-    lagrange::Union{Function,Nothing}=nothing
+    lagrange::Union{LagrangeControlFunction{time_dependence},Nothing}=nothing
     mayer::Union{Function,Nothing}=nothing
     criterion::Union{Symbol,Nothing}=nothing
-    dynamics::Union{Function,Nothing}=nothing
+    dynamics::Union{DynamicsControlFunction{time_dependence},Nothing}=nothing
     dynamics!::Union{Function,Nothing}=nothing
     state_dimension::Union{Dimension,Nothing}=nothing
     control_dimension::Union{Dimension,Nothing}=nothing
@@ -16,9 +16,11 @@ abstract type AbstractOptimalControlModel end
 end
 
 #
-function Model()
-    return OptimalControlModel()
+abstract type Model{td} end # c'est un peu du bricolage ça
+function Model{time_dependence}() where {time_dependence}
+    return OptimalControlModel{time_dependence}()
 end
+Model() = Model{:autonomous}() # default value
 
 # -------------------------------------------------------------------------------------------
 # 
@@ -67,9 +69,9 @@ function constraint!(ocp::OptimalControlModel, type::Symbol, lb::Real, ub::Real,
     end
 end
 
-function constraint!(ocp::OptimalControlModel, type::Symbol, f::Function)
+function constraint!(ocp::OptimalControlModel{time_dependence}, type::Symbol, f::Function) where {time_dependence}
     if type ∈ [ :dynamics, :dynamics! ]
-        setproperty!(ocp, type, f)
+        setproperty!(ocp, type, DynamicsControlFunction{time_dependence}(f))
     else
         error("this constraint is not valid")
     end
@@ -207,7 +209,7 @@ end
 
 # -------------------------------------------------------------------------------------------
 # 
-function objective!(ocp::OptimalControlModel, type::Symbol, f::Function, criterion::Symbol=:min)
+function objective!(ocp::OptimalControlModel{time_dependence}, type::Symbol, f::Function, criterion::Symbol=:min) where {time_dependence}
     setproperty!(ocp, :mayer, nothing)
     setproperty!(ocp, :lagrange, nothing)
     if criterion ∈ [ :min, :max ]
@@ -218,7 +220,7 @@ function objective!(ocp::OptimalControlModel, type::Symbol, f::Function, criteri
     if type == :mayer
         setproperty!(ocp, :mayer, f)
     elseif type == :lagrange
-        setproperty!(ocp, :lagrange, f)
+        setproperty!(ocp, :lagrange, LagrangeControlFunction{time_dependence}(f))
     else
         error("this objective is not valid")
     end

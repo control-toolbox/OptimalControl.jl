@@ -13,9 +13,6 @@ function Poisson(f, g)
     return fg
 end
 
-#
-State = @SLVector (:r, :v, :m)
-
 # Parameters
 Cd = 310.
 Tmax = 3.5
@@ -28,7 +25,7 @@ v0 = 0.
 vmax = 0.1
 m0 = 1.
 mf = 0.6
-x0 = State(r0, v0, m0)
+x0 = [r0, v0, m0]
 
 # OCP model
 ocp = Model()
@@ -54,10 +51,8 @@ constraint!(ocp, :dynamics, f)
 @test constraint(ocp, :state_con1, :lower)(x0, 0.) ≈ 0. atol=1e-8
 @test ocp.state_dimension == 3
 @test ocp.control_dimension == 1
-@test typeof(ocp) == OptimalControlModel
+@test typeof(ocp) == OptimalControlModel{:autonomous}
 @test ocp.initial_time == t0
-
-@show ξ, ψ, ϕ = nlp_constraints(ocp)
 
 # --------------------------------------------------------
 # Direct

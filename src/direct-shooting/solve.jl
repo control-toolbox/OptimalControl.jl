@@ -55,7 +55,7 @@ end
 function solve_by_udss(prob::UncFixedXfProblem, args...; 
     init::Union{Nothing,Controls,Tuple{TimesDisc,Controls},Function,UncFixedXfSolution}=nothing, 
     kwargs...)
-    new_prob = convert(prob, UncFreeXfProblem)
+    new_prob = convert(prob, :UncFreeXfProblem)
     if typeof(init) == UncFixedXfSolution
         new_init = convert(init, UncFreeXfSolution)
     else
@@ -66,7 +66,7 @@ function solve_by_udss(prob::UncFixedXfProblem, args...;
     return new_sol
 end
 
-function solve_by_udss(prob::AbstractOptimalControlProblem, args...; kwargs...)
+function solve_by_udss(prob::AbstractOptimalControlProblem{time_dependence}, args...; kwargs...) where {time_dependence}
     throw(InconsistentArgument("this problem can not be solved by direct simple shooting."))
 end
 

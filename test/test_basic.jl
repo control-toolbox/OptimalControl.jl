@@ -22,11 +22,11 @@ objective!(ocp, :lagrange, (x, u) -> 0.5u^2) # default is to minimise
 #
 @test ocp.state_dimension == 2
 @test ocp.control_dimension == 1
-@test typeof(ocp) == OptimalControlModel
+@test typeof(ocp) == OptimalControlModel{:autonomous}
 @test ocp.initial_time == t0
 @test ocp.final_time == tf
-@test ocp.dynamics([0.; 1.], 1.0) ≈ [1.; 1.] atol=1e-8
-@test ocp.lagrange([0.; 0.], 1.0) ≈ 0.5 atol=1e-8
+@test ocp.dynamics(0.0, [0.; 1.], 1.0) ≈ [1.; 1.] atol=1e-8
+@test ocp.lagrange(0.0, [0.; 0.], 1.0) ≈ 0.5 atol=1e-8
 
 # solve
 sol = solve(ocp)
