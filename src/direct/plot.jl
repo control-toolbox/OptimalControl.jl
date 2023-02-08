@@ -5,6 +5,8 @@ function Plots.plot(sol::DirectSolution)
       input
         sol : direct_sol
   """
+    
+  # getters  
   T = sol.T
   X = sol.X
   U = sol.U
@@ -12,9 +14,16 @@ function Plots.plot(sol::DirectSolution)
   n = sol.n
   m = sol.m
   N = sol.N
-
-  # state
-  px = Plots.plot(T, X, layout=(n,1))
+  obj = sol.objective
+  cons = sol.constraints
+  iter = sol.iterations
+  status = sol.status
+    
+  println("Objective: ",obj," Constraints: ",cons," Iterations: ",iter," Status: ",status)
+    
+  # state (plot actual state from ocp ie mask additional state for lagrange cost if present)
+  #px = Plots.plot(T, X[:,1:n], layout=(n,1))
+  px = Plots.plot(T, X[:,1:n], layout=(1,n))    
   Plots.plot!(px[1], title="state")
   Plots.plot!(px[n], xlabel="t")
   for i ∈ 1:n
@@ -22,7 +31,8 @@ function Plots.plot(sol::DirectSolution)
   end
 
   # costate
-  pp = Plots.plot(T[1:N], P,layout = (n,1))
+  #pp = Plots.plot(T[1:N], P[:,1:n],layout = (n,1))
+  pp = Plots.plot(T[1:N], P[:,1:n],layout = (1,n))    
   Plots.plot!(pp[1], title="costate")
   Plots.plot!(pp[n], xlabel="t")
   for i ∈ 1:n
@@ -30,7 +40,8 @@ function Plots.plot(sol::DirectSolution)
   end
 
   # control
-  pu = Plots.plot(T, U, lc=:red, layout=(m,1))
+  #pu = Plots.plot(T, U, lc=:red, layout=(m,1))
+  pu = Plots.plot(T, U, lc=:red, layout=(1,m))  
   for i ∈ 1:m
     Plots.plot!(pu[i], ylabel=string("u_",i))
   end
@@ -38,6 +49,7 @@ function Plots.plot(sol::DirectSolution)
   Plots.plot!(pu[m], xlabel="t")
 
   # main plot
-  Plots.plot(px, pp, pu, layout=(1,3), legend=false)
+  #Plots.plot(px, pp, pu, layout=(1,3), legend=false) #column layout
+  Plots.plot(px, pp, pu, layout=(3,1), legend=false) #row layout
 
 end
