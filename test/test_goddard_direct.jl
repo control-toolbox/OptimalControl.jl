@@ -42,18 +42,17 @@ function F1(x)
 end
 
 function f(x, u)
-    return F0(x) + u*F1(x)
+    return F0(x) + u[1]*F1(x)
 end
-f(x, u::Vector) = f(x, u[1])
 
 constraint!(ocp, :dynamics, f) # dynamics can be in place
 
-sol = solve(ocp,20)
+sol = solve(ocp, 10)
 
 #using JLD2
 #@save "./src/direct/sol_goddard_20.jld2" sol
 
 #println(sol)
-plot(sol)
+#plot(sol)
 
 

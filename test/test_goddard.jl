@@ -1,18 +1,3 @@
-function Ad(X, f)
-    return x -> ∇(f, x)'*X(x)
-end
-function Poisson(f, g)
-    function fg(x, p)
-        n = size(x, 1)
-        ff = z -> f(z[1:n], z[n+1:2n])
-        gg = z -> g(z[1:n], z[n+1:2n])
-        df = ∇(ff, [ x ; p ])
-        dg = ∇(gg, [ x ; p ])
-        return df[n+1:2n]'*dg[1:n] - df[1:n]'*dg[n+1:2n]
-    end
-    return fg
-end
-
 # Parameters
 Cd = 310.
 Tmax = 3.5
@@ -113,7 +98,7 @@ tf = 0.20298394547952422
 s = zeros(eltype(p0), 7)
 
 shoot!(s, p0, t1, t2, t3, tf)
-println(s)
+#println(s)
 s_guess_sol = [-0.02456074767656735, -0.05699760226157302, 0.0018629693253921868, -0.027013078908634858, -0.21558816838342798, -0.0121146739026253, 0.015713236406057297]
 @test s ≈ s_guess_sol atol=1e-6
 
