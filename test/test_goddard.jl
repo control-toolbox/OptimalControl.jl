@@ -78,7 +78,7 @@ remove_constraint!(ocp, :state_con3)
 constraint!(ocp, :boundary, (t0, x0, tf, xf) -> xf[3], mf, :final_con) # one value => equality (not boxed inequality)
 
 g(x) = constraint(ocp, :state_con2, :upper)(x, 0.0) # g(x, u) ≥ 0 (cf. nonnegative multiplier)
-us(x, p) = [-H001(x, p) / H101(x, p)]
+ub(x, _) = [-Ad(F0, g)(x) / Ad(F1, g)(x)]
 μb(x, p) = H01(x, p) / Ad(F1, g)(x)
 
 f0 = Flow(ocp, u0)
