@@ -16,8 +16,8 @@ A = [ 0.0 1.0
 B = [ 0.0
       1.0 ]
 
-constraint!(ocp, :dynamics, (x, u) -> A*x + B*u)
-objective!(ocp, :lagrange, (x, u) -> 0.5u^2) # default is to minimise
+constraint!(ocp, :dynamics, (x, u) -> A*x + B*u[1])
+objective!(ocp, :lagrange, (x, u) -> 0.5u[1]^2) # default is to minimise
 
 #
 @test ocp.state_dimension == 2
