@@ -44,6 +44,7 @@ end
 function f(x, u)
     return F0(x) + u*F1(x)
 end
+f(x, u::Vector) = f(x, u[1])
 
 constraint!(ocp, :dynamics, f)
 println("test_goddard_direct")

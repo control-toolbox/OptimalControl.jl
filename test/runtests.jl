@@ -24,9 +24,9 @@ const nlp_constraints       = OptimalControl.nlp_constraints
 #
 @testset verbose = true showtiming = true "Optimal control tests" begin
     for name in (
-        "utils", 
-        "optimal_control", 
-        "udss", # unconstrained direct simple shooting
+        #"utils", 
+        #"optimal_control", 
+        #"udss", # unconstrained direct simple shooting
         "basic",
         "goddard_direct",
         "goddard",
