@@ -45,14 +45,14 @@ function f(x, u)
     return F0(x) + u[1]*F1(x)
 end
 
-constraint!(ocp, :dynamics, f) # dynamics can be in place
+constraint!(ocp, :dynamics, f)
+println("test_goddard_direct")
+println(sol)
 
 sol = solve(ocp, 10)
 
 #using JLD2
 #@save "./src/direct/sol_goddard_20.jld2" sol
 
-#println(sol)
-#plot(sol)
-
-
+println(sol)
+#plot(sol) # no plot in tests (plot crashes without display port, e.g. on a jupyterhub connection)
