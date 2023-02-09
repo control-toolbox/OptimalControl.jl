@@ -1,8 +1,7 @@
 using OptimalControl
 using Test
-using Plots
+#using Plots
 using LinearAlgebra
-using LabelledArrays
 using ForwardDiff: jacobian, gradient, ForwardDiff # automatic differentiation
 using MINPACK
 
@@ -11,14 +10,14 @@ using MINPACK
 Jac(f::Function, x) = ForwardDiff.jacobian(f, x)
 
 # functions and types that are not exported
-const convert               = OptimalControl.convert
-const __grid_size           = OptimalControl.__grid_size
-const __init                = OptimalControl.__init
-const __grid                = OptimalControl.__grid
-const __init_interpolation  = OptimalControl.__init_interpolation
+##const convert               = OptimalControl.convert
+##const __grid_size           = OptimalControl.__grid_size
+##const __init                = OptimalControl.__init
+##const __grid                = OptimalControl.__grid
+##const __init_interpolation  = OptimalControl.__init_interpolation
+##const make_udss_init        = OptimalControl.make_udss_init
+##const convert_init          = OptimalControl.convert_init
 const vec2vec               = OptimalControl.vec2vec
-const make_udss_init        = OptimalControl.make_udss_init
-const convert_init          = OptimalControl.convert_init
 const nlp_constraints       = OptimalControl.nlp_constraints
 
 #

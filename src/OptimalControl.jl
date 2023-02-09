@@ -27,6 +27,9 @@ const ControlToolboxCallbacks = Tuple{Vararg{ControlToolboxCallback}}
 import HamiltonianFlows: Flow, HamiltonianFlows
 #
 
+isnonautonomous(time_dependence::Symbol) = :nonautonomous == time_dependence
+isautonomous(time_dependence::Symbol) = !isnonautonomous(time_dependence)
+
 # --------------------------------------------------------------------------------------------------
 # Aliases for types
 # const AbstractVector{T} = AbstractArray{T,1}.
@@ -56,12 +59,12 @@ include("main/solve.jl")
 include("main/flows.jl")
 
 # direct shooting
-include("direct-shooting/init.jl")
-include("direct-shooting/utils.jl")
-include("direct-shooting/problem.jl")
-include("direct-shooting/solve.jl")
-include("direct-shooting/solution.jl")
-include("direct-shooting/plot.jl")
+##include("direct-shooting/init.jl")
+##include("direct-shooting/utils.jl")
+##include("direct-shooting/problem.jl")
+##include("direct-shooting/solve.jl")
+##include("direct-shooting/solution.jl")
+##include("direct-shooting/plot.jl")
 
 # direct ipopt methods
 include("direct/utils.jl")
@@ -70,6 +73,7 @@ include("direct/solve.jl")
 include("direct/solution.jl")
 include("direct/plot.jl")
 
+# solve
 export solve
 
 # model
@@ -79,16 +83,15 @@ export remove_constraint!
 export constraint
 
 # problems
-export AbstractOptimalControlProblem, AbstractOptimalControlSolution, AbstractOptimalControlInit
-export UncFreeXfProblem, UncFreeXfInit, UncFreeXfSolution
-export UncFixedXfProblem, UncFixedXfInit, UncFixedXfSolution
-#
-export OptimalControlProblem
+##export AbstractOptimalControlProblem, AbstractOptimalControlSolution, AbstractOptimalControlInit
+##export UncFreeXfProblem, UncFreeXfInit, UncFreeXfSolution
+##export UncFixedXfProblem, UncFixedXfInit, UncFixedXfSolution
+##export OptimalControlProblem
 
-#
+# plots
 export plot, plot!
 
-#
+# extras
 export Ad, Poisson
 
 end

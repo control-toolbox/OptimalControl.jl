@@ -4,7 +4,6 @@ abstract type AbstractOptimalControlProblem{time_dependence} end
 abstract type AbstractOptimalControlInit end
 abstract type AbstractOptimalControlSolution end
 
-isnonautonomous(time_dependence::Symbol) = :nonautonomous == time_dependence
 isnonautonomous(ocp::AbstractOptimalControlProblem{time_dependence}) where {time_dependence} = isnonautonomous(time_dependence)
 
 # --------------------------------------------------------------------------------------------------
