@@ -138,33 +138,38 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer)
         return lb, ub
     end
 
-    # todo: retrieve from ocp parsed constraints
+    # todo: retrieve optional bounds from ocp parsed constraints
     function variables_bounds()
+        # unbounded case
         l_var = -Inf*ones(dim_xu)
         u_var = Inf*ones(dim_xu)
-        return lvar, uvar
+        return l_var, u_var
     end
 
-    # todo: pass optional constant init to ADNLPProblem()
+    # todo: pass optional constant init to ADNLProblem()
     function initial_guess()
         if init_type == "default"
             # default initialization
             xu0 = 1.1*ones(dim_xu)
         elseif init_type == "constant_variables"
             xu0 = constant_init(dim_x, m, N, dim_xu, x_init, u_init)
+        end
         return xu0
     end
 
     # variables bounds   
-    lvar, uvar = variables_bounds()
+    l_var, u_var = variables_bounds()
 
+    # initial guess
+    xu0 = initial_guess()
 
+    # free final time case
     if has_free_final_time
       xu0[end] = 1.0
       l_var[end] = 1.e-3
     end
 
-    lb, ub = ipopt_l_u_b()
+    lb, ub = constraints_bounds()
 
     nlp = ADNLPModel(ipopt_objective, xu0, l_var, u_var, ipopt_constraint, lb, ub)    
 
