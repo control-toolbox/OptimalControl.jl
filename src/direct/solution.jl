@@ -11,7 +11,6 @@ mutable struct DirectSolution
     objective::MyNumber
     constraints_violation::MyNumber
     iterations::Integer
-    #status::Integer appears to be of type 'Symbol' ?
     stats  #cf https://juliasmoothoptimizers.github.io/SolverCore.jl/stable/reference/#SolverCore.GenericExecutionStats
 end
 
@@ -22,20 +21,21 @@ end
 # only exception is the costate, associated to the dynamics equality constraints: N values instead of N+1
 # we could use the basic extension for the final costate P_N := P_(N-1)  (or linear extrapolation) 
 # NB. things will get more complicated with other discretization schemes (time stages on a different grid ...)
-function Direct_solution_state_dimension(sol::DirectSolution) = sol.n
-function Direct_solution_control_dimension(sol::DirectSolution) = sol.m
-function Direct_solution_steps_dimension(sol::DirectSolution) = sol.N
-function Direct_solution_time_steps(sol::DirectSolution) = sol.T            
-function Direct_solution_state(sol::DirectSolution) = sol.X
-function Direct_solution_control(sol::DirectSolution) = sol.U
-function Direct_solution_adjoint(sol::DirectSolution)
+function state_dimension(sol::DirectSolution) = sol.n
+function control_dimension(sol::DirectSolution) = sol.m
+function steps_dimension(sol::DirectSolution) = sol.N
+function time_steps(sol::DirectSolution) = sol.T            
+function state(sol::DirectSolution) = sol.X
+function control(sol::DirectSolution) = sol.U
+function adjoint(sol::DirectSolution)
     P = zeros(sol.N+1, sol.n+1)
     P[1:N,:] = sol.P
     # trivial constant extrapolation for p(t_f)
     P[N+1,:] = P[N,:]
-return P
-function Direct_solution_objective(sol::DirectSolution) = sol.objective
-function Direct_solution_constraints_violation(sol::DirectSolution) = sol.constraints_violation                         function Direct_solution_iterations(sol::DirectSolution) = sol.iterations   
+    return P
+end
+function objective(sol::DirectSolution) = sol.objective
+function constraints_violation(sol::DirectSolution) = sol.constraints_violation                         function Direct_solution_iterations(sol::DirectSolution) = sol.iterations   
     
 
 function DirectSolution(ocp::OptimalControlModel, N::Integer, ipopt_solution)

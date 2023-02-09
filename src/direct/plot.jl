@@ -7,16 +7,16 @@ function Plots.plot(sol::DirectSolution)
   """
     
   # retrieve info from direct solution
-  n = Direct_solution_state_dimension(sol)
-  m = Direct_solution_control_dimension(sol)
-  N = Direct_solution_steps_dimension(sol)    
-  T = Direct_solution_time_steps(sol) 
-  X = Direct_solution_state(sol)
-  U = Direct_solution_control(sol)
-  P = Direct_solution_adjoint(sol)
-  obj = Direct_solution_objective(sol)
-  cons = Direct_solution_constraints_violation(sol)
-  iter = Direct_solution_iterations(sol)
+  n = state_dimension(sol)
+  m = control_dimension(sol)
+  N = steps_dimension(sol)    
+  T = time_steps(sol) 
+  X = state(sol)
+  U = control(sol)
+  P = adjoint(sol)
+  obj = objective(sol)
+  cons = constraints_violation(sol)
+  iter = iterations(sol)
     
   println("Objective: ",obj," Constraints: ",cons," Iterations: ",iter)
     
