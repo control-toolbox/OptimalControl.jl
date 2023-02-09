@@ -1,4 +1,8 @@
 # --------------------------------------------------------------------------------------------------
+# commun
+__matrix_dimension_stock() = 1 
+
+# --------------------------------------------------------------------------------------------------
 # Direct shooting method - default values
 __grid_size_direct_shooting() = 201
 __penalty_constraint() = 1e4 # the penalty term in front of final constraints

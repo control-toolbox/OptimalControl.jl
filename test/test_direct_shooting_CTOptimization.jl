@@ -130,9 +130,9 @@ init_, grid_ = CTOptimizationInit(t0, tf, m, u_init, T, __init_interpolation())
 @test init_ ≈ convert_init([[u_sol(T[i])-1.0] for i = 1:N-1]) atol=1e-4
 @test grid_ == T
 
-@test_throws InconsistentArgument CTOptimizationInit(t0, tf, m, u_init, range(t0-1, tf, N))
-@test_throws InconsistentArgument CTOptimizationInit(t0, tf, m, u_init, range(t0, tf+1, N))
-@test_throws InconsistentArgument CTOptimizationInit(t0, tf, m, u_init, range(tf, t0, N))
+@test_throws InconsistentArgument CTOptimizationInit(t0, tf, m, u_init, range(t0-1, tf, N), __init_interpolation())
+@test_throws InconsistentArgument CTOptimizationInit(t0, tf, m, u_init, range(t0, tf+1, N), __init_interpolation())
+@test_throws InconsistentArgument CTOptimizationInit(t0, tf, m, u_init, range(tf, t0, N), __init_interpolation())
 
 # --------------------------------------------------------------------------------------------------
 # resolution

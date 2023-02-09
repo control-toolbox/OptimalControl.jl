@@ -6,11 +6,13 @@ using LinearAlgebra
 # description of the optimal control problem
 t0 = 0
 tf = 1
+m = 1
+n = 2
 x0 = [ -1, 0 ]
 xf = [  0, 0 ]
 ocp = Model()
-state!(ocp, 2)   # dimension of the state
-control!(ocp, 1) # dimension of the control
+state!(ocp, n)   # dimension of the state
+control!(ocp, m) # dimension of the control
 time!(ocp, [t0, tf])
 constraint!(ocp, :initial, x0)
 constraint!(ocp, :final,   xf)
@@ -126,4 +128,11 @@ println(sol.T)
 N = 101
 T = range(t0, tf, N)
 sol = solve(ocp, :direct, :shooting, init=sol_1, grid=T, callbacks=(PrintCallback(my_cb_print(T)),))
+println(sol.T)
+
+# make direct solve to init a direct shooting
+N = 201
+T = range(t0, tf, N)
+sol = solve(ocp, :direct, grid_size=N)
+sol = solve(ocp, :direct, :shooting, init=sol, grid=T, callbacks=(PrintCallback(my_cb_print(T)),))
 println(sol.T)

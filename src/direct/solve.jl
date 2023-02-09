@@ -18,7 +18,7 @@ function solve(ocp::OptimalControlModel, algo::Direct, method::Description;
   """
 
   # no display
-  print_level = display ?  0 : print_level
+  print_level = display ?  print_level : 0
 
   # from OCP to NLP
   nlp = ADNLProblem(ocp, grid_size)
