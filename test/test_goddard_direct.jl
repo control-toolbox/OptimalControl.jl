@@ -49,7 +49,7 @@ constraint!(ocp, :dynamics, f)
 println("test_goddard_direct")
 println(sol)
 
-sol = solve(ocp, 10)
+sol = solve(ocp, grid_size=10)
 
 #using JLD2
 #@save "./src/direct/sol_goddard_20.jld2" sol

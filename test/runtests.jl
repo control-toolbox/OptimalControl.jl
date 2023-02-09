@@ -1,6 +1,6 @@
 using OptimalControl
 using Test
-#using Plots
+using Plots
 using LinearAlgebra
 using ForwardDiff: jacobian, gradient, ForwardDiff # automatic differentiation
 using MINPACK
@@ -10,25 +10,24 @@ using MINPACK
 Jac(f::Function, x) = ForwardDiff.jacobian(f, x)
 
 # functions and types that are not exported
-##const convert               = OptimalControl.convert
-##const __grid_size           = OptimalControl.__grid_size
-##const __init                = OptimalControl.__init
-##const __grid                = OptimalControl.__grid
-##const __init_interpolation  = OptimalControl.__init_interpolation
-##const make_udss_init        = OptimalControl.make_udss_init
-##const convert_init          = OptimalControl.convert_init
+const __grid_size_direct_shooting = OptimalControl.__grid_size_direct_shooting
+const __init                = OptimalControl.__init
+const __grid                = OptimalControl.__grid
+const __init_interpolation  = OptimalControl.__init_interpolation
+const CTOptimizationInit    = OptimalControl.CTOptimizationInit
+const DirectShootingSolution = OptimalControl.DirectShootingSolution
+const convert_init          = OptimalControl.convert_init
 const vec2vec               = OptimalControl.vec2vec
 const nlp_constraints       = OptimalControl.nlp_constraints
 
 #
 @testset verbose = true showtiming = true "Optimal control tests" begin
     for name in (
-        #"utils", 
-        #"optimal_control", 
-        #"udss", # unconstrained direct simple shooting
+        "utils", 
+        "direct_shooting_CTOptimization", # unconstrained direct simple shooting
         "basic",
         "goddard_direct",
-        "goddard",
+        "goddard_indirect",
         )
         @testset "$name" begin
             include("test_$name.jl")
