@@ -1,9 +1,10 @@
 #--------------------------------------------------------------------------------------------------
 # Solver of an prob by unconstrained direct simple shooting
-function solve_by_udss(
-    prob::UncFreeXfProblem,
+function solve(
+    ocp::OptimalControlModel,
+    algo::DirectShooting,
     method::Description;
-    init::Union{Nothing,Controls,Tuple{TimesDisc,Controls},Function,UncFreeXfSolution}=nothing,
+    init::Union{Nothing,Controls,Tuple{TimesDisc,Controls},Function,DirectShootingSolution}=nothing,
     grid::Union{Nothing,TimesDisc}=nothing,
     penalty_constraint::Real=__penalty_constraint(),
     display::Bool=__display(),
@@ -12,25 +13,47 @@ function solve_by_udss(
     kwargs...
 )
 
-    # --------------------------------------------------------------------------------------------------
-    # print chosen method
-    display ? println("\nMethod = ", method) : nothing
-
-    # --------------------------------------------------------------------------------------------------
-    # transcription from optimal control to CTOptimization problem and init
-    opti_init, grid = make_udss_init(prob, init, grid, init_interpolation)
-    opti_prob = make_udss_problem(prob, grid, penalty_constraint)
-
-    # --------------------------------------------------------------------------------------------------
-    # resolution of the problem
+    # check if we can solve this kind of problems, that is there must be no constraints
     #
+    # parse prob
+    # make CTOptimizationInit: Vector{<:Real}
+    # make CTOptimizationProblem: CTOptimizationProblem(f; gradient, dimension)
+    # resolution with CTOptimization
+    # make DirectShootingSolution
+    # 
+    # struct UnconstrainedSolution <: CTOptimizationSolution
+    #    x::Primal
+    #    stopping::Symbol
+    #    message::String
+    #    success::Bool
+    #    iterations::Integer
+    #end    
+
+    # check validity
+    ξ, ψ, ϕ = nlp_constraints(ocp)
+    dim_ξ = length(ξ[1])      # dimension of the boundary constraints
+    dim_ψ = length(ψ[1])
+    if dim_ξ != 0 && dim_ψ != 0
+        error("direct shooting is implemented for problems without constraints")
+    end
+
+    # Init - need some parsing
+    t0 = initial_time(ocp)
+    tf = final_time(ocp)
+    m  = control_dimension(ocp)
+    opti_init, grid = CTOptimizationInit(t0, tf, m, init, grid, init_interpolation)
+
+    # Problem
+    nlp = CTOptimizationProblem(ocp, grid, penalty_constraint)
+
+    # Resolution
     # callbacks
     cbs_print = get_priority_print_callbacks((PrintCallback(printOCPDescent, priority=0), callbacks...))
     cbs_stop = get_priority_stop_callbacks(callbacks)
     #
-    opti_sol = CTOptimization.solve(
-        opti_prob,
-        clean_description(method),
+    nlp_sol = CTOptimization.solve(
+        nlp,
+        method,
         init=opti_init,
         iterations=__iterations(),
         absoluteTolerance=__absoluteTolerance(),
@@ -41,33 +64,11 @@ function solve_by_udss(
         kwargs...
     )
 
-    # --------------------------------------------------------------------------------------------------
     # transcription of the solution, from descent to prob
-    sol = make_udss_solution(opti_sol, prob, grid, penalty_constraint)
-
-    # --------------------------------------------------------------------------------------------------
-    # print convergence result ?
+    sol = DirectShootingSolution(nlp_sol, ocp, grid, penalty_constraint)
 
     return sol
 
-end
-
-function solve_by_udss(prob::UncFixedXfProblem, args...; 
-    init::Union{Nothing,Controls,Tuple{TimesDisc,Controls},Function,UncFixedXfSolution}=nothing, 
-    kwargs...)
-    new_prob = convert(prob, :UncFreeXfProblem)
-    if typeof(init) == UncFixedXfSolution
-        new_init = convert(init, UncFreeXfSolution)
-    else
-        new_init = init
-    end
-    sol = solve_by_udss(new_prob, args...; init=new_init, kwargs...)
-    new_sol = convert(sol, UncFixedXfSolution)
-    return new_sol
-end
-
-function solve_by_udss(prob::AbstractOptimalControlProblem{time_dependence}, args...; kwargs...) where {time_dependence}
-    throw(InconsistentArgument("this problem can not be solved by direct simple shooting."))
 end
 
 #--------------------------------------------------------------------------------------------------

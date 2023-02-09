@@ -1,21 +1,23 @@
 using OptimalControl
 
-# description of the optimal control problem
-t0 = 0.0                # t0 is fixed
-tf = 1.0                # tf is fixed
-x0 = [-1.0; 0.0]        # the initial condition is fixed
-xf = [0.0; 0.0]         # the target is fixed
-A = [0.0 1.0
-    0.0 0.0]
-B = [0.0; 1.0]
-f(x, u) = A * x + B * u[1];  # dynamics
-L(x, u) = 0.5 * u[1]^2   # integrand of the Lagrange cost
+t0 = 0
+tf = 1
+x0 = [ -1, 0 ]
+xf = [  0, 0 ]
 
-# problem definition
-ocp = OptimalControlProblem(L, f, t0, x0, tf, xf, 2, 1, :autonomous)
+ocp = Model()
 
-# display the formulation of the problem
-display(ocp)
+state!(ocp, 2)   # dimension of the state
+control!(ocp, 1) # dimension of the control
+time!(ocp, [t0, tf])
+constraint!(ocp, :initial, x0)
+constraint!(ocp, :final,   xf)
+A = [ 0 1
+      0 0 ]
+B = [ 0
+      1 ]
+constraint!(ocp, :dynamics, (x, u) -> A*x + B*u[1])
+objective!(ocp, :lagrange, (x, u) -> 0.5u[1]^2)
 
 # initial iterate
 u_sol(t) = 6.0-12.0*t # solution
