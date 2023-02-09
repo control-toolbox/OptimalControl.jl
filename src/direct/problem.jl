@@ -17,7 +17,7 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer)
         if hasLagrangeCost
             obj = obj + xu[(N+1)*dim_x]
         end
-        return criterion==:min ? obj : -obj
+        return ismin(ocp) ? obj : -obj
     end
 
     # IPOPT constraints

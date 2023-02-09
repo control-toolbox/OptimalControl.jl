@@ -118,7 +118,8 @@ end
 
 #
 function CTOptimizationInit(t0::Time, tf::Time, m::Dimension, u::Function, T::TimesDisc, interp::Function)
-    return CTOptimizationInit(t0, tf, m, u.(T), T, interp)
+    U = u.(T)
+    return CTOptimizationInit(t0, tf, m, U[1:end-1], T, interp)
 end
 
 #
