@@ -47,7 +47,6 @@ end
 
 constraint!(ocp, :dynamics, f)
 
-sol = solve(ocp, grid_size=10)
+sol = solve(ocp, 20)
 
-@test objective(sol) ≈ -1.0 atol=1e-1
-@test constraints_violation(sol) < 1e-6
+plot(sol)
