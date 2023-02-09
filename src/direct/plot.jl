@@ -17,9 +17,8 @@ function Plots.plot(sol::DirectSolution)
   obj = sol.objective
   cons = sol.constraints
   iter = sol.iterations
-  status = sol.status
     
-  println("Objective: ",obj," Constraints: ",cons," Iterations: ",iter," Status: ",status)
+  println("Objective: ",obj," Constraints: ",cons," Iterations: ",iter)
     
   # state (plot actual state from ocp ie mask additional state for lagrange cost if present)
   #px = Plots.plot(T, X[:,1:n], layout=(n,1))

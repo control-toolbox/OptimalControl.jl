@@ -11,7 +11,7 @@ mutable struct DirectSolution
     objective::MyNumber
     constraints::MyNumber
     iterations::Integer
-    status::Integer
+    #status::Integer appears to be of type 'Symbol' ?
     stats  #stats::SolverCore.GenericExecutionStats
 end
 
@@ -94,11 +94,11 @@ function DirectSolution(ocp::OptimalControlModel, N::Integer, ipopt_solution)
     objective = ipopt_solution.objective
     constraints = ipopt_solution.primal_feas
     iterations = ipopt_solution.iter
-    status = ipopt_solution.status
+    #status = ipopt_solution.status this is a 'Symbol' not an int...
         
     # DirectSolution
     #sol  = DirectSolution(T, X, U, P, P_ξ, P_ψ, n_x, m, N, ipopt_solution)
-    sol  = DirectSolution(T, X, U, P, P_ξ, P_ψ, n_x, m, N, objective, constraints, iterations, status, ipopt_solution)     
+    sol  = DirectSolution(T, X, U, P, P_ξ, P_ψ, n_x, m, N, objective, constraints, iterations, ipopt_solution)     
 
     return sol
 end
