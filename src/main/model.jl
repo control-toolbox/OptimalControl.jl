@@ -113,7 +113,7 @@ function constraint!(ocp::OptimalControlModel{time_dependence}, type::Symbol, f:
 end
 
 function constraint!(ocp::OptimalControlModel, type::Symbol, f::Function, val::Real, label::Symbol=gensym(:anonymous))
-    if type ∈ [ :control, :state, :boundary ]
+    if type ∈ [ :control, :mixed, :boundary ]
         ocp.constraints[label] = (type, :eq, f, val)
     else
         error("this constraint is not valid")
@@ -121,7 +121,7 @@ function constraint!(ocp::OptimalControlModel, type::Symbol, f::Function, val::R
 end
 
 function constraint!(ocp::OptimalControlModel, type::Symbol, f::Function, lb::Real, ub::Real, label::Symbol=gensym(:anonymous))
-    if type ∈ [ :control, :state, :boundary ]
+    if type ∈ [ :control, :mixed, :boundary ]
         ocp.constraints[label] = (type, :ineq, f, lb, ub)
     else
         error("this constraint is not valid")
@@ -146,7 +146,7 @@ function constraint(ocp::OptimalControlModel{time_dependence}, label::Symbol) wh
         return (t0, x0, tf, xf) -> f(t0, x0, tf, xf) - val
     elseif type == :control
         return isautonomous(time_dependence) ? u -> f(u) - val : (t, u) -> f(t, u) - val
-    elseif type == :state
+    elseif type == :mixed
         return isautonomous(time_dependence) ? (x, u) -> f(x, u) - val : (t, x, u) -> f(t, x, u) - val
     else
         error("this constraint is not valid")
@@ -178,7 +178,7 @@ function constraint(ocp::OptimalControlModel{time_dependence}, label::Symbol, bo
         else
             return bound == :lower ? (t, u) -> f(t, u) - lb : (t, u) -> ub - f(t, u)
         end
-    elseif type == :state
+    elseif type == :mixed
         if isautonomous(time_dependence)
             return bound == :lower ? (x, u) -> f(x, u) - lb : (x, u) -> ub - f(x, u) 
         else
@@ -205,7 +205,7 @@ function nlp_constraints(ocp::OptimalControlModel{time_dependence}) where {time_
             push!(ξf, ControlFunction{time_dependence}(c[3]))
             append!(ξl, c[4])
             append!(ξu, c[2] == :eq ? c[4] : c[5])
-        elseif c[1] == :state
+        elseif c[1] == :mixed
             push!(ψf, StateConstraintFunction{time_dependence}(c[3]))
             append!(ψl, c[4])
             append!(ψu, c[2] == :eq ? c[4] : c[5])
