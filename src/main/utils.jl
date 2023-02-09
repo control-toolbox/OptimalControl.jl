@@ -1,3 +1,8 @@
+#
+# method to compute gradient and Jacobian
+∇(f::Function, x) = ForwardDiff.gradient(f, x)
+Jac(f::Function, x) = ForwardDiff.jacobian(f, x)
+
 # transform a Vector{<:Vector{<:Real}} to a Vector{<:Real}
 function vec2vec(x::Vector{<:Vector{<:Real}})
     y = x[1]

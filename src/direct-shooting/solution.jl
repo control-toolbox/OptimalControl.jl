@@ -1,6 +1,5 @@
 # --------------------------------------------------------------------------------------------------
-# make an UncFreeXfSolution (Unconstrained) from AbstractOptimalControlSolution
-# direct simple shooting
+# make a DirectShootingSolution (Unconstrained)
 
 #struct UnconstrainedSolution <: CTOptimizationSolution
 #    x::Primal
@@ -9,17 +8,27 @@
 #    iterations::Integer
 #end
 
-function make_udss_solution(sol::CTOptimization.UnconstrainedSolution,
-    ocp::UncFreeXfProblem, grid::TimesDisc, penalty_constraint::Real)
+struct DirectShootingSolution # <: AbstractOptimalControlSolution
+    T::TimesDisc # the times
+    X::States # the states at the times T
+    U::Controls # the controls at T
+    P::Adjoints # the adjoint at T
+    state_dimension::Dimension # the dimension of the state
+    control_dimension::Dimension # the dimension of the control
+    stopping::Symbol # the stopping criterion
+    message::String # the message corresponding to the stopping criterion
+    success::Bool # whether or not the method has finished successfully: CN1, stagnation vs iterations max
+    iterations::Integer # the number of iterations
+end
 
-    # ocp data
-    dy = ocp.dynamics
-    co = ocp.Lagrange_cost
-    cf = ocp.final_constraint
-    x0 = ocp.initial_condition
+function DirectShootingSolution(sol::CTOptimization.UnconstrainedSolution,
+    ocp::OptimalControlModel, grid::TimesDisc, penalty_constraint::Real)
+
+    # parsing ocp
+    dy, co, cf, x0, n, m = parse_ocp_direct_shooting(ocp)
 
     # control solution
-    U⁺ = vec2vec(sol.x, ocp.control_dimension)
+    U⁺ = vec2vec(sol.x, m)
 
     # Jacobian of the constraints
     Jcf(x) = Jac(cf, x)
@@ -28,13 +37,12 @@ function make_udss_solution(sol::CTOptimization.UnconstrainedSolution,
     αₚ = penalty_constraint
 
     # flow for state
-    vf(t, x, u) = isnonautonomous(ocp) ? dy(t, x, u) : dy(x, u)
-    f = Flow(VectorField{:nonautonomous}(vf)) # we always give a non autonomous Vector Field
+    f = Flow(VectorField{:nonautonomous}(dy))
 
     # flow for state-adjoint
     p⁰ = -1.0
-    H(t, x, p, u) = isnonautonomous(ocp) ? p⁰ * co(t, x, u) + p' * dy(t, x, u) : p⁰ * co(x, u) + p' * dy(x, u)
-    fh = Flow(Hamiltonian{:nonautonomous}(H)) # we always give a non autonomous Hamiltonian
+    H(t, x, p, u) = p⁰ * co(t, x, u) + p' * dy(t, x, u)
+    fh = Flow(Hamiltonian{:nonautonomous}(H))
 
     # get state and adjoint
     T = grid
@@ -42,7 +50,7 @@ function make_udss_solution(sol::CTOptimization.UnconstrainedSolution,
     pₙ = p⁰ * αₚ * transpose(Jcf(xₙ)) * cf(xₙ)
     _, _, X⁺, P⁺ = adjoint(xₙ, pₙ, T, U⁺, fh)
 
-    return UncFreeXfSolution(T, X⁺, U⁺, P⁺, ocp.state_dimension, ocp.control_dimension, 
+    return DirectShootingSolution(T, X⁺, U⁺, P⁺, n, m, 
         sol.stopping, sol.message, sol.success, sol.iterations)
    
 end

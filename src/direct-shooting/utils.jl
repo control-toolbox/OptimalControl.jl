@@ -1,6 +1,20 @@
 # --------------------------------------------------------------------------------------------------
 # Utils for the transcription from ocp to descent problem
 
+function parse_ocp_direct_shooting(ocp::OptimalControlModel)
+
+    # parsing ocp
+    dy = dynamics(ocp)
+    co = lagrange(ocp)
+    cf = final_constraint(ocp)
+    x0 = initial_condition(ocp)
+    n = state_dimension(ocp)
+    m = control_dimension(ocp)
+
+    return dy, co, cf, x0, n, m
+
+end
+
 # forward integration of the state
 """
 	model(x0, T, U, f)

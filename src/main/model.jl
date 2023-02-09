@@ -28,6 +28,34 @@ dynamics(ocp::OptimalControlModel) = ocp.dynamics
 lagrange(ocp::OptimalControlModel) = ocp.lagrange
 criterion(ocp::OptimalControlModel) = ocp.criterion
 ismin(ocp::OptimalControlModel) = criterion(ocp) == :min
+initial_time(ocp::OptimalControlModel) = ocp.initial_time
+final_time(ocp::OptimalControlModel) = ocp.final_time
+control_dimension(ocp::OptimalControlModel) = ocp.control_dimension
+state_dimension(ocp::OptimalControlModel) = ocp.state_dimension
+constraints(ocp::OptimalControlModel) = ocp.constraints
+function initial_condition(ocp::OptimalControlModel) 
+    cs = constraints(ocp)
+    n = state_dimension(ocp)
+    x0 = nothing
+    for (_, c) ∈ cs
+        type, _, _, val = c
+        if type == :initial
+             x0 = val
+        end
+    end
+    return x0
+end
+function final_constraint(ocp::OptimalControlModel) 
+    cs = constraints(ocp)
+    cf = nothing
+    for (_, c) ∈ cs
+        type, _, f, val = c
+        if type == :final
+            cf = x -> f(x) - val
+        end
+    end
+    return cf
+end
 
 # -------------------------------------------------------------------------------------------
 # 

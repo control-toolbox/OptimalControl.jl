@@ -13,20 +13,19 @@ using NLPModelsIpopt, ADNLPModels    # for direct methods
 import Plots: plot, plot!, Plots # import instead of using to overload the plot and plot! functions, to plot ocp solution
 
 #
-# method to compute gradient and Jacobian
-∇(f::Function, x) = ForwardDiff.gradient(f, x)
-Jac(f::Function, x) = ForwardDiff.jacobian(f, x)
-
-#
-# dev packages
+# control-toolbox ecosystem packages
+# nlp solvers
 using CTOptimization
-import CTOptimization: solve, CTOptimization
+import CTOptimization: solve, CTOptimizationProblem, CTOptimization
+# tools: callbacks, exceptions, functions and more
 @reexport using ControlToolboxTools
 const ControlToolboxCallbacks = Tuple{Vararg{ControlToolboxCallback}}
+# flows
 @reexport using HamiltonianFlows
 import HamiltonianFlows: Flow, HamiltonianFlows
 #
 
+# todo: the two following methods should be in ControlToolboxTools
 isnonautonomous(time_dependence::Symbol) = :nonautonomous == time_dependence
 isautonomous(time_dependence::Symbol) = !isnonautonomous(time_dependence)
 
@@ -48,23 +47,22 @@ const State = MyVector
 const Adjoint = MyVector # todo: ajouter type adjoint pour faire par exemple p*f(x, u) au lieu de p'*f(x,u)
 const Dimension = Integer
 
-#
+# general
+include("main/algorithms.jl")
 include("main/utils.jl")
 include("main/default.jl")
-
-# general
 include("main/model.jl")
-include("main/problem.jl")
 include("main/solve.jl")
 include("main/flows.jl")
 
 # direct shooting
-##include("direct-shooting/init.jl")
-##include("direct-shooting/utils.jl")
-##include("direct-shooting/problem.jl")
-##include("direct-shooting/solve.jl")
-##include("direct-shooting/solution.jl")
-##include("direct-shooting/plot.jl")
+include("direct-shooting/solution.jl")
+include("direct-shooting/init.jl")
+include("direct-shooting/utils.jl")
+include("direct-shooting/problem.jl")
+include("direct-shooting/solve.jl")
+include("direct-shooting/plot.jl")
+include("direct-shooting/print.jl")
 
 # direct ipopt methods
 include("direct/utils.jl")
@@ -81,12 +79,6 @@ export AbstractOptimalControlModel, OptimalControlModel
 export Model, time!, constraint!, objective!, state!, control!
 export remove_constraint!
 export constraint
-
-# problems
-##export AbstractOptimalControlProblem, AbstractOptimalControlSolution, AbstractOptimalControlInit
-##export UncFreeXfProblem, UncFreeXfInit, UncFreeXfSolution
-##export UncFixedXfProblem, UncFixedXfInit, UncFixedXfSolution
-##export OptimalControlProblem
 
 # plots
 export plot, plot!
