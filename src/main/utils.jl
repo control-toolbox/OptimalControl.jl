@@ -3,8 +3,8 @@
 ∇(f::Function, x) = ForwardDiff.gradient(f, x)
 Jac(f::Function, x) = ForwardDiff.jacobian(f, x)
 
-# transform a Vector{<:Vector{<:Real}} to a Vector{<:Real}
-function vec2vec(x::Vector{<:Vector{<:Real}})
+# transform a Vector{<:Vector{<:MyNumber}} to a Vector{<:MyNumber}
+function vec2vec(x::Vector{<:Vector{<:MyNumber}})
     y = x[1]
     for i in range(2, length(x))
         y = vcat(y, x[i])
@@ -12,15 +12,36 @@ function vec2vec(x::Vector{<:Vector{<:Real}})
     return y
 end
 
-function expand(x::Vector{<:Vector{<:Real}})
+function expand(x::Vector{<:Vector{<:MyNumber}})
     return vec2vec(x)
 end
-function expand(x::Vector{<:Real})
+function expand(x::Vector{<:MyNumber})
     return x
 end
+function expand(x::Matrix{<:MyNumber})
+    return expand(matrix2vec(x, 1))
+end
 
-# transform a Vector{<:Real} to a Vector{<:Vector{<:Real}}
-function vec2vec(x::Vector{<:Real}, n::Integer)
+# transform a Matrix{<:MyNumber} to a Vector{<:Vector{<:MyNumber}}
+function matrix2vec(x::Matrix{<:MyNumber}, dim::Integer=__matrix_dimension_stock())
+    m, n = size(x)
+    y = nothing
+    if dim==1
+        y = [x[1,:]]
+        for i in 2:m
+            y = vcat(y, [x[i,:]])
+        end
+    else
+        y = [x[:,1]]
+        for j in 2:n
+            y = vcat(y, [x[:,j]])
+        end
+    end
+    return y
+end
+
+# transform a Vector{<:MyNumber} to a Vector{<:Vector{<:MyNumber}}
+function vec2vec(x::Vector{<:MyNumber}, n::Integer)
     y = [x[1:n]]
     for i in n+1:n:length(x)-n+1
         y = vcat(y, [x[i:i+n-1]])
