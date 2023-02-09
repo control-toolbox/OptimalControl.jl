@@ -30,8 +30,6 @@ objective!(ocp, :lagrange, (x, u) -> 0.5u[1]^2) # default is to minimise
 
 # solve
 sol = solve(ocp)
-println(objective(sol), constraints_violation(sol))
-
 
 # solution
 u_sol(t) = 6.0-12.0*t
