@@ -4,18 +4,22 @@ using Printf
 using LinearAlgebra
 
 # description of the optimal control problem
-t0 = 0.0                # t0 is fixed
-tf = 1.0                # tf is fixed
-x0 = [-1.0; 0.0]        # the initial condition is fixed
-xf = [0.0; 0.0]         # the target is fixed
-A = [0.0 1.0
-    0.0 0.0]
-B = [0.0; 1.0]
-f(x, u) = A * x + B * u[1];  # dynamics
-L(x, u) = 0.5 * u[1]^2   # integrand of the Lagrange cost
-
-# problem definition
-ocp = OptimalControlProblem(L, f, t0, x0, tf, xf, 2, 1)
+t0 = 0
+tf = 1
+x0 = [ -1, 0 ]
+xf = [  0, 0 ]
+ocp = Model()
+state!(ocp, 2)   # dimension of the state
+control!(ocp, 1) # dimension of the control
+time!(ocp, [t0, tf])
+constraint!(ocp, :initial, x0)
+constraint!(ocp, :final,   xf)
+A = [ 0 1
+      0 0 ]
+B = [ 0
+      1 ]
+constraint!(ocp, :dynamics, (x, u) -> A*x + B*u[1])
+objective!(ocp, :lagrange, (x, u) -> 0.5u[1]^2)
 
 # solution
 u_sol(t) = 6.0-12.0*t # solution
@@ -51,10 +55,10 @@ end
 # --------------------------------------------------------------------------------------------------
 # resolution
 
-T_default = OptimalControl.__grid(OptimalControl.convert(ocp, UncFreeXfProblem))
+T_default = OptimalControl.__grid(t0, tf)
 
 # init=nothing, grid=nothing
-sol = solve(ocp, :descent, callbacks=(PrintCallback(my_cb_print(T_default)),))
+sol = solve(ocp, :direct, :shooting, callbacks=(PrintCallback(my_cb_print(T_default)),))
 sol_1 = sol
 println(sol.T)
 
@@ -62,7 +66,7 @@ println(sol.T)
 # the grid T may be non uniform
 N = 101
 T = range(t0, tf, N)
-sol = solve(ocp, :descent, grid=T, callbacks=(PrintCallback(my_cb_print(T)),))
+sol = solve(ocp, :direct, :shooting, grid=T, callbacks=(PrintCallback(my_cb_print(T)),))
 println(sol.T)
 
 # init=U, grid=nothing
@@ -71,7 +75,7 @@ println(sol.T)
 N = 101
 T = range(t0, tf, N)
 U = [[u_sol(T[i])-1.0] for i = 1:N-1]
-sol = solve(ocp, :descent, init=U, callbacks=(PrintCallback(my_cb_print(T_default)),))
+sol = solve(ocp, :direct, :shooting, init=U, callbacks=(PrintCallback(my_cb_print(T_default)),))
 println(sol.T)
 
 # init=U, grid=T
@@ -79,7 +83,7 @@ println(sol.T)
 N = 101
 T = range(t0, tf, N)
 U = [[u_sol(T[i])-1.0] for i = 1:N-1]
-sol = solve(ocp, :descent, init=U, grid=T, callbacks=(PrintCallback(my_cb_print(T)),))
+sol = solve(ocp, :direct, :shooting, init=U, grid=T, callbacks=(PrintCallback(my_cb_print(T)),))
 println(sol.T)
 
 # init=(T,U), grid=nothing
@@ -89,7 +93,7 @@ N = 101
 T = range(t0, tf, N)
 T = T.^2 # t0 = 0 and tf = 1 so it is ok
 U = [[u_sol(T[i])-1.0] for i = 1:N-1]
-sol = solve(ocp, :descent, init=(T, U), callbacks=(PrintCallback(my_cb_print(T_default)),))
+sol = solve(ocp, :direct, :shooting, init=(T, U), callbacks=(PrintCallback(my_cb_print(T_default)),))
 println(sol.T)
 
 # init=(T,U), grid=T_
@@ -99,27 +103,27 @@ T = range(t0, tf, N)
 T = T.^2 # t0 = 0 and tf = 1 so it is ok
 U = [[u_sol(T[i])-1.0] for i = 1:N-1]
 T_ = range(t0, tf, 301)
-sol = solve(ocp, :descent, init=(T, U), grid=T_, callbacks=(PrintCallback(my_cb_print(T_)),))
+sol = solve(ocp, :direct, :shooting, init=(T, U), grid=T_, callbacks=(PrintCallback(my_cb_print(T_)),))
 println(sol.T)
 
 # init=t->u(t), grid=nothing
 u(t) = [u_sol(t)-1.0]
-sol = solve(ocp, :descent, init=u, callbacks=(PrintCallback(my_cb_print(T_default)),))
+sol = solve(ocp, :direct, :shooting, init=u, callbacks=(PrintCallback(my_cb_print(T_default)),))
 println(sol.T)
 
 # init=t->u(t), grid=T
 N = 101
 T = range(t0, tf, N)
 u(t) = [u_sol(t)-1.0]
-sol = solve(ocp, :descent, init=u, grid=T, callbacks=(PrintCallback(my_cb_print(T)),))
+sol = solve(ocp, :direct, :shooting, init=u, grid=T, callbacks=(PrintCallback(my_cb_print(T)),))
 println(sol.T)
 
 # init=sol, grid=nothing
-sol = solve(ocp, :descent, init=sol_1, callbacks=(PrintCallback(my_cb_print(T_default)),))
+sol = solve(ocp, :direct, :shooting, init=sol_1, callbacks=(PrintCallback(my_cb_print(T_default)),))
 println(sol.T)
 
 # init=sol, grid=T
 N = 101
 T = range(t0, tf, N)
-sol = solve(ocp, :descent, init=sol_1, grid=T, callbacks=(PrintCallback(my_cb_print(T)),))
+sol = solve(ocp, :direct, :shooting, init=sol_1, grid=T, callbacks=(PrintCallback(my_cb_print(T)),))
 println(sol.T)

@@ -1,13 +1,13 @@
 # --------------------------------------------------------------------------------------------------
-# make an CTOptimizationProblem (Unconstrained) from UncFreeXfProblem
+# make an CTOptimizationProblem (Unconstrained) from OptimalControlModel
 # direct simple shooting
-function make_udss_problem(ocp::UncFreeXfProblem, grid::TimesDisc, penalty_constraint::Real)
+function CTOptimizationProblem(ocp::OptimalControlModel, grid::TimesDisc, penalty_constraint::Real)
 
-    # ocp data
-    dy = ocp.dynamics
-    co = ocp.Lagrange_cost
-    cf = ocp.final_constraint
-    x0 = ocp.initial_condition
+    # 
+    VFN = VectorField{:nonautonomous}
+
+    # parsing ocp
+    dy, co, cf, x0, n, m = parse_ocp_direct_shooting(ocp)
 
     # Jacobian of the constraints
     Jcf(x) = Jac(cf, x)
@@ -16,17 +16,15 @@ function make_udss_problem(ocp::UncFreeXfProblem, grid::TimesDisc, penalty_const
     αₚ = penalty_constraint
 
     # state flow
-    vf(t, x, u) = isnonautonomous(ocp) ? dy(t, x, u) : dy(x, u)
-    f = Flow(VectorField{:nonautonomous}(vf)) # we always give a non autonomous Vector Field
+    f = Flow(VFN(dy))
 
     # augmented state flow
-    vfa(t, x, u) = isnonautonomous(ocp) ? [dy(t, x[1:end-1], u)[:]; co(t, x[1:end-1], u)] : [dy(x[1:end-1], u)[:]; co(x[1:end-1], u)]
-    fa = Flow(VectorField{:nonautonomous}(vfa)) # we always give a non autonomous Vector Field
+    fa = Flow(VFN((t, x, u) -> [dy(t, x[1:end-1], u)[:]; co(t, x[1:end-1], u)]))
 
     # state-costate flow
     p⁰ = -1.0
-    H(t, x, p, u) = isnonautonomous(ocp) ? p⁰ * co(t, x, u) + p' * dy(t, x, u) : p⁰ * co(x, u) + p' * dy(x, u)
-    fh = Flow(Hamiltonian{:nonautonomous}(H)) # we always give a non autonomous Hamiltonian
+    H(t, x, p, u) = p⁰ * co(t, x, u) + p' * dy(t, x, u)
+    fh = Flow(Hamiltonian{:nonautonomous}(H))
 
     # to compute the gradient of the function by the adjoint method,
     # we need the partial derivative of the Hamiltonian wrt to the control
@@ -47,7 +45,6 @@ function make_udss_problem(ocp::UncFreeXfProblem, grid::TimesDisc, penalty_const
     ∇J(x::Vector{<:Real}) = vec2vec(∇J(vec2vec(x, ocp.control_dimension))) # for desent solver
 
     # function J, that we minimize
-    L(t, x, u) = isnonautonomous(ocp) ? co(t, x, u) : co(x, u)
     function J(U::Controls)
         # via augmented system
         xₙ, X = model([x0[:]; 0.0], T, U, fa)
