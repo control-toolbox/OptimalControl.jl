@@ -11,7 +11,8 @@ mutable struct DirectSolution
     objective::MyNumber
     constraints_violation::MyNumber
     iterations::Integer
-    stats  #cf https://juliasmoothoptimizers.github.io/SolverCore.jl/stable/reference/#SolverCore.GenericExecutionStats
+    stats       # remove later 
+    #type is https://juliasmoothoptimizers.github.io/SolverCore.jl/stable/reference/#SolverCore.GenericExecutionStats
 end
 
 
@@ -21,21 +22,31 @@ end
 # only exception is the costate, associated to the dynamics equality constraints: N values instead of N+1
 # we could use the basic extension for the final costate P_N := P_(N-1)  (or linear extrapolation) 
 # NB. things will get more complicated with other discretization schemes (time stages on a different grid ...)
-function state_dimension(sol::DirectSolution) = sol.n
-function control_dimension(sol::DirectSolution) = sol.m
-function steps_dimension(sol::DirectSolution) = sol.N
-function time_steps(sol::DirectSolution) = sol.T            
-function state(sol::DirectSolution) = sol.X
-function control(sol::DirectSolution) = sol.U
+# NEED TO CHOOSE A COMMON OUTPUT GRID FOR ALL SCHEMES (note that building the output can be scheme-dependent)
+# PM: I propose to use the time steps [t0, ... , t_N]
+# - states are ok, and we can evaluate boundary conditions directly
+# - control are technically on a different grid (stages) that can coincide with the steps for some schemes.
+# Alternately, the averaged control (in the sense of the butcher coefficients) can be computed on each step. cf bocop
+# - adjoint are for each equation linking x(t_i+1) and x(t_i), so always N values regardless of the scheme
+
+state_dimension(sol::DirectSolution) = sol.n
+control_dimension(sol::DirectSolution) = sol.m
+steps_dimension(sol::DirectSolution) = sol.N
+time_steps(sol::DirectSolution) = sol.T            
+state(sol::DirectSolution) = sol.X
+control(sol::DirectSolution) = sol.U
 function adjoint(sol::DirectSolution)
-    P = zeros(sol.N+1, sol.n+1)
-    P[1:N,:] = sol.P
+    N = sol.N
+    n = sol.n
+    P = zeros(N+1, n)
+    P[1:N,1:n] = sol.P[1:N,1:n]
     # trivial constant extrapolation for p(t_f)
-    P[N+1,:] = P[N,:]
+    P[N+1,1:n] = P[N,1:n]
     return P
 end
-function objective(sol::DirectSolution) = sol.objective
-function constraints_violation(sol::DirectSolution) = sol.constraints_violation                         function Direct_solution_iterations(sol::DirectSolution) = sol.iterations   
+objective(sol::DirectSolution) = sol.objective
+constraints_violation(sol::DirectSolution) = sol.constraints_violation  
+iterations(sol::DirectSolution) = sol.iterations   
     
 
 function DirectSolution(ocp::OptimalControlModel, N::Integer, ipopt_solution)
@@ -46,12 +57,6 @@ function DirectSolution(ocp::OptimalControlModel, N::Integer, ipopt_solution)
     dim_x, nc, dim_xu, g, f_Mayer, has_free_final_time, criterion = direct_infos(ocp, N)
 
     function parse_ipopt_sol(stats)
-        """
-            return
-            X : matrix(N+1,n+1)
-            U : matrix(N+1,m)
-            P : matrix(N,n+1)
-        """
         
         # states and controls
         xu = stats.solution
@@ -101,7 +106,7 @@ function DirectSolution(ocp::OptimalControlModel, N::Integer, ipopt_solution)
     
     # misc info
     objective = ipopt_solution.objective
-    constraints_violations = ipopt_solution.primal_feas
+    constraints_violation = ipopt_solution.primal_feas
     iterations = ipopt_solution.iter
     #status = ipopt_solution.status this is a 'Symbol' not an int...
         

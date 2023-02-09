@@ -30,6 +30,8 @@ objective!(ocp, :lagrange, (x, u) -> 0.5u[1]^2) # default is to minimise
 
 # solve
 sol = solve(ocp)
+println(objective(sol), constraints_violation(sol))
+
 
 # solution
 u_sol(t) = 6.0-12.0*t
@@ -38,4 +40,5 @@ T = sol.T
 dT = T[2:end]-T[1:end-1]
 
 @test sum(dT .* abs.(U[1:end-1] - u_sol.(T[1:end-1]))) ≈ 0 atol=1e-1
-
+@test objective(sol) ≈ 6.0 atol=1e-1
+@test constraints_violation(sol) < 1e-6

@@ -32,7 +32,7 @@ function Plots.plot(sol::DirectSolution)
 
   # costate
   #pp = Plots.plot(T[1:N], P[:,1:n],layout = (n,1))
-  pp = Plots.plot(T[1:N], P[:,1:n],layout = (1,n))    
+  pp = Plots.plot(T, P[:,1:n],layout = (1,n))    
   Plots.plot!(pp[1], title="costate")
   Plots.plot!(pp[n], xlabel="t")
   for i ∈ 1:n

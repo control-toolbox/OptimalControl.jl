@@ -94,4 +94,8 @@ export plot, plot!
 # extras
 export Ad, Poisson
 
+# direct
+export objective, constraints_violation, iterations, state, control, adjoint
+export state_dimension, control_dimension, time_steps, steps_dimension
+
 end
