@@ -9,10 +9,10 @@ mutable struct DirectSolution
     m::Integer
     N::Integer
     objective::MyNumber
-    constraints::MyNumber
+    constraints_violation::MyNumber
     iterations::Integer
     #status::Integer appears to be of type 'Symbol' ?
-    stats  #stats::SolverCore.GenericExecutionStats
+    stats  #cf https://juliasmoothoptimizers.github.io/SolverCore.jl/stable/reference/#SolverCore.GenericExecutionStats
 end
 
 
@@ -22,11 +22,20 @@ end
 # only exception is the costate, associated to the dynamics equality constraints: N values instead of N+1
 # we could use the basic extension for the final costate P_N := P_(N-1)  (or linear extrapolation) 
 # NB. things will get more complicated with other discretization schemes (time stages on a different grid ...)
-        
-#function State()
-#function Control()
-#function Adjoint()
-    
+function Direct_solution_state_dimension(sol::DirectSolution) = sol.n
+function Direct_solution_control_dimension(sol::DirectSolution) = sol.m
+function Direct_solution_steps_dimension(sol::DirectSolution) = sol.N
+function Direct_solution_time_steps(sol::DirectSolution) = sol.T            
+function Direct_solution_state(sol::DirectSolution) = sol.X
+function Direct_solution_control(sol::DirectSolution) = sol.U
+function Direct_solution_adjoint(sol::DirectSolution)
+    P = zeros(sol.N+1, sol.n+1)
+    P[1:N,:] = sol.P
+    # trivial constant extrapolation for p(t_f)
+    P[N+1,:] = P[N,:]
+return P
+function Direct_solution_objective(sol::DirectSolution) = sol.objective
+function Direct_solution_constraints_violation(sol::DirectSolution) = sol.constraints_violation                         function Direct_solution_iterations(sol::DirectSolution) = sol.iterations   
     
 
 function DirectSolution(ocp::OptimalControlModel, N::Integer, ipopt_solution)
@@ -92,13 +101,13 @@ function DirectSolution(ocp::OptimalControlModel, N::Integer, ipopt_solution)
     
     # misc info
     objective = ipopt_solution.objective
-    constraints = ipopt_solution.primal_feas
+    constraints_violations = ipopt_solution.primal_feas
     iterations = ipopt_solution.iter
     #status = ipopt_solution.status this is a 'Symbol' not an int...
         
     # DirectSolution
     #sol  = DirectSolution(T, X, U, P, P_ξ, P_ψ, n_x, m, N, ipopt_solution)
-    sol  = DirectSolution(T, X, U, P, P_ξ, P_ψ, n_x, m, N, objective, constraints, iterations, ipopt_solution)     
+    sol  = DirectSolution(T, X, U, P, P_ξ, P_ψ, n_x, m, N, objective, constraints_violation, iterations, ipopt_solution)     
 
     return sol
 end

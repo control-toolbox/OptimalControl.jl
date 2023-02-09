@@ -6,21 +6,22 @@ function Plots.plot(sol::DirectSolution)
         sol : direct_sol
   """
     
-  # getters  
-  T = sol.T
-  X = sol.X
-  U = sol.U
-  P = sol.P
-  n = sol.n
-  m = sol.m
-  N = sol.N
-  obj = sol.objective
-  cons = sol.constraints
-  iter = sol.iterations
+  # retrieve info from direct solution
+  n = Direct_solution_state_dimension(sol)
+  m = Direct_solution_control_dimension(sol)
+  N = Direct_solution_steps_dimension(sol)    
+  T = Direct_solution_time_steps(sol) 
+  X = Direct_solution_state(sol)
+  U = Direct_solution_control(sol)
+  P = Direct_solution_adjoint(sol)
+  obj = Direct_solution_objective(sol)
+  cons = Direct_solution_constraints_violation(sol)
+  iter = Direct_solution_iterations(sol)
     
   println("Objective: ",obj," Constraints: ",cons," Iterations: ",iter)
     
   # state (plot actual state from ocp ie mask additional state for lagrange cost if present)
+  # use option for layout 'columns' or 'rows' ?
   #px = Plots.plot(T, X[:,1:n], layout=(n,1))
   px = Plots.plot(T, X[:,1:n], layout=(1,n))    
   Plots.plot!(px[1], title="state")
