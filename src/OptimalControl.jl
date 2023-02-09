@@ -10,6 +10,7 @@ using Parameters # @with_kw
 using NLPModelsIpopt, ADNLPModels    # for direct methods
 
 # todo: use RecipesBase instead of plot
+using Plots
 import Plots: plot, plot!, Plots # import instead of using to overload the plot and plot! functions, to plot ocp solution
 
 #
@@ -54,6 +55,8 @@ include("main/default.jl")
 include("main/model.jl")
 include("main/solve.jl")
 include("main/flows.jl")
+include("main/solution.jl")
+#include("main/print.jl")
 
 # direct shooting
 include("direct-shooting/solution.jl")
@@ -62,7 +65,6 @@ include("direct-shooting/utils.jl")
 include("direct-shooting/problem.jl")
 include("direct-shooting/solve.jl")
 include("direct-shooting/plot.jl")
-include("direct-shooting/print.jl")
 
 # direct ipopt methods
 include("direct/utils.jl")
@@ -79,6 +81,11 @@ export AbstractOptimalControlModel, OptimalControlModel
 export Model, time!, constraint!, objective!, state!, control!
 export remove_constraint!
 export constraint
+
+# getters for solutions
+export state_dimension, control_dimension, time_steps, steps_dimension, state
+export control, adjoint, objective, iterations, success, message, stopping
+export constraints_violation
 
 # plots
 export plot, plot!

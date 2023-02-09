@@ -35,9 +35,9 @@ function CTOptimizationProblem(ocp::OptimalControlModel, grid::TimesDisc, penalt
 
     # gradient of the function J
     function ∇J(U::Controls)
-        xₙ, _ = model(x0, T, U, f)
+        xₙ, _ = model_primal_forward(x0, T, U, f)
         pₙ = p⁰ * αₚ * transpose(Jcf(xₙ)) * cf(xₙ)
-        _, _, X, P = adjoint(xₙ, pₙ, T, U, fh)
+        _, _, X, P = model_adjoint_backward(xₙ, pₙ, T, U, fh)
         g = [-Hu(T[i], X[i], P[i], U[i]) .* (T[i+1] - T[i]) for i in 1:length(T)-1]
         return g
     end
@@ -47,7 +47,7 @@ function CTOptimizationProblem(ocp::OptimalControlModel, grid::TimesDisc, penalt
     # function J, that we minimize
     function J(U::Controls)
         # via augmented system
-        xₙ, X = model([x0[:]; 0.0], T, U, fa)
+        xₙ, X = model_primal_forward([x0[:]; 0.0], T, U, fa)
         cost = xₙ[end] + 0.5 * αₚ * norm(cf(xₙ[1:end-1]))^2
         return cost
     end

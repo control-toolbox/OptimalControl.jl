@@ -28,7 +28,7 @@ function Plots.plot(sol::DirectShootingSolution, args...;
             Plots.plot!(px, sol, :time, (:state, i); label="x" * ('\u2080' + i), state_style...)
         end
     end
-
+    
     pu = Plots.plot(; xlabel="time", title="control", control_style...)
     if m == 1
         Plots.plot!(pu, sol, :time, (:control, 1); label="u", control_style...)

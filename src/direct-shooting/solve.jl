@@ -4,7 +4,7 @@ function solve(
     ocp::OptimalControlModel,
     algo::DirectShooting,
     method::Description;
-    init::Union{Nothing,Controls,Tuple{TimesDisc,Controls},Function,DirectShootingSolution}=nothing,
+    init::Union{Nothing,Controls,Tuple{TimesDisc,Controls},Function,DirectShootingSolution,DirectSolution}=nothing,
     grid::Union{Nothing,TimesDisc}=nothing,
     penalty_constraint::Real=__penalty_constraint(),
     display::Bool=__display(),

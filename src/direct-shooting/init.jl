@@ -106,34 +106,22 @@ function CTOptimizationInit(t0::Time, tf::Time, m::Dimension, init::Tuple{TimesD
     return convert_init(U_[1:end-1]), T2
 end
 
-# init=S, grid=nothing => init=S.U, grid=range(t0, tf, N), with N=__grid_size_direct_shooting()
-function CTOptimizationInit(t0::Time, tf::Time, m::Dimension, S::DirectShootingSolution, grid::Nothing, interp::Function)
-    T_ = __grid(t0, tf) # default grid
-    U_ = my_interpolation(interp, S.T[1:end-1], S.U, T_)
-    return convert_init(U_[1:end-1]), T_
+# 
+function CTOptimizationInit(t0::Time, tf::Time, m::Dimension, S::DirectShootingSolution, grid, interp::Function)
+    return CTOptimizationInit(t0, tf, m, (time_steps(S), control(S)), grid, interp)
 end
 
-# init=S, grid=T => init=S.U, grid=T (check validity with ocp)
-function CTOptimizationInit(t0::Time, tf::Time, m::Dimension, S::DirectShootingSolution, T::TimesDisc, interp::Function)
-    if !__check_grid_validity(t0, tf, T)
-        throw(InconsistentArgument("grid argument is inconsistent with ocp argument"))
-    end
-    U_ = my_interpolation(interp, S.T[1:end-1], S.U, T)
-    return convert_init(U_[1:end-1]), T
+# 
+function CTOptimizationInit(t0::Time, tf::Time, m::Dimension, S::DirectSolution, grid, interp::Function)
+    return CTOptimizationInit(t0, tf, m, (time_steps(S), control(S)), grid, interp)
 end
 
-# init=u, grid=nothing => init=u(T), grid=T=range(t0, tf, N), with N=__grid_size_direct_shooting()
-function CTOptimizationInit(t0::Time, tf::Time, m::Dimension, u::Function, grid::Nothing, args...)
-    T = __grid(t0, tf) # default grid
-    U = u.(T)
-    return convert_init(U[1:end-1]), T
+#
+function CTOptimizationInit(t0::Time, tf::Time, m::Dimension, u::Function, T::TimesDisc, interp::Function)
+    return CTOptimizationInit(t0, tf, m, u.(T), T, interp)
 end
 
-# init=u, grid=T => init=u(T), grid=T (check validity with ocp)
-function CTOptimizationInit(t0::Time, tf::Time, m::Dimension, u::Function, T::TimesDisc, args...)
-    if !__check_grid_validity(t0, tf, T)
-        throw(InconsistentArgument("grid argument is inconsistent with ocp argument"))
-    end
-    U = u.(T)
-    return convert_init(U[1:end-1]), T
+#
+function CTOptimizationInit(t0::Time, tf::Time, m::Dimension, u::Function, grid::Nothing, interp::Function)
+    return CTOptimizationInit(t0, tf, m, u, __grid(t0, tf), interp)
 end

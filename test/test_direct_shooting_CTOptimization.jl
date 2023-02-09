@@ -126,7 +126,7 @@ init_, grid_ = CTOptimizationInit(t0, tf, m, u_init, nothing)
 u_init(t) = [u_sol(t)-1.0]
 N = floor(Int64, __grid_size_direct_shooting()/2)
 T = range(t0, tf, N)
-init_, grid_ = CTOptimizationInit(t0, tf, m, u_init, T)
+init_, grid_ = CTOptimizationInit(t0, tf, m, u_init, T, __init_interpolation())
 @test init_ ≈ convert_init([[u_sol(T[i])-1.0] for i = 1:N-1]) atol=1e-4
 @test grid_ == T
 

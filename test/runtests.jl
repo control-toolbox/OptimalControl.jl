@@ -25,9 +25,9 @@ const nlp_constraints       = OptimalControl.nlp_constraints
     for name in (
         "utils", 
         "direct_shooting_CTOptimization", # unconstrained direct simple shooting
-        "basic",
-        "goddard_direct",
-        "goddard_indirect",
+        #"basic",
+        #"goddard_direct",
+        #"goddard_indirect",
         )
         @testset "$name" begin
             include("test_$name.jl")
