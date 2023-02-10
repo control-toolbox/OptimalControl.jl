@@ -1,7 +1,7 @@
 name = "OptimalControl"
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
 authors = ["Olivier Cots <olivier.cots@toulouse-inp.fr>"]
-version = "0.1.0"
+version = "0.2.0"
 
 [deps]
 ADNLPModels = "54578032-b7ea-4c30-94aa-7cbd1cce6c9a"
