@@ -1,4 +1,4 @@
-function Plots.plot(sol::DirectSolution)
+function plot(sol::DirectSolution)
   """
       Plot the solution
 
@@ -9,7 +9,6 @@ function Plots.plot(sol::DirectSolution)
   # retrieve info from direct solution
   n = state_dimension(sol)
   m = control_dimension(sol)
-  N = steps_dimension(sol)    
   T = time_steps(sol) 
   X = state(sol)
   U = control(sol)

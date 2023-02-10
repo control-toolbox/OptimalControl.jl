@@ -1,4 +1,6 @@
-function solve(ocp::OptimalControlModel, algo::Direct, method::Description;
+function direct_solve(ocp::OptimalControlModel, 
+  #algo::DirectAlgorithm, 
+  method::Description;
   grid_size::Integer=__grid_size_direct(),
   print_level::Integer=__print_level_ipopt(),
   mu_strategy::String=__mu_strategy_ipopt(),
