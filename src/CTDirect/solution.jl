@@ -61,7 +61,7 @@ function DirectSolution(ocp::OptimalControlModel, N::Integer, ipopt_solution)
         
     # DirectSolution
     #sol  = DirectSolution(T, X, U, P, P_ξ, P_ψ, n_x, m, N, ipopt_solution)
-    sol  = DirectSolution(T, X, U, P, P_ξ, P_ψ, n_x, m, N, objective, constraints_violation, iterations, ipopt_solution)     
+    sol  = CTBase.DirectSolution(T, X, U, P, P_ξ, P_ψ, n_x, m, N, objective, constraints_violation, iterations, ipopt_solution)     
 
     return sol
 end

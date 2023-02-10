@@ -12,7 +12,7 @@
 
 TBW
 """
-function Plots.plot(sol::DirectShootingSolution, args...; 
+function plot(sol::DirectShootingSolution, args...; 
     state_style=(), control_style=(), adjoint_style=(), kwargs...)
 
     # todo : gérer le cas dans les labels où m, n > 9
@@ -54,7 +54,7 @@ function Plots.plot(sol::DirectShootingSolution, args...;
 end
 
 # specific plot
-function Plots.plot(sol::DirectShootingSolution, 
+function plot(sol::DirectShootingSolution, 
     xx::Union{Symbol,Tuple{Symbol,Integer}}, yy::Union{Symbol,Tuple{Symbol,Integer}}, args...; kwargs...)
 
     x = get(sol, xx)
@@ -64,7 +64,7 @@ function Plots.plot(sol::DirectShootingSolution,
 
 end
 
-function Plots.plot!(p::Plots.Plot{<:Plots.AbstractBackend}, sol::DirectShootingSolution, 
+function plot!(p::Plots.Plot{<:Plots.AbstractBackend}, sol::DirectShootingSolution, 
     xx::Union{Symbol,Tuple{Symbol,Integer}}, yy::Union{Symbol,Tuple{Symbol,Integer}}, args...; kwargs...)
 
     x = get(sol, xx)

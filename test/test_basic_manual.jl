@@ -20,7 +20,7 @@ constraint!(ocp, :dynamics, (x, u) -> A*x + B*u[1])
 objective!(ocp, :lagrange, (x, u) -> 0.5u[1]^2) # default is to minimise
 
 # solve
-sol = solve(ocp,30)
+sol = solve(ocp, grid_size=30)
 
 # plot
 plot(sol)

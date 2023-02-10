@@ -35,7 +35,7 @@ end
 
 # --------------------------------------------------------------------------------------------------
 #
-function reduce_one_if_necessary(U::Vector{<:MyVector}, T::TimesDisc)
+function reduce_one_if_necessary(U::Controls, T::TimesDisc)
     if length(U) == length(T)
         return U[1:end-1]
     else

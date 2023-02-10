@@ -1,4 +1,4 @@
-
+#= 
 #### NE FONCTIONNE PAS
 
 # --------------------------------------------------------------------------------------------------
@@ -27,4 +27,4 @@ function Base.show(io::IO, ocp::OptimalControlModel{time_dependence}) where {tim
     println(io, " Besides, t0, tf and x0 are fixed. ")
     #println(io, "")
 
-end
+end =#

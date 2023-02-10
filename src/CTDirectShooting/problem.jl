@@ -10,7 +10,7 @@ function CTOptimizationProblem(ocp::OptimalControlModel, grid::TimesDisc, penalt
     dy, co, cf, x0, n, m = parse_ocp_direct_shooting(ocp)
 
     # Jacobian of the constraints
-    Jcf(x) = Jac(cf, x)
+    Jcf(x) = ctjacobian(cf, x)
 
     # penalty term for the final constraints
     αₚ = penalty_constraint
@@ -28,7 +28,7 @@ function CTOptimizationProblem(ocp::OptimalControlModel, grid::TimesDisc, penalt
 
     # to compute the gradient of the function by the adjoint method,
     # we need the partial derivative of the Hamiltonian wrt to the control
-    Hu(t, x, p, u) = ∇(u -> H(t, x, p, u), u)
+    Hu(t, x, p, u) = ctgradient(u -> H(t, x, p, u), u)
 
     # discretization grid
     T = grid
@@ -42,7 +42,7 @@ function CTOptimizationProblem(ocp::OptimalControlModel, grid::TimesDisc, penalt
         return g
     end
     # vec2vec permet de passer d'un vecteur de vecteur à simplement un vecteur
-    ∇J(x::Vector{<:Real}) = vec2vec(∇J(vec2vec(x, ocp.control_dimension))) # for desent solver
+    ∇J(x::Vector{<:Real}) = vec2vec(∇J(vec2vec(x, m))) # for desent solver
 
     # function J, that we minimize
     function J(U::Controls)
@@ -51,10 +51,10 @@ function CTOptimizationProblem(ocp::OptimalControlModel, grid::TimesDisc, penalt
         cost = xₙ[end] + 0.5 * αₚ * norm(cf(xₙ[1:end-1]))^2
         return cost
     end
-    J(x::Vector{<:Real}) = J(vec2vec(x, ocp.control_dimension)) # for descent solver
+    J(x::Vector{<:Real}) = J(vec2vec(x, m)) # for descent solver
 
     # CTOptimization (Unconstrained) problem
-    prob = CTOptimizationProblem(J, gradient=∇J, dimension=length(grid)*ocp.control_dimension)
+    prob = CTOptimization.CTOptimizationProblem(J, gradient=∇J, dimension=length(grid)*m)
 
     return prob
 
