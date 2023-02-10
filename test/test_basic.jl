@@ -29,7 +29,7 @@ objective!(ocp, :lagrange, (x, u) -> 0.5u[1]^2) # default is to minimise
 @test ocp.lagrange(0.0, [0.; 0.], 1.0) ≈ 0.5 atol=1e-8
 
 # solve
-sol = solve(ocp)
+sol = solve(ocp, print_level=0)
 
 # solution
 u_sol(t) = 6.0-12.0*t

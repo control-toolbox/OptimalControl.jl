@@ -15,7 +15,6 @@ using NLPModelsIpopt, ADNLPModels
 
 # tools: Descriptions, callbacks, exceptions, functions and more
 using ControlToolboxTools
-const ControlToolboxCallbacks = Tuple{Vararg{ControlToolboxCallback}} # todo: handle this better
 
 # Types
 const MyNumber, MyVector, Time, Times, TimesDisc, States, Adjoints, Controls, State, Adjoint, Dimension = CTBase.types()

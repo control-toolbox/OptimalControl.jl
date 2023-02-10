@@ -14,7 +14,6 @@ using .CTDirectShooting
 
 # tools: callbacks, exceptions, functions and more
 @reexport using ControlToolboxTools
-const ControlToolboxCallbacks = Tuple{Vararg{ControlToolboxCallback}}
 
 # flows
 @reexport using HamiltonianFlows
