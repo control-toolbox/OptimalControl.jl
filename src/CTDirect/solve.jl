@@ -27,6 +27,8 @@ function direct_solve(ocp::OptimalControlModel,
 
   # solve by IPOPT: more info at 
   # https://github.com/JuliaSmoothOptimizers/NLPModelsIpopt.jl/blob/main/src/NLPModelsIpopt.jl#L119
+  # options of ipopt: https://coin-or.github.io/Ipopt/OPTIONS.html
+  # callback: https://github.com/jump-dev/Ipopt.jl#solver-specific-callback
   ipopt_solution = ipopt(nlp, print_level=print_level, mu_strategy=mu_strategy; kwargs...)
 
   # from IPOPT solution to DirectSolution
