@@ -1,8 +1,8 @@
 #--------------------------------------------------------------------------------------------------
 # Solver of an prob by unconstrained direct simple shooting
-function solve(
+function direct_shooting_solve(
     ocp::OptimalControlModel,
-    algo::DirectShooting,
+    #algo::DirectShootingAlgorithm,
     method::Description;
     init::Union{Nothing,Controls,Tuple{TimesDisc,Controls},Function,DirectShootingSolution,DirectSolution}=nothing,
     grid::Union{Nothing,TimesDisc}=nothing,

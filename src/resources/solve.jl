@@ -26,15 +26,11 @@ function solve(prob::OptimalControlModel, description...;
     # if no error before, then the method is correct: no need of else
     if :direct ∈ method
         if :shooting ∈ method
-            return solve(prob, DirectShooting(), clean(method); display=display, kwargs...)
+            return direct_shooting_solve(prob, clean(method); display=display, kwargs...)
         else
-            return solve(prob, Direct(), clean(method); display=display, kwargs...)
+            return direct_solve(prob, clean(method); display=display, kwargs...)
         end
     end
-end
-
-function solve(ocp::OptimalControlModel, algo::AbstractControlAlgorithm, method::Description; kwargs...)
-    error("solve not implemented")
 end
 
 function clean(d::Description)

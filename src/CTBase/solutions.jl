@@ -10,7 +10,7 @@ error_aocs(sol::AbstractOptimalControlSolution) = error(message_aocs*String(type
 state_dimension(sol::AbstractOptimalControlSolution) = error_aocs(sol)
 control_dimension(sol::AbstractOptimalControlSolution) = error_aocs(sol)
 time_steps(sol::AbstractOptimalControlSolution) = error_aocs(sol)
-steps_dimension(sol::AbstractOptimalControlSolution) = error_aocs(sol)
+time_steps_length(sol::AbstractOptimalControlSolution) = error_aocs(sol)
 state(sol::AbstractOptimalControlSolution) = error_aocs(sol)
 control(sol::AbstractOptimalControlSolution) = error_aocs(sol)
 adjoint(sol::AbstractOptimalControlSolution) = error_aocs(sol)
@@ -56,7 +56,7 @@ end
 
 state_dimension(sol::DirectSolution) = sol.n
 control_dimension(sol::DirectSolution) = sol.m
-steps_dimension(sol::DirectSolution) = sol.N
+time_steps_length(sol::DirectSolution) = sol.N
 time_steps(sol::DirectSolution) = sol.T            
 state(sol::DirectSolution) = sol.X
 control(sol::DirectSolution) = sol.U
@@ -94,7 +94,7 @@ end
 state_dimension(sol::DirectShootingSolution) = sol.state_dimension
 control_dimension(sol::DirectShootingSolution) = sol.control_dimension
 time_steps(sol::DirectShootingSolution) = sol.T
-steps_dimension(sol::DirectShootingSolution) = length(time_steps(sol))
+time_steps_length(sol::DirectShootingSolution) = length(time(sol))
 state(sol::DirectShootingSolution) = sol.X
 control(sol::DirectShootingSolution) = sol.U
 adjoint(sol::DirectShootingSolution) = sol.P

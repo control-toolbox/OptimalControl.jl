@@ -11,7 +11,7 @@ function DirectShootingSolution(sol::CTOptimization.UnconstrainedSolution,
     U⁺ = vec2vec(sol.x, m)
 
     # Jacobian of the constraints
-    Jcf(x) = Jac(cf, x)
+    Jcf(x) = ctjacobian(cf, x)
 
     # penalty term for final constraints
     αₚ = penalty_constraint
@@ -42,7 +42,7 @@ function DirectShootingSolution(sol::CTOptimization.UnconstrainedSolution,
     end
     objective = J(U⁺)
 
-    return DirectShootingSolution(T, X⁺, U⁺, P⁺, objective, n, m, 
+    return CTBase.DirectShootingSolution(T, X⁺, U⁺, P⁺, objective, n, m, 
         sol.stopping, sol.message, sol.success, sol.iterations)
    
 end

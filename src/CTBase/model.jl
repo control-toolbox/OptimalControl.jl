@@ -35,7 +35,6 @@ state_dimension(ocp::OptimalControlModel) = ocp.state_dimension
 constraints(ocp::OptimalControlModel) = ocp.constraints
 function initial_condition(ocp::OptimalControlModel) 
     cs = constraints(ocp)
-    n = state_dimension(ocp)
     x0 = nothing
     for (_, c) ∈ cs
         type, _, _, val = c

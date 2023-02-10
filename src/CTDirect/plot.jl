@@ -1,4 +1,4 @@
-function Plots.plot(sol::DirectSolution)
+function plot(sol::DirectSolution)
   """
       Plot the solution
 
@@ -7,16 +7,15 @@ function Plots.plot(sol::DirectSolution)
   """
     
   # retrieve info from direct solution
-  n = state_dimension(sol)
-  m = control_dimension(sol)
-  N = steps_dimension(sol)    
-  T = time_steps(sol) 
-  X = state(sol)
-  U = control(sol)
-  P = adjoint(sol)
-  obj = objective(sol)
-  cons = constraints_violation(sol)
-  iter = iterations(sol)
+  n = CTBase.state_dimension(sol)
+  m = CTBase.control_dimension(sol)
+  T = CTBase.time_steps(sol) 
+  X = CTBase.state(sol)
+  U = CTBase.control(sol)
+  P = CTBase.adjoint(sol)
+  obj = CTBase.objective(sol)
+  cons = CTBase.constraints_violation(sol)
+  iter = CTBase.iterations(sol)
     
   println("Objective: ",obj," Constraints: ",cons," Iterations: ",iter)
     
