@@ -19,9 +19,9 @@ state!(ocp, 3) # state dim
 control!(ocp, 1) # control dim
 constraint!(ocp, :initial, x0)
 constraint!(ocp, :control, u -> u[1], 0., 1.)
-constraint!(ocp, :state, (x, u) -> x[1], r0, Inf, :state_con1)
-constraint!(ocp, :state, (x, u) -> x[2], 0., vmax, :state_con2)
-constraint!(ocp, :state, (x, u) -> x[3], m0, mf, :state_con3)
+constraint!(ocp, :mixed, (x, u) -> x[1], r0, Inf, :state_con1)
+constraint!(ocp, :mixed, (x, u) -> x[2], 0., vmax, :state_con2)
+constraint!(ocp, :mixed, (x, u) -> x[3], m0, mf, :state_con3)
 #
 objective!(ocp, :mayer,  (t0, x0, tf, xf) -> xf[1], :max)
 

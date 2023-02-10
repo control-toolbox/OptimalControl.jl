@@ -10,10 +10,6 @@ using Interpolations: linear_interpolation, Line, Interpolations # for default i
 using Printf # to print a OptimalControlModel
 using ControlToolboxTools # tools: callbacks, exceptions, functions and more
 
-#
-isnonautonomous(time_dependence::Symbol) = :nonautonomous == time_dependence
-isautonomous(time_dependence::Symbol) = !isnonautonomous(time_dependence)
-
 # --------------------------------------------------------------------------------------------------
 # Aliases for types
 # const AbstractVector{T} = AbstractArray{T,1}.
