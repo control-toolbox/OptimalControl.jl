@@ -15,6 +15,12 @@ abstract type AbstractOptimalControlModel end
     constraints::Dict{Symbol, Tuple{Vararg{Any}}}=Dict{Symbol, Tuple{Vararg{Any}}}()
 end
 
+#
+isnonautonomous(time_dependence::Symbol) = :nonautonomous == time_dependence
+isautonomous(time_dependence::Symbol) = !isnonautonomous(time_dependence)
+isnonautonomous(ocp::OptimalControlModel{time_dependence}) where {time_dependence} = isnonautonomous(time_dependence)
+isautonomous(ocp::OptimalControlModel) = !isnonautonomous(ocp)
+
 # Constructors
 abstract type Model{td} end # c'est un peu du bricolage ça
 function Model{time_dependence}() where {time_dependence}
@@ -26,6 +32,7 @@ Model() = Model{:autonomous}() # default value
 # getters
 dynamics(ocp::OptimalControlModel) = ocp.dynamics
 lagrange(ocp::OptimalControlModel) = ocp.lagrange
+mayer(ocp::OptimalControlModel) = ocp.mayer
 criterion(ocp::OptimalControlModel) = ocp.criterion
 ismin(ocp::OptimalControlModel) = criterion(ocp) == :min
 initial_time(ocp::OptimalControlModel) = ocp.initial_time
