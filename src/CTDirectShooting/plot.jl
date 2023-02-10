@@ -12,7 +12,7 @@
 
 TBW
 """
-function Plots.plot(sol::Union{UncFreeXfSolution, UncFixedXfSolution}, args...; 
+function plot(sol::DirectShootingSolution, args...; 
     state_style=(), control_style=(), adjoint_style=(), kwargs...)
 
     # todo : gérer le cas dans les labels où m, n > 9
@@ -28,7 +28,7 @@ function Plots.plot(sol::Union{UncFreeXfSolution, UncFixedXfSolution}, args...;
             Plots.plot!(px, sol, :time, (:state, i); label="x" * ('\u2080' + i), state_style...)
         end
     end
-
+    
     pu = Plots.plot(; xlabel="time", title="control", control_style...)
     if m == 1
         Plots.plot!(pu, sol, :time, (:control, 1); label="u", control_style...)
@@ -54,7 +54,7 @@ function Plots.plot(sol::Union{UncFreeXfSolution, UncFixedXfSolution}, args...;
 end
 
 # specific plot
-function Plots.plot(sol::Union{UncFreeXfSolution, UncFixedXfSolution}, 
+function plot(sol::DirectShootingSolution, 
     xx::Union{Symbol,Tuple{Symbol,Integer}}, yy::Union{Symbol,Tuple{Symbol,Integer}}, args...; kwargs...)
 
     x = get(sol, xx)
@@ -64,7 +64,7 @@ function Plots.plot(sol::Union{UncFreeXfSolution, UncFixedXfSolution},
 
 end
 
-function Plots.plot!(p::Plots.Plot{<:Plots.AbstractBackend}, sol::Union{UncFreeXfSolution, UncFixedXfSolution}, 
+function plot!(p::Plots.Plot{<:Plots.AbstractBackend}, sol::DirectShootingSolution, 
     xx::Union{Symbol,Tuple{Symbol,Integer}}, yy::Union{Symbol,Tuple{Symbol,Integer}}, args...; kwargs...)
 
     x = get(sol, xx)
@@ -80,7 +80,7 @@ end
 
 TBW
 """
-function get(sol::Union{UncFreeXfSolution, UncFixedXfSolution}, xx::Union{Symbol,Tuple{Symbol,Integer}})
+function get(sol::DirectShootingSolution, xx::Union{Symbol,Tuple{Symbol,Integer}})
 
     T = sol.T
     X = sol.X

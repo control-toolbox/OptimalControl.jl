@@ -5,6 +5,7 @@
 algorithmes = ()
 
 # descent methods
+algorithmes = add(algorithmes, (:direct, :ADNLProblem, :ipopt))
 algorithmes = add(algorithmes, (:direct, :shooting, :descent, :bfgs, :bissection))
 algorithmes = add(algorithmes, (:direct, :shooting, :descent, :bfgs, :backtracking))
 algorithmes = add(algorithmes, (:direct, :shooting, :descent, :bfgs, :fixedstep))
@@ -12,16 +13,26 @@ algorithmes = add(algorithmes, (:direct, :shooting, :descent, :gradient, :bissec
 algorithmes = add(algorithmes, (:direct, :shooting, :descent, :gradient, :backtracking))
 algorithmes = add(algorithmes, (:direct, :shooting, :descent, :gradient, :fixedstep))
 
-function solve(prob::AbstractOptimalControlProblem, description...; kwargs...)
+function solve(prob::OptimalControlModel, description...; 
+    display::Bool=__display(),
+    kwargs...)
+
+    #
     method = getFullDescription(makeDescription(description...), algorithmes)
+        
+    # print chosen method
+    display ? println("\nMethod = ", method) : nothing
+
     # if no error before, then the method is correct: no need of else
     if :direct ∈ method
         if :shooting ∈ method
-            return solve_by_udss(prob, method; kwargs...)
+            return direct_shooting_solve(prob, clean(method); display=display, kwargs...)
+        else
+            return direct_solve(prob, clean(method); display=display, kwargs...)
         end
     end
 end
 
-function clean_description(d::Description)
+function clean(d::Description)
     return d\(:direct, :shooting)
 end

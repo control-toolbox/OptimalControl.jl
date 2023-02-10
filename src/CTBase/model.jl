@@ -2,13 +2,13 @@
 # Abstract Optimal control model
 abstract type AbstractOptimalControlModel end
 
-@with_kw mutable struct OptimalControlModel <: AbstractOptimalControlModel
+@with_kw mutable struct OptimalControlModel{time_dependence} <: AbstractOptimalControlModel
     initial_time::Union{Time,Nothing}=nothing
     final_time::Union{Time,Nothing}=nothing
-    lagrange::Union{Function,Nothing}=nothing
+    lagrange::Union{LagrangeFunction{time_dependence},Nothing}=nothing
     mayer::Union{Function,Nothing}=nothing
     criterion::Union{Symbol,Nothing}=nothing
-    dynamics::Union{Function,Nothing}=nothing
+    dynamics::Union{DynamicsFunction{time_dependence},Nothing}=nothing
     dynamics!::Union{Function,Nothing}=nothing
     state_dimension::Union{Dimension,Nothing}=nothing
     control_dimension::Union{Dimension,Nothing}=nothing
@@ -16,8 +16,51 @@ abstract type AbstractOptimalControlModel end
 end
 
 #
-function Model()
-    return OptimalControlModel()
+isnonautonomous(time_dependence::Symbol) = :nonautonomous == time_dependence
+isautonomous(time_dependence::Symbol) = !isnonautonomous(time_dependence)
+isnonautonomous(ocp::OptimalControlModel{time_dependence}) where {time_dependence} = isnonautonomous(time_dependence)
+isautonomous(ocp::OptimalControlModel) = !isnonautonomous(ocp)
+
+# Constructors
+abstract type Model{td} end # c'est un peu du bricolage ça
+function Model{time_dependence}() where {time_dependence}
+    return OptimalControlModel{time_dependence}()
+end
+Model() = Model{:autonomous}() # default value
+
+# -------------------------------------------------------------------------------------------
+# getters
+dynamics(ocp::OptimalControlModel) = ocp.dynamics
+lagrange(ocp::OptimalControlModel) = ocp.lagrange
+mayer(ocp::OptimalControlModel) = ocp.mayer
+criterion(ocp::OptimalControlModel) = ocp.criterion
+ismin(ocp::OptimalControlModel) = criterion(ocp) == :min
+initial_time(ocp::OptimalControlModel) = ocp.initial_time
+final_time(ocp::OptimalControlModel) = ocp.final_time
+control_dimension(ocp::OptimalControlModel) = ocp.control_dimension
+state_dimension(ocp::OptimalControlModel) = ocp.state_dimension
+constraints(ocp::OptimalControlModel) = ocp.constraints
+function initial_condition(ocp::OptimalControlModel) 
+    cs = constraints(ocp)
+    x0 = nothing
+    for (_, c) ∈ cs
+        type, _, _, val = c
+        if type == :initial
+             x0 = val
+        end
+    end
+    return x0
+end
+function final_constraint(ocp::OptimalControlModel) 
+    cs = constraints(ocp)
+    cf = nothing
+    for (_, c) ∈ cs
+        type, _, f, val = c
+        if type == :final
+            cf = x -> f(x) - val
+        end
+    end
+    return cf
 end
 
 # -------------------------------------------------------------------------------------------
@@ -67,16 +110,16 @@ function constraint!(ocp::OptimalControlModel, type::Symbol, lb::Real, ub::Real,
     end
 end
 
-function constraint!(ocp::OptimalControlModel, type::Symbol, f::Function)
+function constraint!(ocp::OptimalControlModel{time_dependence}, type::Symbol, f::Function) where {time_dependence}
     if type ∈ [ :dynamics, :dynamics! ]
-        setproperty!(ocp, type, f)
+        setproperty!(ocp, type, DynamicsFunction{time_dependence}(f))
     else
         error("this constraint is not valid")
     end
 end
 
 function constraint!(ocp::OptimalControlModel, type::Symbol, f::Function, val::Real, label::Symbol=gensym(:anonymous))
-    if type ∈ [ :control, :state, :boundary ]
+    if type ∈ [ :control, :mixed, :boundary ]
         ocp.constraints[label] = (type, :eq, f, val)
     else
         error("this constraint is not valid")
@@ -84,7 +127,7 @@ function constraint!(ocp::OptimalControlModel, type::Symbol, f::Function, val::R
 end
 
 function constraint!(ocp::OptimalControlModel, type::Symbol, f::Function, lb::Real, ub::Real, label::Symbol=gensym(:anonymous))
-    if type ∈ [ :control, :state, :boundary ]
+    if type ∈ [ :control, :mixed, :boundary ]
         ocp.constraints[label] = (type, :ineq, f, lb, ub)
     else
         error("this constraint is not valid")
@@ -97,7 +140,7 @@ function remove_constraint!(ocp::OptimalControlModel, label::Symbol)
 end
 
 #
-function constraint(ocp::OptimalControlModel, label::Symbol)
+function constraint(ocp::OptimalControlModel{time_dependence}, label::Symbol) where {time_dependence}
     con = ocp.constraints[label]
     if length(con) != 4
         error("this constraint is not valid")
@@ -108,9 +151,9 @@ function constraint(ocp::OptimalControlModel, label::Symbol)
     elseif type == :boundary
         return (t0, x0, tf, xf) -> f(t0, x0, tf, xf) - val
     elseif type == :control
-        return u -> f(u) - val
-    elseif type == :state
-        return (x, u) -> f(x, u) - val
+        return isautonomous(time_dependence) ? u -> f(u) - val : (t, u) -> f(t, u) - val
+    elseif type == :mixed
+        return isautonomous(time_dependence) ? (x, u) -> f(x, u) - val : (t, x, u) -> f(t, x, u) - val
     else
         error("this constraint is not valid")
     end
@@ -118,7 +161,7 @@ function constraint(ocp::OptimalControlModel, label::Symbol)
 end
 
 #
-function constraint(ocp::OptimalControlModel, label::Symbol, bound::Symbol)
+function constraint(ocp::OptimalControlModel{time_dependence}, label::Symbol, bound::Symbol) where {time_dependence}
     # constraints are all >= 0
     con = ocp.constraints[label]
     if length(con) != 5
@@ -136,9 +179,17 @@ function constraint(ocp::OptimalControlModel, label::Symbol, bound::Symbol)
     elseif type == :boundary
         return bound == :lower ? (t0, x0, tf, xf) -> f(t0, x0, tf, xf) - lb : (t0, x0, tf, xf) -> ub - f(t0, x0, tf, xf)
     elseif type == :control
-        return bound == :lower ? u -> f(u) - lb : u -> ub - f(u)
-    elseif type == :state
-        return bound == :lower ? (x, u) -> f(x, u) - lb : (x, u) -> ub - f(x,u) 
+        if isautonomous(time_dependence)
+            return bound == :lower ? u -> f(u) - lb : u -> ub - f(u)
+        else
+            return bound == :lower ? (t, u) -> f(t, u) - lb : (t, u) -> ub - f(t, u)
+        end
+    elseif type == :mixed
+        if isautonomous(time_dependence)
+            return bound == :lower ? (x, u) -> f(x, u) - lb : (x, u) -> ub - f(x, u) 
+        else
+            return bound == :lower ? (t, x, u) -> f(t, x, u) - lb : (t, x, u) -> ub - f(t, x, u) 
+        end
     else
         error("this constraint is not valid")
     end
@@ -146,22 +197,22 @@ function constraint(ocp::OptimalControlModel, label::Symbol, bound::Symbol)
 end
 
 #
-function nlp_constraints(ocp::OptimalControlModel)
+function nlp_constraints(ocp::OptimalControlModel{time_dependence}) where {time_dependence}
     #
     constraints = ocp.constraints
     n = ocp.state_dimension
     
-    ξf = Vector{Function}(); ξl = Vector{MyNumber}(); ξu = Vector{MyNumber}()
-    ψf = Vector{Function}(); ψl = Vector{MyNumber}(); ψu = Vector{MyNumber}()
+    ξf = Vector{ControlFunction}(); ξl = Vector{MyNumber}(); ξu = Vector{MyNumber}()
+    ψf = Vector{StateConstraintFunction}(); ψl = Vector{MyNumber}(); ψu = Vector{MyNumber}()
     ϕf = Vector{Function}(); ϕl = Vector{MyNumber}(); ϕu = Vector{MyNumber}()
 
     for (_, c) ∈ constraints
         if c[1] == :control
-            push!(ξf, c[3])
+            push!(ξf, ControlFunction{time_dependence}(c[3]))
             append!(ξl, c[4])
             append!(ξu, c[2] == :eq ? c[4] : c[5])
-        elseif c[1] == :state
-            push!(ψf, c[3])
+        elseif c[1] == :mixed
+            push!(ψf, StateConstraintFunction{time_dependence}(c[3]))
             append!(ψl, c[4])
             append!(ψu, c[2] == :eq ? c[4] : c[5])
         elseif c[1] == :initial
@@ -183,15 +234,15 @@ function nlp_constraints(ocp::OptimalControlModel)
 #    ψ!(val, x, u) = [ val[i] = ψf[i](x, u) for i ∈ 1:length(ψf) ]
 #    ϕ!(val, t0, x0, tf, xf) = [ val[i] = ϕf[i](t0, x0, tf, xf) for i ∈ 1:length(ϕf) ]
 
-    function ξ(u)
+    function ξ(t, u)
         val = Vector{MyNumber}()
-        for i ∈ 1:length(ξf) append!(val, ξf[i](u)) end
+        for i ∈ 1:length(ξf) append!(val, ξf[i](t, u)) end
     return val
     end 
 
-    function ψ(x, u)
+    function ψ(t, x, u)
         val = Vector{MyNumber}()
-        for i ∈ 1:length(ψf) append!(val, ψf[i](x, u)) end
+        for i ∈ 1:length(ψf) append!(val, ψf[i](t, x, u)) end
     return val
     end 
 
@@ -207,7 +258,7 @@ end
 
 # -------------------------------------------------------------------------------------------
 # 
-function objective!(ocp::OptimalControlModel, type::Symbol, f::Function, criterion::Symbol=:min)
+function objective!(ocp::OptimalControlModel{time_dependence}, type::Symbol, f::Function, criterion::Symbol=:min) where {time_dependence}
     setproperty!(ocp, :mayer, nothing)
     setproperty!(ocp, :lagrange, nothing)
     if criterion ∈ [ :min, :max ]
@@ -218,7 +269,7 @@ function objective!(ocp::OptimalControlModel, type::Symbol, f::Function, criteri
     if type == :mayer
         setproperty!(ocp, :mayer, f)
     elseif type == :lagrange
-        setproperty!(ocp, :lagrange, f)
+        setproperty!(ocp, :lagrange, LagrangeFunction{time_dependence}(f))
     else
         error("this objective is not valid")
     end

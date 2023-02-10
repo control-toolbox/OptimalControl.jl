@@ -17,7 +17,7 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer)
         if hasLagrangeCost
             obj = obj + xu[(N+1)*dim_x]
         end
-        return criterion==:min ? obj : -obj
+        return ismin(ocp) ? obj : -obj
     end
 
     # IPOPT constraints
@@ -48,32 +48,34 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer)
         # state equation
         index = 1 # counter for the constraints
         for i in 0:N-1
+            ti = t0 + i*h
+            tip1 = t0 + i*h + h
             # state and control at the current state
             xi = get_state_at_time_step(xu, i, dim_x, N)
             xip1 = get_state_at_time_step(xu, i+1, dim_x, N)
             ui = get_control_at_time_step(xu, i, dim_x, N, m)
             uip1 = get_control_at_time_step(xu, i+1, dim_x, N, m)
             # state equation
-            c[index:index+dim_x-1] = xip1 - (xi + 0.5*h*(f_Mayer(xi, ui)+f_Mayer(xip1, uip1)))
+            c[index:index+dim_x-1] = xip1 - (xi + 0.5*h*(f_Mayer(ti, xi, ui)+f_Mayer(tip1, xip1, uip1)))
             index = index + dim_x
             if has_ξ
-                c[index:index+dim_ξ-1] = ξ[2](ui)        # ui vector
+                c[index:index+dim_ξ-1] = ξ[2](ti, ui)        # ui vector
                 index = index + dim_ξ
             end
             if has_ψ
-                c[index:index+dim_ψ-1] = ψ[2](xi[1:n_x], ui)        # ui vector
+                c[index:index+dim_ψ-1] = ψ[2](ti, xi[1:n_x], ui)        # ui vector
                 index = index + dim_ψ
             end
         end
         if has_ξ
             uf = get_control_at_time_step(xu, N, dim_x, N, m)
-            c[index:index+dim_ξ-1] = ξ[2](uf)      
+            c[index:index+dim_ξ-1] = ξ[2](tf, uf)      
             index = index + dim_ξ
           end  
         if has_ψ
             xf = get_state_at_time_step(xu, N, dim_x, N)
             uf = get_control_at_time_step(xu, N-1, dim_x, N, m)
-            c[index:index+dim_ψ-1] = ψ[2](xf, uf)        # ui is false because Euler
+            c[index:index+dim_ψ-1] = ψ[2](tf, xf, uf)        # ui is false because Euler
             index = index + dim_ψ
         end
 
@@ -81,7 +83,7 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer)
         # -------------------
         x0 = get_state_at_time_step(xu, 0, dim_x, N)
         xf = get_state_at_time_step(xu, N, dim_x, N)
-        c[index:index+dim_ϕ-1] = ϕ[2](t0,x0[1:n_x],tf,xf[1:n_x])  # because Lagrange cost possible
+        c[index:index+dim_ϕ-1] = ϕ[2](t0, x0[1:n_x], tf, xf[1:n_x])  # because Lagrange cost possible
         index = index + dim_ϕ
         if hasLagrangeCost
             c[index] = xu[dim_x]
