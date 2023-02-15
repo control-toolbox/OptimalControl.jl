@@ -164,7 +164,7 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer, init=nothing)
 
         if init === nothing
             # default initialization
-            xu0 = 0.1*ones(dim_xu)
+            xu0 = 1.1*ones(dim_xu)
         else
             if length(init) != (n_x + m)
                 error("vector for initialization should be of size n+m",n_x+m)
