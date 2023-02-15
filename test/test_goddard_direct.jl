@@ -22,9 +22,9 @@ control!(ocp, 1) # control dim
 
 constraint!(ocp, :initial, x0) # vectorial equality
 constraint!(ocp, :control, u -> u[1], 0., 1.) # constraints can be labeled or not
-constraint!(ocp, :state, (x, u) -> x[1], r0, Inf, :state_con1)       # epsilon car sinon adjoint state at 0 false because the state is r0 touch the constraint at 0
-constraint!(ocp, :state, (x, u) -> x[2], 0., vmax, :state_con2)
-constraint!(ocp, :state, (x, u) -> x[3], mf, m0, :state_con3)        
+constraint!(ocp, :mixed, (x, u) -> x[1], r0, Inf, :state_con1)       # epsilon car sinon adjoint state at 0 false because the state is r0 touch the constraint at 0
+constraint!(ocp, :mixed, (x, u) -> x[2], 0., vmax, :state_con2)
+constraint!(ocp, :mixed, (x, u) -> x[3], mf, m0, :state_con3)        
 
 objective!(ocp, :mayer,  (t0, x0, tf, xf) -> xf[1], :max)
 
@@ -47,7 +47,7 @@ end
 
 constraint!(ocp, :dynamics, f)
 
-sol = solve(ocp, grid_size=10)
+sol = solve(ocp, grid_size=10, print_level=0)
 
 @test objective(sol) ≈ -1.0 atol=1e-1
 @test constraints_violation(sol) < 1e-6

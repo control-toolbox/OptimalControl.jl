@@ -23,8 +23,8 @@ objective!(ocp, :lagrange, (x, u) -> 0.5u[1]^2) # default is to minimise
 init = [1., 0.5, 0.3]
 
 # solve
-#sol = solve(ocp, grid_size=10, print_level=5, display=false)
-sol = solve(ocp, grid_size=10, print_level=5, display=false, init=init)
+#sol = solve(ocp, grid_size=10, print_level=5)
+sol = solve(ocp, grid_size=10, print_level=5, init=init)
 
 
 # plot

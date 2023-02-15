@@ -26,7 +26,7 @@ function makeH(f::DynamicsFunction, u::ControlFunction, f⁰::LagrangeFunction, 
     return H
 end
 
-function HamiltonianFlows.Flow(ocp::OptimalControlModel{time_dependence}, u_::Function) where {time_dependence}
+function Flow(ocp::OptimalControlModel{time_dependence}, u_::Function) where {time_dependence}
 
     p⁰ = -1.
     f  = dynamics(ocp)
@@ -45,7 +45,7 @@ function HamiltonianFlows.Flow(ocp::OptimalControlModel{time_dependence}, u_::Fu
 
 end
 
-function HamiltonianFlows.Flow(ocp::OptimalControlModel{time_dependence}, u_::Function, g_::Function, μ_::Function) where {time_dependence}
+function Flow(ocp::OptimalControlModel{time_dependence}, u_::Function, g_::Function, μ_::Function) where {time_dependence}
 
     p⁰ = -1.
     f  = dynamics(ocp)

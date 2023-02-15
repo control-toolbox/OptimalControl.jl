@@ -118,7 +118,7 @@ init_, grid_ = CTOptimizationInit(t0, tf, m, sol, T2, __init_interpolation())
 
 # init=u, grid=nothing => init=u(T), grid=T=range(t0, tf, N), with N=__grid_size_direct_shooting()
 u_init(t) = [u_sol(t)-1.0]
-init_, grid_ = CTOptimizationInit(t0, tf, m, u_init, nothing)
+init_, grid_ = CTOptimizationInit(t0, tf, m, u_init, nothing, __init_interpolation())
 @test init_ ≈ convert_init([[u_sol(grid_[i])-1.0] for i = 1:__grid_size_direct_shooting()-1]) atol=1e-4
 @test grid_ == __grid(t0, tf)
 
@@ -126,13 +126,13 @@ init_, grid_ = CTOptimizationInit(t0, tf, m, u_init, nothing)
 u_init(t) = [u_sol(t)-1.0]
 N = floor(Int64, __grid_size_direct_shooting()/2)
 T = range(t0, tf, N)
-init_, grid_ = CTOptimizationInit(t0, tf, m, u_init, T)
+init_, grid_ = CTOptimizationInit(t0, tf, m, u_init, T, __init_interpolation())
 @test init_ ≈ convert_init([[u_sol(T[i])-1.0] for i = 1:N-1]) atol=1e-4
 @test grid_ == T
 
-@test_throws InconsistentArgument CTOptimizationInit(t0, tf, m, u_init, range(t0-1, tf, N))
-@test_throws InconsistentArgument CTOptimizationInit(t0, tf, m, u_init, range(t0, tf+1, N))
-@test_throws InconsistentArgument CTOptimizationInit(t0, tf, m, u_init, range(tf, t0, N))
+@test_throws InconsistentArgument CTOptimizationInit(t0, tf, m, u_init, range(t0-1, tf, N), __init_interpolation())
+@test_throws InconsistentArgument CTOptimizationInit(t0, tf, m, u_init, range(t0, tf+1, N), __init_interpolation())
+@test_throws InconsistentArgument CTOptimizationInit(t0, tf, m, u_init, range(tf, t0, N), __init_interpolation())
 
 # --------------------------------------------------------------------------------------------------
 # resolution

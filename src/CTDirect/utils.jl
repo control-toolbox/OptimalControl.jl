@@ -38,7 +38,7 @@ function direct_infos(ocp::OptimalControlModel, N::Integer)
     # dynamics
     f = ocp.dynamics
     # constraints
-    ξ, ψ, ϕ = OptimalControl.nlp_constraints(ocp)
+    ξ, ψ, ϕ = nlp_constraints(ocp)
     dim_ξ = length(ξ[1])      # dimension of the boundary constraints
     dim_ψ = length(ψ[1])
     dim_ϕ = length(ϕ[1])

@@ -21,7 +21,7 @@ end
 
 TBW
 """
-function model(x0, T, U, f)
+function model_primal_forward(x0, T, U, f)
     xₙ = x0
     X = [xₙ]
     for n in range(1, length(T) - 1)
@@ -37,7 +37,7 @@ end
 
 TBW
 """
-function adjoint(xₙ, pₙ, T, U, f)
+function model_adjoint_backward(xₙ, pₙ, T, U, f)
     X = [xₙ]
     P = [pₙ]
     for n in range(length(T), 2, step=-1)
