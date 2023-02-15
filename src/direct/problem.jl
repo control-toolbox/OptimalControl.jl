@@ -1,8 +1,4 @@
-function ADNLProblem(ocp::OptimalControlModel, N::Integer)
-
-    # +++todo: add optional arguments x_init and u_init
-    # if present init_type is set to "constant_variables"
-    init_type = "default"
+function ADNLProblem(ocp::OptimalControlModel, N::Integer, init=nothing)
 
     # direct_infos
     t0, tf_, n_x, m, f, ξ, ψ, ϕ, dim_ξ, dim_ψ, dim_ϕ, 
@@ -146,13 +142,50 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer)
         return l_var, u_var
     end
 
-    # todo: pass optional constant init to ADNLProblem()
+    # generate initial guess
+    function set_state_at_time_step!(x, i, dim_x, N, xu)
+        if i > N
+            error("trying to set x(t_i) for i > N")
+        else
+            xu[1+i*dim_x:(i+1)*dim_x] = x[1:dim_x]
+        end
+    end
+    
+    function set_control_at_time_step!(u, i, dim_x, N, m, xu)
+        if i > N
+            error("trying to set (t_i) for i > N")
+        else
+            xu[1+(N+1)*dim_x+i*m:m+(N+1)*dim_x+i*m] = u[1:m]
+        end
+    end
+
     function initial_guess()
-        if init_type == "default"
+        #println("Initialization: ", init)
+
+        if init === nothing
             # default initialization
             xu0 = 1.1*ones(dim_xu)
-        elseif init_type == "constant_variables"
-            xu0 = constant_init(dim_x, m, N, dim_xu, x_init, u_init)
+        else
+            if length(init) != (n_x + m)
+                error("vector for initialization should be of size n+m",n_x+m)
+            end
+            # split state / control
+            x_init = zeros(dim_x)
+            x_init[1:n_x] = init[1:n_x]
+            u_init = zeros(m)
+            u_init[1:m] = init[n_x+1:n_x+m]
+            
+            # mayer -> lagrange additional state
+            if hasLagrangeCost
+                x_init[dim_x] = 0.1
+            end
+
+            # constant initialization
+            xu0 = zeros(dim_xu)
+            for i in 0:N
+                set_state_at_time_step!(x_init, i, dim_x, N, xu0)
+                set_control_at_time_step!(u_init, i, dim_x, N, m, xu0)
+            end
         end
         return xu0
     end

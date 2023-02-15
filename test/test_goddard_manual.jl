@@ -47,6 +47,10 @@ end
 
 constraint!(ocp, :dynamics, f)
 
-sol = solve(ocp, 20)
+# initial guess (constant state and control functions)
+init = [1.01, 0.25, 0.5, 0.4]
+
+#sol = solve(ocp, grid_size=20, print_level=5, display=false)
+sol = solve(ocp, grid_size=20, print_level=5, display=false, init=init)
 
 plot(sol)

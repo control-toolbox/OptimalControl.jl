@@ -19,8 +19,13 @@ B = [ 0.0
 constraint!(ocp, :dynamics, (x, u) -> A*x + B*u[1])
 objective!(ocp, :lagrange, (x, u) -> 0.5u[1]^2) # default is to minimise
 
+# initial guess (constant state and control functions)
+init = [1., 0.5, 0.3]
+
 # solve
-sol = solve(ocp,30)
+#sol = solve(ocp, grid_size=10, print_level=5, display=false)
+sol = solve(ocp, grid_size=10, print_level=5, display=false, init=init)
+
 
 # plot
 plot(sol)

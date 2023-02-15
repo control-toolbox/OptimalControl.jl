@@ -3,6 +3,7 @@ function solve(ocp::OptimalControlModel, algo::Direct, method::Description;
   print_level::Integer=__print_level_ipopt(),
   mu_strategy::String=__mu_strategy_ipopt(),
   display::Bool=__display(),
+  init=nothing,  #NB. for now, can be nothing or (n+m) vector
   kwargs...)
   """
     Solve the optimal control problem
@@ -21,7 +22,8 @@ function solve(ocp::OptimalControlModel, algo::Direct, method::Description;
   print_level = display ?  0 : print_level
 
   # from OCP to NLP
-  nlp = ADNLProblem(ocp, grid_size)
+  nlp = ADNLProblem(ocp, grid_size, init)
+  #println("nlp x0:", nlp.meta.x0)
 
   # solve by IPOPT
   ipopt_solution = ipopt(nlp, print_level=print_level, mu_strategy=mu_strategy; kwargs...)
