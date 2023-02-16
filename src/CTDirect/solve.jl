@@ -5,6 +5,7 @@ function direct_solve(ocp::OptimalControlModel,
   print_level::Integer=__print_level_ipopt(),
   mu_strategy::String=__mu_strategy_ipopt(),
   display::Bool=__display(),
+  init=nothing,  #NB. for now, can be nothing or (n+m) vector
   kwargs...)
   """
     Solve the optimal control problem
@@ -23,7 +24,8 @@ function direct_solve(ocp::OptimalControlModel,
   print_level = display ?  print_level : 0
 
   # from OCP to NLP
-  nlp = ADNLProblem(ocp, grid_size)
+  nlp = ADNLProblem(ocp, grid_size, init)
+  #println("nlp x0:", nlp.meta.x0)
 
   # solve by IPOPT: more info at 
   # https://github.com/JuliaSmoothOptimizers/NLPModelsIpopt.jl/blob/main/src/NLPModelsIpopt.jl#L119

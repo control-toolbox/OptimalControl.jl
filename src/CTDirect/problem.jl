@@ -1,4 +1,4 @@
-function ADNLProblem(ocp::OptimalControlModel, N::Integer)
+function ADNLProblem(ocp::OptimalControlModel, N::Integer, init=nothing)
 
     # direct_infos
     t0, tf_, n_x, m, f, ξ, ψ, ϕ, dim_ξ, dim_ψ, dim_ϕ, 
@@ -94,7 +94,7 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer)
     end
 
     # bounds for the constraints
-    function  ipopt_l_u_b()
+    function  constraints_bounds()
         lb = zeros(nc)
         ub = zeros(nc)
         index = 1 # counter for the constraints
@@ -134,17 +134,75 @@ function ADNLProblem(ocp::OptimalControlModel, N::Integer)
         return lb, ub
     end
 
-    # todo: init a changer
-    xu0 = 1.1*ones(dim_xu)
+    # todo: retrieve optional bounds from ocp parsed constraints
+    function variables_bounds()
+        # unbounded case
+        l_var = -Inf*ones(dim_xu)
+        u_var = Inf*ones(dim_xu)
+        return l_var, u_var
+    end
 
-    l_var = -Inf*ones(dim_xu)
-    u_var = Inf*ones(dim_xu)
+    # generate initial guess
+    function set_state_at_time_step!(x, i, dim_x, N, xu)
+        if i > N
+            error("trying to set x(t_i) for i > N")
+        else
+            xu[1+i*dim_x:(i+1)*dim_x] = x[1:dim_x]
+        end
+    end
+    
+    function set_control_at_time_step!(u, i, dim_x, N, m, xu)
+        if i > N
+            error("trying to set (t_i) for i > N")
+        else
+            xu[1+(N+1)*dim_x+i*m:m+(N+1)*dim_x+i*m] = u[1:m]
+        end
+    end
+
+    function initial_guess()
+        #println("Initialization: ", init)
+
+        if init === nothing
+            # default initialization
+            xu0 = 1.1*ones(dim_xu)
+        else
+            if length(init) != (n_x + m)
+                error("vector for initialization should be of size n+m",n_x+m)
+            end
+            # split state / control
+            x_init = zeros(dim_x)
+            x_init[1:n_x] = init[1:n_x]
+            u_init = zeros(m)
+            u_init[1:m] = init[n_x+1:n_x+m]
+            
+            # mayer -> lagrange additional state
+            if hasLagrangeCost
+                x_init[dim_x] = 0.1
+            end
+
+            # constant initialization
+            xu0 = zeros(dim_xu)
+            for i in 0:N
+                set_state_at_time_step!(x_init, i, dim_x, N, xu0)
+                set_control_at_time_step!(u_init, i, dim_x, N, m, xu0)
+            end
+        end
+        return xu0
+    end
+
+    # variables bounds   
+    l_var, u_var = variables_bounds()
+
+    # initial guess
+    xu0 = initial_guess()
+
+    # free final time case
     if has_free_final_time
       xu0[end] = 1.0
       l_var[end] = 1.e-3
     end
 
-    lb, ub = ipopt_l_u_b()
+    lb, ub = constraints_bounds()
 
     nlp = ADNLPModel(ipopt_objective, xu0, l_var, u_var, ipopt_constraint, lb, ub)    
 

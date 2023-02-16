@@ -4,7 +4,7 @@ function get_state_at_time_step(xu, i, dim_x, N)
         x(t_i)
     """
     if i > N
-        error("trying to access at x(t_i) for i > N")
+        error("trying to get x(t_i) for i > N")
     end  
     return xu[1+i*dim_x:(i+1)*dim_x]
 end
@@ -15,7 +15,7 @@ function get_control_at_time_step(xu, i, dim_x, N, m)
         u(t_i)
     """
     if i > N
-        error("trying to access at (t_i) for i > N")
+        error("trying to get (t_i) for i > N")
     end
     return xu[1+(N+1)*dim_x+i*m:m+(N+1)*dim_x+i*m]
 end
