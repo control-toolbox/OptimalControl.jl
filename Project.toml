@@ -5,6 +5,9 @@ version = "0.2.0"
 
 [deps]
 ADNLPModels = "54578032-b7ea-4c30-94aa-7cbd1cce6c9a"
+CTBase = "54762871-cc72-4466-b8e8-f6c8b58076cd"
+CTDirect = "790bbbee-bee9-49ee-8912-a9de031322d5"
+CTDirectShooting = "e0e6c04b-5022-4cd2-bea2-4a09fff39444"
 CTOptimization = "22f08de8-270f-4470-8fba-397dbc90d8e0"
 ControlToolboxTools = "3a0bcf43-9180-47f3-913c-e71e0d69f39f"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
