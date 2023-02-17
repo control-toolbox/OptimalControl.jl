@@ -26,9 +26,9 @@ function solve(prob::OptimalControlModel, description...;
     # if no error before, then the method is correct: no need of else
     if :direct ∈ method
         if :shooting ∈ method
-            return direct_shooting_solve(prob, clean(method); display=display, kwargs...)
+            return CTDirectShooting.solve(prob, clean(method); display=display, kwargs...)
         else
-            return direct_solve(prob, clean(method); display=display, kwargs...)
+            return CTDirect.solve(prob, clean(method); display=display, kwargs...)
         end
     end
 end
