@@ -3,6 +3,7 @@ using Test
 using Plots
 using LinearAlgebra
 using MINPACK
+using CTProblemLibrary
 
 # functions and types that are not exported
 
@@ -21,11 +22,8 @@ const __display = OptimalControl.CTBase.__display
 #
 @testset verbose = true showtiming = true "Optimal control tests" begin
     for name in (
-        #"utils", 
-        #"direct_shooting_CTOptimization", # unconstrained direct simple shooting
-        "basic",
-        #"goddard_direct",
-        #"goddard_indirect",
+        "goddard_direct",
+        "goddard_indirect",
         )
         @testset "$name" begin
             include("test_$name.jl")

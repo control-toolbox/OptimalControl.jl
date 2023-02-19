@@ -40,9 +40,6 @@ constraint!(ocp, :dynamics, f)
 @test ocp.initial_time == t0
 
 # --------------------------------------------------------
-# Direct
-
-# --------------------------------------------------------
 # Indirect
 
 # Bang controls
