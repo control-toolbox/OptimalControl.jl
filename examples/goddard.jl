@@ -4,7 +4,8 @@
 
 using OptimalControl
 using Plots
-unicodeplots()
+#unicodeplots()
+ENV["GKSwstype"]="nul" # no plot display on stdout
 
 # Parameters
 const Cd = 310
@@ -51,8 +52,10 @@ f(x, u) = F0(x) + u[1]*F1(x)
 constraint!(ocp, :dynamics, f)
 
 # Solve
-sol = solve(ocp)
+N = 30
+sol = solve(ocp, grid_size=N)
 plot(sol)
+savefig("sol-direct.pdf")
 
 ## Indirect solve
 
@@ -101,7 +104,7 @@ function shoot!(s, p0, t1, t2, t3, tf) # B+ S C B0 structure
 end
 
 # Initialisation from direct solution
-t = sol.T; t = (t[1:end-1] + t[2:end]) / 2
+t = sol.T; N = length(t)-1; t = (t[1:end-1] + t[2:end]) / 2
 x = [ sol.X[i, 1:3] for i ∈ 1:N+1 ]; x = (x[1:end-1] + x[2:end]) / 2
 u = [ sol.U[i, 1  ] for i ∈ 1:N+1 ]; u = (u[1:end-1] + u[2:end]) / 2
 p = [ sol.P[i, 1:3] for i ∈ 1:N   ]
@@ -143,4 +146,5 @@ m_plot = plot(sol, idxs=(0, 3), xlabel="t", label="m")
 pr_plot = plot(sol, idxs=(0, 4), xlabel="t", label="p_r")
 pv_plot = plot(sol, idxs=(0, 5), xlabel="t", label="p_v")
 pm_plot = plot(sol, idxs=(0, 6), xlabel="t", label="p_m")
-plot(r_plot, pr_plot, v_plot, pv_plot, m_plot, pv_plot, layout=(3, 2))
+plot(r_plot, pr_plot, v_plot, pv_plot, m_plot, pm_plot, layout=(3, 2))
+savefig("sol-indirect.pdf")
