@@ -51,7 +51,8 @@ f(x, u) = F0(x) + u[1]*F1(x)
 constraint!(ocp, :dynamics, f)
 
 # Solve
-sol = solve(ocp)
+N = 30
+sol = solve(ocp, grid_size=N)
 plot(sol)
 
 ## Indirect solve
