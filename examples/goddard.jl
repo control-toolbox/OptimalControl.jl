@@ -4,7 +4,8 @@
 
 using OptimalControl
 using Plots
-unicodeplots()
+#unicodeplots()
+ENV["GKSwstype"]="nul" # no plot display on stdout
 
 # Parameters
 const Cd = 310
@@ -54,6 +55,7 @@ constraint!(ocp, :dynamics, f)
 N = 30
 sol = solve(ocp, grid_size=N)
 plot(sol)
+savefig("sol-direct.pdf")
 
 ## Indirect solve
 
@@ -145,3 +147,4 @@ pr_plot = plot(sol, idxs=(0, 4), xlabel="t", label="p_r")
 pv_plot = plot(sol, idxs=(0, 5), xlabel="t", label="p_v")
 pm_plot = plot(sol, idxs=(0, 6), xlabel="t", label="p_m")
 plot(r_plot, pr_plot, v_plot, pv_plot, m_plot, pm_plot, layout=(3, 2))
+savefig("sol-indirect.pdf")
