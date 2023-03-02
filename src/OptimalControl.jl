@@ -19,9 +19,13 @@ const __display = CTBase.__display
 include("flows.jl")
 include("solve.jl")
 
+# ----------------------------------------
+# to remove when put in the right package
+include("CTBase.jl")
+# ----------------------------------------
+
 # export functions only for user
 export solve
-export plot, plot!
 export Flow
 
 end

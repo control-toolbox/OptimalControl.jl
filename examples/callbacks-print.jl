@@ -18,8 +18,8 @@ A = [ 0 1
       0 0 ]
 B = [ 0
       1 ]
-constraint!(ocp, :dynamics, (x, u) -> A*x + B*u[1])
-objective!(ocp, :lagrange, (x, u) -> 0.5u[1]^2)
+constraint!(ocp, :dynamics, (x, u) -> A*x + B*u)
+objective!(ocp, :lagrange, (x, u) -> 0.5u^2)
 
 # replace default callback
 function myprint(i, sᵢ, dᵢ, Uᵢ, gᵢ, fᵢ)
@@ -52,4 +52,4 @@ function myprint3(i, sᵢ, dᵢ, xᵢ, gᵢ, fᵢ)
     old_f = fᵢ
 end
 cbs = (PrintCallback(myprint3, priority=0),)
-sol = solve(ocp, :direct, :shooting, callbacks=cbs);
+sol = solve(ocp, :direct, :shooting, callbacks=cbs)

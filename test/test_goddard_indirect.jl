@@ -17,7 +17,7 @@ time!(ocp, :initial, t0) # if not provided, final time is free
 state!(ocp, 3) # state dim
 control!(ocp, 1) # control dim
 constraint!(ocp, :initial, x0)
-constraint!(ocp, :control, u -> u[1], 0., 1.)
+constraint!(ocp, :control, u -> u, 0., 1.)
 constraint!(ocp, :mixed, (x, u) -> x[1], r0, Inf, :state_con1)
 constraint!(ocp, :mixed, (x, u) -> x[2], 0., vmax, :state_con2)
 constraint!(ocp, :mixed, (x, u) -> x[3], m0, mf, :state_con3)
@@ -27,15 +27,15 @@ objective!(ocp, :mayer,  (t0, x0, tf, xf) -> xf[1], :max)
 D(x) = Cd * x[2]^2 * exp(-β*(x[1]-1))
 F0(x) = [ x[2], -D(x)/x[3]-1/x[1]^2, 0 ]
 F1(x) = [ 0, Tmax/x[3], -b*Tmax ]
-f(x, u) = F0(x) + u[1]*F1(x)
+f(x, u) = F0(x) + u*F1(x)
 constraint!(ocp, :dynamics, f)
 
 # --------------------------------------------------------
 # Indirect
 
 # Bang controls
-u0(x, p) = [0.]
-u1(x, p) = [1.]
+u0(x, p) = 0.
+u1(x, p) = 1.
 
 # Computation of singular control of order 1
 H0(x, p) = p' * F0(x)
@@ -43,7 +43,7 @@ H1(x, p) = p' * F1(x)
 H01 = Poisson(H0, H1)
 H001 = Poisson(H0, H01)
 H101 = Poisson(H1, H01)
-us(x, p) = [-H001(x, p) / H101(x, p)]
+us(x, p) = -H001(x, p) / H101(x, p)
 
 # Computation of boundary control
 remove_constraint!(ocp, :state_con1)
@@ -51,7 +51,7 @@ remove_constraint!(ocp, :state_con3)
 constraint!(ocp, :boundary, (t0, x0, tf, xf) -> xf[3], mf, :final_con) # one value => equality (not boxed inequality)
 
 g(x) = constraint(ocp, :state_con2, :upper)(x, 0.0) # g(x, u) ≥ 0 (cf. nonnegative multiplier)
-ub(x, _) = [-Ad(F0, g)(x) / Ad(F1, g)(x)]
+ub(x, _) = -Ad(F0, g)(x) / Ad(F1, g)(x)
 μb(x, p) = H01(x, p) / Ad(F1, g)(x)
 
 f0 = Flow(ocp, u0)
