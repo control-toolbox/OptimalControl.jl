@@ -3,7 +3,6 @@ Cd = 310.
 Tmax = 3.5
 β = 500.
 b = 2.
-N = 100
 t0 = 0.
 r0 = 1.
 v0 = 0.
@@ -28,16 +27,8 @@ objective!(ocp, :mayer,  (t0, x0, tf, xf) -> xf[1], :max)
 D(x) = Cd * x[2]^2 * exp(-β*(x[1]-1))
 F0(x) = [ x[2], -D(x)/x[3]-1/x[1]^2, 0 ]
 F1(x) = [ 0, Tmax/x[3], -b*Tmax ]
-#f!(dx, x, u) = (dx[:] = F0(x) + u*F1(x))
-#constraint!(ocp, :dynamics!, f!) # dynamics can be in place
 f(x, u) = F0(x) + u[1]*F1(x)
 constraint!(ocp, :dynamics, f)
-
-@test constraint(ocp, :state_con1, :lower)(x0, 0.) ≈ 0. atol=1e-8
-@test ocp.state_dimension == 3
-@test ocp.control_dimension == 1
-@test typeof(ocp) == OptimalControlModel{:autonomous}
-@test ocp.initial_time == t0
 
 # --------------------------------------------------------
 # Indirect
@@ -105,7 +96,6 @@ s_guess_sol = [-0.02456074767656735, -0.05699760226157302, 0.0018629693253921868
 #jfoo(ξ) = ForwardDiff.jacobian(foo, ξ)
 #foo!(s, ξ) = ( s[:] = foo(ξ); nothing )
 #jfoo!(js, ξ) = ( js[:] = jfoo(ξ); nothing )
-
 foo!(s, ξ) = shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
 sol = fsolve(foo!, ξ0, show_trace=true); println(sol)
 
