@@ -4,6 +4,7 @@
 using OptimalControl
 using Plots
 #unicodeplots()
+ENV["GKSwstype"]="nul" # no plot display on stdout
 
 # Parameters
 const Cd = 310
@@ -50,8 +51,10 @@ f(x, u) = F0(x) + u*F1(x)
 constraint!(ocp, :dynamics, f)
 
 # Solve
-direct_sol = solve(ocp)
+N = 30
+direct_sol = solve(ocp, grid_size=N)
 plot(direct_sol)
+savefig("sol-direct.pdf")
 
 ## Indirect solve
 using MINPACK
@@ -143,3 +146,4 @@ pr_plot = plot(flow_sol, idxs=(0, 4), xlabel="t", label="p_r")
 pv_plot = plot(flow_sol, idxs=(0, 5), xlabel="t", label="p_v")
 pm_plot = plot(flow_sol, idxs=(0, 6), xlabel="t", label="p_m")
 plot(r_plot, pr_plot, v_plot, pv_plot, m_plot, pv_plot, layout=(3, 2), size=(600, 300))
+savefig("sol-indirect.pdf")
