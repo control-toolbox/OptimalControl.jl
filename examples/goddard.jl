@@ -106,15 +106,15 @@ t = direct_sol.times
 x = direct_sol.state
 u = direct_sol.control
 p = direct_sol.adjoint
-φ(t) = H1(x(t), p(t))
+H1(t) = H1(x(t), p(t))
 
 u_plot = plot(t, t -> u(t)[1], xlabel = "t", ylabel = "u", legend = false)
-H1_plot = plot(t, φ, xlabel = "t", ylabel = "H1", legend = false)
+H1_plot = plot(t, H1, xlabel = "t", ylabel = "H1", legend = false)
 g_plot = plot(t, g∘x, xlabel = "t", ylabel = "g", legend = false)
 display(plot(u_plot, H1_plot, g_plot, layout=(3,1), size=(400,300)))
 
 η = 1e-3
-t13 = t[ abs.(φ.(t)) .≤ η ]
+t13 = t[ abs.(H1.(t)) .≤ η ]
 t23 = t[ 0 .≤ (g∘x).(t) .≤ η ]
 p0 = p(t0)
 t1 = min(t13...)
