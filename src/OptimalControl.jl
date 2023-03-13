@@ -9,14 +9,12 @@ using CTDirect
 using CTDirectShooting
 
 # flows
-@reexport using HamiltonianFlows
-import HamiltonianFlows: Flow
+@reexport using CTFlows
 
 # Other declarations
 const __display = CTBase.__display
 
 # resources
-include("flows.jl")
 include("solve.jl")
 
 # ----------------------------------------
@@ -26,6 +24,5 @@ include("CTBase.jl")
 
 # export functions only for user
 export solve
-export Flow
 
 end
