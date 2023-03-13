@@ -1,9 +1,8 @@
 using OptimalControl
 using Test
-using Plots
 using LinearAlgebra
 using MINPACK
-using CTProblemLibrary
+using CTProblems
 
 # functions and types that are not exported
 
