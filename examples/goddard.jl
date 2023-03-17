@@ -31,20 +31,20 @@ ocp = @def begin
     0  ≤ v(t) ≤ vmax,    (2)
     mf ≤ m(t) ≤ m0,      (3)
 
-    ẋ(t) == F₀(x(t)) + u(t)*F₁(x(t))
+    ẋ(t) == F0(x(t)) + u(t)*F1(x(t))
  
     r(tf) -> max
     
 end
 
-function F₀(x)
+function F0(x)
     r, v, m = x
     D = Cd * v^2 * exp(-β*(r - 1))
     F = [ v, -D/m - 1/r^2, 0 ]
     return F
 end
 
-function F₁(x)
+function F1(x)
     r, v, m = x
     F = [ 0, Tmax/m, -b*Tmax ]
     return F
