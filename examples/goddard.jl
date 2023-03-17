@@ -18,7 +18,7 @@ ocp = @def begin
 
     tf, variable
     t ∈ [ t0, tf ], time
-    x ∈ R³,  state
+    x ∈ R³, state
     u ∈ R, control
     
     r = x₁
