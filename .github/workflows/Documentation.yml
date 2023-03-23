@@ -4,7 +4,9 @@ name: Documentation
 on:
   push:
     branches:
-      - doc
+      - main
+    tags: '*'
+  pull_request:
 
 jobs:
   build:
