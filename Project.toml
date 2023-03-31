@@ -11,8 +11,8 @@ CTFlows = "1c39547c-7794-42f7-af83-d98194f657c2"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 
 [compat]
-CTBase = "0.4"
-CTDirect = "0.1"
+CTBase = "0.5"
+CTDirect = "0.2"
 CTDirectShooting = "0.1"
 Reexport = "1.2"
 julia = "1.8"
