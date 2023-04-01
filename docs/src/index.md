@@ -65,15 +65,15 @@ Then, we can define the problem
 
 ```@example main
 ocp = Model()
-state!(ocp, 1)   # dimension of the state
+state!(ocp, 2)   # dimension of the state
 control!(ocp, 1) # dimension of the control
 time!(ocp, [0, 1]) # time interval
 constraint!(ocp, :initial, [-1, 0]) # initial condition
 constraint!(ocp, :final,   [0, 0]) # final condition
 A = [ 0 1
-   0 0 ]
+      0 0 ]
 B = [ 0
-   1 ]
+      1 ]
 constraint!(ocp, :dynamics, (x, u) -> A*x + B*u) # dynamics
 objective!(ocp, :lagrange, (x, u) -> 0.5u^2) # objective
 ```
