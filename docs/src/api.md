@@ -5,6 +5,6 @@ CurrentModule = OptimalControl
 ```
 
 ```@autodocs
-Modules = []
+Modules = [OptimalControl]
 Order = [:module, :type, :function, :macro]
 ```

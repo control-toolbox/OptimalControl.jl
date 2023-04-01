@@ -13,7 +13,13 @@ algorithmes = add(algorithmes, (:direct, :shooting, :descent, :gradient, :bissec
 algorithmes = add(algorithmes, (:direct, :shooting, :descent, :gradient, :backtracking))
 algorithmes = add(algorithmes, (:direct, :shooting, :descent, :gradient, :fixedstep))
 
-function solve(prob::OptimalControlModel, description...; 
+"""
+$(TYPEDSIGNATURES)
+
+Solve the the optimal control problem `ocp`. 
+
+"""
+function solve(ocp::OptimalControlModel, description...; 
     display::Bool=__display(),
     kwargs...)
 
@@ -26,9 +32,9 @@ function solve(prob::OptimalControlModel, description...;
     # if no error before, then the method is correct: no need of else
     if :direct ∈ method
         if :shooting ∈ method
-            return CTDirectShooting.solve(prob, clean(method); display=display, kwargs...)
+            return CTDirectShooting.solve(ocp, clean(method); display=display, kwargs...)
         else
-            return CTDirect.solve(prob, clean(method); display=display, kwargs...)
+            return CTDirect.solve(ocp, clean(method); display=display, kwargs...)
         end
     end
 end

@@ -1,7 +1,19 @@
+"""
+[`OptimalControl`](@ref) module.
+
+Lists all the imported modules and packages:
+
+$(IMPORTS)
+
+List of all the exported names:
+
+$(EXPORTS)
+"""
 module OptimalControl
 
 # using
 using Reexport
+using DocStringExtensions
 
 # include modules
 @reexport using CTBase

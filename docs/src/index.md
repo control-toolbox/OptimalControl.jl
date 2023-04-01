@@ -1,4 +1,4 @@
-# Introduction to the `OptimalControl.jl` package
+# Introduction to the OptimalControl.jl package
 
 The `OptimalControl.jl` package is part of the [control-toolbox ecosystem](https://github.com/control-toolbox). It aims to provide tools to solve optimal control problems by direct and indirect methods. An optimal control problem can be described as minimising the cost functional
 
@@ -64,24 +64,30 @@ using OptimalControl
 Then, we can define the problem
 
 ```@example main
-ocp = Model()
-state!(ocp, 2)   # dimension of the state
-control!(ocp, 1) # dimension of the control
-time!(ocp, [0, 1]) # time interval
-constraint!(ocp, :initial, [-1, 0]) # initial condition
-constraint!(ocp, :final,   [0, 0]) # final condition
+ocp = Model()                                    # the model for the problem definition
+
+state!(ocp, 2)                                   # dimension of the state
+control!(ocp, 1)                                 # dimension of the control
+time!(ocp, [0, 1])                               # time interval
+
+objective!(ocp, :lagrange, (x, u) -> 0.5u^2)     # objective
+
 A = [ 0 1
       0 0 ]
 B = [ 0
       1 ]
 constraint!(ocp, :dynamics, (x, u) -> A*x + B*u) # dynamics
-objective!(ocp, :lagrange, (x, u) -> 0.5u^2) # objective
+
+constraint!(ocp, :initial, [-1, 0])              # initial condition
+constraint!(ocp, :final,   [0, 0])               # final condition
+nothing # hide
 ```
 
 Solve it
 
 ```@example main
 sol = solve(ocp)
+nothing # hide
 ```
 
 and plot the solution
