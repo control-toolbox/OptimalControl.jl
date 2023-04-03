@@ -58,7 +58,6 @@ direct_sol = solve(ocp, grid_size=N)
 # Plot
 plot(direct_sol, size=(700, 900))
 savefig("fig_goddard_direct.png")
-
 md"![fig](fig_goddard_direct.png)"
 
 # Shooting function
@@ -137,5 +136,8 @@ tf = indirect_sol.x[7]
 
 f = f1 * (t1, fs) * (t2, fb) * (t3, f0)
 flow_sol = f((t0, tf), x0, p0)
-
 plot(flow_sol, size=(700, 900))
+savefig("fig_goddard_indirect.png")
+md"![fig](fig_goddard_indirect.png)"
+
+# todo: replace mixed
