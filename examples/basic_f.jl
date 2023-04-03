@@ -1,5 +1,6 @@
 using OptimalControl
 using Markdown
+using Plots
 
 md"""
 
@@ -43,3 +44,5 @@ N = 50
 sol = solve(ocp, grid_size=N)
 plot(sol)
 savefig("fig_basic.png")
+
+md"![fig](fig_basic.png)"
