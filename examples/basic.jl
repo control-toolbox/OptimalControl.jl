@@ -21,24 +21,25 @@ subject to
 t0 = 0
 tf = 1
 
-ocp = Model()
+ocp = @def begin
 
-time!(ocp, [t0, tf])
+    t ∈ [ t0, tf], time
+    x ∈ R^2, state
+    u ∈ R, control
 
-state!(ocp, 2)
-control!(ocp, 1)
+    x(t0) == [ -1, 0 ] 
+    x(tf) == [  0, 0 ] 
 
-constraint!(ocp, :initial, [ -1, 0 ])
-constraint!(ocp, :final,   [  0, 0 ])
+    ẋ(t) == A*x(t) + B*u(t)
+
+    ∫( 0.5u(t)^2 ) → min
+
+end
 
 A = [ 0 1
       0 0 ]
 B = [ 0
       1 ]
-
-constraint!(ocp, :dynamics, (x, u) -> A*x + B*u)
-
-objective!(ocp, :lagrange, (x, u) -> 0.5u^2)
 
 N = 50
 sol = solve(ocp, grid_size=N)
