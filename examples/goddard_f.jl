@@ -57,8 +57,8 @@ direct_sol = solve(ocp, grid_size=N)
 
 # Plot
 plot(direct_sol, size=(700, 900))
-savefig("fig_goddard_direct.png")
-md"![fig](fig_goddard_direct.png)"
+savefig("fig2.png")
+md"![fig](fig2.png)"
 
 # Shooting function
 u0(x, p) = 0.
@@ -109,6 +109,8 @@ u_plot = plot(t, t -> u(t)[1], xlabel = "t", ylabel = "u", legend = false)
 H1_plot = plot(t, H1, xlabel = "t", ylabel = "H1", legend = false)
 g_plot = plot(t, g∘x, xlabel = "t", ylabel = "g", legend = false)
 display(plot(u_plot, H1_plot, g_plot, layout=(3,1), size=(400,300)))
+savefig("fig3.png")
+md"![fig](fig3.png)"
 
 η = 1e-3
 t13 = t[ abs.(H1.(t)) .≤ η ]
@@ -137,7 +139,7 @@ tf = indirect_sol.x[7]
 f = f1 * (t1, fs) * (t2, fb) * (t3, f0)
 flow_sol = f((t0, tf), x0, p0)
 plot(flow_sol, size=(700, 900))
-savefig("fig_goddard_indirect.png")
-md"![fig](fig_goddard_indirect.png)"
+savefig("fig4.png")
+md"![fig](fig4.png)"
 
 # todo: replace mixed
