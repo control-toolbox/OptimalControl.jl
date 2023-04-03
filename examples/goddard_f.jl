@@ -107,7 +107,7 @@ H1(t) = H1(x(t), p(t))
 
 u_plot = plot(t, t -> u(t)[1], xlabel = "t", ylabel = "u", legend = false)
 H1_plot = plot(t, H1, xlabel = "t", ylabel = "H1", legend = false)
-g_plot = plot(t, g∘x, xlabel = "t", ylabel = "g", legend = false)
+g_plot = plot(t, g ∘ x, xlabel = "t", ylabel = "g", legend = false)
 display(plot(u_plot, H1_plot, g_plot, layout=(3,1), size=(400,300)))
 savefig("fig3.png")
 md"![fig](fig3.png)"
