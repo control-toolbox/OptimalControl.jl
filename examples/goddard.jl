@@ -1,4 +1,5 @@
 using OptimalControl
+#using Markdown
 
 # Parameters
 Cd = 310
@@ -51,6 +52,8 @@ function F1(x)
 end
 
 # Solve and plot
-sol = solve(ocp)
+sol = solve(ocp; grid_size=100)
 plot(sol)
 savefig("fig_goddard.png")
+
+md"""![fig](fig_goddard.png)"""

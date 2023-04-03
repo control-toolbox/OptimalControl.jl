@@ -1,10 +1,10 @@
-### Goddard
+# Goddard
 
 ## Direct solve
 using OptimalControl
 using Plots
 
-# Parameters
+### Parameters
 const Cd = 310
 const Tmax = 3.5
 const β = 500
@@ -48,7 +48,7 @@ f(x, u) = F0(x) + u*F1(x)
 
 constraint!(ocp, :dynamics, f)
 
-# Solve
+### Solve
 N = 30
 direct_sol = solve(ocp, grid_size=N)
 plot(direct_sol)
@@ -57,11 +57,11 @@ savefig("sol-direct.png")
 ## Indirect solve
 using MINPACK
 
-# Bang controls
+### Bang controls
 u0(x, p) = 0.
 u1(x, p) = 1.
 
-# Computation of singular control of order 1
+### Computation of singular control of order 1
 H0(x, p) = p' * F0(x)
 H1(x, p) = p' * F1(x)
 H01 = Poisson(H0, H1)
@@ -69,11 +69,11 @@ H001 = Poisson(H0, H01)
 H101 = Poisson(H1, H01)
 us(x, p) = -H001(x, p) / H101(x, p)
 
-# Computation of boundary control
+### Computation of boundary control
 remove_constraint!(ocp, :eq1)
 remove_constraint!(ocp, :eq3)
 constraint!(ocp, :boundary, (t0, x0, tf, xf) -> xf[3], mf, :eq4) # one value => equality (not boxed inequality); changed to equality constraint for shooting
-#
+
 g(x) = constraint(ocp, :eq2, :upper)(x, 0) # g(x, u) ≥ 0 (cf. nonnegative multiplier)
 ub(x, _) = -Ad(F0, g)(x) / Ad(F1, g)(x)
 μb(x, p) = H01(x, p) / Ad(F1, g)(x)
@@ -83,7 +83,7 @@ f1 = Flow(ocp, u1)
 fs = Flow(ocp, us)
 fb = Flow(ocp, ub, (x, _) -> g(x), μb)
 
-# Shooting function
+### Shooting function
 function shoot!(s, p0, t1, t2, t3, tf) # B+ S C B0 structure
 
     x1, p1 = f1(t0, x0, p0, t1)
@@ -99,7 +99,7 @@ function shoot!(s, p0, t1, t2, t3, tf) # B+ S C B0 structure
 
 end
 
-# Initialisation from direct solution
+### Initialisation from direct solution
 t = direct_sol.times
 x = direct_sol.state
 u = direct_sol.control
@@ -123,12 +123,12 @@ tf = t[end]
 
 println("Initial guess:\n", ξ)
 
-# Solve
+### Solve
 nle = (s, ξ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
 indirect_sol = fsolve(nle, ξ, show_trace=true)
 println(indirect_sol)
 
-# Plots
+### Plots
 p0 = indirect_sol.x[1:3]
 t1 = indirect_sol.x[4]
 t2 = indirect_sol.x[5]
