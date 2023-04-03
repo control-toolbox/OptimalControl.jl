@@ -142,4 +142,4 @@ plot(flow_sol, size=(700, 900))
 savefig("fig4.png")
 md"![fig](fig4.png)"
 
-# todo: replace mixed
+# todo: replace mixed, rename figs (basic_fig, goddard_fig1...)
