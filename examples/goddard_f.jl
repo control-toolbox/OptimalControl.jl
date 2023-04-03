@@ -1,10 +1,14 @@
-# Goddard
-
-## Direct solve
 using OptimalControl
+using MINPACK
+using Markdown
 using Plots
 
-### Parameters
+md"""
+
+# Goddard problem
+"""
+
+# Parameters
 const Cd = 310
 const Tmax = 3.5
 const β = 500
@@ -17,51 +21,50 @@ m0 = 1
 mf = 0.6
 x0 = [ r0, v0, m0 ]
 
+# Model
 ocp = Model()
 
-time!(ocp, :initial, t0) # if not provided, final time is free
-state!(ocp, 3) # state dim
-control!(ocp, 1) # control dim
+time!(ocp, :initial, t0)
+state!(ocp, 3, [ "r", "v", "m" ])
+control!(ocp, 1)
 
 constraint!(ocp, :initial, x0)
-constraint!(ocp, :control, u -> u[1], 0, 1) # constraints can be labeled or not
+constraint!(ocp, :control, 0, 1)
 constraint!(ocp, :mixed, (x, u) -> x[1], r0, Inf,  :eq1)
 constraint!(ocp, :mixed, (x, u) -> x[2], 0, vmax,  :eq2)
 constraint!(ocp, :mixed, (x, u) -> x[3], mf, m0,   :eq3)
 
+constraint!(ocp, :dynamics, (x, u) ->  F0(x) + u*F1(x))
+
 objective!(ocp, :mayer,  (t0, x0, tf, xf) -> xf[1], :max)
 
-function F0(x)
+F0(x) = begin
     r, v, m = x
     D = Cd * v^2 * exp(-β*(r - 1))
     F = [ v, -D/m - 1/r^2, 0 ]
     return F
 end
 
-function F1(x)
+F1(x) = begin
     r, v, m = x
     F = [ 0, Tmax/m, -b*Tmax ]
     return F
 end
 
-f(x, u) = F0(x) + u*F1(x)
-
-constraint!(ocp, :dynamics, f)
-
-### Solve
-N = 30
+# Direct solve
+N = 100
 direct_sol = solve(ocp, grid_size=N)
-plot(direct_sol)
-savefig("sol-direct.png")
 
-## Indirect solve
-using MINPACK
+# Plot
+plot(direct_sol, size=(700, 900))
+savefig("fig_goddard_direct.png")
 
-### Bang controls
+md"![fig](fig_goddard_direct.png)"
+
+# Shooting function
 u0(x, p) = 0.
 u1(x, p) = 1.
 
-### Computation of singular control of order 1
 H0(x, p) = p' * F0(x)
 H1(x, p) = p' * F1(x)
 H01 = Poisson(H0, H1)
@@ -69,12 +72,10 @@ H001 = Poisson(H0, H01)
 H101 = Poisson(H1, H01)
 us(x, p) = -H001(x, p) / H101(x, p)
 
-### Computation of boundary control
 remove_constraint!(ocp, :eq1)
 remove_constraint!(ocp, :eq3)
-constraint!(ocp, :boundary, (t0, x0, tf, xf) -> xf[3], mf, :eq4) # one value => equality (not boxed inequality); changed to equality constraint for shooting
-
-g(x) = constraint(ocp, :eq2, :upper)(x, 0) # g(x, u) ≥ 0 (cf. nonnegative multiplier)
+constraint!(ocp, :boundary, (t0, x0, tf, xf) -> xf[3], mf, :eq4)
+g(x) = vmax - constraint(ocp, :eq2)(x, 0)
 ub(x, _) = -Ad(F0, g)(x) / Ad(F1, g)(x)
 μb(x, p) = H01(x, p) / Ad(F1, g)(x)
 
@@ -83,14 +84,13 @@ f1 = Flow(ocp, u1)
 fs = Flow(ocp, us)
 fb = Flow(ocp, ub, (x, _) -> g(x), μb)
 
-### Shooting function
-function shoot!(s, p0, t1, t2, t3, tf) # B+ S C B0 structure
+shoot!(s, p0, t1, t2, t3, tf) = begin
 
     x1, p1 = f1(t0, x0, p0, t1)
     x2, p2 = fs(t1, x1, p1, t2)
     x3, p3 = fb(t2, x2, p2, t3)
     xf, pf = f0(t3, x3, p3, tf)
-    s[1] = constraint(ocp, :eq4)(t0, x0, tf, xf)
+    s[1] = constraint(ocp, :eq4)(t0, x0, tf, xf) - mf
     s[2:3] = pf[1:2] - [ 1, 0 ]
     s[4] = H1(x1, p1)
     s[5] = H01(x1, p1)
@@ -99,7 +99,7 @@ function shoot!(s, p0, t1, t2, t3, tf) # B+ S C B0 structure
 
 end
 
-### Initialisation from direct solution
+# Initialisation from direct solution
 t = direct_sol.times
 x = direct_sol.state
 u = direct_sol.control
@@ -123,25 +123,19 @@ tf = t[end]
 
 println("Initial guess:\n", ξ)
 
-### Solve
+# Indirect solve
 nle = (s, ξ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
 indirect_sol = fsolve(nle, ξ, show_trace=true)
 println(indirect_sol)
 
-### Plots
+# Plot
 p0 = indirect_sol.x[1:3]
 t1 = indirect_sol.x[4]
 t2 = indirect_sol.x[5]
 t3 = indirect_sol.x[6]
 tf = indirect_sol.x[7]
 
-f1sb0 = f1 * (t1, fs) * (t2, fb) * (t3, f0) # concatenation of the Hamiltonian flows
-flow_sol = f1sb0((t0, tf), x0, p0)
-r_plot = plot(flow_sol, idxs=(0, 1), xlabel="t", label="r")
-v_plot = plot(flow_sol, idxs=(0, 2), xlabel="t", label="v")
-m_plot = plot(flow_sol, idxs=(0, 3), xlabel="t", label="m")
-pr_plot = plot(flow_sol, idxs=(0, 4), xlabel="t", label="p_r")
-pv_plot = plot(flow_sol, idxs=(0, 5), xlabel="t", label="p_v")
-pm_plot = plot(flow_sol, idxs=(0, 6), xlabel="t", label="p_m")
-plot(r_plot, pr_plot, v_plot, pv_plot, m_plot, pv_plot, layout=(3, 2), size=(600, 300))
-savefig("sol-indirect.png")
+f = f1 * (t1, fs) * (t2, fb) * (t3, f0)
+flow_sol = f((t0, tf), x0, p0)
+
+plot(flow_sol, size=(700, 900))

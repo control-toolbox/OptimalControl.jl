@@ -18,9 +18,11 @@ subject to
 ```
 """
 
+# Parameters
 t0 = 0
 tf = 1
 
+# Model
 ocp = @def begin
 
     t ∈ [ t0, tf], time
@@ -41,8 +43,11 @@ A = [ 0 1
 B = [ 0
       1 ]
 
+# Solve
 N = 50
 sol = solve(ocp, grid_size=N)
+
+# Plot
 plot(sol)
 savefig("fig_basic.png")
 
