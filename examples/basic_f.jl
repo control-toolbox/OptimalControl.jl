@@ -47,5 +47,5 @@ sol = solve(ocp, grid_size=N)
 
 # Plot
 plot(sol)
-savefig("fig1.png")
-md"![fig](fig1.png)"
+savefig("basic_fig.png")
+md"![fig](basic_fig.png)"
