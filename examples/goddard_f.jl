@@ -30,9 +30,9 @@ control!(ocp, 1)
 
 constraint!(ocp, :initial, x0)
 constraint!(ocp, :control, 0, 1)
-constraint!(ocp, :mixed, (x, u) -> x[1], r0, Inf,  :eq1)
-constraint!(ocp, :mixed, (x, u) -> x[2], 0, vmax,  :eq2)
-constraint!(ocp, :mixed, (x, u) -> x[3], mf, m0,   :eq3)
+constraint!(ocp, :state, Index(1), r0, Inf,  :eq1)
+constraint!(ocp, :state, Index(2), 0, vmax,  :eq2)
+constraint!(ocp, :state, Index(3), mf, m0,   :eq3)
 
 constraint!(ocp, :dynamics, (x, u) ->  F0(x) + u*F1(x))
 
@@ -73,8 +73,8 @@ us(x, p) = -H001(x, p) / H101(x, p)
 
 remove_constraint!(ocp, :eq1)
 remove_constraint!(ocp, :eq3)
-constraint!(ocp, :boundary, (t0, x0, tf, xf) -> xf[3], mf, :eq4)
-g(x) = vmax - constraint(ocp, :eq2)(x, 0)
+constraint!(ocp, :final, Index(3), mf, :eq4)
+g(x) = vmax - constraint(ocp, :eq2)(x)
 ub(x, _) = -Ad(F0, g)(x) / Ad(F1, g)(x)
 μb(x, p) = H01(x, p) / Ad(F1, g)(x)
 
@@ -89,7 +89,7 @@ shoot!(s, p0, t1, t2, t3, tf) = begin
     x2, p2 = fs(t1, x1, p1, t2)
     x3, p3 = fb(t2, x2, p2, t3)
     xf, pf = f0(t3, x3, p3, tf)
-    s[1] = constraint(ocp, :eq4)(t0, x0, tf, xf) - mf
+    s[1] = constraint(ocp, :eq4)(xf) - mf
     s[2:3] = pf[1:2] - [ 1, 0 ]
     s[4] = H1(x1, p1)
     s[5] = H01(x1, p1)
@@ -141,5 +141,3 @@ flow_sol = f((t0, tf), x0, p0)
 plot(flow_sol, size=(700, 900))
 savefig("goddard_fig3.png")
 md"![fig](goddard_fig3.png)"
-
-# todo: replace mixed

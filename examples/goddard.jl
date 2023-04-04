@@ -1,5 +1,5 @@
 using OptimalControl
-#using Markdown
+using Markdown
 
 # Parameters
 Cd = 310
