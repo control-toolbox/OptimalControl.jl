@@ -22,8 +22,8 @@ subject to
 t0 = 0
 tf = 1
 
-# Model
-ocp = @def begin
+# Abstract model
+ocp_a = @__def begin
 
     t ∈ [ t0, tf], time
     x ∈ R^2, state
@@ -43,7 +43,21 @@ A = [ 0 1
 B = [ 0
       1 ]
 
+# Functional model
+ocp_f = Model()
+
+time!(ocp, [t0, tf])
+state!(ocp, 2)
+control!(ocp, 1)
+
+constraint!(ocp, :initial, [ -1, 0 ])
+constraint!(ocp, :final,   [  0, 0 ])
+constraint!(ocp, :dynamics, (x, u) -> A*x + B*u)
+
+objective!(ocp, :lagrange, (x, u) -> 0.5u^2)
+
 # Solve
+ocp = ocp_f
 N = 50
 sol = solve(ocp, grid_size=N)
 

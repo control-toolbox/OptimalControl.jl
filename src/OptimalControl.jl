@@ -28,8 +28,10 @@ const __display = CTBase.__display
 
 # resources
 include("solve.jl")
+include("utils.jl")
 
 # export functions only for user
 export solve
+export @__def
 
 end
