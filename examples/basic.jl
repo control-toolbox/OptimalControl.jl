@@ -46,20 +46,20 @@ B = [ 0
 # Functional model
 ocp_f = Model()
 
-time!(ocp, [t0, tf])
-state!(ocp, 2)
-control!(ocp, 1)
+time!(ocp_f, [t0, tf])
+state!(ocp_f, 2)
+control!(ocp_f, 1)
 
-constraint!(ocp, :initial, [ -1, 0 ])
-constraint!(ocp, :final,   [  0, 0 ])
-constraint!(ocp, :dynamics, (x, u) -> A*x + B*u)
+constraint!(ocp_f, :initial, [ -1, 0 ])
+constraint!(ocp_f, :final,   [  0, 0 ])
+constraint!(ocp_f, :dynamics, (x, u) -> A*x + B*u)
 
-objective!(ocp, :lagrange, (x, u) -> 0.5u^2)
+objective!(ocp_f, :lagrange, (x, u) -> 0.5u^2)
 
 # Solve
 ocp = ocp_f
 N = 50
-sol = solve(ocp, grid_size=N)
+sol = solve(ocp_f, grid_size=N)
 
 # Plot
 plot(sol)
