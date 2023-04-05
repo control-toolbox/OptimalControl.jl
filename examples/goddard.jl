@@ -41,7 +41,7 @@ ocp_a = @__def begin
 
     ẋ(t) == F0(x(t)) + u(t)*F1(x(t))
  
-    r(tf) -> max
+    r(tf) → max
     
 end
 
