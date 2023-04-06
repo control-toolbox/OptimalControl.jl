@@ -13,7 +13,7 @@ We solve using the default method in `OptimalControl.jl` the following simple pr
 ```
 subject to
 ```math
-    \dot{x}_1(t) = x_2(t),\quad \dot{x}_2(t) = u(t)\\
+    x'_1(t) = x'_2(t),\quad \dot{x}_2(t) = u(t)\\
     x(0)=(-1,0),\quad x(1)=(0,0).
 ```
 """
@@ -32,7 +32,7 @@ ocp_a = @__def begin
     x(t0) == [ -1, 0 ] 
     x(tf) == [  0, 0 ] 
 
-    ẋ(t) == A*x(t) + B*u(t)
+    x'(t) == A*x(t) + B*u(t)
 
     ∫( 0.5u(t)^2 ) → min
 

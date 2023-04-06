@@ -39,7 +39,7 @@ ocp_a = @__def begin
     0  ≤ v(t) ≤ vmax,    (2)
     mf ≤ m(t) ≤ m0,      (3)
 
-    ẋ(t) == F0(x(t)) + u(t)*F1(x(t))
+    x'(t) == F0(x(t)) + u(t)*F1(x(t))
  
     r(tf) → max
     
