@@ -25,7 +25,7 @@ tf = 1
 # Abstract model
 ocp_a = @__def begin
 
-    t ∈ [ t0, tf], time
+    t ∈ [ t0, tf ], time
     x ∈ R^2, state
     u ∈ R, control
 
