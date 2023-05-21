@@ -22,7 +22,7 @@ mf = 0.6
 x0 = [ r0, v0, m0 ]
 
 # Abstract model
-ocp_a = @__def begin
+@def ocp_a begin
 
     tf, variable
     t ∈ [ t0, tf ], time
