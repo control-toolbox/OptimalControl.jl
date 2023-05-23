@@ -32,7 +32,8 @@ ocp_a = @__def begin
     x(t0) == [ -1, 0 ] 
     x(tf) == [  0, 0 ] 
 
-    x'(t) == A*x(t) + B*u(t)
+
+    ẋ(t) == A*x(t) + B*u(t)
 
     ∫( 0.5u(t)^2 ) → min
 
