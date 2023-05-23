@@ -22,7 +22,7 @@ mf = 0.6
 x0 = [ r0, v0, m0 ]
 
 # Abstract model
-ocp_a = @__def begin
+@def ocp_a begin
 
     tf, variable
     t ∈ [ t0, tf ], time
@@ -39,7 +39,7 @@ ocp_a = @__def begin
     0  ≤ v(t) ≤ vmax,    (2)
     mf ≤ m(t) ≤ m0,      (3)
 
-    x'(t) == F0(x(t)) + u(t)*F1(x(t))
+    ẋ(t) == F0(x(t)) + u(t) * F1(x(t))
  
     r(tf) → max
     

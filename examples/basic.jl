@@ -23,7 +23,7 @@ t0 = 0
 tf = 1
 
 # Abstract model
-ocp_a = @__def begin
+@def ocp_a begin
 
     t ∈ [ t0, tf ], time
     x ∈ R^2, state
@@ -53,7 +53,8 @@ control!(ocp_f, 1)
 
 constraint!(ocp_f, :initial, [ -1, 0 ])
 constraint!(ocp_f, :final,   [  0, 0 ])
-constraint!(ocp_f, :dynamics, (x, u) -> A*x + B*u)
+
+dynamics!(ocp_f, (x, u) -> A*x + B*u)
 
 objective!(ocp_f, :lagrange, (x, u) -> 0.5u^2)
 
