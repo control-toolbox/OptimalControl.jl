@@ -35,7 +35,7 @@ x0 = [ r0, v0, m0 ]
    
     x(t0) == [ r0, v0, m0 ]
     0  ≤ u(t) ≤ 1
-    r0  ≤ r(t),          (1)
+    r0  ≤ r(t) ≤ Inf,    (1)
     0  ≤ v(t) ≤ vmax,    (2)
     mf ≤ m(t) ≤ m0,      (3)
 
@@ -59,25 +59,26 @@ F1(x) = begin
 end
 
 # Functional model
-ocp_f = Model()
+ocp_f = Model(variable=true)
 
-time!(ocp_f, :initial, t0)
-state!(ocp_f, 3, [ "r", "v", "m" ])
+variable!(ocp_f, 1)
+time!(ocp_f, t0, Index(1))
+state!(ocp_f, 3)
 control!(ocp_f, 1)
 
 constraint!(ocp_f, :initial, x0)
 constraint!(ocp_f, :control, 0, 1)
-constraint!(ocp_f, :state, Index(1), r0, Inf,  :eq1)
-constraint!(ocp_f, :state, Index(2), 0, vmax,  :eq2)
-constraint!(ocp_f, :state, Index(3), mf, m0,   :eq3)
+constraint!(ocp_f, :state, Index(1), r0, Inf, :eq1)
+constraint!(ocp_f, :state, Index(2), 0, vmax, :eq2)
+constraint!(ocp_f, :state, Index(3), mf, m0,  :eq3)
 
-constraint!(ocp_f, :dynamics, (x, u) ->  F0(x) + u*F1(x))
+dynamics!(ocp_f, (x, u, tf) -> F0(x) + u*F1(x))
 
-objective!(ocp_f, :mayer,  (t0, x0, tf, xf) -> xf[1], :max)
+objective!(ocp_f, :mayer,  (x0, xf, tf) -> xf[1], :max)
 
 # Direct solve
 ocp = ocp_f
-N = 100
+N = 10 
 direct_sol = solve(ocp, grid_size=N)
 
 # Plot
