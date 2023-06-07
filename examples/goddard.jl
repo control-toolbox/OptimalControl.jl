@@ -37,7 +37,7 @@ x0 = [ r0, v0, m0 ]
    
     x(t0) == [ r0, v0, m0 ]
     0  ≤ u(t) ≤ 1
-    r0 ≤ r(t) ≤ Inf,    (1)
+         r(t) ≥ r0,     (1)
     0  ≤ v(t) ≤ vmax,   (2)
     mf ≤ m(t) ≤ m0,     (3)
 
@@ -78,7 +78,7 @@ objective!(ocp_f, :mayer,  (x0, xf, tf) -> xf[1], :max)
 
 # Direct solve
 ocp = ocp_f
-N = 10 
+N = 50 
 direct_sol = solve(ocp, grid_size=N)
 
 # Plot
@@ -90,17 +90,14 @@ md"![fig](goddard_fig1.png)"
 u0 = 0
 u1 = 1
 
-H0 = Lift(F0)
-H1 = Lift(F1)
+H0(x, p) = Lift(F0)(x, p)
+H1(x, p) = Lift(F1)(x, p)
 H01  = @Poisson {H0, H1}
 H001 = @Poisson {H0, H01}
 H101 = @Poisson {H1, H01}
 us(x, p) = -H001(x, p) / H101(x, p)
 
-#remove_constraint!(ocp, :eq1)
-#remove_constraint!(ocp, :eq3)
-#constraint!(ocp, :final, Index(3), mf, :eq4)
-g(x) = vmax - constraint(ocp, :eq2)(x, Real[])
+g(x) = vmax - constraint(ocp, :eq2)(x, -1)
 ub(x)   = -Lie(F0, g)(x) / Lie(F1, g)(x)
 μ(x, p) = H01(x, p) / Lie(F1, g)(x)
 
@@ -115,7 +112,7 @@ shoot!(s, p0, t1, t2, t3, tf) = begin
     x2, p2 = fs(t1, x1, p1, t2)
     x3, p3 = fb(t2, x2, p2, t3)
     xf, pf = f0(t3, x3, p3, tf)
-    s[1] = constraint(ocp, :eq4)(xf) - mf
+    s[1] = xf[3] - mf # final mass constraint active
     s[2:3] = pf[1:2] - [ 1, 0 ]
     s[4] = H1(x1, p1)
     s[5] = H01(x1, p1)
@@ -128,12 +125,13 @@ end
 t = direct_sol.times
 x = direct_sol.state
 u = direct_sol.control
-p = direct_sol.adjoint
+p = direct_sol.costate
+H1(t) = H1(x(t), p(t))
 
-u_plot  = plot(t, u,                    label = "u(t)")
-H1_plot = plot(t, t -> H1(x(t), p(t)),  label = "H₁(x(t), p(t))")
-g_plot  = plot(t, g ∘ x,                label = "g(x(t))")
-display(plot(u_plot, H1_plot, g_plot, layout=(3,1), size=(400,300)))
+u_plot  = plot(t, t -> u(t)[1], label = "u(t)")
+H1_plot = plot(t, H1,           label = "H₁(x(t), p(t))")
+g_plot  = plot(t, g ∘ x,         label = "g(x(t))")
+display(plot(u_plot, H1_plot, g_plot, layout=(3,1), size=(700,600)))
 savefig("goddard_fig2.png")
 md"![fig](goddard_fig2.png)"
 

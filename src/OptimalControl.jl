@@ -40,6 +40,7 @@ export plot, plot!
 export *
 
 # CTBase
+export Index
 export Autonomous, NonAutonomous
 export NonFixed, Fixed
 export ControlLaw, FeedbackControl, Multiplier
