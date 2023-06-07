@@ -5,13 +5,7 @@
 algorithmes = ()
 
 # descent methods
-algorithmes = add(algorithmes, (:direct, :ADNLProblem, :ipopt))
-algorithmes = add(algorithmes, (:direct, :shooting, :descent, :bfgs, :bissection))
-algorithmes = add(algorithmes, (:direct, :shooting, :descent, :bfgs, :backtracking))
-algorithmes = add(algorithmes, (:direct, :shooting, :descent, :bfgs, :fixedstep))
-algorithmes = add(algorithmes, (:direct, :shooting, :descent, :gradient, :bissection))
-algorithmes = add(algorithmes, (:direct, :shooting, :descent, :gradient, :backtracking))
-algorithmes = add(algorithmes, (:direct, :shooting, :descent, :gradient, :fixedstep))
+algorithmes = add(algorithmes, (:direct, :adnlp, :ipopt))
 
 """
 $(TYPEDSIGNATURES)
@@ -19,26 +13,34 @@ $(TYPEDSIGNATURES)
 Solve the the optimal control problem `ocp`. 
 
 """
-function solve(ocp::OptimalControlModel, description...; 
+function solve(ocp::OptimalControlModel, description::Symbol...; 
     display::Bool=__display(),
+    init=nothing,
     kwargs...)
 
     #
-    method = getFullDescription(makeDescription(description...), algorithmes)
-        
+    method = getFullDescription(description, algorithmes)
+
+    # todo: OptimalControlInit must be in CTBase
+    #=
+    if isnothing(init)
+        init =  OptimalControlInit()
+    elseif init isa CTBase.OptimalControlSolution
+        init = OptimalControlInit(init)
+    else
+        OptimalControlInit(init...)
+    end
+    =#
+
     # print chosen method
     display ? println("\nMethod = ", method) : nothing
 
     # if no error before, then the method is correct: no need of else
     if :direct ∈ method
-        if :shooting ∈ method
-            return CTDirectShooting.solve(ocp, clean(method); display=display, kwargs...)
-        else
-            return CTDirect.solve(ocp, clean(method); display=display, kwargs...)
-        end
+        return CTDirect.solve(ocp, clean(method)...; display=display, init=init, kwargs...)
     end
 end
 
 function clean(d::Description)
-    return d\(:direct, :shooting)
+    return d\(:direct, )
 end

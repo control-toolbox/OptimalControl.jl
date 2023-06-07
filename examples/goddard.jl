@@ -19,6 +19,8 @@ v0 = 0
 vmax = 0.1
 m0 = 1
 mf = 0.6
+
+# Initial state
 x0 = [ r0, v0, m0 ]
 
 # Abstract model
@@ -35,9 +37,9 @@ x0 = [ r0, v0, m0 ]
    
     x(t0) == [ r0, v0, m0 ]
     0  ≤ u(t) ≤ 1
-    r0  ≤ r(t) ≤ Inf,    (1)
-    0  ≤ v(t) ≤ vmax,    (2)
-    mf ≤ m(t) ≤ m0,      (3)
+    r0 ≤ r(t) ≤ Inf,    (1)
+    0  ≤ v(t) ≤ vmax,   (2)
+    mf ≤ m(t) ≤ m0,     (3)
 
     ẋ(t) == F0(x(t)) + u(t) * F1(x(t))
  
@@ -48,14 +50,12 @@ end
 F0(x) = begin
     r, v, m = x
     D = Cd * v^2 * exp(-β*(r - 1))
-    F = [ v, -D/m - 1/r^2, 0 ]
-    return F
+    return [ v, -D/m - 1/r^2, 0 ]
 end
 
 F1(x) = begin
     r, v, m = x
-    F = [ 0, Tmax/m, -b*Tmax ]
-    return F
+    return [ 0, Tmax/m, -b*Tmax ]
 end
 
 # Functional model
@@ -87,27 +87,27 @@ savefig("goddard_fig1.png")
 md"![fig](goddard_fig1.png)"
 
 # Shooting function
-u0(x, p) = 0.
-u1(x, p) = 1.
+u0 = 0
+u1 = 1
 
-H0(x, p) = p' * F0(x)
-H1(x, p) = p' * F1(x)
-H01 = Poisson(H0, H1)
-H001 = Poisson(H0, H01)
-H101 = Poisson(H1, H01)
+H0 = Lift(F0)
+H1 = Lift(F1)
+H01  = @Poisson {H0, H1}
+H001 = @Poisson {H0, H01}
+H101 = @Poisson {H1, H01}
 us(x, p) = -H001(x, p) / H101(x, p)
 
-remove_constraint!(ocp, :eq1)
-remove_constraint!(ocp, :eq3)
-constraint!(ocp, :final, Index(3), mf, :eq4)
-g(x) = vmax - constraint(ocp, :eq2)(x)
-ub(x, _) = -Ad(F0, g)(x) / Ad(F1, g)(x)
-μb(x, p) = H01(x, p) / Ad(F1, g)(x)
+#remove_constraint!(ocp, :eq1)
+#remove_constraint!(ocp, :eq3)
+#constraint!(ocp, :final, Index(3), mf, :eq4)
+g(x) = vmax - constraint(ocp, :eq2)(x, Real[])
+ub(x)   = -Lie(F0, g)(x) / Lie(F1, g)(x)
+μ(x, p) = H01(x, p) / Lie(F1, g)(x)
 
-f0 = Flow(ocp, u0)
-f1 = Flow(ocp, u1)
-fs = Flow(ocp, us)
-fb = Flow(ocp, ub, (x, _) -> g(x), μb)
+f0 = Flow(ocp, (x, p, tf) -> u0)
+f1 = Flow(ocp, (x, p, tf) -> u1)
+fs = Flow(ocp, (x, p, tf) -> us(x, p))
+fb = Flow(ocp, (x, p, tf) -> ub(x), (x, u, tf) -> g(x), (x, p, tf) -> μ(x, p))
 
 shoot!(s, p0, t1, t2, t3, tf) = begin
 
@@ -129,11 +129,10 @@ t = direct_sol.times
 x = direct_sol.state
 u = direct_sol.control
 p = direct_sol.adjoint
-H1(t) = H1(x(t), p(t))
 
-u_plot = plot(t, t -> u(t)[1], xlabel = "t", ylabel = "u", legend = false)
-H1_plot = plot(t, H1, xlabel = "t", ylabel = "H1", legend = false)
-g_plot = plot(t, g ∘ x, xlabel = "t", ylabel = "g", legend = false)
+u_plot  = plot(t, u,                    label = "u(t)")
+H1_plot = plot(t, t -> H1(x(t), p(t)),  label = "H₁(x(t), p(t))")
+g_plot  = plot(t, g ∘ x,                label = "g(x(t))")
 display(plot(u_plot, H1_plot, g_plot, layout=(3,1), size=(400,300)))
 savefig("goddard_fig2.png")
 md"![fig](goddard_fig2.png)"
