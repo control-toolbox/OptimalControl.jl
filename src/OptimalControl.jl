@@ -21,6 +21,7 @@ using CTFlows
 
 # declarations
 const __display = CTBase.__display
+const ctrepl = CTBase.__init_repl
 
 # resources
 include("solve.jl")
@@ -50,8 +51,9 @@ export variable!, time!, constraint!, dynamics!, objective!, state!, control!, r
 export is_time_independent, is_time_dependent, is_min, is_max, is_variable_dependent, is_variable_independent
 export Lie, @Lie, Poisson, @Poisson, Lift, ⋅, ∂ₜ
 export @def
+export ctrepl
 
 # repl
-isdefined(Base, :active_repl) && CTBase.__init_repl()
+isdefined(Base, :active_repl) && ctrepl()
 
 end
