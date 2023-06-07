@@ -1,22 +1,16 @@
 name = "OptimalControl"
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
 authors = ["Olivier Cots <olivier.cots@toulouse-inp.fr>"]
-version = "0.5.0"
+version = "0.6.0"
 
 [deps]
 CTBase = "54762871-cc72-4466-b8e8-f6c8b58076cd"
 CTDirect = "790bbbee-bee9-49ee-8912-a9de031322d5"
-CTDirectShooting = "e0e6c04b-5022-4cd2-bea2-4a09fff39444"
 CTFlows = "1c39547c-7794-42f7-af83-d98194f657c2"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
-MINPACK = "4854310b-de5a-5eb6-a2a5-c1dee2bd17f9"
-Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
-Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
-Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 
 [compat]
-CTBase = "0.5"
-CTDirect = "0.2"
-CTDirectShooting = "0.1"
-Reexport = "1.2"
+CTBase = "0.7"
+CTDirect = "0.3"
+CTFlows = "0.3"
 julia = "1.8"

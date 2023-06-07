@@ -58,9 +58,9 @@ dynamics!(ocp_f, (x, u) -> A*x + B*u)
 objective!(ocp_f, :lagrange, (x, u) -> 0.5u^2)
 
 # Solve
-ocp = ocp_f
+ocp = ocp_a
 N = 50
-sol = solve(ocp_f, grid_size=N)
+sol = solve(ocp, grid_size=N)
 
 # Plot
 plot(sol)

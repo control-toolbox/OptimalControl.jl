@@ -12,26 +12,45 @@ $(EXPORTS)
 module OptimalControl
 
 # using
-using Reexport
 using DocStringExtensions
 
-# include modules
-@reexport using CTBase
+# include core modules
+using CTBase
 using CTDirect
-using CTDirectShooting
+using CTFlows
 
-# flows
-@reexport using CTFlows
-
-# Other declarations
+# declarations
 const __display = CTBase.__display
 
 # resources
 include("solve.jl")
-include("utils.jl")
 
 # export functions only for user
 export solve
-export @__def
+
+# export from other modules
+
+# CTFlows
+export VectorField
+export Hamiltonian
+export HamiltonianLift
+export HamiltonianVectorField
+export Flow
+export plot, plot!
+export *
+
+# CTBase
+export Autonomous, NonAutonomous
+export NonFixed, Fixed
+export ControlLaw, FeedbackControl, Multiplier
+export StateConstraint, ControlConstraint, MixedConstraint
+export Model
+export variable!, time!, constraint!, dynamics!, objective!, state!, control!, remove_constraint!, constraint
+export is_time_independent, is_time_dependent, is_min, is_max, is_variable_dependent, is_variable_independent
+export Lie, @Lie, Poisson, @Poisson, Lift, ⋅, ∂ₜ
+export @def
+
+# repl
+isdefined(Base, :active_repl) && CTBase.__init_repl()
 
 end
