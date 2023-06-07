@@ -97,8 +97,8 @@ H001 = @Poisson {H0, H01}
 H101 = @Poisson {H1, H01}
 us(x, p) = -H001(x, p) / H101(x, p)
 
-g(x) = vmax - constraint(ocp, :eq2)(x, -1)
-ub(x)   = -Lie(F0, g)(x) / Lie(F1, g)(x)
+g(x) = vmax - constraint(ocp, :eq2)(x, -1) # -1 for tf, not used
+ub(x) = -Lie(F0, g)(x) / Lie(F1, g)(x)
 μ(x, p) = H01(x, p) / Lie(F1, g)(x)
 
 f0 = Flow(ocp, (x, p, tf) -> u0)
@@ -112,7 +112,7 @@ shoot!(s, p0, t1, t2, t3, tf) = begin
     x2, p2 = fs(t1, x1, p1, t2)
     x3, p3 = fb(t2, x2, p2, t3)
     xf, pf = f0(t3, x3, p3, tf)
-    s[1] = xf[3] - mf # final mass constraint active
+    s[1] = constraint(ocp, :eq3)(x, -1) - mf # constraint on final mass is active
     s[2:3] = pf[1:2] - [ 1, 0 ]
     s[4] = H1(x1, p1)
     s[5] = H01(x1, p1)
