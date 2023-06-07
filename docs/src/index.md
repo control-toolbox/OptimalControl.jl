@@ -76,7 +76,7 @@ A = [ 0 1
       0 0 ]
 B = [ 0
       1 ]
-constraint!(ocp, :dynamics, (x, u) -> A*x + B*u) # dynamics
+dynamics!(ocp, (x, u) -> A*x + B*u) # dynamics
 
 constraint!(ocp, :initial, [-1, 0])              # initial condition
 constraint!(ocp, :final,   [0, 0])               # final condition
