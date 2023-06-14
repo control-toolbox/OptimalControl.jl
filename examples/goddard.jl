@@ -77,7 +77,7 @@ dynamics!(ocp_f, (x, u, tf) -> F0(x) + u*F1(x))
 objective!(ocp_f, :mayer,  (x0, xf, tf) -> xf[1], :max)
 
 # Direct solve
-ocp = ocp_f
+ocp = ocp_a
 N = 50 
 direct_sol = solve(ocp, grid_size=N)
 
