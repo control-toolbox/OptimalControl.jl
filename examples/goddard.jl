@@ -1,12 +1,6 @@
 using OptimalControl
 using MINPACK
-using Markdown
 using Plots
-
-md"""
-
-# Goddard problem
-"""
 
 # Parameters
 const Cd = 310
@@ -78,13 +72,13 @@ objective!(ocp_f, :mayer,  (x0, xf, tf) -> xf[1], :max)
 
 # Direct solve
 ocp = ocp_a
+#ocp = ocp_f
 N = 50 
 direct_sol = solve(ocp, grid_size=N)
 
 # Plot
-plot(direct_sol, size=(700, 900))
+fig1 = plot(direct_sol, size=(700, 900))
 savefig("goddard_fig1.png")
-md"![fig](goddard_fig1.png)"
 
 # Shooting function
 u0 = 0
@@ -92,9 +86,9 @@ u1 = 1
 
 H0(x, p) = Lift(F0)(x, p)
 H1(x, p) = Lift(F1)(x, p)
-H01  = @Poisson {H0, H1}
-H001 = @Poisson {H0, H01}
-H101 = @Poisson {H1, H01}
+H01  = @Poisson { H0, H1 }
+H001 = @Poisson { H0, H01 }
+H101 = @Poisson { H1, H01 }
 us(x, p) = -H001(x, p) / H101(x, p)
 
 g(x) = vmax - constraint(ocp, :eq2)(x, -1) # -1 for tf, not used
@@ -112,7 +106,7 @@ shoot!(s, p0, t1, t2, t3, tf) = begin
     x2, p2 = fs(t1, x1, p1, t2)
     x3, p3 = fb(t2, x2, p2, t3)
     xf, pf = f0(t3, x3, p3, tf)
-    s[1] = constraint(ocp, :eq3)(x, -1) - mf # constraint on final mass is active
+    s[1] = constraint(ocp, :eq3)(xf, -1) - mf # constraint on final mass is active
     s[2:3] = pf[1:2] - [ 1, 0 ]
     s[4] = H1(x1, p1)
     s[5] = H01(x1, p1)
@@ -128,16 +122,15 @@ u = direct_sol.control
 p = direct_sol.costate
 H1(t) = H1(x(t), p(t))
 
-u_plot  = plot(t, t -> u(t)[1], label = "u(t)")
-H1_plot = plot(t, H1,           label = "H₁(x(t), p(t))")
-g_plot  = plot(t, g ∘ x,         label = "g(x(t))")
+u_plot  = plot(t, t -> u(t)[1], label = "u(t)"          )
+H1_plot = plot(t, H1          , label = "H₁(x(t), p(t))")
+g_plot  = plot(t, g ∘ x       , label = "g(x(t))"       )
 display(plot(u_plot, H1_plot, g_plot, layout=(3,1), size=(700,600)))
 savefig("goddard_fig2.png")
-md"![fig](goddard_fig2.png)"
 
 η = 1e-3
 t13 = t[ abs.(H1.(t)) .≤ η ]
-t23 = t[ 0 .≤ (g∘x).(t) .≤ η ]
+t23 = t[ 0 .≤ (g ∘ x).(t) .≤ η ]
 p0 = p(t0)
 t1 = min(t13...)
 t2 = min(t23...)
@@ -161,6 +154,5 @@ tf = indirect_sol.x[7]
 
 f = f1 * (t1, fs) * (t2, fb) * (t3, f0)
 flow_sol = f((t0, tf), x0, p0)
-plot(flow_sol, size=(700, 900))
+plot!(fig1, flow_sol, size=(700, 900))
 savefig("goddard_fig3.png")
-md"![fig](goddard_fig3.png)"
