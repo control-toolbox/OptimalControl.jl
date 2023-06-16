@@ -84,8 +84,8 @@ savefig("goddard_fig1.png")
 u0 = 0
 u1 = 1
 
-H0(x, p) = Lift(F0)(x, p)
-H1(x, p) = Lift(F1)(x, p)
+H0 = Lift(F0); H1 = Lift(F1)
+#H0(x, p) = Lift(F0)(x, p); H1(x, p) = Lift(F1)(x, p) # debug
 H01  = @Poisson { H0, H1 }
 H001 = @Poisson { H0, H01 }
 H101 = @Poisson { H1, H01 }
@@ -120,16 +120,16 @@ t = direct_sol.times
 x = direct_sol.state
 u = direct_sol.control
 p = direct_sol.costate
-H1(t) = H1(x(t), p(t))
+φ(t) = H1(x(t), p(t))
 
 u_plot  = plot(t, t -> u(t)[1], label = "u(t)"          )
-H1_plot = plot(t, H1          , label = "H₁(x(t), p(t))")
+H1_plot = plot(t, φ           , label = "H₁(x(t), p(t))")
 g_plot  = plot(t, g ∘ x       , label = "g(x(t))"       )
 display(plot(u_plot, H1_plot, g_plot, layout=(3,1), size=(700,600)))
 savefig("goddard_fig2.png")
 
 η = 1e-3
-t13 = t[ abs.(H1.(t)) .≤ η ]
+t13 = t[ abs.(φ.(t)) .≤ η ]
 t23 = t[ 0 .≤ (g ∘ x).(t) .≤ η ]
 p0 = p(t0)
 t1 = min(t13...)
