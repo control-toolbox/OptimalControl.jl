@@ -1,6 +1,17 @@
-# Introduction to the OptimalControl.jl package
+# OptimalControl.jl
 
-The `OptimalControl.jl` package is part of the [control-toolbox ecosystem](https://github.com/control-toolbox). It aims to provide tools to solve optimal control problems by direct and indirect methods. An optimal control problem can be described as minimising the cost functional
+```@meta
+CurrentModule =  OptimalControl
+```
+
+The `OptimalControl.jl` package is part of the [control-toolbox ecosystem](https://github.com/control-toolbox).
+
+!!! note "Install"
+
+    To install a package from the control-toolbox ecosystem, 
+    please visit the [installation page](https://github.com/control-toolbox#installation).
+
+This package aims to provide tools to solve optimal control problems by direct and indirect methods. An optimal control problem can be described as minimising the cost functional
 
 ```math
 g(t_0, x(t_0), t_f, x(t_f)) + \int_{t_0}^{t_f} f^{0}(t, x(t), u(t))~\mathrm{d}t
@@ -23,7 +34,3 @@ and other constraints such as
 \phi_l &\le& \phi(t_0, x(t_0), t_f, x(t_f)) &\le& \phi_u.
 \end{array}
 ```
-
-## Installation
-
-To install a package from the control-toolbox ecosystem, please visit the [installation page](https://github.com/control-toolbox#installation).
