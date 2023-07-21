@@ -11,6 +11,6 @@ DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 
 [compat]
 CTBase = "0.7"
-CTDirect = "0.3"
+CTDirect = "0.4"
 CTFlows = "0.3"
-julia = "1.8"
+julia = "1.9"
