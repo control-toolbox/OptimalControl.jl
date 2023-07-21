@@ -86,9 +86,9 @@ u1 = 1
 
 H0 = Lift(F0); H1 = Lift(F1)
 #H0(x, p) = Lift(F0)(x, p); H1(x, p) = Lift(F1)(x, p) # debug
-H01  = @Poisson { H0, H1 }
-H001 = @Poisson { H0, H01 }
-H101 = @Poisson { H1, H01 }
+H01  = @Lie { H0, H1 }
+H001 = @Lie { H0, H01 }
+H101 = @Lie { H1, H01 }
 us(x, p) = -H001(x, p) / H101(x, p)
 
 g(x) = vmax - constraint(ocp, :eq2)(x, -1) # -1 for tf, not used
