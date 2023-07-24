@@ -6,12 +6,15 @@ using CTProblems
 
 #
 @testset verbose = true showtiming = true "Optimal control tests" begin
-    for name in (
-        "goddard_direct",
-        "goddard_indirect",
+    for name ∈ (
+        :goddard_direct,
+        :goddard_indirect,
+        :init,
         )
-        @testset "$name" begin
-            include("test_$name.jl")
+        @testset "$(name)" begin
+            test_name = Symbol(:test_, name)
+            include("$(test_name).jl")
+            @eval $test_name()
         end
     end
 end

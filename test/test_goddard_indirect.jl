@@ -1,3 +1,5 @@
+function test_goddard_indirect()
+
 prob = Problem(:goddard, :classical, :altitude, :x_dim_3, :u_dim_1, :mayer, :x_cons, :u_cons, :singular_arc)
 ocp = prob.model
 sol = prob.solution
@@ -106,3 +108,5 @@ shoot!(s, p0, t1, t2, t3, tf)
 
 @test sol.converged
 @test norm(s) < 1e-6
+
+end
