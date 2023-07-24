@@ -16,8 +16,7 @@ makedocs(
     pages = [
         "Introduction"  => "index.md",
         "Tutorials"     => ["basic-example.md", "goddard.md"],
-        "Documentation" => ["api.md", "api-ctbase.md", "api-ctflows.md", "api-ctdirect.md"], 
-        "Developpers"   => "api-dev.md"
+        "API"           => ["api.md", "api-ctbase.md", "api-ctflows.md", "api-ctdirect.md"], 
     ]
 )
 

@@ -36,6 +36,7 @@ $v(t) \leq v_{\max}$. The initial state is fixed while only the final mass is pr
 using Plots
 using Plots.PlotMeasures
 plot(args...; kwargs...) = Plots.plot(args...; kwargs..., leftmargin=0px)
+using Suppressor # to suppress warnings
 ```
 
 We import the `OptimalControl.jl` package:
@@ -126,9 +127,9 @@ H1 = Lift(F1)           # H1(x, p) = p' * F1(x)
 φ(t) = H1(x(t), p(t))   # switching function
 g(x) = vmax - x[2]      # state constraint v ≤ vmax
 
-u_plot  = plot(t, t -> u(t)[1], label = "u(t)")
-H1_plot = plot(t, φ,            label = "H₁(x(t), p(t))")
-g_plot  = plot(t, g ∘ x,        label = "g(x(t))")
+u_plot  = plot(t, u,     label = "u(t)")
+H1_plot = plot(t, φ,     label = "H₁(x(t), p(t))")
+g_plot  = plot(t, g ∘ x, label = "g(x(t))")
 
 plot(u_plot, H1_plot, g_plot, layout=(3,1), size=(600,450))
 ```
@@ -210,7 +211,9 @@ using MINPACK                                               # NLE solver
 nle = (s, ξ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])   # auxiliary function with aggregated inputs
 
 ξ = [ p0 ; t1 ; t2 ; t3 ; tf ]                              # initial guess
-indirect_sol = fsolve(nle, ξ)
+indirect_sol = @suppress_err begin # hide
+fsolve(nle, ξ)
+end # hide
 
 # we retrieve the costate solution together with the times
 p0 = indirect_sol.x[1:3]
@@ -219,18 +222,19 @@ t2 = indirect_sol.x[5]
 t3 = indirect_sol.x[6]
 tf = indirect_sol.x[7]
 
-# Norm of the shooting function at solution 
-using LinearAlgebra                                         # for the norm
-s = similar(p0, 7)
-shoot!(s, p0, t1, t2, t3, tf)
-println("‖s‖ = ", norm(s), "\n")
-
-#
 println("p0 = ", p0)
 println("t1 = ", t1)
 println("t2 = ", t2)
 println("t3 = ", t3)
 println("T  = ", tf)
+
+# Norm of the shooting function at solution 
+using LinearAlgebra: norm
+s = similar(p0, 7)
+@suppress_err begin # hide
+shoot!(s, p0, t1, t2, t3, tf)
+end # hide
+println("Norm of the shooting function: ‖s‖ = ", norm(s), "\n")
 ```
 
 We plot the solution of the indirect solution (in red) over the solution of the direct method (in blue).

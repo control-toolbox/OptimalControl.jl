@@ -8,7 +8,7 @@ For more details about `CTFlows.jl` package, see the [documentation](https://con
 ```@index
 Pages   = ["api-ctflows.md"]
 Modules = [CTFlows]
-Order = [:module, :type, :function, :macro]
+Order = [:module, :constant, :type, :function, :macro]
 Private = false
 ```
 
@@ -16,6 +16,6 @@ Private = false
 
 ```@autodocs
 Modules = [CTFlows]
-Order = [:module, :type, :function, :macro]
+Order = [:module, :constant, :type, :function, :macro]
 Private = false
 ```

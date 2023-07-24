@@ -5,7 +5,7 @@
 ```@index
 Pages   = ["api.md"]
 Modules = [OptimalControl]
-Order = [:module, :type, :function, :macro]
+Order = [:module, :constant, :type, :function, :macro]
 Private = false
 ```
 
@@ -13,6 +13,6 @@ Private = false
 
 ```@autodocs
 Modules = [OptimalControl]
-Order = [:module, :type, :function, :macro]
+Order = [:module, :constant, :type, :function, :macro]
 Private = false
 ```

@@ -8,7 +8,7 @@ For more details about `CTDirect.jl` package, see the [documentation](https://co
 ```@index
 Pages   = ["api-ctdirect.md"]
 Modules = [CTDirect]
-Order = [:module, :type, :function, :macro]
+Order = [:module, :constant, :type, :function, :macro]
 Private = false
 ```
 
@@ -16,6 +16,6 @@ Private = false
 
 ```@autodocs
 Modules = [CTDirect]
-Order = [:module, :type, :function, :macro]
+Order = [:module, :constant, :type, :function, :macro]
 Private = false
 ```

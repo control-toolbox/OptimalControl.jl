@@ -8,7 +8,7 @@ For more details about `CTBase.jl` package, see the [documentation](https://cont
 ```@index
 Pages   = ["api-ctbase.md"]
 Modules = [CTBase]
-Order = [:module, :type, :function, :macro]
+Order = [:module, :constant, :type, :function, :macro]
 Private = false
 ```
 
@@ -16,6 +16,6 @@ Private = false
 
 ```@autodocs
 Modules = [CTBase]
-Order = [:module, :type, :function, :macro]
+Order = [:module, :constant, :type, :function, :macro]
 Private = false
 ```

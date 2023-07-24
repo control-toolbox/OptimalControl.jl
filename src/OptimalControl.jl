@@ -49,7 +49,7 @@ export StateConstraint, ControlConstraint, MixedConstraint
 export Model
 export variable!, time!, constraint!, dynamics!, objective!, state!, control!, remove_constraint!, constraint
 export is_time_independent, is_time_dependent, is_min, is_max, is_variable_dependent, is_variable_independent
-export Lie, @Lie, Poisson, @Poisson, Lift, ⋅, ∂ₜ
+export Lie, @Lie, Poisson, Lift, ⋅, ∂ₜ
 export @def
 export ctrepl
 
