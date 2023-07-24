@@ -9,6 +9,13 @@ Order = [:module, :constant, :type, :function, :macro]
 Private = false
 ```
 
+## Available methods
+
+```@example
+using OptimalControl
+Methods()
+```
+
 ## Documentation
 
 ```@autodocs

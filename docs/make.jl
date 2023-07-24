@@ -15,8 +15,18 @@ makedocs(
     format = Documenter.HTML(prettyurls = false),
     pages = [
         "Introduction"  => "index.md",
-        "Tutorials"     => ["basic-example.md", "goddard.md"],
-        "API"           => ["api.md", "api-ctbase.md", "api-ctflows.md", "api-ctdirect.md"], 
+        "Tutorials"     => ["tutorial-basic-example.md", 
+                            "tutorial-goddard.md",
+                            "tutorial-model.md",
+                            "tutorial-solvers.md",
+                            "tutorial-init.md",
+                            "tutorial-plot.md",
+                            "tutorial-iss.md",
+                            "tutorial-ctrepl.md"],
+        "API"           => ["api.md", 
+                            "api-ctbase.md", 
+                            "api-ctflows.md", 
+                            "api-ctdirect.md"], 
     ]
 )
 

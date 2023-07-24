@@ -21,13 +21,12 @@ using CTFlows
 
 # declarations
 const __display = CTBase.__display
-const ctrepl = CTBase.__init_repl
 
-# resources
 include("solve.jl")
 
 # export functions only for user
 export solve
+export Methods
 
 # export from other modules
 
