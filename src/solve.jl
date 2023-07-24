@@ -33,7 +33,7 @@ function solve(ocp::OptimalControlModel, description::Symbol...;
     
 
     # print chosen method
-    display ? println("\nMethod = ", method) : nothing
+    display ? println("Method = ", method) : nothing
 
     # if no error before, then the method is correct: no need of else
     if :direct ∈ method

@@ -1,6 +1,12 @@
 # Advanced example
 
-This well-known problem[^1] [^2] models the ascent of a rocket through the atmosphere, and we restrict here ourselves to vertical (one dimensional) trajectories. The state variables are the altitude $r$, speed $v$ and mass $m$ of the rocket during the flight, for a total dimension of 3. The rocket is subject to gravity $g$, thrust $u$ and drag force $D$ (function of speed and altitude). The final time $T$ is free, and the objective is to reach a maximal altitude with a bounded fuel consumption.
+## Introduction
+
+```@raw html
+<img src="./assets/Goddard_and_Rocket.jpg" style="float: left; margin: auto 10px;" width="200px">
+```
+
+For this advanced example, we consider the well-known Goddard problem[^1] [^2] which models the ascent of a rocket through the atmosphere, and we restrict here ourselves to vertical (one dimensional) trajectories. The state variables are the altitude $r$, speed $v$ and mass $m$ of the rocket during the flight, for a total dimension of 3. The rocket is subject to gravity $g$, thrust $u$ and drag force $D$ (function of speed and altitude). The final time $T$ is free, and the objective is to reach a maximal altitude with a bounded fuel consumption.
 
 We thus want to solve the optimal control problem in Mayer form
 
@@ -24,6 +30,14 @@ $v(t) \leq v_{\max}$. The initial state is fixed while only the final mass is pr
     The Hamiltonian is affine with respect to the control, so singular arcs may occur, 
     as well as constrained arcs due to the path constraint on the velocity (see below).
 
+## Direct method
+
+```@setup main
+using Plots
+using Plots.PlotMeasures
+plot(args...; kwargs...) = Plots.plot(args...; kwargs..., leftmargin=0px)
+```
+
 We import the `OptimalControl.jl` package:
 
 ```@example main
@@ -33,24 +47,14 @@ using OptimalControl
 We define the problem
 
 ```@example main
-# Parameters
-const Cd = 310
-const Tmax = 3.5
-const β = 500
-const b = 2
+t0 = 0      # initial time
+r0 = 1      # initial altitude
+v0 = 0      # initial speed
+m0 = 1      # initial mass
+vmax = 0.1  # maximal authorized speed
+mf = 0.6    # final mass to target
 
-t0 = 0
-r0 = 1
-v0 = 0
-vmax = 0.1
-m0 = 1
-mf = 0.6
-
-# Initial state
-x0 = [ r0, v0, m0 ]
-
-# Abstract model
-@def ocp_goddard begin
+@def ocp begin # definition of the optimal control problem
 
     tf, variable
     t ∈ [ t0, tf ], time
@@ -63,9 +67,9 @@ x0 = [ r0, v0, m0 ]
    
     x(t0) == [ r0, v0, m0 ]
     0  ≤ u(t) ≤ 1
-         r(t) ≥ r0,     (1)
-    0  ≤ v(t) ≤ vmax,   (2)
-    mf ≤ m(t) ≤ m0,     (3)
+         r(t) ≥ r0
+    0  ≤ v(t) ≤ vmax
+    m(tf) == mf
 
     ẋ(t) == F0(x(t)) + u(t) * F1(x(t))
  
@@ -73,9 +77,15 @@ x0 = [ r0, v0, m0 ]
     
 end;
 
+# Dynamics
+const Cd = 310
+const Tmax = 3.5
+const β = 500
+const b = 2
+
 F0(x) = begin
     r, v, m = x
-    D = Cd * v^2 * exp(-β*(r - 1))
+    D = Cd * v^2 * exp(-β*(r - 1)) # Drag force
     return [ v, -D/m - 1/r^2, 0 ]
 end
 
@@ -86,19 +96,153 @@ end
 nothing # hide
 ```
 
-Solve it
+We then solve it
 
 ```@example main
-N = 50
-direct_sol_goddard = solve(ocp_goddard, grid_size=N)
+direct_sol = solve(ocp, grid_size=100)
 nothing # hide
 ```
 
 and plot the solution
 
 ```@example main
-plot(direct_sol_goddard, size=(700, 700))
+plt = plot(direct_sol, size=(600, 600))
 ```
+
+## Indirect method
+
+We first determine visually the structure of the optimal solution which is composed of a
+bang arc with maximal control, followed by a singular arc, then by a boundary arc and the final
+arc is with zero control. Note that the switching function vanishes along the singular and
+boundary arcs.
+
+```@example main
+t = direct_sol.times
+x = direct_sol.state
+u = direct_sol.control
+p = direct_sol.costate
+
+H1 = Lift(F1)           # H1(x, p) = p' * F1(x)
+φ(t) = H1(x(t), p(t))   # switching function
+g(x) = vmax - x[2]      # state constraint v ≤ vmax
+
+u_plot  = plot(t, t -> u(t)[1], label = "u(t)")
+H1_plot = plot(t, φ,            label = "H₁(x(t), p(t))")
+g_plot  = plot(t, g ∘ x,        label = "g(x(t))")
+
+plot(u_plot, H1_plot, g_plot, layout=(3,1), size=(600,450))
+```
+
+To solve the problem by an indirect shooting method, we then need a good initial guess,
+that is a good approximation of the initial costate, the three switching times and the
+final time.
+
+```@example main
+η = 1e-3
+t13 = t[ abs.(φ.(t)) .≤ η ]
+t23 = t[ 0 .≤ (g ∘ x).(t) .≤ η ]
+p0 = p(t0)
+t1 = min(t13...)
+t2 = min(t23...)
+t3 = max(t23...)
+tf = t[end]
+
+println("p0 = ", p0)
+println("t1 = ", t1)
+println("t2 = ", t2)
+println("t3 = ", t3)
+println("T  = ", tf)
+```
+
+We are now in position to solve the problem by an indirect shooting method. We first define
+the four control laws in feedback form and their associated flows.
+
+```@example main
+# Controls
+u0 = 0                                  # off control
+u1 = 1                                  # bang control
+
+H0 = Lift(F0)                           # H0(x, p) = p' * F0(x)
+H01  = @Lie { H0, H1 }
+H001 = @Lie { H0, H01 }
+H101 = @Lie { H1, H01 }
+us(x, p) = -H001(x, p) / H101(x, p)     # singular control
+
+ub(x) = -(F0⋅g)(x) / (F1⋅g)(x)          # boundary control
+μ(x, p) = H01(x, p) / (F1⋅g)(x)         # multiplier associated to the state constraint g
+
+# Flows
+f0 = Flow(ocp, (x, p, tf) -> u0)
+f1 = Flow(ocp, (x, p, tf) -> u1)
+fs = Flow(ocp, (x, p, tf) -> us(x, p))
+fb = Flow(ocp, (x, p, tf) -> ub(x), (x, u, tf) -> g(x), (x, p, tf) -> μ(x, p))
+nothing # hide
+```
+
+Then, we define the shooting function according to the optimal structure we have determined.
+
+```@example main
+x0 = [ r0, v0, m0 ]                     # initial state
+
+function shoot!(s, p0, t1, t2, t3, tf)
+
+    x1, p1 = f1(t0, x0, p0, t1)
+    x2, p2 = fs(t1, x1, p1, t2)
+    x3, p3 = fb(t2, x2, p2, t3)
+    xf, pf = f0(t3, x3, p3, tf)
+    
+    s[1] = xf[3] - mf                   # final mass constraint
+    s[2:3] = pf[1:2] - [ 1, 0 ]         # transversality conditions
+    s[4] = H1(x1, p1)                   # 
+    s[5] = H01(x1, p1)                  # H1 = H01 = 0 at the entrance of the singular arc
+    s[6] = g(x2)                        # g = 0 when entering the boundary arc
+    s[7] = H0(xf, pf)                   # free tf: Hamiltonian condition
+
+end
+nothing # hide
+```
+
+Finally, we can solve the shooting equations thanks to the [MINPACK](https://docs.sciml.ai/NonlinearSolve/stable/solvers/NonlinearSystemSolvers/#MINPACK.jl) solver.
+
+```@example main
+using MINPACK                                               # NLE solver
+
+nle = (s, ξ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])   # auxiliary function with aggregated inputs
+
+ξ = [ p0 ; t1 ; t2 ; t3 ; tf ]                              # initial guess
+indirect_sol = fsolve(nle, ξ)
+
+# we retrieve the costate solution together with the times
+p0 = indirect_sol.x[1:3]
+t1 = indirect_sol.x[4]
+t2 = indirect_sol.x[5]
+t3 = indirect_sol.x[6]
+tf = indirect_sol.x[7]
+
+# Norm of the shooting function at solution 
+using LinearAlgebra                                         # for the norm
+s = similar(p0, 7)
+shoot!(s, p0, t1, t2, t3, tf)
+println("‖s‖ = ", norm(s), "\n")
+
+#
+println("p0 = ", p0)
+println("t1 = ", t1)
+println("t2 = ", t2)
+println("t3 = ", t3)
+println("T  = ", tf)
+```
+
+We plot the solution of the indirect solution (in red) over the solution of the direct method (in blue).
+
+```@example main
+f = f1 * (t1, fs) * (t2, fb) * (t3, f0) # concatenation of the flows
+flow_sol = f((t0, tf), x0, p0)          # compute the solution: state, costate, control...
+
+plot!(plt, flow_sol)
+```
+
+## References
 
 [^1]: R.H. Goddard. A Method of Reaching Extreme Altitudes, volume 71(2) of Smithsonian Miscellaneous Collections. Smithsonian institution, City of Washington, 1919.
 
