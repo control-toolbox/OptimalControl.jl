@@ -18,6 +18,7 @@ makedocs(
     pages = [
         "Introduction"  => "index.md",
         "Tutorials"     => ["tutorial-basic-example.md", 
+                            "tutorial-basic-example-f.md", 
                             "tutorial-goddard.md",
                             "tutorial-model.md",
                             "tutorial-solvers.md",
