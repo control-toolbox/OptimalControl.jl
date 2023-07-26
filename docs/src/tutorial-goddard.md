@@ -1,4 +1,4 @@
-# Advanced example
+# Advanced example: the Goddard problem
 
 ## Introduction
 
