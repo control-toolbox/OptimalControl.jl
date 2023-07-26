@@ -27,7 +27,7 @@ $v(t) \leq v_{\max}$. The initial state is fixed while only the final mass is pr
 
 !!! note
 
-    The Hamiltonian is affine with respect to the control, so singular arcs may occur, 
+    The Hamiltonian is affine with respect to the control, so singular arcs may occur,
     as well as constrained arcs due to the path constraint on the velocity (see below).
 
 ## Direct method
@@ -61,11 +61,11 @@ mf = 0.6    # final mass to target
     t ∈ [ t0, tf ], time
     x ∈ R³, state
     u ∈ R, control
-    
+
     r = x₁
     v = x₂
     m = x₃
-   
+
     x(t0) == [ r0, v0, m0 ]
     0  ≤ u(t) ≤ 1
          r(t) ≥ r0
@@ -73,9 +73,9 @@ mf = 0.6    # final mass to target
     m(tf) == mf
 
     ẋ(t) == F0(x(t)) + u(t) * F1(x(t))
- 
+
     r(tf) → max
-    
+
 end;
 
 # Dynamics
@@ -134,27 +134,6 @@ g_plot  = plot(t, g ∘ x, label = "g(x(t))")
 plot(u_plot, H1_plot, g_plot, layout=(3,1), size=(600,450))
 ```
 
-To solve the problem by an indirect shooting method, we then need a good initial guess,
-that is a good approximation of the initial costate, the three switching times and the
-final time.
-
-```@example main
-η = 1e-3
-t13 = t[ abs.(φ.(t)) .≤ η ]
-t23 = t[ 0 .≤ (g ∘ x).(t) .≤ η ]
-p0 = p(t0)
-t1 = min(t13...)
-t2 = min(t23...)
-t3 = max(t23...)
-tf = t[end]
-
-println("p0 = ", p0)
-println("t1 = ", t1)
-println("t2 = ", t2)
-println("t3 = ", t3)
-println("T  = ", tf)
-```
-
 We are now in position to solve the problem by an indirect shooting method. We first define
 the four control laws in feedback form and their associated flows.
 
@@ -191,16 +170,45 @@ function shoot!(s, p0, t1, t2, t3, tf)
     x2, p2 = fs(t1, x1, p1, t2)
     x3, p3 = fb(t2, x2, p2, t3)
     xf, pf = f0(t3, x3, p3, tf)
-    
+
     s[1] = xf[3] - mf                   # final mass constraint
     s[2:3] = pf[1:2] - [ 1, 0 ]         # transversality conditions
-    s[4] = H1(x1, p1)                   # 
+    s[4] = H1(x1, p1)                   #
     s[5] = H01(x1, p1)                  # H1 = H01 = 0 at the entrance of the singular arc
     s[6] = g(x2)                        # g = 0 when entering the boundary arc
     s[7] = H0(xf, pf)                   # free tf: Hamiltonian condition
 
 end
 nothing # hide
+```
+
+To solve the problem by an indirect shooting method, we then need a good initial guess,
+that is a good approximation of the initial costate, the three switching times and the
+final time.
+
+```@example main
+η = 1e-3
+t13 = t[ abs.(φ.(t)) .≤ η ]
+t23 = t[ 0 .≤ (g ∘ x).(t) .≤ η ]
+p0 = p(t0)
+t1 = min(t13...)
+t2 = min(t23...)
+t3 = max(t23...)
+tf = t[end]
+
+println("p0 = ", p0)
+println("t1 = ", t1)
+println("t2 = ", t2)
+println("t3 = ", t3)
+println("T  = ", tf)
+
+# Norm of the shooting function at solution
+using LinearAlgebra: norm
+s = similar(p0, 7)
+@suppress_err begin # hide
+shoot!(s, p0, t1, t2, t3, tf)
+end # hide
+println("Norm of the shooting function: ‖s‖ = ", norm(s), "\n")
 ```
 
 Finally, we can solve the shooting equations thanks to the [MINPACK](https://docs.sciml.ai/NonlinearSolve/stable/solvers/NonlinearSystemSolvers/#MINPACK.jl) solver.
@@ -228,8 +236,7 @@ println("t2 = ", t2)
 println("t3 = ", t3)
 println("T  = ", tf)
 
-# Norm of the shooting function at solution 
-using LinearAlgebra: norm
+# Norm of the shooting function at solution
 s = similar(p0, 7)
 @suppress_err begin # hide
 shoot!(s, p0, t1, t2, t3, tf)

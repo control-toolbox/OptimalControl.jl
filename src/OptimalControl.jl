@@ -18,6 +18,7 @@ using DocStringExtensions
 using CTBase
 using CTDirect
 using CTFlows
+using CTProblems
 
 # declarations
 const __display = CTBase.__display
@@ -51,6 +52,10 @@ export is_time_independent, is_time_dependent, is_min, is_max, is_variable_depen
 export Lie, @Lie, Poisson, Lift, ⋅, ∂ₜ
 export @def
 export ctrepl
+
+# CTProblems
+export ProblemsDescriptions, Problem, Problems, @ProblemsDescriptions, @Problems
+
 
 # repl
 isdefined(Base, :active_repl) && ctrepl()

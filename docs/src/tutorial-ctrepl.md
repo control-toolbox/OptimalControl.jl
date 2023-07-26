@@ -1,3 +1,3 @@
-# ct repl
+# Repl
 
 See [`ctrepl`](@ref) method.
