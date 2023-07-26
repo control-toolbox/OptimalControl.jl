@@ -1,4 +1,4 @@
 # Test problems
 
 
-See the page [CTProblems](http://control-toolbox.org/CTDocs.jl/ctproblems).
+See the page [CTProblems](http://control-toolbox.org/docs/ctproblems).
