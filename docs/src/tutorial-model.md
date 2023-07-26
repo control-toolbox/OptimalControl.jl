@@ -1,3 +1,3 @@
-# Modelisation
+# Modelling
 
 See [`OptimalControlModel`](@ref) type.
