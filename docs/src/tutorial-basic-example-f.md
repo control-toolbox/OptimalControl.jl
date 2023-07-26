@@ -1,4 +1,4 @@
-# Basic example
+# Basic example (functional version)
 
 Let us consider a wagon moving along a rail, whom acceleration can be controlled by a force $u$.
 We denote by $x = (x_1, x_2)$ the state of the wagon, that is its position $x_1$ and its velocity $x_2$.
@@ -59,16 +59,16 @@ B = [ 0
 
 ocp = Model()
 
-time!(ocp_f, [t0, tf])
-state!(ocp_f, 2)
-control!(ocp_f, 1)
+time!(ocp, [t0, tf])
+state!(ocp, 2)
+control!(ocp, 1)
 
-constraint!(ocp_f, :initial, [ -1, 0 ])
-constraint!(ocp_f, :final,   [  0, 0 ])
+constraint!(ocp, :initial, [ -1, 0 ])
+constraint!(ocp, :final,   [  0, 0 ])
 
-dynamics!(ocp_f, (x, u) -> A*x + B*u)
+dynamics!(ocp, (x, u) -> A*x + B*u)
 
-objective!(ocp_f, :lagrange, (x, u) -> 0.5u^2)
+objective!(ocp, :lagrange, (x, u) -> 0.5u^2)
 nothing # hide
 ```
 
