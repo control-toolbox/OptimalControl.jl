@@ -70,10 +70,10 @@ mf = 0.6    # final mass to target
     m = x₃
 
     x(t0) == [ r0, v0, m0 ]
-    0  ≤ u(t) ≤ 1
-         r(t) ≥ r0
-    0  ≤ v(t) ≤ vmax
-    m(tf) == mf
+    m(tf) ≥ mf,         (1)
+    0 ≤ u(t) ≤ 1
+    r(t) ≥ r0
+    0 ≤ v(t) ≤ vmax
 
     ẋ(t) == F0(x(t)) + u(t) * F1(x(t))
 
@@ -174,12 +174,12 @@ function shoot!(s, p0, t1, t2, t3, tf)
     x3, p3 = fb(t2, x2, p2, t3)
     xf, pf = f0(t3, x3, p3, tf)
 
-    s[1] = xf[3] - mf                   # final mass constraint
-    s[2:3] = pf[1:2] - [ 1, 0 ]         # transversality conditions
-    s[4] = H1(x1, p1)                   #
-    s[5] = H01(x1, p1)                  # H1 = H01 = 0 at the entrance of the singular arc
-    s[6] = g(x2)                        # g = 0 when entering the boundary arc
-    s[7] = H0(xf, pf)                   # free tf: Hamiltonian condition
+    s[1] = constraint(ocp, :eq1)(xf, tf) - mf # final mass constraint (1), now an equality
+    s[2:3] = pf[1:2] - [ 1, 0 ]               # transversality conditions
+    s[4] = H1(x1, p1)                         # H1 = H01 = 0
+    s[5] = H01(x1, p1)                        # at the entrance of the singular arc
+    s[6] = g(x2)                              # g = 0 when entering the boundary arc
+    s[7] = H0(xf, pf)                         # since tf is free
 
 end
 nothing # hide
