@@ -174,7 +174,7 @@ function shoot!(s, p0, t1, t2, t3, tf)
     x3, p3 = fb(t2, x2, p2, t3)
     xf, pf = f0(t3, x3, p3, tf)
 
-    s[1] = constraint(ocp, :eq1)(xf, tf) - mf # final mass constraint (1), now an equality
+    s[1] = constraint(ocp, :eq1)(xf, tf) - mf # final mass constraint (1)
     s[2:3] = pf[1:2] - [ 1, 0 ]               # transversality conditions
     s[4] = H1(x1, p1)                         # H1 = H01 = 0
     s[5] = H01(x1, p1)                        # at the entrance of the singular arc
