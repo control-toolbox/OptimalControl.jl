@@ -1,9 +1,13 @@
+```@raw html
 <img width="800" alt="juliacon" src="https://github.com/control-toolbox/JuliaCon2023/assets/66357348/44cbcbf2-5634-418b-a936-f703c258dbae">
+```
 
 # Solving optimal control problems with Julia
 ### Jean-Baptiste Caillau, Olivier Cots, Joseph Gergaud, Pierre Martinon, Sophia Sed
 
+```@raw html
 <img width="800" alt="affiliations" src="./assets/affil.jpg">
+```
 
 # What it's about
 - Nonlinear optimal control of ODEs:
@@ -23,8 +27,8 @@ plus boundary, control and state constraints
 - [Coupling direct and indirect solvers, examples](https://ct.gitlabpages.inria.fr/gallery//notebooks.html)
 
 # OptimalControl.jl
-- [Basic example: double integrator](https://control-toolbox.org/OptimalControl.jl/dev/tutorial-basic-example.html)
-- [Basic example: double integrator (cont'ed)](https://control-toolbox.org/OptimalControl.jl/dev/tutorial-basic-example-f.html)
+- [Basic example: double integrator](https://control-toolbox.org/OptimalControl.jl/dev/tutorial-basic-example-f.html)
+- [Basic example: double integrator (cont'ed)](https://control-toolbox.org/OptimalControl.jl/dev/tutorial-basic-example.html)
 - [Advanced example: Goddard problem](https://control-toolbox.org/OptimalControl.jl/dev/tutorial-goddard.html)
 
 # Wrap up
@@ -42,7 +46,9 @@ plus boundary, control and state constraints
 - Open toolbox
 - Collection of Julia Packages rooted at [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl)
 
+```@raw html
 <a href="https://control-toolbox.org"><img width="800" alt="control-toolbox.org" src="./assets/control-toolbox.jpg"></a>
+```
 
 # Credits (not exhaustive!)
 - [DifferentialEquations.jl](https://github.com/SciML/DifferentialEquations.jl)
@@ -56,6 +62,8 @@ plus boundary, control and state constraints
   [Zygote.jl](https://fluxml.ai/Zygote.jl))
 - [MLStyle.jl](https://thautwarm.github.io/MLStyle.jl)
 - [REPLMaker.jl](https://docs.juliahub.com/ReplMaker)
+
+```@raw html
 <br/>
 <br/>
 <br/>
@@ -92,6 +100,9 @@ plus boundary, control and state constraints
 <br/>
 <br/>
 <br/>
+```
 
 # [caseazatmiftakhov.org](https://caseazatmiftakhov.org) (2019-)
+```@raw html
 <a href="https://caseazatmiftakhov.org"><img width="800" alt="azat" src="./assets/azat.jpg"></a>
+```
