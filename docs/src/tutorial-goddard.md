@@ -70,7 +70,7 @@ mf = 0.6    # final mass to target
     m = x₃
 
     x(t0) == [ r0, v0, m0 ]
-    m(tf) ≥ mf,         (1)
+    m(tf) == mf,         (1)
     0 ≤ u(t) ≤ 1
     r(t) ≥ r0
     0 ≤ v(t) ≤ vmax
