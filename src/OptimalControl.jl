@@ -27,7 +27,7 @@ include("solve.jl")
 
 # export functions only for user
 export solve
-export Methods
+export available_methods
 
 # export from other modules
 

@@ -13,7 +13,7 @@ Private = false
 
 ```@example
 using OptimalControl
-Methods()
+available_methods()
 ```
 
 ## Documentation

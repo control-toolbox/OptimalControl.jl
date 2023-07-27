@@ -12,7 +12,7 @@ $(TYPEDSIGNATURES)
 
 Return the list of available methods to solve the optimal control problem.
 """
-function Methods()::Tuple{Tuple{Vararg{Symbol}}}
+function available_methods()::Tuple{Tuple{Vararg{Symbol}}}
     return algorithmes
 end
 
@@ -44,7 +44,7 @@ Keyword arguments:
 
 !!! tip
 
-    - To see the list of available methods, simply call `Methods()`.
+    - To see the list of available methods, simply call `available_methods()`.
     - You can pass any other option by a pair `keyword=value` according to the chosen method.
 
 # Examples
@@ -70,7 +70,7 @@ function solve(ocp::OptimalControlModel, description::Symbol...;
     kwargs...)
 
     #
-    method = getFullDescription(description, Methods())
+    method = getFullDescription(description, available_methods())
 
     # todo: OptimalControlInit must be in CTBase, it is for the moment in CTDirect
     
