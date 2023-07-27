@@ -29,6 +29,7 @@ makedocs(
                             "tutorial-ctrepl.md",
                             "tutorial-problems.md"],
         "API"           => "api.md", 
+        "JuliaCon2023"  => "juliacon2023.md", 
     ]
 )
 
