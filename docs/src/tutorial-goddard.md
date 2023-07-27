@@ -1,4 +1,4 @@
-# Advanced example: the Goddard problem
+# [Advanced example: the Goddard problem](@id goddard)
 
 ## Introduction
 

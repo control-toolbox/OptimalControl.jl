@@ -26,7 +26,7 @@ makedocs(
                             "tutorial-plot.md",
                             "tutorial-iss.md",
                             "tutorial-flows.md",
-                            "tutorial-ctrepl.md",
+                            "tutorial-ct_repl.md",
                             "tutorial-problems.md"],
         "API"           => "api.md", 
         "JuliaCon2023"  => "juliacon2023.md", 

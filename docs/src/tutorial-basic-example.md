@@ -1,4 +1,4 @@
-# Basic example: the double integrator
+# [Basic example](@id basic)
 
 Let us consider a wagon moving along a rail, whom acceleration can be controlled by a force $u$.
 We denote by $x = (x_1, x_2)$ the state of the wagon, that is its position $x_1$ and its velocity $x_2$.
