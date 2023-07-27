@@ -138,7 +138,39 @@ plot(u_plot, H1_plot, g_plot, layout=(3,1), size=(600,450))
 ```
 
 We are now in position to solve the problem by an indirect shooting method. We first define
-the four control laws in feedback form and their associated flows.
+the four control laws in feedback form and their associated flows. For this we need to
+compute some Lie derivatives,
+namely [Poisson brackets](https://en.wikipedia.org/wiki/Poisson_bracket) of Hamiltonians
+(themselves obtained as lifts to the cotangent bundle of vector fields), or 
+derivatives of functions along a vector field. For instance, the control along the
+*minimal order* singular arcs is obtained as the quotient
+```math
+u_s = -\frac{H_{001}}{H_{101}}
+```
+of length three Poisson brackets:
+```math
+H_{001} = \{H_0,\{H_0,H_1\}\}
+```
+where, for two Hamiltonians $H$ and $G$,
+```math
+\{H,G\} := (\nabla_p H|\nabla_x G) - (\nabla_x H|\nabla_p G).
+```
+While the Lie derivative of a function $f$ *wrt.* a vector field $X$ is simply obtained as
+```math
+(X \cdot f)(x) := f'(x) \cdot X(x),
+```
+and is used to the compute the control along the boundary arc, 
+```math
+u_b(x) = -(F_0 \cdot g)(x) / (F_1 \cdot g)(x),
+```
+as well as the associated multiplier for the *order one* state constraint on the velocity:
+```math
+\mu(x, p) = H_{01}(x, p) / (F_1 \cdot g)(x).
+```
+
+With the help of the [differential geometry primitives](https://control-toolbox.org/CTBase.jl/stable/api-diffgeom.html)
+form [CTBase.jl](https://control-toolbox.org/CTBase.jl/stable/index.html),
+these expressions are straightforwardly translated into Julia code:
 
 ```@example main
 # Controls
@@ -162,7 +194,8 @@ fb = Flow(ocp, (x, p, tf) -> ub(x), (x, u, tf) -> g(x), (x, p, tf) -> μ(x, p))
 nothing # hide
 ```
 
-Then, we define the shooting function according to the optimal structure we have determined.
+Then, we define the shooting function according to the optimal structure we have determined,
+that is a concatenation of four arcs.
 
 ```@example main
 x0 = [ r0, v0, m0 ]                     # initial state
