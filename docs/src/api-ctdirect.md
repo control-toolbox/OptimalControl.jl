@@ -1,7 +1,7 @@
 # CTDirect API
 
 This is just a dump of CTDirect API documentation.
-For more details about `CTDirect.jl` package, see the [documentation](https://control-toolbox.org/CTDocs.jl/ctdirect).
+For more details about `CTDirect.jl` package, see the [documentation](https://control-toolbox.org/docs/ctdirect).
 
 ## Index
 

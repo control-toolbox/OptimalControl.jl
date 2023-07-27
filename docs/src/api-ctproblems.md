@@ -1,7 +1,7 @@
 # CTProblems API
 
 This is just a dump of CTProblems API documentation.
-For more details about `CTProblems.jl` package, see the [documentation](https://control-toolbox.org/CTDocs.jl/ctproblems).
+For more details about `CTProblems.jl` package, see the [documentation](https://control-toolbox.org/docs/ctproblems).
 
 ## Index
 

@@ -1,4 +1,4 @@
-# Basic example (functional version)
+# Basic example: the double integrator (functional version)
 
 Let us consider a wagon moving along a rail, whom acceleration can be controlled by a force $u$.
 We denote by $x = (x_1, x_2)$ the state of the wagon, that is its position $x_1$ and its velocity $x_2$.
@@ -25,7 +25,7 @@ starting from the condition $x(0) = (-1, 0)$ and with the goal to reach the targ
 !!! note "Solution and details"
 
     See the page 
-    [Double integrator: energy minimisation](https://control-toolbox.org/CTDocs.jl/ctproblems/stable/problems/double_integrator_energy.html#DIE) 
+    [Double integrator: energy minimisation](https://control-toolbox.org/docs/ctproblems/stable/problems/double_integrator_energy.html#DIE) 
     for the analytical solution and details about this problem.
 
 ```@setup main

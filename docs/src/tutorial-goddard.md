@@ -1,4 +1,4 @@
-# Advanced example
+# Advanced example: the Goddard problem
 
 ## Introduction
 
@@ -203,7 +203,7 @@ println("p0 = ", p0)
 println("t1 = ", t1)
 println("t2 = ", t2)
 println("t3 = ", t3)
-println("T  = ", tf)
+println("tf = ", tf)
 
 # Norm of the shooting function at solution
 using LinearAlgebra: norm
@@ -237,7 +237,7 @@ println("p0 = ", p0)
 println("t1 = ", t1)
 println("t2 = ", t2)
 println("t3 = ", t3)
-println("T  = ", tf)
+println("tf = ", tf)
 
 # Norm of the shooting function at solution
 s = similar(p0, 7)
