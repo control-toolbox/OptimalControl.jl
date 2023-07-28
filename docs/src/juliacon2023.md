@@ -52,10 +52,9 @@ plus boundary, control and state constraints
 
 # Credits (not exhaustive!)
 - [DifferentialEquations.jl](https://github.com/SciML/DifferentialEquations.jl)
-- [JuliaSmoothOptimizers](https://github.com/JuliaSmoothOptimizers)
-  ([JuMP](https://jump.dev/JuMP.jl),
+- [JuMP](https://jump.dev/JuMP.jl),
   [InfiniteOpt.jl](https://docs.juliahub.com/InfiniteOpt/p3GvY/0.4.1),
-  [ADNLPModels.jl](https://jso.dev/ADNLPModels.jl))
+  [ADNLPModels.jl](https://jso.dev/ADNLPModels.jl)
 - [Ipopt](https://github.com/coin-or/ipopt)
 - [JuliaDiff](https://juliadiff.org)
   ([FowardDiff.jl](https://juliadiff.org/ForwardDiff.jl),

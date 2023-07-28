@@ -43,9 +43,6 @@ using OptimalControl
 Then, we can define the problem
 
 ```@example main
-t0 = 0
-tf = 1
-
 A = [ 0 1
       0 0 ]
 B = [ 0
@@ -53,7 +50,7 @@ B = [ 0
 
 ocp = Model()
 
-time!(ocp, [t0, tf])
+time!(ocp, [ 0, 1 ])
 state!(ocp, 2)
 control!(ocp, 1)
 
