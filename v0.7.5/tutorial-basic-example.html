@@ -5,14 +5,10 @@
     u ∈ R, control
     x(0) == [-1, 0]
     x(1) == [0, 0]
-    ẋ(t) == A * x(t) + B * u(t)
+    ẋ(t) == [x₂(t), u(t)]
     ∫( 0.5u(t)^2 ) → min
 end
-
-A = [ 0 1
-      0 0 ]
-B = [ 0
-      1 ]</code></pre><p>Solve it</p><pre><code class="language-julia hljs">sol = solve(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Method = (:direct, :adnlp, :ipopt)
+</code></pre><p>Solve it</p><pre><code class="language-julia hljs">sol = solve(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Method = (:direct, :adnlp, :ipopt)
 This is Ipopt version 3.14.13, running with linear solver MUMPS 5.6.0.
 
 Number of nonzeros in equality constraint Jacobian...:     1205
