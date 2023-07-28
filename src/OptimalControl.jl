@@ -52,6 +52,7 @@ export is_time_independent, is_time_dependent, is_min, is_max, is_variable_depen
 export Lie, @Lie, Poisson, Lift, ⋅, ∂ₜ
 export @def
 export ct_repl
+export ParsingError
 
 # CTProblems
 export ProblemsDescriptions, Problem, Problems, @ProblemsDescriptions, @Problems
