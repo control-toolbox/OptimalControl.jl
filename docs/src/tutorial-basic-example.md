@@ -31,7 +31,7 @@ starting from the condition $x(0) = (-1, 0)$ and with the goal to reach the targ
 ```@setup main
 using Plots
 using Plots.PlotMeasures
-plot(args...; kwargs...) = Plots.plot(args...; kwargs..., leftmargin=0px)
+plot(args...; kwargs...) = Plots.plot(args...; kwargs..., leftmargin=20px)
 ```
 
 First, we need to import the `OptimalControl.jl` package:

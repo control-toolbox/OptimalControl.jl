@@ -38,7 +38,7 @@ $v(t) \leq v_{\max}$. The initial state is fixed while only the final mass is pr
 ```@setup main
 using Plots
 using Plots.PlotMeasures
-plot(args...; kwargs...) = Plots.plot(args...; kwargs..., leftmargin=0px)
+plot(args...; kwargs...) = Plots.plot(args...; kwargs..., leftmargin=20px)
 using Suppressor # to suppress warnings
 ```
 
