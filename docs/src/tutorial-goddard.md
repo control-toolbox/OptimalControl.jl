@@ -1,4 +1,4 @@
-# [Advanced example: the Goddard problem](@id goddard)
+# [Advanced example](@id goddard)
 
 ## Introduction
 
@@ -38,7 +38,7 @@ $v(t) \leq v_{\max}$. The initial state is fixed while only the final mass is pr
 ```@setup main
 using Plots
 using Plots.PlotMeasures
-plot(args...; kwargs...) = Plots.plot(args...; kwargs..., leftmargin=20px)
+plot(args...; kwargs...) = Plots.plot(args...; kwargs..., leftmargin=25px)
 using Suppressor # to suppress warnings
 ```
 
@@ -141,35 +141,57 @@ We are now in position to solve the problem by an indirect shooting method. We f
 the four control laws in feedback form and their associated flows. For this we need to
 compute some Lie derivatives,
 namely [Poisson brackets](https://en.wikipedia.org/wiki/Poisson_bracket) of Hamiltonians
-(themselves obtained as lifts to the cotangent bundle of vector fields), or 
+(themselves obtained as lifts to the cotangent bundle of vector fields), or
 derivatives of functions along a vector field. For instance, the control along the
 *minimal order* singular arcs is obtained as the quotient
+
 ```math
 u_s = -\frac{H_{001}}{H_{101}}
 ```
+
 of length three Poisson brackets:
+
 ```math
-H_{001} = \{H_0,\{H_0,H_1\}\}
+H_{001} = \{H_0,\{H_0,H_1\}\}, \quad H_{101} = \{H_1,\{H_0,H_1\}\}
 ```
+
 where, for two Hamiltonians $H$ and $G$,
+
 ```math
 \{H,G\} := (\nabla_p H|\nabla_x G) - (\nabla_x H|\nabla_p G).
 ```
+
 While the Lie derivative of a function $f$ *wrt.* a vector field $X$ is simply obtained as
+
 ```math
 (X \cdot f)(x) := f'(x) \cdot X(x),
 ```
-and is used to the compute the control along the boundary arc, 
+
+and is used to the compute the control along the boundary arc,
+
 ```math
 u_b(x) = -(F_0 \cdot g)(x) / (F_1 \cdot g)(x),
 ```
+
 as well as the associated multiplier for the *order one* state constraint on the velocity:
+
 ```math
 \mu(x, p) = H_{01}(x, p) / (F_1 \cdot g)(x).
 ```
 
+!!! note
+
+    The Poisson bracket $\{H,G\}$ is also given by the Lie derivative of $G$ along the
+    Hamiltonian vector field $X_H = (\nabla_p H, -\nabla_x H)$ of $H$, that is
+
+    ```math
+        \{H,G\} = X_H \cdot G
+    ```
+
+    which is the reason why we use the `@Lie` macro to compute Poisson brackets below.
+
 With the help of the [differential geometry primitives](https://control-toolbox.org/CTBase.jl/stable/api-diffgeom.html)
-form [CTBase.jl](https://control-toolbox.org/CTBase.jl/stable/index.html),
+from [CTBase.jl](https://control-toolbox.org/docs/ctbase),
 these expressions are straightforwardly translated into Julia code:
 
 ```@example main
@@ -198,7 +220,7 @@ Then, we define the shooting function according to the optimal structure we have
 that is a concatenation of four arcs.
 
 ```@example main
-x0 = [ r0, v0, m0 ]                     # initial state
+x0 = [ r0, v0, m0 ] # initial state
 
 function shoot!(s, p0, t1, t2, t3, tf)
 
@@ -252,8 +274,8 @@ Finally, we can solve the shooting equations thanks to the [MINPACK](https://doc
 ```@example main
 using MINPACK                                               # NLE solver
 
-nle = (s, ξ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])   # auxiliary function with aggregated inputs
-
+nle = (s, ξ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])   # auxiliary function
+                                                            # with aggregated inputs
 ξ = [ p0 ; t1 ; t2 ; t3 ; tf ]                              # initial guess
 indirect_sol = @suppress_err begin # hide
 fsolve(nle, ξ)

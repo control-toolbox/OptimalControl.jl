@@ -51,13 +51,12 @@ export variable!, time!, constraint!, dynamics!, objective!, state!, control!, r
 export is_time_independent, is_time_dependent, is_min, is_max, is_variable_dependent, is_variable_independent
 export Lie, @Lie, Poisson, Lift, ⋅, ∂ₜ
 export @def
-export ctrepl
+export ct_repl
 
 # CTProblems
 export ProblemsDescriptions, Problem, Problems, @ProblemsDescriptions, @Problems
 
-
 # repl
-isdefined(Base, :active_repl) && ctrepl()
+isdefined(Base, :active_repl) && ct_repl()
 
 end
