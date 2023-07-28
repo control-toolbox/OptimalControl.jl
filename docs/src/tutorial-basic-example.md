@@ -49,14 +49,9 @@ Then, we can define the problem
     u ∈ R, control
     x(0) == [-1, 0]
     x(1) == [0, 0]
-    ẋ(t) == A * x(t) + B * u(t)
+    ẋ(t) == [x₂(t), u(t)]
     ∫( 0.5u(t)^2 ) → min
 end
-
-A = [ 0 1
-      0 0 ]
-B = [ 0
-      1 ]
 nothing # hide
 ```
 
