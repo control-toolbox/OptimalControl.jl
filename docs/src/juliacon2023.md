@@ -40,7 +40,7 @@ plus boundary, control and state constraints
 - [ct_repl](./assets/repl.mp4)
 - Additional solvers: direct shooting, collocation for BVP, Hamiltonian pathfollowing...
 - ... and open to contributions!
-- [CTProblems.jl](https://control-toolbox.org/CTProblems.jl/stable/problems-list.html)
+- [CTProblems.jl](https://control-toolbox.org/docs/ctproblems/stable/problems-list.html)
 
 # control-toolbox.org
 - Open toolbox

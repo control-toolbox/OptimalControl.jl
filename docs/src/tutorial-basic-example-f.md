@@ -43,11 +43,6 @@ using OptimalControl
 Then, we can define the problem
 
 ```@example main
-A = [ 0 1
-      0 0 ]
-B = [ 0
-      1 ]
-
 ocp = Model()
 
 time!(ocp, [ 0, 1 ])
@@ -57,7 +52,7 @@ control!(ocp, 1)
 constraint!(ocp, :initial, [ -1, 0 ])
 constraint!(ocp, :final,   [  0, 0 ])
 
-dynamics!(ocp, (x, u) -> A*x + B*u)
+dynamics!(ocp, (x, u) -> [ x[2], u ])
 
 objective!(ocp, :lagrange, (x, u) -> 0.5u^2)
 nothing # hide
