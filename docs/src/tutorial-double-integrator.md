@@ -1,4 +1,4 @@
-# [Double integrator: time minimisation 2](@id DIT2)
+# [Double integrator: time minimisation](@id DIT2)
 
 The problem consists in minimising the final time $t_f$ for the double integrator system
 
