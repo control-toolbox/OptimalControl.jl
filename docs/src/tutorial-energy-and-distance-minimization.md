@@ -33,18 +33,21 @@ using OptimalControl
 Then, we can define the problem
 
 ```@example main
+tf = 5
+x0 = [ 0
+       1 ]
+A = [ 0 1
+     -1 0 ]
+B = [ 0
+      1 ]
+
 @def ocp begin
-    t0 = 0
-    tf = 5
-    x0 = [0; 1]
-    A = [0 1; -1 0]
-    B = [0; 1]
-    t ∈ [t0, tf], time
+    t ∈ [ 0, tf ], time
     x ∈ R², state
     u ∈ R, control
-    x(t0) == x0, initial_con
+    x(0) == x0, initial_con
     ẋ(t) == A * x(t) + B * u(t)
-    ∫(0.5 * (x₁(t)^2 + x₂(t)^2 + u(t)^2)) → min
+    ∫( 0.5(x₁(t)^2 + x₂(t)^2 + u(t)^2) ) → min
 end
 nothing # hide
 ```
