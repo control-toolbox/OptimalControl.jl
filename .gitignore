@@ -25,3 +25,6 @@ Manifest.toml
 
 # Notebooks checkpoints
 */.ipynb_checkpoints
+
+#
+docs/src/tmp/

@@ -25,7 +25,7 @@ makedocs(
                             #"tutorial-model.md",
                             #"tutorial-solvers.md",
                             #"tutorial-init.md",
-                            #"tutorial-plot.md",
+                            "tutorial-plot.md",
                             #"tutorial-iss.md",
                             #"tutorial-flows.md",
                             #"tutorial-ct_repl.md",
