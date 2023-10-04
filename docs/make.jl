@@ -13,6 +13,7 @@ DocMeta.setdocmeta!(CTProblems, :DocTestSetup, :(using CTProblems); recursive = 
 DocMeta.setdocmeta!(OptimalControl, :DocTestSetup, :(using OptimalControl); recursive = true)
 
 makedocs(
+    warnonly = :cross_references,
     sitename = "OptimalControl.jl",
     format = Documenter.HTML(prettyurls = false),
     pages = [
