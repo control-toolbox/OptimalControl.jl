@@ -92,6 +92,7 @@ function solve(ocp::OptimalControlModel, description::Symbol...;
     if :direct ∈ method
         return CTDirect.solve(ocp, clean(method)...; display=display, init=init, kwargs...)
     end
+
 end
 
 rg(i, j) = i == j ? i : i:j
