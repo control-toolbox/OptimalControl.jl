@@ -20,7 +20,7 @@ makedocs(
         "Tutorials"     => ["tutorial-basic-example.md", 
                             "tutorial-basic-example-f.md", 
                             "tutorial-double-integrator.md",
-                            "tutorial-energy-and-distance-minimization.md",
+                            "tutorial-lqr-basic.md",
                             "tutorial-goddard.md",
                             #"tutorial-model.md",
                             #"tutorial-solvers.md",
