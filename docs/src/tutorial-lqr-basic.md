@@ -139,3 +139,7 @@ px2 = plot(plt[2], label=reshape(["tf = $tf" for tf ∈ tfspan],
 pu  = plot(plt[5], legend=false, xlabel="s", ylabel="u")
 plot(px1, px2, pu, layout=(1, 3), size=(800, 300), leftmargin=5mm, bottommargin=5mm)
 ```
+
+!!! note
+
+    We can observe that $x(t_f)$ converges to the origin as $t_f$ increases.

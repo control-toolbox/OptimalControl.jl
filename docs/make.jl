@@ -24,12 +24,11 @@ makedocs(
                             "tutorial-goddard.md",
                             #"tutorial-model.md",
                             #"tutorial-solvers.md",
-                            #"tutorial-init.md",
+                            "tutorial-init.md",
                             "tutorial-plot.md",
                             #"tutorial-iss.md",
                             #"tutorial-flows.md",
                             #"tutorial-ct_repl.md",
-                            #"tutorial-problems.md"
                             ],
         "API"           => "api.md", 
         "JuliaCon2023"  => "juliacon2023.md", 
