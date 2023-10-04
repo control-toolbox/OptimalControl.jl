@@ -15,7 +15,8 @@ DocMeta.setdocmeta!(OptimalControl, :DocTestSetup, :(using OptimalControl); recu
 makedocs(
     warnonly = :cross_references,
     sitename = "OptimalControl.jl",
-    format = Documenter.HTML(prettyurls = false),
+    format = Documenter.HTML(prettyurls = false,
+                             size_threshold_ignore = ["api-ctbase.md"]),
     pages = [
         "Introduction"  => "index.md",
         "Tutorials"     => ["tutorial-basic-example.md", 
