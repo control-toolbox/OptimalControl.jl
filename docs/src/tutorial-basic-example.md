@@ -7,10 +7,10 @@ We denote by $x = (x_1, x_2)$ the state of the wagon, that is its position $x_1$
 <img src="./assets/chariot.png" style="display: block; margin: 0 auto 20px auto;" width="300px">
 ```
 
-We assume that the mass is constant and unitary and that there is no friction. The dynamics is thus given by
+We assume that the mass is constant and unitary and that there is no friction. The dynamics we consider is given by
 
 ```math
-    \dot x_1(t) = x_2(t), \quad \dot x_2(t) = u(t) \in \mathbb{R},
+    \dot x_1(t) = x_2(t), \quad \dot x_2(t) = u(t), , \quad u(t) \in \R,
 ```
 
 which is simply the [double integrator](https://en.wikipedia.org/w/index.php?title=Double_integrator&oldid=1071399674) system.

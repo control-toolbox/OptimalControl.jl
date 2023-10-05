@@ -9,7 +9,7 @@ The problem consists in minimising the final time $t_f$ for the double integrato
 and the limit conditions
 
 ```math
-    x(0) = (1,2), \quad x(t_f) = (0,0)
+    x(0) = (1,2), \quad x(t_f) = (0,0).
 ```
 
 This problem can be interpretated as a simple model for a wagon with constant mass moving along
@@ -48,13 +48,14 @@ Then, we can define the problem
 end
 nothing # hide
 ```
+
 !!! note "Nota bene"
 
     In order to ensure convergence of the direct solver, we have added the state constraints labelled (1) and (2):
 
-```math
-0 \leq q(t) \leq 5,\quad -2 \leq v(t) \leq 3,\quad t \in [ 0, tf ].
-```
+    ```math
+    0 \leq q(t) \leq 5,\quad -2 \leq v(t) \leq 3,\quad t \in [ 0, t_f ].
+    ```
 
 Solve it
 

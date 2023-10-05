@@ -1,4 +1,4 @@
-# [Advanced example](@id goddard)
+# [Goddard problem](@id goddard)
 
 ## Introduction
 
@@ -28,7 +28,7 @@ subject to the controlled dynamics
 and subject to the control constraint $u(t) \in [0,1]$ and the state constraint
 $v(t) \leq v_{\max}$. The initial state is fixed while only the final mass is prescribed.
 
-!!! note
+!!! note "Nota bene"
 
     The Hamiltonian is affine with respect to the control, so singular arcs may occur,
     as well as constrained arcs due to the path constraint on the velocity (see below).
@@ -179,7 +179,7 @@ as well as the associated multiplier for the *order one* state constraint on the
 \mu(x, p) = H_{01}(x, p) / (F_1 \cdot g)(x).
 ```
 
-!!! note
+!!! note "Poisson bracket and Lie derivative"
 
     The Poisson bracket $\{H,G\}$ is also given by the Lie derivative of $G$ along the
     Hamiltonian vector field $X_H = (\nabla_p H, -\nabla_x H)$ of $H$, that is

@@ -7,10 +7,10 @@ We denote by $x = (x_1, x_2)$ the state of the wagon, that is its position $x_1$
 <img src="./assets/chariot.png" style="display: block; margin: 0 auto 20px auto;" width="300px">
 ```
 
-We assume that the mass is constant and unitary and that there is no friction. The dynamics is thus given by
+We assume that the mass is constant and unitary and that there is no friction. The dynamics we consider is given by
 
 ```math
-    \dot x_1(t) = x_2(t), \quad \dot x_2(t) = u(t) \in \mathbb{R},
+    \dot x_1(t) = x_2(t), \quad \dot x_2(t) = u(t), \quad u(t) \in \R,
 ```
 
 which is simply the [double integrator](https://en.wikipedia.org/w/index.php?title=Double_integrator&oldid=1071399674) system.
@@ -43,20 +43,26 @@ using OptimalControl
 Then, we can define the problem
 
 ```@example main
-ocp = Model()
+ocp = Model()                                   # empty optimal control problem
 
-time!(ocp, [ 0, 1 ])
-state!(ocp, 2)
-control!(ocp, 1)
+time!(ocp, [ 0, 1 ])                            # time interval
+state!(ocp, 2)                                  # dimension of the state
+control!(ocp, 1)                                # dimension of the control
 
-constraint!(ocp, :initial, [ -1, 0 ])
-constraint!(ocp, :final,   [  0, 0 ])
+constraint!(ocp, :initial, [ -1, 0 ])           # initial condition
+constraint!(ocp, :final,   [  0, 0 ])           # final condition
 
-dynamics!(ocp, (x, u) -> [ x[2], u ])
+dynamics!(ocp, (x, u) -> [ x[2], u ])           # dynamics of the double integrator
 
-objective!(ocp, :lagrange, (x, u) -> 0.5u^2)
+objective!(ocp, :lagrange, (x, u) -> 0.5u^2)    # cost in Lagrange form
 nothing # hide
 ```
+
+!!! note "Nota bene"
+
+    There are two ways to define an optimal control problem:
+    - using functions like in this example, see also the [`Mode` documentation](https://control-toolbox.org/docs/ctbase/stable/api-model.html) for more details.
+    - using an abstract formulation. You can compare both ways taking a look at the abstract version of this [basic example](@ref basic).
 
 Solve it
 
