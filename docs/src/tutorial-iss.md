@@ -63,10 +63,11 @@ S(p0) = exp(p0)(tf)[1] - xf;                        # shooting function
 nle = (s, ξ) -> s[1] = S(ξ[1])                      # auxiliary function
 ξ = [ 0.0 ]                                         # initial guess
 
-indirect_sol = 
+global indirect_sol =      # hide
 @suppress_err begin # hide
-fsolve(nle, ξ)                       # resolution of S(p0) = 0
-end # hide
+fsolve(nle, ξ)      # hide
+indirect_sol = fsolve(nle, ξ)                       # resolution of S(p0) = 0
+end                 # hide
 
 p0_sol = indirect_sol.x[1]                          # costate solution
 println("costate:    p0 = ", p0_sol)
@@ -105,7 +106,7 @@ for i ∈ 1:length(p0s)
     ps[i, :] = [z[2] for z ∈ sol.(times)]
 end
 for j ∈ 1:length(times) # plot intermediate points
-    label = j==1 ? "wavefronts" : false
+    label = j==1 ? "flow at times" : false
     plot!(plt_flow, xs[:, j], ps[:, j], color=:green, linewidth=2, label=label)
 end
 
@@ -116,14 +117,14 @@ plot!(plt_flow, [0, 0], [p0min, p0max], color=:black, xlabel="x", ylabel="p", la
 sol = exp(p0_sol)
 x = [sol(t)[1] for t ∈ sol.t]
 p = [sol(t)[2] for t ∈ sol.t]
-plot!(plt_flow, x, p, color=:red, linewidth=2, label="solution")
+plot!(plt_flow, x, p, color=:red, linewidth=2, label="extremal solution")
 plot!(plt_flow, [x[end]], [p[end]], seriestype=:scatter, color=:green, label=false)   # solution
 
 # plot of the shooting function
-plt_shoot = plot(xlims=(p0min, p0max), ylims=(-2, 4), xlabel="p₀", ylabel="S")
+plt_shoot = plot(xlims=(p0min, p0max), ylims=(-2, 4), xlabel="p₀", ylabel="y")
 plot!(plt_shoot, p0s, S, linewidth=2, label="S(p₀)", color=:green)
-plot!(plt_shoot, [p0min, p0max], [0, 0], color=:black, label="S=0")
-plot!(plt_shoot, [p0_sol, p0_sol], [-2, 0], color=:black, label="p0=solution", linestyle=:dash)
+plot!(plt_shoot, [p0min, p0max], [0, 0], color=:black, label="y=0")
+plot!(plt_shoot, [p0_sol, p0_sol], [-2, 0], color=:black, label="p₀ solution", linestyle=:dash)
 plot!(plt_shoot, [p0_sol], [0], seriestype=:scatter, color=:green, label=false)   # solution
 
 # plots
