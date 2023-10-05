@@ -1,5 +1,9 @@
 # Initial guess
 
+```@meta
+CurrentModule =  OptimalControl
+```
+
 We present in this tutorial the different possibilities to provide an initial guess to solve an optimal control problem using the [`solve`](@ref) command. For the illustrations, we define the following optimal control problem.
 
 ```@example main
