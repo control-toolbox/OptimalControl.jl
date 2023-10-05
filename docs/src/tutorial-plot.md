@@ -1,6 +1,6 @@
 # Plot a solution
 
-In this tutorial we explain the different ways to plot a solution from an optimal control problem.
+In this tutorial we explain the different ways to plot a solution of an optimal control problem.
 
 Let us start by importing the necessary package.
 
@@ -35,11 +35,11 @@ plot(sol)
 
 As you can see, it produces a grid of subplots. The left column contains the state trajectories, the right column the costate trajectories, and at the bottom we have the control trajectory.
 
-Attributes from `Plots.jl` can be passed to the `plot` function:
+Attributes from [`Plots.jl`](https://docs.juliaplots.org) can be passed to the `plot` function:
 
-- In addition to `sol` you can pass attributes to the full `Plot`, see the [attribute plot documentation](https://docs.juliaplots.org/latest/generated/attributes_plot/) from `Plots.jl` for more details. For instance, you can specify the size of the figure.
-- You can also pass attributes to the subplots, see the [attribute subplot documentation](https://docs.juliaplots.org/latest/generated/attributes_subplot/) from `Plots.jl` for more details. However, it will affect all the subplots. For instance, you can specify the location of the legend.
-- In the same way, you can pass axis attributes to the subplots, see the [attribute axis documentation](https://docs.juliaplots.org/latest/generated/attributes_axis/) from `Plots.jl` for more details. It will also affect all the subplots. For instance, you can remove the grid.
+- In addition to `sol` you can pass attributes to the full `Plot`, see the [attributes plot documentation](https://docs.juliaplots.org/latest/generated/attributes_plot/) from `Plots.jl` for more details. For instance, you can specify the size of the figure.
+- You can also pass attributes to the subplots, see the [attributes subplot documentation](https://docs.juliaplots.org/latest/generated/attributes_subplot/) from `Plots.jl` for more details. However, it will affect all the subplots. For instance, you can specify the location of the legend.
+- In the same way, you can pass axis attributes to the subplots, see the [attributes axis documentation](https://docs.juliaplots.org/latest/generated/attributes_axis/) from `Plots.jl` for more details. It will also affect all the subplots. For instance, you can remove the grid.
 
 ```@example main
 plot(sol, size=(700, 450), legend=:bottomright, grid=false)
@@ -84,11 +84,12 @@ sol2 = solve(ocp, display=false)
 nothing # hide
 ```
 
-We first plot the solution of the first optimal control problem. Then, we plot the solution of the second optimal control problem on the same figure, but with dashed lines.
+We first plot the solution of the first optimal control problem, then, we plot the solution of the second optimal control problem on the same figure, but with dashed lines.
 
 ```@example main
 # first plot
 plt = plot(sol, size=(700, 450))
+
 # second plot
 style = (linestyle=:dash, )
 plot!(plt, sol2, state_style=style, costate_style=style, control_style=style)
@@ -118,6 +119,8 @@ u = sol.control
 plot(t, norm∘u, label="‖u‖") 
 ```
 
-!!! note
+!!! note "Nota bene"
 
-    The `norm` function is from `LinearAlgebra.jl`. The `∘` operator is the composition operator. Hence, `norm∘u` is equivalent to `t -> norm(u(t))`. The `sol.state`, `sol.costate` and `sol.control` are functions that return the state, costate and control trajectories at a given time.
+    - The `norm` function is from `LinearAlgebra.jl`. 
+    - The `∘` operator is the composition operator. Hence, `norm∘u` is the function `t -> norm(u(t))`. 
+    - The `sol.state`, `sol.costate` and `sol.control` are functions that return the state, costate and control trajectories at a given time.

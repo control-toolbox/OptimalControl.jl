@@ -1,6 +1,10 @@
 # Initial guess
 
-We define the following optimal control problem.
+```@meta
+CurrentModule =  OptimalControl
+```
+
+We present in this tutorial the different possibilities to provide an initial guess to solve an optimal control problem using the [`solve`](@ref) command. For the illustrations, we define the following optimal control problem.
 
 ```@example main
 using OptimalControl
@@ -39,7 +43,7 @@ Let us plot the solution of the optimal control problem.
 plot(sol, size=(600, 450))
 ```
 
-To reduce the number of iterations and improve the convergence, we can give an initial guess to the solver. We define the following initial guess.
+To reduce the number of iterations and improve the convergence, we can give an initial guess to the solver. We define the following constant initial guess.
 
 ```@example main
 # constant initial guess
@@ -57,8 +61,8 @@ We can also provide functions of time as initial guess for the state and the con
 
 ```@example main
 # initial guess as functions of time
-x(t) = [ -0.2 * t, 0.1 * t ]
-u(t) = -0.2 * t
+x(t) = [ -0.2t, 0.1t ]
+u(t) = -0.2t
 initial_guess = (state=x, control=u, variable=0.05)
 
 # solve the optimal control problem with initial guess

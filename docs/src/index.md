@@ -41,8 +41,4 @@ and other constraints such as
 \end{array}
 ```
 
-See our tutorials to get started solving optimal control problems:
-
-- [Basic example](@ref basic): a simple smooth optimal control problem solved by the direct method.
-- [Double integrator](@ref double-int): the classical double integrator, minimum time. 
-- [Advanced example](@ref goddard): the [Goddard problem](https://en.wikipedia.org/w/index.php?title=Goddard_problem&oldid=1091155283) solved by direct and indirect methods.
+See our tutorials to get started solving optimal control problems.
