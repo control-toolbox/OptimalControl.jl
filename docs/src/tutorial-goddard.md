@@ -277,7 +277,8 @@ using MINPACK                                               # NLE solver
 nle = (s, ξ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])   # auxiliary function
                                                             # with aggregated inputs
 ξ = [ p0 ; t1 ; t2 ; t3 ; tf ]                              # initial guess
-indirect_sol = @suppress_err begin # hide
+indirect_sol = 
+@suppress_err begin # hide
 fsolve(nle, ξ)
 end # hide
 
