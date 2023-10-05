@@ -3,6 +3,7 @@
 ```
 
 # Solving optimal control problems with Julia
+
 ### [Jean-Baptiste Caillau](http://caillau.perso.math.cnrs.fr), [Olivier Cots](https://ocots.github.io), [Joseph Gergaud](https://scholar.google.com/citations?user=pkH4An4AAAAJ&hl=fr), [Pierre Martinon](https://www.linkedin.com/in/pierre-martinon-b4603a17), [Sophia Sed](https://iww.inria.fr/sed-sophia)
 
 ```@raw html
@@ -10,40 +11,52 @@
 ```
 
 # What it's about
+
 - Nonlinear optimal control of ODEs:
+
 ```math
 g(x(t_0),x(t_f)) + \int_{t_0}^{t_f} f^0(x(t), u(t)) \to \min
 ```
+
 subject to
+
 ```math
 \dot{x}(t) = f(x(t), u(t)),\quad t \in [0, t_f]
 ```
+
 plus boundary, control and state constraints
+
 - Our core interests: numerical & geometrical methods in control, applications
 
 # Where it comes from
+
 - [BOCOP: the optimal control solver](https://www.bocop.org)
 - [HamPath: indirect and Hamiltonian pathfollowing](http://www.hampath.org)
 - [Coupling direct and indirect solvers, examples](https://ct.gitlabpages.inria.fr/gallery//notebooks.html)
 
 # OptimalControl.jl
+
 - [Basic example: double integrator (1/3)](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-basic-example-f.html)
 - [Basic example: double integrator (2/3)](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-basic-example.html)
 - [Basic example: double integrator (3/3)](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-double-integrator.html)
+- [Indirect simple shooting](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-iss.html)
 - [Advanced example: Goddard problem](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-goddard.html)
 
 # Wrap up
+
 - [X] High level modelling of optimal control problems
 - [X] Efficient numerical resolution coupling direct and indirect methods
-- [X] Collection of examples 
+- [X] Collection of examples
 
 # Future
+
 - [ct_repl](./assets/repl.mp4)
 - Additional solvers: direct shooting, collocation for BVP, Hamiltonian pathfollowing...
 - ... and open to contributions!
 - [CTProblems.jl](https://control-toolbox.org/docs/ctproblems/stable/problems-list.html)
 
 # control-toolbox.org
+
 - Open toolbox
 - Collection of Julia Packages rooted at [OptimalControl.jl](https://control-toolbox.org/docs/optimalcontrol)
 
@@ -52,6 +65,7 @@ plus boundary, control and state constraints
 ```
 
 # Credits (not exhaustive!)
+
 - [DifferentialEquations.jl](https://github.com/SciML/DifferentialEquations.jl)
 - [JuMP](https://jump.dev/JuMP.jl),
   [InfiniteOpt.jl](https://docs.juliahub.com/InfiniteOpt/p3GvY/0.4.1),
@@ -62,4 +76,3 @@ plus boundary, control and state constraints
   [Zygote.jl](https://fluxml.ai/Zygote.jl))
 - [MLStyle.jl](https://thautwarm.github.io/MLStyle.jl)
 - [REPLMaker.jl](https://docs.juliahub.com/ReplMaker)
-
