@@ -34,6 +34,7 @@ makedocs(
                             ],
         "API"           => "api.md", 
         "JuliaCon2023"  => "juliacon2023.md", 
+        "JuliaOpt2023"  => "juliaopt2023.md", 
     ]
 )
 

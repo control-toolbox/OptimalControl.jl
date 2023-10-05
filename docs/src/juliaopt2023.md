@@ -1,5 +1,5 @@
 ```@raw html
-<img width="800" alt="juliacon" src="./assets/juliacon.jpg">
+<img width="800" alt="juliaopt2023" src="./assets/juliaopt2023.jpg">
 ```
 
 # Solving optimal control problems with Julia
@@ -27,8 +27,9 @@ plus boundary, control and state constraints
 - [Coupling direct and indirect solvers, examples](https://ct.gitlabpages.inria.fr/gallery//notebooks.html)
 
 # OptimalControl.jl
-- [Basic example: double integrator](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-basic-example-f.html)
-- [Basic example: double integrator (cont'ed)](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-basic-example.html)
+- [Basic example: double integrator (1/3)](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-basic-example-f.html)
+- [Basic example: double integrator (2/3)](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-basic-example.html)
+- [Basic example: double integrator (3/3)](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-double-integrator.html)
 - [Advanced example: Goddard problem](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-goddard.html)
 
 # Wrap up
