@@ -15,7 +15,7 @@
 - Nonlinear optimal control of ODEs:
 
 ```math
-g(x(t_0),x(t_f)) + \int_{t_0}^{t_f} f^0(x(t), u(t)) \to \min
+g(x(t_0),x(t_f)) + \int_{t_0}^{t_f} f^0(x(t), u(t))\, \mathrm{d}t \to \min
 ```
 
 subject to
