@@ -16,7 +16,7 @@ g(x(t_0),x(t_f)) + \int_{t_0}^{t_f} f^0(x(t), u(t)) \to \min
 ```
 subject to
 ```math
-\dot{x}(t) = f(x(t), u(t)),\quad t \in [0, t_f]
+\dot{x}(t) = f(x(t), u(t)),\quad t \in [t_0, t_f]
 ```
 plus boundary, control and state constraints
 - Our core interests: numerical & geometrical methods in control, applications

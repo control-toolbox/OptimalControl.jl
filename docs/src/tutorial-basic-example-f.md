@@ -61,7 +61,7 @@ nothing # hide
 !!! note "Nota bene"
 
     There are two ways to define an optimal control problem:
-    - using functions like in this example, see also the [`Mode` documentation](https://control-toolbox.org/docs/ctbase/stable/api-model.html) for more details.
+    - using functions like in this example, see also the [`Model` documentation](https://control-toolbox.org/docs/ctbase/stable/api-model.html) for more details.
     - using an abstract formulation. You can compare both ways taking a look at the abstract version of this [basic example](@ref basic).
 
 Solve it

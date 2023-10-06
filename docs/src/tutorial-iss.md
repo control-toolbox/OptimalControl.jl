@@ -18,7 +18,7 @@ Let us consider the following optimal control problem:
 ```math
 \left\{ 
     \begin{array}{l}
-        \min \displaystyle \frac{1}{2} \int_{t_0}^{t_f} {u(t)}^2 \, \mathrm{d} t\\[1.0em]
+        \min \displaystyle \frac{1}{2} \int_{t_0}^{t_f} u^2(t) \, \mathrm{d} t\\[1.0em]
         \dot{x}(t)  =  \displaystyle -x(t)+\alpha x^2(t)+u(t), \quad  u(t) \in \R, 
         \quad t \in [t_0, t_f] \text{ a.e.}, \\[0.5em]
         x(t_0) = x_0, \quad x(t_f) = x_f,
@@ -49,7 +49,7 @@ nothing # hide
 The **pseudo-Hamiltonian** of this problem is
 
 ```math
-    H(x,p,u) = p \, (-x+u) + p^0 u^2 /2,
+    H(x,p,u) = p \, (-x+\alpha x^2+u) + p^0 u^2 /2,
 ```
 
 where $p^0 = -1$ since we are in the normal case. From the Pontryagin Maximum Principle, the maximising control is given by
@@ -63,14 +63,15 @@ since $\partial^2_{uu} H = p^0 = - 1 < 0$. Plugging this control in feedback for
 ```math
     \left\{ 
         \begin{array}{l}
-            \dot{x}(t)  = \phantom{-} \nabla_p H[t] = -x(t) + u(x(t), p(t)) = -x(t)+p(t), \\[0.5em]
-            \dot{p}(t)  = -           \nabla_x H[t] = p(t),    \\[0.5em]
-            x(0)        = x_0, \quad x(t_f) = x_f,
+            \dot{x}(t)  = \phantom{-} \nabla_p H[t] = -x(t) + \alpha x^2(t) + u(x(t), p(t)) 
+            = -x(t) + \alpha x^2(t) + p(t), \\[0.5em]
+            \dot{p}(t)  = -           \nabla_x H[t] = (1 - 2 \alpha x(t))\, p(t),    \\[0.5em]
+            x(t_0)        = x_0, \quad x(t_f) = x_f,
         \end{array}
     \right.
 ```
 
-where $[t]~=  (x(t),p(t),u(x(t), p(t)))$. 
+where $[t]~=  (x(t),p(t),u(x(t), p(t)))$.
 
 !!! note "Our goal"
 
@@ -82,13 +83,13 @@ To achive our goal, let us first introduce the pseudo-Hamiltonian vector field
     \vec{H}(z,u) = \left( \nabla_p H(z,u), -\nabla_x H(z,u) \right), \quad z = (x,p),
 ```
 
-and then denote by $z(\cdot,x_0,p_0)$ the solution of 
+and then denote by $z(\cdot, t_0, x_0, p_0)$ the solution of the following Cauchy problem
 
 ```math
-\dot{z}(t) = \vec{H}(z(t), u(z(t))), \quad z(0) = (x_0,p_0).
+\dot{z}(t) = \vec{H}(z(t), u(z(t))), \quad z(t_0) = (x_0, p_0).
 ```
 
-To compute $z$ with the `OptimalControl` package, we define the flow of the associated Hamiltonian vector field:
+To compute $z$ with the `OptimalControl` package, we define the flow of the associated Hamiltonian vector field by:
 
 ```@example main
 u(x, p) = p
@@ -99,10 +100,10 @@ nothing # hide
 
 !!! note "Nota bene"
 
-    Actually, $z(\cdot, x_0, p_0)$ is also solution of
+    Actually, $z(\cdot, t_0, x_0, p_0)$ is also solution of
     
     ```math
-        \dot{z}(t) = \vec{\mathbf{H}}(z(t)), \quad z(0) = (x_0, p_0),
+        \dot{z}(t) = \vec{\mathbf{H}}(z(t)), \quad z(t_0) = (x_0, p_0),
     ```
     where $\mathbf{H}(z) = H(z, u(z))$ and $\vec{\mathbf{H}} = (\nabla_p \mathbf{H}, -\nabla_x \mathbf{H})$. This is what is actually computed by `Flow`.
 
@@ -118,11 +119,16 @@ Now, to solve the (BVP) we introduce the **shooting function**.
 ```math
     \begin{array}{rlll}
         S \colon    & \R    & \longrightarrow   & \R \\
-                    & p_0    & \longmapsto     & S(p_0) = \pi(z(t_f,x_0,p_0)) - x_f,
+                    & p_0    & \longmapsto     & S(p_0) = \pi(z(t_f, t_0, x_0, p_0)) - x_f,
     \end{array}
 ```
 
-where $\pi(x,p) = x$. At the end, solving (BVP) leads to solve $S(p_0) = 0$.
+where $\pi(x,p) = x$. At the end, solving (BVP) leads to solve 
+
+```math
+    S(p_0) = 0.
+```
+
 This is what we call the **indirect simple shooting method**.
 
 ```@example main
