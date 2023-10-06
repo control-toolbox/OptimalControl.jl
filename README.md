@@ -22,3 +22,6 @@ The `OptimalControl.jl` package is part of the [control-toolbox ecosystem](https
 
 To install a package from the control-toolbox ecosystem, please visit the [installation page](https://github.com/control-toolbox#installation).
 
+## See also
+
+We acknowledge support of colleagues from [ADNLPModels](https://jso.dev/ADNLPModels.jl/stable) @[Julia Smooth Optimizers](https://jso.dev).
