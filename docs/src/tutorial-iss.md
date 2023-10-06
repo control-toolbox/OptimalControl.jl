@@ -123,7 +123,7 @@ Now, to solve the (BVP) we introduce the **shooting function**.
     \end{array}
 ```
 
-where $\pi(x,p) = x$. At the end, solving (BVP) leads to solve 
+where $\pi(x,p) = x$. At the end, solving (BVP) leads to solve
 
 ```math
     S(p_0) = 0.
