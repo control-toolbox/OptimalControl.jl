@@ -72,19 +72,6 @@ function solve(ocp::OptimalControlModel, description::Symbol...;
     #
     method = getFullDescription(description, available_methods())
 
-    # todo: OptimalControlInit must be in CTBase, it is for the moment in CTDirect
-    
-    if isnothing(init)
-        init =  OptimalControlInit()
-    elseif init isa CTBase.OptimalControlSolution
-        init = OptimalControlInit(init)
-    else
-        x_init = :state    ∈ keys(init) ? init[:state]    : nothing
-        u_init = :control  ∈ keys(init) ? init[:control]  : nothing
-        v_init = :variable ∈ keys(init) ? init[:variable] : nothing
-        init = OptimalControlInit(x_init=x_init, u_init=u_init, v_init=v_init)
-    end
-
     # print chosen method
     display ? println("Method = ", method) : nothing
 
