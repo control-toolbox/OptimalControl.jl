@@ -7,6 +7,7 @@ using CTProblems
 #
 @testset verbose = true showtiming = true "Optimal control tests" begin
     for name ∈ (
+        :basic,
         :goddard_direct,
         :goddard_indirect,
         :init,

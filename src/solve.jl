@@ -66,7 +66,7 @@ julia> sol = solve(ocp, init=(state=t->[-1+t, t*(t-1)], control=t->6-12*t))
 """
 function solve(ocp::OptimalControlModel, description::Symbol...; 
     display::Bool=__display(),
-    init=nothing,
+    init=__ocp_init(),
     kwargs...)
 
     #

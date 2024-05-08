@@ -22,6 +22,7 @@ using CTProblems
 
 # declarations
 const __display = CTBase.__display
+__ocp_init() = CTBase.OCPInit()
 
 include("solve.jl")
 
