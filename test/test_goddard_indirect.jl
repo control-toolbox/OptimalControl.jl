@@ -95,18 +95,21 @@ s_guess_sol = [-0.02456074767656735,
 ξ0 = [ p0 ; t1 ; t2 ; t3 ; tf ]
 
 #
-foo!(s, ξ) = shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
-sol = fsolve(foo!, ξ0, show_trace=true); println(sol)
+foo!(s, ξ, λ) = shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
+#sol = fsolve(foo!, ξ0, show_trace=true); println(sol)
+prob = NonlinearProblem(foo!, ξ0)
+sol = NonlinearSolve.solve(prob)
 
-p0 = sol.x[1:3]
-t1 = sol.x[4]
-t2 = sol.x[5]
-t3 = sol.x[6]
-tf = sol.x[7];
+p0 = sol.u[1:3]
+t1 = sol.u[4]
+t2 = sol.u[5]
+t3 = sol.u[6]
+tf = sol.u[7];
 
 shoot!(s, p0, t1, t2, t3, tf)
 
-@test sol.converged
+#@test sol.converged
+@test SciMLBase.successful_retcode(sol)
 @test norm(s) < 1e-6
 
 end

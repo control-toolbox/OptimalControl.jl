@@ -8,7 +8,7 @@ ocp = prob.model
 init = (state=[1.01, 0.05, 0.8], control=0.1, variable=0.2)
 
 # solve
-sol = solve(ocp, grid_size=10, print_level=5, init=init)
+sol = OptimalControl.solve(ocp, grid_size=10, print_level=5, init=init)
 
 # test
 @test sol.objective ≈ prob.solution.objective atol=5e-3

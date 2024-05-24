@@ -1,7 +1,8 @@
 [deps]
 CTProblems = "45d9ea3f-a92f-411f-833f-222dd4fb9cd8"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-MINPACK = "4854310b-de5a-5eb6-a2a5-c1dee2bd17f9"
+NonlinearSolve = "8913a72c-1f9b-4ce2-8d82-65094dcecaec"
+SciMLBase = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]

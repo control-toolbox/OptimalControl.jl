@@ -1,8 +1,9 @@
 using OptimalControl
 using Test
 using LinearAlgebra
-using MINPACK
 using CTProblems
+using SciMLBase
+using NonlinearSolve
 
 #
 @testset verbose = true showtiming = true "Optimal control tests" begin
