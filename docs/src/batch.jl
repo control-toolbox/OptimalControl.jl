@@ -30,24 +30,31 @@ V0 = 0.003
 
     V(tf) → max
 
-end;
+end
 
 # Dynamics
-const kᵣ = 1.1
-const kₘ = 1.2
-const Kᵣ = 1.3
-const Kₘ = 1.4
+kᵣ = 1.1
+kₘ = 1.2
+Kᵣ = 1.3
+Kₘ = 1.4
 
 wᵣ(p) = kᵣ * p / (Kᵣ + p)
 wₘ(s) = kₘ * s / (Kₘ + s)
 
-F0(s, p, r, V) =
-    [ -wₘ(s) * (1 - r) * V
-       wₘ(s) * (1 - r) - wᵣ(p) * r * (p + 1)
-      -wᵣ(p) * r^2
-       wᵣ(p) * r * V ]
+F0(φ) = begin
+    s, p, r, V = φ
+    res = [ -wₘ(s) * (1 - r) * V
+             wₘ(s) * (1 - r) - wᵣ(p) * r * (p + 1)
+            -wᵣ(p) * r^2
+             wᵣ(p) * r * V ]
+    return res
+end
 
-F1(s, p, r, V) = [ 0, 0, wᵣ(p) * r, 0 ]
+F1(φ) = begin
+    s, p, r, V = φ
+    res = [ 0, 0, wᵣ(p) * r, 0 ]
+    return res
+end
 
 direct_sol1 = solve(ocp, grid_size=100)
 direct_sol2 = solve(ocp, grid_size=1000)
