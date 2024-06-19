@@ -1,5 +1,26 @@
-# batch.jl
+# [Batch](@id batch)
 
+Let us consider a wagon moving along a rail, whom acceleration can be controlled by a force $u$.
+We denote by $x = (x_1, x_2)$ the state of the wagon, that is its position $x_1$ and its velocity $x_2$.
+
+```@raw html
+<img src="./assets/chariot.png" style="display: block; margin: 0 auto 20px auto;" width="300px">
+```
+
+We assume that the mass is constant and unitary and that there is no friction. The dynamics we consider is given by
+
+```math
+    \dot x_1(t) = x_2(t), \quad \dot x_2(t) = u(t), , \quad u(t) \in \R,
+```
+
+which is simply the [double integrator](https://en.wikipedia.org/w/index.php?title=Double_integrator&oldid=1071399674) system.
+Les us consider a transfer starting at time $t_0 = 0$ and ending at time $t_f = 1$, for which we want to minimise the transfer energy
+
+```math
+    \frac{1}{2}\int_{0}^{1} u^2(t) \, \mathrm{d}t
+```
+
+```@example main
 using OptimalControl
 
 t0 = 0      # initial time
@@ -65,3 +86,4 @@ println("Objective ", sol2.objective, " after ", sol2.iterations, " iterations")
 
 plot(sol1, size=(600, 600))
 plot!(sol2)
+```

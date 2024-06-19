@@ -27,6 +27,7 @@ makedocs(
                             "tutorial-init.md",
                             "tutorial-lqr-basic.md",
                             "tutorial-plot.md",
+                            "tutorial-batch.md",
                             #"tutorial-model.md",
                             #"tutorial-solvers.md",
                             #"tutorial-flows.md",
