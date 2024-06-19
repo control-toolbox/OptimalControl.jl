@@ -1,12 +1,51 @@
 # [Batch](@id batch)
 
-Let us consider...
+Let us consider a *self-replicator* model [^1] describing the
+dynamics of a microbial population growing inside a closed bioreactor. The bacterial
+culture has a constant volume. At the beginning of the experience,
+there is an initial mass of substrate $S$ inside the bioreactor, that is gradually consumed
+by the bacterial population, and transformed into precursor metabolites $P$. These
+precursors are intermediate metabolites used to produce proteins—such as ribosomes
+and enzymes—responsible for specific cellular functions; and metabolites of interest
+$X$ which are excreted from the cell. The proteins forming bacterial cells are divided
+into three classes $M$, $R$ and $Q$, associated with the following cellular functions:
+- class $M$ proteins of the metabolic machinery, responsible for the uptake of nurients
+- $S$ from the medium (substrate)
+- the production of precursor metabolites $P$
+- and the synthesis of metabolites of interest $X$.
+
+Class $R$ proteins of the gene expression machinery (such as ribosomes) actively involved in protein biosynthesis (*i.e.* in the production of proteins of classes $M$,
+$Q$ and $R$). Class $Q$ Growth are rate-independent proteins, such as housekeeping proteins responsible for cell maintenance, and ribosomes not involved in protein synthesis
 
 ```@raw html
-<img src="./assets/chariot.png" style="display: block; margin: 0 auto 20px auto;" width="300px">
+<img src="./assets/batch.jpg" style="display: block; margin: 0 auto 20px auto;" width="300px">
 ```
 
-To solve the problem, we first set up the boundary values,
+After some normalisations, a simplified version of the system (not describing the production of metabolite as we will focus on volume maximisation on this example) can be written in terms of the concentrations of the substrate $s$, precursors $p$, ribosomes $r$, and the of the volume $V$ of the bacterial population:
+
+```math
+\begin{align}
+  \dot{s} &= -w_M(s)(1-r)V,\\
+  \dot{p} &= w_M(s)(1-r) - w_R(p)r(p+1),\\
+  \dot{r} &= (\alpha-r)w_R(p)r,\\
+  \dot{V} &= w_R(p)rV,
+\end{align}
+```
+
+where velocities are taken linear in the concentrations, and where Michaelis-Menten kinetics are assumed:
+
+```math
+v_R := V_R/V = w_R(p) r,\quad v_M := V_M/V = w_M(s) m,
+```
+
+with
+
+```math
+w_R(p) = \frac{k_R p}{K_r + p}, \quad w_M(s) = \frac{k_m s}{K_m + s}\cdot
+```
+
+We are interested in maximising the biomass production (final volume of the bacterial population), and
+to solve the problem, we first set up the boundary values,
 
 ```@example main
 using OptimalControl
@@ -20,7 +59,7 @@ V0 = 0.003
 nothing # hide
 ```
 
-together with parameters and auxiliary functions definnig the synthesis rates (Michaelis-Menten kinetics, here)
+together with parameters and auxiliary functions definnig the synthesis rates:
 
 ```@example main
 kᵣ = 1.1
@@ -31,12 +70,6 @@ Kₘ = 1.4
 wᵣ(p) = kᵣ * p / (Kᵣ + p)
 wₘ(s) = kₘ * s / (Kₘ + s)
 nothing # hide
-```
-
-assuming that velocities are linear in the concentrations:
-
-```math
-v_R := V_R/V = w_R(p) r,\quad v_M := V_M/V = w_M(s) m.
 ```
 
 Then we define the optimal control problem setting time, state, control, boundary conditions, state and control constraints, affine in the control dynamics and Mayer cost:
@@ -112,3 +145,10 @@ We eventually plot the solutions (raw grid + finer grid) and observe that the co
 plot(sol1, size=(600, 600))
 plot!(sol2)
 ```
+
+[^1]:  Giordano, N.; Mairet, F.; Gouzé́, J.-L.; Geiselmann, J.; De Jong, H. Dynamical allocation of cellular resources as an optimal control problem: novel insights into microbial
+growth strategies. *PLoS comp. biol.* **12** (2016), e1004802. 
+
+[^2]: Yabo, A. G.; Caillau, J.-B.; Gouzé, J.-L.; de Jong, H.; Mairet, F. Dynamical analysis and optimization of a generalized resource allocation model of microbial growth. *SIAM J. Appl. Dyn. Syst.* **21** (2022), no. 1, 137-165.
+
+[^3]: Yabo, A. G.; Caillau, J.-B.; Gouzé, J.-L. Optimal bacterial resource allocation strategies in batch processing. *SIAM J. Appl. Dyn. Syst.*, to appear.
