@@ -21,7 +21,7 @@ $Q$ and $R$). Class $Q$ Growth are rate-independent proteins, such as housekeepi
 <img src="./assets/batch.jpg" style="display: block; margin: 0 auto 20px auto;" width="300px">
 ```
 
-After some normalisations, a simplified version of the system (not describing the production of metabolite as we will focus on volume maximisation on this example) can be written in terms of the concentrations of the substrate $s$, precursors $p$, ribosomes $r$, and the of the volume $V$ of the bacterial population:
+After some normalisations, a simplified version of the system (not describing the production of metabolite as we will focus on volume maximisation on this example) can be written in terms of the concentrations of the substrate $s$, precursors $p$, ribosomes $r$, and the of the volume $V$ of the bacterial population [^2]:
 
 ```math
 \begin{align}
@@ -44,7 +44,7 @@ with
 w_R(p) = \frac{k_R p}{K_r + p}, \quad w_M(s) = \frac{k_m s}{K_m + s}\cdot
 ```
 
-We are interested in maximising the biomass production (final volume of the bacterial population), and
+We are interested in maximising the biomass production [^3] (final volume of the bacterial population), and
 to solve the problem, we first set up the boundary values,
 
 ```@example main
