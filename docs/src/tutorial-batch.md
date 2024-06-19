@@ -17,6 +17,7 @@ s0 = 0.1
 p0 = 0.001
 r0 = 0.1
 V0 = 0.003
+nothing # hide
 ```
 
 together with parameters and auxiliary functions definnig the synthesis rates (Michaelis-Menten kinetics, here)
@@ -29,6 +30,7 @@ Kₘ = 1.4
 
 wᵣ(p) = kᵣ * p / (Kᵣ + p)
 wₘ(s) = kₘ * s / (Kₘ + s)
+nothing # hide
 ```
 
 assuming that velocities are linear in the concentrations:
@@ -62,6 +64,7 @@ Then we define the optimal control problem setting time, state, control, boundar
     V(tf) → max
 
 end
+nothing # hide
 ```
 
 Herebefore, the two vector fields are
@@ -81,24 +84,25 @@ F1(φ) = begin
     res = [ 0, 0, wᵣ(p) * r, 0 ]
     return res
 end
+nothing # hide
 ```
 
 We first solve the problem using a uniform discretisation:
 
 ```@example main
-sol0  = solve(batch, grid_size=1000)
+sol0  = solve(batch, grid_size=1000, print_level=0)
 println("Objective ", sol0.objective, " after ", sol0.iterations, " iterations")
 ```
 
 Although convergence is obtained, it is actually more efficient to first solve on a raw grid, then use a *warm start* to solve again on a finer (still uniform) grid:
 
 ```@example main
-sol1 = solve(batch, grid_size=20)
+sol1 = solve(batch, grid_size=20, print_level=0)
 println("Objective ", sol1.objective, " after ", sol1.iterations, " iterations")
 ```
 
 ```@example main
-sol2 = solve(batch, grid_size=1000, init=sol1)
+sol2 = solve(batch, grid_size=1000, print_level=0, init=sol1)
 println("Objective ", sol2.objective, " after ", sol2.iterations, " iterations")
 ```
 
