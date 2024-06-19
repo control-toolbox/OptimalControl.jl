@@ -18,23 +18,26 @@ makedocs(
     format = Documenter.HTML(prettyurls = false,
                              size_threshold_ignore = ["api-ctbase.md"]),
     pages = [
-        "Introduction"  => "index.md",
-        "Tutorials"     => ["tutorial-basic-example.md", 
+        "Introduction" => "index.md",
+        "Tutorials"    => [
+                            "tutorial-basic-example.md", 
                             "tutorial-basic-example-f.md", 
                             "tutorial-double-integrator.md",
-                            "tutorial-goddard.md",
-                            "tutorial-iss.md",
                             "tutorial-init.md",
-                            "tutorial-lqr-basic.md",
                             "tutorial-plot.md",
+                            "tutorial-lqr-basic.md",
+                            "tutorial-iss.md",
                             #"tutorial-model.md",
                             #"tutorial-solvers.md",
                             #"tutorial-flows.md",
                             #"tutorial-ct_repl.md",
                             ],
-        "API"           => "api.md", 
-        "JuliaCon2023"  => "juliacon2023.md", 
-        "JuliaOpt2023"  => "juliaopt2023.md", 
+        "Applications" => [
+                            "tutorial-batch.md",
+                            "tutorial-goddard.md",
+                          ],
+        "FGS 2024"     => "fgs-2024.md", 
+        "API"          => "api.md", 
     ]
 )
 

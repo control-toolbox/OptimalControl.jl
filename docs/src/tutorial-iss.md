@@ -75,7 +75,7 @@ where $[t]~=  (x(t),p(t),u(x(t), p(t)))$.
 
 !!! note "Our goal"
 
-    Our goal is to solve this (BVP).
+    Our goal is to solve this (BVP). Solving (BVP) consists in solving the Pontryagin Maximum Principle which provides necessary conditions of optimality.
 
 To achive our goal, let us first introduce the pseudo-Hamiltonian vector field
 
@@ -83,56 +83,58 @@ To achive our goal, let us first introduce the pseudo-Hamiltonian vector field
     \vec{H}(z,u) = \left( \nabla_p H(z,u), -\nabla_x H(z,u) \right), \quad z = (x,p),
 ```
 
-and then denote by $z(\cdot, t_0, x_0, p_0)$ the solution of the following Cauchy problem
+and then denote by $\varphi_{t_0, x_0, p_0}(\cdot)$ the solution of the following Cauchy problem
 
 ```math
 \dot{z}(t) = \vec{H}(z(t), u(z(t))), \quad z(t_0) = (x_0, p_0).
 ```
 
-To compute $z$ with the `OptimalControl` package, we define the flow of the associated Hamiltonian vector field by:
+Our goal becomes to solve
+
+```math
+\pi( \varphi_{t_0, x_0, p_0}(t_f) ) = x_f, \quad \pi(x, p) = x.
+```
+
+To compute $\varphi$ with the `OptimalControl` package, we define the flow of the associated Hamiltonian vector field by:
 
 ```@example main
 u(x, p) = p
+φ = Flow(ocp, u)
+nothing # hide
+```
 
-f = Flow(ocp, u)
+We define also the projection function on the state space.
+
+```@example main
+π(x, p) = x
+π(z::Tuple{Number, Number}) = π(z...) # z = (x, p)
 nothing # hide
 ```
 
 !!! note "Nota bene"
 
-    Actually, $z(\cdot, t_0, x_0, p_0)$ is also solution of
+    Actually, $\varphi_{t_0, x_0, p_0}(\cdot)$ is also solution of
     
     ```math
         \dot{z}(t) = \vec{\mathbf{H}}(z(t)), \quad z(t_0) = (x_0, p_0),
     ```
     where $\mathbf{H}(z) = H(z, u(z))$ and $\vec{\mathbf{H}} = (\nabla_p \mathbf{H}, -\nabla_x \mathbf{H})$. This is what is actually computed by `Flow`.
 
-We define also an auxiliary exponential map for clarity.
-
-```@example main
-exp(p0; saveat=[]) = f((t0, tf), x0, p0, saveat=saveat).ode_sol
-nothing # hide
-```
-
 Now, to solve the (BVP) we introduce the **shooting function**.
 
 ```math
     \begin{array}{rlll}
         S \colon    & \R    & \longrightarrow   & \R \\
-                    & p_0    & \longmapsto     & S(p_0) = \pi(z(t_f, t_0, x_0, p_0)) - x_f,
+                    & p_0    & \longmapsto     & S(p_0) = \pi( \varphi_{t_0, x_0, p_0}(t_f) ) - x_f.
     \end{array}
 ```
 
-where $\pi(x,p) = x$. At the end, solving (BVP) leads to solve
-
-```math
-    S(p_0) = 0.
-```
+At the end, solving (BVP) is equivalent to solve $S(p_0) = 0$.
 
 This is what we call the **indirect simple shooting method**.
 
 ```@example main
-S(p0) = exp(p0)(tf)[1] - xf;                        # shooting function
+S(p0) = π( φ(t0, x0, p0, tf) ) - xf;                # shooting function
 
 nle = (s, ξ) -> s[1] = S(ξ[1])                      # auxiliary function
 ξ = [ 0.0 ]                                         # initial guess
@@ -154,6 +156,7 @@ nothing # hide
 We get:
 
 ```@example main
+exp(p0; saveat=[]) = φ((t0, tf), x0, p0, saveat=saveat).ode_sol # hide
 times = range(t0, tf, length=2) # hide
 p0min = -0.5 # hide
 p0max = 2 # hide
