@@ -1,4 +1,4 @@
-# [Batch](@id batch)
+# [Batch processing](@id batch)
 
 ## Introduction
 
@@ -148,7 +148,7 @@ println("Objective ", sol2.objective, " after ", sol2.iterations, " iterations")
 We eventually plot the solutions (raw grid + finer grid) and observe that the control exhibits the expected structure with a Fuller-in arc followed by a singular one, then a Fuller-out arc:
 
 ```@example main
-plot(sol1, size=(600, 600))
+plot(sol1, size=(800, 800))
 plot!(sol2)
 ```
 
