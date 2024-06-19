@@ -3,7 +3,7 @@
 using OptimalControl
 
 t0 = 0      # initial time
-tf = 300    # final time
+tf = 90     # final time
 s0 = 0.1
 p0 = 0.001
 r0 = 0.1
@@ -56,9 +56,9 @@ F1(φ) = begin
     return res
 end
 
-direct_sol1 = solve(ocp, grid_size=100)
-direct_sol2 = solve(ocp, grid_size=1000)
+sol1 = solve(ocp, grid_size=20)
+sol2 = solve(ocp, grid_size=1000, init=sol1)
+sol2 = solve(ocp, grid_size=1000)
 
-plt1 = plot(direct_sol1, size=(600, 600))
-plt2 = plot(direct_sol2, size=(600, 600))
-plot(plt1, plt2, layout=(1, 2))
+plot(sol1, size=(600, 600))
+plot!(sol2)
