@@ -1,36 +1,46 @@
 # [Batch](@id batch)
 
-Let us consider a wagon moving along a rail, whom acceleration can be controlled by a force $u$.
-We denote by $x = (x_1, x_2)$ the state of the wagon, that is its position $x_1$ and its velocity $x_2$.
+Let us consider...
 
 ```@raw html
 <img src="./assets/chariot.png" style="display: block; margin: 0 auto 20px auto;" width="300px">
 ```
 
-We assume that the mass is constant and unitary and that there is no friction. The dynamics we consider is given by
-
-```math
-    \dot x_1(t) = x_2(t), \quad \dot x_2(t) = u(t), , \quad u(t) \in \R,
-```
-
-which is simply the [double integrator](https://en.wikipedia.org/w/index.php?title=Double_integrator&oldid=1071399674) system.
-Les us consider a transfer starting at time $t_0 = 0$ and ending at time $t_f = 1$, for which we want to minimise the transfer energy
-
-```math
-    \frac{1}{2}\int_{0}^{1} u^2(t) \, \mathrm{d}t
-```
+To solve the problem, we first set up the boundary values,
 
 ```@example main
 using OptimalControl
 
-t0 = 0      # initial time
-tf = 90     # final time
+t0 = 0      
+tf = 90     
 s0 = 0.1
 p0 = 0.001
 r0 = 0.1
 V0 = 0.003
+```
 
-@def ocp begin
+together with parameters and auxiliary functions definnig the synthesis rates (Michaelis-Menten kinetics, here)
+
+```@example main
+kᵣ = 1.1
+kₘ = 1.2
+Kᵣ = 1.3
+Kₘ = 1.4
+
+wᵣ(p) = kᵣ * p / (Kᵣ + p)
+wₘ(s) = kₘ * s / (Kₘ + s)
+```
+
+assuming that velocities are linear in the concentrations:
+
+```math
+v_R := V_R/V = w_R(p) r,\quad v_M := V_M/V = w_M(s) m.
+```
+
+Then we define the optimal control problem setting time, state, control, boundary conditions, state and control constraints, affine in the control dynamics and Mayer cost:
+
+```@example main
+@def batch begin
 
     t ∈ [ t0, tf ], time
     φ = (s, p, r, V) ∈ R⁴, state 
@@ -52,16 +62,11 @@ V0 = 0.003
     V(tf) → max
 
 end
+```
 
-# Dynamics
-kᵣ = 1.1
-kₘ = 1.2
-Kᵣ = 1.3
-Kₘ = 1.4
+Herebefore, the two vector fields are
 
-wᵣ(p) = kᵣ * p / (Kᵣ + p)
-wₘ(s) = kₘ * s / (Kₘ + s)
-
+```@example main
 F0(φ) = begin
     s, p, r, V = φ
     res = [ -wₘ(s) * (1 - r) * V
@@ -76,14 +81,30 @@ F1(φ) = begin
     res = [ 0, 0, wᵣ(p) * r, 0 ]
     return res
 end
+```
 
-sol0  = solve(ocp, grid_size=1000)
+We first solve the problem using a uniform discretisation:
+
+```@example main
+sol0  = solve(batch, grid_size=1000)
 println("Objective ", sol0.objective, " after ", sol0.iterations, " iterations")
-sol1 = solve(ocp, grid_size=20)
-println("Objective ", sol1.objective, " after ", sol1.iterations, " iterations")
-sol2 = solve(ocp, grid_size=1000, init=sol1)
-println("Objective ", sol2.objective, " after ", sol2.iterations, " iterations")
+```
 
+Although convergence is obtained, it is actually more efficient to first solve on a raw grid, then use a *warm start* to solve again on a finer (still uniform) grid:
+
+```@example main
+sol1 = solve(batch, grid_size=20)
+println("Objective ", sol1.objective, " after ", sol1.iterations, " iterations")
+```
+
+```@example main
+sol2 = solve(batch, grid_size=1000, init=sol1)
+println("Objective ", sol2.objective, " after ", sol2.iterations, " iterations")
+```
+
+We eventually plot the solutions (raw grid + finer grid) and observe that the control exhibits the expected structure with a Fuller-in arc followed by a singular one, then a Fuller-out arc:
+
+```@example main
 plot(sol1, size=(600, 600))
 plot!(sol2)
 ```
