@@ -62,7 +62,7 @@ mf = 0.6    # final mass to target
 
     tf ∈ R, variable
     t ∈ [ t0, tf ], time
-    x =(r, v, m) ∈ R³, state
+    x = (r, v, m) ∈ R³, state
     u ∈ R, control
 
     x(t0) == [ r0, v0, m0 ]
