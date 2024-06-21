@@ -257,7 +257,7 @@ println("t3 = ", t3)
 println("tf = ", tf)
 
 # Norm of the shooting function at solution
-using LinearAlgebra: norm # hide
+using LinearAlgebra: norm
 s = similar(p0, 7)
 @suppress_err begin # hide
 shoot!(s, p0, t1, t2, t3, tf)
