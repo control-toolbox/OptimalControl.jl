@@ -127,19 +127,19 @@ one expects singular arcs connected with bang arcs through Fuller phenomenon (ac
 We first solve the problem using a uniform discretisation:
 
 ```@example main
-sol0  = solve(batch, grid_size=1000, print_level=0)
+sol0  = solve(batch; grid_size=1000, print_level=0)
 println("Objective ", sol0.objective, " after ", sol0.iterations, " iterations")
 ```
 
 Although convergence is obtained, it is actually more efficient to first solve on a raw grid, then use a *warm start* to solve again on a finer (still uniform) grid:
 
 ```@example main
-sol1 = solve(batch, grid_size=20, print_level=0)
+sol1 = solve(batch; grid_size=20, print_level=0)
 println("Objective ", sol1.objective, " after ", sol1.iterations, " iterations")
 ```
 
 ```@example main
-sol2 = solve(batch, grid_size=1000, print_level=0, init=sol1)
+sol2 = solve(batch; grid_size=1000, print_level=0, init=sol1)
 println("Objective ", sol2.objective, " after ", sol2.iterations, " iterations")
 ```
 
