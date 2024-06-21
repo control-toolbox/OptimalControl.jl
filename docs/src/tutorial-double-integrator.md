@@ -31,12 +31,10 @@ Then, we can define the problem
 @def ocp begin
     tf ∈ R, variable
     t ∈ [ 0, tf ], time
-    x ∈ R², state
+    x = (q, v) ∈ R², state
     u ∈ R, control
     tf ≥ 0
     -1 ≤ u(t) ≤ 1
-    q = x₁
-    v = x₂
     q(0) == 1
     v(0) == 2
     q(tf) == 0
