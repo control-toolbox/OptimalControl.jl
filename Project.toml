@@ -11,8 +11,8 @@ CTProblems = "45d9ea3f-a92f-411f-833f-222dd4fb9cd8"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 
 [compat]
-CTBase = "0.9"
-CTDirect = "0.6"
+CTBase = "0.10"
+CTDirect = "0.7"
 CTFlows = "0.3"
 CTProblems = "0.5"
 julia = "1.8"
