@@ -16,7 +16,7 @@ using DifferentialEquations
         )
         @testset "$(name)" begin
             test_name = Symbol(:test_, name)
-            println("\nTesting: "*name)
+            println("\nTesting: "*string(name))
             include("$(test_name).jl")
             @eval $test_name()
         end
