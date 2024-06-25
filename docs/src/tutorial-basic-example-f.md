@@ -40,7 +40,7 @@ Then, we can define the problem
 ```@example main
 ocp = Model()                                   # empty optimal control problem
 
-time!(ocp, t0=0, tf=1)                          # time interval
+time!(ocp, t0=0, tf=1)                          # initial and final times
 state!(ocp, 2)                                  # dimension of the state
 control!(ocp, 1)                                # dimension of the control
 
@@ -57,7 +57,7 @@ nothing # hide
 
     There are two ways to define an optimal control problem:
     - using functions like in this example, see also the [`Model` documentation](https://control-toolbox.org/docs/ctbase/stable/api-model.html) for more details.
-    - using an abstract formulation. You can compare both ways taking a look at the abstract version of this [basic example](@ref basic).
+    - using an abstract formulation, see for instance [basic example](@ref basic) to compare.
 
 Solve it
 

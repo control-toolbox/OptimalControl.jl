@@ -30,20 +30,27 @@ Then, we can define the problem
 
 ```@example main
 @def ocp begin
-    tf ∈ R, variable
-    t ∈ [ 0, tf ], time
+
+    tf ∈ R,          variable
+    t ∈ [ 0, tf ],   time
     x = (q, v) ∈ R², state
-    u ∈ R, control
+    u ∈ R,           control
+
     tf ≥ 0
     -1 ≤ u(t) ≤ 1
-    q(0) == 1
-    v(0) == 2
+
+    q(0)  == 1
+    v(0)  == 2
     q(tf) == 0
     v(tf) == 0
-    0 ≤ q(t) ≤ 5,       (1)
-    -2 ≤ v(t) ≤ 3,      (2)
+
+     0 ≤ q(t) ≤ 5,          (1)
+    -2 ≤ v(t) ≤ 3,          (2)
+
     ẋ(t) == [ v(t), u(t) ]
+
     tf → min
+
 end
 nothing # hide
 ```

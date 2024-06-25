@@ -32,7 +32,6 @@ First, we need to import the `OptimalControl.jl` and `Plots.jl` packages.
 ```@example main
 using OptimalControl
 using Plots
-using Plots.PlotMeasures # for leftmargin, bottommargin
 ```
 
 Then, we can define the problem parameterized by the final time `tf`.
@@ -76,7 +75,7 @@ end
 nothing # hide
 ```
 
-We plot the state and control variables considering a normalized time $s=(t-t_0)/(t_f-t_0)$, thanks to the kwarg `time=:normalized` of the [plot](https://control-toolbox.org/docs/ctbase/stable/api-plot.html) function.
+We plot the state and control variables considering a normalized time $s=(t-t_0)/(t_f-t_0)$, thanks to the keyword argument `time=:normalized` of the [plot](https://control-toolbox.org/docs/ctbase/stable/api-plot.html) function.
 
 ```@example main
 plt = plot(solutions[1], time=:normalized)
@@ -85,10 +84,12 @@ for sol ∈ solutions[2:end]
 end
 
 # we plot only the state and control variables and we add the legend
+N = length(tfs)
 px1 = plot(plt[1], legend=false, xlabel="s", ylabel="x₁")
-px2 = plot(plt[2], label=reshape(["tf = $tf" for tf ∈ tfs], 
-    (1, length(tfs))), xlabel="s", ylabel="x₂")
+px2 = plot(plt[2], label=reshape(["tf = $tf" for tf ∈ tfs], (1, N)), xlabel="s", ylabel="x₂")
 pu  = plot(plt[5], legend=false, xlabel="s", ylabel="u")
+
+using Plots.PlotMeasures # for leftmargin, bottommargin
 plot(px1, px2, pu, layout=(1, 3), size=(800, 300), leftmargin=5mm, bottommargin=5mm)
 ```
 
