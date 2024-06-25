@@ -52,6 +52,7 @@ We are interested in maximising the biomass production [^3] (final volume of the
 
 ```@example main
 using OptimalControl
+using Plots
 
 t0 = 0      
 tf = 90     
@@ -148,7 +149,7 @@ println("Objective ", sol2.objective, " after ", sol2.iterations, " iterations")
 We eventually plot the solutions (raw grid + finer grid) and observe that the control exhibits the expected structure with a Fuller-in arc followed by a singular one, then a Fuller-out arc:
 
 ```@example main
-plot(sol1, size=(800, 800))
+plot(sol1)
 plot!(sol2)
 ```
 

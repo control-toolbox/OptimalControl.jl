@@ -19,10 +19,11 @@ a line without fricton.
 <img src="./assets/chariot.png" style="display: block; margin: 0 auto 20px auto;" width="300px">
 ```
 
-First, we need to import the `OptimalControl.jl` package:
+First, we need to import the `OptimalControl.jl` package to define and solve the optimal control problem. We also need to import the `Plots.jl` package to plot the solution.
 
 ```@example main
 using OptimalControl
+using Plots
 ```
 
 Then, we can define the problem
@@ -65,5 +66,5 @@ nothing # hide
 and plot the solution
 
 ```@example main
-plot(sol, size=(600, 450))
+plot(sol)
 ```

@@ -10,7 +10,9 @@ Let us start by importing the necessary packages.
 
 ```@example main
 using OptimalControl
-using MINPACK # NLE solver
+using Plots
+using DifferentialEquations # to get the Flow function
+using MINPACK               # NLE solver
 ```
 
 Let us consider the following optimal control problem:

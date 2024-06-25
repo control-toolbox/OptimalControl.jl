@@ -127,6 +127,7 @@ nothing # hide
 Finally we choose to plot only the state and control variables.
 
 ```@example main
+using Plots
 using Plots.PlotMeasures # for leftmargin, bottommargin
 
 # we construct the plots from the solutions with default options

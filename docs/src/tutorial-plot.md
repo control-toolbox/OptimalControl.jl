@@ -2,10 +2,11 @@
 
 In this tutorial we explain the different ways to plot a solution of an optimal control problem.
 
-Let us start by importing the necessary package.
+Let us start by importing the necessary packages.
 
 ```@example main
 using OptimalControl
+using Plots
 ```
 
 Then, we define a simple optimal control problem and solve it.

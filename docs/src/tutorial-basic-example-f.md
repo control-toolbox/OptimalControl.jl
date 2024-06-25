@@ -28,16 +28,11 @@ starting from the condition $x(0) = (-1, 0)$ and with the goal to reach the targ
     [Double integrator: energy minimisation](https://control-toolbox.org/docs/ctproblems/stable/problems/double_integrator_energy.html#DIE) 
     for the analytical solution and details about this problem.
 
-```@setup main
-using Plots
-using Plots.PlotMeasures
-plot(args...; kwargs...) = Plots.plot(args...; kwargs..., leftmargin=25px)
-```
-
-First, we need to import the `OptimalControl.jl` package:
+First, we need to import the `OptimalControl.jl` package to define and solve the optimal control problem. We also need to import the `Plots.jl` package to plot the solution.
 
 ```@example main
 using OptimalControl
+using Plots
 ```
 
 Then, we can define the problem
@@ -45,12 +40,12 @@ Then, we can define the problem
 ```@example main
 ocp = Model()                                   # empty optimal control problem
 
-time!(ocp, [ 0, 1 ])                            # time interval
+time!(ocp, t0=0, tf=1)                          # time interval
 state!(ocp, 2)                                  # dimension of the state
 control!(ocp, 1)                                # dimension of the control
 
-constraint!(ocp, :initial, [ -1, 0 ])           # initial condition
-constraint!(ocp, :final,   [  0, 0 ])           # final condition
+constraint!(ocp, :initial; lb=[ -1, 0 ], ub=[ -1, 0 ]) # initial condition
+constraint!(ocp, :final;   lb=[  0, 0 ], ub=[  0, 0 ]) # final condition
 
 dynamics!(ocp, (x, u) -> [ x[2], u ])           # dynamics of the double integrator
 
@@ -74,5 +69,5 @@ nothing # hide
 and plot the solution
 
 ```@example main
-plot(sol, size=(600, 450))
+plot(sol)
 ```
