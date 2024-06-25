@@ -48,12 +48,16 @@ w_R(p) = \frac{k_R\,p}{K_r + p}\,, \quad w_M(s) = \frac{k_m s}{K_m + s}\cdot
 
 ## Biomass maximisation
 
-We are interested in maximising the biomass production [^3] (final volume of the bacterial population) over a finite time horizon $[0,t_f]$. To solve the problem, we first set up the boundary values,
+We first import the needed packages.
 
 ```@example main
 using OptimalControl
 using Plots
+```
 
+We are interested in maximising the biomass production [^3] (final volume of the bacterial population) over a finite time horizon $[0,t_f]$. To solve the problem, we first set up the boundary values,
+
+```@example main
 t0 = 0      
 tf = 90     
 s0 = 0.1
@@ -149,8 +153,8 @@ println("Objective ", sol2.objective, " after ", sol2.iterations, " iterations")
 We eventually plot the solutions (raw grid + finer grid) and observe that the control exhibits the expected structure with a Fuller-in arc followed by a singular one, then a Fuller-out arc:
 
 ```@example main
-plot(sol1)
-plot!(sol2)
+plot(sol1; solution_label="(N=20)", size=(800, 1000))     # N is the grid size
+plot!(sol2; solution_label="(N=1000)")
 ```
 
 ## References

@@ -12,7 +12,7 @@ Let us start by importing the necessary packages.
 using OptimalControl
 using Plots
 using DifferentialEquations # to get the Flow function
-using MINPACK               # NLE solver
+using MINPACK               # NLE solver: we get the fsolve function
 ```
 
 Let us consider the following optimal control problem:
