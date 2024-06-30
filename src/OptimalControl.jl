@@ -59,6 +59,9 @@ export ParsingError
 export ProblemsDescriptions, Problem, Problems, @ProblemsDescriptions, @Problems
 
 # repl
-isdefined(Base, :active_repl) && ct_repl()
+function __init__()
+    ct_repl()
+    nothing
+end
 
 end
