@@ -60,7 +60,7 @@ export ProblemsDescriptions, Problem, Problems, @ProblemsDescriptions, @Problems
 
 # repl
 function __init__()
-    ct_repl()
+    isdefined(Base, :active_repl) && ct_repl()
     nothing
 end
 
