@@ -27,10 +27,6 @@ makedocs(
                             "tutorial-plot.md",
                             "tutorial-lqr-basic.md",
                             "tutorial-iss.md",
-                            #"tutorial-model.md",
-                            #"tutorial-solvers.md",
-                            #"tutorial-flows.md",
-                            #"tutorial-ct_repl.md",
                             ],
         "Applications" => [
                             "tutorial-batch.md",

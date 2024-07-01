@@ -10,7 +10,7 @@ We denote by $x = (x_1, x_2)$ the state of the wagon, that is its position $x_1$
 We assume that the mass is constant and unitary and that there is no friction. The dynamics we consider is given by
 
 ```math
-    \dot x_1(t) = x_2(t), \quad \dot x_2(t) = u(t), , \quad u(t) \in \R,
+    \dot x_1(t) = x_2(t), \quad \dot x_2(t) = u(t),\quad u(t) \in \R,
 ```
 
 which is simply the [double integrator](https://en.wikipedia.org/w/index.php?title=Double_integrator&oldid=1071399674) system.
@@ -28,16 +28,11 @@ starting from the condition $x(0) = (-1, 0)$ and with the goal to reach the targ
     [Double integrator: energy minimisation](https://control-toolbox.org/docs/ctproblems/stable/problems/double_integrator_energy.html#DIE) 
     for the analytical solution and details about this problem.
 
-```@setup main
-using Plots
-using Plots.PlotMeasures
-plot(args...; kwargs...) = Plots.plot(args...; kwargs..., leftmargin=25px)
-```
-
-First, we need to import the `OptimalControl.jl` package:
+First, we need to import the `OptimalControl.jl` package to define and solve the optimal control problem. We also need to import the `Plots.jl` package to plot the solution.
 
 ```@example main
 using OptimalControl
+using Plots
 ```
 
 Then, we can define the problem
@@ -65,5 +60,5 @@ nothing # hide
 and plot the solution
 
 ```@example main
-plot(sol, size=(600, 450))
+plot(sol)
 ```
