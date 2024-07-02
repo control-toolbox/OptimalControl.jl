@@ -8,6 +8,10 @@ function test_init()
     N = 50
     tol = 1e-2
    
+    # initial guess (default)
+    sol = OptimalControl.solve(ocp, grid_size=N)
+    @test sol.objective ≈ prob.solution.objective atol=tol    
+
     # initial guess (constant state and control)
     init = (state=[-0.5, 0.2], control=0.5)
     sol = OptimalControl.solve(ocp, grid_size=N, init=init)
