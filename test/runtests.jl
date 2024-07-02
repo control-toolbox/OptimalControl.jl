@@ -5,6 +5,10 @@ using CTProblems
 using SciMLBase
 using NonlinearSolve
 
+using NLPModelsIpopt # for direct solve
+using HSL # for direct solve
+using DifferentialEquations # for indirect and goddard from CTProblems; quite slow, maybe use ony in related test scripts instead of here ?
+
 #
 @testset verbose = true showtiming = true "Optimal control tests" begin
     for name ∈ (
