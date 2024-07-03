@@ -18,11 +18,10 @@ using DocStringExtensions
 using CTBase
 using CTDirect
 using CTFlows
-using CTProblems
 
 # declarations
 const __display = CTBase.__display
-__ocp_init() = CTBase.OptimalControlInit()
+__ocp_init() = CTBase.OCPInit()
 
 include("solve.jl")
 
@@ -55,10 +54,10 @@ export @def
 export ct_repl
 export ParsingError
 
-# CTProblems
-export ProblemsDescriptions, Problem, Problems, @ProblemsDescriptions, @Problems
-
 # repl
-isdefined(Base, :active_repl) && ct_repl()
+function __init__()
+    isdefined(Base, :active_repl) && ct_repl()
+    nothing
+end
 
 end
