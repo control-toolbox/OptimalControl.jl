@@ -10,7 +10,6 @@ Let us start by importing the necessary packages.
 
 ```@example main
 using OptimalControl
-using NLPModelsIpopt
 using DifferentialEquations # to get the Flow function from OptimalControl
 using MINPACK               # NLE solver: we get the fsolve function
 using Plots
