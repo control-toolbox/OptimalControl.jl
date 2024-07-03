@@ -31,6 +31,7 @@ First, we need to import the `OptimalControl.jl` and `Plots.jl` packages.
 
 ```@example main
 using OptimalControl
+using NLPModelsIpopt
 using Plots
 ```
 

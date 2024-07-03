@@ -52,6 +52,7 @@ We first import the needed packages.
 
 ```@example main
 using OptimalControl
+using NLPModelsIpopt
 using Plots
 ```
 
