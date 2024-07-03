@@ -19,30 +19,38 @@ a line without fricton.
 <img src="./assets/chariot.png" style="display: block; margin: 0 auto 20px auto;" width="300px">
 ```
 
-First, we need to import the `OptimalControl.jl` package:
+First, we need to import the `OptimalControl.jl` package to define and solve the optimal control problem. We also need to import the `Plots.jl` package to plot the solution.
 
 ```@example main
 using OptimalControl
+using Plots
 ```
 
 Then, we can define the problem
 
 ```@example main
 @def ocp begin
-    tf ∈ R, variable
-    t ∈ [ 0, tf ], time
+
+    tf ∈ R,          variable
+    t ∈ [ 0, tf ],   time
     x = (q, v) ∈ R², state
-    u ∈ R, control
+    u ∈ R,           control
+
     tf ≥ 0
     -1 ≤ u(t) ≤ 1
-    q(0) == 1
-    v(0) == 2
+
+    q(0)  == 1
+    v(0)  == 2
     q(tf) == 0
     v(tf) == 0
-    0 ≤ q(t) ≤ 5,       (1)
-    -2 ≤ v(t) ≤ 3,      (2)
+
+     0 ≤ q(t) ≤ 5,          (1)
+    -2 ≤ v(t) ≤ 3,          (2)
+
     ẋ(t) == [ v(t), u(t) ]
+
     tf → min
+
 end
 nothing # hide
 ```
@@ -65,5 +73,5 @@ nothing # hide
 and plot the solution
 
 ```@example main
-plot(sol, size=(600, 450))
+plot(sol)
 ```

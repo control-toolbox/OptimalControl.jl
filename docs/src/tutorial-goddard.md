@@ -36,16 +36,16 @@ $v(t) \leq v_{\max}$. The initial state is fixed while only the final mass is pr
 ## Direct method
 
 ```@setup main
-using Plots
-using Plots.PlotMeasures
-plot(args...; kwargs...) = Plots.plot(args...; kwargs..., leftmargin=25px)
 using Suppressor # to suppress warnings
 ```
 
-We import the `OptimalControl.jl` package:
+We import the `OptimalControl.jl` package to define and solve the optimal control problem. We import the `Plots.jl` package to plot the solution. The `DifferentialEquations.jl` package is used to define the shooting function for the indirect method and the `MINPACK.jl` package permits solve the shooting equation.
 
 ```@example main
 using OptimalControl
+using Plots
+using DifferentialEquations # to get the Flow function
+using MINPACK               # NLE solver
 ```
 
 We define the problem
@@ -99,14 +99,14 @@ nothing # hide
 We then solve it
 
 ```@example main
-direct_sol = solve(ocp, grid_size=100)
+direct_sol = OptimalControl.solve(ocp, grid_size=100)
 nothing # hide
 ```
 
 and plot the solution
 
 ```@example main
-plt = plot(direct_sol, size=(600, 600))
+plt = plot(direct_sol, solution_label="(direct)", size=(800, 800))
 ```
 
 ## Indirect method
@@ -130,7 +130,7 @@ u_plot  = plot(t, u,     label = "u(t)")
 H1_plot = plot(t, φ,     label = "H₁(x(t), p(t))")
 g_plot  = plot(t, g ∘ x, label = "g(x(t))")
 
-plot(u_plot, H1_plot, g_plot, layout=(3,1), size=(600,450))
+plot(u_plot, H1_plot, g_plot, layout=(3,1), size=(500, 500))
 ```
 
 We are now in position to solve the problem by an indirect shooting method. We first define
@@ -268,8 +268,6 @@ println("Norm of the shooting function: ‖s‖ = ", norm(s), "\n")
 Finally, we can solve the shooting equations thanks to the [MINPACK](https://docs.sciml.ai/NonlinearSolve/stable/solvers/NonlinearSystemSolvers/#MINPACK.jl) solver.
 
 ```@example main
-using MINPACK                                               # NLE solver
-
 nle = (s, ξ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])   # auxiliary function
                                                             # with aggregated inputs
 ξ = [ p0 ; t1 ; t2 ; t3 ; tf ]                              # initial guess
@@ -306,7 +304,7 @@ We plot the solution of the indirect solution (in red) over the solution of the 
 f = f1 * (t1, fs) * (t2, fb) * (t3, f0) # concatenation of the flows
 flow_sol = f((t0, tf), x0, p0)          # compute the solution: state, costate, control...
 
-plot!(plt, flow_sol)
+plot!(plt, flow_sol, solution_label="(indirect)")
 ```
 
 ## References

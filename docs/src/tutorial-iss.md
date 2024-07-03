@@ -10,7 +10,9 @@ Let us start by importing the necessary packages.
 
 ```@example main
 using OptimalControl
-using MINPACK # NLE solver
+using Plots
+using DifferentialEquations # to get the Flow function from OptimalControl
+using MINPACK               # NLE solver: we get the fsolve function
 ```
 
 Let us consider the following optimal control problem:
@@ -35,13 +37,18 @@ x0 = -1
 xf = 0
 α  = 1.5
 @def ocp begin
+
     t ∈ [ t0, tf ], time
     x ∈ R, state
     u ∈ R, control
+
     x(t0) == x0
     x(tf) == xf
+
     ẋ(t) == -x(t) + α * x(t)^2 + u(t)
+
     ∫( 0.5u(t)^2 ) → min
+    
 end;
 nothing # hide
 ```

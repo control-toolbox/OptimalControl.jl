@@ -13,22 +13,20 @@ jobs:
     strategy:
       matrix:
         version:
-          #- '1.8'
-          - '1.9'
           - '1.10'
         os:
           - ubuntu-latest
           #- macOS-latest
-          ##- windows-latest
+          #- windows-latest
         arch:
           - x64
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@latest
         with:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
-      - uses: julia-actions/add-julia-registry@v1
+      - uses: julia-actions/add-julia-registry@v2
         with:
           key: ${{ secrets.SSH_KEY }}
           registry: control-toolbox/ct-registry
