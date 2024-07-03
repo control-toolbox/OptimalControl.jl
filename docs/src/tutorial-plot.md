@@ -6,6 +6,7 @@ Let us start by importing the package to define the problem and solve it.
 
 ```@example main
 using OptimalControl
+using NLPModelsIpopt
 ```
 
 Then, we define a simple optimal control problem and solve it.

@@ -8,6 +8,7 @@ We present in this tutorial the different possibilities to provide an initial gu
 
 ```@example main
 using OptimalControl
+using NLPModelsIpopt
 using Plots
 ```
 

@@ -43,9 +43,10 @@ We import the `OptimalControl.jl` package to define and solve the optimal contro
 
 ```@example main
 using OptimalControl
-using Plots
+using NLPModelsIpopt
 using DifferentialEquations # to get the Flow function
 using MINPACK               # NLE solver
+using Plots
 ```
 
 We define the problem

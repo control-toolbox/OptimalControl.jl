@@ -23,6 +23,7 @@ First, we need to import the `OptimalControl.jl` package to define and solve the
 
 ```@example main
 using OptimalControl
+using NLPModelsIpopt
 using Plots
 ```
 
