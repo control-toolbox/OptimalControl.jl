@@ -55,6 +55,9 @@ export ct_repl
 export ParsingError
 
 # repl
-isdefined(Base, :active_repl) && ct_repl()
+function __init__()
+    isdefined(Base, :active_repl) && ct_repl()
+    nothing
+end
 
 end
