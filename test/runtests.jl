@@ -5,6 +5,7 @@ using CTProblems
 using SciMLBase
 using NonlinearSolve
 using DifferentialEquations
+using NLPModelsIpopt
 
 #
 @testset verbose = true showtiming = true "Optimal control tests" begin
