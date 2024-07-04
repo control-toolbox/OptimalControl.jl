@@ -11,7 +11,7 @@ Let us start by importing the necessary packages.
 ```@example main
 using OptimalControl
 using DifferentialEquations # to get the Flow function from OptimalControl
-using MINPACK               # NLE solver: we get the fsolve function
+using NonlinearSolve        # NLE solver: we get the fsolve function
 using Plots
 ```
 
@@ -143,16 +143,17 @@ This is what we call the **indirect simple shooting method**.
 ```@example main
 S(p0) = π( φ(t0, x0, p0, tf) ) - xf;                # shooting function
 
-nle = (s, ξ) -> s[1] = S(ξ[1])                      # auxiliary function
+nle = (s, ξ, λ) -> s[1] = S(ξ[1])                   # auxiliary function
 ξ = [ 0.0 ]                                         # initial guess
 
+prob = NonlinearProblem(nle, ξ)
 global indirect_sol =      # hide
 @suppress_err begin # hide
-fsolve(nle, ξ)      # hide
-indirect_sol = fsolve(nle, ξ)                       # resolution of S(p0) = 0
+NonlinearSolve.solve(prob)      # hide
+indirect_sol = NonlinearSolve.solve(prob)           # resolution of S(p0) = 0
 end                 # hide
 
-p0_sol = indirect_sol.x[1]                          # costate solution
+p0_sol = indirect_sol.u[1]                          # costate solution
 println("costate:    p0 = ", p0_sol)
 @suppress_err begin # hide
 println("shoot: |S(p0)| = ", abs(S(p0_sol)), "\n")
