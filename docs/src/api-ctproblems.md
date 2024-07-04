@@ -9,7 +9,6 @@ For more details about `CTProblems.jl` package, see the [documentation](https://
 Pages   = ["api-ctproblems.md"]
 Modules = [CTProblems]
 Order = [:module, :constant, :type, :function, :macro]
-Private = false
 ```
 
 ## Documentation

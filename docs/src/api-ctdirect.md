@@ -9,7 +9,6 @@ For more details about `CTDirect.jl` package, see the [documentation](https://co
 Pages   = ["api-ctdirect.md"]
 Modules = [CTDirect]
 Order = [:module, :constant, :type, :function, :macro]
-Private = false
 ```
 
 ## Documentation
