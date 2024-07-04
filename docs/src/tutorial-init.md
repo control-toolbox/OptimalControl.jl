@@ -31,6 +31,7 @@ nothing # hide
 ```
 ## Default initial guess
 We first solve the problem without giving an initial guess.
+This will default to initialize all variables to 0.1.
 
 ```@example main
 # solve the optimal control problem without initial guess
@@ -47,15 +48,17 @@ Let us plot the solution of the optimal control problem.
 plot(sol, size=(600, 450))
 ```
 
-Note that the three following formulations are equivalent
+Note that the following formulations are equivalent
 ```@example main
-sol = solve(ocp, display=false)
 sol = solve(ocp, display=false, init=nothing)
+println("Number of iterations: ", sol.iterations)
 sol = solve(ocp, display=false, init=())
+println("Number of iterations: ", sol.iterations)
+nothing # hide
 ```
 
 To reduce the number of iterations and improve the convergence, we can give an initial guess to the solver. 
-This initial guess can be built from constant values, interpolated matrices, functions, or existing solutions.
+This initial guess can be built from constant values, interpolated vectors, functions, or existing solutions.
 Except when initializing from a solution, the arguments are to be passed as a named tuple ```init=(state=..., control=..., variable=...)``` whose fields are optional. Missing fields will revert to default initialization (ie constant 0.1).
 
 ## Constant initial guess
@@ -70,11 +73,15 @@ println("Number of iterations: ", sol.iterations)
 nothing # hide
 ```
 
-Partial initializations are also valid, such as
+Partial initializations are also valid, as shown below. Note the ending comma when a single argument is passed (tuple).
 ```@example main
 sol = solve(ocp, display=false, init=(state=[-0.2, 0.1],))
+println("Number of iterations: ", sol.iterations)
 sol = solve(ocp, display=false, init=(control=-0.2,))
+println("Number of iterations: ", sol.iterations)
 sol = solve(ocp, display=false, init=(state=[-0.2, 0.1], variable=0.05))
+println("Number of iterations: ", sol.iterations)
+nothing # hide
 ```
 
 ## Functional initial guess
@@ -100,12 +107,11 @@ For the values to be interpolated both matrices and vectors of vectors are allow
 Simple vectors are also allowed for variables of dimension 1.
 
 ```@example main
-time_grid = LinRange(t0,tf,4)
-x_vec = [[0, 0], [1, 2], [0.5,-0.3], [5, -1]]
-x_matrix = [0 0; 1 2; 0.5 -0.3; 5 -1]
-u_vec = [0, 0.8,  0.3, .1]
+time_vec = LinRange(t0,tf,4)
+x_vec = [[0, 0], [-0.1, 0.3], [-0.15,0.4], [-0.3, 0.5]]
+u_vec = [0, -0.8,  -0.3, 0]
 
-sol = solve(ocp, display=false, init=(time=time_grid, state=x_vec, control=u_vec, variable=0.05))
+sol = solve(ocp, display=false, init=(time=time_vec, state=x_vec, control=u_vec, variable=0.05))
 
 println("Number of iterations: ", sol.iterations)
 nothing # hide
@@ -120,7 +126,7 @@ sol = solve(ocp, display=false, init=(state=[-0.2, 0.1], control=u, variable=0.0
 println("Number of iterations: ", sol.iterations)
 nothing # hide
 
-sol = solve(ocp, display=false, init=(time=time_grid, state=x_matrix, control=u, variable=0.05))
+sol = solve(ocp, display=false, init=(time=time_vec, state=x_vec, control=u, variable=0.05))
 println("Number of iterations: ", sol.iterations)
 nothing # hide
 ```
@@ -142,14 +148,14 @@ nothing # hide
 ```
 
 Note that you can also manually pick and choose which data to reuse from a solution, by recovering the functions ```sol.state```, ```sol.control``` and the values ```sol.variable```.
-The two following formulations are equivalent
+For instance the following formulation is equivalent to the ```init=sol``` one.
 ```@example main
-sol = solve(ocp, display=false, init=sol)
 sol = solve(ocp, display=false, init=(state=sol.state, control=sol.control, variable=sol.variable))
+println("Number of iterations: ", sol.iterations)
+nothing # hide
 ``` 
 
+## Costate / multipliers
 
-!!! warning
-
-    For the moment we can not provide an initial guess for the costate / multipliers.
+For the moment we can not provide an initial guess for the costate / multipliers.
 
