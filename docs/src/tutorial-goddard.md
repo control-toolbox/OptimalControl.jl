@@ -45,7 +45,7 @@ We import the `OptimalControl.jl` package to define and solve the optimal contro
 using OptimalControl
 using NLPModelsIpopt
 using DifferentialEquations # to get the Flow function
-using MINPACK               # NLE solver
+using NonlinearSolve        # NLE solver
 using Plots
 ```
 
@@ -269,21 +269,23 @@ println("Norm of the shooting function: ‖s‖ = ", norm(s), "\n")
 Finally, we can solve the shooting equations thanks to the [MINPACK](https://docs.sciml.ai/NonlinearSolve/stable/solvers/NonlinearSystemSolvers/#MINPACK.jl) solver.
 
 ```@example main
-nle = (s, ξ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])   # auxiliary function
-                                                            # with aggregated inputs
-ξ = [ p0 ; t1 ; t2 ; t3 ; tf ]                              # initial guess
+nle = (s, ξ, λ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])   # auxiliary function
+                                                               # with aggregated inputs
+ξ = [ p0 ; t1 ; t2 ; t3 ; tf ]                                 # initial guess
+
+prob = NonlinearProblem(nle, ξ)
 global indirect_sol =      # hide
 @suppress_err begin # hide
-fsolve(nle, ξ)      # hide
-indirect_sol = fsolve(nle, ξ)                               # resolution of S(ξ) = 0
+NonlinearSolve.solve(prob)      # hide
+indirect_sol = NonlinearSolve.solve(prob)                       # resolution of S(p0) = 0
 end                 # hide
 
 # we retrieve the costate solution together with the times
-p0 = indirect_sol.x[1:3]
-t1 = indirect_sol.x[4]
-t2 = indirect_sol.x[5]
-t3 = indirect_sol.x[6]
-tf = indirect_sol.x[7]
+p0 = indirect_sol.u[1:3]
+t1 = indirect_sol.u[4]
+t2 = indirect_sol.u[5]
+t3 = indirect_sol.u[6]
+tf = indirect_sol.u[7]
 
 println("p0 = ", p0)
 println("t1 = ", t1)
