@@ -6,7 +6,6 @@
 Pages   = ["api.md"]
 Modules = [OptimalControl]
 Order = [:module, :constant, :type, :function, :macro]
-Private = false
 ```
 
 ## Available methods

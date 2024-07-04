@@ -9,7 +9,6 @@ For more details about `CTFlows.jl` package, see the [documentation](https://con
 Pages   = ["api-ctflows.md"]
 Modules = [CTFlows]
 Order = [:module, :constant, :type, :function, :macro]
-Private = false
 ```
 
 ## Documentation
