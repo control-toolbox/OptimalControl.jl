@@ -40,6 +40,12 @@ export Flow
 export plot, plot!
 export *
 
+# CTDirect
+export save_OCP_solution
+export load_OCP_solution
+export export_OCP_solution
+export read_OCP_solution
+
 # CTBase
 export Index
 export Autonomous, NonAutonomous

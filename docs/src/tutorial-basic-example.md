@@ -63,3 +63,19 @@ and plot the solution
 ```@example main
 plot(sol)
 ```
+
+We can save the solution in a julia *.jld2* data file and reload it later, and also export a discretised version of the solution in a more portable JSON format.
+```@example main
+# laod additional modules
+using JLD2, JSON3
+
+# JLD save / load
+save_OCP_solution(sol, filename_prefix="my_solution")
+sol_reloaded = load_OCP_solution("my_solution")
+println("Objective from loaded solution: ", sol_reloaded.objective)
+
+# JSON export / read
+export_OCP_solution(sol, filename_prefix="my_solution")
+sol_json = read_OCP_solution("my_solution")
+println("Objective from JSON discrete solution: ", sol_json.objective)
+```
