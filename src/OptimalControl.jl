@@ -41,10 +41,15 @@ export plot, plot!
 export *
 
 # CTDirect
+export directTranscription
+export getNLP
+export setInitialGuess
+export OCPSolutionFromDOCP
 export save_OCP_solution
 export load_OCP_solution
 export export_OCP_solution
 export read_OCP_solution
+
 
 # CTBase
 export Index
