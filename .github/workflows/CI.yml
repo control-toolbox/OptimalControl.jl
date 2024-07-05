@@ -31,6 +31,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           registry: control-toolbox/ct-registry
       - uses: julia-actions/julia-runtest@latest
-      - uses: julia-actions/julia-uploadcodecov@latest
+      - uses: julia-actions/julia-processcoverage@latest
+      - uses: codecov/codecov-action@v4
+      #- uses: julia-actions/julia-uploadcodecov@latest
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
