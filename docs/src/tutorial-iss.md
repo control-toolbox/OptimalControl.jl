@@ -10,7 +10,7 @@ Let us start by importing the necessary packages.
 
 ```@example main
 using OptimalControl
-using DifferentialEquations # to get the Flow function from OptimalControl
+using OrdinaryDiffEq        # to get the Flow function from OptimalControl
 using NonlinearSolve        # NLE solver: we get the fsolve function
 using Plots
 ```

@@ -39,7 +39,7 @@ $v(t) \leq v_{\max}$. The initial state is fixed while only the final mass is pr
 using Suppressor # to suppress warnings
 ```
 
-We import the `OptimalControl.jl` package to define and solve the optimal control problem. We import the `Plots.jl` package to plot the solution. The `DifferentialEquations.jl` package is used to define the shooting function for the indirect method and the `MINPACK.jl` package permits solve the shooting equation.
+We import the `OptimalControl.jl` package to define and solve the optimal control problem. We import the `Plots.jl` package to plot the solution. The `OrdinaryDiffEq.jl` package is used to define the shooting function for the indirect method and the `NonlinearSolve.jl` package permits solve the shooting equation.
 
 ```@example main
 using OptimalControl
