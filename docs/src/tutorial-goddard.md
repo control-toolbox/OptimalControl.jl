@@ -44,8 +44,8 @@ We import the `OptimalControl.jl` package to define and solve the optimal contro
 ```@example main
 using OptimalControl
 using NLPModelsIpopt
-using DifferentialEquations # to get the Flow function
-using NonlinearSolve        # NLE solver
+using OrdinaryDiffEq # to get the Flow function
+using NonlinearSolve # NLE solver
 using Plots
 ```
 
@@ -100,7 +100,7 @@ nothing # hide
 We then solve it
 
 ```@example main
-direct_sol = OptimalControl.solve(ocp, grid_size=100)
+direct_sol = OptimalControl.solve(ocp; grid_size=100)
 nothing # hide
 ```
 
@@ -266,7 +266,7 @@ end # hide
 println("Norm of the shooting function: ‖s‖ = ", norm(s), "\n")
 ```
 
-Finally, we can solve the shooting equations thanks to the [MINPACK](https://docs.sciml.ai/NonlinearSolve/stable/solvers/NonlinearSystemSolvers/#MINPACK.jl) solver.
+Finally, we can solve the shooting equations thanks to the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl).
 
 ```@example main
 nle = (s, ξ, λ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])   # auxiliary function
