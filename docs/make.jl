@@ -20,22 +20,9 @@ makedocs(
                              size_threshold_ignore = ["api-ctbase.md"]),
     pages = [
         "Introduction" => "index.md",
-        "Tutorials"    => [
-                            "tutorial-basic-example.md", 
-                            "tutorial-basic-example-f.md", 
-                            "tutorial-double-integrator.md",
-                            "tutorial-initial-guess.md",
-                            "tutorial-continuation.md",
-                            "tutorial-plot.md",
-                            "tutorial-lqr-basic.md",
-                            "tutorial-iss.md",
-                            ],
         "Applications" => [
-                            "tutorial-batch.md",
-                            "tutorial-goddard.md",
+                            "application-mri-saturation.md",
                           ],
-        "FGS 2024"     => "fgs-2024.md", 
-        "API"          => "api.md", 
     ]
 )
 
