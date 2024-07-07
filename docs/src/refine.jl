@@ -7,7 +7,6 @@ function refine_grid(X, Y, N)
     model = JuMP.Model(optimizer_with_attributes(Ipopt.Optimizer, "print_level" => 0))
 
     v = abs.( Y[1:end-1].*(X[2:end]-X[1:end-1]) )
-    println(v)
     K = length(v)
 
     @variables(model, begin
@@ -30,6 +29,8 @@ function refine_grid(X, Y, N)
     X_ = []
     Y_ = []
     for k ∈ 1:K
+        
+        #
         x  = X[k]
         y  = Y[k] 
         nk = round(value(n[k]))
@@ -44,6 +45,7 @@ function refine_grid(X, Y, N)
             push!(X_, x+i*Δx)
             push!(Y_, y)
         end
+        
     end
     push!(X_, X[end])
     push!(Y_, Y[end])
