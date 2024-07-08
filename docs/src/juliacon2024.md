@@ -1,16 +1,16 @@
 ```@raw html
-<img width="800" alt="fgs-2024" src="./assets/fgs-2024.jpg">
+<img width="800" alt="juliaopt2024" src="./assets/juliacon2024.jpg">
 ```
 
 # control-toolbox: solving optimal control problems within Julia
 
-### [Jean-Baptiste Caillau](http://caillau.perso.math.cnrs.fr), [Olivier Cots](https://ocots.github.io), [Joseph Gergaud](https://scholar.google.com/citations?user=pkH4An4AAAAJ&hl=fr), [Pierre Martinon](https://www.linkedin.com/in/pierre-martinon-b4603a17), [Sophia Sed](https://iww.inria.fr/sed-sophia)
+### [Jean-Baptiste Caillau](http://caillau.perso.math.cnrs.fr), [Olivier Cots](https://ocots.github.io), [Alesia Herasimenka](https://www.uni.lu/snt-en/people/alesia-herasimenka) 
 
 ```@raw html
 <img width="800" alt="affiliations" src="./assets/affil.jpg">
 ```
 
-# What it's about
+## What it's about
 
 - Nonlinear optimal control of ODEs:
 
@@ -28,32 +28,32 @@ plus boundary, control and state constraints
 
 - Our core interests: numerical & geometrical methods in control, applications
 
-# Where it comes from
+## Where it comes from
 
 - [BOCOP: the optimal control solver](https://www.bocop.org)
 - [HamPath: indirect and Hamiltonian pathfollowing](http://www.hampath.org)
 - [Coupling direct and indirect solvers, examples](https://ct.gitlabpages.inria.fr/gallery//notebooks.html)
 
-# OptimalControl.jl
+## OptimalControl.jl for space mechanics
 
 - [Double integrator](tutorial-double-integrator.html)
-- [Batch processing](tutorial-batch.html)
 - [Goddard problem](tutorial-goddard.html)
+- [Orbit transfer](tutorial-orbit.html)
+- [Solar sailing](tutorial-sail.html)
 
-# Wrap up
+## Wrap up
 
 - High level modelling of optimal control problems
 - Efficient numerical resolution coupling direct and indirect methods
 - Collection of examples
 
-# Future
+## Future
 
 - New applications (biology, space mechanics, quantum mechanics and more)
 - Additional solvers: direct shooting, collocation for BVP, Hamiltonian pathfollowing...
 - ... and open to contributions!
-- [CTProblems.jl](https://control-toolbox.org/docs/ctproblems/stable/problems-list.html)
 
-# control-toolbox.org
+## control-toolbox.org
 
 - Open toolbox
 - Collection of Julia Packages rooted at [OptimalControl.jl](https://control-toolbox.org/docs/optimalcontrol)
@@ -62,7 +62,7 @@ plus boundary, control and state constraints
 <a href="https://control-toolbox.org"><img width="800" alt="control-toolbox.org" src="./assets/control-toolbox.jpg"></a>
 ```
 
-# Credits (not exhaustive!)
+## Credits (not exhaustive!)
 
 - [ADNLPModels.jl](https://jso.dev/ADNLPModels.jl)
 - [DifferentiationInterface.jl](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface/stable)

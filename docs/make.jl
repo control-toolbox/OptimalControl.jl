@@ -34,8 +34,10 @@ makedocs(
         "Applications" => [
                             "tutorial-batch.md",
                             "tutorial-goddard.md",
+                            "tutorial-orbit.md",
                           ],
         "FGS 2024"     => "fgs-2024.md", 
+        "JuliaCon 2024"=> "juliacon2024.md", 
         "API"          => "api.md", 
     ]
 )
