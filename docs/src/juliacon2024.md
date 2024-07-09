@@ -2,7 +2,7 @@
 <img width="800" alt="juliaopt2024" src="./assets/juliacon2024.jpg">
 ```
 
-# control-toolbox: solving optimal control problems within Julia
+# Trajectory optimisation in space mechanics with Julia
 
 ### [Jean-Baptiste Caillau](http://caillau.perso.math.cnrs.fr), [Olivier Cots](https://ocots.github.io), [Alesia Herasimenka](https://www.uni.lu/snt-en/people/alesia-herasimenka) 
 
@@ -28,15 +28,9 @@ plus boundary, control and state constraints
 
 - Our core interests: numerical & geometrical methods in control, applications
 
-## Where it comes from
-
-- [BOCOP: the optimal control solver](https://www.bocop.org)
-- [HamPath: indirect and Hamiltonian pathfollowing](http://www.hampath.org)
-- [Coupling direct and indirect solvers, examples](https://ct.gitlabpages.inria.fr/gallery//notebooks.html)
-
 ## OptimalControl.jl for space mechanics
 
-- [Double integrator](tutorial-double-integrator.html)
+- [Basic example](tutorial-basic-example.html)
 - [Goddard problem](tutorial-goddard.html)
 - [Orbit transfer](tutorial-orbit.html)
 - [Solar sailing](tutorial-sail.html)

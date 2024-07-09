@@ -1,5 +1,5 @@
 ```@raw html
-<img width="800" alt="juliacon" src="./assets/juliacon.jpg">
+<img width="800" alt="juliacon" src="./assets/juliacon2023.jpg">
 ```
 
 # Solving optimal control problems with Julia
