@@ -88,58 +88,53 @@ function F3(x)
     F[6] = pdmw *   zz
     return F
 end
+
+nothing # hide
 ```
 
-## Initialisations, including direct solve for Tmax = 60
+## Direct solve
 
 ```@example main
-init = Dict{Real, Tuple{Real, Vector{Real}}}()
+tf = 15                                      # Estimation of final time
+Lf = 3π                                      # Estimation of final longitude
+x0 = [P0, ex0, ey0, hx0, hy0, L0]            # Initial state
+xf = [Pf, exf, eyf, hxf, hyf, Lf]            # Final state
+x(t) = x0 + (xf - x0) * t / tf               # Linear interpolation
+u(t) = [0.1, 0.5, 0.]                        # Initial guess for the control
+nlp_init = (state=x, control=u, variable=tf) # Initial guess for the NLP
 
-if Tmax == 60 
-
-    tf = 15                                      # Estimation of final time
-    Lf = 3π                                      # Estimation of final longitude
-    x0 = [P0, ex0, ey0, hx0, hy0, L0]            # Initial state
-    xf = [Pf, exf, eyf, hxf, hyf, Lf]            # Final state
-    x(t) = x0 + (xf - x0) * t / tf               # Linear interpolation
-    u(t) = [0.1, 0.5, 0.]                        # Initial guess for the control
-    nlp_init = (state=x, control=u, variable=tf) # Initial guess for the NLP
-    
-    @def ocp begin
-        tf ∈ R, variable
-        t ∈ [0, tf], time
-        x = (P, ex, ey, hx, hy, L) ∈ R⁶, state
-        u ∈ R³, control
-        x(0) == x0 
-        x[1:5](tf) == xf[1:5]
-        mass = mass0 - β * T * t
-        ẋ(t) == F0(x(t)) + T / mass * (u₁(t) * F1(x(t)) + u₂(t) * F2(x(t)) + u₃(t) * F3(x(t)))
-        u₁(t)^2 + u₂(t)^2 + u₃(t)^2 ≤ 1
-        .8P0 ≤ P(t) ≤ 1.2Pf
-        -1 ≤ ex(t) ≤ 1
-        -1 ≤ ey(t) ≤ 1
-        -1 ≤ hx(t) ≤ 1
-        -1 ≤ hy(t) ≤ 1
-        L0 ≤ L(t) ≤ 1.2Lf
-        tf → min
-    end
-    
-    nlp_sol = OptimalControl.solve(ocp; init=nlp_init, grid_size=100)
-
+@def ocp begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x = (P, ex, ey, hx, hy, L) ∈ R⁶, state
+    u ∈ R³, control
+    x(0) == x0 
+    x[1:5](tf) == xf[1:5]
+    mass = mass0 - β * T * t
+    ẋ(t) == F0(x(t)) + T / mass * (u₁(t) * F1(x(t)) + u₂(t) * F2(x(t)) + u₃(t) * F3(x(t)))
+    u₁(t)^2 + u₂(t)^2 + u₃(t)^2 ≤ 1
+    .8P0 ≤ P(t) ≤ 1.2Pf
+    -1 ≤ ex(t) ≤ 1
+    -1 ≤ ey(t) ≤ 1
+    -1 ≤ hx(t) ≤ 1
+    -1 ≤ hy(t) ≤ 1
+    L0 ≤ L(t) ≤ 1.2Lf
+    tf → min
 end
 ```
 
 ```@example main
-tf = 1.320e2; p0 =-[-4.743728539366440e+00, -7.171314869854240e+01, -2.750468309804530e+00, 4.505679923365745e+01, -3.026794475592510e+00, 2.248091067047670e+00]; init[6] = (tf, p0)
-tf = 1.210e3; p0 =-[-2.215319700438820e+01, -4.347109477345140e+01, 9.613188807286992e-01, 3.181800985503019e+02, -2.307236094862410e+00, -5.797863110671591e-01]; init[0.7] = (tf, p0)
-tf = 6.080e3; p0 =-[-1.234155379067110e+02, -6.207170881591489e+02, 5.742554220129187e-01, 1.629324243017332e+03, -2.373935935351530e+00, -2.854066853269850e-01]; init[0.14] = (tf, p0)
-if Tmax == 60
-    tf = nlp_sol.variable; p0 = nlp_sol.costate(0); init[60] = (tf, p0)
-    plot(nlp_sol)
-end
+nlp_sol = OptimalControl.solve(ocp; init=nlp_init, grid_size=100)
+nothing # hide
 ```
 
-## Shooting (1/2)
+```@example main
+tf = nlp_sol.variable
+p0 = nlp_sol.costate(0)
+plot(nlp_sol)
+```
+
+## Shooting (1/2), Tmax = 60 Newtons
 
 ```@example main
 function ur(t, x, p, tf) # Regular maximising control 
@@ -155,24 +150,25 @@ fr = Flow(ocp, ur) # Regular flow (first version)
 
 function shoot(ξ::Vector{T}) where T
     tf, p0 = ξ[1], ξ[2:end]
-    xf, pf = fr(0, x0, p0, tf)
+    xf_, pf = fr(0, x0, p0, tf)
     s = zeros(T, 7)
-    s[1:5] = xf[1:5] - xf[1:5]
+    s[1:5] = xf_[1:5] - xf[1:5]
     s[6] = pf[6]
     s[7] = p0[1]^2 + p0[2]^2 + p0[3]^2 + p0[4]^2 + p0[5]^2 + p0[6]^2 - 1
     return s
 end
 
-tf, p0 = init[Tmax]
 p0 = p0 / norm(p0) # Normalization |p0|=1 for free final time
 ξ = [tf; p0]; # Initial guess
 jshoot(ξ) = ForwardDiff.jacobian(shoot, ξ)
 shoot!(s, ξ) = (s[:] = shoot(ξ); nothing)
 jshoot!(js, ξ) = (js[:] = jshoot(ξ); nothing)
-bvp_sol = fsolve(shoot!, jshoot!, ξ, show_trace=true); println(bvp_sol)
+bvp_sol = fsolve(shoot!, jshoot!, ξ; show_trace=true); println(bvp_sol)
+nothing # hide
 ```
 
-## Shooting (2/2)
+## Shooting (2/2), Tmax = 6 Newtons
+
 
 ```@example main
 hr = (t, x, p) -> begin # Regular maximised Hamiltonian (more efficient)
@@ -187,13 +183,24 @@ end
 
 hr = Hamiltonian(hr; autonomous=false)
 fr = Flow(hr) # Regular flow (again)
-bvp_sol = fsolve(shoot!, jshoot!, ξ, show_trace=true); println(bvp_sol)
-tf = bvp_sol.x[1]; p0 = bvp_sol.x[2:end]
+
+Tmax = 0.7                                 # Maximum thrust (Newtons)
+cTmax = 3600^2 / 1e6; T = Tmax * cTmax     # Conversion from Newtons to kg x Mm / h²
+tf = 6.080e3; p0 =-[-1.234155379067110e+02, -6.207170881591489e+02, 5.742554220129187e-01, 1.629324243017332e+03, -2.373935935351530e+00, -2.854066853269850e-01] # hide
+tf = 1.320e2; p0 =-[-4.743728539366440e+00, -7.171314869854240e+01, -2.750468309804530e+00, 4.505679923365745e+01, -3.026794475592510e+00, 2.248091067047670e+00] # hide
+tf = 1.210e3; p0 =-[-2.215319700438820e+01, -4.347109477345140e+01, 9.613188807286992e-01, 3.181800985503019e+02, -2.307236094862410e+00, -5.797863110671591e-01] # Tmax = 0.7 Newtons 
+p0 = p0 / norm(p0) # Normalization |p0|=1 for free final time
+ξ = [tf; p0]; # Initial guess
+
+bvp_sol = fsolve(shoot!, jshoot!, ξ; show_trace=true); println(bvp_sol)
+nothing # hide
 ```
 
 ## Plots
 
 ```@example main
+tf = bvp_sol.x[1]
+p0 = bvp_sol.x[2:end]
 ode_sol = fr((0, tf), x0, p0)
 t  = ode_sol.t; N = size(t, 1)
 P  = ode_sol[1, :]

@@ -35,6 +35,7 @@ makedocs(
         "Applications" => [
                             "application-batch.md",
                             "application-orbit.md",
+                            "application-sail.md",
                             "application-surface-revolution.md",
                             "application-mri-saturation.md",
                           ],
