@@ -34,6 +34,7 @@ makedocs(
         "Applications" => [
                             "tutorial-batch.md",
                             "tutorial-goddard.md",
+                            "application-surface-revolution.md",
                             "application-mri-saturation.md",
                           ],
         "FGS 2024"     => "fgs-2024.md", 
