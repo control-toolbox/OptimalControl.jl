@@ -5,6 +5,7 @@ using CTBase
 using CTFlows
 using CTDirect
 using CTProblems
+using Suppressor
 
 # https://stackoverflow.com/questions/70137119/how-to-include-the-docstring-for-a-function-from-another-package-in-my-julia-doc
 DocMeta.setdocmeta!(CTBase, :DocTestSetup, :(using CTBase); recursive = true)

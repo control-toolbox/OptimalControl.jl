@@ -106,7 +106,7 @@ end
 ```@example main
 init = Dict{Real, Tuple{Real, Vector{Real}}}()
 
-if Tmax == 60
+if Tmax == 60 
 
     tf = 15                                      # Estimation of final time
     Lf = 3π                                      # Estimation of final longitude
@@ -136,13 +136,18 @@ if Tmax == 60
     end
     
     nlp_sol = OptimalControl.solve(ocp; init=nlp_init, grid_size=100)
-    plot(nlp_sol)
-    tf = nlp_sol.variable; p0 = nlp_sol.costate(0); init[60] = (tf, p0)
-end
 
+end
+```
+
+```@example main
 tf = 1.320e2; p0 =-[-4.743728539366440e+00, -7.171314869854240e+01, -2.750468309804530e+00, 4.505679923365745e+01, -3.026794475592510e+00, 2.248091067047670e+00]; init[6] = (tf, p0)
 tf = 1.210e3; p0 =-[-2.215319700438820e+01, -4.347109477345140e+01, 9.613188807286992e-01, 3.181800985503019e+02, -2.307236094862410e+00, -5.797863110671591e-01]; init[0.7] = (tf, p0)
 tf = 6.080e3; p0 =-[-1.234155379067110e+02, -6.207170881591489e+02, 5.742554220129187e-01, 1.629324243017332e+03, -2.373935935351530e+00, -2.854066853269850e-01]; init[0.14] = (tf, p0)
+if Tmax == 60
+    tf = nlp_sol.variable; p0 = nlp_sol.costate(0); init[60] = (tf, p0)
+    plot(nlp_sol)
+end
 ```
 
 ## Shooting (1/2)
