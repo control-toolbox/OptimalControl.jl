@@ -17,7 +17,7 @@ makedocs(
     warnonly = :cross_references,
     sitename = "OptimalControl.jl",
     format = Documenter.HTML(prettyurls = false,
-                             size_threshold_ignore = ["api-ctbase.md"]),
+                             size_threshold_ignore = ["api-ctbase.md", "application-mri-saturation.md"]),
     pages = [
         "Introduction" => "index.md",
         "Tutorials"    => [
