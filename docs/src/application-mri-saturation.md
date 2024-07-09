@@ -23,6 +23,8 @@ process is the control of the magnetization vector via the magnetic pulse.
 To do that, many different control strategies already exists[^4], but the majority are based 
 upon heuristic reasoning[^5] [^6].
 
+![MRI](mri-resources/mri.jpg)
+
 Optimal control algorithms were introduced in NMR to improve control field sequences 
 recently[^7] and at the end of the nineties, new methods appeared in optimal control of NMR 
 systems both from the analytical and numerical points of view[^8] [^9]. More recently, the 
@@ -78,6 +80,10 @@ by *in vitro* and *in vivo* experiments, see[^16] [^17].
 [^19]: Bonnard, B.; Cots, O.; Rouot, J.; Verron, T. Time minimal saturation of a pair of spins and application in magnetic resonance imaging. Mathematical Control and Related Fields, 2020, 10 (1), pp.47-88. https://inria.hal.science/hal-01779377
 
 ## The Bloch equation
+
+```@raw html
+<img src="./mri-resources/bloch.jpeg" style="float: left; margin: auto 10px;" width="200px">
+```
 
 The mathematical model which is suitable for analyzing such problems is to consider an 
 ensemble of spins, each spin being described by a magnetization vector $M = (M_X, M_Y, M_Z)$ 
@@ -271,9 +277,9 @@ $v_1^2 + v_2^2 = u_1^2 + u_2^2 \le 1$.
 
 ### The Bloch ball
 
-**Definition.** The closed unit ball is called the *Bloch Ball* and is denoted by $\mathcal{B}$.
+**Definition.** The closed unit ball is called the *Bloch Ball*.
 
-**Proposition.** The Bloch ball $\mathcal{B}$ is invariant under the Bloch equations if and 
+**Proposition.** The Bloch ball is invariant under the Bloch equations if and 
 only if $0 \le \gamma \le 2 \Gamma$ and it is the smallest invariant closed ball centered at 
 the origin if and only if $0 < \gamma \le 2\, \Gamma$.
 
@@ -369,18 +375,28 @@ corresponds at the final time to zero magnetization of the spin.
 
 !!! note "Time-optimal saturation problem"
 
-    Let $q_0 = (y_0, z_0) \in \mathcal{B}$. We define the *time-optimal saturation problem* 
-    from $q_0$ as the following optimal control problem:
+    We define the *time-optimal saturation problem* as the following optimal control 
+    problem:
 
     ```math
         \inf t_f, 
         \quad \text{s.t.} \quad u(\cdot) \in \mathcal{U}, \quad 
-        t_f \ge 0 \quad \text{and} \quad q(t_f, q_0, u(\cdot)) = O,
+        t_f \ge 0 \quad \text{and} \quad q(t_f, N, u(\cdot)) = O,
     ```
 
-    where $O = (0,0)$ is the origin of the Bloch ball and where $t \mapsto q(t, q_0, u(\cdot))$ 
+    where $N = (0, 1)$ is the North pole, where $O = (0,0)$ is the origin of the Bloch 
+    ball and where $t \mapsto q(t, q_0, u(\cdot))$ 
     is the unique maximal solution of the 2D control system $\dot{q} = F_0(q) + u\, F_1(q)$ 
     associated to the control $u(\cdot)$ and starting from the given initial condition $q_0$.
+
+The **inversion sequence** ${\sigma_+} {\sigma_s^v}$, that is a positive bang arc followed
+by a singular vertical arc with zero control, is the simplest way to go from $N$ to $O$. 
+Is it optimal?
+
+```@raw html
+<img src="./mri-resources/inversion_sequence.png" style="display: block; margin-left: auto; margin-right: auto;" width="500px">
+<br>
+```
 
 We have the following symmetry.
 
@@ -395,7 +411,7 @@ In order to solve numerically the problem, we need to set the parameters.
 We introduce the practical cases in the following table. We give the relaxation times with 
 the associated $(\gamma, \Gamma)$ parameters for $\omega_\mathrm{max} = 2 \pi\times 32.3$ Hz. 
 Note that in the experiments, $\omega_\mathrm{max}$ may be chosen up to 15 000 Hz but we 
-consider the same value as in[^16].
+consider the same value as in [^16].
 
 | **Name**                | $T_1$ | $T_2$ |     $\gamma$      |       $\Gamma$    | $\delta=\gamma-\Gamma$ | 
 |:------------------------|:------|:------|:------------------|:------------------|:-----------------------|
@@ -631,7 +647,7 @@ end # hide
 nothing # hide
 ```
 
-and then plot again the solution. We can see that the first bang arc permits to reach the 
+And then plot again the solution. We can see that the first bang arc permits to reach the 
 horizontal singular line $z=\gamma/2\delta$ which is depicted with a dashed line. The second 
 bang arc is very short which explains why it is not well captured. We should refine the 
 grid around this bang arc to capture it well.
@@ -672,6 +688,53 @@ println("tf = ", tf)
 ```
 
 ## Indirect method
+
+We introduce the pseudo-Hamiltonian
+
+```math
+H(q, p, u) = H_0(q, p) + u\, H_1(q, p)
+```
+
+where $H_0(q, p) = p \cdot F_0(q)$ and $H_1(q, p) = p \cdot F_1(q)$
+are both Hamiltonian lifts. According to the maximisation condition 
+from the Pontryagin Maximum Principle (PMP), a bang arc occurs when 
+$H_1$ is nonzero and of constant sign along the arc. On the contrary
+the singular arcs are contained in $H_1 = 0$. If 
+$t \mapsto H_1(q(t), p(t)) = 0$ along an arc then its derivative is 
+also zero. Thus, along a singular arc we have also
+
+```math
+\frac{\mathrm{d}}{\mathrm{d}t} H_1(q(t), p(t)) = 
+\{H_0, H_1\}(q(t), p(t)) = 0,
+```
+
+where $\{H_0, H_1\}$ is the Poisson bracket of $H_0$ and $H_1$.
+
+!!! note "Lie and Poisson brackets"
+
+    Let $F_0$, $F_1$ be two smooth vector fields on a smooth manifold $M$ and $f$ a 
+    smooth function pn $M$. Let $x$ be local coordinates. The *Lie bracket* of $F_0$ 
+    and $F_1$ is given by 
+    
+    ```math
+        [F_0,F_1] \coloneqq  F_0 \cdot F_1 - F_1 \cdot F_0,
+    ```
+
+    with $(F_0 \cdot F_1)(x) = \mathrm{d} F_1(x) \cdot F_0(x)$.
+    The *Lie derivative* $\mathcal{L}_{F_0} f$ of $f$ along $F_0$ is simply written 
+    $F_0\cdot f$. Denoting $H_0$, $H_1$ the Hamiltonian lifts of $F_0$, $F_1$, then the 
+    *Poisson bracket* of $H_0$ and $H_1$ is
+    
+    ```math
+        \{H_0,H_1\}  \coloneqq  \vec{H_0} \cdot H_1.
+    ```
+
+    We also use the notation $H_{01}$ (resp. $F_{01}$) to write the bracket 
+    $\{H_0,H_1\}$ (resp. $[F_0,F_1]$) and so forth. Besides, since $H_0$, $H_1$ 
+    are Hamiltonian lifts, we have $\{H_0,H_1\}= p \cdot [F_0,F_1]$.
+
+We define next a function to plot the switching function $t \mapsto H_1(q(t), p(t))$ 
+and its derivative along the solution computed by the direct method.
 
 ```@raw html
 <article class="docstring">
@@ -730,6 +793,11 @@ end</code>
 </article>
 ```
 
+We can notice on the plots below that maximisation condition from the PMP is not 
+satisfied. We can see that the switching function becomes negative along the first 
+bang arc but there is no switching from the control plot. Besides, we can see that along
+the first singular arc, the switching function is not always zero.
+
 ```@example main
 function switching_plot(sol, H1, H01; kwargs...) # hide
 
@@ -783,6 +851,45 @@ H01  = @Lie { H0, H1 }
 switching_plot(direct_sol, H1, H01; size=(700, 900))
 ```
 
+We aim to compute a better approximation of the solution thanks to indirect shooting.
+To do so, we need to define the three different flows associated to the three different 
+control laws in feedback form: bang control, singular control along the horizontal line
+and singular control along the vertical line. 
+
+!!! note
+
+    Let us recall that $\delta = \gamma - \Gamma$. Then, for any $q = (y,z)$ we have:
+
+    ```math
+        \begin{aligned}
+            F_{01}(q) &= 
+            -(\gamma - \delta z) \frac{\partial}{\partial y} + 
+            \delta y \frac{\partial}{\partial z}, \\[0.5em]
+            F_{001}(q) &= 
+            \left( \gamma\, (\gamma - 2\Gamma) - 
+            \delta^2 z\right)\frac{\partial}{ \partial y} + 
+            \delta^2 y \frac{\partial}{\partial z}, \\[0.5em]
+            F_{101}(q) &= 
+            2 \delta y \frac{\partial}{\partial y} + 
+            (\gamma - 2 \delta z) \frac{\partial}{\partial z}.
+        \end{aligned}
+    ```
+
+    Along a singular arc, we have $H_1 = H_{01} = 0$, that is 
+    $p \cdot F_1 = p \cdot F_{01} = 0$. Since, $p$ is of dimension 2 and is nonzero, then
+    we have $\det(F_1, F_{01}) = y ( \gamma - 2 \delta z) = 0$. This gives us
+    the two singular lines. 
+    
+    ALong the horizontal singular line, the control is given by 
+
+    ```math
+        u_s(y) \coloneqq \gamma (2\Gamma - \gamma) / (2 \delta y)
+    ```
+
+    while along the vertical line it is given by $u_0 \coloneqq 0$.
+    We refer to [^19] for details about how to compute the 
+    singular controls in feedback form. 
+
 ```@example main
 @suppress_err begin # hide
 using OrdinaryDiffEq
@@ -794,11 +901,38 @@ u1 = 1                   # bang control
 us(y) = γ⋅(2Γ−γ)/(2δ⋅y)  # singular control: horizontal line
 
 # Flows
-f0 = Flow(ocp, (q, p, tf) -> u0, abstol=1e-14, reltol=1e-10, alg=AutoVern7(Rodas5P()))
-f1 = Flow(ocp, (q, p, tf) -> u1, abstol=1e-14, reltol=1e-10, alg=AutoVern7(Rodas5P()))
-fs = Flow(ocp, (q, p, tf) -> us(q[1]), abstol=1e-14, reltol=1e-10, alg=AutoVern7(Rodas5P()))
+f0 = Flow(ocp, (q, p, tf) -> u0, abstol=1e-14, reltol=1e-10)
+f1 = Flow(ocp, (q, p, tf) -> u1, abstol=1e-14, reltol=1e-10)
+fs = Flow(ocp, (q, p, tf) -> us(q[1]), abstol=1e-14, reltol=1e-10)
 nothing # hide
 ```
+
+With the previous flows, we can define the shooting function considering the sequence
+Bang-Singular-Bang-Singular. There are 3 switching times $t_1$, $t_2$ and $t_3$.
+The final time $t_f$ is unknown such as the initial costate. To reduce the sensitivy
+of the shooting function we also consider the states and costates at the switching times
+as unknowns and we add some matching conditions.
+
+Note that the final time is free, hence, in the normal case, $H = -p^0 = 1$ along the
+solution of the PMP. Considering this condition at the initial time, we obtain 
+$p_y(0) = -1$. At the entrance of the singular arcs, we must satisfy $H_1 = H_{01} = 0$
+For the first singular arc, this leads to the conditions 
+
+```math
+    - p_y(t_1) z_s + p_z(t_1) y(t_1) = z(t_1) - z_s = 0
+```
+
+At the entrance of the second singular arc, we have
+
+```math
+    p_y(t_3) = y(t_3) = 0.
+```
+
+Finally, the solution has to satisfy the final condition $q(t_f) = (0, 0)$. Since, the
+last singular arc is contained in $y=0$, this condition is redundant and so we only 
+need to check that $z(t_f) = 0$.
+
+Altogether, this leads to the following shooting function.
 
 ```@example main
 function shoot!(s, pz0, t1, t2, t3, tf, q1, p1, q2, p2, q3, p3)
@@ -826,6 +960,23 @@ end
 nothing # hide
 ```
 
+We are now in position to solve the shooting equations. Due to the sensitivity of the 
+first singular arc, we need to improve the initial guess obtained from the direct method
+to make the Newton solver converge. To do so we set for the initial guess:
+
+```
+    z(t_1) = z_s
+```
+
+and 
+
+```
+    p_z(t_1) = p_y(t_1) z_s / y(t_1).
+```
+
+One can see below from the norm of the shooting function at the initial guess that 
+it is not very accurate.
+
 ```@example main
 
 # we refine the initial guess to make the Newton solver converge
@@ -843,7 +994,7 @@ end # hide
 println("Norm of the shooting function: ‖s‖ = ", norm(s), "\n")
 ```
 
-Finally, we can solve the shooting equations thanks to the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl).
+Finally, we can solve the shooting equations thanks to the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) and improve our solution.
 
 ```@example main
 using NonlinearSolve
@@ -885,7 +1036,7 @@ end # hide
 println("Norm of the shooting function: ‖s‖ = ", norm(s), "\n")
 ```
 
-We plot the solution of the indirect solution (in red) over the solution of the direct method (in blue).
+Let us plot the indirect solution. One can note that the second bang arc is well captured.
 
 ```@example main
 f = f1 * (t1, fs) * (t2, f1) * (t3, f0) # concatenation of the flows
@@ -893,6 +1044,9 @@ indirect_sol = f((t0, tf), q0, [-1, pz0]) # compute the solution: state, costate
 
 spin_plot(indirect_sol; size=(700, 350))
 ```
+
+From the following plot, one can see that the maximisation condition from the PMP is 
+now well satisfied compared to the solution obtained from the direct method.
 
 ```@example main
 switching_plot(indirect_sol, H1, H01; size=(700, 900))
