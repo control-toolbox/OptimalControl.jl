@@ -277,7 +277,8 @@ prob = NonlinearProblem(nle, ξ)
 global indirect_sol =      # hide
 @suppress_err begin # hide
 NonlinearSolve.solve(prob)      # hide
-indirect_sol = NonlinearSolve.solve(prob)                       # resolution of S(p0) = 0
+# resolution of S(p0) = 0
+indirect_sol = NonlinearSolve.solve(prob; abstol=1e-8, reltol=1e-8, show_trace=Val(true))
 end                 # hide
 
 # we retrieve the costate solution together with the times
