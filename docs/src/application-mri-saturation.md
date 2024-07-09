@@ -964,13 +964,13 @@ We are now in position to solve the shooting equations. Due to the sensitivity o
 first singular arc, we need to improve the initial guess obtained from the direct method
 to make the Newton solver converge. To do so we set for the initial guess:
 
-```
+```math
     z(t_1) = z_s
 ```
 
 and 
 
-```
+```math
     p_z(t_1) = p_y(t_1) z_s / y(t_1).
 ```
 
