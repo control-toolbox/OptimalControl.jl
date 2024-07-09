@@ -32,8 +32,8 @@ plus boundary, control and state constraints
 
 - [Basic example](tutorial-basic-example.html)
 - [Goddard problem](tutorial-goddard.html)
-- [Orbit transfer](tutorial-orbit.html)
-- [Solar sailing](tutorial-sail.html)
+- [Orbit transfer](application-orbit.html)
+- [Solar sailing](application-sail.html)
 
 ## Wrap up
 
