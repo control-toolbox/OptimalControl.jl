@@ -1,0 +1,30 @@
+Let us consider the Bloch equations in spherical coordinates and take an initial point 
+$(\rho_0, \phi_0, \theta_0)$ in the Bloch ball. Let
+$\bar{v}(\cdot) = (\bar{v}_1(\cdot), \bar{v}_2(\cdot))$ denotes an optimal control which steers 
+$(\rho_0, \phi_0, \theta_0)$ to the target $\rho = 0$ in time $\bar{t}_f$.
+The control law satisfies $\bar{v}_1^2(t) + \bar{v}_2^2(t) \le 1$ for all 
+$t \in [0, \bar{t}_f]$. Since $\theta$ is a cyclic variable and since the component $v_1$ 
+appears only in the $\theta$ dynamics, then, one can define the control law 
+$v^*(\cdot) = (0, \bar{v}_2(\cdot))$ which satisfies the constraint and also steers the system 
+from the initial point $(\rho_0, \phi_0, \theta_0)$ to the target $\rho = 0$
+in the same time $\bar{t}_f$, and thus, the control $v^*(\cdot)$ is also optimal.
+
+On the contrary, let us consider an optimal control of the form
+$\bar{v}(\cdot) = (0, \bar{v}_2(\cdot))$ with $\bar{t}_f$ the optimal time. If there exists times 
+$0 \le t_1 < t_2 \le \bar{t}_f$ such that $\bar{v}_2(t)^2 < 1$ on $[t_1, t_2]$, then clearly, 
+one can define a new control $v^*(\cdot) = (v_1^*(\cdot), \bar{v}_2(\cdot))$ such that
+$v_1^*(\cdot) \ne 0$ on $[t_1, t_2]$, which satisfies the control constraint over 
+$[0, \bar{t}_f]$, and again this control $v^*(\cdot)$ steers the system to $\rho=0$ in time 
+$\bar{t}_f$ and thus is optimal.
+
+As a conclusion, if there exists an optimal control 
+$\bar{v}(\cdot) = (\bar{v}_1(\cdot), \bar{v}_2(\cdot))$, then there exists one of the form
+$v^*(\cdot) = (0, \bar{v}_2(\cdot))$. Besides, if there exists an optimal control of the form 
+$\bar{v}(\cdot) = (0, \bar{v}_2(\cdot))$ such that $\bar{v}_2(\cdot)^2 \ne 1$, then there exist 
+optimal controls of the form $v^*(\cdot) = (v_1^*(\cdot), \bar{v}_2(\cdot))$ with 
+$v_1^*(\cdot) \ne 0$. In any case, it is reasonable to consider only the optimal controls of 
+the form $\bar{v}(\cdot) = (0, \bar{v}_2(\cdot))$.
+
+Besides, since $\theta$ is a cyclic variable, one can fix $\theta_0 = \pi/2$ and in the case 
+$v_1(\cdot) = 0$ and $\theta(0) = \pi/2$, we have $\theta(\cdot) = 0$ and 
+$v_1(\cdot) =  u_2(\cdot) = 0$.
