@@ -135,12 +135,11 @@ for i ∈ 1:Np0x
 end
 
 # we seek the p0 which gives the ts_target at xf = xmax
+G(p0, ts_target) = (π ∘ ocp_flow)(t0, x0, p0, ts_target, callback=cbt) - xmax
 for i ∈ 1:Np0t
-    F(p0) = (π ∘ ocp_flow)(t0, x0, p0, ts_target[i], callback=cbt) - xmax
-    push!(p0s, Roots.find_zero(p0 -> F(p0), (p0_tau_2,  0.999)))
+    push!(p0s, Roots.find_zero(p0 -> G(p0, ts_target[i]), (p0_tau_2,  0.999)))
     try 
-        F(p0) = (π ∘ ocp_flow)(t0, x0, p0, ts_target[i] - (δt/2), callback=cbt) - xmax
-        push!(p0s, Roots.find_zero(p0 -> F(p0), (p0_tau_2, -0.999)))
+        push!(p0s, Roots.find_zero(p0 -> G(p0, ts_target[i] - (δt/2)), (p0_tau_2, -0.999)))
     catch e 
         nothing
     end
@@ -160,7 +159,11 @@ xmax = 4 # hide
 
 # the extremal which has a conjugate time equal to 2:  # hide
 p0_tau_2 = -0.6420147569351132 # hide
+global xf_tau_2, _ = # hide
+@suppress_err begin # hide
+ocp_flow(t0, x0, p0_tau_2, tmax) # hide
 xf_tau_2, _ = ocp_flow(t0, x0, p0_tau_2, tmax) # hide
+end # hide
 
 # # hide
 Np0x = 4 # hide
@@ -189,20 +192,27 @@ for i ∈ 1:Np0x # hide
     if i == 1 # hide
         push!(p0s, p0_tau_2) # hide
     else # hide
+        @suppress_err begin # hide
         push!(p0s, Roots.find_zero(p0 -> F(p0) - xs_target[i], (p0_tau_2,  0.999))) # hide
+        end # hide
     end # hide
     if i < Np0x # hide
+        @suppress_err begin # hide
         push!(p0s, Roots.find_zero(p0 -> F(p0) - (xs_target[i]+δx/2), (p0_tau_2, -0.999))) # hide
+        end # hide
     end # hide
 end # hide
 
 # we seek the p0 which gives the ts_target at xf = xmax # hide
+G(p0, ts_target) = (π ∘ ocp_flow)(t0, x0, p0, ts_target, callback=cbt) - xmax # hide
 for i ∈ 1:Np0t # hide
-    F(p0) = (π ∘ ocp_flow)(t0, x0, p0, ts_target[i], callback=cbt) - xmax # hide
-    push!(p0s, Roots.find_zero(p0 -> F(p0), (p0_tau_2,  0.999))) # hide
+    @suppress_err begin # hide
+    push!(p0s, Roots.find_zero(p0 -> G(p0, ts_target[i]), (p0_tau_2,  0.999))) # hide
+    end # hide
     try  # hide
-        F(p0) = (π ∘ ocp_flow)(t0, x0, p0, ts_target[i] - (δt/2), callback=cbt) - xmax # hide
-        push!(p0s, Roots.find_zero(p0 -> F(p0), (p0_tau_2, -0.999))) # hide
+        @suppress_err begin # hide
+        push!(p0s, Roots.find_zero(p0 -> G(p0, ts_target[i] - (δt/2)), (p0_tau_2, -0.999))) # hide
+        end # hide
     catch e  # hide
         nothing # hide
     end # hide
