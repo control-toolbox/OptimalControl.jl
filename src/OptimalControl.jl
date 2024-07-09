@@ -44,7 +44,7 @@ export *
 export direct_transcription
 export get_nlp
 export set_initial_guess
-export ocp_solution_from_docp
+export build_solution
 export save
 export load
 export export_ocp_solution
