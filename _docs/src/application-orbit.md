@@ -113,12 +113,6 @@ nlp_init = (state=x, control=u, variable=tf) # Initial guess for the NLP
     mass = mass0 - β * T * t
     ẋ(t) == F0(x(t)) + T / mass * (u₁(t) * F1(x(t)) + u₂(t) * F2(x(t)) + u₃(t) * F3(x(t)))
     u₁(t)^2 + u₂(t)^2 + u₃(t)^2 ≤ 1
-    #.8P0 ≤ P(t) ≤ 1.2Pf
-    #-1 ≤ ex(t) ≤ 1
-    #-1 ≤ ey(t) ≤ 1
-    #-1 ≤ hx(t) ≤ 1
-    #-1 ≤ hy(t) ≤ 1
-    #L0 ≤ L(t) ≤ 1.2Lf
     tf → min
 end
 ```
