@@ -5,7 +5,7 @@
 Let us consider [^1] and [^2]
 
 ```@raw html
-<img src="./assets/batch.jpg" style="display: block; margin: 0 auto 20px auto;" width="400px">
+<img src="./assets/orbit.jpg" style="display: block; margin: 0 auto 20px auto;" width="400px">
 ```
 
 Foo
