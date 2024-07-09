@@ -40,6 +40,17 @@ export Flow
 export plot, plot!
 export *
 
+# CTDirect
+export direct_transcription
+export get_nlp
+export set_initial_guess
+export build_solution
+export save
+export load
+export export_ocp_solution
+export import_ocp_solution
+
+
 # CTBase
 export Index
 export Autonomous, NonAutonomous
