@@ -7,7 +7,7 @@
 ### [Jean-Baptiste Caillau](http://caillau.perso.math.cnrs.fr), [Olivier Cots](https://ocots.github.io), [Alesia Herasimenka](https://www.uni.lu/snt-en/people/alesia-herasimenka) 
 
 ```@raw html
-<img width="800" alt="affiliations" src="./assets/affil.jpg">
+<img width="800" alt="affiliations" src="./assets/affil-lux.jpg">
 ```
 
 ## What it's about
