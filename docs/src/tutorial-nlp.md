@@ -8,7 +8,7 @@ We describe here some more advanced operations related to the discretized optima
 When calling ```solve(ocp)``` three steps are performed internally:
 - first, the OCP is discretized into a DOCP (a nonlinear optimization problem) with *direct_transcription*
 - then, this DOCP is solved, also with the method *solve*
-- finally, a functional solution of the OCP is rebuilt from the solution of the discretized problem, with *ocp_solution_from_docp*
+- finally, a functional solution of the OCP is rebuilt from the solution of the discretized problem, with *build_solution*
 
 These steps can also be done separately, for instance if you want to use your own NLP solver. Let us load the modules
 
@@ -45,18 +45,17 @@ nlp = get_nlp(docp)
 ```
 You could then use a custom solver that would return the solution for the NLP problem, such as
 ```
-nlpsol = MySolver(getNLP(docp))
+nlp_sol = MySolver(get_nlp(docp))
 ```
-For illustrative purpose we can mimick this by using the *solve* from *CTDirect* on the DOCP, and extract the NLP solution alone, without the multipliers and other informations
+For illustrative purpose we can mimick this by using the *solve* from *CTDirect* on the DOCP, and extract the NLP solution and multipliers
 ```@example main
 using CTDirect
-dsol = CTDirect.solve(docp, display=false)
-nlpsol = dsol.solution
+nlp_sol = CTDirect.solve(docp, display=false)
 nothing # hide
 ```
-Then we can rebuild and plot an OCP solution (note that the costate has not been retrieved in this case)
+Then we can rebuild and plot an OCP solution (note that the multipliers are optional, but the OCP costate will not be retrieved if the multipliers are not provided)
 ```@example main
-sol = ocp_solution_from_nlp(docp, nlpsol)
+sol = build_solution(docp, primal=nlp_sol.solution, dual=nlp_sol.multipliers)
 plot(sol)
 ```
 
