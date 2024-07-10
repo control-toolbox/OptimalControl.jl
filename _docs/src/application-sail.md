@@ -4,6 +4,10 @@
 <img src="./assets/sail.png" style="display: block; margin: 0 auto 20px auto;" width="400px">
 ```
 
+```@raw html
+<img src="./assets/sail2.png" style="display: block; margin: 0 auto 20px auto;" width="400px">
+```
+
 ```@example main
 using OptimalControl
 using NLPModelsIpopt
