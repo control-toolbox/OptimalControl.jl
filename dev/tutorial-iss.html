@@ -50,7 +50,7 @@ indirect_sol = NonlinearSolve.solve(prob)           # resolution of S(p0) = 0
 p0_sol = indirect_sol.u[1]                          # costate solution
 println(&quot;costate:    p0 = &quot;, p0_sol)
 println(&quot;shoot: |S(p0)| = &quot;, abs(S(p0_sol)), &quot;\n&quot;)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">costate:    p0 = 0.07202997482188266
-shoot: |S(p0)| = 1.4247892799241235e-16</code></pre><p>We get:</p><img src="tutorial-iss-b4621742.svg" alt="Example block output"/><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+shoot: |S(p0)| = 1.4247892799241235e-16</code></pre><p>We get:</p><img src="tutorial-iss-8faee4b7.svg" alt="Example block output"/><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"

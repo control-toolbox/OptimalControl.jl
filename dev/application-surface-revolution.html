@@ -126,7 +126,7 @@ plot!(plt_p, xlabel=&quot;t&quot;, ylabel=&quot;p(t,p₀)&quot;, legend=false)
 plot!(plt_u, xlabel=&quot;t&quot;, ylabel=&quot;u(t,p₀)&quot;, legend=false, ylims=(-2.5, 5))
 plot!(plt_phase, xlabel=&quot;x(t,p₀)&quot;, ylabel=&quot;p(t,p₀)&quot;, legend=false, xlims=(0, 2), ylims=(-1, 2))
 
-plot(plt_x, plt_p, plt_u, plt_phase, layout=(2,2), size=(800,600))</code></pre><img src="application-surface-revolution-0122edb0.svg" alt="Example block output"/><p>Here, the shooting equation given by </p><p class="math-container">\[    S({p₀}) = \pi(z(t_f,x_0,{p₀})) - x_f = 0,\]</p><p>with <span>$\pi(x, p) = x$</span>, has two solutions: <span>$p₀ = -0.9851$</span> and <span>$p₀ = 0.5126$</span>.</p><pre><code class="language-julia hljs">π((x, p)) = x
+plot(plt_x, plt_p, plt_u, plt_phase, layout=(2,2), size=(800,600))</code></pre><img src="application-surface-revolution-0babaa0e.svg" alt="Example block output"/><p>Here, the shooting equation given by </p><p class="math-container">\[    S({p₀}) = \pi(z(t_f,x_0,{p₀})) - x_f = 0,\]</p><p>with <span>$\pi(x, p) = x$</span>, has two solutions: <span>$p₀ = -0.9851$</span> and <span>$p₀ = 0.5126$</span>.</p><pre><code class="language-julia hljs">π((x, p)) = x
 
 # Shooting function
 S(p0) = (π ∘ ocp_flow)(t0, x0, p0, tf) - xf
@@ -171,7 +171,7 @@ plot!(plt2_p, xlabel=&quot;t&quot;, ylabel=&quot;p(t,p₀)&quot;, legend=false, 
 plot!(plt2_u, xlabel=&quot;t&quot;, ylabel=&quot;u(t,p₀)&quot;, legend=false, ylims=(-6.,5.))
 plot!(plt2_phase, xlabel=&quot;x(t,p₀)&quot;, ylabel=&quot;p(t,p₀)&quot;, legend=false, xlims=(0.,2.5), ylims=(-1.,5.))
 
-plot(plt2_x, plt2_p, plt2_u, plt2_phase, layout=(2,2), size=(800, 600))</code></pre><img src="application-surface-revolution-04495593.svg" alt="Example block output"/><p>Now, we can compute the conjugate points along the two extremals. We have to compute the flow <span>$\delta z(t, p₀)$</span> of the Jacobi equation  with the initial condition <span>$\delta z(0) = (0, 1)$</span>. This is given solving</p><p class="math-container">\[    \delta z(t, p₀) = \dfrac{\partial}{\partial p₀}z(t, p₀).\]</p><p>Note that to compute the conjugate points, we only need the first component:</p><p class="math-container">\[    \delta z(t, p₀)_1.\]</p><pre><code class="language-julia hljs">using ForwardDiff
+plot(plt2_x, plt2_p, plt2_u, plt2_phase, layout=(2,2), size=(800, 600))</code></pre><img src="application-surface-revolution-edcd8615.svg" alt="Example block output"/><p>Now, we can compute the conjugate points along the two extremals. We have to compute the flow <span>$\delta z(t, p₀)$</span> of the Jacobi equation  with the initial condition <span>$\delta z(0) = (0, 1)$</span>. This is given solving</p><p class="math-container">\[    \delta z(t, p₀) = \dfrac{\partial}{\partial p₀}z(t, p₀).\]</p><p>Note that to compute the conjugate points, we only need the first component:</p><p class="math-container">\[    \delta z(t, p₀)_1.\]</p><pre><code class="language-julia hljs">using ForwardDiff
 
 function jacobi_flow(t, p0)
     x(t, p0) = (π ∘ ocp_flow)(t0, x0, p0, t)
@@ -199,11 +199,11 @@ plot!(plt_conj2, tspan, δx)  # as n=1 the det(δx) = δx
 plot!(plt_conj2, xlabel=&quot;t&quot;, ylabel=&quot;δx(t,p₀)&quot;, legend=false, ylims=(-10.,10.), size=(400,300))
 
 #
-plt_conj = plot(plt_conj1, plt_conj2, layout=(1, 2), size=(800, 300), leftmargin=25px)</code></pre><img src="application-surface-revolution-7f2717a5.svg" alt="Example block output"/><p>We compute the first conjugate point along the first extremal and add it to the plot.</p><pre><code class="language-julia hljs">tau0 = Roots.find_zero(tau -&gt; jacobi_flow(tau, sol1_p0), (0.4, 0.6))
+plt_conj = plot(plt_conj1, plt_conj2, layout=(1, 2), size=(800, 300), leftmargin=25px)</code></pre><img src="application-surface-revolution-daedbdd9.svg" alt="Example block output"/><p>We compute the first conjugate point along the first extremal and add it to the plot.</p><pre><code class="language-julia hljs">tau0 = Roots.find_zero(tau -&gt; jacobi_flow(tau, sol1_p0), (0.4, 0.6))
 
 println(&quot;For p0 = &quot;, sol1_p0, &quot; tau_0 = &quot;, tau0)
 
-plot!(plt_conj[1], [tau0], [jacobi_flow(tau0, sol1_p0)], seriestype=:scatter)</code></pre><img src="application-surface-revolution-8d209369.svg" alt="Example block output"/><p>To conclude on this example, we compute the conjugate locus by using a path following algorithm. Define <span>$F(\tau,p₀) = \delta x(\tau,p₀)$</span> and suppose that the partial  derivative <span>$\partial_\tau F(\tau,p₀)$</span> is invertible, then, by the implicit function  theorem the conjugate time is a function of <span>$p₀$</span>. So, since here <span>$p₀\in\R$</span>, we can  compute them by solving the initial value problem for  <span>$p₀ \in [\alpha, \beta]$</span>:</p><p class="math-container">\[    \dot{\tau}(p₀) = -\dfrac{\partial F}{\partial \tau}(\tau(p₀),p₀)^{-1}\, 
+plot!(plt_conj[1], [tau0], [jacobi_flow(tau0, sol1_p0)], seriestype=:scatter)</code></pre><img src="application-surface-revolution-b4f7b8ca.svg" alt="Example block output"/><p>To conclude on this example, we compute the conjugate locus by using a path following algorithm. Define <span>$F(\tau,p₀) = \delta x(\tau,p₀)$</span> and suppose that the partial  derivative <span>$\partial_\tau F(\tau,p₀)$</span> is invertible, then, by the implicit function  theorem the conjugate time is a function of <span>$p₀$</span>. So, since here <span>$p₀\in\R$</span>, we can  compute them by solving the initial value problem for  <span>$p₀ \in [\alpha, \beta]$</span>:</p><p class="math-container">\[    \dot{\tau}(p₀) = -\dfrac{\partial F}{\partial \tau}(\tau(p₀),p₀)^{-1}\, 
     \dfrac{\partial F}{\partial p₀}(\tau(p₀),p₀), \quad
     \tau(\alpha) = \tau_0.\]</p><p>For the numerical experiment, we set <span>$\alpha = -0.9995$</span>, <span>$\beta = -0.5$</span>.</p><pre><code class="language-julia hljs">function conjugate_times_rhs_path(tau, p0)
     dF = ForwardDiff.gradient(y -&gt; jacobi_flow(y...), [tau, p0])
@@ -236,7 +236,7 @@ end
 plot!(plt_x, taus, X, linewidth=3, color=:red, legend=false, xlims=(0.,2.0), ylims=(0., xmax))
 
 #
-plot(plt_x, plt_conj_times, layout=(1,2), legend=false, size=(800,300), leftmargin=25px)</code></pre><img src="application-surface-revolution-88a9b67b.svg" alt="Example block output"/><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+plot(plt_x, plt_conj_times, layout=(1,2), legend=false, size=(800,300), leftmargin=25px)</code></pre><img src="application-surface-revolution-eca08208.svg" alt="Example block output"/><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
