@@ -31,11 +31,11 @@ systems both from the analytical and numerical points of view[^8] [^9]. More rec
 combination of geometric optimal control based on the Maximum Principle[^10] and related 
 numerical algorithms (gradient methods[^11], shooting and continuation methods[^12]) leads 
 to sophisticated results about the time-minimal saturation problem (which consists in bringing 
-the magnetization vector to zero, ie. the state to the origin) of a single spin[^13]
+the magnetization vector to zero, *i.e.* the state to the origin) of a single spin[^13]
 with applications to the contrast problem in MRI, see[^14] [^15]. They are the basis to 
 numerical computations of *robust optimal controls* which take into account inhomogeneities 
 contained in the $B_0$ and $B_1$ magnetic fields and which have been validated very recently 
-by *in vitro* and *in vivo* experiments, see[^16] [^17].
+by *in vitro* and *in vivo* experiments, see for instance [^16] [^17].
 
 !!! note "Recent survey"
 
@@ -82,12 +82,12 @@ by *in vitro* and *in vivo* experiments, see[^16] [^17].
 ## The Bloch equation
 
 ```@raw html
-<img src="./mri-resources/bloch.jpeg" style="float: left; margin: auto 10px;" width="200px">
+<img src="./mri-resources/bloch.jpeg" style="float: left; margin: auto 20px;" width="200px">
 ```
 
 The mathematical model which is suitable for analyzing such problems is to consider an 
 ensemble of spins, each spin being described by a magnetization vector $M = (M_X, M_Y, M_Z)$ 
-in the *laboratory frame* $0XYZ$ whose evolution satisfies the so-called *Bloch equation*
+in the *laboratory frame* whose evolution satisfies the so-called *Bloch equation*
 
 ```math
     \dot{M}(\tau) = \bar{\gamma}\, M(\tau) \wedge B(\tau) + R(M(\tau)),
@@ -112,12 +112,12 @@ $\R^3$. The $R(M)$ term represents the dissipation and is of the form:
 
 where $M_0$ is the equilibrium magnetization, and $T_1$, $T_2$ are the *relaxation times* 
 which are the chemical signatures of the observed species and satisfy the physical constraints 
-$0 < T_2 \le 2\, T_1$. The control is denoted $\omega(\tau) = (\omega_X(\tau),\omega_Y(\tau)) \coloneqq (-\bar{\gamma}  B_X(\tau), -\bar{\gamma} B_Y(\tau))$, and is bounded by 
-$\omega_\mathrm{max}$, ie. $\Vert{\omega(\tau)}\Vert\le \omega_\mathrm{max}$,
+$0 < T_2 \le 2\, T_1$. The control is denoted $\omega(\tau) = (\omega_X(\tau),\omega_Y(\tau)) \coloneqq (-\bar{\gamma}  B_X(\tau), -\bar{\gamma} B_Y(\tau))$ and is bounded by 
+$\omega_\mathrm{max}$, *i.e.* $\Vert{\omega(\tau)}\Vert\le \omega_\mathrm{max}$,
 where $\omega_\mathrm{max}$ is the maximal experimental intensity of the experiments and 
 $\Vert{\cdot}\Vert$ is the Euclidean norm.
 
-The Bloch equation can be written in a *rotating frame* $0xyz$ where the equilibrium is 
+The Bloch equation can be written in a *rotating frame* where the equilibrium is 
 normalized introducing the state $q=(x,y,z)$, the matrices
 
 ```math
@@ -190,13 +190,13 @@ where
 
 In this setting, the normalized Bloch equation has 3 positive parameters: $\gamma$, $\Gamma$ and 
 $u_\mathrm{max}$. However, one may choose one parameter to fix since for any $\lambda > 0$ and 
-any triplet $(\gamma, \Gamma, u_\mathrm{max})$, both systems in coordinates $(x, y, z)$
+any triplet $(\gamma, \Gamma, u_\mathrm{max})$, both systems, in coordinates $(x, y, z)$,
 with parameters $(\gamma, \Gamma, u_\mathrm{max})$ or 
 $(\lambda\gamma, \lambda\Gamma, \lambda u_\mathrm{max})$ are equivalent, up to a time 
 reparameterization.
 
 Note that for the constant control $u(\cdot) =(u_\mathrm{max},0)$, starting from $x=0$ and 
-denoting $q = (y,z)$, the Bloch equation becomes to
+denoting $q = (y,z)$, the Bloch equation becomes
 
 ```math
     \dot{x}(t) = -\Gamma\, x(t), \quad
@@ -213,7 +213,7 @@ $R(\theta)$ is the rotation matrix of angle $\theta$. Thus, this trajectory is p
 period $T$ given by:
 
 ```math
-    T = \frac{2\, \pi}{u_\mathrm{max}}.
+    T = \frac{2 \pi}{u_\mathrm{max}}.
 ```
 
 Classically, one may fix the period to $T=1$ and so $u_\mathrm{max} = 2 \pi$, or on the contrary 
@@ -237,7 +237,7 @@ with the feedback $u = R(\theta)^{-1} v$ becomes:
 ```math
     \left\{ 
         \begin{aligned}
-            \dot{\rho}(t)   &= \gamma \cos \phi(t)\, (1 - \rho(t) \cos \phi(t)) - \Gamma \rho(t) \sin^2 \phi(t), \\[0.0em]
+            \dot{\rho}(t)   &= \gamma \cos \phi(t)\, (1 - \rho(t) \cos \phi(t)) - \Gamma \rho(t) \sin^2 \phi(t), \\[1.0em]
             \dot{\phi}(t)   &= \delta \sin \phi(t) \cos \phi(t) - \frac{\gamma}{\rho(t)} \sin \phi(t) + v_2(t), \\[0.0em]
             \dot{\theta}(t) &= - \cot \phi(t)\, v_1(t),
         \end{aligned}
@@ -291,14 +291,14 @@ the origin if and only if $0 < \gamma \le 2\, \Gamma$.
 </header>
 <section style="display: none;">
     <div>
-<p>Consider the Bloch equations in spherical coordinates. We want to prove first that  <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>ρ</mi><mo>˙</mo></mover><mo>≤</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\dot{\rho} \le 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8623em; vertical-align: -0.1944em;"></span><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.6679em;"><span class="" style="top: -3em;"><span class="pstrut" style="height: 3em;"></span><span class="mord mathnormal">ρ</span></span><span class="" style="top: -3em;"><span class="pstrut" style="height: 3em;"></span><span class="accent-body" style="left: -0.0556em;"><span class="mord">˙</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.1944em;"><span class=""></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span></span></span> for every point on the sphere, ie. such that <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ρ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\rho = 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.625em; vertical-align: -0.1944em;"></span><span class="mord mathnormal">ρ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">1</span></span></span></span></span></span>. On such points  we have:</p>
+<p>Consider the Bloch equations in spherical coordinates. We want to prove first that  <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>ρ</mi><mo>˙</mo></mover><mo>≤</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\dot{\rho} \le 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8623em; vertical-align: -0.1944em;"></span><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.6679em;"><span class="" style="top: -3em;"><span class="pstrut" style="height: 3em;"></span><span class="mord mathnormal">ρ</span></span><span class="" style="top: -3em;"><span class="pstrut" style="height: 3em;"></span><span class="accent-body" style="left: -0.0556em;"><span class="mord">˙</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.1944em;"><span class=""></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span></span></span> for every point on the sphere, <i>i.e.</i> such that <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ρ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\rho = 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.625em; vertical-align: -0.1944em;"></span><span class="mord mathnormal">ρ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">1</span></span></span></span></span></span>. On such points  we have:</p>
 
 <p class="math-container"><span><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mover accent="true"><mi>ρ</mi><mo>˙</mo></mover><mo>=</mo><mo>−</mo><mi>δ</mi><msup><mrow><mi>cos</mi><mo>⁡</mo></mrow><mn>2</mn></msup><mi>ϕ</mi><mo>+</mo><mi>γ</mi><mi>cos</mi><mo>⁡</mo><mi>ϕ</mi><mo>−</mo><mi mathvariant="normal">Γ</mi><mo>=</mo><mo>−</mo><mi>δ</mi><msup><mi>X</mi><mn>2</mn></msup><mo>+</mo><mi>γ</mi><mi>X</mi><mo>−</mo><mi mathvariant="normal">Γ</mi><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mspace width="1em"></mspace><mi>X</mi><mo>=</mo><mi>cos</mi><mo>⁡</mo><mi>ϕ</mi><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">    \dot{\rho} = -\delta \cos^2 \phi + \gamma \cos \phi - \Gamma = 
     -\delta X^2 + \gamma X - \Gamma = P(X), \quad X = \cos \phi.</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8623em; vertical-align: -0.1944em;"></span><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.6679em;"><span class="" style="top: -3em;"><span class="pstrut" style="height: 3em;"></span><span class="mord mathnormal">ρ</span></span><span class="" style="top: -3em;"><span class="pstrut" style="height: 3em;"></span><span class="accent-body" style="left: -0.0556em;"><span class="mord">˙</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.1944em;"><span class=""></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.0585em; vertical-align: -0.1944em;"></span><span class="mord">−</span><span class="mord mathnormal" style="margin-right: 0.0379em;">δ</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mop"><span class="mop">cos</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8641em;"><span class="" style="top: -3.113em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord mathnormal">ϕ</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.8889em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.0556em;">γ</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mop">cos</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord mathnormal">ϕ</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord">Γ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.9474em; vertical-align: -0.0833em;"></span><span class="mord">−</span><span class="mord mathnormal" style="margin-right: 0.0379em;">δ</span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.0785em;">X</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8641em;"><span class="" style="top: -3.113em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.8778em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.0556em;">γ</span><span class="mord mathnormal" style="margin-right: 0.0785em;">X</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord">Γ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.1389em;">P</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right: 0.0785em;">X</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right: 1em;"></span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord mathnormal" style="margin-right: 0.0785em;">X</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.8889em; vertical-align: -0.1944em;"></span><span class="mop">cos</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord mathnormal">ϕ</span><span class="mord">.</span></span></span></span></span></span></p>
 
 <p>This is a degree 2 polynomial vanishing at <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">X=1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord mathnormal" style="margin-right: 0.0785em;">X</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">1</span></span></span></span></span></span>, and its discriminant is <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>2</mn><mi mathvariant="normal">Γ</mi><mo>−</mo><mi>γ</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">(2\Gamma - \gamma)^2 \ge 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">(</span><span class="mord">2Γ</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1.0641em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.0556em;">γ</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8141em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span></span></span>, so <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi></mrow><annotation encoding="application/x-tex">P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord mathnormal" style="margin-right: 0.1389em;">P</span></span></span></span></span></span> has at most another root <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>X</mi><mn>2</mn></msub><mo>=</mo><mi mathvariant="normal">Γ</mi><mi mathvariant="normal">/</mi><mi>δ</mi></mrow><annotation encoding="application/x-tex">X_2 = {\Gamma}/{\delta}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8333em; vertical-align: -0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.0785em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3011em;"><span class="" style="top: -2.55em; margin-left: -0.0785em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span class=""></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord"><span class="mord">Γ</span></span><span class="mord">/</span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.0379em;">δ</span></span></span></span></span></span></span>. If <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo>&lt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\delta &lt; 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.7335em; vertical-align: -0.0391em;"></span><span class="mord mathnormal" style="margin-right: 0.0379em;">δ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span></span></span>, the polynomial function is negative between its roots, so <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi></mrow><annotation encoding="application/x-tex">P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord mathnormal" style="margin-right: 0.1389em;">P</span></span></span></span></span></span> is  non-positive over <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mo>−</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[-1, 1]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">[</span><span class="mord">−</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord">1</span><span class="mclose">]</span></span></span></span></span></span> if and only if <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>X</mi><mn>2</mn></msub><mo>≤</mo><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">X_2 \le -1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8333em; vertical-align: -0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.0785em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3011em;"><span class="" style="top: -2.55em; margin-left: -0.0785em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span class=""></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.7278em; vertical-align: -0.0833em;"></span><span class="mord">−</span><span class="mord">1</span></span></span></span></span></span>, that is: <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Γ</mi><mi mathvariant="normal">/</mi><mi>δ</mi><mo>≤</mo><mo>−</mo><mn>1</mn><mo>⇔</mo><mi>γ</mi><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">{\Gamma}/{\delta} \le -1 \Leftrightarrow \gamma \ge 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord"><span class="mord">Γ</span></span><span class="mord">/</span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.0379em;">δ</span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.7278em; vertical-align: -0.0833em;"></span><span class="mord">−</span><span class="mord">1</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">⇔</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.8304em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.0556em;">γ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span></span></span>. If <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\delta &gt; 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.7335em; vertical-align: -0.0391em;"></span><span class="mord mathnormal" style="margin-right: 0.0379em;">δ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span></span></span>, we need to have <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>X</mi><mn>2</mn></msub><mo>≥</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">X_2 \ge 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8333em; vertical-align: -0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.0785em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3011em;"><span class="" style="top: -2.55em; margin-left: -0.0785em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span class=""></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">1</span></span></span></span></span></span>, that is <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Γ</mi><mi mathvariant="normal">/</mi><mi>δ</mi><mo>≥</mo><mn>1</mn><mo>⇔</mo><mi>γ</mi><mo>≤</mo><mn>2</mn><mi mathvariant="normal">Γ</mi></mrow><annotation encoding="application/x-tex">{\Gamma}/{\delta} \ge 1 \Leftrightarrow \gamma \le 2\Gamma</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord"><span class="mord">Γ</span></span><span class="mord">/</span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.0379em;">δ</span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">1</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">⇔</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.8304em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.0556em;">γ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord">2Γ</span></span></span></span></span></span>. If <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\delta = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6944em;"></span><span class="mord mathnormal" style="margin-right: 0.0379em;">δ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span></span></span> then <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi></mrow><annotation encoding="application/x-tex">P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord mathnormal" style="margin-right: 0.1389em;">P</span></span></span></span></span></span> is non-positive over <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mo>−</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[-1, 1]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">[</span><span class="mord">−</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord">1</span><span class="mclose">]</span></span></span></span></span></span> if and only if  <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mi mathvariant="normal">Γ</mi><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\gamma = \Gamma \ge 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.625em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.0556em;">γ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.8193em; vertical-align: -0.136em;"></span><span class="mord">Γ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span></span></span>.</p>
 
-<p>Hence, the Bloch ball is invariant under the Bloch equations if and only if  <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≤</mo><mi>γ</mi><mo>≤</mo><mn>2</mn><mi mathvariant="normal">Γ</mi></mrow><annotation encoding="application/x-tex">0 \le \gamma \le 2 \Gamma</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.7804em; vertical-align: -0.136em;"></span><span class="mord">0</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.8304em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.0556em;">γ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord">2Γ</span></span></span></span></span></span> but it is the smallest invariant ball if and only if we also  have <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo mathvariant="normal">≠</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\gamma \ne 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8889em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.0556em;">γ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel"><span class="mrel"><span class="mord vbox"><span class="thinbox"><span class="rlap"><span class="strut" style="height: 0.8889em; vertical-align: -0.1944em;"></span><span class="inner"><span class="mord"><span class="mrel"></span></span></span><span class="fix"></span></span></span></span></span><span class="mrel">=</span></span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span></span></span> since if <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\gamma = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.625em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.0556em;">γ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span></span></span> then every ball centered at the origin is  invariant under the Bloch equations and finally if <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>&lt;</mo><mi>γ</mi><mo>≤</mo><mn>2</mn><mi mathvariant="normal">Γ</mi></mrow><annotation encoding="application/x-tex">0 &lt; \gamma \le 2 \Gamma</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6835em; vertical-align: -0.0391em;"></span><span class="mord">0</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.8304em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.0556em;">γ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord">2Γ</span></span></span></span></span></span>, then the  dynamics given by the normalized Bloch equation with a zero control (ie. the free dynamics)  is linear, its equilibrium point is the North pole <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">N=(0,0,1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord mathnormal" style="margin-right: 0.109em;">N</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">(</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span></span></span> and this equilibrium is  globally asymptotically stable so any trajectory solution of the free dynamics would leave  any ball centered at the origin strictly smaller than the unit ball. The result is proved.</p>
+<p>Hence, the Bloch ball is invariant under the Bloch equations if and only if  <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≤</mo><mi>γ</mi><mo>≤</mo><mn>2</mn><mi mathvariant="normal">Γ</mi></mrow><annotation encoding="application/x-tex">0 \le \gamma \le 2 \Gamma</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.7804em; vertical-align: -0.136em;"></span><span class="mord">0</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.8304em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.0556em;">γ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord">2Γ</span></span></span></span></span></span> but it is the smallest invariant ball if and only if we also  have <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo mathvariant="normal">≠</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\gamma \ne 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8889em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.0556em;">γ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel"><span class="mrel"><span class="mord vbox"><span class="thinbox"><span class="rlap"><span class="strut" style="height: 0.8889em; vertical-align: -0.1944em;"></span><span class="inner"><span class="mord"><span class="mrel"></span></span></span><span class="fix"></span></span></span></span></span><span class="mrel">=</span></span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span></span></span> since if <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\gamma = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.625em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.0556em;">γ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span></span></span> then every ball centered at the origin is  invariant under the Bloch equations and finally if <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>&lt;</mo><mi>γ</mi><mo>≤</mo><mn>2</mn><mi mathvariant="normal">Γ</mi></mrow><annotation encoding="application/x-tex">0 &lt; \gamma \le 2 \Gamma</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6835em; vertical-align: -0.0391em;"></span><span class="mord">0</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.8304em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.0556em;">γ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord">2Γ</span></span></span></span></span></span>, then the  dynamics given by the normalized Bloch equation with a zero control (<i>i.e.</i> the free dynamics)  is linear, its equilibrium point is the North pole <span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">N=(0,0,1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord mathnormal" style="margin-right: 0.109em;">N</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">(</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span></span></span> and this equilibrium is  globally asymptotically stable so any trajectory solution of the free dynamics would leave  any ball centered at the origin strictly smaller than the unit ball. The result is proved.</p>
     </div>
 </section>
 </article>
@@ -306,11 +306,11 @@ the origin if and only if $0 < \gamma \le 2\, \Gamma$.
 
 ### Symmetry of revolution and restriction to the 2D case
 
-Considering the Bloch equations in spherical coordinates, one can see that $\theta$ does 
+Considering the Bloch equation in spherical coordinates, one can see that $\theta$ does 
 not appear in the dynamics (it is a cyclic variable) so there exists a one dimensional 
 symmetry group of translations on $\theta$. Hence, one may fix the initial value $\theta(0)$ 
 to $\pi/2$ for instance (it implies $x(0) = 0$). Finally, imposing $\theta(0) = \pi/2$ and 
-$u_2 = 0$, then, one can reduce (since $x(t)=0$ for any time $t$) the Bloch equations
+$u_2 = 0$, then, one can reduce (since $x(t)=0$ for any time $t$) the Bloch equation
 to the following two dimensional single-input control system:
 
 ```math
@@ -342,7 +342,7 @@ by:
 The admissible control set $\mathcal{U}$ is then defined as
 
 ```math
-    \left\{
+    \mathcal{U} \coloneqq \left\{
         u(\cdot) \colon [0, \infty) \to [-1, 1] ~|~ u(\cdot) \text{ measurable}
     \right\}.
 ```
@@ -369,7 +369,7 @@ The admissible control set $\mathcal{U}$ is then defined as
 
 ## The time-optimal saturation problem
 
-The time-optimal saturation problem is the following: starting from a given point in the 
+The time-optimal saturation problem is the following: starting from the North pole of the 
 Bloch ball, the goal is to reach in minimum time the center of the Bloch ball, which 
 corresponds at the final time to zero magnetization of the spin.
 
@@ -456,12 +456,12 @@ T2 = 0.05
 Γ = 1/(ω⋅T2)
 
 δ = γ - Γ
-zs = γ / 2δ # singular ordinate of the horizontal singular line
+zs = γ / 2δ # ordinate of the horizontal singular line
 
 F0(y, z) = [ -Γ⋅y, γ⋅(1-z) ]
 F1(y, z) = [ -z, y ]
 
-q0 = [ 0, 1 ] # initial state
+q0 = [ 0, 1 ] # initial state: the North pole
 nothing # hide
 ```
 
@@ -526,7 +526,7 @@ direct_sol = solve(ocp; grid_size=N, init=sol, print_level=4, tol=1e-12)
 nothing # hide
 ```
 
-We can compare both solutions. The BSBS is revelead even if second bang arc is not clearly 
+We can compare both solutions. The BSBS structure is revelead even if the second bang arc is not clearly 
 demonstrated.
 
 ```@example main
@@ -541,11 +541,9 @@ We define a custom plot function to plot the solution inside the Bloch ball.
     <a class="docstring-article-toggle-button fa-solid fa-chevron-right" href="javascript:;" title="Expand docstring"> </a>
     <code>spin_plot</code> — <span class="docstring-category">Function</span>
 </header>
-<section style="display: none;">
-    <div>
-    <pre>
-    <code class="language-julia hljs">using Plots.PlotMeasures
+<section style="display: none;"><div><pre><code class="language-julia hljs">using Plots.PlotMeasures
 using CTFlows
+
 function spin_plot(sol; kwargs...)
 
     if sol isa CTFlows.OptimalControlFlowSolution
@@ -589,10 +587,7 @@ function spin_plot(sol; kwargs...)
 
     return plot(state_plt, control_plt; layout=(1, 2), bottommargin=15px, kwargs...)
 
-end</code>
-    <button class="copy-button fa-solid fa-copy" aria-label="Copy this code ;opblock" title="Copy"></button>
-    </pre>
-    </div>
+end</code><button class="copy-button fa-solid fa-copy" aria-label="Copy this code ;opblock" title="Copy"></button></pre></div>
 </section>
 </article>
 ```
@@ -649,15 +644,15 @@ nothing # hide
 
 And then plot again the solution. We can see that the first bang arc permits to reach the 
 horizontal singular line $z=\gamma/2\delta$ which is depicted with a dashed line. The second 
-bang arc is very short which explains why it is not well captured. We should refine the 
-grid around this bang arc to capture it well.
+bang arc is very short which explains why it is not well captured. We may refine the 
+grid around this bang arc to capture it well but in the following we propose to use an indirect method to refine this approximation.
 
 ```@example main
 spin_plot(direct_sol; size=(700, 350))
 ```
 
 We extract now the useful information from the direct solution to provide an initial guess
-for the indirect method in the following part. For instance, we need the initial costate 
+for the indirect method. For instance, we need the initial costate 
 together with the switching times between bang and sinular arcs and the final time.
 
 ```@example main
@@ -697,7 +692,7 @@ H(q, p, u) = H_0(q, p) + u\, H_1(q, p)
 
 where $H_0(q, p) = p \cdot F_0(q)$ and $H_1(q, p) = p \cdot F_1(q)$
 are both Hamiltonian lifts. According to the maximisation condition 
-from the Pontryagin Maximum Principle (PMP), a bang arc occurs when 
+from the [Pontryagin Maximum Principle](https://en.wikipedia.org/wiki/Pontryagin%27s_maximum_principle) (PMP), a bang arc occurs when 
 $H_1$ is nonzero and of constant sign along the arc. On the contrary
 the singular arcs are contained in $H_1 = 0$. If 
 $t \mapsto H_1(q(t), p(t)) = 0$ along an arc then its derivative is 
@@ -713,7 +708,7 @@ where $\{H_0, H_1\}$ is the Poisson bracket of $H_0$ and $H_1$.
 !!! note "Lie and Poisson brackets"
 
     Let $F_0$, $F_1$ be two smooth vector fields on a smooth manifold $M$ and $f$ a 
-    smooth function pn $M$. Let $x$ be local coordinates. The *Lie bracket* of $F_0$ 
+    smooth function on $M$. Let $x$ be local coordinates. The *Lie bracket* of $F_0$ 
     and $F_1$ is given by 
     
     ```math
@@ -742,10 +737,7 @@ and its derivative along the solution computed by the direct method.
     <a class="docstring-article-toggle-button fa-solid fa-chevron-right" href="javascript:;" title="Expand docstring"> </a>
     <code>switching_plot</code> — <span class="docstring-category">Function</span>
 </header>
-<section style="display: none;">
-    <div>
-    <pre>
-    <code class="language-julia hljs">function switching_plot(sol, H1, H01; kwargs...)
+<section style="display: none;"><div><pre><code class="language-julia hljs">function switching_plot(sol, H1, H01; kwargs...)
 
     if sol isa CTFlows.OptimalControlFlowSolution
         sol = CTFlows.OptimalControlSolution(sol)
@@ -785,10 +777,7 @@ and its derivative along the solution computed by the direct method.
     plot!(control_plt; ylims=(-0.1, 1.1), xlabel="t", ylabel="u")
 
     return plot(switching_plt, dswitching_plt, control_plt; layout=(3, 1), kwargs...)
-end</code>
-    <button class="copy-button fa-solid fa-copy" aria-label="Copy this code ;opblock" title="Copy"></button>
-    </pre>
-    </div>
+end</code><button class="copy-button fa-solid fa-copy" aria-label="Copy this code ;opblock" title="Copy"></button></pre></div>
 </section>
 </article>
 ```
@@ -880,15 +869,31 @@ and singular control along the vertical line.
     we have $\det(F_1, F_{01}) = y ( \gamma - 2 \delta z) = 0$. This gives us
     the two singular lines. 
     
-    ALong the horizontal singular line, the control is given by 
+    Differentiating $t \mapsto H_1(q(t), p(t)) = 0$ a second time along a singular 
+    arc gives
 
     ```math
-        u_s(y) \coloneqq \gamma (2\Gamma - \gamma) / (2 \delta y)
+        H_{001}(q(t), p(t)) + u(t)\, H_{101}(q(t), p(t)) = 0,
     ```
 
-    while along the vertical line it is given by $u_0 \coloneqq 0$.
-    We refer to [^19] for details about how to compute the 
-    singular controls in feedback form. 
+    that is $p(t)$ is orthogonal to $F_{001}(q(t)) + u(t)\, F_{101}(q(t))$. Hence, 
+    the singular control is given by
+
+    ```math
+        \det(F_1(q(t)), F_{001}(q(t))) + u(t) \, \det(F_1(q(t)), F_{101}(q(t))) = 0.
+    ```
+
+    For $y=0$, $\det(F_1(q), F_{101}(q))$ is zero and thus the singular control is zero.
+    We denote it $u_0 \coloneqq 0$.
+    Along the horizontal singular line, that is for $z=\gamma/2\delta$, 
+    the control is given by 
+
+    ```math
+        u_s(y) \coloneqq \gamma (2\Gamma - \gamma) / (2 \delta y).
+    ```
+
+    Note that we could have defined the singular control with the Hamiltonian
+    lifts $H_{001}$ and $H_{101}$. See the [Goddard tutorial](https://control-toolbox.org/docs/optimalcontrol/stable/tutorial-goddard.html#Indirect-method) for an example of such a computation.
 
 ```@example main
 @suppress_err begin # hide
@@ -897,13 +902,15 @@ end # hide
 
 # Controls
 u0 = 0                   # off control: vertical singular line
-u1 = 1                   # bang control
+u1 = 1                   # positive bang control
 us(y) = γ⋅(2Γ−γ)/(2δ⋅y)  # singular control: horizontal line
 
 # Flows
-f0 = Flow(ocp, (q, p, tf) -> u0, abstol=1e-14, reltol=1e-10)
-f1 = Flow(ocp, (q, p, tf) -> u1, abstol=1e-14, reltol=1e-10)
-fs = Flow(ocp, (q, p, tf) -> us(q[1]), abstol=1e-14, reltol=1e-10)
+tolerances = (abstol=1e-14, reltol=1e-10)
+
+f0 = Flow(ocp, (q, p, tf) -> u0      ; tolerances...)
+f1 = Flow(ocp, (q, p, tf) -> u1      ; tolerances...)
+fs = Flow(ocp, (q, p, tf) -> us(q[1]); tolerances...)
 nothing # hide
 ```
 
@@ -915,11 +922,11 @@ as unknowns and we add some matching conditions.
 
 Note that the final time is free, hence, in the normal case, $H = -p^0 = 1$ along the
 solution of the PMP. Considering this condition at the initial time, we obtain 
-$p_y(0) = -1$. At the entrance of the singular arcs, we must satisfy $H_1 = H_{01} = 0$
+$p_y(0) = -1$. At the entrance of the singular arcs, we must satisfy $H_1 = H_{01} = 0$.
 For the first singular arc, this leads to the conditions 
 
 ```math
-    - p_y(t_1) z_s + p_z(t_1) y(t_1) = z(t_1) - z_s = 0
+    - p_y(t_1) z_s + p_z(t_1) y(t_1) = z(t_1) - z_s = 0.
 ```
 
 At the entrance of the second singular arc, we have
@@ -928,9 +935,10 @@ At the entrance of the second singular arc, we have
     p_y(t_3) = y(t_3) = 0.
 ```
 
-Finally, the solution has to satisfy the final condition $q(t_f) = (0, 0)$. Since, the
-last singular arc is contained in $y=0$, this condition is redundant and so we only 
-need to check that $z(t_f) = 0$.
+Finally, the solution has to satisfy the final condition 
+$q(t_f) = (y(t_f), z(t_f)) = (0, 0)$. Since, the
+last singular arc is contained in $y=0$, the condition $y(t_f)=0$ is redundant and 
+so we only need to check that $z(t_f) = 0$.
 
 Altogether, this leads to the following shooting function.
 
@@ -962,17 +970,8 @@ nothing # hide
 
 We are now in position to solve the shooting equations. Due to the sensitivity of the 
 first singular arc, we need to improve the initial guess obtained from the direct method
-to make the Newton solver converge. To do so we set for the initial guess:
-
-```math
-    z(t_1) = z_s
-```
-
-and 
-
-```math
-    p_z(t_1) = p_y(t_1) z_s / y(t_1).
-```
+to make the Newton solver converge. To do so we set for the initial guess 
+$z(t_1) = z_s$ and $p_z(t_1) = p_y(t_1) z_s / y(t_1)$.
 
 One can see below from the norm of the shooting function at the initial guess that 
 it is not very accurate.
@@ -994,15 +993,21 @@ end # hide
 println("Norm of the shooting function: ‖s‖ = ", norm(s), "\n")
 ```
 
-Finally, we can solve the shooting equations thanks to the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) and improve our solution.
+Finally, we can solve the shooting equations thanks to the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package and improve our solution.
 
 ```@example main
 using NonlinearSolve
-# auxiliary function with aggregated inputs
-nle = (s, ξ, λ) -> shoot!(s, ξ[1], ξ[2:5]..., ξ[6:7], ξ[8:9], ξ[10:11], ξ[12:13], ξ[14:15], ξ[16:17])   
-ξ = [ pz0 ; t1 ; t2 ; t3 ; tf ; q1 ; p1 ; q2 ; p2 ; q3 ; p3] # initial guess
 
+# auxiliary function with aggregated inputs
+nle = (s, ξ, λ) -> shoot!(s, ξ[1], ξ[2:5]..., ξ[6:7], ξ[8:9], ξ[10:11], ξ[12:13], ξ[14:15], ξ[16:17])
+
+# initial guess
+ξ = [ pz0 ; t1 ; t2 ; t3 ; tf ; q1 ; p1 ; q2 ; p2 ; q3 ; p3]
+
+# NLE problem
 prob = NonlinearProblem(nle, ξ)
+
+# resolution of S=0
 global indirect_sol =      # hide
 @suppress_err begin # hide
 NonlinearSolve.solve(prob)      # hide
@@ -1039,9 +1044,13 @@ println("Norm of the shooting function: ‖s‖ = ", norm(s), "\n")
 Let us plot the indirect solution. One can note that the second bang arc is well captured.
 
 ```@example main
-f = f1 * (t1, fs) * (t2, f1) * (t3, f0) # concatenation of the flows
-indirect_sol = f((t0, tf), q0, [-1, pz0]) # compute the solution: state, costate, control...
+# concatenation of the flows with the switching times
+f = f1 * (t1, fs) * (t2, f1) * (t3, f0)
 
+# computation of the solution: state, costate, control
+indirect_sol = f((t0, tf), q0, [-1, pz0])
+
+# plot in the Bloch ball
 spin_plot(indirect_sol; size=(700, 350))
 ```
 
