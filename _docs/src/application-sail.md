@@ -166,7 +166,6 @@ plot!([sol.times[1], sol.times[end]], [Tlim, Tlim], label="temperature limit")
 ```@example main
 energy_sol = -mu./sqrt.([x_sol[i][1] for i ∈ 1:Nsol].^2 + [x_sol[i][2] for i ∈ 1:Nsol].^2 ) + 1/2 * ([x_sol[i][3] for i ∈ 1:Nsol].^2 + [x_sol[i][4] for i ∈ 1:Nsol].^2)
 energy_local_optimal = -mu./sqrt.(matrix_data[2].^2 + matrix_data[3].^2 + matrix_data[4].^2) + 1/2 * (matrix_data[5].^2 + matrix_data[6].^2 + matrix_data[7].^2)
-
 plot_energy = Plots.plot(sol.times, energy_sol, size=(600, 600), label="orbital energy")
 plot!(matrix_data[1][N_init:N], energy_local_optimal[N_init:N], label="orbital energy, local-optimal")
 ```
@@ -210,7 +209,7 @@ end
 
 init_loop = sol
 sol_list = []
-for Nt0_local = N_init:-10:N_init-50 
+@gif for Nt0_local = N_init:-10:N_init-50 
     ocp_loop = ocp_t0(Nt0_local, N)
     global sol_loop = solve(ocp_loop, init=init_loop, grid_size = 150, print_level=0)
     global init_loop = sol_loop
