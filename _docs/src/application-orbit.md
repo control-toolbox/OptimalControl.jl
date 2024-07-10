@@ -6,21 +6,21 @@
 <img src="./assets/cnes-tas.jpg" style="display: block; margin: 0 auto 20px auto;" width="400px">
 ```
 
-Minimum time control of the Kepler equation (CNES / TAS / Inria / CNRS collaboration):
+Minimum time control of the Kepler equation (CNES / TAS / Inria / CNRS collaboration,
+check [^1] and [^2]):
 ```math
 \begin{cases}
   t_f \to \min,\\
-  ddot{q} = -\mu\frac{q}{|q|^3} + \frac{u}{m}\,,\quad t \in [0,t_f],\\
+  \ddot{q} = -\mu\frac{q}{|q|^3} + \frac{u}{m}\,,\quad t \in [0,t_f],\\
   \dot{m} = -\beta|u|,\quad |u| \leq T_{\mathrm{max}}.
-\endA{cases}
+\end{cases}
+```
 
 Fixed initial and final Keplerian orbits (free final longitude).
 
 ```@raw html
 <img src="./assets/orbit.jpg" style="display: block; margin: 0 auto 20px auto;" width="400px">
 ```
-
-For the controlled Kepler equation, check [^1] and [^2].
 
 ```@example main
 using OptimalControl
