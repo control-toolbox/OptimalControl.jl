@@ -1,8 +1,9 @@
 # The surface of revolution of minimum area
 
-We consider the well-known surface of revolution of minimum area problem which dates 
-back to Euler[^1] [^2]. This is a problem from 
-[calculus of variations](https://en.wikipedia.org/wiki/Calculus_of_variation) but we consider 
+We consider the well-known surface of revolution of minimum area problem which dates back to Euler[^1] [^2]. 
+We already know that the solution is a [catenoid](https://en.wikipedia.org/wiki/Catenoid) and we propose to retrieve
+this numerically and compute conjugate points, in relation with second order conditions of local optimality.
+This is a problem from [calculus of variations](https://en.wikipedia.org/wiki/Calculus_of_variation) but we consider 
 its optimal control version. We minimise the cost integral
 
 ```math

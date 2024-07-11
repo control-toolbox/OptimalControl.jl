@@ -28,7 +28,8 @@ starting from the condition $x(0) = (-1, 0)$ and with the goal to reach the targ
     [Double integrator: energy minimisation](https://control-toolbox.org/docs/ctproblems/stable/problems/double_integrator_energy.html#DIE) 
     for the analytical solution and details about this problem.
 
-First, we need to import the `OptimalControl.jl` package to define and solve the optimal control problem. We also need to import the `Plots.jl` package to plot the solution.
+First, we need to import the `OptimalControl.jl` package to define the optimal control problem and `NLPModelsIpopt.jl` to solve it. 
+We also need to import the `Plots.jl` package to plot the solution.
 
 ```@example main
 using OptimalControl
