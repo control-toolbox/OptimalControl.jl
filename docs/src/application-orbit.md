@@ -171,7 +171,7 @@ p0 = p0 / norm(p0) # Normalization |p0|=1 for free final time
 jshoot(ξ) = ForwardDiff.jacobian(shoot, ξ)
 shoot!(s, ξ) = (s[:] = shoot(ξ); nothing)
 jshoot!(js, ξ) = (js[:] = jshoot(ξ); nothing)
-#bvp_sol = fsolve(shoot!, jshoot!, ξ; show_trace=true); println(bvp_sol)
+bvp_sol = fsolve(shoot!, jshoot!, ξ; show_trace=true); println(bvp_sol)
 nothing # hide
 ```
 
@@ -199,37 +199,36 @@ tf = 1.210e3; p0 =-[-2.215319700438820e+01, -4.347109477345140e+01, 9.6131888072
 p0 = p0 / norm(p0) # Normalization |p0|=1 for free final time
 ξ = [tf; p0]; # Initial guess
 
-#bvp_sol = fsolve(shoot!, jshoot!, ξ; show_trace=true); println(bvp_sol)
+bvp_sol = fsolve(shoot!, jshoot!, ξ; show_trace=true); println(bvp_sol)
 nothing # hide
 ```
 
 ## Plots
 
 ```@example main
-# tf = bvp_sol.x[1]
-# p0 = bvp_sol.x[2:end]
-# ode_sol = fr((0, tf), x0, p0)
-# t  = ode_sol.t; N = size(t, 1)
-# P  = ode_sol[1, :]
-# ex = ode_sol[2, :]
-# ey = ode_sol[3, :]
-# hx = ode_sol[4, :]
-# hy = ode_sol[5, :]
-# L  = ode_sol[6, :]
-# cL = cos.(L)
-# sL = sin.(L)
-# w  = @. 1 + ex * cL + ey * sL
-# Z  = @. hx * sL - hy * cL
-# C  = @. 1 + hx^2 + hy^2
-# q1 = @. P *((1 + hx^2 - hy^2) * cL + 2 * hx * hy * sL) / (C * w)
-# q2 = @. P *((1 - hx^2 + hy^2) * sL + 2 * hx * hy * cL) / (C * w)
-# q3 = @. 2 * P * Z / (C * w)
+tf = bvp_sol.x[1]
+p0 = bvp_sol.x[2:end]
+ode_sol = fr((0, tf), x0, p0)
+t  = ode_sol.t; N = size(t, 1)
+P  = ode_sol[1, :]
+ex = ode_sol[2, :]
+ey = ode_sol[3, :]
+hx = ode_sol[4, :]
+hy = ode_sol[5, :]
+L  = ode_sol[6, :]
+cL = cos.(L)
+sL = sin.(L)
+w  = @. 1 + ex * cL + ey * sL
+Z  = @. hx * sL - hy * cL
+C  = @. 1 + hx^2 + hy^2
+q1 = @. P *((1 + hx^2 - hy^2) * cL + 2 * hx * hy * sL) / (C * w)
+q2 = @. P *((1 - hx^2 + hy^2) * sL + 2 * hx * hy * cL) / (C * w)
+q3 = @. 2 * P * Z / (C * w)
 
-# plt1 = plot3d(1; xlim = (-60, 60), ylim = (-60, 60), zlim = (-5, 5), title = "Orbit transfer", legend=false)
-# @gif for i = 1:N
-#     push!(plt1, q1[i], q2[i], q3[i])
-# end every N ÷ min(N, 100) 
-nothing
+plt1 = plot3d(1; xlim = (-60, 60), ylim = (-60, 60), zlim = (-5, 5), title = "Orbit transfer", legend=false)
+@gif for i = 1:N
+    push!(plt1, q1[i], q2[i], q3[i])
+end every N ÷ min(N, 100) 
 ```
 
 ## References
