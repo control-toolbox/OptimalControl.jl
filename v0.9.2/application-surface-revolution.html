@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Catenoid solution · OptimalControl.jl</title><meta name="title" content="Catenoid solution · OptimalControl.jl"/><meta property="og:title" content="Catenoid solution · OptimalControl.jl"/><meta property="twitter:title" content="Catenoid solution · OptimalControl.jl"/><meta name="description" content="Documentation for OptimalControl.jl."/><meta property="og:description" content="Documentation for OptimalControl.jl."/><meta property="twitter:description" content="Documentation for OptimalControl.jl."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script><link href="https://control-toolbox.org/assets/css/documentation.css" rel="stylesheet" type="text/css"/><script src="https://control-toolbox.org/assets/js/documentation.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="index.html">OptimalControl.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="index.html">Introduction</a></li><li><span class="tocitem">Tutorials</span><ul><li><a class="tocitem" href="tutorial-basic-example.html">Basic example</a></li><li><a class="tocitem" href="tutorial-basic-example-f.html">Basic example (functional version)</a></li><li><a class="tocitem" href="tutorial-double-integrator.html">Double integrator: time minimisation</a></li><li><a class="tocitem" href="tutorial-initial-guess.html">Initial guess options</a></li><li><a class="tocitem" href="tutorial-continuation.html">Discrete continuation</a></li><li><a class="tocitem" href="tutorial-nlp.html">NLP and DOCP manipulations</a></li><li><a class="tocitem" href="tutorial-plot.html">Plot a solution</a></li><li><a class="tocitem" href="tutorial-lqr-basic.html">LQR example</a></li><li><a class="tocitem" href="tutorial-iss.html">Indirect simple shooting</a></li><li><a class="tocitem" href="tutorial-goddard.html">Goddard problem</a></li></ul></li><li><span class="tocitem">Applications</span><ul><li><a class="tocitem" href="application-batch.html">Batch processing</a></li><li><a class="tocitem" href="application-sail.html">Solar sail</a></li><li class="is-active"><a class="tocitem" href="application-surface-revolution.html">Catenoid solution</a></li></ul></li><li><a class="tocitem" href="fgs-2024.html">FGS 2024</a></li><li><a class="tocitem" href="juliacon2024.html">JuliaCon 2024</a></li><li><a class="tocitem" href="api.html">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Applications</a></li><li class="is-active"><a href="application-surface-revolution.html">Catenoid solution</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="application-surface-revolution.html">Catenoid solution</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl/blob/main/docs/src/application-surface-revolution.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="The-surface-of-revolution-of-minimum-area"><a class="docs-heading-anchor" href="#The-surface-of-revolution-of-minimum-area">The surface of revolution of minimum area</a><a id="The-surface-of-revolution-of-minimum-area-1"></a><a class="docs-heading-anchor-permalink" href="#The-surface-of-revolution-of-minimum-area" title="Permalink"></a></h1><p>We consider the well-known surface of revolution of minimum area problem which dates back to Euler<sup class="footnote-reference"><a id="citeref-1" href="#footnote-1">[1]</a></sup> <sup class="footnote-reference"><a id="citeref-2" href="#footnote-2">[2]</a></sup>.  We already know that the solution is a <a href="https://en.wikipedia.org/wiki/Catenoid">catenoid</a> and we propose to retrieve this numerically and compute conjugate points, in relation with second order conditions of local optimality. This is a problem from <a href="https://en.wikipedia.org/wiki/Calculus_of_variation">calculus of variations</a> but we consider  its optimal control version. We minimise the cost integral</p><p class="math-container">\[    \int_0^{1} x(t)\,\sqrt{1+u^2(t)}\,\mathrm{d} t\]</p><p>under the dynamical constraint</p><p class="math-container">\[    \dot{x}(t) = u(t), \quad u(t)\in\R,\]</p><p>and the limit conditions</p><p class="math-container">\[    x(0) = 1, \quad x(1) = 2.5.\]</p><p>To define this problem with <code>OptimalControl.jl</code> we have write:</p><pre><code class="language-julia hljs">using OptimalControl
+
+t0 = 0
+tf = 1
+x0 = 1
+xf = 2.5
+
+@def ocp begin
+
+    t ∈ [ t0, tf ], time
+    x ∈ R, state
+    u ∈ R, control
+
+    x(t0) == x0
+    x(tf) == xf
+
+    ẋ(t) ==  u(t)
+
+    ∫( x(t) * √(1 + u(t)^2) ) → min
+
+end</code></pre><p>The maximization of the pseudo-Hamiltonian provides the control with respect to  the state and the costate:</p><p class="math-container">\[    u(x,p) = \mathrm{sign}(x) \frac{p}{\sqrt{x^2-p^2}}.\]</p><p>From this control law, we could define the Hamiltonian  <span>$\mathbf{H}(x,p)=H(x, p, u(x,p))$</span> and its associated Hamiltonian flow. The <code>OptimalControl.jl</code> package does this for us simply passing to the function <code>Flow</code>, the optimal control problem with the control law.</p><pre><code class="language-julia hljs">using OrdinaryDiffEq
+
+u(x, p) = sign(x) * p / √(x^2-p^2)
+
+ocp_flow = Flow(ocp, u, reltol=1e-10, abstol=1e-10)</code></pre><p>Let us plot some extremals, solutions of this flow. The initial condition <span>$x_0$</span> is fixed while we compute some extremals for different values of initial  covector <span>$p_0$</span>. We compute some specific initial covectors for a nice plot.</p><article class="docstring">
+<header>
+    <a class="docstring-article-toggle-button fa-solid fa-chevron-right" href="javascript:;" title="Expand docstring"> </a>
+    <span class="docstring-category">Computation of the initial covectors</span>
+</header>
+<section style="display: none;">
+    <div>
+    <pre>
+    <code class="language-julia hljs">using Roots
+
+# parameters
+tmax = 2
+xmax = 4
+
+# the extremal which has a conjugate time equal to 2: 
+p0_tau_2 = -0.6420147569351132
+xf_tau_2, _ = ocp_flow(t0, x0, p0_tau_2, tmax)
+
+#
+Np0x = 4
+Δx = xmax - xf_tau_2
+δx = Δx / (Np0x-1)
+δt = δx * (tmax - t0) / (xmax - 0) # depends on the xlims and ylims of the plots
+
+#
+xs_target = range(xf_tau_2, xmax, length=Np0x)
+ts_target = collect(tmax:-δt:t0)
+Np0t = length(ts_target)
+Np0 = Np0x + Np0t
+
+#
+condition(z,t,integrator) = z[1] - (xmax+1)
+affect!(integrator) = terminate!(integrator)
+cbt  = ContinuousCallback(condition,affect!)
+
+#
+π((x, p)) = x
+
+# we seek the p0 which gives the xs_target at tf = 2
+F(p0) = (π ∘ ocp_flow)(t0, x0, p0, tmax, callback=cbt)
+p0s = []
+for i ∈ 1:Np0x
+    if i == 1
+        push!(p0s, p0_tau_2)
+    else
+        push!(p0s, Roots.find_zero(p0 -> F(p0) - xs_target[i], (p0_tau_2,  0.999)))
+    end
+    if i < Np0x
+        push!(p0s, Roots.find_zero(p0 -> F(p0) - (xs_target[i]+δx/2), (p0_tau_2, -0.999)))
+    end
+end
+
+# we seek the p0 which gives the ts_target at xf = xmax
+G(p0, ts_target) = (π ∘ ocp_flow)(t0, x0, p0, ts_target, callback=cbt) - xmax
+for i ∈ 1:Np0t
+    push!(p0s, Roots.find_zero(p0 -> G(p0, ts_target[i]), (p0_tau_2,  0.999)))
+    try 
+        push!(p0s, Roots.find_zero(p0 -> G(p0, ts_target[i] - (δt/2)), (p0_tau_2, -0.999)))
+    catch e 
+        nothing
+    end
+end
+
+Np0 = length(p0s)</code><button class="copy-button fa-solid fa-copy" aria-label="Copy this code ;opblock" title="Copy"></button></pre></div>
+</section>
+</article><pre><code class="language-julia hljs">using Plots
+
+N  = 200
+tf_ = 2
+tspan = range(t0, tf_, N)   # time interval
+plt_x = plot()              # plot of the state x(t)
+plt_p = plot()              # plot of the costate p(t)
+plt_u = plot()              # plot of the control u(t)
+plt_phase = plot()          # plot (x, p)
+
+# callback: termination
+# Without this, the numerical integration stop before tf for p₀ = 0.99
+condition(z,t,integrator) = z[1] - (xmax+1)
+affect!(integrator) = terminate!(integrator)
+cbt  = ContinuousCallback(condition,affect!)
+
+for p0 ∈ p0s # plot for each p₀ in p0s
+
+    flow_p0 = ocp_flow((t0, tf_), x0, p0, saveat=tspan, callback=cbt)
+
+    T = flow_p0.ode_sol.t
+    Z = flow_p0.(T)
+    X = [Z[i][1] for i in 1:length(T)]
+    P = [Z[i][2] for i in 1:length(T)]
+
+    plot!(plt_x, T, X;          color=:blue)
+    plot!(plt_p, T, P;          color=:blue)
+    plot!(plt_u, T, u.(X, P);   color=:blue)
+    plot!(plt_phase, X, P;      color=:blue)
+
+end
+
+# Plots
+plot!(plt_x, xlabel=&quot;t&quot;, ylabel=&quot;x(t,p₀)&quot;, legend=false, ylims=(0, xmax))
+plot!(plt_p, xlabel=&quot;t&quot;, ylabel=&quot;p(t,p₀)&quot;, legend=false)
+plot!(plt_u, xlabel=&quot;t&quot;, ylabel=&quot;u(t,p₀)&quot;, legend=false, ylims=(-2.5, 5))
+plot!(plt_phase, xlabel=&quot;x(t,p₀)&quot;, ylabel=&quot;p(t,p₀)&quot;, legend=false, xlims=(0, 2), ylims=(-1, 2))
+
+plot(plt_x, plt_p, plt_u, plt_phase, layout=(2,2), size=(800,600))</code></pre><img src="application-surface-revolution-866ecf7c.svg" alt="Example block output"/><p>Here, the shooting equation given by </p><p class="math-container">\[    S({p₀}) = \pi(z(t_f,x_0,{p₀})) - x_f = 0,\]</p><p>with <span>$\pi(x, p) = x$</span>, has two solutions: <span>$p₀ = -0.9851$</span> and <span>$p₀ = 0.5126$</span>.</p><pre><code class="language-julia hljs">π((x, p)) = x
+
+# Shooting function
+S(p0) = (π ∘ ocp_flow)(t0, x0, p0, tf) - xf
+
+# Solve the shooting equation: first extremal
+sol1_p0 = Roots.find_zero(S, (-0.99, -0.97))
+
+# Solve the shooting equation: second extremal
+sol2_p0 = Roots.find_zero(S, (0.5, 0.6))
+
+println(&quot;sol1_p0 = &quot;,  sol1_p0, &quot;, S(sol1_p0) = &quot;, S(sol1_p0))
+println(&quot;sol2_p0 =  &quot;, sol2_p0, &quot;, S(sol2_p0) = &quot;, S(sol2_p0))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">sol1_p0 = -0.9851008114504582, S(sol1_p0) = 1.794120407794253e-13
+sol2_p0 =  0.5126502880898602, S(sol2_p0) = 8.881784197001252e-16</code></pre><p>Let us plot the two solutions. One can notice that they intersect as shown by  the top-left subplot.</p><pre><code class="language-julia hljs">p0s = (sol1_p0, sol2_p0)     # the different p₀
+
+N  = 100
+tspan = range(t0, tf, N)     # time interval
+plt2_x = plot()              # plot of the state x(t)
+plt2_p = plot()              # plot of the costate p(t)
+plt2_u = plot()              # plot of the control u(t)
+plt2_phase = plot()          # plot (x, p)
+
+labels = [&quot;p₀=-0.9851&quot; , &quot;p₀=0.51265&quot;]
+
+for (p0, label) ∈ zip(p0s, labels) # plot for each p₀ in p0s
+
+    flow_p0 = ocp_flow((t0, tf), x0, p0, saveat=tspan)
+
+    T = tspan
+    Z = flow_p0.(tspan)
+    X = [Z[i][1] for i in 1:N]
+    P = [Z[i][2] for i in 1:N]
+
+    plot!(plt2_x, T, X,         label=label)
+    plot!(plt2_p, T, P,         label=label)
+    plot!(plt2_u, T, u.(X, P),  label=label)
+    plot!(plt2_phase, X, P,     label=label)
+
+end
+
+plot!(plt2_x, [tf], [xf], xlabel=&quot;t&quot;, ylabel=&quot;x(t,p₀)&quot;, seriestype=:scatter,label=&quot;&quot;)
+plot!(plt2_p, xlabel=&quot;t&quot;, ylabel=&quot;p(t,p₀)&quot;, legend=false, ylims=(-1.5,5.))
+plot!(plt2_u, xlabel=&quot;t&quot;, ylabel=&quot;u(t,p₀)&quot;, legend=false, ylims=(-6.,5.))
+plot!(plt2_phase, xlabel=&quot;x(t,p₀)&quot;, ylabel=&quot;p(t,p₀)&quot;, legend=false, xlims=(0.,2.5), ylims=(-1.,5.))
+
+plot(plt2_x, plt2_p, plt2_u, plt2_phase, layout=(2,2), size=(800, 600))</code></pre><img src="application-surface-revolution-97ae976f.svg" alt="Example block output"/><p>Now, we can compute the conjugate points along the two extremals. We have to compute the flow <span>$\delta z(t, p₀)$</span> of the Jacobi equation  with the initial condition <span>$\delta z(0) = (0, 1)$</span>. This is given solving</p><p class="math-container">\[    \delta z(t, p₀) = \dfrac{\partial}{\partial p₀}z(t, p₀).\]</p><p>Note that to compute the conjugate points, we only need the first component:</p><p class="math-container">\[    \delta z(t, p₀)_1.\]</p><pre><code class="language-julia hljs">using ForwardDiff
+
+function jacobi_flow(t, p0)
+    x(t, p0) = (π ∘ ocp_flow)(t0, x0, p0, t)
+    return ForwardDiff.derivative(p0 -&gt; x(t, p0), p0)
+end</code></pre><p>The first conjugate time is then the first time <span>$\tau$</span> such that</p><p class="math-container">\[    \delta x(\tau, p₀)= \delta z(\tau, p₀)_1 = 0,\]</p><p>with <span>$p₀$</span> fixed. On the following figure, one can see that the first extremal has  a conjugate time smaller than <span>$t_f=1$</span> while for the second extremal, there is  no conjugate time. Thus, the first extremal cannot be optimal.</p><pre><code class="language-julia hljs">using Plots.PlotMeasures
+
+N = 100
+
+# Jacobi field for the first extremal
+tspan = range(t0, tf, N) # time interval
+
+δx = jacobi_flow.(tspan, sol1_p0)
+
+plt_conj1 = plot()
+plot!(plt_conj1, tspan, δx)  # as n=1, det(δx) = δx
+plot!(plt_conj1, xlabel=&quot;t&quot;, ylabel=&quot;δx(t,p₀)&quot;, legend=false, ylims=(-10.,10.), size=(400,300))
+
+# Jacobi field for the second extremal
+tspan = range(t0, 1.5, N) # time interval
+
+δx = jacobi_flow.(tspan, sol2_p0)
+
+plt_conj2= plot()
+plot!(plt_conj2, tspan, δx)  # as n=1 the det(δx) = δx
+plot!(plt_conj2, xlabel=&quot;t&quot;, ylabel=&quot;δx(t,p₀)&quot;, legend=false, ylims=(-10.,10.), size=(400,300))
+
+#
+plt_conj = plot(plt_conj1, plt_conj2, layout=(1, 2), size=(800, 300), leftmargin=25px)</code></pre><img src="application-surface-revolution-a13432be.svg" alt="Example block output"/><p>We compute the first conjugate point along the first extremal and add it to the plot.</p><pre><code class="language-julia hljs">tau0 = Roots.find_zero(tau -&gt; jacobi_flow(tau, sol1_p0), (0.4, 0.6))
+
+println(&quot;For p0 = &quot;, sol1_p0, &quot; tau_0 = &quot;, tau0)
+
+plot!(plt_conj[1], [tau0], [jacobi_flow(tau0, sol1_p0)], seriestype=:scatter)</code></pre><img src="application-surface-revolution-2dbdd88e.svg" alt="Example block output"/><p>To conclude on this example, we compute the conjugate locus by using a path following algorithm. Define <span>$F(\tau,p₀) = \delta x(\tau,p₀)$</span> and suppose that the partial  derivative <span>$\partial_\tau F(\tau,p₀)$</span> is invertible, then, by the implicit function  theorem the conjugate time is a function of <span>$p₀$</span>. So, since here <span>$p₀\in\R$</span>, we can  compute them by solving the initial value problem for  <span>$p₀ \in [\alpha, \beta]$</span>:</p><p class="math-container">\[    \dot{\tau}(p₀) = -\dfrac{\partial F}{\partial \tau}(\tau(p₀),p₀)^{-1}\, 
+    \dfrac{\partial F}{\partial p₀}(\tau(p₀),p₀), \quad
+    \tau(\alpha) = \tau_0.\]</p><p>For the numerical experiment, we set <span>$\alpha = -0.9995$</span>, <span>$\beta = -0.5$</span>.</p><pre><code class="language-julia hljs">function conjugate_times_rhs_path(tau, p0)
+    dF = ForwardDiff.gradient(y -&gt; jacobi_flow(y...), [tau, p0])
+    return -dF[2]/dF[1]
+end
+
+function conjugate_times(p0span, tau0)
+    ode = OrdinaryDiffEq.ODEProblem((tau, par, p0) -&gt; conjugate_times_rhs_path(tau, p0), tau0, p0span)
+    sol = OrdinaryDiffEq.solve(ode, reltol=1e-8, abstol=1e-8)
+    return sol.u, sol.t # taus, p0s
+end</code></pre><p>Now we have defined the algorithm, let us compute the conjugate locus and plot it.</p><pre><code class="language-julia hljs"># conjugate locus
+p0 = sol1_p0
+taus1, p0s1 = conjugate_times((p0, -0.5), tau0)
+taus2, p0s2 = conjugate_times((p0, -0.999), tau0)
+taus = append!(taus2[end:-1:1],taus1)
+p0s = append!(p0s2[end:-1:1],p0s1)
+
+# plot tau(p0)
+plt_conj_times = plot(p0s, taus, xlabel=&quot;p₀&quot;, ylabel=&quot;τ&quot;, color=:blue, xlims = (-1,-0.5))
+
+# get conjugate points
+X = []
+for (tau, p0) ∈ zip(taus, p0s)
+    # compute x(tau, p0)
+    x = (π ∘ ocp_flow)(t0, x0, p0, tau)
+    push!(X, x)
+end
+
+# plot conjugate points on plt_x
+plot!(plt_x, taus, X, linewidth=3, color=:red, legend=false, xlims=(0.,2.0), ylims=(0., xmax))
+
+#
+plot(plt_x, plt_conj_times, layout=(1,2), legend=false, size=(800,300), leftmargin=25px)</code></pre><img src="application-surface-revolution-ddf5b210.svg" alt="Example block output"/><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a>H. Schättler &amp; U. Ledzewicz, <em>Geometric optimal control: theory, methods and examples</em>, vol~<strong>38</strong> of <em>Interdisciplinary applied mathematics</em>, Springer Science &amp; Business Media, New York (2012), xiv+640.</li><li class="footnote" id="footnote-2"><a class="tag is-link" href="#citeref-2">2</a>D. Liberzon, <em>Calculus ov Variations and Optimal Control Theory</em>, Princeton University Press (2012).</li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="application-sail.html">« Solar sail</a><a class="docs-footer-nextpage" href="fgs-2024.html">FGS 2024 »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Friday 12 July 2024 17:19">Friday 12 July 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
