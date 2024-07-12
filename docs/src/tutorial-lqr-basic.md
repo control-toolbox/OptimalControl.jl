@@ -76,7 +76,7 @@ end
 nothing # hide
 ```
 
-We plot the state and control variables considering a normalized time $s=(t-t_0)/(t_f-t_0)$, thanks to the keyword argument `time=:normalized` of the [plot](https://control-toolbox.org/docs/ctbase/stable/api-plot.html) function.
+We plot the state and control variables considering a normalized time $s=(t-t_0)/(t_f-t_0)$, thanks to the keyword argument `time=:normalized` of the [plot](https://control-toolbox.org/CTBase.jl/stable/api-plot.html) function.
 
 ```@example main
 plt = plot(solutions[1], time=:normalized)

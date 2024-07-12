@@ -27,9 +27,9 @@ plus boundary, control and state constraints
 - [Coupling direct and indirect solvers, examples](https://ct.gitlabpages.inria.fr/gallery//notebooks.html)
 
 # OptimalControl.jl
-- [Basic example: double integrator](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-basic-example-f.html)
-- [Basic example: double integrator (cont'ed)](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-basic-example.html)
-- [Advanced example: Goddard problem](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-goddard.html)
+- [Basic example: double integrator](https://control-toolbox.org/OptimalControl.jl/dev/tutorial-basic-example-f.html)
+- [Basic example: double integrator (cont'ed)](https://control-toolbox.org/OptimalControl.jl/dev/tutorial-basic-example.html)
+- [Advanced example: Goddard problem](https://control-toolbox.org/OptimalControl.jl/dev/tutorial-goddard.html)
 
 # Wrap up
 - [X] High level modelling of optimal control problems
@@ -40,11 +40,11 @@ plus boundary, control and state constraints
 - [ct_repl](./assets/repl.mp4)
 - Additional solvers: direct shooting, collocation for BVP, Hamiltonian pathfollowing...
 - ... and open to contributions!
-- [CTProblems.jl](https://control-toolbox.org/docs/ctproblems/stable/problems-list.html)
+- [CTProblems.jl](https://control-toolbox.org/CTProblems.jl/stable/problems-list.html)
 
 # control-toolbox.org
 - Open toolbox
-- Collection of Julia Packages rooted at [OptimalControl.jl](https://control-toolbox.org/docs/optimalcontrol)
+- Collection of Julia Packages rooted at [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl)
 
 ```@raw html
 <a href="https://control-toolbox.org"><img width="800" alt="control-toolbox.org" src="./assets/control-toolbox.jpg"></a>

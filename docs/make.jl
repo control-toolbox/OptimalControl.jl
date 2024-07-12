@@ -16,8 +16,14 @@ DocMeta.setdocmeta!(OptimalControl, :DocTestSetup, :(using OptimalControl); recu
 makedocs(
     warnonly = :cross_references,
     sitename = "OptimalControl.jl",
-    format = Documenter.HTML(prettyurls = false,
-                             size_threshold_ignore = ["api-ctbase.md", "application-mri-saturation.md"]),
+    format = Documenter.HTML(
+        prettyurls = false,
+        size_threshold_ignore = ["api-ctbase.md", "application-mri-saturation.md"],
+        assets=[
+            asset("https://control-toolbox.org/assets/css/documentation.css"),
+            asset("https://control-toolbox.org/assets/js/documentation.js"),
+        ],
+    ),
     pages = [
         "Introduction" => "index.md",
         "Tutorials"    => [
@@ -34,10 +40,8 @@ makedocs(
                             ],
         "Applications" => [
                             "application-batch.md",
-                            "application-orbit.md",
                             "application-sail.md",
                             "Catenoid solution" => "application-surface-revolution.md",
-                            "MRI: saturation problem" => "application-mri-saturation.md",
                           ],
         "FGS 2024"     => "fgs-2024.md", 
         "JuliaCon 2024"=> "juliacon2024.md", 

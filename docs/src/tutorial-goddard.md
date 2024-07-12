@@ -188,7 +188,7 @@ as well as the associated multiplier for the *order one* state constraint on the
     which is the reason why we use the `@Lie` macro to compute Poisson brackets below.
 
 With the help of the [differential geometry primitives](https://control-toolbox.org/CTBase.jl/stable/api-diffgeom.html)
-from [CTBase.jl](https://control-toolbox.org/docs/ctbase),
+from [CTBase.jl](https://control-toolbox.org/CTBase.jl),
 these expressions are straightforwardly translated into Julia code:
 
 ```@example main

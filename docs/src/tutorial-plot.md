@@ -113,7 +113,7 @@ plot!(plt, sol2, solution_label="(sol2)", linestyle=:dash)
 
 ## Plot the norm of the control
 
-For some problem, it is interesting to plot the norm of the control. You can do it by using the `control` optional keyword argument with `:norm` value. The default value is `:components`. Let us illustrate this on the consumption minimisation orbital transfer problem from [CTProlbems.jl](https://control-toolbox.org/docs/ctproblems).
+For some problem, it is interesting to plot the norm of the control. You can do it by using the `control` optional keyword argument with `:norm` value. The default value is `:components`. Let us illustrate this on the consumption minimisation orbital transfer problem from [CTProlbems.jl](https://control-toolbox.org/CTProblems.jl).
 
 ```@example main
 using CTProblems
@@ -144,7 +144,7 @@ plot(t, norm∘u, label="‖u‖")
 ## Normalized time
 
 We consider a [LQR example](@ref) and solve the problem for different values of the final time `tf`.
-Then, we plot the solutions on the same figure considering a normalized time $s=(t-t_0)/(t_f-t_0)$, thanks to the keyword argument `time=:normalized` of the [plot](https://control-toolbox.org/docs/ctbase/stable/api-plot.html) function.
+Then, we plot the solutions on the same figure considering a normalized time $s=(t-t_0)/(t_f-t_0)$, thanks to the keyword argument `time=:normalized` of the [plot](https://control-toolbox.org/CTBase.jl/stable/api-plot.html) function.
 
 ```@example main
 
