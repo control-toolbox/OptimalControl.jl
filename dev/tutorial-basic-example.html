@@ -49,9 +49,9 @@ Number of inequality constraint evaluations          = 0
 Number of equality constraint Jacobian evaluations   = 3
 Number of inequality constraint Jacobian evaluations = 0
 Number of Lagrangian Hessian evaluations             = 2
-Total seconds in IPOPT                               = 0.025
+Total seconds in IPOPT                               = 0.028
 
-EXIT: Optimal Solution Found.</code></pre><p>and plot the solution</p><pre><code class="language-julia hljs">plot(sol)</code></pre><img src="tutorial-basic-example-73aa6987.svg" alt="Example block output"/><p>We can save the solution in a julia <em>.jld2</em> data file and reload it later, and also export a discretised version of the solution in a more portable JSON format.</p><pre><code class="language-julia hljs"># load additional modules
+EXIT: Optimal Solution Found.</code></pre><p>and plot the solution</p><pre><code class="language-julia hljs">plot(sol)</code></pre><img src="tutorial-basic-example-89b7cd14.svg" alt="Example block output"/><p>We can save the solution in a julia <em>.jld2</em> data file and reload it later, and also export a discretised version of the solution in a more portable JSON format.</p><pre><code class="language-julia hljs"># load additional modules
 using JLD2, JSON3
 
 # JLD save / load
