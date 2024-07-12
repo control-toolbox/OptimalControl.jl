@@ -7,10 +7,10 @@
 [co-url]: https://codecov.io/gh/control-toolbox/OptimalControl.jl
 
 [doc-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
-[doc-dev-url]: https://control-toolbox.org/docs/optimalcontrol/dev/
+[doc-dev-url]: https://control-toolbox.org/OptimalControl.jl/dev/
 
 [doc-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
-[doc-stable-url]: https://control-toolbox.org/docs/optimalcontrol/stable/
+[doc-stable-url]: https://control-toolbox.org/OptimalControl.jl/stable/
 
 [down-img]: https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/OptimalControl
 [down-url]: https://pkgs.genieframework.com?packages=OptimalControl

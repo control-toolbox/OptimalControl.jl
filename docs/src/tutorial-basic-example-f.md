@@ -25,7 +25,7 @@ starting from the condition $x(0) = (-1, 0)$ and with the goal to reach the targ
 !!! note "Solution and details"
 
     See the page 
-    [Double integrator: energy minimisation](https://control-toolbox.org/docs/ctproblems/stable/problems/double_integrator_energy.html#DIE) 
+    [Double integrator: energy minimisation](https://control-toolbox.org/CTProblems.jl/stable/problems/double_integrator_energy.html#DIE) 
     for the analytical solution and details about this problem.
 
 First, we need to import the `OptimalControl.jl` package to define the optimal control problem and `NLPModelsIpopt.jl` to solve it. 
@@ -58,7 +58,7 @@ nothing # hide
 !!! note "Nota bene"
 
     There are two ways to define an optimal control problem:
-    - using functions like in this example, see also the [`Model` documentation](https://control-toolbox.org/docs/ctbase/stable/api-model.html) for more details.
+    - using functions like in this example, see also the [`Model` documentation](https://control-toolbox.org/CTBase.jl/stable/api-model.html) for more details.
     - using an abstract formulation, see for instance [basic example](@ref basic) to compare.
 
 Solve it

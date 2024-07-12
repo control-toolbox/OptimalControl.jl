@@ -36,11 +36,11 @@ plus boundary, control and state constraints
 
 # OptimalControl.jl
 
-- [Basic example: double integrator (1/3)](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-basic-example-f.html)
-- [Basic example: double integrator (2/3)](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-basic-example.html)
-- [Basic example: double integrator (3/3)](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-double-integrator.html)
-- [Indirect simple shooting](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-iss.html)
-- [Advanced example: Goddard problem](https://control-toolbox.org/docs/optimalcontrol/dev/tutorial-goddard.html)
+- [Basic example: double integrator (1/3)](https://control-toolbox.org/OptimalControl.jl/dev/tutorial-basic-example-f.html)
+- [Basic example: double integrator (2/3)](https://control-toolbox.org/OptimalControl.jl/dev/tutorial-basic-example.html)
+- [Basic example: double integrator (3/3)](https://control-toolbox.org/OptimalControl.jl/dev/tutorial-double-integrator.html)
+- [Indirect simple shooting](https://control-toolbox.org/OptimalControl.jl/dev/tutorial-iss.html)
+- [Advanced example: Goddard problem](https://control-toolbox.org/OptimalControl.jl/dev/tutorial-goddard.html)
 
 # Wrap up
 
@@ -53,12 +53,12 @@ plus boundary, control and state constraints
 - [ct_repl](./assets/repl.mp4)
 - Additional solvers: direct shooting, collocation for BVP, Hamiltonian pathfollowing...
 - ... and open to contributions!
-- [CTProblems.jl](https://control-toolbox.org/docs/ctproblems/stable/problems-list.html)
+- [CTProblems.jl](https://control-toolbox.org/CTProblems.jl/stable/problems-list.html)
 
 # control-toolbox.org
 
 - Open toolbox
-- Collection of Julia Packages rooted at [OptimalControl.jl](https://control-toolbox.org/docs/optimalcontrol)
+- Collection of Julia Packages rooted at [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl)
 
 ```@raw html
 <a href="https://control-toolbox.org"><img width="800" alt="control-toolbox.org" src="./assets/control-toolbox.jpg"></a>

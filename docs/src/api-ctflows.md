@@ -1,7 +1,7 @@
 # CTFlows API
 
 This is just a dump of CTFlows API documentation.
-For more details about `CTFlows.jl` package, see the [documentation](https://control-toolbox.org/docs/ctflows).
+For more details about `CTFlows.jl` package, see the [documentation](https://control-toolbox.org/CTFlows.jl).
 
 ## Index
 
