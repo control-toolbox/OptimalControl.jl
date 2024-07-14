@@ -41,7 +41,7 @@ This will default to initialize all variables to 0.1.
 
 ```@example main
 # solve the optimal control problem without initial guess
-sol = solve(ocp, display=false)
+sol = solve(ocp; display=false)
 println("Number of iterations: ", sol.iterations)
 nothing # hide
 ```
@@ -49,16 +49,16 @@ nothing # hide
 Let us plot the solution of the optimal control problem.
 
 ```@example main
-plot(sol, size=(600, 450))
+plot(sol; size=(600, 450))
 ```
 
 Note that the following formulations are equivalent to not giving an initial guess.
 
 ```@example main
-sol = solve(ocp, display=false, init=nothing)
+sol = solve(ocp; init=nothing, display=false)
 println("Number of iterations: ", sol.iterations)
 
-sol = solve(ocp, display=false, init=())
+sol = solve(ocp; init=(), display=false)
 println("Number of iterations: ", sol.iterations)
 nothing # hide
 ```
@@ -72,7 +72,7 @@ We first illustrate the constant initial guess, using vectors or scalars accordi
 
 ```@example main
 # solve the optimal control problem with initial guess with constant values
-sol = solve(ocp, display=false, init=(state=[-0.2, 0.1], control=-0.2, variable=0.05))
+sol = solve(ocp; init=(state=[-0.2, 0.1], control=-0.2, variable=0.05), display=false)
 println("Number of iterations: ", sol.iterations)
 nothing # hide
 ```
@@ -80,15 +80,15 @@ nothing # hide
 Partial initializations are also valid, as shown below. Note the ending comma when a single argument is passed (tuple).
 ```@example main
 # initialisation only on the state
-sol = solve(ocp, display=false, init=(state=[-0.2, 0.1],))
+sol = solve(ocp; init=(state=[-0.2, 0.1],), display=false)
 println("Number of iterations: ", sol.iterations)
 
 # initialisation only on the control
-sol = solve(ocp, display=false, init=(control=-0.2,))
+sol = solve(ocp; init=(control=-0.2,), display=false)
 println("Number of iterations: ", sol.iterations)
 
 # initialisation only on the state and the variable
-sol = solve(ocp, display=false, init=(state=[-0.2, 0.1], variable=0.05))
+sol = solve(ocp; init=(state=[-0.2, 0.1], variable=0.05), display=false)
 println("Number of iterations: ", sol.iterations)
 nothing # hide
 ```
@@ -101,7 +101,7 @@ For the state and control, we can also provide functions of time as initial gues
 x(t) = [ -0.2t, 0.1t ]
 u(t) = -0.2t
 
-sol = solve(ocp, display=false, init=(state=x, control=u, variable=0.05))
+sol = solve(ocp; init=(state=x, control=u, variable=0.05), display=false)
 println("Number of iterations: ", sol.iterations)
 nothing # hide
 ```
@@ -114,11 +114,11 @@ Simple vectors are also allowed for variables of dimension 1.
 
 ```@example main
 # initial guess as vector of points
-time_vec = LinRange(t0,tf,4)
+t_vec = LinRange(t0,tf,4)
 x_vec = [[0, 0], [-0.1, 0.3], [-0.15,0.4], [-0.3, 0.5]]
 u_vec = [0, -0.8,  -0.3, 0]
 
-sol = solve(ocp, display=false, init=(time=time_vec, state=x_vec, control=u_vec, variable=0.05))
+sol = solve(ocp; init=(time=t_vec, state=x_vec, control=u_vec, variable=0.05), display=false)
 println("Number of iterations: ", sol.iterations)
 nothing # hide
 ```
@@ -131,11 +131,11 @@ The constant, functional and vector initializations can be mixed, for instance a
 
 ```@example main
 # we can mix constant values with functions of time
-sol = solve(ocp, display=false, init=(state=[-0.2, 0.1], control=u, variable=0.05))
+sol = solve(ocp; init=(state=[-0.2, 0.1], control=u, variable=0.05), display=false)
 println("Number of iterations: ", sol.iterations)
 
 # wa can mix every possibility
-sol = solve(ocp, display=false, init=(time=time_vec, state=x_vec, control=u, variable=0.05))
+sol = solve(ocp; init=(time=t_vec, state=x_vec, control=u, variable=0.05), display=false)
 println("Number of iterations: ", sol.iterations)
 nothing # hide
 ```
@@ -148,10 +148,10 @@ This particular feature allows an easy implementation of discrete continuations.
 
 ```@example main
 # generate the initial solution
-sol_init = solve(ocp, display=false)
+sol_init = solve(ocp; display=false)
 
 # solve the problem using solution as initial guess
-sol = solve(ocp, init=sol_init, display=false)
+sol = solve(ocp; init=sol_init, display=false)
 println("Number of iterations: ", sol.iterations)
 nothing # hide
 ```
@@ -161,8 +161,14 @@ functions ```sol.state```, ```sol.control``` and the values ```sol.variable```.
 For instance the following formulation is equivalent to the ```init=sol``` one.
 
 ```@example main
-# use a previous solution to initialise picking information
-sol = solve(ocp, display=false, init=(state=sol.state, control=sol.control, variable=sol.variable))
+# use a previous solution to initialise picking data
+sol = solve(ocp; 
+    init = (
+        state    = sol.state, 
+        control  = sol.control, 
+        variable = sol.variable
+    ), 
+    display=false)
 println("Number of iterations: ", sol.iterations)
 nothing # hide
 ``` 

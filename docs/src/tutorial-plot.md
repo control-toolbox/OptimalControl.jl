@@ -60,7 +60,7 @@ plot(sol, size=(700, 450), legend=:bottomright, grid=false, linewidth=2)
 To specify series attributes to a specific subplot, you can use the optional keyword arguments `state_style`, `costate_style` and `control_style` which correspond respectively to the state, costate and control trajectories. See the [attribute series documentation](https://docs.juliaplots.org/latest/generated/attributes_series/) from `Plots.jl` for more details. For instance, you can specify the color of the state trajectories and more.
 
 ```@example main
-plot(sol, 
+plot(sol; 
      state_style   = (color=:blue,), 
      costate_style = (color=:black, linestyle=:dash),
      control_style = (color=:red, linewidth=2))
@@ -71,7 +71,7 @@ plot(sol,
 If you prefer to get a more compact figure, you can use the `layout` optional keyword argument with `:group` value. It will group the state, costate and control trajectories in one subplot for each.
 
 ```@example main
-plot(sol, layout=:group, size=(800, 300))
+plot(sol; layout=:group, size=(800, 300))
 ```
 
 !!! note "Default layout value"
@@ -97,7 +97,7 @@ You can plot the solution of a second optimal control problem on the same figure
     ∫( 0.5u(t)^2 ) → min
 
 end
-sol2 = solve(ocp, display=false)
+sol2 = solve(ocp; display=false)
 nothing # hide
 ```
 
@@ -105,20 +105,18 @@ We first plot the solution of the first optimal control problem, then, we plot t
 
 ```@example main
 # first plot
-plt = plot(sol, solution_label="(sol1)", size=(700, 500))
+plt = plot(sol; solution_label="(sol1)", size=(700, 500))
 
 # second plot
-plot!(plt, sol2, solution_label="(sol2)", linestyle=:dash)
+plot!(plt, sol2; solution_label="(sol2)", linestyle=:dash)
 ```
 
 ## Plot the norm of the control
 
-For some problem, it is interesting to plot the norm of the control. You can do it by using the `control` optional keyword argument with `:norm` value. The default value is `:components`. Let us illustrate this on the consumption minimisation orbital transfer problem from [CTProlbems.jl](https://control-toolbox.org/CTProblems.jl).
+For some problem, it is interesting to plot the norm of the control. You can do it by using the `control` optional keyword argument with `:norm` value. The default value is `:components`.
 
 ```@example main
-using CTProblems
-prob = Problem(:orbital_transfert, :consumption)
-plot(prob.solution, control=:norm, size=(800, 300), layout=:group)
+plot(sol; control=:norm, size=(800, 300), layout=:group)
 ```
 
 ## Custom plot
@@ -131,7 +129,7 @@ t = sol.times
 x = sol.state
 p = sol.costate
 u = sol.control
-plot(t, norm∘u, label="‖u‖") 
+plot(t, norm∘u; label="‖u‖") 
 ```
 
 !!! note "Nota bene"
@@ -177,22 +175,22 @@ end;
 solutions = []
 tfs = [3, 5, 30]
 for tf ∈ tfs
-    solution = solve(lqr(tf), display=false)
+    solution = solve(lqr(tf); display=false)
     push!(solutions, solution)
 end
 
 # create plots
-plt = plot(solutions[1], time=:normalized)
+plt = plot(solutions[1]; time=:normalized)
 for sol ∈ solutions[2:end]
-    plot!(plt, sol, time=:normalized)
+    plot!(plt, sol; time=:normalized)
 end
 
 # make a custom plot from created plots: only state and control are plotted
 N = length(tfs)
-px1 = plot(plt[1], legend=false, xlabel="s", ylabel="x₁")
-px2 = plot(plt[2], label=reshape(["tf = $tf" for tf ∈ tfs], (1, N)), xlabel="s", ylabel="x₂")
-pu  = plot(plt[5], legend=false, xlabel="s", ylabel="u")
+px1 = plot(plt[1]; legend=false, xlabel="s", ylabel="x₁")
+px2 = plot(plt[2]; label=reshape(["tf = $tf" for tf ∈ tfs], (1, N)), xlabel="s", ylabel="x₂")
+pu  = plot(plt[5]; legend=false, xlabel="s", ylabel="u")
 
 using Plots.PlotMeasures # for leftmargin, bottommargin
-plot(px1, px2, pu, layout=(1, 3), size=(800, 300), leftmargin=5mm, bottommargin=5mm)
+plot(px1, px2, pu; layout=(1, 3), size=(800, 300), leftmargin=5mm, bottommargin=5mm)
 ```
