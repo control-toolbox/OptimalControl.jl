@@ -47,7 +47,7 @@ Then we perform the continuation with a simple *for* loop, using each solution t
 init1 = ()
 for T=1:5
     ocp1 = ocp_T(T) 
-    sol1 = solve(ocp1, display=false, init=init1)
+    sol1 = solve(ocp1; display=false, init=init1)
     global init1 = sol1
     @printf("T %.2f objective %9.6f iterations %d\n", T, sol1.objective, sol1.iterations)
 end
@@ -76,37 +76,43 @@ function F1(x)
 end
 
 ocp = Model(variable=true)
+
 r0 = 1
 v0 = 0
 m0 = 1
 mf = 0.6
 x0=[r0,v0,m0]
+
 vmax = 0.1
+
 state!(ocp, 3)
 control!(ocp, 1)
 variable!(ocp, 1)
-time!(ocp, t0=0, indf=1)
-constraint!(ocp, :initial, lb=x0, ub=x0)
-constraint!(ocp, :final, rg=3, lb=mf, ub=Inf)
-constraint!(ocp, :state, lb=[r0,v0,mf], ub=[r0+0.2,vmax,m0])
-constraint!(ocp, :control, lb=0, ub=1)
-constraint!(ocp, :variable, lb=0.01, ub=Inf)
+time!(ocp; t0=0, indf=1)
+
+constraint!(ocp, :initial; lb=x0, ub=x0)
+constraint!(ocp, :final; rg=3, lb=mf, ub=Inf)
+constraint!(ocp, :state; lb=[r0,v0,mf], ub=[r0+0.2,vmax,m0])
+constraint!(ocp, :control; lb=0, ub=1)
+constraint!(ocp, :variable; lb=0.01, ub=Inf)
+
 objective!(ocp, :mayer, (x0, xf, v) -> xf[1], :max)
+
 dynamics!(ocp, (x, u, v) -> F0(x) + u*F1(x) )
 
-sol0 = solve(ocp, display=false)
-sol = sol0
+sol0 = solve(ocp; display=false)
 @printf("Objective for reference solution %.6f\n", sol0.objective)
 ```
 
 Then we perform the continuation on the maximal thrust.
 
 ```@example main
+sol       = sol0
 Tmax_list = []
-obj_list = []
+obj_list  = []
 for Tmax_local=3.5:-0.5:1
     global Tmax = Tmax_local  
-    global sol = solve(ocp, display=false, init=sol)
+    global sol = solve(ocp; display=false, init=sol)
     @printf("Tmax %.2f objective %.6f iterations %d\n", Tmax, sol.objective, sol.iterations)
     push!(Tmax_list, Tmax)
     push!(obj_list, sol.objective)
@@ -116,10 +122,18 @@ end
 We plot now the objective w.r.t the maximal thrust, as well as both solutions for *Tmax*=3.5 and *Tmax*=1.
 
 ```@example main
-pobj = plot(Tmax_list, obj_list, label="r(tf)",seriestype=:scatter)
-xlabel!("Maximal thrust (Tmax)")
-ylabel!("Maximal altitude r(tf)")
-plot(sol0)
-p = plot!(sol)
-plot(pobj, p, layout=2, size=(1000, 500))
+using Plots.PlotMeasures # for leftmargin
+
+plt_obj = plot(Tmax_list, obj_list;
+    seriestype=:scatter,
+    title="Goddard problem",
+    label="r(tf)", 
+    xlabel="Maximal thrust (Tmax)",
+    ylabel="Maximal altitude r(tf)")
+
+plt_sol = plot(sol0; solution_label="(Tmax = "*string(Tmax_list[1])*")")
+plot!(plt_sol, sol;  solution_label="(Tmax = "*string(Tmax_list[end])*")")
+
+layout = grid(2, 1, heights=[0.2, 0.8])
+plot(plt_obj, plt_sol; layout=layout, size=(800, 1000), leftmargin=5mm)
 ```
