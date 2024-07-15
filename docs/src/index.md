@@ -5,19 +5,9 @@ CurrentModule =  OptimalControl
 ```
 
 The `OptimalControl.jl` package aims to provide tools to solve optimal control problems by direct and indirect methods.
-It is part of the [control-toolbox ecosystem](https://github.com/control-toolbox):
+It is part of the [control-toolbox ecosystem](https://github.com/control-toolbox).
 
-```mermaid
-flowchart TD
-O(<a href='https://control-toolbox.org/OptimalControl.jl/stable/'>OptimalControl</a>) --> B(<a href='https://control-toolbox.org/CTBase.jl/stable/'>CTBase</a>)
-O --> D(<a href='https://control-toolbox.org/CTDirect.jl/stable/'>CTDirect</a>)
-O --> F(<a href='https://control-toolbox.org/CTFlows.jl/stable/'>CTFlows</a>)
-P(<a href='https://control-toolbox.org/CTProblems.jl/stable/'>CTProblems</a>) --> F
-P --> B
-F --> B
-D --> B
-style O fill:#FBF275
-```
+
 
 !!! note "Install and documentation"
 
