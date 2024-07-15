@@ -2,10 +2,10 @@
 # Resolution
 
 # by order of preference
-algorithmes = ()
+algorithms = ()
 
 # descent methods
-algorithmes = add(algorithmes, (:direct, :adnlp, :ipopt))
+algorithms = add(algorithms, (:direct, :adnlp, :ipopt))
 
 """
 $(TYPEDSIGNATURES)
@@ -13,8 +13,9 @@ $(TYPEDSIGNATURES)
 Return the list of available methods to solve the optimal control problem.
 """
 function available_methods()::Tuple{Tuple{Vararg{Symbol}}}
-    return algorithmes
+    return algorithms
 end
+
 
 """
 $(TYPEDSIGNATURES)
@@ -64,23 +65,46 @@ julia> sol = solve(ocp, init=(state=t->[-1+t, t*(t-1)], control=t->6-12*t))
 ```
 
 """
+#=
 function solve(ocp::OptimalControlModel, description::Symbol...; 
     display::Bool=__display(),
     init=__ocp_init(),
     kwargs...)
+    =#
 
-    #
-    method = getFullDescription(description, available_methods())
+
+function solve(ocp::OptimalControlModel, description::Symbol...;
+    init=nothing,
+    time_grid=nothing,
+    grid_size::Integer=CTDirect.__grid_size_direct(),
+    display::Bool=CTDirect.__display(),
+    print_level::Integer=CTDirect.__print_level_ipopt(),
+    mu_strategy::String=CTDirect.__mu_strategy_ipopt(),
+    max_iter::Integer=CTDirect.__max_iter(),
+    tol::Real=CTDirect.__tol(),
+    linear_solver::String=CTDirect.__linear_solver(),
+    kwargs...)
 
     # print chosen method
+    method = getFullDescription(description, available_methods())
     display ? println("Method = ", method) : nothing
 
     # if no error before, then the method is correct: no need of else
     if :direct ∈ method
-        return CTDirect.solve(ocp, clean(method)...; display=display, init=init, kwargs...)
+        #return CTDirect.solve(ocp, clean(method)...; display=display, init=init, kwargs...)
+    
+        # build discretized OCP
+        docp = direct_transcription(ocp, description, init=init, grid_size=grid_size, time_grid=time_grid)
+
+        # solve DOCP (NB. init is already embedded in docp)
+        docp_solution = CTDirect.solve_docp(docp, display=display, print_level=print_level, mu_strategy=mu_strategy, tol=tol, max_iter=max_iter, linear_solver=linear_solver; kwargs...)
+
+        # build and return OCP solution
+        return build_solution(docp, docp_solution)
     end
 
 end
+
 
 rg(i, j) = i == j ? i : i:j
 
