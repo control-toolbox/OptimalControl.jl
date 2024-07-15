@@ -1,5 +1,6 @@
 # --------------------------------------------------------------------------------------------------
 # Resolution
+import CommonSolve: solve
 
 # by order of preference
 algorithms = ()

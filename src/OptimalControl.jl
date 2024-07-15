@@ -21,7 +21,7 @@ using CTFlows
 
 # declarations
 const __display = CTBase.__display
-__ocp_init() = ()
+__ocp_init() = () # +++ nothing should work as well
 
 include("solve.jl")
 
