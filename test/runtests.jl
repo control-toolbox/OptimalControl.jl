@@ -13,6 +13,7 @@ using NLPModelsIpopt
         :basic,
         :goddard_direct,
         :goddard_indirect,
+        :grid,
         :init,
         )
         @testset "$(name)" begin

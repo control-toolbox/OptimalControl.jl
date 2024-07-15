@@ -8,7 +8,7 @@ We describe here some more advanced operations related to the discretized optima
 When calling ```solve(ocp)``` three steps are performed internally:
 
 - first, the OCP is discretized into a DOCP (a nonlinear optimization problem) with `direct_transcription`,
-- then, this DOCP is solved, also with the method `solve`,
+- then, this DOCP is solved,
 - finally, a functional solution of the OCP is rebuilt from the solution of the discretized problem, with `build_solution`.
 
 These steps can also be done separately, for instance if you want to use your own NLP solver. Let us load the modules
@@ -82,8 +82,3 @@ It can also be changed after the transcription is done, with  `set_initial_guess
 set_initial_guess(docp, sol)
 nothing # hide
 ```
-
-Back to the function `solve`, passing an explicit initial guess to
-
-- `solve(ocp)` will transmit it to `direct_transcription`, therefore the resulting DOCP will have the initial guess embedded in it.
-- `solve(docp)` will override the initial guess in the DOCP and used the given one instead, without modifying the DOCP. 

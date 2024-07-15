@@ -98,7 +98,8 @@ s_guess_sol = [-0.02456074767656735,
 foo!(s, ξ, λ) = shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
 #sol = fsolve(foo!, ξ0, show_trace=true); println(sol)
 prob = NonlinearProblem(foo!, ξ0)
-sol = NonlinearSolve.solve(prob)
+#sol = NonlinearSolve.solve(prob)
+sol = solve(prob)
 
 p0 = sol.u[1:3]
 t1 = sol.u[4]

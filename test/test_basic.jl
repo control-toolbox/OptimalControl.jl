@@ -10,7 +10,7 @@ function test_basic()
         ∫( 0.5u(t)^2 ) → min
     end
 
-    sol = OptimalControl.solve(ocp)
+    sol = solve(ocp)
     @test sol.objective ≈ 6 atol=1e-2
 
 end
