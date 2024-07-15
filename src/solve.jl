@@ -83,7 +83,7 @@ function solve(ocp::OptimalControlModel, description::Symbol...;
     max_iter::Integer=CTDirect.__max_iter(),
     tol::Real=CTDirect.__tol(),
     linear_solver::String=CTDirect.__linear_solver(),
-    time_grid=CTDirect.__time_grid_direct(),
+    time_grid=nothing,
     kwargs...)
 
     # print chosen method
