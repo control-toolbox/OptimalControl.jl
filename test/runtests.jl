@@ -1,11 +1,12 @@
 using OptimalControl
 using Test
 using LinearAlgebra
-using CTProblems
 using SciMLBase
 using NonlinearSolve
-using DifferentialEquations
+using OrdinaryDiffEq
 using NLPModelsIpopt
+
+include("Goddard.jl")
 
 #
 @testset verbose = true showtiming = true "Optimal control tests" begin
