@@ -10,7 +10,7 @@ function test_basic()
         ∫( 0.5u(t)^2 ) → min
     end
 
-    sol = solve(ocp)
+    sol = solve(ocp; display=false)
     @test sol.objective ≈ 6 atol=1e-2
 
 end

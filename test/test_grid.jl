@@ -13,7 +13,7 @@ function test_grid()
     objective!(ocp, :lagrange, (x, u) -> (u[1]+u[2])^2)
 
     time_grid = [0,0.1,0.3,0.6,0.98,0.99,1]
-    sol = solve(ocp, time_grid=time_grid, print_level=0)
+    sol = solve(ocp; time_grid=time_grid, display=false)
     @test sol.objective ≈ 0.309 rtol=1e-2
 
 end
