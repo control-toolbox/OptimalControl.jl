@@ -6,7 +6,7 @@
 [co-img]: https://codecov.io/gh/control-toolbox/OptimalControl.jl/branch/main/graph/badge.svg?token=YM5YQQUSO3
 [co-url]: https://codecov.io/gh/control-toolbox/OptimalControl.jl
 
-[doc-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
+[doc-dev-img]: https://img.shields.io/badge/docs-dev-8A2BE2.svg
 [doc-dev-url]: https://control-toolbox.org/OptimalControl.jl/dev/
 
 [doc-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
