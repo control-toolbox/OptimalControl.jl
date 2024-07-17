@@ -113,8 +113,7 @@ nothing # hide
 We define also the projection function on the state space.
 
 ```@example main
-π(x, p) = x
-π(z::Tuple{Number, Number}) = π(z...) # z = (x, p)
+π((x, p)) = x
 nothing # hide
 ```
 

@@ -33,7 +33,7 @@ nothing # hide
 
 ## First ways to plot
 
-The simplest way to plot the solution is to use the [`plot`](@ref) function with only the solution as argument.
+The simplest way to plot the solution is to use the `plot` function with only the solution as argument.
 
 !!! note "The plot function"
 
@@ -142,7 +142,7 @@ plot(t, norm∘u; label="‖u‖")
 ## Normalized time
 
 We consider a [LQR example](@ref) and solve the problem for different values of the final time `tf`.
-Then, we plot the solutions on the same figure considering a normalized time $s=(t-t_0)/(t_f-t_0)$, thanks to the keyword argument `time=:normalized` of the [plot](https://control-toolbox.org/CTBase.jl/stable/api-plot.html) function.
+Then, we plot the solutions on the same figure considering a normalized time $s=(t-t_0)/(t_f-t_0)$, thanks to the keyword argument `time=:normalized` of the `plot` function.
 
 ```@example main
 
