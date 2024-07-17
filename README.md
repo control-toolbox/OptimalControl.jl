@@ -15,7 +15,7 @@
 [release-img]: https://img.shields.io/github/v/release/control-toolbox/OptimalControl.jl.svg?style=round-square
 [release-url]: https://github.com/control-toolbox/OptimalControl.jl/releases
 
-The `OptimalControl.jl` package is the root package of the [control-toolbox ecosystem](https://github.com/control-toolbox). Since July 16, 2024, `OptimalControl.jl` is in the general registry.
+The `OptimalControl.jl` package is the root package of the [control-toolbox ecosystem](https://github.com/control-toolbox).
 The control-toolbox ecosystem gathers `Julia` packages for mathematical control and applications. It aims to provide tools to modelise and solve optimal control problems by direct and indirect methods.
 
 | **Documentation**  | **Code Status**  | **Release**  |
