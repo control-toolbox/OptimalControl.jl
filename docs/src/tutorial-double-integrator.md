@@ -68,7 +68,7 @@ nothing # hide
 Solve it
 
 ```@example main
-sol = solve(ocp)
+sol = solve(ocp; grid_size=200)
 nothing # hide
 ```
 

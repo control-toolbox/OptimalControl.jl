@@ -39,7 +39,10 @@ $v(t) \leq v_{\max}$. The initial state is fixed while only the final mass is pr
 using Suppressor # to suppress warnings
 ```
 
-We import the `OptimalControl.jl` package to define and solve the optimal control problem. We import the `Plots.jl` package to plot the solution. The `OrdinaryDiffEq.jl` package is used to define the shooting function for the indirect method and the `NonlinearSolve.jl` package permits solve the shooting equation.
+We import the `OptimalControl.jl` package to define the optimal control problem and 
+`NLPModelsIpopt.jl` to solve it. We import the `Plots.jl` package to plot the solution. The 
+`OrdinaryDiffEq.jl` package is used to define the shooting function for the indirect method and 
+the `NonlinearSolve.jl` package permits solve the shooting equation.
 
 ```@example main
 using OptimalControl
@@ -188,7 +191,7 @@ as well as the associated multiplier for the *order one* state constraint on the
     which is the reason why we use the `@Lie` macro to compute Poisson brackets below.
 
 With the help of the [differential geometry primitives](https://control-toolbox.org/CTBase.jl/stable/api-diffgeom.html)
-from [CTBase.jl](https://control-toolbox.org/CTBase.jl),
+from [CTBase.jl](https://control-toolbox.org/OptimalControl.jl/stable/api-ctbase.html),
 these expressions are straightforwardly translated into Julia code:
 
 ```@example main
