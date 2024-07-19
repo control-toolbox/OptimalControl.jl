@@ -96,11 +96,11 @@ Number of Iterations....: 24
 
                                    (scaled)                 (unscaled)
 Objective...............:  -1.0125716188789131e+00   -1.0125716188789131e+00
-Dual infeasibility......:   1.0759894687738036e-09    1.0759894687738036e-09
-Constraint violation....:   1.5779377804392425e-11    1.2476868149757792e-10
+Dual infeasibility......:   1.0759932365800644e-09    1.0759932365800644e-09
+Constraint violation....:   1.5779266782089962e-11    1.2476876476430476e-10
 Variable bound violation:   6.1594570555101313e-09    6.1594570555101313e-09
-Complementarity.........:   1.5140175167763902e-11    1.5140175167763902e-11
-Overall NLP error.......:   1.5779377804392425e-11    1.0759894687738036e-09
+Complementarity.........:   1.5140175163850676e-11    1.5140175163850676e-11
+Overall NLP error.......:   1.5779266782089962e-11    1.0759932365800644e-09
 
 
 Number of objective function evaluations             = 25
@@ -110,7 +110,7 @@ Number of inequality constraint evaluations          = 0
 Number of equality constraint Jacobian evaluations   = 25
 Number of inequality constraint Jacobian evaluations = 0
 Number of Lagrangian Hessian evaluations             = 24
-Total seconds in IPOPT                               = 2.791
+Total seconds in IPOPT                               = 0.341
 
 EXIT: Optimal Solution Found.</code></pre><p>and plot the solution</p><pre><code class="language-julia hljs">plt = plot(direct_sol, solution_label=&quot;(direct)&quot;, size=(800, 800))</code></pre><img src="tutorial-goddard-36df7bf2.svg" alt="Example block output"/><h2 id="Indirect-method"><a class="docs-heading-anchor" href="#Indirect-method">Indirect method</a><a id="Indirect-method-1"></a><a class="docs-heading-anchor-permalink" href="#Indirect-method" title="Permalink"></a></h2><p>We first determine visually the structure of the optimal solution which is composed of a bang arc with maximal control, followed by a singular arc, then by a boundary arc and the final arc is with zero control. Note that the switching function vanishes along the singular and boundary arcs.</p><pre><code class="language-julia hljs">t = direct_sol.times
 x = direct_sol.state
@@ -177,12 +177,12 @@ println(&quot;tf = &quot;, tf)
 using LinearAlgebra: norm
 s = similar(p0, 7)
 shoot!(s, p0, t1, t2, t3, tf)
-println(&quot;Norm of the shooting function: ‖s‖ = &quot;, norm(s), &quot;\n&quot;)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">p0 = [3.942091355812244, 0.14627140398405175, 0.05411785715965967]
+println(&quot;Norm of the shooting function: ‖s‖ = &quot;, norm(s), &quot;\n&quot;)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">p0 = [3.942091355812274, 0.1462714039840529, 0.05411785715966011]
 t1 = 0.018178502658805395
 t2 = 0.060595008862684645
 t3 = 0.07877351152149005
 tf = 0.2019833628756155
-Norm of the shooting function: ‖s‖ = 3.249855374462001</code></pre><p>Finally, we can solve the shooting equations thanks to the <a href="https://github.com/SciML/NonlinearSolve.jl">NonlinearSolve.jl</a>.</p><pre><code class="language-julia hljs">nle = (s, ξ, λ) -&gt; shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])   # auxiliary function
+Norm of the shooting function: ‖s‖ = 3.2498553744620526</code></pre><p>Finally, we can solve the shooting equations thanks to the <a href="https://github.com/SciML/NonlinearSolve.jl">NonlinearSolve.jl</a>.</p><pre><code class="language-julia hljs">nle = (s, ξ, λ) -&gt; shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])   # auxiliary function
                                                                # with aggregated inputs
 ξ = [ p0 ; t1 ; t2 ; t3 ; tf ]                                 # initial guess
 
@@ -214,25 +214,25 @@ Algorithm: NewtonRaphson(
 ----     -------------        -----------
 Iter     f(u) inf-norm        Step 2-norm
 ----     -------------        -----------
-0        3.24278441e+00       6.95075438e-310
+0        3.24278441e+00       4.28882234e+01
 1        4.67258528e-01       5.11752361e-02
 2        1.51720869e-01       2.74692747e-02
-3        3.98034716e-04       1.64503443e-02
-4        8.69926478e-08       4.30551008e-04
-5        2.50466314e-13       6.48523792e-09
-Final    2.50466314e-13
+3        3.98034717e-04       1.64503443e-02
+4        8.69969625e-08       4.30551008e-04
+5        3.17612603e-12       6.48505908e-09
+Final    3.17612603e-12
 ----------------------
-p0 = [3.9457646586494275, 0.15039559623174523, 0.053712712940147976]
-t1 = 0.023509684041210236
-t2 = 0.05973738090001507
-t3 = 0.10157134842500312
-tf = 0.2020474405719236
-Norm of the shooting function: ‖s‖ = 2.705829801448431e-13</code></pre><p>We plot the solution of the indirect solution (in red) over the solution of the direct method (in blue).</p><pre><code class="language-julia hljs">f = f1 * (t1, fs) * (t2, fb) * (t3, f0) # concatenation of the flows
+p0 = [3.945764658649368, 0.15039559623174634, 0.05371271294014792]
+t1 = 0.023509684041214764
+t2 = 0.05973738090000315
+t3 = 0.10157134842500433
+tf = 0.20204744057192545
+Norm of the shooting function: ‖s‖ = 3.190386002012701e-12</code></pre><p>We plot the solution of the indirect solution (in red) over the solution of the direct method (in blue).</p><pre><code class="language-julia hljs">f = f1 * (t1, fs) * (t2, fb) * (t3, f0) # concatenation of the flows
 flow_sol = f((t0, tf), x0, p0)          # compute the solution: state, costate, control...
 
-plot!(plt, flow_sol, solution_label=&quot;(indirect)&quot;)</code></pre><img src="tutorial-goddard-6a915273.svg" alt="Example block output"/><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+plot!(plt, flow_sol, solution_label=&quot;(indirect)&quot;)</code></pre><img src="tutorial-goddard-a2a8b23b.svg" alt="Example block output"/><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a>R.H. Goddard. A Method of Reaching Extreme Altitudes, volume 71(2) of Smithsonian Miscellaneous Collections. Smithsonian institution, City of Washington, 1919.</li><li class="footnote" id="footnote-2"><a class="tag is-link" href="#citeref-2">2</a>H. Seywald and E.M. Cliff. Goddard problem in presence of a dynamic pressure limit. Journal of Guidance, Control, and Dynamics, 16(4):776–781, 1993.</li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-iss.html">« Indirect simple shooting</a><a class="docs-footer-nextpage" href="api-optimalcontrol.html">OptimalControl.jl »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Wednesday 17 July 2024 21:09">Wednesday 17 July 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a>R.H. Goddard. A Method of Reaching Extreme Altitudes, volume 71(2) of Smithsonian Miscellaneous Collections. Smithsonian institution, City of Washington, 1919.</li><li class="footnote" id="footnote-2"><a class="tag is-link" href="#citeref-2">2</a>H. Seywald and E.M. Cliff. Goddard problem in presence of a dynamic pressure limit. Journal of Guidance, Control, and Dynamics, 16(4):776–781, 1993.</li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-iss.html">« Indirect simple shooting</a><a class="docs-footer-nextpage" href="api-optimalcontrol.html">OptimalControl.jl »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Friday 19 July 2024 11:43">Friday 19 July 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
