@@ -24,7 +24,13 @@ The control-toolbox ecosystem gathers `Julia` packages for mathematical control 
 
 ## Installation
 
-To install a package from the control-toolbox ecosystem, please visit the [installation page](https://github.com/control-toolbox#installation).
+To install a package from the control-toolbox ecosystem, please visit the [installation page](https://github.com/control-toolbox#installation). To install [OptimalControl.jl](https://github.com/control-toolbox/OptimalControl.jl) please <a href="https://docs.julialang.org/en/v1/manual/getting-started/">open
+Julia's interactive session (known as REPL)</a> and press <kbd>]</kbd> key in the REPL to use the package mode, then add the package:
+
+```julia
+julia> ]
+pkg> add OptimalControl
+```
 
 ## See also
 
