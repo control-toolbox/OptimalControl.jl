@@ -1,4 +1,4 @@
-# Indirect simple shooting
+# [Indirect simple shooting](@id iss)
 
 In this tutorial we present the indirect simple shooting method on a simple example.
 
@@ -160,7 +160,16 @@ end # hide
 nothing # hide
 ```
 
-We get:
+The solution can be plot calling first the flow.
+
+```@example main
+sol = φ( (t0, tf), x0, p0_sol )
+plot(sol, size=(800, 600))
+```
+
+In the indirect shooting method, the research of the optimal control is replaced by the computation
+of its associated extremal. This computation is equivalent to finding the initial covector solution
+to the shooting function.
 
 ```@example main
 exp(p0; saveat=[]) = φ((t0, tf), x0, p0, saveat=saveat).ode_sol # hide
