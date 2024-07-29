@@ -1,7 +1,7 @@
 name = "OptimalControl"
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
 authors = ["Olivier Cots <olivier.cots@toulouse-inp.fr>"]
-version = "0.9.4"
+version = "0.10.0"
 
 [deps]
 CTBase = "54762871-cc72-4466-b8e8-f6c8b58076cd"
@@ -12,7 +12,7 @@ DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 
 [compat]
 CTBase = "0.11"
-CTDirect = "0.9"
+CTDirect = "0.10"
 CTFlows = "0.4"
 CommonSolve = "0.2"
 DocStringExtensions = "0.9"
