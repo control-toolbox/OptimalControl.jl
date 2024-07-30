@@ -20,6 +20,7 @@ makedocs(
         prettyurls = false,
         size_threshold_ignore = [
             "api-ctbase/types.md",
+            "tutorial-plot.md",
         ],
         assets = [
             asset("https://control-toolbox.org/assets/css/documentation.css"),
