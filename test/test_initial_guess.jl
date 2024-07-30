@@ -134,44 +134,4 @@ end
     @test(check_xf(sol, sol.state(sol.times[end])) && check_uf(sol, sol.control(sol.times[end])) && check_v(sol, sol.variable))
 end
 
-# +++ tests below mimic the use of another NLP solver
-# by calling solve_docp from CTDirect
-# this function is internal and not meant for reexport
-# so maybe these tests should stay in CTDirect only ?
-
-#################################################
-# 2 Setting the initial guess at the DOCP level
-docp, nlp = direct_transcription(ocp)
-# mixed init
-@testset verbose = true showtiming = true ":docp_mixed_init" begin
-    set_initial_guess(docp, nlp, (time=t_vec, state=x_vec, control=u_func, variable=v_const))
-    dsol = solve_docp(docp, nlp, print_level=0, max_iter=maxiter)
-    sol = build_solution(docp, dsol)
-    @test(check_xf(sol, x_vec[end]) && check_uf(sol, u_func(sol.times[end])) && check_v(sol, v_const))
-end
-# warm start
-@testset verbose = true showtiming = true ":docp_warm_start" begin
-    set_initial_guess(docp, nlp, sol0)
-    dsol = solve_docp(docp, nlp, print_level=0, max_iter=maxiter)
-    sol = build_solution(docp, dsol)
-    @test(check_xf(sol, sol.state(sol.times[end])) && check_uf(sol, sol.control(sol.times[end])) && check_v(sol, sol.variable))
-end
-
-#################################################
-# 3 Passing the initial guess to solve call
-set_initial_guess(docp, nlp, nothing) # reset init in docp
-# mixed init
-@testset verbose = true showtiming = true ":docp_solve_mixed_init" begin
-    dsol = solve_docp(docp, nlp, init=(time=t_vec, state=x_vec, control=u_func, variable=v_const), print_level=0, max_iter=maxiter)
-    sol = build_solution(docp, dsol)
-    @test(check_xf(sol, x_vec[end]) && check_uf(sol, u_func(sol.times[end])) && check_v(sol, v_const))
-end
-
-# warm start
-@testset verbose = true showtiming = true ":docp_solve_warm_start" begin
-    dsol = solve_docp(docp, nlp, init=sol0, print_level=0, max_iter=maxiter)
-    sol = build_solution(docp, dsol)
-    @test(check_xf(sol, sol.state(sol.times[end])) && check_uf(sol, sol.control(sol.times[end])) && check_v(sol, sol.variable))
-end
-
 end

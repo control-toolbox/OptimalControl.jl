@@ -8,7 +8,7 @@ using NLPModelsIpopt
 
 
 include("Goddard.jl")
-include("../problems/goddard.jl")
+include("problems/goddard.jl")
 
 #
 @testset verbose = true showtiming = true "Optimal control tests" begin
