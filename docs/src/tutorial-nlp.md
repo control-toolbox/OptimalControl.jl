@@ -8,7 +8,7 @@ We describe here some more advanced operations related to the discretized optima
 When calling `solve(ocp)` three steps are performed internally:
 
 - first, the OCP is discretized into a DOCP (a nonlinear optimization problem) with [`direct_transcription`](@ref),
-- then, this DOCP is solved,
+- then, this DOCP is solved (with the internal function `solve_docp`),
 - finally, a functional solution of the OCP is rebuilt from the solution of the discretized problem, with [`build_solution`](@ref).
 
 These steps can also be done separately, for instance if you want to use your own NLP solver. Let us load the modules
@@ -37,23 +37,18 @@ nothing # hide
 First let us discretize the problem.
 
 ```@example main
-docp = direct_transcription(ocp)
+docp, nlp = direct_transcription(ocp)
 nothing # hide
 ```
 
-The DOCP contains a copy of the original OCP, and the resulting discretized problem, in our case an `ADNLPModel`.
-You can extract this raw NLP problem  with the [`get_nlp`](@ref) method.
-
-```@example main
-nlp = get_nlp(docp)
-```
+The DOCP contains information related to the transcription, including a copy of the original OCP, and the NLP is the resulting discretized problem, in our case an `ADNLPModel`.
 
 You could then use the solver of your choice to solve it.
 For an example we use the `ipopt` solver from [`NLPModelsIpopt.jl`](https://github.com/JuliaSmoothOptimizers/NLPModelsIpopt.jl) package to solve the NLP problem.
 
 ```@example main
 using NLPModelsIpopt
-nlp_sol = ipopt(get_nlp(docp); print_level=4, mu_strategy="adaptive", tol=1e-8, sb="yes")
+nlp_sol = ipopt(nlp; print_level=4, mu_strategy="adaptive", tol=1e-8, sb="yes")
 nothing # hide
 ```
 
@@ -67,13 +62,13 @@ plot(sol)
 An initial guess, including warm start, can be passed to [`direct_transcription`](@ref) the same way as for `solve`.
 
 ```@example main
-docp = direct_transcription(ocp, init=sol)
+docp, nlp = direct_transcription(ocp, init=sol)
 nothing # hide
 ```
 
 It can also be changed after the transcription is done, with  [`set_initial_guess`](@ref).
 
 ```@example main
-set_initial_guess(docp, sol)
+set_initial_guess(docp, nlp, sol)
 nothing # hide
 ```
