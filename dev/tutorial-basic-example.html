@@ -9,8 +9,7 @@ using Plots</code></pre><p>Then, we can define the problem</p><pre><code class="
     x(1) == [ 0, 0 ]
     ẋ(t) == [ x₂(t), u(t) ]
     ∫( 0.5u(t)^2 ) → min
-end</code></pre><p>Solve it</p><pre><code class="language-julia hljs">sol = solve(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Method = (:direct, :adnlp, :ipopt)
-This is Ipopt version 3.14.16, running with linear solver MUMPS 5.7.3.
+end</code></pre><p>Solve it</p><pre><code class="language-julia hljs">sol = solve(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">This is Ipopt version 3.14.16, running with linear solver MUMPS 5.7.3.
 
 Number of nonzeros in equality constraint Jacobian...:     1205
 Number of nonzeros in inequality constraint Jacobian.:        0
@@ -27,19 +26,19 @@ Total number of inequality constraints...............:        0
         inequality constraints with only upper bounds:        0
 
 iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
-   0  1.0000000e-01 1.10e+00 7.31e-15   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
+   0  1.0000000e-01 1.10e+00 1.31e-15   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
    1 -5.0000000e-03 1.81e-01 1.78e-15 -11.0 6.04e+00    -  1.00e+00 1.00e+00h  1
-   2  6.0023829e+00 8.88e-16 8.88e-16 -11.0 6.01e+00    -  1.00e+00 1.00e+00h  1
+   2  6.0023829e+00 8.88e-16 1.78e-15 -11.0 6.01e+00    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 2
 
                                    (scaled)                 (unscaled)
-Objective...............:   6.0023829460295683e+00    6.0023829460295683e+00
-Dual infeasibility......:   8.8817841970012523e-16    8.8817841970012523e-16
+Objective...............:   6.0023829460295737e+00    6.0023829460295737e+00
+Dual infeasibility......:   1.7763568394002505e-15    1.7763568394002505e-15
 Constraint violation....:   8.8817841970012523e-16    8.8817841970012523e-16
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
 Complementarity.........:   0.0000000000000000e+00    0.0000000000000000e+00
-Overall NLP error.......:   8.8817841970012523e-16    8.8817841970012523e-16
+Overall NLP error.......:   1.7763568394002505e-15    1.7763568394002505e-15
 
 
 Number of objective function evaluations             = 3
@@ -49,9 +48,9 @@ Number of inequality constraint evaluations          = 0
 Number of equality constraint Jacobian evaluations   = 3
 Number of inequality constraint Jacobian evaluations = 0
 Number of Lagrangian Hessian evaluations             = 2
-Total seconds in IPOPT                               = 0.024
+Total seconds in IPOPT                               = 0.021
 
-EXIT: Optimal Solution Found.</code></pre><p>And plot the solution</p><pre><code class="language-julia hljs">plot(sol)</code></pre><img src="tutorial-basic-example-e18ad2d6.svg" alt="Example block output"/><p>We can save the solution in a julia <code>.jld2</code> data file and reload it later, and also export a discretised version of the solution in a more portable <a href="https://en.wikipedia.org/wiki/JSON">JSON</a> format.</p><pre><code class="language-julia hljs"># load additional modules
+EXIT: Optimal Solution Found.</code></pre><p>And plot the solution</p><pre><code class="language-julia hljs">plot(sol)</code></pre><img src="tutorial-basic-example-89b7cd14.svg" alt="Example block output"/><p>We can save the solution in a julia <code>.jld2</code> data file and reload it later, and also export a discretised version of the solution in a more portable <a href="https://en.wikipedia.org/wiki/JSON">JSON</a> format.</p><pre><code class="language-julia hljs"># load additional modules
 using JLD2, JSON3
 
 # JLD save / load
@@ -62,10 +61,10 @@ println(&quot;Objective from loaded solution: &quot;, sol_reloaded.objective)
 # JSON export / read
 export_ocp_solution(sol, filename_prefix=&quot;my_solution&quot;)
 sol_json = import_ocp_solution(&quot;my_solution&quot;)
-println(&quot;Objective from JSON discrete solution: &quot;, sol_json.objective)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Objective from loaded solution: 6.002382946029568
-Objective from JSON discrete solution: 6.002382946029568</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+println(&quot;Objective from JSON discrete solution: &quot;, sol_json.objective)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Objective from loaded solution: 6.002382946029574
+Objective from JSON discrete solution: 6.002382946029574</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="index.html">« Introduction</a><a class="docs-footer-nextpage" href="tutorial-basic-example-f.html">Basic example (functional version) »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Tuesday 30 July 2024 21:33">Tuesday 30 July 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="index.html">« Introduction</a><a class="docs-footer-nextpage" href="tutorial-basic-example-f.html">Basic example (functional version) »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Wednesday 31 July 2024 10:32">Wednesday 31 July 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

@@ -23,8 +23,7 @@ using Plots</code></pre><p>Then, we can define the problem</p><pre><code class="
 
     tf → min
 
-end</code></pre><div class="admonition is-info"><header class="admonition-header">Nota bene</header><div class="admonition-body"><p>In order to ensure convergence of the direct solver, we have added the state constraints labelled (1) and (2):</p><p class="math-container">\[0 \leq q(t) \leq 5,\quad -2 \leq v(t) \leq 3,\quad t \in [ 0, t_f ].\]</p></div></div><p>Solve it</p><pre><code class="language-julia hljs">sol = solve(ocp; grid_size=200)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Method = (:direct, :adnlp, :ipopt)
-This is Ipopt version 3.14.16, running with linear solver MUMPS 5.7.3.
+end</code></pre><div class="admonition is-info"><header class="admonition-header">Nota bene</header><div class="admonition-body"><p>In order to ensure convergence of the direct solver, we have added the state constraints labelled (1) and (2):</p><p class="math-container">\[0 \leq q(t) \leq 5,\quad -2 \leq v(t) \leq 3,\quad t \in [ 0, t_f ].\]</p></div></div><p>Solve it</p><pre><code class="language-julia hljs">sol = solve(ocp; grid_size=200)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">This is Ipopt version 3.14.16, running with linear solver MUMPS 5.7.3.
 
 Number of nonzeros in equality constraint Jacobian...:     2004
 Number of nonzeros in inequality constraint Jacobian.:        0
@@ -61,7 +60,7 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   16  7.2822686e-01 1.25e-01 8.55e+03   1.1 1.54e+02    -  3.72e-01 2.79e-03h  1
   17  7.2566213e-01 1.25e-01 1.79e+07   2.7 2.30e+01    -  1.00e+00 4.37e-04h  1
   18  7.2549669e-01 1.25e-01 1.06e+11   3.3 1.52e+01    -  2.18e-01 3.62e-05h  1
-  19r 7.2549669e-01 1.25e-01 1.00e+03   3.3 0.00e+00    -  0.00e+00 4.51e-07R  2
+  19r 7.2549669e-01 1.25e-01 1.00e+03   3.3 0.00e+00    -  0.00e+00 3.39e-07R  3
 iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   20r 7.2685592e-01 1.22e-01 5.15e+01  -2.9 2.02e+00    -  9.49e-01 9.62e-01f  1
   21r 8.9674899e-01 7.44e-02 1.26e+01  -4.3 2.84e-01    -  7.54e-01 7.47e-01f  1
@@ -86,26 +85,26 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
 Number of Iterations....: 37
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.0000000661941797e+00    1.0000000661941797e+00
-Dual infeasibility......:   9.9999673491412566e-01    9.9999673491412566e-01
-Constraint violation....:   9.9999992406772376e-01    9.9999992406772376e-01
+Objective...............:   1.0000000661941799e+00    1.0000000661941799e+00
+Dual infeasibility......:   9.9999673491412777e-01    9.9999673491412777e-01
+Constraint violation....:   9.9999992406772353e-01    9.9999992406772353e-01
 Variable bound violation:   9.7989949487953254e-09    9.7989949487953254e-09
-Complementarity.........:   1.0000675297124424e-09    1.0000675297124424e-09
-Overall NLP error.......:   9.9999992406772376e-01    9.9999992406772376e-01
+Complementarity.........:   1.0000675297124404e-09    1.0000675297124404e-09
+Overall NLP error.......:   9.9999992406772353e-01    9.9999992406772353e-01
 
 
-Number of objective function evaluations             = 56
+Number of objective function evaluations             = 57
 Number of objective gradient evaluations             = 20
-Number of equality constraint evaluations            = 56
+Number of equality constraint evaluations            = 57
 Number of inequality constraint evaluations          = 0
 Number of equality constraint Jacobian evaluations   = 44
 Number of inequality constraint Jacobian evaluations = 0
 Number of Lagrangian Hessian evaluations             = 38
-Total seconds in IPOPT                               = 0.195
+Total seconds in IPOPT                               = 0.165
 
-EXIT: Converged to a point of local infeasibility. Problem may be infeasible.</code></pre><p>and plot the solution</p><pre><code class="language-julia hljs">plot(sol)</code></pre><img src="tutorial-double-integrator-44ea73d0.svg" alt="Example block output"/><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+EXIT: Converged to a point of local infeasibility. Problem may be infeasible.</code></pre><p>and plot the solution</p><pre><code class="language-julia hljs">plot(sol)</code></pre><img src="tutorial-double-integrator-289cac4e.svg" alt="Example block output"/><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-basic-example-f.html">« Basic example (functional version)</a><a class="docs-footer-nextpage" href="tutorial-initial-guess.html">Initial guess options »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Tuesday 30 July 2024 21:33">Tuesday 30 July 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-basic-example-f.html">« Basic example (functional version)</a><a class="docs-footer-nextpage" href="tutorial-initial-guess.html">Initial guess options »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Wednesday 31 July 2024 10:32">Wednesday 31 July 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
