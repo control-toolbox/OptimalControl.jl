@@ -66,6 +66,33 @@ plot(sol;
      control_style = (color=:red, linewidth=2))
 ```
 
+## From Flow
+
+The previous resolution of the optimal control problem was done with the `solve` function.
+If you use an indirect shooting method and solve shooting equations, you may want to plot the 
+associated solution. To do so, you need to use the `Flow` function to 
+reconstruct the solution. See the [Indirect Simple Shooting](@ref iss) tutorial for an example.
+In our example, you must provide the maximising control $(x, p) \mapsto p_2$ together with the 
+optimal control problem.
+
+```@example main
+t0 = 0
+tf = 1
+x0 = [ -1, 0 ]
+p0 = sol.costate(t0)
+f  = Flow(ocp, (x, p) -> p[2])
+sol_flow = f( (t0, tf), x0, p0 )
+plot(sol_flow)
+```
+
+You can notice that the time grid has very few points. To have a better visualisation (the accuracy 
+won't change), you can give a finer grid.
+
+```@example main
+sol_flow = f( (t0, tf), x0, p0; saveat=range(t0, tf, 100) )
+plot(sol_flow)
+```
+
 ## Split versus group layout
 
 If you prefer to get a more compact figure, you can use the `layout` optional keyword argument with `:group` value. It will group the state, costate and control trajectories in one subplot for each.
