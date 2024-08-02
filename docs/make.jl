@@ -35,7 +35,7 @@ makedocs(
             "tutorial-double-integrator.md",
             "tutorial-initial-guess.md",
             "tutorial-continuation.md",
-            "tutorial-nlp.md",
+            #"tutorial-nlp.md",
             "tutorial-plot.md",
             "tutorial-lqr-basic.md",
             "tutorial-iss.md",
