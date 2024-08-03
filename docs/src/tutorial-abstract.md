@@ -147,7 +147,6 @@ end
 Any Julia code can be used, so the following is also OK: 
 
 ```@example main
-\cdot  
 @def ocp begin
     t ∈ [0, 1], time
     x ∈ R², state
@@ -165,13 +164,13 @@ F₁(x) = [0, 1]
 Currently, it is not possible to declare the dynamics component after component, but a simple workaround is to use *aliases* (check the relevant [section ](@aliases) below):
 
 ```@example main
-def double_integrator begin
+@def damped_integrator begin
     tf ∈ R, variable
     t ∈ [0, tf], time
     x = (q, v) ∈ R², state
     u ∈ R, control
-    q̇ = v
-    v̇ = u
+    q̇ = v(t)
+    v̇ = u(t) - c(t)
     ẋ(t) == [q̇, v̇]
 end
 ```
@@ -186,17 +185,81 @@ end
    :( $e2 ≥  $e1                     ) 
 ```
 
-Constraints
-- boundary, control, state, mixed
-- ranges (linear) of general (*a priori* nonlinear)
-- equalities, one or two-sided inequalities
-- labeled or not (future use: retrieve associated multipliers on the discretised problem)
+Constraints 
+- can be of five types: boundary, control, state, mixed, variable,
+- be linear (ranges) or nonlinear (not ranges),
+- equalities or (one or two-sided) inequalities.
+
+Boundary conditions are detected when the expression contains evaluations of the state at initial and / or final time bounds (*e.g.*, `x(0)`), and may not involve the control. Conversely control, state or mixed constraints will involve control, state or both evaluated at the declared time (*e.g.*, `x(t) + u(t)`). 
+Other combinations should be detected as incorrect by the parser 🤞🏾. The variable may be involved in any of the four previous constraints. Constraints involving the variable only are variable constraints, either linear or nonlinear.
+In the example below, there are
+- two linear boundary constraints,
+- one linear variable constraint,
+- one linear state constraint,
+- one (two-sided) nonlinear control constraint.
+
+```@example main
+@def ocp begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x ∈ R², state
+    u ∈ R, control
+    x(0) == [-1, 0]
+    x(tf) == [0, 0]
+    ẋ(t) == [x₂(t), u(t)]
+    tf ≥ 0 
+    x₂(t) ≤ 1
+    u(t)^2 ≤ 1
+   end
+```
+
+!!! caveat
+    Write either `u(t)^2` or `(u^2)(t)`, not `u^2(t)` since in Julia the latter is means `u^(2t)`. Moreover,
+    in the case of equalities or of one-sided inequalities, the control and / or the state must belong the *left-hand side*. The following will error:
+
+```julia
+julia> @def ocp begin
+    t ∈ [0, 2], time
+    x ∈ R², state
+    u ∈ R, control
+    x(0) == [-1, 0]
+    x(2) == [0, 0]
+    ẋ(t) == [x₂(t), u(t)]
+    1 ≤ x₂(t)
+    -1 ≤ u(t) ≤ 1
+end
+ERROR: ParsingError: 
+Line 7: 1 ≤ x₂(t)
+bad constraint declaration
+```
 
 ## Mayer cost
 
 ```julia                                      
    :( $e1                      → min ) 
    :( $e1                      → max ) 
+```
+
+Mayer costs are defined in a similar way to boundary conditions and follow the same rules. The symbol `→` is used
+to denote minimisation of maximisation, the latter being treated by minimising the opposite cost.
+
+```@example main
+@def ocp begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    tf ≥ 0
+    -1 ≤ u(t) ≤ 1
+    q(0) == 1
+    v(0) == 2
+    q(tf) == 0
+    v(tf) == 0
+    0 ≤ q(t) ≤ 5
+   -2 ≤ v(t) ≤ 3
+    ẋ(t) == [v(t), u(t)]
+    tf → min
+end
 ```
 
 ## Lagrange cost
@@ -235,6 +298,43 @@ Constraints
 ## [Aliases](@id aliases)
 
 - labels for dyn and constraints (future use, retrieve multipliers...)
+
+!!! hint
+    You can use a trace mode for the macro `@def` to look at your code after expansions of the aliases adding `true` after your `begin ... end` block:
+
+```@example main
+@def damped_integrator begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    q̇ = v(t)
+    v̇ = u(t) - c(t)
+    ẋ(t) == [q̇, v̇]
+end true
+```
+
+!!! caveat
+    The dynamics of an OCP is indeed a particular constraint, be careful to use `==` and not a single `=` that would try define an alias:
+
+```julia
+julia> @def double_integrator begin
+       tf ∈ R, variable
+       t ∈ [0, tf], time
+       x = (q, v) ∈ R², state
+       u ∈ R, control
+       q̇ = v
+       v̇ = u
+       ẋ(t) = [q̇, v̇]
+       end
+ERROR: ParsingError: 
+Line 7: ẋ(t) = begin
+        #= REPL[35]:8 =#
+        [q̇, v̇]
+    end
+forbidden alias name: (∂(x))(t)
+```
+
 - order: declaration first, then constraint and cost (no ordering for these two)
 - examples for most features
 - caveat's (check isssue) (case by base)
@@ -242,6 +342,8 @@ Constraints
 - expressions should evaluate at run
 - aliases (vars, and in general)
 - link to example + API for functional syntax
+- parsing error should be explicit
 - point towards examples for further use
+
 
 [^1]: Domain Specific Language
