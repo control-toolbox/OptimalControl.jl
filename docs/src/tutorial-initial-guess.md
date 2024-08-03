@@ -24,7 +24,7 @@ tf = 10
 α  = 5
 
 @def ocp begin
-    t ∈ [ t0, tf ], time
+    t ∈ [t0, tf], time
     v ∈ R, variable
     x ∈ R², state
     u ∈ R, control

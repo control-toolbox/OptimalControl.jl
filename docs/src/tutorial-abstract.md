@@ -6,7 +6,7 @@ The full grammar of OptimalControl.jl DSL[^1] is given below. The idea is to use
 
 While the syntax will be transparent to those users familiar with Julia expressions, we provide examples for every case that should be widely understandable. We rely heavily on [MLStyle.jl](https://github.com/thautwarm/MLStyle.jl) and its pattern matching abilities for the semantic pass. Abstract definitions use the macro `@def`.
 
-## Variable declaration
+## Variable
 
 ```julia
    # variable                    
@@ -31,7 +31,15 @@ Aliases `v₁` and `v₂` are automatically defined and can be used in subsequen
 end
 ```
 
-## Time declaration
+A one dimensional can be declared according to
+
+```@example main
+@def ocp begin
+    v ∈ R, variable
+end
+```
+
+## Time
 
 ```julia
    :( $t ∈ [$t0, $tf], time        ) 
@@ -55,7 +63,8 @@ One (or even the two bounds) can be variable, typically for minimum time problem
 end
 ```
 
-## State declaration
+## State
+
 ```julia
    :( $x ∈ R^$n, state               ) 
    :( $x ∈ R   , state               ) 
@@ -77,7 +86,8 @@ As for the variable, there are automatic aliases (`x₁` for `x[1]`, *etc.*) and
 end
 ```
 
-## Control declaration
+## Control
+
 ```julia
    :( $u ∈ R^$m, control             ) 
    :( $u ∈ R   , control             ) 
@@ -100,80 +110,131 @@ end
 ```
 
 ## Dynamics
+
 ```julia
    :( ∂($x)($t) == $e1               ) 
-   :( ∂($x)($t) == $e1, $label       ) 
 ```
-- add x\dot (automatic alias)
-- no line to line / component declaration
-- labeled or not
+
+The dynamics is given in the standard vectorial ODE form:
+
+```math
+    \dot{x}(t) = f(x(t), u(t)) \quad \text{or} \quad f(t, x(t), u(t))
+```
+
+depending on whether it is autonomous or not (the parser will detect dependence time, which entails that time and state must be declared prior to dynamics - an error will be issued otherwise). The symbol `∂` or the dotted state name
+(`ẋ` can be used):
+
+```@example main
+@def ocp begin
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    ∂(x)(t) == [x₂(t), u(t)]
+end
+```
+
+or
+
+```@example main
+@def ocp begin
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    ẋ(t) == [x₂(t), u(t)]
+end
+```
+
+Any Julia code can be used, so the following is also OK: 
+
+```@example main
+\cdot  
+@def ocp begin
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    ẋ(t) == F₀(x(t)) + u * F₁(x(t))
+end
+
+F₀(x) = [x[2], 0]
+F₁(x) = [0, 1]
+```
+
+!!! note
+    The vector fields `F₀` and `F₁` can be defined afterwards, as they only need to be available when the dynamics will be evaluated.
+
+Currently, it is not possible to declare the dynamics component after component, but a simple workaround is to use *aliases* (check the relevant [section ](@aliases) below):
+
+```@example main
+def double_integrator begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    q̇ = v
+    v̇ = u
+    ẋ(t) == [q̇, v̇]
+end
+```
 
 ## Constraints
+
+```julia
+   :( $e1 == $e2                     ) 
+   :( $e1 ≤  $e2 ≤  $e3              ) 
+   :(        $e2 ≤  $e3              ) 
+   :( $e3 ≥  $e2 ≥  $e1              ) 
+   :( $e2 ≥  $e1                     ) 
+```
+
+Constraints
 - boundary, control, state, mixed
 - ranges (linear) of general (*a priori* nonlinear)
 - equalities, one or two-sided inequalities
 - labeled or not (future use: retrieve associated multipliers on the discretised problem)
 
-```julia
-   :( $e1 == $e2                     ) 
-   :( $e1 == $e2, $label             ) 
-   :( $e1 ≤  $e2 ≤  $e3              ) 
-   :( $e1 ≤  $e2 ≤  $e3, $label      ) 
-   :(        $e2 ≤  $e3              ) 
-   :(        $e2 ≤  $e3, $label      ) 
-   :( $e3 ≥  $e2 ≥  $e1              ) 
-   :( $e3 ≥  $e2 ≥  $e1, $label      ) 
-   :( $e2 ≥  $e1                     ) 
-   :( $e2 ≥  $e1,        $label      ) 
-```
+## Mayer cost
 
-# Mayer cost
- ```julia                                      
+```julia                                      
    :( $e1                      → min ) 
    :( $e1                      → max ) 
 ```
 
-# Lagrange cost
+## Lagrange cost
+
 ```julia
    :(             ∫($e1)       → min ) 
    :(           - ∫($e1)       → min ) 
    :(       $e1 * ∫($e2)       → min ) 
-                                       
    :(             ∫($e1)       → max ) 
    :(           - ∫($e1)       → max ) 
    :(       $e1 * ∫($e2)       → max ) 
 ```
 - caveat:  ... + ... + ...
 
-# Bolza cost
+## Bolza cost
+
 ```julia
    :( $e1 +       ∫($e2)       → min ) 
    :( $e1 + $e2 * ∫($e3)       → min ) 
-                                       
    :( $e1 -       ∫($e2)       → min ) 
    :( $e1 - $e2 * ∫($e3)       → min ) 
-                                       
    :( $e1 +       ∫($e2)       → max ) 
    :( $e1 + $e2 * ∫($e3)       → max ) 
-                                       
    :( $e1 -       ∫($e2)       → max ) 
    :( $e1 - $e2 * ∫($e3)       → max ) 
-                                       
    :(             ∫($e2) + $e1 → min ) 
    :(       $e2 * ∫($e3) + $e1 → min ) 
-                                       
    :(             ∫($e2) - $e1 → min ) 
    :(       $e2 * ∫($e3) - $e1 → min ) 
-                                       
    :(             ∫($e2) + $e1 → max ) 
    :(       $e2 * ∫($e3) + $e1 → max ) 
-                                       
    :(             ∫($e2) - $e1 → max ) 
    :(       $e2 * ∫($e3) - $e1 → max ) 
  ```
 
-## Aliases
+## [Aliases](@id aliases)
 
+- labels for dyn and constraints (future use, retrieve multipliers...)
 - order: declaration first, then constraint and cost (no ordering for these two)
 - examples for most features
 - caveat's (check isssue) (case by base)

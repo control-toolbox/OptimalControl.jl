@@ -35,7 +35,7 @@ Then, we can define the problem
 
 ```@example main
 @def ocp begin
-    t ∈ [ 0, 1 ], time
+    t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
     x(0) == [ -1, 0 ]

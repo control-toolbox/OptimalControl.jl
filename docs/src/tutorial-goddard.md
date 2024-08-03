@@ -65,7 +65,7 @@ mf = 0.6    # final mass to target
 @def ocp begin # definition of the optimal control problem
 
     tf ∈ R, variable
-    t ∈ [ t0, tf ], time
+    t ∈ [t0, tf], time
     x = (r, v, m) ∈ R³, state
     u ∈ R, control
 
