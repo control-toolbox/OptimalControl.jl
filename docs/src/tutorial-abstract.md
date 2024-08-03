@@ -19,7 +19,7 @@ A variable (only one is allowed) is a finite dimensional vector or reals that wi
 ```@example main
 using OptimalControl #hide
 @def ocp begin
-    v ∈ R^2, variable
+    v ∈ R², variable
 end
 ```
 
@@ -27,14 +27,14 @@ Aliases `v₁` and `v₂` are automatically defined and can be used in subsequen
 
 ```@example main
 @def ocp begin
-    v = (a, b) ∈ R^2, variable
+    v = (a, b) ∈ R², variable
 end
 ```
 
 ## Time declaration
 
 ```julia
-   :( $t ∈ [ $t0, $tf ], time        ) 
+   :( $t ∈ [$t0, $tf], time        ) 
 ```
 
 The independent variable or *time* is a scalar bound to a given interval. Its name is arbitrary.
@@ -50,7 +50,7 @@ One (or even the two bounds) can be variable, typically for minimum time problem
 
 ```@example main
 @def ocp begin
-    v = (T, λ) ∈ R^2, variable
+    v = (T, λ) ∈ R², variable
     t ∈ [0, T], time
 end
 ```
@@ -61,9 +61,21 @@ end
    :( $x ∈ R   , state               ) 
 ```
 
-As for the variable, there are automatic aliases (`x₁` for `x[1]`, *etc.*) and the used can define her own aliases (one per scalar component of the state):
+The state declaration defines the name and the dimension of the state:
 
-XXXXX
+```@example main
+@def ocp begin
+       x ∈ R⁴, state
+end
+```
+
+As for the variable, there are automatic aliases (`x₁` for `x[1]`, *etc.*) and the user can define her own aliases (one per scalar component of the state):
+
+```@example main
+@def ocp begin
+       x = (q₁, q₂, v₁, v₂) ∈ R⁴, state
+end
+```
 
 ## Control declaration
 ```julia
@@ -71,7 +83,21 @@ XXXXX
    :( $u ∈ R   , control             ) 
 ```
 
-As for the variable and the state, automatic or user-defined aliases are available for control components.
+The control declaration defines the name and the dimension of the control:
+
+```@example main
+@def ocp begin
+    u ∈ R², control
+end
+```
+
+As before, there are automatic aliases (`u₁` for `u[1]`, *etc.*) and the user can define her own aliases (one per scalar component of the state):
+
+```@example main
+@def ocp begin
+    u = (α, β) ∈ R², control
+end
+```
 
 ## Dynamics
 ```julia
