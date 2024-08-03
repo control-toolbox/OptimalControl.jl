@@ -89,12 +89,22 @@ set_initial_guess(docp, nlp, sol)
 nothing # hide
 ```
 
-For a second example, we use the [`Percival.jl`](https://jso.dev/Percival.jl) to solve the NLP problem
+For a second example, we use [`Percival.jl`](https://jso.dev/Percival.jl) to solve the NLP problem
 with as initial guess the solution from the first resolution.
 
 ```@example main
 using Percival
 
 output = percival(nlp)
+print(output)
+```
+
+We eventullay use [`MadNLP.jl`](https://jso.dev/Percival.jl) to solve the NLP problem from scratch:
+
+```@example main
+using MadNLP
+
+...
+output = madnlp(nlp)
 print(output)
 ```
