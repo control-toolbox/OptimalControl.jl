@@ -9,11 +9,14 @@ using Suppressor # to suppress warnings
 Let us start by importing the necessary packages.
 
 ```@example main
-using OptimalControl
-using OrdinaryDiffEq        # to get the Flow function from OptimalControl
-using NonlinearSolve        # NLE solver: we get the fsolve function
-using Plots
+using OptimalControl  # to define the optimal control problem and its flow
+using OrdinaryDiffEq  # to get the Flow function from OptimalControl
+using NonlinearSolve  # interface to NLE solvers
+using MINPACK         # NLE solver: use to solve the shooting equation
+using Plots           # to plot the solution
 ```
+
+## Optimal control problem
 
 Let us consider the following optimal control problem:
 
@@ -53,6 +56,8 @@ end;
 nothing # hide
 ```
 
+## Boundary value problem
+
 The **pseudo-Hamiltonian** of this problem is
 
 ```math
@@ -83,6 +88,8 @@ where $[t]~=  (x(t),p(t),u(x(t), p(t)))$.
 !!! note "Our goal"
 
     Our goal is to solve this (BVP). Solving (BVP) consists in solving the Pontryagin Maximum Principle which provides necessary conditions of optimality.
+
+## Shooting function
 
 To achive our goal, let us first introduce the pseudo-Hamiltonian vector field
 
@@ -135,30 +142,80 @@ Now, to solve the (BVP) we introduce the **shooting function**.
     \end{array}
 ```
 
-At the end, solving (BVP) is equivalent to solve $S(p_0) = 0$.
+```@example main
+S(p0) = π( φ(t0, x0, p0, tf) ) - xf # shooting function
+nothing # hide
+```
 
-This is what we call the **indirect simple shooting method**.
+## Resolution of the shooting equation
+
+At the end, solving (BVP) is equivalent to solve $S(p_0) = 0$. This is what we call the 
+**indirect simple shooting method**. We define an initial guess.
 
 ```@example main
-S(p0) = π( φ(t0, x0, p0, tf) ) - xf;                # shooting function
+ξ = [ 0.0 ] # initial guess
+nothing # hide
+```
 
-nle = (s, ξ, λ) -> s[1] = S(ξ[1])                   # auxiliary function
-ξ = [ 0.0 ]                                         # initial guess
+### NonlinearSolve.jl
 
-prob = NonlinearProblem(nle, ξ)
+```@example main
+nle! = (s, ξ, λ) -> s[1] = S(ξ[1])                  # auxiliary function
+prob = NonlinearProblem(nle!, ξ)                    # NLE problem
 global indirect_sol =      # hide
 @suppress_err begin # hide
 NonlinearSolve.solve(prob)      # hide
-indirect_sol = NonlinearSolve.solve(prob)           # resolution of S(p0) = 0
+indirect_sol = solve(prob, show_trace=Val(true))    # resolution of S(p0) = 0  
 end                 # hide
-
 p0_sol = indirect_sol.u[1]                          # costate solution
-println("costate:    p0 = ", p0_sol)
+println("\ncostate:    p0 = ", p0_sol)
 @suppress_err begin # hide
 println("shoot: |S(p0)| = ", abs(S(p0_sol)), "\n")
 end # hide
 nothing # hide
 ```
+
+### MINPACK.jl
+
+Instead of the [`NonlinearSolve.jl`](https://github.com/SciML/NonlinearSolve.jl) package we can use the [`MINPACK.jl`](https://github.com/sglyon/MINPACK.jl) package to solve 
+the shooting equation. To compute the Jacobian of the shooting function we use the 
+[`DifferentiationInterface.jl`](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface) package with 
+[`ForwardDiff`](https://github.com/JuliaDiff/ForwardDiff.jl) backend.
+
+```@example main
+using DifferentiationInterface
+import ForwardDiff
+backend = AutoForwardDiff()
+nothing # hide
+```
+
+We are now in position to compute the Jacobian of the shooting function and use the `hybrj` solver
+from `MINPACK` through the `fsolve` function, providing the Jacobian.
+
+```@example main
+nle! = (s, ξ) -> s[1] = S(ξ[1])                        # auxiliary function
+jnle!(js, ξ) = jacobian!(nle!, js, backend, ξ)         # Jacobian of the shooting function
+global indirect_sol =      # hide
+@suppress_err begin # hide
+fsolve(nle!, ξ)      # hide
+try # hide
+indirect_sol = fsolve(nle!, jnle!, ξ, show_trace=true) # resolution of S(p0) = 0
+catch e # hide
+println("hybrj not supported. Replaced by hybrd even if it is not visible on the doc.") # hide
+indirect_sol = fsolve(nle!, ξ, show_trace=true) # hide
+end # hide
+end                 # hide
+
+# costate solution
+p0_sol = indirect_sol.x[1]
+println("\ncostate:    p0 = ", p0_sol)
+@suppress_err begin # hide
+println("shoot: |S(p0)| = ", abs(S(p0_sol)), "\n")
+end # hide
+nothing # hide
+```
+
+## Plot of the solution
 
 The solution can be plot calling first the flow.
 
