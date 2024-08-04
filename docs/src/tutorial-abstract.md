@@ -1,15 +1,14 @@
 # [Abstract syntax](@id abstract)
 
-The full grammar of OptimalControl.jl DSL[^1] is given below. The idea is to use a syntax that is
+The full grammar of OptimalControl.jl small Domain Specific Language is given below. The idea is to use a syntax that is
 - pure Julia (and, as such, effortlessly analysed by the standard Julia parser),
 - as close as possible to the mathematical description of an optimal control problem. 
 
-While the syntax will be transparent to those users familiar with Julia expressions, we provide examples for every case that should be widely understandable. We rely heavily on [MLStyle.jl](https://github.com/thautwarm/MLStyle.jl) and its pattern matching abilities for the semantic pass. Abstract definitions use the macro `@def`.
+While the syntax will be transparent to those users familiar with Julia expressions (`Expr`'s), we provide examples for every case that should be widely understandable. We rely heavily on [MLStyle.jl](https://github.com/thautwarm/MLStyle.jl) and its pattern matching abilities for the semantic pass. Abstract definitions use the macro `@def`.
 
-## Variable
+## [Variable](@id variable)
 
 ```julia
-   # variable                    
    :( $v ∈ R^$q, variable            ) 
    :( $v ∈ R   , variable            ) 
 ```
@@ -63,7 +62,7 @@ One (or even the two bounds) can be variable, typically for minimum time problem
 end
 ```
 
-## State
+## [State](@id state)
 
 ```julia
    :( $x ∈ R^$n, state               ) 
@@ -86,7 +85,7 @@ As for the variable, there are automatic aliases (`x₁` for `x[1]`, *etc.*) and
 end
 ```
 
-## Control
+## [Control](@id control)
 
 ```julia
    :( $u ∈ R^$m, control             ) 
@@ -109,7 +108,7 @@ As before, there are automatic aliases (`u₁` for `u[1]`, *etc.*) and the user 
 end
 ```
 
-## Dynamics
+## [Dynamics](@id dynamics)
 
 ```julia
    :( ∂($x)($t) == $e1               ) 
@@ -151,7 +150,7 @@ Any Julia code can be used, so the following is also OK:
     t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
-    ẋ(t) == F₀(x(t)) + u * F₁(x(t))
+    ẋ(t) == F₀(x(t)) + u(t) * F₁(x(t))
 end
 
 F₀(x) = [x[2], 0]
@@ -161,7 +160,7 @@ F₁(x) = [0, 1]
 !!! note
     The vector fields `F₀` and `F₁` can be defined afterwards, as they only need to be available when the dynamics will be evaluated.
 
-Currently, it is not possible to declare the dynamics component after component, but a simple workaround is to use *aliases* (check the relevant [section ](@aliases) below):
+Currently, it is not possible to declare the dynamics component after component, but a simple workaround is to use *aliases* (check the relevant [section ](#aliases) below):
 
 ```@example main
 @def damped_integrator begin
@@ -272,7 +271,24 @@ end
    :(           - ∫($e1)       → max ) 
    :(       $e1 * ∫($e2)       → max ) 
 ```
-- caveat:  ... + ... + ...
+
+Lagrange (integral) costs are defined used the symbol `∫`, *with parenthesis:
+
+```@example main
+@def ocp begin
+    t ∈ [0, 1], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    0.5∫( q(t) + u(t)^2 ) → min
+end
+```
+
+The integration range is implicitly equal to the time range, so the cost above is to be understood as
+```math
+\int_0^1 q(t) + u^2(t)\,\mathrm{d}t \to \min.
+```
+
+As for the dynamics, the parser will detect whether the integrand depends or not on time (autonomous / non-autonomous case).
 
 ## Bolza cost
 
@@ -295,9 +311,66 @@ end
    :(       $e2 * ∫($e3) - $e1 → max ) 
  ```
 
+Quite readily, Mayer and Lagrange costs can be combined into genral Bolza costs. For instance as follows:
+
+```@example main
+@def ocp begin
+    p = (t0, tf) ∈ R², variable
+    t ∈ [t0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R², control
+    (tf - t0) + 0.5∫( c(t) * u(t)^2 ) → min
+end
+```
+
+!!! caveat
+    The expression must be the sum of two terms (plus, possibly, a scalar factor before the integral), not *more*, so mind the parentheses. For instance, the following errors:
+
+```julia
+julia> @def ocp begin
+           p = (t0, tf) ∈ R², variable
+           t ∈ [t0, tf], time
+           x = (q, v) ∈ R², state
+           u ∈ R², control
+           (tf - t0) + q(tf) + 0.5∫( c(t) * u(t)^2 ) → min
+       end
+ERROR: ParsingError: 
+Line 5: (tf - t0) + q(tf) + 0.5 * ∫(c(t) * u(t) ^ 2) → min
+bad objective declaration resulting in a Mayer term with trailing ∫
+```
+
+The correct syntax is
+```@example main
+@def ocp begin
+    p = (t0, tf) ∈ R², variable
+    t ∈ [t0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R², control
+    ( (tf - t0) + q(tf) ) + 0.5∫( c(t) * u(t)^2 ) → min
+end
+```
+
 ## [Aliases](@id aliases)
 
-- labels for dyn and constraints (future use, retrieve multipliers...)
+```julia
+        :( $a = $e1 )
+```
+
+The single `=` symbol is used to define not a constraint but an alias, that is a purely syntactic replacement. There are some automatic aliases, *e.g.* `x₁` for `x[1]` if `x` is the state, and we have also seen that the user can define her own aliases when declaring the [variable](#variable), [state](#state) and [control](#control). Arbitrary aliases can be further defined, as below (compare with previous examples in the [dynamics](#dynamics) section):
+
+```@example main
+@def ocp begin
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    F₀ = [x₂(t), 0]
+    F₁ = [0, 1]
+    ẋ(t) == F₀ + u(t) * F₁
+end
+
+```
+
+!!! caveat Such aliases do not define any additional function and are just replaced textually by the parser. In particular, they cannot be used outside the `@def` `begin ... end` block.
 
 !!! hint
     You can use a trace mode for the macro `@def` to look at your code after expansions of the aliases adding `true` after your `begin ... end` block:
@@ -311,7 +384,7 @@ end
     q̇ = v(t)
     v̇ = u(t) - c(t)
     ẋ(t) == [q̇, v̇]
-end true
+end
 ```
 
 !!! caveat
@@ -335,15 +408,25 @@ Line 7: ẋ(t) = begin
 forbidden alias name: (∂(x))(t)
 ```
 
-- order: declaration first, then constraint and cost (no ordering for these two)
-- examples for most features
-- caveat's (check isssue) (case by base)
-- error should be OK (give an example)
-- expressions should evaluate at run
-- aliases (vars, and in general)
-- link to example + API for functional syntax
-- parsing error should be explicit
-- point towards examples for further use
+## Misc
 
+- Declarations (variable - in any -, time, state and control) must be done first. Then, dynamics, constraints and cost can be introduced in an arbitrary order.
+- It is possible to provide numbers / labels (as math equations) for the constraints to improve readability (this is mostly for future use, typically to retrieve the Lagrange multiplier associated with the discretisation of a given constraint):
 
-[^1]: Domain Specific Language
+```@example main
+@def damped_integrator begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    tf ≥ 0, (1)
+    q(0) == 2, (♡)
+    q̇ = v(t)
+    v̇ = u(t) - c(t)
+    ẋ(t) == [q̇, v̇]
+    x(t).^2  ≤ [1, 2], (state_con) 
+end
+```
+
+- Parsing errors should be explicit enough (with line number in the `@def` `begin ... end` block indicated) 🤞🏾
+- Check tutorials and applications in the documentation for further use.
