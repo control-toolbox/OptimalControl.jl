@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Abstract syntax · OptimalControl.jl</title><meta name="title" content="Abstract syntax · OptimalControl.jl"/><meta property="og:title" content="Abstract syntax · OptimalControl.jl"/><meta property="twitter:title" content="Abstract syntax · OptimalControl.jl"/><meta name="description" content="Documentation for OptimalControl.jl."/><meta property="og:description" content="Documentation for OptimalControl.jl."/><meta property="twitter:description" content="Documentation for OptimalControl.jl."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script><link href="https://control-toolbox.org/assets/css/documentation.css" rel="stylesheet" type="text/css"/><script src="https://control-toolbox.org/assets/js/documentation.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="index.html">OptimalControl.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="index.html">Introduction</a></li><li><span class="tocitem">Basic example</span><ul><li><a class="tocitem" href="tutorial-basic-example.html">Energy min (abstract syntax)</a></li><li><a class="tocitem" href="tutorial-basic-example-f.html">Energy min (functional syntax)</a></li><li><a class="tocitem" href="tutorial-double-integrator.html">Time minimisation</a></li></ul></li><li><span class="tocitem">Manual</span><ul><li class="is-active"><a class="tocitem" href="tutorial-abstract.html">Abstract syntax</a><ul class="internal"><li><a class="tocitem" href="#variable"><span>Variable</span></a></li><li><a class="tocitem" href="#Time"><span>Time</span></a></li><li><a class="tocitem" href="#state"><span>State</span></a></li><li><a class="tocitem" href="#control"><span>Control</span></a></li><li><a class="tocitem" href="#dynamics"><span>Dynamics</span></a></li><li><a class="tocitem" href="#Constraints"><span>Constraints</span></a></li><li><a class="tocitem" href="#mayer"><span>Mayer cost</span></a></li><li><a class="tocitem" href="#Lagrange-cost"><span>Lagrange cost</span></a></li><li><a class="tocitem" href="#Bolza-cost"><span>Bolza cost</span></a></li><li><a class="tocitem" href="#aliases"><span>Aliases</span></a></li><li><a class="tocitem" href="#Misc"><span>Misc</span></a></li></ul></li><li><a class="tocitem" href="tutorial-initial-guess.html">Initial guess</a></li><li><a class="tocitem" href="tutorial-plot.html">Plot a solution</a></li></ul></li><li><span class="tocitem">Tutorials</span><ul><li><a class="tocitem" href="tutorial-continuation.html">Discrete continuation</a></li><li><a class="tocitem" href="tutorial-goddard.html">Goddard: direct, indirect</a></li><li><a class="tocitem" href="tutorial-iss.html">Indirect simple shooting</a></li><li><a class="tocitem" href="tutorial-lqr-basic.html">Linear–quadratic regulator</a></li><li><a class="tocitem" href="tutorial-nlp.html">NLP and DOCP manipulations</a></li></ul></li><li><span class="tocitem">API</span><ul><li><a class="tocitem" href="api-optimalcontrol.html">OptimalControl.jl</a></li><li><input class="collapse-toggle" id="menuitem-5-2" type="checkbox"/><label class="tocitem" for="menuitem-5-2"><span class="docs-label">Subpackages</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="api-ctbase.html">CTBase.jl</a></li><li><a class="tocitem" href="api-ctdirect.html">CTDirect.jl</a></li><li><a class="tocitem" href="api-ctflows.html">CTFlows.jl</a></li></ul></li></ul></li><li><span class="tocitem">Developers</span><ul><li><a class="tocitem" href="dev-optimalcontrol.html">OptimalControl.jl</a></li><li><input class="collapse-toggle" id="menuitem-6-2" type="checkbox"/><label class="tocitem" for="menuitem-6-2"><span class="docs-label">Subpackages</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="dev-ctbase.html">CTBase.jl</a></li><li><a class="tocitem" href="dev-ctdirect.html">CTDirect.jl</a></li><li><a class="tocitem" href="dev-ctflows.html">CTFlows.jl</a></li></ul></li></ul></li><li><a class="tocitem" href="juliacon2024.html">JuliaCon 2024</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Manual</a></li><li class="is-active"><a href="tutorial-abstract.html">Abstract syntax</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="tutorial-abstract.html">Abstract syntax</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl/blob/main/docs/src/tutorial-abstract.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="abstract"><a class="docs-heading-anchor" href="#abstract">The abstract syntax to define an optimal control problem</a><a id="abstract-1"></a><a class="docs-heading-anchor-permalink" href="#abstract" title="Permalink"></a></h1><p>The full grammar of OptimalControl.jl small <em>Domain Specific Language</em> is given below. The idea is to use a syntax that is</p><ul><li>pure Julia (and, as such, effortlessly analysed by the standard Julia parser),</li><li>as close as possible to the mathematical description of an optimal control problem. </li></ul><p>While the syntax will be transparent to those users familiar with Julia expressions (<code>Expr</code>&#39;s), we provide examples for every case that should be widely understandable. We rely heavily on <a href="https://github.com/thautwarm/MLStyle.jl">MLStyle.jl</a> and its pattern matching abilities 👍🏽 for the semantic pass. Abstract definitions use the macro <code>@def</code>.</p><h2 id="variable"><a class="docs-heading-anchor" href="#variable">Variable</a><a id="variable-1"></a><a class="docs-heading-anchor-permalink" href="#variable" title="Permalink"></a></h2><pre><code class="language-julia hljs">:( $v ∈ R^$q, variable ) 
+:( $v ∈ R   , variable ) </code></pre><p>A variable (only one is allowed) is a finite dimensional vector or reals that will be <em>optimised</em> along with state and control values. To define an (almost empty!) optimal control problem, named <code>ocp</code>, having a dimension two variable named <code>v</code>, do the following:</p><pre><code class="language-julia hljs">@def ocp begin
+    v ∈ R², variable
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (autonomous) optimal control problem is given by:</span>
+
+    v ∈ R², variable
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr31"><span class="sgr1">   X    │   X    │    X     │</span></span><span class="sgr1"><span class="sgr32">    V     │</span><span class="sgr31">     X     │     X      │      X      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><p>Aliases <code>v₁</code> and <code>v₂</code> are automatically defined and can be used in subsequent expressions instead of <code>v[1]</code> and <code>v[2]</code>. The user can also define her own aliases for the components (one alias per dimension):</p><pre><code class="language-julia hljs">@def ocp begin
+    v = (a, b) ∈ R², variable
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (autonomous) optimal control problem is given by:</span>
+
+    v = ((a, b) ∈ R², variable)
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr31"><span class="sgr1">   X    │   X    │    X     │</span></span><span class="sgr1"><span class="sgr32">    V     │</span><span class="sgr31">     X     │     X      │      X      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><p>A one dimensional variable can be declared according to</p><pre><code class="language-julia hljs">@def ocp begin
+    v ∈ R, variable
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (autonomous) optimal control problem is given by:</span>
+
+    v ∈ R, variable
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr31"><span class="sgr1">   X    │   X    │    X     │</span></span><span class="sgr1"><span class="sgr32">    V     │</span><span class="sgr31">     X     │     X      │      X      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><h2 id="Time"><a class="docs-heading-anchor" href="#Time">Time</a><a id="Time-1"></a><a class="docs-heading-anchor-permalink" href="#Time" title="Permalink"></a></h2><pre><code class="language-julia hljs">:( $t ∈ [$t0, $tf], time ) </code></pre><p>The independent variable or <em>time</em> is a scalar bound to a given interval. Its name is arbitrary.</p><pre><code class="language-julia hljs">t0 = 1
+tf = 5
+@def ocp begin
+    t ∈ [t0, tf], time
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (autonomous) optimal control problem is given by:</span>
+
+    t ∈ [t0, tf], time
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr32"><span class="sgr1">   V    │</span></span><span class="sgr1"><span class="sgr31">   X    │    X     │    X     │     X     │     X      │      X      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><p>One (or even the two bounds) can be variable, typically for minimum time problems (see <a href="tutorial-abstract.html#mayer">Mayer cost</a> section):</p><pre><code class="language-julia hljs">@def ocp begin
+    v = (T, λ) ∈ R², variable
+    t ∈ [0, T], time
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (autonomous) optimal control problem is given by:</span>
+
+    v = ((T, λ) ∈ R², variable)
+    t ∈ [0, T], time
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr32"><span class="sgr1">   V    │</span></span><span class="sgr1"><span class="sgr31">   X    │    X     │</span><span class="sgr32">    V     │</span><span class="sgr31">     X     │     X      │      X      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><h2 id="state"><a class="docs-heading-anchor" href="#state">State</a><a id="state-1"></a><a class="docs-heading-anchor-permalink" href="#state" title="Permalink"></a></h2><pre><code class="language-julia hljs">:( $x ∈ R^$n, state ) 
+:( $x ∈ R   , state ) </code></pre><p>The state declaration defines the name and the dimension of the state:</p><pre><code class="language-julia hljs">@def ocp begin
+    x ∈ R⁴, state
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (autonomous) optimal control problem is given by:</span>
+
+    x ∈ R⁴, state
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr31"><span class="sgr1">   X    │</span></span><span class="sgr1"><span class="sgr32">   V    │</span><span class="sgr31">    X     │    X     │     X     │     X      │      X      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><p>As for the variable, there are automatic aliases (<code>x₁</code> for <code>x[1]</code>, <em>etc.</em>) and the user can define her own aliases (one per scalar component of the state):</p><pre><code class="language-julia hljs">@def ocp begin
+    x = (q₁, q₂, v₁, v₂) ∈ R⁴, state
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (autonomous) optimal control problem is given by:</span>
+
+    x = ((q₁, q₂, v₁, v₂) ∈ R⁴, state)
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr31"><span class="sgr1">   X    │</span></span><span class="sgr1"><span class="sgr32">   V    │</span><span class="sgr31">    X     │    X     │     X     │     X      │      X      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><h2 id="control"><a class="docs-heading-anchor" href="#control">Control</a><a id="control-1"></a><a class="docs-heading-anchor-permalink" href="#control" title="Permalink"></a></h2><pre><code class="language-julia hljs">:( $u ∈ R^$m, control ) 
+:( $u ∈ R   , control ) </code></pre><p>The control declaration defines the name and the dimension of the control:</p><pre><code class="language-julia hljs">@def ocp begin
+    u ∈ R², control
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (autonomous) optimal control problem is given by:</span>
+
+    u ∈ R², control
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr31"><span class="sgr1">   X    │   X    │</span></span><span class="sgr1"><span class="sgr32">    V     │</span><span class="sgr31">    X     │     X     │     X      │      X      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><p>As before, there are automatic aliases (<code>u₁</code> for <code>u[1]</code>, <em>etc.</em>) and the user can define her own aliases (one per scalar component of the state):</p><pre><code class="language-julia hljs">@def ocp begin
+    u = (α, β) ∈ R², control
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (autonomous) optimal control problem is given by:</span>
+
+    u = ((α, β) ∈ R², control)
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr31"><span class="sgr1">   X    │   X    │</span></span><span class="sgr1"><span class="sgr32">    V     │</span><span class="sgr31">    X     │     X     │     X      │      X      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><h2 id="dynamics"><a class="docs-heading-anchor" href="#dynamics">Dynamics</a><a id="dynamics-1"></a><a class="docs-heading-anchor-permalink" href="#dynamics" title="Permalink"></a></h2><pre><code class="language-julia hljs">:( ∂($x)($t) == $e1 ) </code></pre><p>The dynamics is given in the standard vectorial ODE form:</p><p class="math-container">\[    \dot{x}(t) = f(x(t), u(t)) \quad \text{or} \quad \dot{x}(t) = f(t, x(t), u(t))\]</p><p>depending on whether it is autonomous or not (the parser will detect dependence time, which entails that time and state must be declared prior to dynamics - an error will be issued otherwise). The symbol <code>∂</code> or the dotted state name (<code>ẋ</code> can be used):</p><pre><code class="language-julia hljs">@def ocp begin
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    ∂(x)(t) == [x₂(t), u(t)]
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (autonomous) optimal control problem is given by:</span>
+
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    (∂(x))(t) == [x₂(t), u(t)]
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr32"><span class="sgr1">   V    │   V    │    V     │</span></span><span class="sgr1"><span class="sgr31">    X     │</span><span class="sgr32">     V     │</span><span class="sgr31">     X      │      X      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><p>or</p><pre><code class="language-julia hljs">@def ocp begin
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    ẋ(t) == [x₂(t), u(t)]
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (autonomous) optimal control problem is given by:</span>
+
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    ẋ(t) == [x₂(t), u(t)]
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr32"><span class="sgr1">   V    │   V    │    V     │</span></span><span class="sgr1"><span class="sgr31">    X     │</span><span class="sgr32">     V     │</span><span class="sgr31">     X      │      X      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><p>Any Julia code can be used, so the following is also OK: </p><pre><code class="language-julia hljs">@def ocp begin
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    ẋ(t) == F₀(x(t)) + u(t) * F₁(x(t))
+end
+
+F₀(x) = [x[2], 0]
+F₁(x) = [0, 1]</code></pre><div class="admonition is-info"><header class="admonition-header">Note</header><div class="admonition-body"><p>The vector fields <code>F₀</code> and <code>F₁</code> can be defined afterwards, as they only need to be available when the dynamics will be evaluated.</p></div></div><p>Currently, it is not possible to declare the dynamics component after component, but a simple workaround is to use <em>aliases</em> (check the relevant <a href="tutorial-abstract.html#aliases">aliases</a> section below):</p><pre><code class="language-julia hljs">@def damped_integrator begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    q̇ = v(t)
+    v̇ = u(t) - c(t)
+    ẋ(t) == [q̇, v̇]
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (non autonomous) optimal control problem is given by:</span>
+
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x = ((q, v) ∈ R², state)
+    u ∈ R, control
+    q̇ = v(t)
+    v̇ = u(t) - c(t)
+    ẋ(t) == [q̇, v̇]
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr32"><span class="sgr1">   V    │   V    │    V     │    V     │     V     │</span></span><span class="sgr1"><span class="sgr31">     X      │      X      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><h2 id="Constraints"><a class="docs-heading-anchor" href="#Constraints">Constraints</a><a id="Constraints-1"></a><a class="docs-heading-anchor-permalink" href="#Constraints" title="Permalink"></a></h2><pre><code class="language-julia hljs">:( $e1 == $e2        ) 
+:( $e1 ≤  $e2 ≤  $e3 ) 
+:(        $e2 ≤  $e3 ) 
+:( $e3 ≥  $e2 ≥  $e1 ) 
+:( $e2 ≥  $e1        ) </code></pre><p>Constraints </p><ul><li>can be of five types: boundary, control, state, mixed, variable,</li><li>be linear (ranges) or nonlinear (not ranges),</li><li>equalities or (one or two-sided) inequalities.</li></ul><p>Boundary conditions are detected when the expression contains evaluations of the state at initial and / or final time bounds (<em>e.g.</em>, <code>x(0)</code>), and may not involve the control. Conversely control, state or mixed constraints will involve control, state or both evaluated at the declared time (<em>e.g.</em>, <code>x(t) + u(t)</code>).  Other combinations should be detected as incorrect by the parser 🤞🏾. The variable may be involved in any of the four previous constraints. Constraints involving the variable only are variable constraints, either linear or nonlinear. In the example below, there are</p><ul><li>two linear boundary constraints,</li><li>one linear variable constraint,</li><li>one linear state constraint,</li><li>one (two-sided) nonlinear control constraint.</li></ul><pre><code class="language-julia hljs">@def ocp begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x ∈ R², state
+    u ∈ R, control
+    x(0) == [-1, 0]
+    x(tf) == [0, 0]
+    ẋ(t) == [x₂(t), u(t)]
+    tf ≥ 0
+    x₂(t) ≤ 1
+    u(t)^2 ≤ 1
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (autonomous) optimal control problem is given by:</span>
+
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x ∈ R², state
+    u ∈ R, control
+    x(0) == [-1, 0]
+    x(tf) == [0, 0]
+    ẋ(t) == [x₂(t), u(t)]
+    tf ≥ 0
+    x₂(t) ≤ 1
+    u(t) ^ 2 ≤ 1
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr32"><span class="sgr1">   V    │   V    │    V     │    V     │     V     │</span></span><span class="sgr1"><span class="sgr31">     X      │</span><span class="sgr32">      V      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><div class="admonition is-category-caveat"><header class="admonition-header">Caveat</header><div class="admonition-body"><p>Write either <code>u(t)^2</code> or <code>(u^2)(t)</code>, not <code>u^2(t)</code> since in Julia the latter is means <code>u^(2t)</code>. Moreover, in the case of equalities or of one-sided inequalities, the control and / or the state must belong the <em>left-hand side</em>. The following will error:</p></div></div><pre><code class="language-julia hljs">julia&gt; @def ocp begin
+    t ∈ [0, 2], time
+    x ∈ R², state
+    u ∈ R, control
+    x(0) == [-1, 0]
+    x(2) == [0, 0]
+    ẋ(t) == [x₂(t), u(t)]
+    1 ≤ x₂(t)
+    -1 ≤ u(t) ≤ 1
+end
+ERROR: ParsingError: 
+Line 7: 1 ≤ x₂(t)
+bad constraint declaration</code></pre><h2 id="mayer"><a class="docs-heading-anchor" href="#mayer">Mayer cost</a><a id="mayer-1"></a><a class="docs-heading-anchor-permalink" href="#mayer" title="Permalink"></a></h2><pre><code class="language-julia hljs">:( $e1 → min ) 
+:( $e1 → max ) </code></pre><p>Mayer costs are defined in a similar way to boundary conditions and follow the same rules. The symbol <code>→</code> is used to denote minimisation of maximisation, the latter being treated by minimising the opposite cost.</p><pre><code class="language-julia hljs">@def ocp begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    tf ≥ 0
+    -1 ≤ u(t) ≤ 1
+    q(0) == 1
+    v(0) == 2
+    q(tf) == 0
+    v(tf) == 0
+    0 ≤ q(t) ≤ 5
+   -2 ≤ v(t) ≤ 3
+    ẋ(t) == [v(t), u(t)]
+    tf → min
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (autonomous) optimal control problem is given by:</span>
+
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x = ((q, v) ∈ R², state)
+    u ∈ R, control
+    tf ≥ 0
+    -1 ≤ u(t) ≤ 1
+    q(0) == 1
+    v(0) == 2
+    q(tf) == 0
+    v(tf) == 0
+    0 ≤ q(t) ≤ 5
+    -2 ≤ v(t) ≤ 3
+    ẋ(t) == [v(t), u(t)]
+    tf → min
+
+<span class="sgr1">The (autonomous) optimal control problem is of the form:</span>
+
+<span class="sgr34">    minimize  </span>J(x, u, tf) = g(x(0), x(tf), tf)
+
+<span class="sgr34">    subject to</span>
+
+        ẋ(t) = f(x(t), u(t), tf), t in [0, tf] a.e.,
+
+        ηl ≤ η(x(t), tf) ≤ ηu, 
+        ϕl ≤ ϕ(x(0), x(tf), tf) ≤ ϕu, 
+
+    where x(t) = (q(t), v(t)) ∈ R², u(t) ∈ R and tf ∈ R.
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr32"><span class="sgr1">   V    │   V    │    V     │    V     │     V     │     V      │      V      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><h2 id="Lagrange-cost"><a class="docs-heading-anchor" href="#Lagrange-cost">Lagrange cost</a><a id="Lagrange-cost-1"></a><a class="docs-heading-anchor-permalink" href="#Lagrange-cost" title="Permalink"></a></h2><pre><code class="language-julia hljs">:(       ∫($e1) → min ) 
+:(     - ∫($e1) → min ) 
+:( $e1 * ∫($e2) → min ) 
+:(       ∫($e1) → max ) 
+:(     - ∫($e1) → max ) 
+:( $e1 * ∫($e2) → max ) </code></pre><p>Lagrange (integral) costs are defined used the symbol <code>∫</code>, *with parenthesis:</p><pre><code class="language-julia hljs">@def ocp begin
+    t ∈ [0, 1], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    0.5∫(q(t) + u(t)^2) → min
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (autonomous) optimal control problem is given by:</span>
+
+    t ∈ [0, 1], time
+    x = ((q, v) ∈ R², state)
+    u ∈ R, control
+    0.5 * ∫(q(t) + u(t) ^ 2) → min
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr32"><span class="sgr1">   V    │   V    │    V     │</span></span><span class="sgr1"><span class="sgr31">    X     │     X     │</span><span class="sgr32">     V      │</span><span class="sgr31">      X      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><p>The integration range is implicitly equal to the time range, so the cost above is to be understood as</p><p class="math-container">\[\int_0^1 \left( q(t) + u^2(t) \right) \mathrm{d}t \to \min.\]</p><p>As for the dynamics, the parser will detect whether the integrand depends or not on time (autonomous / non-autonomous case).</p><h2 id="Bolza-cost"><a class="docs-heading-anchor" href="#Bolza-cost">Bolza cost</a><a id="Bolza-cost-1"></a><a class="docs-heading-anchor-permalink" href="#Bolza-cost" title="Permalink"></a></h2><pre><code class="language-julia hljs">:( $e1 +       ∫($e2)       → min ) 
+:( $e1 + $e2 * ∫($e3)       → min ) 
+:( $e1 -       ∫($e2)       → min ) 
+:( $e1 - $e2 * ∫($e3)       → min ) 
+:( $e1 +       ∫($e2)       → max ) 
+:( $e1 + $e2 * ∫($e3)       → max ) 
+:( $e1 -       ∫($e2)       → max ) 
+:( $e1 - $e2 * ∫($e3)       → max ) 
+:(             ∫($e2) + $e1 → min ) 
+:(       $e2 * ∫($e3) + $e1 → min ) 
+:(             ∫($e2) - $e1 → min ) 
+:(       $e2 * ∫($e3) - $e1 → min ) 
+:(             ∫($e2) + $e1 → max ) 
+:(       $e2 * ∫($e3) + $e1 → max ) 
+:(             ∫($e2) - $e1 → max ) 
+:(       $e2 * ∫($e3) - $e1 → max ) </code></pre><p>Quite readily, Mayer and Lagrange costs can be combined into general Bolza costs. For instance as follows:</p><pre><code class="language-julia hljs">@def ocp begin
+    p = (t0, tf) ∈ R², variable
+    t ∈ [t0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R², control
+    (tf - t0) + 0.5∫(c(t) * u(t)^2) → min
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (non autonomous) optimal control problem is given by:</span>
+
+    p = ((t0, tf) ∈ R², variable)
+    t ∈ [t0, tf], time
+    x = ((q, v) ∈ R², state)
+    u ∈ R², control
+    (tf - t0) + 0.5 * ∫(c(t) * u(t) ^ 2) → min
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr32"><span class="sgr1">   V    │   V    │    V     │    V     │</span></span><span class="sgr1"><span class="sgr31">     X     │</span><span class="sgr32">     V      │</span><span class="sgr31">      X      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><div class="admonition is-category-caveat"><header class="admonition-header">Caveat</header><div class="admonition-body"><p>The expression must be the sum of two terms (plus, possibly, a scalar factor before the integral), not <em>more</em>, so mind the parentheses. For instance, the following errors:</p></div></div><pre><code class="language-julia hljs">julia&gt; @def ocp begin
+           p = (t0, tf) ∈ R², variable
+           t ∈ [t0, tf], time
+           x = (q, v) ∈ R², state
+           u ∈ R², control
+           (tf - t0) + q(tf) + 0.5∫( c(t) * u(t)^2 ) → min
+       end
+ERROR: ParsingError: 
+Line 5: (tf - t0) + q(tf) + 0.5 * ∫(c(t) * u(t) ^ 2) → min
+bad objective declaration resulting in a Mayer term with trailing ∫</code></pre><p>The correct syntax is</p><pre><code class="language-julia hljs">@def ocp begin
+    p = (t0, tf) ∈ R², variable
+    t ∈ [t0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R², control
+    ( (tf - t0) + q(tf) ) + 0.5∫( c(t) * u(t)^2 ) → min
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (non autonomous) optimal control problem is given by:</span>
+
+    p = ((t0, tf) ∈ R², variable)
+    t ∈ [t0, tf], time
+    x = ((q, v) ∈ R², state)
+    u ∈ R², control
+    ((tf - t0) + q(tf)) + 0.5 * ∫(c(t) * u(t) ^ 2) → min
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr32"><span class="sgr1">   V    │   V    │    V     │    V     │</span></span><span class="sgr1"><span class="sgr31">     X     │</span><span class="sgr32">     V      │</span><span class="sgr31">      X      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><h2 id="aliases"><a class="docs-heading-anchor" href="#aliases">Aliases</a><a id="aliases-1"></a><a class="docs-heading-anchor-permalink" href="#aliases" title="Permalink"></a></h2><pre><code class="language-julia hljs">:( $a = $e1 )</code></pre><p>The single <code>=</code> symbol is used to define not a constraint but an alias, that is a purely syntactic replacement. There are some automatic aliases, <em>e.g.</em> <code>x₁</code> for <code>x[1]</code> if <code>x</code> is the state, and we have also seen that the user can define her own aliases when declaring the <a href="tutorial-abstract.html#variable">variable</a>, <a href="tutorial-abstract.html#state">state</a> and <a href="tutorial-abstract.html#control">control</a>. Arbitrary aliases can be further defined, as below (compare with previous examples in the <a href="tutorial-abstract.html#dynamics">dynamics</a> section):</p><pre><code class="language-julia hljs">@def ocp begin
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    F₀ = [x₂(t), 0]
+    F₁ = [0, 1]
+    ẋ(t) == F₀ + u(t) * F₁
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (autonomous) optimal control problem is given by:</span>
+
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    F₀ = [x₂(t), 0]
+    F₁ = [0, 1]
+    ẋ(t) == F₀ + u(t) * F₁
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr32"><span class="sgr1">   V    │   V    │    V     │</span></span><span class="sgr1"><span class="sgr31">    X     │</span><span class="sgr32">     V     │</span><span class="sgr31">     X      │      X      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><div class="admonition is-category-caveat"><header class="admonition-header">Caveat</header><div class="admonition-body"><p>Such aliases do <em>not</em> define any additional function and are just replaced textually by the parser. In particular, they cannot be used outside the <code>@def</code> <code>begin ... end</code> block.</p></div></div><div class="admonition is-category-hint"><header class="admonition-header">Hint</header><div class="admonition-body"><p>You can use a trace mode for the macro <code>@def</code> to look at your code after expansions of the aliases adding <code>true</code> after your <code>begin ... end</code> block:</p></div></div><pre><code class="language-julia hljs">julia&gt; @def damped_integrator begin
+           tf ∈ R, variable
+           t ∈ [0, tf], time
+           x = (q, v) ∈ R², state
+           u ∈ R, control
+           q̇ = v(t)
+           v̇ = u(t) - c(t)
+           ẋ(t) == [q̇, v̇]
+       end true
+
+variable: tf, dim: 1
+time: t, initial time: 0, final time: tf
+state: x, dim: 2
+control: u, dim: 1
+alias: q̇ = (x[2])(t)
+alias: v̇ = u(t) - c(t)
+dynamics: ẋ(t) == [(x[2])(t), u(t) - c(t)]</code></pre><div class="admonition is-category-caveat"><header class="admonition-header">Caveat</header><div class="admonition-body"><p>The dynamics of an OCP is indeed a particular constraint, be careful to use <code>==</code> and not a single <code>=</code> that would try to define an alias:</p></div></div><pre><code class="language-julia hljs">julia&gt; @def double_integrator begin
+       tf ∈ R, variable
+       t ∈ [0, tf], time
+       x = (q, v) ∈ R², state
+       u ∈ R, control
+       q̇ = v
+       v̇ = u
+       ẋ(t) = [q̇, v̇]
+       end
+ERROR: ParsingError: 
+Line 7: ẋ(t) = begin
+        #= REPL[35]:8 =#
+        [q̇, v̇]
+    end
+forbidden alias name: (∂(x))(t)</code></pre><h2 id="Misc"><a class="docs-heading-anchor" href="#Misc">Misc</a><a id="Misc-1"></a><a class="docs-heading-anchor-permalink" href="#Misc" title="Permalink"></a></h2><ul><li>Declarations (of variable - if any -, time, state and control) must be done first. Then, dynamics, constraints and cost can be introduced in an arbitrary order.</li><li>It is possible to provide numbers / labels (as in math equations) for the constraints to improve readability (this is mostly for future use, typically to retrieve the Lagrange multiplier associated with the discretisation of a given constraint):</li></ul><pre><code class="language-julia hljs">@def damped_integrator begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    tf ≥ 0, (1)
+    q(0) == 2, (♡)
+    q̇ = v(t)
+    v̇ = u(t) - c(t)
+    ẋ(t) == [q̇, v̇]
+    x(t).^2  ≤ [1, 2], (state_con)
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+<span class="sgr1">The (non autonomous) optimal control problem is given by:</span>
+
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x = ((q, v) ∈ R², state)
+    u ∈ R, control
+    tf ≥ 0, 1
+    q(0) == 2, ♡
+    q̇ = v(t)
+    v̇ = u(t) - c(t)
+    ẋ(t) == [q̇, v̇]
+    x(t) .^ 2 ≤ [1, 2], state_con
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr32"><span class="sgr1">   V    │   V    │    V     │    V     │     V     │</span></span><span class="sgr1"><span class="sgr31">     X      │</span><span class="sgr32">      V      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><ul><li>Parsing errors should be explicit enough (with line number in the <code>@def</code> <code>begin ... end</code> block indicated) 🤞🏾</li><li>Check tutorials and applications in the documentation for further use.</li></ul><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-double-integrator.html">« Time minimisation</a><a class="docs-footer-nextpage" href="tutorial-initial-guess.html">Initial guess »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Sunday 4 August 2024 22:03">Sunday 4 August 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
