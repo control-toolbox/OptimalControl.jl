@@ -29,17 +29,22 @@ makedocs(
     ),
     pages = [
         "Introduction" => "index.md",
+        "Basic example" => [
+            "Energy min (abstract syntax)"   => "tutorial-basic-example.md", 
+            "Energy min (functional syntax)" => "tutorial-basic-example-f.md",
+            "Time minimisation"              => "tutorial-double-integrator.md",
+        ],
+        "Manual" => [
+            "Abstract syntax" => "tutorial-abstract.md",
+            "Initial guess"   => "tutorial-initial-guess.md",
+            "Plot a solution" => "tutorial-plot.md",
+        ],
         "Tutorials" => [
-            "tutorial-basic-example.md", 
-            "tutorial-basic-example-f.md", 
-            "tutorial-double-integrator.md",
-            "tutorial-initial-guess.md",
             "tutorial-continuation.md",
-            "tutorial-nlp.md",
-            "tutorial-plot.md",
-            "tutorial-lqr-basic.md",
+            "Goddard: direct, indirect"  => "tutorial-goddard.md",
             "tutorial-iss.md",
-            "tutorial-goddard.md",
+            "Linear–quadratic regulator" => "tutorial-lqr-basic.md",
+            "tutorial-nlp.md",
         ],
         "API" => [
             "api-optimalcontrol.md",
@@ -50,7 +55,7 @@ makedocs(
             ],
         ],
         "Developers" => [
-            #"OptimalControl.jl" => "dev-optimalcontrol.md",
+            "OptimalControl.jl" => "dev-optimalcontrol.md",
             "Subpackages" => [
                 "CTBase.jl" => "dev-ctbase.md",
                 "CTDirect.jl" => "dev-ctdirect.md",

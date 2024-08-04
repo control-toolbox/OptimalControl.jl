@@ -1,4 +1,4 @@
-# LQR example
+# A simple Linear–quadratic regulator example
 
 We consider the following Linear Quadratic Regulator (LQR) problem which consists in minimising
 
@@ -51,7 +51,7 @@ B  = [ 0
 function lqr(tf)
 
     @def ocp begin
-        t ∈ [ 0, tf ], time
+        t ∈ [0, tf], time
         x ∈ R², state
         u ∈ R, control
         x(0) == x0

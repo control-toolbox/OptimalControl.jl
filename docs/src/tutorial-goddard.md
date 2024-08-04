@@ -1,4 +1,4 @@
-# [Goddard problem](@id goddard)
+# [Direct and indirect methods for the Goddard problem](@id goddard)
 
 ## Introduction
 
@@ -70,7 +70,7 @@ mf = 0.6    # final mass to target
 @def ocp begin # definition of the optimal control problem
 
     tf ∈ R, variable
-    t ∈ [ t0, tf ], time
+    t ∈ [t0, tf], time
     x = (r, v, m) ∈ R³, state
     u ∈ R, control
 
@@ -110,7 +110,7 @@ nothing # hide
 We then solve it
 
 ```@example main
-direct_sol = solve(ocp; grid_size=100)
+direct_sol = solve(ocp; grid_size=100, linear_solver="mumps")
 nothing # hide
 ```
 
