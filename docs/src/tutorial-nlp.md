@@ -28,7 +28,7 @@ We define a test problem
 ```@example main
 @def ocp begin
 
-    t ∈ [ 0, 1 ], time
+    t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
 

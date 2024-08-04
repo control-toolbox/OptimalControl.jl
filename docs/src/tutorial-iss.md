@@ -38,7 +38,7 @@ xf = 0
 α  = 1.5
 @def ocp begin
 
-    t ∈ [ t0, tf ], time
+    t ∈ [t0, tf], time
     x ∈ R, state
     u ∈ R, control
 

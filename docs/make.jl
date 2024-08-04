@@ -40,6 +40,7 @@ makedocs(
             "tutorial-lqr-basic.md",
             "tutorial-iss.md",
             "tutorial-goddard.md",
+            "tutorial-abstract.md",
         ],
         "API" => [
             "api-optimalcontrol.md",

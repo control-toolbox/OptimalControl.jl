@@ -14,14 +14,14 @@ Then, we define a simple optimal control problem and solve it.
 ```@example main
 @def ocp begin
 
-    t ∈ [ 0, 1 ], time
+    t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
 
-    x(0) == [ -1, 0 ]
-    x(1) == [ 0, 0 ]
+    x(0) == [-1, 0]
+    x(1) == [0, 0]
 
-    ẋ(t) == [ x₂(t), u(t) ]
+    ẋ(t) == [x₂(t), u(t)]
 
     ∫( 0.5u(t)^2 ) → min
 
@@ -112,14 +112,14 @@ You can plot the solution of a second optimal control problem on the same figure
 ```@example main
 @def ocp begin
 
-    t ∈ [ 0, 1 ], time
+    t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
 
-    x(0) == [ -0.5, -0.5 ]
-    x(1) == [ 0, 0 ]
+    x(0) == [-0.5, -0.5]
+    x(1) == [0, 0]
 
-    ẋ(t) == [ x₂(t), u(t) ]
+    ẋ(t) == [x₂(t), u(t)]
 
     ∫( 0.5u(t)^2 ) → min
 
@@ -187,7 +187,7 @@ B  = [ 0
 function lqr(tf)
 
     @def ocp begin
-        t ∈ [ 0, tf ], time
+        t ∈ [0, tf], time
         x ∈ R², state
         u ∈ R, control
         x(0) == x0
