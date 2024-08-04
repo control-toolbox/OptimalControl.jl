@@ -59,6 +59,8 @@ And plot the solution
 plot(sol)
 ```
 
+For a comprehensive introduction to the syntax used above to describe the optimal control problem, check [this tutorial(@ref abstract). 
+
 We can save the solution in a julia `.jld2` data file and reload it later, and also export a discretised version of the solution in a more portable [JSON](https://en.wikipedia.org/wiki/JSON) format.
 
 ```@example main
