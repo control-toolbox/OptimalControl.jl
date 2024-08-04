@@ -159,25 +159,63 @@ nothing # hide
 
 ### NonlinearSolve.jl
 
+We first use the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package to solve the shooting
+equation. Let us define the problem.
+
 ```@example main
-nle! = (s, ξ, λ) -> s[1] = S(ξ[1])                  # auxiliary function
-prob = NonlinearProblem(nle!, ξ)                    # NLE problem
-global indirect_sol =      # hide
-@suppress_err begin # hide
-NonlinearSolve.solve(prob)      # hide
-indirect_sol = solve(prob, show_trace=Val(true))    # resolution of S(p0) = 0  
-end                 # hide
+nle! = (s, ξ, λ) -> s[1] = S(ξ[1]) # auxiliary function
+prob = NonlinearProblem(nle!, ξ)   # NLE problem with initial guess
+nothing # hide
+```
+
+Let us do some benchmarking.
+
+```@example main
+using BenchmarkTools
+@benchmark solve(prob; show_trace=Val(false))
+```
+
+For small nonlinear systems, it could be faster to use the 
+[`SimpleNewtonRaphson()` descent algorithm](https://docs.sciml.ai/NonlinearSolve/stable/tutorials/code_optimization/).
+
+```@example main
+@benchmark solve(prob, SimpleNewtonRaphson(); show_trace=Val(false))
+```
+
+Now, let us solve the problem and retrieve the initial costate solution.
+
+```@example main
+global indirect_sol =                               # hide
+@suppress_err begin                                 # hide
+solve(prob; show_trace=Val(false))                  # hide
+indirect_sol = solve(prob; show_trace=Val(true))    # resolution of S(p0) = 0  
+end                                                 # hide
 p0_sol = indirect_sol.u[1]                          # costate solution
 println("\ncostate:    p0 = ", p0_sol)
-@suppress_err begin # hide
+@suppress_err begin                                 # hide
 println("shoot: |S(p0)| = ", abs(S(p0_sol)), "\n")
-end # hide
-nothing # hide
+end                                                 # hide
+nothing                                             # hide
 ```
 
 ### MINPACK.jl
 
-Instead of the [`NonlinearSolve.jl`](https://github.com/SciML/NonlinearSolve.jl) package we can use the [`MINPACK.jl`](https://github.com/sglyon/MINPACK.jl) package to solve 
+```@setup main
+using MINPACK
+function fsolve(f, j, x; kwargs...)
+    try
+        MINPACK.fsolve(f, j, x; kwargs...)
+    catch e
+        println("Erreur using MINPACK")
+        println(e)
+        println("hybrj not supported. Replaced by hybrd even if it is not visible on the doc.")
+        MINPACK.fsolve(f, x; kwargs...)
+    end
+end
+```
+
+Instead of the [`NonlinearSolve.jl`](https://github.com/SciML/NonlinearSolve.jl) package we can use the 
+[`MINPACK.jl`](https://github.com/sglyon/MINPACK.jl) package to solve 
 the shooting equation. To compute the Jacobian of the shooting function we use the 
 [`DifferentiationInterface.jl`](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface) package with 
 [`ForwardDiff`](https://github.com/JuliaDiff/ForwardDiff.jl) backend.
@@ -189,30 +227,43 @@ backend = AutoForwardDiff()
 nothing # hide
 ```
 
-We are now in position to compute the Jacobian of the shooting function and use the `hybrj` solver
-from `MINPACK` through the `fsolve` function, providing the Jacobian.
+Let us define the problem to solve.
 
 ```@example main
-nle! = (s, ξ) -> s[1] = S(ξ[1])                        # auxiliary function
-jnle!(js, ξ) = jacobian!(nle!, js, backend, ξ)         # Jacobian of the shooting function
-global indirect_sol =      # hide
-@suppress_err begin # hide
-fsolve(nle!, ξ)      # hide
-try # hide
-indirect_sol = fsolve(nle!, jnle!, ξ, show_trace=true) # resolution of S(p0) = 0
-catch e # hide
-println("hybrj not supported. Replaced by hybrd even if it is not visible on the doc.") # hide
-indirect_sol = fsolve(nle!, ξ, show_trace=true) # hide
-end # hide
-end                 # hide
-
-# costate solution
-p0_sol = indirect_sol.x[1]
-println("\ncostate:    p0 = ", p0_sol)
-@suppress_err begin # hide
-println("shoot: |S(p0)| = ", abs(S(p0_sol)), "\n")
-end # hide
+nle!  = ( s, ξ) -> s[1] = S(ξ[1])                              # auxiliary function
+jnle! = (js, ξ) -> jacobian!(nle!, similar(ξ), js, backend, ξ) # Jacobian of nle
 nothing # hide
+```
+
+We are now in position to solve the problem with the `hybrj` solver from `MINPACK` through the `fsolve` 
+function, providing the Jacobian. Let us do some benchmarking.
+
+```@example main
+@benchmark fsolve(nle!, jnle!, ξ; show_trace=false) # initial guess given to the solver
+```
+
+We can also use the [preparation step](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface/stable/tutorial1/#Preparing-for-multiple-gradients) of `DifferentiationInterface.jl`.
+
+```@example main
+extras = prepare_jacobian(nle!, similar(ξ), backend, ξ)
+jnle_prepared!(js, ξ) = jacobian!(nle!, similar(ξ), js, backend, ξ, extras)
+@benchmark fsolve(nle!, jnle_prepared!, ξ; show_trace=false)
+```
+
+Now, let us solve the problem and retrieve the initial costate solution.
+
+```@example main
+global indirect_sol =                                   # hide
+@suppress_err begin                                     # hide
+fsolve(nle!, jnle!, ξ; show_trace=false)                # hide
+indirect_sol = fsolve(nle!, jnle!, ξ; show_trace=true)  # resolution of S(p0) = 0
+end                                                     # hide
+p0_sol = indirect_sol.x[1]                              # costate solution
+println("\ncostate:    p0 = ", p0_sol)
+@suppress_err begin                                     # hide
+println("shoot: |S(p0)| = ", abs(S(p0_sol)), "\n")
+end                                                     # hide
+nothing                                                 # hide
 ```
 
 ## Plot of the solution
