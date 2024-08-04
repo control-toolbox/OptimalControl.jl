@@ -1,4 +1,4 @@
-# [Goddard problem](@id goddard)
+# [Direct and indirect methods for the Goddard problem](@id goddard)
 
 ## Introduction
 

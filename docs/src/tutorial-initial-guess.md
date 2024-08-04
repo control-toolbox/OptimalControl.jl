@@ -1,4 +1,4 @@
-# Initial guess options
+# Initial guess (or iterate) for the resolution
 
 ```@meta
 CurrentModule =  OptimalControl

@@ -1,4 +1,4 @@
-# [Abstract syntax](@id abstract)
+# [The abstract syntax to define an optimal control problem](@id abstract)
 
 The full grammar of OptimalControl.jl small *Domain Specific Language* is given below. The idea is to use a syntax that is
 - pure Julia (and, as such, effortlessly analysed by the standard Julia parser),
@@ -9,8 +9,8 @@ While the syntax will be transparent to those users familiar with Julia expressi
 ## [Variable](@id variable)
 
 ```julia
-   :( $v ∈ R^$q, variable ) 
-   :( $v ∈ R   , variable ) 
+:( $v ∈ R^$q, variable ) 
+:( $v ∈ R   , variable ) 
 ```
 
 A variable (only one is allowed) is a finite dimensional vector or reals that will be *optimised* along with state and control values. To define an (almost empty!) optimal control problem, named `ocp`, having a dimension two variable named `v`, do the following:
@@ -41,7 +41,7 @@ end
 ## Time
 
 ```julia
-   :( $t ∈ [$t0, $tf], time ) 
+:( $t ∈ [$t0, $tf], time ) 
 ```
 
 The independent variable or *time* is a scalar bound to a given interval. Its name is arbitrary.
@@ -66,15 +66,15 @@ end
 ## [State](@id state)
 
 ```julia
-   :( $x ∈ R^$n, state ) 
-   :( $x ∈ R   , state ) 
+:( $x ∈ R^$n, state ) 
+:( $x ∈ R   , state ) 
 ```
 
 The state declaration defines the name and the dimension of the state:
 
 ```@example main
 @def ocp begin
-       x ∈ R⁴, state
+    x ∈ R⁴, state
 end
 ```
 
@@ -82,15 +82,15 @@ As for the variable, there are automatic aliases (`x₁` for `x[1]`, *etc.*) and
 
 ```@example main
 @def ocp begin
-       x = (q₁, q₂, v₁, v₂) ∈ R⁴, state
+    x = (q₁, q₂, v₁, v₂) ∈ R⁴, state
 end
 ```
 
 ## [Control](@id control)
 
 ```julia
-   :( $u ∈ R^$m, control ) 
-   :( $u ∈ R   , control ) 
+:( $u ∈ R^$m, control ) 
+:( $u ∈ R   , control ) 
 ```
 
 The control declaration defines the name and the dimension of the control:
@@ -112,7 +112,7 @@ end
 ## [Dynamics](@id dynamics)
 
 ```julia
-   :( ∂($x)($t) == $e1 ) 
+:( ∂($x)($t) == $e1 ) 
 ```
 
 The dynamics is given in the standard vectorial ODE form:
@@ -179,11 +179,11 @@ end
 ## Constraints
 
 ```julia
-   :( $e1 == $e2        ) 
-   :( $e1 ≤  $e2 ≤  $e3 ) 
-   :(        $e2 ≤  $e3 ) 
-   :( $e3 ≥  $e2 ≥  $e1 ) 
-   :( $e2 ≥  $e1        ) 
+:( $e1 == $e2        ) 
+:( $e1 ≤  $e2 ≤  $e3 ) 
+:(        $e2 ≤  $e3 ) 
+:( $e3 ≥  $e2 ≥  $e1 ) 
+:( $e2 ≥  $e1        ) 
 ```
 
 Constraints 
@@ -211,7 +211,7 @@ In the example below, there are
     tf ≥ 0 
     x₂(t) ≤ 1
     u(t)^2 ≤ 1
-   end
+end
 ```
 
 !!! caveat
@@ -237,8 +237,8 @@ bad constraint declaration
 ## [Mayer cost](@id mayer)
 
 ```julia                                      
-   :( $e1 → min ) 
-   :( $e1 → max ) 
+:( $e1 → min ) 
+:( $e1 → max ) 
 ```
 
 Mayer costs are defined in a similar way to boundary conditions and follow the same rules. The symbol `→` is used
@@ -266,12 +266,12 @@ end
 ## Lagrange cost
 
 ```julia
-   :(       ∫($e1) → min ) 
-   :(     - ∫($e1) → min ) 
-   :( $e1 * ∫($e2) → min ) 
-   :(       ∫($e1) → max ) 
-   :(     - ∫($e1) → max ) 
-   :( $e1 * ∫($e2) → max ) 
+:(       ∫($e1) → min ) 
+:(     - ∫($e1) → min ) 
+:( $e1 * ∫($e2) → min ) 
+:(       ∫($e1) → max ) 
+:(     - ∫($e1) → max ) 
+:( $e1 * ∫($e2) → max ) 
 ```
 
 Lagrange (integral) costs are defined used the symbol `∫`, *with parenthesis:
@@ -287,7 +287,7 @@ end
 
 The integration range is implicitly equal to the time range, so the cost above is to be understood as
 ```math
-\int_0^1 (q(t) + u^2(t))\,\mathrm{d}t \to \min.
+\int_0^1 \left( q(t) + u^2(t) \right) \mathrm{d}t \to \min.
 ```
 
 As for the dynamics, the parser will detect whether the integrand depends or not on time (autonomous / non-autonomous case).
@@ -295,25 +295,25 @@ As for the dynamics, the parser will detect whether the integrand depends or not
 ## Bolza cost
 
 ```julia
-   :( $e1 +       ∫($e2)       → min ) 
-   :( $e1 + $e2 * ∫($e3)       → min ) 
-   :( $e1 -       ∫($e2)       → min ) 
-   :( $e1 - $e2 * ∫($e3)       → min ) 
-   :( $e1 +       ∫($e2)       → max ) 
-   :( $e1 + $e2 * ∫($e3)       → max ) 
-   :( $e1 -       ∫($e2)       → max ) 
-   :( $e1 - $e2 * ∫($e3)       → max ) 
-   :(             ∫($e2) + $e1 → min ) 
-   :(       $e2 * ∫($e3) + $e1 → min ) 
-   :(             ∫($e2) - $e1 → min ) 
-   :(       $e2 * ∫($e3) - $e1 → min ) 
-   :(             ∫($e2) + $e1 → max ) 
-   :(       $e2 * ∫($e3) + $e1 → max ) 
-   :(             ∫($e2) - $e1 → max ) 
-   :(       $e2 * ∫($e3) - $e1 → max ) 
+:( $e1 +       ∫($e2)       → min ) 
+:( $e1 + $e2 * ∫($e3)       → min ) 
+:( $e1 -       ∫($e2)       → min ) 
+:( $e1 - $e2 * ∫($e3)       → min ) 
+:( $e1 +       ∫($e2)       → max ) 
+:( $e1 + $e2 * ∫($e3)       → max ) 
+:( $e1 -       ∫($e2)       → max ) 
+:( $e1 - $e2 * ∫($e3)       → max ) 
+:(             ∫($e2) + $e1 → min ) 
+:(       $e2 * ∫($e3) + $e1 → min ) 
+:(             ∫($e2) - $e1 → min ) 
+:(       $e2 * ∫($e3) - $e1 → min ) 
+:(             ∫($e2) + $e1 → max ) 
+:(       $e2 * ∫($e3) + $e1 → max ) 
+:(             ∫($e2) - $e1 → max ) 
+:(       $e2 * ∫($e3) - $e1 → max ) 
 ```
 
-Quite readily, Mayer and Lagrange costs can be combined into genral Bolza costs. For instance as follows:
+Quite readily, Mayer and Lagrange costs can be combined into general Bolza costs. For instance as follows:
 
 ```@example main
 @def ocp begin
@@ -355,7 +355,7 @@ end
 ## [Aliases](@id aliases)
 
 ```julia
-        :( $a = $e1 )
+:( $a = $e1 )
 ```
 
 The single `=` symbol is used to define not a constraint but an alias, that is a purely syntactic replacement. There are some automatic aliases, *e.g.* `x₁` for `x[1]` if `x` is the state, and we have also seen that the user can define her own aliases when declaring the [variable](#variable), [state](#state) and [control](#control). Arbitrary aliases can be further defined, as below (compare with previous examples in the [dynamics](#dynamics) section):
@@ -399,7 +399,7 @@ dynamics: ẋ(t) == [(x[2])(t), u(t) - c(t)]
 ```
 
 !!! caveat
-    The dynamics of an OCP is indeed a particular constraint, be careful to use `==` and not a single `=` that would try define an alias:
+    The dynamics of an OCP is indeed a particular constraint, be careful to use `==` and not a single `=` that would try to define an alias:
 
 ```julia
 julia> @def double_integrator begin
