@@ -162,7 +162,7 @@ nothing # hide
 !!! note
     The vector fields `F₀` and `F₁` can be defined afterwards, as they only need to be available when the dynamics will be evaluated.
 
-Currently, it is not possible to declare the dynamics component after component, but a simple workaround is to use *aliases* (check the relevant [aliases](@ref aliases) section below):
+Currently, it is not possible to declare the dynamics component after component, but a simple workaround is to use *aliases* (check the relevant [aliases](#aliases) section below):
 
 ```@example main
 @def damped_integrator begin
@@ -372,7 +372,8 @@ end
 
 ```
 
-!!! caveat Such aliases do not define any additional function and are just replaced textually by the parser. In particular, they cannot be used outside the `@def` `begin ... end` block.
+!!! caveat
+    Such aliases do *not* define any additional function and are just replaced textually by the parser. In particular, they cannot be used outside the `@def` `begin ... end` block.
 
 !!! hint
     You can use a trace mode for the macro `@def` to look at your code after expansions of the aliases adding `true` after your `begin ... end` block:
@@ -386,7 +387,7 @@ end
     q̇ = v(t)
     v̇ = u(t) - c(t)
     ẋ(t) == [q̇, v̇]
-end
+end true
 ```
 
 !!! caveat
@@ -412,7 +413,7 @@ forbidden alias name: (∂(x))(t)
 
 ## Misc
 
-- Declarations (variable - in any -, time, state and control) must be done first. Then, dynamics, constraints and cost can be introduced in an arbitrary order.
+- Declarations (variable - if any -, time, state and control) must be done first. Then, dynamics, constraints and cost can be introduced in an arbitrary order.
 - It is possible to provide numbers / labels (as math equations) for the constraints to improve readability (this is mostly for future use, typically to retrieve the Lagrange multiplier associated with the discretisation of a given constraint):
 
 ```@example main
