@@ -378,16 +378,24 @@ end
 !!! hint
     You can use a trace mode for the macro `@def` to look at your code after expansions of the aliases adding `true` after your `begin ... end` block:
 
-```@example main
-@def damped_integrator begin
-    tf ∈ R, variable
-    t ∈ [0, tf], time
-    x = (q, v) ∈ R², state
-    u ∈ R, control
-    q̇ = v(t)
-    v̇ = u(t) - c(t)
-    ẋ(t) == [q̇, v̇]
-end true
+```julia
+julia> @def damped_integrator begin
+           tf ∈ R, variable
+           t ∈ [0, tf], time
+           x = (q, v) ∈ R², state
+           u ∈ R, control
+           q̇ = v(t)
+           v̇ = u(t) - c(t)
+           ẋ(t) == [q̇, v̇]
+       end true
+
+variable: tf, dim: 1
+time: t, initial time: 0, final time: tf
+state: x, dim: 2
+control: u, dim: 1
+alias: q̇ = (x[2])(t)
+alias: v̇ = u(t) - c(t)
+dynamics: ẋ(t) == [(x[2])(t), u(t) - c(t)]
 ```
 
 !!! caveat
@@ -413,8 +421,8 @@ forbidden alias name: (∂(x))(t)
 
 ## Misc
 
-- Declarations (variable - if any -, time, state and control) must be done first. Then, dynamics, constraints and cost can be introduced in an arbitrary order.
-- It is possible to provide numbers / labels (as math equations) for the constraints to improve readability (this is mostly for future use, typically to retrieve the Lagrange multiplier associated with the discretisation of a given constraint):
+- Declarations (of variable - if any -, time, state and control) must be done first. Then, dynamics, constraints and cost can be introduced in an arbitrary order.
+- It is possible to provide numbers / labels (as in math equations) for the constraints to improve readability (this is mostly for future use, typically to retrieve the Lagrange multiplier associated with the discretisation of a given constraint):
 
 ```@example main
 @def damped_integrator begin
