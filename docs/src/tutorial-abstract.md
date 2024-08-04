@@ -1,19 +1,19 @@
 # [Abstract syntax](@id abstract)
 
-The full grammar of OptimalControl.jl small Domain Specific Language is given below. The idea is to use a syntax that is
+The full grammar of OptimalControl.jl small *Domain Specific Language* is given below. The idea is to use a syntax that is
 - pure Julia (and, as such, effortlessly analysed by the standard Julia parser),
 - as close as possible to the mathematical description of an optimal control problem. 
 
-While the syntax will be transparent to those users familiar with Julia expressions (`Expr`'s), we provide examples for every case that should be widely understandable. We rely heavily on [MLStyle.jl](https://github.com/thautwarm/MLStyle.jl) and its pattern matching abilities for the semantic pass. Abstract definitions use the macro `@def`.
+While the syntax will be transparent to those users familiar with Julia expressions (`Expr`'s), we provide examples for every case that should be widely understandable. We rely heavily on [MLStyle.jl](https://github.com/thautwarm/MLStyle.jl) and its pattern matching abilities 👍🏽 for the semantic pass. Abstract definitions use the macro `@def`.
 
 ## [Variable](@id variable)
 
 ```julia
-   :( $v ∈ R^$q, variable            ) 
-   :( $v ∈ R   , variable            ) 
+   :( $v ∈ R^$q, variable ) 
+   :( $v ∈ R   , variable ) 
 ```
 
-A variable (only one is allowed) is a finite dimensional vector or reals that will be optimised along with state and control values. To define an (almost empty!) optimal control problem, named `ocp`, having a dimension two variable named `v`, do the following:
+A variable (only one is allowed) is a finite dimensional vector or reals that will be *optimised* along with state and control values. To define an (almost empty!) optimal control problem, named `ocp`, having a dimension two variable named `v`, do the following:
 
 ```@example main
 using OptimalControl #hide
@@ -22,7 +22,7 @@ using OptimalControl #hide
 end
 ```
 
-Aliases `v₁` and `v₂` are automatically defined and can be used in subsequent expressions instead of `v[1]` and `v[2]`. The user can also define her own aliases for the components (one per dimension):
+Aliases `v₁` and `v₂` are automatically defined and can be used in subsequent expressions instead of `v[1]` and `v[2]`. The user can also define her own aliases for the components (one alias per dimension):
 
 ```@example main
 @def ocp begin
@@ -30,7 +30,7 @@ Aliases `v₁` and `v₂` are automatically defined and can be used in subsequen
 end
 ```
 
-A one dimensional can be declared according to
+A one dimensional variable can be declared according to
 
 ```@example main
 @def ocp begin
@@ -41,19 +41,20 @@ end
 ## Time
 
 ```julia
-   :( $t ∈ [$t0, $tf], time        ) 
+   :( $t ∈ [$t0, $tf], time ) 
 ```
 
 The independent variable or *time* is a scalar bound to a given interval. Its name is arbitrary.
 
 ```@example main
+t0 = 1
 tf = 5
 @def ocp begin
-    t ∈ [0, tf], time
+    t ∈ [t0, tf], time
 end
 ```
 
-One (or even the two bounds) can be variable, typically for minimum time problems:
+One (or even the two bounds) can be variable, typically for minimum time problems (see [Mayer cost](#mayer) section):
 
 ```@example main
 @def ocp begin
@@ -65,8 +66,8 @@ end
 ## [State](@id state)
 
 ```julia
-   :( $x ∈ R^$n, state               ) 
-   :( $x ∈ R   , state               ) 
+   :( $x ∈ R^$n, state ) 
+   :( $x ∈ R   , state ) 
 ```
 
 The state declaration defines the name and the dimension of the state:
@@ -88,8 +89,8 @@ end
 ## [Control](@id control)
 
 ```julia
-   :( $u ∈ R^$m, control             ) 
-   :( $u ∈ R   , control             ) 
+   :( $u ∈ R^$m, control ) 
+   :( $u ∈ R   , control ) 
 ```
 
 The control declaration defines the name and the dimension of the control:
@@ -111,13 +112,13 @@ end
 ## [Dynamics](@id dynamics)
 
 ```julia
-   :( ∂($x)($t) == $e1               ) 
+   :( ∂($x)($t) == $e1 ) 
 ```
 
 The dynamics is given in the standard vectorial ODE form:
 
 ```math
-    \dot{x}(t) = f(x(t), u(t)) \quad \text{or} \quad f(t, x(t), u(t))
+    \dot{x}(t) = f(x(t), u(t)) \quad \text{or} \quad \dot{x}(t) = f(t, x(t), u(t))
 ```
 
 depending on whether it is autonomous or not (the parser will detect dependence time, which entails that time and state must be declared prior to dynamics - an error will be issued otherwise). The symbol `∂` or the dotted state name
@@ -155,12 +156,13 @@ end
 
 F₀(x) = [x[2], 0]
 F₁(x) = [0, 1]
+nothing # hide
 ```
 
 !!! note
     The vector fields `F₀` and `F₁` can be defined afterwards, as they only need to be available when the dynamics will be evaluated.
 
-Currently, it is not possible to declare the dynamics component after component, but a simple workaround is to use *aliases* (check the relevant [section ](#aliases) below):
+Currently, it is not possible to declare the dynamics component after component, but a simple workaround is to use *aliases* (check the relevant [aliases](@ref aliases) section below):
 
 ```@example main
 @def damped_integrator begin
@@ -177,11 +179,11 @@ end
 ## Constraints
 
 ```julia
-   :( $e1 == $e2                     ) 
-   :( $e1 ≤  $e2 ≤  $e3              ) 
-   :(        $e2 ≤  $e3              ) 
-   :( $e3 ≥  $e2 ≥  $e1              ) 
-   :( $e2 ≥  $e1                     ) 
+   :( $e1 == $e2        ) 
+   :( $e1 ≤  $e2 ≤  $e3 ) 
+   :(        $e2 ≤  $e3 ) 
+   :( $e3 ≥  $e2 ≥  $e1 ) 
+   :( $e2 ≥  $e1        ) 
 ```
 
 Constraints 
@@ -232,11 +234,11 @@ Line 7: 1 ≤ x₂(t)
 bad constraint declaration
 ```
 
-## Mayer cost
+## [Mayer cost](@id mayer)
 
 ```julia                                      
-   :( $e1                      → min ) 
-   :( $e1                      → max ) 
+   :( $e1 → min ) 
+   :( $e1 → max ) 
 ```
 
 Mayer costs are defined in a similar way to boundary conditions and follow the same rules. The symbol `→` is used
@@ -264,12 +266,12 @@ end
 ## Lagrange cost
 
 ```julia
-   :(             ∫($e1)       → min ) 
-   :(           - ∫($e1)       → min ) 
-   :(       $e1 * ∫($e2)       → min ) 
-   :(             ∫($e1)       → max ) 
-   :(           - ∫($e1)       → max ) 
-   :(       $e1 * ∫($e2)       → max ) 
+   :(       ∫($e1) → min ) 
+   :(     - ∫($e1) → min ) 
+   :( $e1 * ∫($e2) → min ) 
+   :(       ∫($e1) → max ) 
+   :(     - ∫($e1) → max ) 
+   :( $e1 * ∫($e2) → max ) 
 ```
 
 Lagrange (integral) costs are defined used the symbol `∫`, *with parenthesis:
@@ -279,13 +281,13 @@ Lagrange (integral) costs are defined used the symbol `∫`, *with parenthesis:
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
     u ∈ R, control
-    0.5∫( q(t) + u(t)^2 ) → min
+    0.5∫(q(t) + u(t)^2) → min
 end
 ```
 
 The integration range is implicitly equal to the time range, so the cost above is to be understood as
 ```math
-\int_0^1 q(t) + u^2(t)\,\mathrm{d}t \to \min.
+\int_0^1 (q(t) + u^2(t))\,\mathrm{d}t \to \min.
 ```
 
 As for the dynamics, the parser will detect whether the integrand depends or not on time (autonomous / non-autonomous case).
@@ -309,7 +311,7 @@ As for the dynamics, the parser will detect whether the integrand depends or not
    :(       $e2 * ∫($e3) + $e1 → max ) 
    :(             ∫($e2) - $e1 → max ) 
    :(       $e2 * ∫($e3) - $e1 → max ) 
- ```
+```
 
 Quite readily, Mayer and Lagrange costs can be combined into genral Bolza costs. For instance as follows:
 
@@ -319,7 +321,7 @@ Quite readily, Mayer and Lagrange costs can be combined into genral Bolza costs.
     t ∈ [t0, tf], time
     x = (q, v) ∈ R², state
     u ∈ R², control
-    (tf - t0) + 0.5∫( c(t) * u(t)^2 ) → min
+    (tf - t0) + 0.5∫(c(t) * u(t)^2) → min
 end
 ```
 
