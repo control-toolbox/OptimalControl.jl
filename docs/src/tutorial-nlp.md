@@ -17,7 +17,6 @@ Let us load the packages.
 
 ```@example main
 using OptimalControl
-using NLPModelsIpopt
 using Plots
 ```
 
@@ -62,7 +61,8 @@ For a first example we use the `ipopt` solver from [`NLPModelsIpopt.jl`](https:/
 
 ```@example main
 using NLPModelsIpopt
-nlp_sol = ipopt(nlp; print_level=4, mu_strategy="adaptive", tol=1e-8, sb="yes")
+nlp_sol = ipopt(nlp; print_level=5, mu_strategy="adaptive", tol=1e-8, sb="yes") # hide
+nlp_sol = ipopt(nlp; print_level=5, mu_strategy="adaptive", tol=1e-8, sb="yes")
 nothing # hide
 ```
 
@@ -72,7 +72,17 @@ Then we can rebuild and plot an optimal control problem solution (note that the 
 sol = build_solution(docp, primal=nlp_sol.solution, dual=nlp_sol.multipliers)
 plot(sol)
 ```
+## Change the NLP solver
 
+Alternatively, we can use [`MadNLP.jl`](https://jso.dev/Percival.jl) to solve anew the NLP problem:
+
+```@example main
+using MadNLP
+
+output = madnlp(nlp) # hide
+output = madnlp(nlp)
+print(output)
+```
 ## Initial guess
 
 An initial guess, including warm start, can be passed to [`direct_transcription`](@ref) the same way as for `solve`.
@@ -89,22 +99,12 @@ set_initial_guess(docp, nlp, sol)
 nothing # hide
 ```
 
-For a second example, we use [`Percival.jl`](https://jso.dev/Percival.jl) to solve the NLP problem
-with as initial guess the solution from the first resolution.
+We can eventually use yet another NLP solverr, [`Percival.jl`](https://jso.dev/Percival.jl), to solve the NLP problem
+with as initial guess the solution from previous solve.
 
 ```@example main
 using Percival
 
 output = percival(nlp)
-print(output)
-```
-
-We eventullay use [`MadNLP.jl`](https://jso.dev/Percival.jl) to solve the NLP problem from scratch:
-
-```@example main
-using MadNLP
-
-...
-output = madnlp(nlp)
 print(output)
 ```
