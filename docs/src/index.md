@@ -15,10 +15,11 @@ It is part of the [control-toolbox ecosystem](https://github.com/control-toolbox
     please visit the [installation page](https://github.com/control-toolbox#installation).
     The documentation is accessible from the main menu.
 
-An optimal control problem with fixed initial and final times can be described as minimising the cost functional
+A (nonautonomous) optimal control problem with possibly free and final times can be described as minimising the cost functional
+s
 
 ```math
-g(x(t_0), x(t_f)) + \int_{t_0}^{t_f} f^{0}(t, x(t), u(t))~\mathrm{d}t
+g(t_0, x(t_0), t_f, x(t_f)) + \int_{t_0}^{t_f} f^{0}(t, x(t), u(t))~\mathrm{d}t
 ```
 
 where the state $x$ and the control $u$ are functions subject, for $t \in [t_0, t_f]$,
