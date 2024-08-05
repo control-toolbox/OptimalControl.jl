@@ -1,4 +1,4 @@
-# [Goddard problem](@id goddard)
+# [Direct and indirect methods for the Goddard problem](@id goddard)
 
 ## Introduction
 
@@ -33,24 +33,29 @@ $v(t) \leq v_{\max}$. The initial state is fixed while only the final mass is pr
     The Hamiltonian is affine with respect to the control, so singular arcs may occur,
     as well as constrained arcs due to the path constraint on the velocity (see below).
 
-## Direct method
-
 ```@setup main
 using Suppressor # to suppress warnings
 ```
 
-We import the `OptimalControl.jl` package to define the optimal control problem and 
-`NLPModelsIpopt.jl` to solve it. We import the `Plots.jl` package to plot the solution. The 
-`OrdinaryDiffEq.jl` package is used to define the shooting function for the indirect method and 
-the `NonlinearSolve.jl` package permits solve the shooting equation.
+We import the `OptimalControl.jl` package to define the optimal control problem and
+[`NLPModelsIpopt.jl`](https://github.com/JuliaSmoothOptimizers/NLPModelsIpopt.jl) to solve it. 
+We import the [`Plots.jl`](https://github.com/JuliaPlots/Plots.jl) package to plot the solution. 
+The [`OrdinaryDiffEq.jl`](https://github.com/SciML/OrdinaryDiffEq.jl) package is used to 
+define the shooting function for the indirect method and the 
+[`NonlinearSolve.jl`](https://github.com/SciML/NonlinearSolve.jl) and 
+[`MINPACK.jl`](https://github.com/sglyon/MINPACK.jl) packages permit to solve the shooting 
+equation.
 
 ```@example main
-using OptimalControl
-using NLPModelsIpopt
-using OrdinaryDiffEq # to get the Flow function
-using NonlinearSolve # NLE solver
-using Plots
+using OptimalControl  # to define the optimal control problem and more
+using NLPModelsIpopt  # to solve the problem via a direct method
+using OrdinaryDiffEq  # to get the Flow function from OptimalControl
+using NonlinearSolve  # interface to NLE solvers
+using MINPACK         # NLE solver: use to solve the shooting equation
+using Plots           # to plot the solution
 ```
+
+## Optimal control problem
 
 We define the problem
 
@@ -100,6 +105,8 @@ end
 nothing # hide
 ```
 
+## Direct method
+
 We then solve it
 
 ```@example main
@@ -113,7 +120,7 @@ and plot the solution
 plt = plot(direct_sol, solution_label="(direct)", size=(800, 800))
 ```
 
-## Indirect method
+## Structure of the solution
 
 We first determine visually the structure of the optimal solution which is composed of a
 bang arc with maximal control, followed by a singular arc, then by a boundary arc and the final
@@ -216,6 +223,8 @@ fb = Flow(ocp, (x, p, tf) -> ub(x), (x, u, tf) -> g(x), (x, p, tf) -> μ(x, p))
 nothing # hide
 ```
 
+## Shooting function
+
 Then, we define the shooting function according to the optimal structure we have determined,
 that is a concatenation of four arcs.
 
@@ -239,6 +248,8 @@ function shoot!(s, p0, t1, t2, t3, tf)
 end
 nothing # hide
 ```
+
+## Initial guess
 
 To solve the problem by an indirect shooting method, we then need a good initial guess,
 that is a good approximation of the initial costate, the three switching times and the
@@ -266,23 +277,54 @@ s = similar(p0, 7)
 @suppress_err begin # hide
 shoot!(s, p0, t1, t2, t3, tf)
 end # hide
-println("Norm of the shooting function: ‖s‖ = ", norm(s), "\n")
+println("\nNorm of the shooting function: ‖s‖ = ", norm(s), "\n")
 ```
 
-Finally, we can solve the shooting equations thanks to the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl).
+## Indirect shooting
+
+We aggregate the data to define the initial guess vector.
 
 ```@example main
-nle = (s, ξ, λ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])   # auxiliary function
-                                                               # with aggregated inputs
-ξ = [ p0 ; t1 ; t2 ; t3 ; tf ]                                 # initial guess
+ξ = [ p0 ; t1 ; t2 ; t3 ; tf ] # initial guess
+```
 
-prob = NonlinearProblem(nle, ξ)
-global indirect_sol =      # hide
-@suppress_err begin # hide
-NonlinearSolve.solve(prob)      # hide
-# resolution of S(p0) = 0
-indirect_sol = NonlinearSolve.solve(prob; abstol=1e-8, reltol=1e-8, show_trace=Val(true))
-end                 # hide
+### NonlinearSolve.jl
+
+We first use the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package to solve the shooting
+equation. Let us define the problem.
+
+```@example main
+# auxiliary function with aggregated inputs
+nle! = (s, ξ, λ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
+
+# NLE problem with initial guess
+prob = NonlinearProblem(nle!, ξ)
+nothing # hide
+```
+
+Let us do some benchmarking.
+
+```@example main
+using BenchmarkTools
+@benchmark solve(prob; abstol=1e-8, reltol=1e-8, show_trace=Val(false))
+```
+
+For small nonlinear systems, it could be faster to use the 
+[`SimpleNewtonRaphson()` descent algorithm](https://docs.sciml.ai/NonlinearSolve/stable/tutorials/code_optimization/).
+
+```@example main
+@benchmark solve(prob, SimpleNewtonRaphson(); abstol=1e-8, reltol=1e-8, show_trace=Val(false))
+```
+
+Now, let us solve the problem and retrieve the initial costate solution.
+
+```@example main
+global indirect_sol =               # hide
+@suppress_err begin                 # hide
+solve(prob; show_trace=Val(false))  # hide
+# resolution of S(ξ) = 0
+indirect_sol = solve(prob; abstol=1e-8, reltol=1e-8, show_trace=Val(true))
+end                                 # hide
 
 # we retrieve the costate solution together with the times
 p0 = indirect_sol.u[1:3]
@@ -291,6 +333,7 @@ t2 = indirect_sol.u[5]
 t3 = indirect_sol.u[6]
 tf = indirect_sol.u[7]
 
+println("")
 println("p0 = ", p0)
 println("t1 = ", t1)
 println("t2 = ", t2)
@@ -302,10 +345,101 @@ s = similar(p0, 7)
 @suppress_err begin # hide
 shoot!(s, p0, t1, t2, t3, tf)
 end # hide
-println("Norm of the shooting function: ‖s‖ = ", norm(s), "\n")
+println("\nNorm of the shooting function: ‖s‖ = ", norm(s), "\n")
 ```
 
-We plot the solution of the indirect solution (in red) over the solution of the direct method (in blue).
+### MINPACK.jl
+
+```@setup main
+using MINPACK
+function fsolve(f, j, x; kwargs...)
+    try
+        MINPACK.fsolve(f, j, x; kwargs...)
+    catch e
+        println("Erreur using MINPACK")
+        println(e)
+        println("hybrj not supported. Replaced by hybrd even if it is not visible on the doc.")
+        MINPACK.fsolve(f, x; kwargs...)
+    end
+end
+```
+
+Instead of the [`NonlinearSolve.jl`](https://github.com/SciML/NonlinearSolve.jl) package we can use the 
+[`MINPACK.jl`](https://github.com/sglyon/MINPACK.jl) package to solve 
+the shooting equation. To compute the Jacobian of the shooting function we use the 
+[`DifferentiationInterface.jl`](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface) package with 
+[`ForwardDiff`](https://github.com/JuliaDiff/ForwardDiff.jl) backend.
+
+```@example main
+using DifferentiationInterface
+import ForwardDiff
+backend = AutoForwardDiff()
+nothing # hide
+```
+
+Let us define the problem to solve.
+
+```@example main
+# auxiliary function with aggregated inputs
+nle!  = ( s, ξ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
+
+ # Jacobian of the (auxiliary) shooting function
+jnle! = (js, ξ) -> jacobian!(nle!, similar(ξ), js, backend, ξ)
+nothing # hide
+```
+
+We are now in position to solve the problem with the `hybrj` solver from `MINPACK` through the `fsolve` 
+function, providing the Jacobian. Let us do some benchmarking.
+
+```@example main
+@benchmark fsolve(nle!, jnle!, ξ; show_trace=false) # initial guess given to the solver
+```
+
+We can also use the [preparation step](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface/stable/tutorial1/#Preparing-for-multiple-gradients) of `DifferentiationInterface.jl`.
+
+```@example main
+extras = prepare_jacobian(nle!, similar(ξ), backend, ξ)
+jnle_prepared!(js, ξ) = jacobian!(nle!, similar(ξ), js, backend, ξ, extras)
+@benchmark fsolve(nle!, jnle_prepared!, ξ; show_trace=false)
+```
+
+Now, let us solve the problem and retrieve the initial costate solution.
+
+```@example main
+
+global indirect_sol =                                   # hide
+@suppress_err begin                                     # hide
+fsolve(nle!, jnle!, ξ; show_trace=false)                # hide
+# resolution of S(ξ) = 0
+indirect_sol = fsolve(nle!, jnle!, ξ, show_trace=true)
+end                                                     # hide
+
+# we retrieve the costate solution together with the times
+p0 = indirect_sol.x[1:3]
+t1 = indirect_sol.x[4]
+t2 = indirect_sol.x[5]
+t3 = indirect_sol.x[6]
+tf = indirect_sol.x[7]
+
+println("")
+println("p0 = ", p0)
+println("t1 = ", t1)
+println("t2 = ", t2)
+println("t3 = ", t3)
+println("tf = ", tf)
+
+# Norm of the shooting function at solution
+s = similar(p0, 7)
+@suppress_err begin                                     # hide
+shoot!(s, p0, t1, t2, t3, tf)
+end                                                     # hide
+println("\nNorm of the shooting function: ‖s‖ = ", norm(s), "\n")
+```
+
+## Plot of the solution
+
+We plot the solution of the indirect solution (in red) over the solution of the direct method 
+(in blue).
 
 ```@example main
 f = f1 * (t1, fs) * (t2, fb) * (t3, f0) # concatenation of the flows

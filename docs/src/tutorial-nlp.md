@@ -61,7 +61,6 @@ For a first example we use the `ipopt` solver from [`NLPModelsIpopt.jl`](https:/
 
 ```@example main
 using NLPModelsIpopt
-nlp_sol = ipopt(nlp; print_level=5, mu_strategy="adaptive", tol=1e-8, sb="yes") # hide
 nlp_sol = ipopt(nlp; print_level=5, mu_strategy="adaptive", tol=1e-8, sb="yes")
 nothing # hide
 ```
@@ -79,10 +78,17 @@ Alternatively, we can use [`MadNLP.jl`](https://jso.dev/Percival.jl) to solve an
 ```@example main
 using MadNLP
 
-output = madnlp(nlp) # hide
-output = madnlp(nlp)
-print(output)
+nlp_sol = madnlp(nlp)
 ```
+
+Another  possible NLP solver is [`Percival.jl`](https://jso.dev/Percival.jl).
+
+```@example main
+using Percival
+
+nlp_sol = percival(nlp, verbose=1)
+```
+
 ## Initial guess
 
 An initial guess, including warm start, can be passed to [`direct_transcription`](@ref) the same way as for `solve`.
@@ -97,14 +103,4 @@ It can also be changed after the transcription is done, with  [`set_initial_gues
 ```@example main
 set_initial_guess(docp, nlp, sol)
 nothing # hide
-```
-
-We can eventually use yet another NLP solverr, [`Percival.jl`](https://jso.dev/Percival.jl), to solve the NLP problem
-with as initial guess the solution from previous solve.
-
-```@example main
-using Percival
-
-output = percival(nlp)
-print(output)
 ```

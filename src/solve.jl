@@ -1,6 +1,6 @@
 # --------------------------------------------------------------------------------------------------
 # Resolution
-import CommonSolve: solve
+import CommonSolve: solve, CommonSolve
 
 # by order of preference
 algorithms = ()
@@ -66,7 +66,7 @@ julia> sol = solve(ocp, init=(state=t->[-1+t, t*(t-1)], control=t->6-12*t))
 ```
 
 """
-function solve(ocp::OptimalControlModel, description::Symbol...;
+function CommonSolve.solve(ocp::OptimalControlModel, description::Symbol...;
     init=__ocp_init(),
     grid_size::Integer=CTDirect.__grid_size_direct(),
     display::Bool=CTDirect.__display(),

@@ -1,4 +1,4 @@
-# LQR example
+# A simple Linear–quadratic regulator example
 
 We consider the following Linear Quadratic Regulator (LQR) problem which consists in minimising
 

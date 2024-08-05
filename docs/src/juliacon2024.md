@@ -32,7 +32,7 @@ plus boundary, control and state constraints
 
 - [Basic example](tutorial-basic-example.html)
 - [Goddard problem](tutorial-goddard.html)
-- [Orbit transfer](http://control-toolbox.org/kepler/stable)
+- [Orbit transfer](http://control-toolbox.org/kepler)
 
 ## Wrap up
 
