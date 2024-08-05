@@ -99,7 +99,7 @@ set_initial_guess(docp, nlp, sol)
 nothing # hide
 ```
 
-We can eventually use yet another NLP solverr, [`Percival.jl`](https://jso.dev/Percival.jl), to solve the NLP problem
+We can eventually use yet another NLP solver, [`Percival.jl`](https://jso.dev/Percival.jl), to solve the NLP problem
 with as initial guess the solution from previous solve.
 
 ```@example main
