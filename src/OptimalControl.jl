@@ -60,7 +60,7 @@ export variable!, time!, constraint!, dynamics!, objective!, state!, control!, r
 export is_time_independent, is_time_dependent, is_min, is_max, is_variable_dependent, is_variable_independent
 export Lie, @Lie, Poisson, Lift, ⋅, ∂ₜ
 export @def
-export ct_repl
+export ct_repl, ct_repl_update_model
 export ParsingError
 
 # repl
