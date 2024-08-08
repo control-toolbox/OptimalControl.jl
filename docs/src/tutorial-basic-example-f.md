@@ -31,7 +31,9 @@ using NLPModelsIpopt
 using Plots
 ```
 
-Then, we can define the problem
+## Definition of the optimal control problem
+
+Let us define the problem
 
 ```@example main
 ocp = Model()                                   # empty optimal control problem
@@ -55,15 +57,31 @@ nothing # hide
     - using functions like in this example, see also the [`Model` documentation](https://control-toolbox.org/OptimalControl.jl/stable/api-ctbase/model.html#api-ctbase-model) for more details.
     - using an abstract formulation, see for instance [basic example](@ref basic) to compare.
 
-Solve it
+## Solve the problem and plot the solution
+
+We can solve it simply with:
 
 ```@example main
 sol = solve(ocp)
 nothing # hide
 ```
 
-and plot the solution
+And plot the solution with:
 
 ```@example main
+plot(sol)
+```
+
+## Basic example with a state constraint
+
+We add the path constraint
+
+```math
+x_2(t) \le 1.2.
+```
+
+```@example main
+constraint!(ocp, :state; rg=2, ub=1.2)
+sol = solve(ocp)
 plot(sol)
 ```

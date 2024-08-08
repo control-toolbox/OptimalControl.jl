@@ -22,7 +22,7 @@ docp, nlp = direct_transcription(ocp)
 
 using NLPModelsIpopt
 nlp_sol = ipopt(nlp; print_level=5, mu_strategy="adaptive", tol=1e-8, sb="yes")
-sol = build_solution(docp, primal=nlp_sol.solution, dual=nlp_sol.multipliers)
+sol = OptimalControlSolution(docp, primal=nlp_sol.solution, dual=nlp_sol.multipliers)
 plot(sol)
 
 using MadNLP
@@ -35,13 +35,13 @@ mad_nlp_sol = madnlp(nlp)
 docp, nlp = direct_transcription(ocp, init=sol)
 mad_nlp_sol = madnlp(nlp)
 
-mad_sol = build_solution(docp, primal=madnlp_sol.solution, dual=madnlp_sol.multipliers)
+mad_sol = OptimalControlSolution(docp, primal=madnlp_sol.solution, dual=madnlp_sol.multipliers)
 plot(mad_sol)
 
 
 #=
 using Percival
 per_nlp_sol = percival(nlp, verbose = 1)
-per_sol = build_solution(docp, primal=per_nlp_sol.solution, dual=per_nlp_sol.multipliers)
+per_sol = OptimalControlSolution(docp, primal=per_nlp_sol.solution, dual=per_nlp_sol.multipliers)
 plot(per_sol)
 =#
