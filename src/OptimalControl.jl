@@ -19,6 +19,9 @@ using CTBase
 using CTDirect
 using CTFlows
 
+# extend
+import CommonSolve: solve, CommonSolve
+
 # declarations
 const __display  = CTBase.__display
 const __ocp_init = CTBase.__ocp_init
@@ -28,8 +31,6 @@ include("solve.jl")
 # export functions only for user
 export solve
 export available_methods
-
-# export from other modules
 
 # CTFlows
 export VectorField
