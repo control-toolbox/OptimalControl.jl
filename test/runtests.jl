@@ -5,7 +5,7 @@ using SciMLBase
 using NonlinearSolve
 using OrdinaryDiffEq
 using NLPModelsIpopt
-
+using CTDirect
 
 include("Goddard.jl")
 include("problems/goddard.jl")
@@ -19,7 +19,6 @@ include("problems/goddard.jl")
         :goddard_direct,
         :goddard_indirect,
         :grid,
-        #:init,
         :initial_guess,
         :objective,
         )

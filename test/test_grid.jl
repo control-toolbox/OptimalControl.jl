@@ -31,9 +31,10 @@ function test_grid()
     
     # solve with explicit and non uniform time grid
     @testset verbose = true showtiming = true ":explicit_grid" begin
-        time_grid = LinRange(0,1,101)
+        time_grid = LinRange(0, 1, CTDirect.__grid_size()+1)
         sol = solve(ocp, time_grid=time_grid, print_level=0)
-        @test (sol.objective == sol0.objective) && (sol.iterations == sol0.iterations)
+        @test sol.objective == sol0.objective
+        @test sol.iterations == sol0.iterations
     end
     
     @testset verbose = true showtiming = true ":non_uniform_grid" begin
@@ -59,8 +60,9 @@ function test_grid()
     sol0 = solve(ocp, print_level=0)
     
     @testset verbose = true showtiming = true ":explicit_grid" begin
-        sol = solve(ocp, time_grid=LinRange(0,1,101), print_level=0)
-        @test (sol.objective == sol0.objective) && (sol.iterations == sol0.iterations)
+        sol = solve(ocp, time_grid=LinRange(0, 1, CTDirect.__grid_size()+1), print_level=0)
+        @test sol.objective == sol0.objective 
+        @test sol.iterations == sol0.iterations
     end
     
     @testset verbose = true showtiming = true ":non_uniform_grid" begin
@@ -86,8 +88,9 @@ function test_grid()
     sol0 = solve(ocpT2, print_level=0)
     
     @testset verbose = true showtiming = true ":explicit_grid" begin
-        sol = solve(ocpT2, time_grid=LinRange(0,1,101),print_level=0)
-        @test (sol.objective == sol0.objective) && (sol.iterations == sol0.iterations)
+        sol = solve(ocpT2, time_grid=LinRange(0, 1, CTDirect.__grid_size()+1), print_level=0)
+        @test sol.objective == sol0.objective
+        @test sol.iterations == sol0.iterations
     end
     
     @testset verbose = true showtiming = true ":non_uniform_grid" begin
