@@ -1,20 +1,15 @@
-# --------------------------------------------------------------------------------------------------
-# Resolution
-import CommonSolve: solve, CommonSolve
-
-# by order of preference
-algorithms = ()
-
-# descent methods
-algorithms = add(algorithms, (:direct, :adnlp, :ipopt))
-
 """
 $(TYPEDSIGNATURES)
 
 Return the list of available methods to solve the optimal control problem.
 """
-function available_methods()::Tuple{Tuple{Vararg{Symbol}}}
-    return algorithms
+function available_methods()
+    # by order of preference: from top to bottom
+    methods = ()
+    for method ∈ CTDirect.available_methods()
+        methods = add(methods, (:direct, method...))
+    end
+    return methods
 end
 
 
@@ -28,7 +23,7 @@ Solve the the optimal control problem `ocp` by the method given by the (optional
 You can pass a partial description.
 If you give a partial description, then, if several complete descriptions contains the partial one, 
 then, the method with the highest priority is chosen. The higher in the list, 
-the higher is the priority.
+the higher is the priority. To get the list of available methods, call `available_methods()`.
 
 Keyword arguments:
 
@@ -68,13 +63,13 @@ julia> sol = solve(ocp, init=(state=t->[-1+t, t*(t-1)], control=t->6-12*t))
 """
 function CommonSolve.solve(ocp::OptimalControlModel, description::Symbol...;
     init=__ocp_init(),
-    grid_size::Integer=CTDirect.__grid_size_direct(),
-    display::Bool=CTDirect.__display(),
-    print_level::Integer=CTDirect.__print_level_ipopt(),
-    mu_strategy::String=CTDirect.__mu_strategy_ipopt(),
-    max_iter::Integer=CTDirect.__max_iter(),
-    tol::Real=CTDirect.__tol(),
-    linear_solver::String=CTDirect.__linear_solver(),
+    grid_size::Integer=CTDirect.__grid_size(),
+    display::Bool=__display(),
+    print_level::Integer=CTDirect.__ipopt_print_level(),
+    mu_strategy::String=CTDirect.__ipopt_mu_strategy(),
+    max_iter::Integer=CTDirect.__max_iterations(),
+    tol::Real=CTDirect.__tolerance(),
+    linear_solver::String=CTDirect.__ipopt_linear_solver(),
     time_grid=nothing,
     kwargs...)
 
@@ -89,10 +84,10 @@ function CommonSolve.solve(ocp::OptimalControlModel, description::Symbol...;
         docp, nlp = direct_transcription(ocp, description, init=init, grid_size=grid_size, time_grid=time_grid)
 
         # solve DOCP (NB. init is already embedded in docp)
-        docp_solution = CTDirect.solve_docp(docp, nlp,  display=display, print_level=print_level, mu_strategy=mu_strategy, tol=tol, max_iter=max_iter, linear_solver=linear_solver; kwargs...)
+        docp_solution = CTDirect.solve_docp(CTDirect.IpoptTag(), docp, nlp, display=display, print_level=print_level, mu_strategy=mu_strategy, tol=tol, max_iter=max_iter, linear_solver=linear_solver; kwargs...)
 
         # build and return OCP solution
-        return build_solution(docp, docp_solution)
+        return CTDirect.OptimalControlSolution(docp, docp_solution)
     end
 
 end
