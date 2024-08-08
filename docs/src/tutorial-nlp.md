@@ -9,7 +9,7 @@ When calling `solve(ocp)` three steps are performed internally:
 
 - first, the OCP is discretized into a DOCP (a nonlinear optimization problem) with [`direct_transcription`](@ref),
 - then, this DOCP is solved (with the internal function `solve_docp`),
-- finally, a functional solution of the OCP is rebuilt from the solution of the discretized problem, with [`build_solution`](@ref).
+- finally, a functional solution of the OCP is rebuilt from the solution of the discretized problem, with [`OptimalControlSolution`](@ref).
 
 These steps can also be done separately, for instance if you want to use your own NLP solver. 
 
@@ -68,7 +68,7 @@ nothing # hide
 Then we can rebuild and plot an optimal control problem solution (note that the multipliers are optional, but the OCP costate will not be retrieved if the multipliers are not provided).
 
 ```@example main
-sol = build_solution(docp, primal=nlp_sol.solution, dual=nlp_sol.multipliers)
+sol = OptimalControlSolution(docp, primal=nlp_sol.solution, dual=nlp_sol.multipliers)
 plot(sol)
 ```
 ## Change the NLP solver

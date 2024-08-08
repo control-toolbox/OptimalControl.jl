@@ -28,7 +28,9 @@ using NLPModelsIpopt
 using Plots
 ```
 
-Then, we can define the problem
+## Definition of the optimal control problem
+
+Let us define the problem
 
 ```@example main
 @def ocp begin
@@ -65,10 +67,12 @@ nothing # hide
     0 \leq q(t) \leq 5,\quad -2 \leq v(t) \leq 3,\quad t \in [ 0, t_f ].
     ```
 
+## Solve the problem and plot the solution
+
 Solve it
 
 ```@example main
-sol = solve(ocp; grid_size=100)
+sol = solve(ocp)
 nothing # hide
 ```
 

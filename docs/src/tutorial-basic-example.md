@@ -31,7 +31,9 @@ using NLPModelsIpopt
 using Plots
 ```
 
-Then, we can define the problem
+## Definition of the optimal control problem
+
+Let us define the problem
 
 ```@example main
 @def ocp begin
@@ -46,20 +48,57 @@ end
 nothing # hide
 ```
 
-Solve it
+## Solve the problem and plot the solution
+
+We can solve it simply with:
 
 ```@example main
 sol = solve(ocp)
 nothing # hide
 ```
 
-And plot the solution
+And plot the solution with:
 
 ```@example main
 plot(sol)
 ```
 
-For a comprehensive introduction to the syntax used above to describe the optimal control problem, check [this tutorial](@ref abstract). 
+!!! tip "Abstract syntax"
+
+    For a comprehensive introduction to the syntax used above to describe the optimal control problem, 
+    check [this tutorial](@ref abstract). 
+
+## Basic example with a state constraint
+
+We add the path constraint
+
+```math
+x_2(t) \le 1.2.
+```
+
+```@example main
+@def ocp begin
+
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+
+    x₂(t) ≤ 1.2
+
+    x(0) == [ -1, 0 ]
+    x(1) == [ 0, 0 ]
+
+    ẋ(t) == [ x₂(t), u(t) ]
+
+    ∫( 0.5u(t)^2 ) → min
+
+end
+
+sol = solve(ocp)
+plot(sol)
+```
+
+## Save and load a solution
 
 We can save the solution in a julia `.jld2` data file and reload it later, and also export a discretised version of the solution in a more portable [JSON](https://en.wikipedia.org/wiki/JSON) format.
 
@@ -77,3 +116,4 @@ export_ocp_solution(sol, filename_prefix="my_solution")
 sol_json = import_ocp_solution("my_solution")
 println("Objective from JSON discrete solution: ", sol_json.objective)
 ```
+
