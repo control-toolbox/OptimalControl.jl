@@ -23,8 +23,8 @@ using CTFlows
 import CommonSolve: solve, CommonSolve
 
 # declarations
-const __display = CTBase.__display
-__ocp_init() = nothing #()
+const __display  = CTBase.__display
+const __ocp_init = CTBase.__ocp_init
 
 include("solve.jl")
 
