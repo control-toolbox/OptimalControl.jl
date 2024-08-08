@@ -1,20 +1,15 @@
-# --------------------------------------------------------------------------------------------------
-# Resolution
-import CommonSolve: solve, CommonSolve
-
-# by order of preference
-algorithms = ()
-
-# descent methods
-algorithms = add(algorithms, (:direct, :adnlp, :ipopt))
-
 """
 $(TYPEDSIGNATURES)
 
 Return the list of available methods to solve the optimal control problem.
 """
-function available_methods()::Tuple{Tuple{Vararg{Symbol}}}
-    return algorithms
+function available_methods()
+    # by order of preference: from top to bottom
+    methods = ()
+    for method ∈ CTDirect.available_methods()
+        methods = add(methods, (:direct, method...))
+    end
+    return methods
 end
 
 
