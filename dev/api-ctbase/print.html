@@ -20,8 +20,7 @@ B = [ 0
       1 ]
 dynamics!(ocp, (x, u) -&gt; A*x + B*u)
 
-objective!(ocp, :lagrange, (x, u) -&gt; 0.5u^2)</code></pre><p>Then, we can print the form of this optimal control problem:</p><pre><code class="language-julia hljs">ocp</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
-<span class="sgr1">The (autonomous) optimal control problem is of the form:</span>
+objective!(ocp, :lagrange, (x, u) -&gt; 0.5u^2)</code></pre><p>Then, we can print the form of this optimal control problem:</p><pre><code class="language-julia hljs">ocp</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr1">The (autonomous) optimal control problem is of the form:</span>
 
 <span class="sgr34">    minimize  </span>J(x, u) = ∫ f⁰(x(s), u(s)) ds, over [0, 1]
 
@@ -53,8 +52,7 @@ end
 A = [ 0 1
       0 0 ]
 B = [ 0
-      1 ]</code></pre><p>Then, you can print this optimal control problem:</p><pre><code class="language-julia hljs">ocp</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
-<span class="sgr1">The (autonomous) optimal control problem is given by:</span>
+      1 ]</code></pre><p>Then, you can print this optimal control problem:</p><pre><code class="language-julia hljs">ocp</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr1">The (autonomous) optimal control problem is given by:</span>
 
     t ∈ [0, 1], time
     x ∈ R ^ 2, state
@@ -87,4 +85,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Wednesday 7 August 2024 09:19">Wednesday 7 August 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body><div data-docstringscollapsed="true"></div></html>
+</script></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Thursday 8 August 2024 21:23">Thursday 8 August 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body><div data-docstringscollapsed="true"></div></html>
