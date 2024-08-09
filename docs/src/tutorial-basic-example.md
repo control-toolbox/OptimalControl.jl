@@ -31,7 +31,7 @@ using NLPModelsIpopt
 using Plots
 ```
 
-## Definition of the optimal control problem
+## Optimal control problem
 
 Let us define the problem
 
@@ -48,7 +48,7 @@ end
 nothing # hide
 ```
 
-## Solve the problem and plot the solution
+## Solve and plot
 
 We can solve it simply with:
 
@@ -63,12 +63,11 @@ And plot the solution with:
 plot(sol)
 ```
 
-!!! tip "Abstract syntax"
+!!! note "Nota bene"
 
-    For a comprehensive introduction to the syntax used above to describe the optimal control problem, 
-    check [this tutorial](@ref abstract). 
+    For a comprehensive introduction to the syntax used above to describe the optimal control problem, check [this tutorial](@ref abstract). 
 
-## Basic example with a state constraint
+## State constraint
 
 We add the path constraint
 
@@ -98,7 +97,7 @@ sol = solve(ocp)
 plot(sol)
 ```
 
-## Save and load a solution
+## Save and load
 
 We can save the solution in a julia `.jld2` data file and reload it later, and also export a discretised version of the solution in a more portable [JSON](https://en.wikipedia.org/wiki/JSON) format.
 

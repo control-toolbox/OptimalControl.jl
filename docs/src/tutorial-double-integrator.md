@@ -1,4 +1,4 @@
-# [Double integrator: time minimisation](@id double-int)
+# [Double integrator: time minimisation (abstract syntax)](@id double-int)
 
 The problem consists in minimising the final time $t_f$ for the double integrator system
 
@@ -28,7 +28,7 @@ using NLPModelsIpopt
 using Plots
 ```
 
-## Definition of the optimal control problem
+## Optimal control problem
 
 Let us define the problem
 
@@ -48,8 +48,8 @@ Let us define the problem
     q(tf) == 0
     v(tf) == 0
 
-     0 ≤ q(t) ≤ 5,          (1)
-    -2 ≤ v(t) ≤ 3,          (2)
+    -5 ≤ q(t) ≤ 5,          (1)
+    -3 ≤ v(t) ≤ 3,          (2)
 
     ẋ(t) == [ v(t), u(t) ]
 
@@ -59,20 +59,24 @@ end
 nothing # hide
 ```
 
-!!! note "Nota bene"
+!!! tip "Convergence"
 
     In order to ensure convergence of the direct solver, we have added the state constraints labelled (1) and (2):
 
     ```math
-    0 \leq q(t) \leq 5,\quad -2 \leq v(t) \leq 3,\quad t \in [ 0, t_f ].
+    -5 \leq q(t) \leq 5,\quad -3 \leq v(t) \leq 3,\quad t \in [ 0, t_f ].
     ```
 
-## Solve the problem and plot the solution
+!!! note "Nota bene"
+
+    For a comprehensive introduction to the syntax used above to describe the optimal control problem, check [this tutorial](@ref abstract).
+
+## Solve and plot
 
 Solve it
 
 ```@example main
-sol = solve(ocp)
+sol = solve(ocp; print_level=4)
 nothing # hide
 ```
 

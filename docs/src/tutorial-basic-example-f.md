@@ -31,7 +31,7 @@ using NLPModelsIpopt
 using Plots
 ```
 
-## Definition of the optimal control problem
+## Optimal control problem
 
 Let us define the problem
 
@@ -53,11 +53,10 @@ nothing # hide
 
 !!! note "Nota bene"
 
-    There are two ways to define an optimal control problem:
-    - using functions like in this example, see also the [`Model` documentation](https://control-toolbox.org/OptimalControl.jl/stable/api-ctbase/model.html#api-ctbase-model) for more details.
-    - using an abstract formulation, see for instance [basic example](@ref basic) to compare.
+    - For details about the syntax used above to describe the optimal control problem, check the [`Model` documentation](@ref api-ctbase-model).
+    - You can also define the optimal control problem with an abstract syntax. See for instance [basic example](@ref basic) to compare or for a comprehensive introduction to the abstract syntax, check [this tutorial](@ref abstract).
 
-## Solve the problem and plot the solution
+## Solve and plot
 
 We can solve it simply with:
 
@@ -72,7 +71,7 @@ And plot the solution with:
 plot(sol)
 ```
 
-## Basic example with a state constraint
+## State constraint
 
 We add the path constraint
 
