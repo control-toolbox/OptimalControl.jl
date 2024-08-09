@@ -46,7 +46,7 @@ constraint!(ocp, :variable; lb=0)                # tf ≥ 0
 constraint!(ocp, :control; lb=-1, ub=1)          # -1 ≤ u(t) ≤ 1
 constraint!(ocp, :initial; val=[ 1, 2 ])         # initial condition
 constraint!(ocp, :final;   val=[ 0, 0 ])         # final condition
-constraint!(ocp, :state; lb=[-5, -3], ub=[5, 3]) # 0 ≤ q(t) ≤ 5, -2 ≤ v(t) ≤ 3
+constraint!(ocp, :state; lb=[-5, -3], ub=[5, 3]) # -5 ≤ q(t) ≤ 5, -3 ≤ v(t) ≤ 3
 
 dynamics!(ocp, (x, u, tf) -> [ x[2], u ])        # dynamics of the double integrator
 
