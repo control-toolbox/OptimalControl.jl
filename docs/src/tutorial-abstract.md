@@ -218,8 +218,12 @@ end
     Write either `u(t)^2` or `(u^2)(t)`, not `u^2(t)` since in Julia the latter is means `u^(2t)`. Moreover,
     in the case of equalities or of one-sided inequalities, the control and / or the state must belong the *left-hand side*. The following will error:
 
-```julia
-julia> @def ocp begin
+```@setup main-repl
+using OptimalControl
+```
+
+```@repl main-repl
+@def ocp begin
     t ∈ [0, 2], time
     x ∈ R², state
     u ∈ R, control
@@ -229,9 +233,6 @@ julia> @def ocp begin
     1 ≤ x₂(t)
     -1 ≤ u(t) ≤ 1
 end
-ERROR: ParsingError: 
-Line 7: 1 ≤ x₂(t)
-bad constraint declaration
 ```
 
 ## [Mayer cost](@id mayer)
@@ -328,17 +329,14 @@ end
 !!! caveat
     The expression must be the sum of two terms (plus, possibly, a scalar factor before the integral), not *more*, so mind the parentheses. For instance, the following errors:
 
-```julia
-julia> @def ocp begin
-           p = (t0, tf) ∈ R², variable
-           t ∈ [t0, tf], time
-           x = (q, v) ∈ R², state
-           u ∈ R², control
-           (tf - t0) + q(tf) + 0.5∫( c(t) * u(t)^2 ) → min
-       end
-ERROR: ParsingError: 
-Line 5: (tf - t0) + q(tf) + 0.5 * ∫(c(t) * u(t) ^ 2) → min
-bad objective declaration resulting in a Mayer term with trailing ∫
+```@repl main-repl
+@def ocp begin
+    p = (t0, tf) ∈ R², variable
+    t ∈ [t0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R², control
+    (tf - t0) + q(tf) + 0.5∫( c(t) * u(t)^2 ) → min
+end
 ```
 
 The correct syntax is
@@ -378,45 +376,31 @@ end
 !!! hint
     You can use a trace mode for the macro `@def` to look at your code after expansions of the aliases adding `true` after your `begin ... end` block:
 
-```julia
-julia> @def damped_integrator begin
-           tf ∈ R, variable
-           t ∈ [0, tf], time
-           x = (q, v) ∈ R², state
-           u ∈ R, control
-           q̇ = v(t)
-           v̇ = u(t) - c(t)
-           ẋ(t) == [q̇, v̇]
-       end true
-
-variable: tf, dim: 1
-time: t, initial time: 0, final time: tf
-state: x, dim: 2
-control: u, dim: 1
-alias: q̇ = (x[2])(t)
-alias: v̇ = u(t) - c(t)
-dynamics: ẋ(t) == [(x[2])(t), u(t) - c(t)]
+```@repl main-repl
+@def damped_integrator begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    q̇ = v(t)
+    v̇ = u(t) - c(t)
+    ẋ(t) == [q̇, v̇]
+end true;
 ```
 
 !!! caveat
     The dynamics of an OCP is indeed a particular constraint, be careful to use `==` and not a single `=` that would try to define an alias:
 
-```julia
-julia> @def double_integrator begin
-       tf ∈ R, variable
-       t ∈ [0, tf], time
-       x = (q, v) ∈ R², state
-       u ∈ R, control
-       q̇ = v
-       v̇ = u
-       ẋ(t) = [q̇, v̇]
-       end
-ERROR: ParsingError: 
-Line 7: ẋ(t) = begin
-        #= REPL[35]:8 =#
-        [q̇, v̇]
-    end
-forbidden alias name: (∂(x))(t)
+```@repl main-repl
+@def double_integrator begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    q̇ = v
+    v̇ = u
+    ẋ(t) = [q̇, v̇]
+end
 ```
 
 ## Misc
