@@ -216,17 +216,16 @@ end</code></pre><pre class="documenter-example-output"><code class="nohighlight 
 ├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
 │</span><span class="sgr32"><span class="sgr1">   V    │   V    │    V     │    V     │     V     │</span></span><span class="sgr1"><span class="sgr31">     X      │</span><span class="sgr32">      V      │
 ╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
-</span></span></code></pre><div class="admonition is-category-caveat"><header class="admonition-header">Caveat</header><div class="admonition-body"><p>Write either <code>u(t)^2</code> or <code>(u^2)(t)</code>, not <code>u^2(t)</code> since in Julia the latter is means <code>u^(2t)</code>. Moreover, in the case of equalities or of one-sided inequalities, the control and / or the state must belong the <em>left-hand side</em>. The following will error:</p></div></div><pre><code class="language-julia hljs">julia&gt; @def ocp begin
-    t ∈ [0, 2], time
-    x ∈ R², state
-    u ∈ R, control
-    x(0) == [-1, 0]
-    x(2) == [0, 0]
-    ẋ(t) == [x₂(t), u(t)]
-    1 ≤ x₂(t)
-    -1 ≤ u(t) ≤ 1
-end
-ERROR: ParsingError: 
+</span></span></code></pre><div class="admonition is-category-caveat"><header class="admonition-header">Caveat</header><div class="admonition-body"><p>Write either <code>u(t)^2</code> or <code>(u^2)(t)</code>, not <code>u^2(t)</code> since in Julia the latter is means <code>u^(2t)</code>. Moreover, in the case of equalities or of one-sided inequalities, the control and / or the state must belong the <em>left-hand side</em>. The following will error:</p></div></div><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; @def ocp begin
+           t ∈ [0, 2], time
+           x ∈ R², state
+           u ∈ R, control
+           x(0) == [-1, 0]
+           x(2) == [0, 0]
+           ẋ(t) == [x₂(t), u(t)]
+           1 ≤ x₂(t)
+           -1 ≤ u(t) ≤ 1
+       end</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: ParsingError:
 Line 7: 1 ≤ x₂(t)
 bad constraint declaration</code></pre><h2 id="mayer"><a class="docs-heading-anchor" href="#mayer">Mayer cost</a><a id="mayer-1"></a><a class="docs-heading-anchor-permalink" href="#mayer" title="Permalink"></a></h2><pre><code class="language-julia hljs">:( $e1 → min ) 
 :( $e1 → max ) </code></pre><p>Mayer costs are defined in a similar way to boundary conditions and follow the same rules. The symbol <code>→</code> is used to denote minimisation of maximisation, the latter being treated by minimising the opposite cost.</p><pre><code class="language-julia hljs">@def ocp begin
@@ -338,14 +337,13 @@ end</code></pre><pre class="documenter-example-output"><code class="nohighlight 
 ├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
 │</span><span class="sgr32"><span class="sgr1">   V    │   V    │    V     │    V     │</span></span><span class="sgr1"><span class="sgr31">     X     │</span><span class="sgr32">     V      │</span><span class="sgr31">      X      │
 ╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
-</span></span></code></pre><div class="admonition is-category-caveat"><header class="admonition-header">Caveat</header><div class="admonition-body"><p>The expression must be the sum of two terms (plus, possibly, a scalar factor before the integral), not <em>more</em>, so mind the parentheses. For instance, the following errors:</p></div></div><pre><code class="language-julia hljs">julia&gt; @def ocp begin
+</span></span></code></pre><div class="admonition is-category-caveat"><header class="admonition-header">Caveat</header><div class="admonition-body"><p>The expression must be the sum of two terms (plus, possibly, a scalar factor before the integral), not <em>more</em>, so mind the parentheses. For instance, the following errors:</p></div></div><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; @def ocp begin
            p = (t0, tf) ∈ R², variable
            t ∈ [t0, tf], time
            x = (q, v) ∈ R², state
            u ∈ R², control
            (tf - t0) + q(tf) + 0.5∫( c(t) * u(t)^2 ) → min
-       end
-ERROR: ParsingError: 
+       end</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: ParsingError:
 Line 5: (tf - t0) + q(tf) + 0.5 * ∫(c(t) * u(t) ^ 2) → min
 bad objective declaration resulting in a Mayer term with trailing ∫</code></pre><p>The correct syntax is</p><pre><code class="language-julia hljs">@def ocp begin
     p = (t0, tf) ∈ R², variable
@@ -389,7 +387,7 @@ end</code></pre><pre class="documenter-example-output"><code class="nohighlight 
 ├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
 │</span><span class="sgr32"><span class="sgr1">   V    │   V    │    V     │</span></span><span class="sgr1"><span class="sgr31">    X     │</span><span class="sgr32">     V     │</span><span class="sgr31">     X      │      X      │
 ╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
-</span></span></code></pre><div class="admonition is-category-caveat"><header class="admonition-header">Caveat</header><div class="admonition-body"><p>Such aliases do <em>not</em> define any additional function and are just replaced textually by the parser. In particular, they cannot be used outside the <code>@def</code> <code>begin ... end</code> block.</p></div></div><div class="admonition is-category-hint"><header class="admonition-header">Hint</header><div class="admonition-body"><p>You can use a trace mode for the macro <code>@def</code> to look at your code after expansions of the aliases adding <code>true</code> after your <code>begin ... end</code> block:</p></div></div><pre><code class="language-julia hljs">julia&gt; @def damped_integrator begin
+</span></span></code></pre><div class="admonition is-category-caveat"><header class="admonition-header">Caveat</header><div class="admonition-body"><p>Such aliases do <em>not</em> define any additional function and are just replaced textually by the parser. In particular, they cannot be used outside the <code>@def</code> <code>begin ... end</code> block.</p></div></div><div class="admonition is-category-hint"><header class="admonition-header">Hint</header><div class="admonition-body"><p>You can use a trace mode for the macro <code>@def</code> to look at your code after expansions of the aliases adding <code>true</code> after your <code>begin ... end</code> block:</p></div></div><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; @def damped_integrator begin
            tf ∈ R, variable
            t ∈ [0, tf], time
            x = (q, v) ∈ R², state
@@ -397,26 +395,23 @@ end</code></pre><pre class="documenter-example-output"><code class="nohighlight 
            q̇ = v(t)
            v̇ = u(t) - c(t)
            ẋ(t) == [q̇, v̇]
-       end true
-
-variable: tf, dim: 1
+       end true;</code><code class="nohighlight hljs ansi" style="display:block;">variable: tf, dim: 1
 time: t, initial time: 0, final time: tf
 state: x, dim: 2
 control: u, dim: 1
 alias: q̇ = (x[2])(t)
 alias: v̇ = u(t) - c(t)
-dynamics: ẋ(t) == [(x[2])(t), u(t) - c(t)]</code></pre><div class="admonition is-category-caveat"><header class="admonition-header">Caveat</header><div class="admonition-body"><p>The dynamics of an OCP is indeed a particular constraint, be careful to use <code>==</code> and not a single <code>=</code> that would try to define an alias:</p></div></div><pre><code class="language-julia hljs">julia&gt; @def double_integrator begin
-       tf ∈ R, variable
-       t ∈ [0, tf], time
-       x = (q, v) ∈ R², state
-       u ∈ R, control
-       q̇ = v
-       v̇ = u
-       ẋ(t) = [q̇, v̇]
-       end
-ERROR: ParsingError: 
+dynamics: ẋ(t) == [(x[2])(t), u(t) - c(t)]</code></pre><div class="admonition is-category-caveat"><header class="admonition-header">Caveat</header><div class="admonition-body"><p>The dynamics of an OCP is indeed a particular constraint, be careful to use <code>==</code> and not a single <code>=</code> that would try to define an alias:</p></div></div><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; @def double_integrator begin
+           tf ∈ R, variable
+           t ∈ [0, tf], time
+           x = (q, v) ∈ R², state
+           u ∈ R, control
+           q̇ = v
+           v̇ = u
+           ẋ(t) = [q̇, v̇]
+       end</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: ParsingError:
 Line 7: ẋ(t) = begin
-        #= REPL[35]:8 =#
+        #= REPL[1]:8 =#
         [q̇, v̇]
     end
 forbidden alias name: (∂(x))(t)</code></pre><h2 id="Misc"><a class="docs-heading-anchor" href="#Misc">Misc</a><a id="Misc-1"></a><a class="docs-heading-anchor-permalink" href="#Misc" title="Permalink"></a></h2><ul><li>Declarations (of variable - if any -, time, state and control) must be done first. Then, dynamics, constraints and cost can be introduced in an arbitrary order.</li><li>It is possible to provide numbers / labels (as in math equations) for the constraints to improve readability (this is mostly for future use, typically to retrieve the Lagrange multiplier associated with the discretisation of a given constraint):</li></ul><pre><code class="language-julia hljs">@def damped_integrator begin
@@ -454,4 +449,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-double-integrator-f.html">« Time min (functional syntax)</a><a class="docs-footer-nextpage" href="tutorial-initial-guess.html">Initial guess »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Friday 9 August 2024 13:23">Friday 9 August 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-double-integrator-f.html">« Time min (functional syntax)</a><a class="docs-footer-nextpage" href="tutorial-initial-guess.html">Initial guess »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Friday 9 August 2024 17:10">Friday 9 August 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
