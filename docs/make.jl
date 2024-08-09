@@ -29,10 +29,11 @@ makedocs(
     ),
     pages = [
         "Introduction" => "index.md",
-        "Basic example" => [
+        "Basic examples" => [
             "Energy min (abstract syntax)"   => "tutorial-basic-example.md", 
             "Energy min (functional syntax)" => "tutorial-basic-example-f.md",
-            "Time minimisation"              => "tutorial-double-integrator.md",
+            "Time min (abstract syntax)"     => "tutorial-double-integrator.md",
+            "Time min (functional syntax)"     => "tutorial-double-integrator-f.md",
         ],
         "Manual" => [
             "Abstract syntax" => "tutorial-abstract.md",

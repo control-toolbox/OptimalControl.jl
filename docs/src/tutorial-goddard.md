@@ -33,10 +33,6 @@ $v(t) \leq v_{\max}$. The initial state is fixed while only the final mass is pr
     The Hamiltonian is affine with respect to the control, so singular arcs may occur,
     as well as constrained arcs due to the path constraint on the velocity (see below).
 
-```@setup main
-using Suppressor # to suppress warnings
-```
-
 We import the `OptimalControl.jl` package to define the optimal control problem and
 [`NLPModelsIpopt.jl`](https://github.com/JuliaSmoothOptimizers/NLPModelsIpopt.jl) to solve it. 
 We import the [`Plots.jl`](https://github.com/JuliaPlots/Plots.jl) package to plot the solution. 
@@ -274,9 +270,7 @@ println("tf = ", tf)
 # Norm of the shooting function at solution
 using LinearAlgebra: norm
 s = similar(p0, 7)
-@suppress_err begin # hide
 shoot!(s, p0, t1, t2, t3, tf)
-end # hide
 println("\nNorm of the shooting function: ‖s‖ = ", norm(s), "\n")
 ```
 
@@ -319,12 +313,8 @@ For small nonlinear systems, it could be faster to use the
 Now, let us solve the problem and retrieve the initial costate solution.
 
 ```@example main
-global indirect_sol =               # hide
-@suppress_err begin                 # hide
-solve(prob; show_trace=Val(false))  # hide
 # resolution of S(ξ) = 0
 indirect_sol = solve(prob; abstol=1e-8, reltol=1e-8, show_trace=Val(true))
-end                                 # hide
 
 # we retrieve the costate solution together with the times
 p0 = indirect_sol.u[1:3]
@@ -342,9 +332,7 @@ println("tf = ", tf)
 
 # Norm of the shooting function at solution
 s = similar(p0, 7)
-@suppress_err begin # hide
 shoot!(s, p0, t1, t2, t3, tf)
-end # hide
 println("\nNorm of the shooting function: ‖s‖ = ", norm(s), "\n")
 ```
 
@@ -406,13 +394,8 @@ jnle_prepared!(js, ξ) = jacobian!(nle!, similar(ξ), js, backend, ξ, extras)
 Now, let us solve the problem and retrieve the initial costate solution.
 
 ```@example main
-
-global indirect_sol =                                   # hide
-@suppress_err begin                                     # hide
-fsolve(nle!, jnle!, ξ; show_trace=false)                # hide
 # resolution of S(ξ) = 0
 indirect_sol = fsolve(nle!, jnle!, ξ, show_trace=true)
-end                                                     # hide
 
 # we retrieve the costate solution together with the times
 p0 = indirect_sol.x[1:3]
@@ -430,9 +413,7 @@ println("tf = ", tf)
 
 # Norm of the shooting function at solution
 s = similar(p0, 7)
-@suppress_err begin                                     # hide
 shoot!(s, p0, t1, t2, t3, tf)
-end                                                     # hide
 println("\nNorm of the shooting function: ‖s‖ = ", norm(s), "\n")
 ```
 

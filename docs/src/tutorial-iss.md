@@ -2,10 +2,6 @@
 
 In this tutorial we present the indirect simple shooting method on a simple example.
 
-```@setup main
-using Suppressor # to suppress warnings
-```
-
 Let us start by importing the necessary packages.
 
 ```@example main
@@ -185,17 +181,10 @@ For small nonlinear systems, it could be faster to use the
 Now, let us solve the problem and retrieve the initial costate solution.
 
 ```@example main
-global indirect_sol =                               # hide
-@suppress_err begin                                 # hide
-solve(prob; show_trace=Val(false))                  # hide
 indirect_sol = solve(prob; show_trace=Val(true))    # resolution of S(p0) = 0  
-end                                                 # hide
 p0_sol = indirect_sol.u[1]                          # costate solution
 println("\ncostate:    p0 = ", p0_sol)
-@suppress_err begin                                 # hide
 println("shoot: |S(p0)| = ", abs(S(p0_sol)), "\n")
-end                                                 # hide
-nothing                                             # hide
 ```
 
 ### MINPACK.jl
@@ -253,17 +242,10 @@ jnle_prepared!(js, ξ) = jacobian!(nle!, similar(ξ), js, backend, ξ, extras)
 Now, let us solve the problem and retrieve the initial costate solution.
 
 ```@example main
-global indirect_sol =                                   # hide
-@suppress_err begin                                     # hide
-fsolve(nle!, jnle!, ξ; show_trace=false)                # hide
 indirect_sol = fsolve(nle!, jnle!, ξ; show_trace=true)  # resolution of S(p0) = 0
-end                                                     # hide
 p0_sol = indirect_sol.x[1]                              # costate solution
 println("\ncostate:    p0 = ", p0_sol)
-@suppress_err begin                                     # hide
 println("shoot: |S(p0)| = ", abs(S(p0_sol)), "\n")
-end                                                     # hide
-nothing                                                 # hide
 ```
 
 ## Plot of the solution
@@ -277,6 +259,142 @@ plot(sol, size=(800, 600))
 
 In the indirect shooting method, the research of the optimal control is replaced by the computation
 of its associated extremal. This computation is equivalent to finding the initial covector solution
-to the shooting function.
+to the shooting function. Let us plot the extremal in the phase space and the shooting function with 
+the solution.
+
+```@raw html
+<article class="docstring">
+<header>
+    <a class="docstring-article-toggle-button fa-solid fa-chevron-right" href="javascript:;" title="Expand docstring"> </a>
+    <code>pretty_plot</code> — <span class="docstring-category">Function</span>
+</header>
+<section style="display: none;"><div><pre><code class="language-julia hljs">using Plots.PlotMeasures
+
+exp(p0; saveat=[]) = φ((t0, tf), x0, p0, saveat=saveat)
+
+function pretty_plot(S, p0; Np0=20, kwargs...)
+
+    times = range(t0, tf, length=2)
+    p0_min = -0.5
+    p0_max = 2
+    p0_sol = p0
+
+    # plot of the flow in phase space
+    plt_flow = plot()
+    p0s = range(p0_min, p0_max, length=Np0)
+    for i ∈ eachindex(p0s)
+        sol = exp(p0s[i])
+        x = [sol.state(t)   for t ∈ sol.times]
+        p = [sol.costate(t) for t ∈ sol.times]
+        label = i==1 ? "extremals" : false
+        plot!(plt_flow, x, p, color=:blue, label=label)
+    end
+
+    # plot of wavefronts in phase space
+    p0s = range(p0_min, p0_max, length=200)
+    xs  = zeros(length(p0s), length(times))
+    ps  = zeros(length(p0s), length(times))
+    for i ∈ eachindex(p0s)
+        sol = exp(p0s[i], saveat=times)
+        xs[i, :] .= sol.state.(times)
+        ps[i, :] .= sol.costate.(times)
+    end
+    for j ∈ eachindex(times)
+        label = j==1 ? "flow at times" : false
+        plot!(plt_flow, xs[:, j], ps[:, j], color=:green, linewidth=2, label=label)
+    end
+
+    # 
+    plot!(plt_flow, xlims=(-1.1, 1), ylims=(p0_min, p0_max))
+    plot!(plt_flow, [0, 0], [p0_min, p0_max], color=:black, xlabel="x", ylabel="p", label="x=xf")
+    
+    # solution
+    sol = exp(p0_sol)
+    x = [sol.state(t)   for t ∈ sol.times]
+    p = [sol.costate(t) for t ∈ sol.times]
+    plot!(plt_flow, x, p, color=:red, linewidth=2, label="extremal solution")
+    plot!(plt_flow, [x[end]], [p[end]], seriestype=:scatter, color=:green, label=false)
+
+    # plot of the shooting function 
+    p0s = range(p0_min, p0_max, length=200)
+    plt_shoot = plot(xlims=(p0_min, p0_max), ylims=(-2, 4), xlabel="p₀", ylabel="y")
+    plot!(plt_shoot, p0s, S, linewidth=2, label="S(p₀)", color=:green)
+    plot!(plt_shoot, [p0_min, p0_max], [0, 0], color=:black, label="y=0")
+    plot!(plt_shoot, [p0_sol, p0_sol], [-2, 0], color=:black, label="p₀ solution", linestyle=:dash)
+    plot!(plt_shoot, [p0_sol], [0], seriestype=:scatter, color=:green, label=false)
+
+    # final plot
+    plot(plt_flow, plt_shoot; layout=(1,2), leftmargin=15px, bottommargin=15px, kwargs...)
+
+end</code><button class="copy-button fa-solid fa-copy" aria-label="Copy this code ;opblock" title="Copy"></button></pre></div>
+</section>
+</article>
+```
+
+```@example main
+using Plots.PlotMeasures # hide
+exp(p0; saveat=[]) = φ((t0, tf), x0, p0, saveat=saveat) # hide
+ # hide
+function pretty_plot(S, p0; Np0=20, kwargs...) # hide
+ # hide
+    times = range(t0, tf, length=2) # hide
+    p0_min = -0.5 # hide
+    p0_max = 2 # hide
+    p0_sol = p0 # hide
+ # hide
+    # plot of the flow in phase space # hide
+    plt_flow = plot() # hide
+    p0s = range(p0_min, p0_max, length=Np0) # hide
+    for i ∈ eachindex(p0s) # hide
+        sol = exp(p0s[i]) # hide
+        x = [sol.state(t)   for t ∈ sol.times] # hide
+        p = [sol.costate(t) for t ∈ sol.times] # hide
+        label = i==1 ? "extremals" : false # hide
+        plot!(plt_flow, x, p, color=:blue, label=label) # hide
+    end # hide
+ # hide
+    # plot of wavefronts in phase space # hide
+    p0s = range(p0_min, p0_max, length=200) # hide
+    xs  = zeros(length(p0s), length(times)) # hide
+    ps  = zeros(length(p0s), length(times)) # hide
+    for i ∈ eachindex(p0s) # hide
+        sol = exp(p0s[i], saveat=times) # hide
+        xs[i, :] .= sol.state.(times) # hide
+        ps[i, :] .= sol.costate.(times) # hide
+    end # hide
+    for j ∈ eachindex(times) # hide
+        label = j==1 ? "flow at times" : false # hide
+        plot!(plt_flow, xs[:, j], ps[:, j], color=:green, linewidth=2, label=label) # hide
+    end # hide
+ # hide
+    #  # hide
+    plot!(plt_flow, xlims=(-1.1, 1), ylims=(p0_min, p0_max)) # hide
+    plot!(plt_flow, [0, 0], [p0_min, p0_max], color=:black, xlabel="x", ylabel="p", label="x=xf") # hide
+     # hide
+    # solution # hide
+    sol = exp(p0_sol) # hide
+    x = [sol.state(t)   for t ∈ sol.times] # hide
+    p = [sol.costate(t) for t ∈ sol.times] # hide
+    plot!(plt_flow, x, p, color=:red, linewidth=2, label="extremal solution") # hide
+    plot!(plt_flow, [x[end]], [p[end]], seriestype=:scatter, color=:green, label=false) # hide
+ # hide
+    # plot of the shooting function  # hide
+    p0s = range(p0_min, p0_max, length=200) # hide
+    plt_shoot = plot(xlims=(p0_min, p0_max), ylims=(-2, 4), xlabel="p₀", ylabel="y") # hide
+    plot!(plt_shoot, p0s, S, linewidth=2, label="S(p₀)", color=:green) # hide
+    plot!(plt_shoot, [p0_min, p0_max], [0, 0], color=:black, label="y=0") # hide
+    plot!(plt_shoot, [p0_sol, p0_sol], [-2, 0], color=:black, label="p₀ solution", linestyle=:dash) # hide
+    plot!(plt_shoot, [p0_sol], [0], seriestype=:scatter, color=:green, label=false) # hide
+ # hide
+    # final plot # hide
+    plot(plt_flow, plt_shoot; layout=(1,2), leftmargin=15px, bottommargin=15px, kwargs...) # hide
+ # hide
+end # hide
+nothing # hide
+```
+
+```@example main
+pretty_plot(S, p0_sol; size=(800, 450))
+```
 
 
