@@ -17,7 +17,7 @@ A variable (only one is allowed) is a finite dimensional vector or reals that wi
 
 ```@example main
 using OptimalControl #hide
-@def ocp begin
+@def begin
     v ∈ R², variable
 end
 ```
@@ -25,7 +25,7 @@ end
 Aliases `v₁` and `v₂` are automatically defined and can be used in subsequent expressions instead of `v[1]` and `v[2]`. The user can also define her own aliases for the components (one alias per dimension):
 
 ```@example main
-@def ocp begin
+@def begin
     v = (a, b) ∈ R², variable
 end
 ```
@@ -33,10 +33,24 @@ end
 A one dimensional variable can be declared according to
 
 ```@example main
-@def ocp begin
+@def begin
     v ∈ R, variable
 end
 ```
+
+!!! note
+    It is also possible to use the following syntax
+    ```@example main
+    @def ocp begin
+        v ∈ R, variable
+    end
+    ```
+    that is equivalent to
+    ```@example main
+    ocp = @def begin
+        v ∈ R, variable
+    end
+    ```
 
 ## Time
 
@@ -49,7 +63,7 @@ The independent variable or *time* is a scalar bound to a given interval. Its na
 ```@example main
 t0 = 1
 tf = 5
-@def ocp begin
+@def begin
     t ∈ [t0, tf], time
 end
 ```
@@ -57,7 +71,7 @@ end
 One (or even the two bounds) can be variable, typically for minimum time problems (see [Mayer cost](#mayer) section):
 
 ```@example main
-@def ocp begin
+@def begin
     v = (T, λ) ∈ R², variable
     t ∈ [0, T], time
 end
@@ -73,7 +87,7 @@ end
 The state declaration defines the name and the dimension of the state:
 
 ```@example main
-@def ocp begin
+@def begin
     x ∈ R⁴, state
 end
 ```
@@ -81,7 +95,7 @@ end
 As for the variable, there are automatic aliases (`x₁` for `x[1]`, *etc.*) and the user can define her own aliases (one per scalar component of the state):
 
 ```@example main
-@def ocp begin
+@def begin
     x = (q₁, q₂, v₁, v₂) ∈ R⁴, state
 end
 ```
@@ -96,7 +110,7 @@ end
 The control declaration defines the name and the dimension of the control:
 
 ```@example main
-@def ocp begin
+@def begin
     u ∈ R², control
 end
 ```
@@ -104,7 +118,7 @@ end
 As before, there are automatic aliases (`u₁` for `u[1]`, *etc.*) and the user can define her own aliases (one per scalar component of the state):
 
 ```@example main
-@def ocp begin
+@def begin
     u = (α, β) ∈ R², control
 end
 ```
@@ -125,7 +139,7 @@ depending on whether it is autonomous or not (the parser will detect dependence 
 (`ẋ` can be used):
 
 ```@example main
-@def ocp begin
+@def begin
     t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
@@ -136,7 +150,7 @@ end
 or
 
 ```@example main
-@def ocp begin
+@def begin
     t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
@@ -147,7 +161,7 @@ end
 Any Julia code can be used, so the following is also OK: 
 
 ```@example main
-@def ocp begin
+ocp = @def begin
     t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
@@ -200,7 +214,7 @@ In the example below, there are
 - one (two-sided) nonlinear control constraint.
 
 ```@example main
-@def ocp begin
+@def begin
     tf ∈ R, variable
     t ∈ [0, tf], time
     x ∈ R², state
@@ -223,7 +237,7 @@ using OptimalControl
 ```
 
 ```@repl main-repl
-@def ocp begin
+@def begin
     t ∈ [0, 2], time
     x ∈ R², state
     u ∈ R, control
@@ -246,7 +260,7 @@ Mayer costs are defined in a similar way to boundary conditions and follow the s
 to denote minimisation of maximisation, the latter being treated by minimising the opposite cost.
 
 ```@example main
-@def ocp begin
+@def begin
     tf ∈ R, variable
     t ∈ [0, tf], time
     x = (q, v) ∈ R², state
@@ -278,7 +292,7 @@ end
 Lagrange (integral) costs are defined used the symbol `∫`, *with parenthesis:
 
 ```@example main
-@def ocp begin
+@def begin
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
     u ∈ R, control
@@ -317,7 +331,7 @@ As for the dynamics, the parser will detect whether the integrand depends or not
 Quite readily, Mayer and Lagrange costs can be combined into general Bolza costs. For instance as follows:
 
 ```@example main
-@def ocp begin
+@def begin
     p = (t0, tf) ∈ R², variable
     t ∈ [t0, tf], time
     x = (q, v) ∈ R², state
@@ -330,7 +344,7 @@ end
     The expression must be the sum of two terms (plus, possibly, a scalar factor before the integral), not *more*, so mind the parentheses. For instance, the following errors:
 
 ```@repl main-repl
-@def ocp begin
+@def begin
     p = (t0, tf) ∈ R², variable
     t ∈ [t0, tf], time
     x = (q, v) ∈ R², state
@@ -341,7 +355,7 @@ end
 
 The correct syntax is
 ```@example main
-@def ocp begin
+@def begin
     p = (t0, tf) ∈ R², variable
     t ∈ [t0, tf], time
     x = (q, v) ∈ R², state
@@ -359,7 +373,7 @@ end
 The single `=` symbol is used to define not a constraint but an alias, that is a purely syntactic replacement. There are some automatic aliases, *e.g.* `x₁` for `x[1]` if `x` is the state, and we have also seen that the user can define her own aliases when declaring the [variable](#variable), [state](#state) and [control](#control). Arbitrary aliases can be further defined, as below (compare with previous examples in the [dynamics](#dynamics) section):
 
 ```@example main
-@def ocp begin
+@def begin
     t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
@@ -367,14 +381,13 @@ The single `=` symbol is used to define not a constraint but an alias, that is a
     F₁ = [0, 1]
     ẋ(t) == F₀ + u(t) * F₁
 end
-
 ```
 
 !!! caveat
     Such aliases do *not* define any additional function and are just replaced textually by the parser. In particular, they cannot be used outside the `@def` `begin ... end` block.
 
 !!! hint
-    You can use a trace mode for the macro `@def` to look at your code after expansions of the aliases adding `true` after your `begin ... end` block:
+    You can rely on a trace mode for the macro `@def` to look at your code after expansions of the aliases using the `@def ocp ...` syntax and adding `true` after your `begin ... end` block:
 
 ```@repl main-repl
 @def damped_integrator begin

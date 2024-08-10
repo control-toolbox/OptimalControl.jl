@@ -36,7 +36,7 @@ using Plots
 Let us define the problem
 
 ```@example main
-@def ocp begin
+ocp = @def begin
     t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
