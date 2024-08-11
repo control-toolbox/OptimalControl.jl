@@ -132,6 +132,7 @@ with the function `solve`. See for instance the [basic example](@ref basic-solve
 
 ```@example main
 using Plots
+
 plot(sol)
 ```
 
@@ -166,8 +167,8 @@ the flow from the optimal control problem and the control in feedback form. Anot
 to define explicitely the Hamiltonian.
 
 ```@example main
-H(x, p, u) = p[1] * x[2] + p[2] * u - 0.5 * u^2 # pseudo-Hamiltonian
-H(x, p) = H(x, p, u(x, p))                      # Hamiltonian
+H(x, p, u) = p[1] * x[2] + p[2] * u - 0.5 * u^2     # pseudo-Hamiltonian
+H(x, p) = H(x, p, u(x, p))                          # Hamiltonian
 
 z = Flow(Hamiltonian(H))
 xf, pf = z(t0, x0, p0, tf)
@@ -176,7 +177,7 @@ xf, pf = z(t0, x0, p0, tf)
 You can also provide the Hamiltonian vector field.
 
 ```@example main
-Hv(x, p) = [x[2], p[2]], [0.0, -p[1]] # Hamiltonian vector field
+Hv(x, p) = [x[2], p[2]], [0.0, -p[1]]     # Hamiltonian vector field
 
 z = Flow(HamiltonianVectorField(Hv))
 xf, pf = z(t0, x0, p0, tf)
@@ -216,7 +217,7 @@ x0 = 0
 
 ocp = @def begin
 
-    tf ∈ R, variable
+    tf ∈ R, variable             # the optimisation variable is tf
     t ∈ [t0, tf], time
     x ∈ R, state
     u ∈ R, control
@@ -241,14 +242,14 @@ p0 = 2tf/3
 nothing # hide
 ```
 
-The input arguments of the maximising control are the state `x`, the costate `p` and the variable `tf`.
+The input arguments of the maximising control are now the state `x`, the costate `p` and the variable `tf`.
 
 ```@example main
-u(x, p, tf) = tf*p
+u(x, p, tf) = tf * p
 nothing # hide
 ```
 
-Let us check that the final condition `x(tf)=1` is satisfied.
+Let us check that the final condition `x(tf) = 1` is satisfied.
 
 ```@example main
 f = Flow(ocp, u)
@@ -256,7 +257,7 @@ xf, pf = f(t0, x0, p0, tf, tf)
 ```
 
 The usage of the flow `f` is the following: `f(t0, x0, p0, tf, v)` where `v` is the variable. If one wants
-to compute the state at time `t1 = 0.5`, then one must write:
+to compute the state at time `t1 = 0.5`, then, one must write:
 
 ```@example main
 t1 = 0.5
@@ -265,7 +266,7 @@ x1, p1 = f(t0, x0, p0, t1, tf)
 
 !!! note "Free times"
 
-    In the particular cases: the initial time `t0` is the only variable, the final time `tf` is the only variable, or the initial and final times `t0` and `tf` are the only variables and is in order `v=(t0, tf)`, the times do not need to be repeated in the call of the flow.
+    In the particular cases: the initial time `t0` is the only variable, the final time `tf` is the only variable, or the initial and final times `t0` and `tf` are the only variables and are in order `v=(t0, tf)`, the times do not need to be repeated in the call of the flow:
 
     ```@example main
     xf, pf = f(t0, x0, p0, tf)
@@ -362,13 +363,13 @@ From the Pontryagin maximum principle, the optimal control is a concatenation of
 positive bang arc ($u=1$). The initial costate is 
 
 ```math
-p0 = \frac{1}{x_0-\frac{x_f-1}{e^{-t_f}}}
+p_0 = \frac{1}{x_0 - (x_f-1) e^{t_f}}
 ```
 
 and the switching time is $t_1 = -\ln(p_0)$.
 
 ```@example main
-p0 = 1/(x0-(xf-1)/exp(-tf))
+p0 = 1/( x0 - (xf-1) * exp(tf) )
 t1 = -log(p0)
 nothing  # hide
 ```
@@ -376,10 +377,10 @@ nothing  # hide
 Let us define the two flows and the concatenation. Note that the concatenation of two flows is a flow.
 
 ```@example main
-f0 = Flow(ocp, (x, p) -> 0) # off arc: u = 0
-f1 = Flow(ocp, (x, p) -> 1) # positive bang arc: u = 1
+f0 = Flow(ocp, (x, p) -> 0)     # off arc: u = 0
+f1 = Flow(ocp, (x, p) -> 1)     # positive bang arc: u = 1
 
-f = f0 * (t1, f1)           # f0 followed by f1 whenever t ≥ t1
+f = f0 * (t1, f1)               # f0 followed by f1 whenever t ≥ t1
 nothing # hide
 ```
 
