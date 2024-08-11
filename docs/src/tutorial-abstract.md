@@ -232,7 +232,7 @@ end
 
 !!! caveat
     Write either `u(t)^2` or `(u^2)(t)`, not `u^2(t)` since in Julia the latter is means `u^(2t)`. Moreover,
-    in the case of equalities or of one-sided inequalities, the control and / or the state must belong the *left-hand side*. The following will error:
+    in the case of equalities or of one-sided inequalities, the control and / or the state must belong to the *left-hand side*. The following will error:
 
 ```@setup main-repl
 using OptimalControl
@@ -362,7 +362,7 @@ The correct syntax is
     t ∈ [t0, tf], time
     x = (q, v) ∈ R², state
     u ∈ R², control
-    ( (tf - t0) + q(tf) ) + 0.5∫( c(t) * u(t)^2 ) → min
+    ((tf - t0) + q(tf)) + 0.5∫( c(t) * u(t)^2 ) → min
 end
 ```
 
@@ -407,7 +407,7 @@ end true;
     The dynamics of an OCP is indeed a particular constraint, be careful to use `==` and not a single `=` that would try to define an alias:
 
 ```@repl main-repl
-@def double_integrator begin
+double_integrator = @def begin
     tf ∈ R, variable
     t ∈ [0, tf], time
     x = (q, v) ∈ R², state
