@@ -116,7 +116,7 @@ and plot the solution
 plt = plot(direct_sol, solution_label="(direct)", size=(800, 800))
 ```
 
-## Structure of the solution
+## [Structure of the solution](@id goddard-structure)
 
 We first determine visually the structure of the optimal solution which is composed of a
 bang arc with maximal control, followed by a singular arc, then by a boundary arc and the final
@@ -417,7 +417,7 @@ shoot!(s, p0, t1, t2, t3, tf)
 println("\nNorm of the shooting function: ‖s‖ = ", norm(s), "\n")
 ```
 
-## Plot of the solution
+## [Plot of the solution](@id goddard-plot)
 
 We plot the solution of the indirect solution (in red) over the solution of the direct method 
 (in blue).

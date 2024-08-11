@@ -37,6 +37,7 @@ makedocs(
         ],
         "Manual" => [
             "Abstract syntax" => "tutorial-abstract.md",
+            "Flow"            => "tutorial-flow.md",
             "Initial guess"   => "tutorial-initial-guess.md",
             "Plot a solution" => "tutorial-plot.md",
         ],
