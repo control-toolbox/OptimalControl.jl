@@ -23,7 +23,7 @@ t0 = 0
 tf = 10
 α  = 5
 
-@def ocp begin
+ocp = @def begin
     t ∈ [t0, tf], time
     v ∈ R, variable
     x ∈ R², state

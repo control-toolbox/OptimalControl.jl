@@ -50,7 +50,7 @@ B  = [ 0
 
 function lqr(tf)
 
-    @def ocp begin
+    ocp = @def begin
         t ∈ [0, tf], time
         x ∈ R², state
         u ∈ R, control

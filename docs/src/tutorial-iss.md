@@ -35,7 +35,7 @@ tf = 1
 x0 = -1
 xf = 0
 α  = 1.5
-@def ocp begin
+ocp = @def begin
 
     t ∈ [t0, tf], time
     x ∈ R, state

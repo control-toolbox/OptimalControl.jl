@@ -33,7 +33,7 @@ using Plots
 Let us define the problem
 
 ```@example main
-@def ocp begin
+ocp = @def begin
 
     tf ∈ R,          variable
     t ∈ [ 0, tf ],   time
