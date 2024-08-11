@@ -1,4 +1,4 @@
- How to plot a solution
+# [How to plot a solution](@id tutorial-plot)
 
 In this tutorial we explain the different ways to plot a solution of an optimal control problem.
 
