@@ -25,7 +25,7 @@ using Plots
 We define a test problem
 
 ```@example main
-@def ocp begin
+ocp = @def begin
 
     t ∈ [0, 1], time
     x ∈ R², state

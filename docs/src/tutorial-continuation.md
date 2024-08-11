@@ -23,7 +23,7 @@ using Plots
 and write a function that returns the OCP for a given final time
 ```@example main
 function ocp_T(T)
-    @def ocp begin
+    ocp = @def begin
         t ∈ [0, T], time
         x ∈ R², state
         u ∈ R, control

@@ -63,7 +63,7 @@ m0 = 1      # initial mass
 vmax = 0.1  # maximal authorized speed
 mf = 0.6    # final mass to target
 
-@def ocp begin # definition of the optimal control problem
+ocp = @def begin # definition of the optimal control problem
 
     tf ∈ R, variable
     t ∈ [t0, tf], time

@@ -1,4 +1,4 @@
-# How to plot a solution
+ How to plot a solution
 
 In this tutorial we explain the different ways to plot a solution of an optimal control problem.
 
@@ -12,7 +12,7 @@ using NLPModelsIpopt
 Then, we define a simple optimal control problem and solve it.
 
 ```@example main
-@def ocp begin
+ocp = @def begin
 
     t ∈ [0, 1], time
     x ∈ R², state
@@ -110,7 +110,7 @@ plot(sol; layout=:group, size=(800, 300))
 You can plot the solution of a second optimal control problem on the same figure if it has the same number of states, costates and controls. For instance, consider the same optimal control problem but with a different initial condition.
 
 ```@example main
-@def ocp begin
+ocp = @def begin
 
     t ∈ [0, 1], time
     x ∈ R², state
@@ -186,7 +186,7 @@ B  = [ 0
 # definition
 function lqr(tf)
 
-    @def ocp begin
+    ocp = @def begin
         t ∈ [0, tf], time
         x ∈ R², state
         u ∈ R, control

@@ -76,7 +76,7 @@ x_2(t) \le 1.2.
 ```
 
 ```@example main
-@def ocp begin
+ocp = @def begin
 
     t ∈ [0, 1], time
     x ∈ R², state
