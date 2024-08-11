@@ -220,7 +220,7 @@ end</code></pre><pre class="documenter-example-output"><code class="nohighlight 
 ├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
 │</span><span class="sgr32"><span class="sgr1">   V    │   V    │    V     │    V     │     V     │</span></span><span class="sgr1"><span class="sgr31">     X      │</span><span class="sgr32">      V      │
 ╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
-</span></span></code></pre><div class="admonition is-category-caveat"><header class="admonition-header">Caveat</header><div class="admonition-body"><p>Write either <code>u(t)^2</code> or <code>(u^2)(t)</code>, not <code>u^2(t)</code> since in Julia the latter is means <code>u^(2t)</code>. Moreover, in the case of equalities or of one-sided inequalities, the control and / or the state must belong the <em>left-hand side</em>. The following will error:</p></div></div><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; @def begin
+</span></span></code></pre><div class="admonition is-category-caveat"><header class="admonition-header">Caveat</header><div class="admonition-body"><p>Write either <code>u(t)^2</code> or <code>(u^2)(t)</code>, not <code>u^2(t)</code> since in Julia the latter is means <code>u^(2t)</code>. Moreover, in the case of equalities or of one-sided inequalities, the control and / or the state must belong to the <em>left-hand side</em>. The following will error:</p></div></div><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; @def begin
            t ∈ [0, 2], time
            x ∈ R², state
            u ∈ R, control
@@ -354,7 +354,7 @@ bad objective declaration resulting in a Mayer term with trailing ∫</code></pr
     t ∈ [t0, tf], time
     x = (q, v) ∈ R², state
     u ∈ R², control
-    ( (tf - t0) + q(tf) ) + 0.5∫( c(t) * u(t)^2 ) → min
+    ((tf - t0) + q(tf)) + 0.5∫( c(t) * u(t)^2 ) → min
 end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr1">The optimal control problem is not complete but made of:</span>
 
     p = ((t0, tf) ∈ R², variable)
@@ -405,7 +405,7 @@ state: x, dim: 2
 control: u, dim: 1
 alias: q̇ = (x[2])(t)
 alias: v̇ = u(t) - c(t)
-dynamics: ẋ(t) == [(x[2])(t), u(t) - c(t)]</code></pre><div class="admonition is-category-caveat"><header class="admonition-header">Caveat</header><div class="admonition-body"><p>The dynamics of an OCP is indeed a particular constraint, be careful to use <code>==</code> and not a single <code>=</code> that would try to define an alias:</p></div></div><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; @def double_integrator begin
+dynamics: ẋ(t) == [(x[2])(t), u(t) - c(t)]</code></pre><div class="admonition is-category-caveat"><header class="admonition-header">Caveat</header><div class="admonition-body"><p>The dynamics of an OCP is indeed a particular constraint, be careful to use <code>==</code> and not a single <code>=</code> that would try to define an alias:</p></div></div><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; double_integrator = @def begin
            tf ∈ R, variable
            t ∈ [0, tf], time
            x = (q, v) ∈ R², state
@@ -453,4 +453,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-double-integrator-f.html">« Time min (functional syntax)</a><a class="docs-footer-nextpage" href="tutorial-flow.html">Flow »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Sunday 11 August 2024 22:18">Sunday 11 August 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-double-integrator-f.html">« Time min (functional syntax)</a><a class="docs-footer-nextpage" href="tutorial-flow.html">Flow »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Sunday 11 August 2024 23:09">Sunday 11 August 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
