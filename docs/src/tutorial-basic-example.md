@@ -48,7 +48,7 @@ end
 nothing # hide
 ```
 
-## Solve and plot
+## [Solve and plot](@id basic-solve-plot)
 
 We can solve it simply with:
 
