@@ -44,12 +44,14 @@ end
     @def ocp begin
         v ∈ R, variable
     end
+    nothing # hide
     ```
     that is equivalent to
     ```@example main
     ocp = @def begin
         v ∈ R, variable
     end
+    nothing # hide
     ```
 
 ## Time
