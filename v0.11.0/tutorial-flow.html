@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Flow · OptimalControl.jl</title><meta name="title" content="Flow · OptimalControl.jl"/><meta property="og:title" content="Flow · OptimalControl.jl"/><meta property="twitter:title" content="Flow · OptimalControl.jl"/><meta name="description" content="Documentation for OptimalControl.jl."/><meta property="og:description" content="Documentation for OptimalControl.jl."/><meta property="twitter:description" content="Documentation for OptimalControl.jl."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script><link href="https://control-toolbox.org/assets/css/documentation.css" rel="stylesheet" type="text/css"/><script src="https://control-toolbox.org/assets/js/documentation.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="index.html">OptimalControl.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="index.html">Introduction</a></li><li><span class="tocitem">Basic examples</span><ul><li><a class="tocitem" href="tutorial-basic-example.html">Energy min (abstract syntax)</a></li><li><a class="tocitem" href="tutorial-basic-example-f.html">Energy min (functional syntax)</a></li><li><a class="tocitem" href="tutorial-double-integrator.html">Time min (abstract syntax)</a></li><li><a class="tocitem" href="tutorial-double-integrator-f.html">Time min (functional syntax)</a></li></ul></li><li><span class="tocitem">Manual</span><ul><li><a class="tocitem" href="tutorial-abstract.html">Abstract syntax</a></li><li class="is-active"><a class="tocitem" href="tutorial-flow.html">Flow</a><ul class="internal"><li><a class="tocitem" href="#Basic-usage"><span>Basic usage</span></a></li><li><a class="tocitem" href="#Extremals-and-trajectories"><span>Extremals and trajectories</span></a></li><li><a class="tocitem" href="#Variable"><span>Variable</span></a></li><li><a class="tocitem" href="#Concatenation-of-arcs"><span>Concatenation of arcs</span></a></li><li><a class="tocitem" href="#Callbacks"><span>Callbacks</span></a></li></ul></li><li><a class="tocitem" href="tutorial-initial-guess.html">Initial guess</a></li><li><a class="tocitem" href="tutorial-plot.html">Plot a solution</a></li></ul></li><li><span class="tocitem">Tutorials</span><ul><li><a class="tocitem" href="tutorial-continuation.html">Discrete continuation</a></li><li><a class="tocitem" href="tutorial-goddard.html">Goddard: direct, indirect</a></li><li><a class="tocitem" href="tutorial-iss.html">Indirect simple shooting</a></li><li><a class="tocitem" href="tutorial-lqr-basic.html">Linear–quadratic regulator</a></li><li><a class="tocitem" href="tutorial-nlp.html">NLP and DOCP manipulations</a></li></ul></li><li><span class="tocitem">API</span><ul><li><a class="tocitem" href="api-optimalcontrol.html">OptimalControl.jl</a></li><li><input class="collapse-toggle" id="menuitem-5-2" type="checkbox"/><label class="tocitem" for="menuitem-5-2"><span class="docs-label">Subpackages</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="api-ctbase.html">CTBase.jl</a></li><li><a class="tocitem" href="api-ctdirect.html">CTDirect.jl</a></li><li><a class="tocitem" href="api-ctflows.html">CTFlows.jl</a></li></ul></li></ul></li><li><span class="tocitem">Developers</span><ul><li><a class="tocitem" href="dev-optimalcontrol.html">OptimalControl.jl</a></li><li><input class="collapse-toggle" id="menuitem-6-2" type="checkbox"/><label class="tocitem" for="menuitem-6-2"><span class="docs-label">Subpackages</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="dev-ctbase.html">CTBase.jl</a></li><li><a class="tocitem" href="dev-ctdirect.html">CTDirect.jl</a></li><li><a class="tocitem" href="dev-ctflows.html">CTFlows.jl</a></li></ul></li></ul></li><li><a class="tocitem" href="juliacon2024.html">JuliaCon 2024</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Manual</a></li><li class="is-active"><a href="tutorial-flow.html">Flow</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="tutorial-flow.html">Flow</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl/blob/main/docs/src/tutorial-flow.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="manual-flow"><a class="docs-heading-anchor" href="#manual-flow">How to compute flows</a><a id="manual-flow-1"></a><a class="docs-heading-anchor-permalink" href="#manual-flow" title="Permalink"></a></h1><p>In this tutorial, we explain the <code>Flow</code> function from <code>OptimalControl</code> package.</p><h2 id="Basic-usage"><a class="docs-heading-anchor" href="#Basic-usage">Basic usage</a><a id="Basic-usage-1"></a><a class="docs-heading-anchor-permalink" href="#Basic-usage" title="Permalink"></a></h2><p>Les us define a basic optimal control problem.</p><pre><code class="language-julia hljs">using OptimalControl
+
+t0 = 0
+tf = 1
+x0 = [-1, 0]
+
+ocp = @def begin
+
+    t ∈ [ t0, tf ], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+
+    x(t0) == x0
+    x(tf) == [ 0, 0 ]
+
+    ẋ(t)  == [ v(t), u(t) ]
+
+    ∫( 0.5u(t)^2 ) → min
+
+end</code></pre><p>The <strong>pseudo-Hamiltonian</strong> of this problem is</p><p class="math-container">\[    H(x, p, u) = p_q\, q + p_v\, v + p^0 u^2 /2,\]</p><p>where <span>$p^0 = -1$</span> since we are in the normal case. From the Pontryagin maximum principle, the maximising control is given in feedback form by</p><p class="math-container">\[u(x, p) = p_v\]</p><p>since <span>$\partial^2_{uu} H = p^0 = - 1 &lt; 0$</span>. </p><pre><code class="language-julia hljs">u(x, p) = p[2]</code></pre><p>Actually, if <span>$(x, u)$</span> is a solution of the optimal control problem,  then, the Pontryagin maximum principle tells us that there exists a costate <span>$p$</span> such that <span>$u(t) = u(x(t), p(t))$</span> and such that the pair <span>$(x, p)$</span> satisfies:</p><p class="math-container">\[\begin{array}{l}
+    \dot{x}(t) = \displaystyle\phantom{-}\nabla_p H(x(t), p(t), u(x(t), p(t))), \\[0.5em]
+    \dot{p}(t) = \displaystyle         - \nabla_x H(x(t), p(t), u(x(t), p(t))).
+\end{array}\]</p><p>The <code>Flow</code> function aims to compute <span>$(x, p)$</span> from the optimal control problem <code>ocp</code> and the control in  feedback form <code>u(x, p)</code>.</p><div class="admonition is-info"><header class="admonition-header">Nota bene</header><div class="admonition-body"><p>Actually, writing <span>$z = (x, p)$</span>, then the pair <span>$(x, p)$</span> is also solution of</p><p class="math-container">\[    \dot{z}(t) = \vec{\mathbf{H}}(z(t)),\]</p><p>where <span>$\mathbf{H}(z) = H(z, u(z))$</span> and <span>$\vec{\mathbf{H}} = (\nabla_p \mathbf{H}, -\nabla_x \mathbf{H})$</span>. This is what is actually computed by <code>Flow</code>.</p></div></div><p>Let us try to get the associated flow:</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; f = Flow(ocp, u)</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: ExtensionError. Please make: <span class="sgr32"><span class="sgr1">julia&gt;</span></span><span class="sgr35"> using </span>OrdinaryDiffEq</code></pre><p>As you can see, an error occured since we need the package <a href="https://docs.sciml.ai/DiffEqDocs"><code>OrdinaryDiffEq.jl</code></a>. This package provides numerical integrators to compute solutions of the ordinary differential equation  <span>$\dot{z}(t) = \vec{\mathbf{H}}(z(t))$</span>.</p><div class="admonition is-info"><header class="admonition-header">OrdinaryDiffEq.jl</header><div class="admonition-body"><p>The package <code>OrdinaryDiffEq.jl</code> is part of <code>DifferentialEquations.jl</code>. You can either use one or the other.</p></div></div><pre><code class="language-julia hljs">using OrdinaryDiffEq
+
+f = Flow(ocp, u)</code></pre><p>Now we have the flow of the associated Hamiltonian vector field, we can use it. Some simple calculations shows that the initial covector <span>$p(0)$</span> solution of the Pontryagin maximum principle is <span>$[12, 6]$</span>. Let us check that integrating the flow from <span>$(t_0, x_0) = (0, [-1, 0])$</span> to the final time <span>$t_f$</span> we reach the target <span>$x_f = [0, 0]$</span>.</p><pre><code class="language-julia hljs">p0 = [12, 6]
+xf, pf = f(t0, x0, p0, tf)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">([2.425225564003491e-15, 2.4789995105012755e-14], [12.0, -5.999999999999998])</code></pre><p>If you prefer to get the state, costate and control trajectories at any time, you can call the flow:</p><pre><code class="language-julia hljs">sol = f((t0, tf), x0, p0)</code></pre><p>In this case, you obtain a data that you can plot exactly like when solving the optimal control problem  with the function <code>solve</code>. See for instance the <a href="tutorial-basic-example.html#basic-solve-plot">basic example</a> or the  <a href="tutorial-plot.html#tutorial-plot">plot tutorial</a>.</p><pre><code class="language-julia hljs">using Plots
+
+plot(sol)</code></pre><img src="tutorial-flow-37c7a4cf.svg" alt="Example block output"/><p>You can notice from the graph of <code>v</code> that the integrator has made very few steps:</p><pre><code class="language-julia hljs">sol.times</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">6-element Vector{Float64}:
+ 0.0
+ 0.0027652656319165627
+ 0.01991270125908861
+ 0.10962307175239358
+ 0.42412906329190825
+ 1.0</code></pre><p>To have a better visualisation (the accuracy won&#39;t change), you can provide a fine grid.</p><pre><code class="language-julia hljs">sol = f((t0, tf), x0, p0; saveat=range(t0, tf, 100))
+plot(sol)</code></pre><img src="tutorial-flow-46172db3.svg" alt="Example block output"/><p>The argument <code>saveat</code> is an option from <code>OrdinaryDiffEq.jl</code>. Please check the  <a href="https://docs.sciml.ai/DiffEqDocs/stable/basics/common_solver_opts/#solver_options">list of common options</a>. For instance, one can change the integrator with the keyword argument <code>alg</code> or the absolute tolerance with  <code>abstol</code>. Note that you can set an option when declaring the flow or set an option in a particular call of the flow.  In the following example, the integrator will be <code>BS5()</code> and the absolute tolerance will be <code>abstol=1e-8</code>.</p><pre><code class="language-julia hljs">f = Flow(ocp, u; alg=BS5(), abstol=1)   # alg=BS5(), abstol=1
+xf, pf = f(t0, x0, p0, tf; abstol=1e-8) # alg=BS5(), abstol=1e-8</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">([9.187823365203511e-17, 1.6903858162793364e-16], [12.0, -6.0])</code></pre><h2 id="Extremals-and-trajectories"><a class="docs-heading-anchor" href="#Extremals-and-trajectories">Extremals and trajectories</a><a id="Extremals-and-trajectories-1"></a><a class="docs-heading-anchor-permalink" href="#Extremals-and-trajectories" title="Permalink"></a></h2><p>The pairs <span>$(x, p)$</span> solution of the Hamitonian vector field are called <em>extremals</em>. We can compute some constructing the flow from the optimal control problem and the control in feedback form. Another way to compute extremals is  to define explicitely the Hamiltonian.</p><pre><code class="language-julia hljs">H(x, p, u) = p[1] * x[2] + p[2] * u - 0.5 * u^2     # pseudo-Hamiltonian
+H(x, p) = H(x, p, u(x, p))                          # Hamiltonian
+
+z = Flow(Hamiltonian(H))
+xf, pf = z(t0, x0, p0, tf)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">([2.425225564003491e-15, 2.4789995105012755e-14], [12.0, -5.999999999999998])</code></pre><p>You can also provide the Hamiltonian vector field.</p><pre><code class="language-julia hljs">Hv(x, p) = [x[2], p[2]], [0.0, -p[1]]     # Hamiltonian vector field
+
+z = Flow(HamiltonianVectorField(Hv))
+xf, pf = z(t0, x0, p0, tf)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">([2.425225564003491e-15, 2.4789995105012755e-14], [12.0, -5.999999999999998])</code></pre><p>Note that if you call the flow on <code>tspan=(t0, tf)</code>, then you obtain the output solution  from <code>OrdinaryDiffEq.jl</code>.</p><pre><code class="language-julia hljs">sol = z((t0, tf), x0, p0)
+xf, pf = sol(tf)[1:2], sol(tf)[3:4]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">([2.936701702520115e-15, 4.115723153754471e-14], [12.0, -5.999999999999967])</code></pre><p>You can also compute trajectories from the control dynamics <span>$(x, u) \mapsto (v, u)$</span> and a control law  <span>$t \mapsto u(t)$</span>.</p><pre><code class="language-julia hljs">u(t) = 6-12t
+x = Flow((t, x) -&gt; [x[2], u(t)]; autonomous=false) # the vector field depends on t
+x(t0, x0, tf)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2-element Vector{Float64}:
+ -8.881784197001252e-16
+  1.5543122344752192e-15</code></pre><p>Again, giving a <code>tspan</code> you get an output solution from <code>OrdinaryDiffEq.jl</code>.</p><pre><code class="language-julia hljs">sol = x((t0, tf), x0)
+plot(sol)</code></pre><img src="tutorial-flow-d3698db2.svg" alt="Example block output"/><h2 id="Variable"><a class="docs-heading-anchor" href="#Variable">Variable</a><a id="Variable-1"></a><a class="docs-heading-anchor-permalink" href="#Variable" title="Permalink"></a></h2><p>Let us consider an optimal control problem with a (decision / optimisation) variable.</p><pre><code class="language-julia hljs">t0 = 0
+x0 = 0
+
+ocp = @def begin
+
+    tf ∈ R, variable             # the optimisation variable is tf
+    t ∈ [t0, tf], time
+    x ∈ R, state
+    u ∈ R, control
+
+    x(t0) == x0
+    x(tf) == 1
+
+    ẋ(t) == tf * u(t)
+
+    tf + 0.5∫(u(t)^2) → min
+
+end</code></pre><p>As you can see, the variable is the final time <code>tf</code>. Note that the dynamics depends on <code>tf</code>. From the Pontryagin maximum principle, the solution is given by:</p><pre><code class="language-julia hljs">tf = (3/2)^(1/4)
+p0 = 2tf/3</code></pre><p>The input arguments of the maximising control are now the state <code>x</code>, the costate <code>p</code> and the variable <code>tf</code>.</p><pre><code class="language-julia hljs">u(x, p, tf) = tf * p</code></pre><p>Let us check that the final condition <code>x(tf) = 1</code> is satisfied.</p><pre><code class="language-julia hljs">f = Flow(ocp, u)
+xf, pf = f(t0, x0, p0, tf, tf)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(1.0000000000000004, 0.7377879464668812)</code></pre><p>The usage of the flow <code>f</code> is the following: <code>f(t0, x0, p0, tf, v)</code> where <code>v</code> is the variable. If one wants to compute the state at time <code>t1 = 0.5</code>, then, one must write:</p><pre><code class="language-julia hljs">t1 = 0.5
+x1, p1 = f(t0, x0, p0, t1, tf)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(0.45180100180492255, 0.7377879464668812)</code></pre><div class="admonition is-info"><header class="admonition-header">Free times</header><div class="admonition-body"><p>In the particular cases: the initial time <code>t0</code> is the only variable, the final time <code>tf</code> is the only variable, or the initial and final times <code>t0</code> and <code>tf</code> are the only variables and are in order <code>v=(t0, tf)</code>, the times do not need to be repeated in the call of the flow:</p><pre><code class="language-julia hljs">xf, pf = f(t0, x0, p0, tf)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(1.0000000000000004, 0.7377879464668812)</code></pre></div></div><p>Since the variable is the final time, we can make the time-reparameterisation <span>$t = t_f \, s$</span> to normalise the time <span>$s$</span> in <span>$[0, 1]$</span>.</p><pre><code class="language-julia hljs">ocp = @def begin
+
+    tf ∈ R, variable
+    s ∈ [0, 1], time
+    x ∈ R, state
+    u ∈ R, control
+
+    x(0) == 0
+    x(1) == 1
+
+    ẋ(s) == tf^2 * u(s)
+
+    tf + (0.5*tf)*∫(u(s)^2) → min
+
+end
+
+f = Flow(ocp, u)
+xf, pf = f(0, x0, p0, 1, tf)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(1.0000000000000002, 0.7377879464668812)</code></pre><p>Another possibility is to add a new state variable <span>$t_f(s)$</span>. The problem has no variable anymore.</p><pre><code class="language-julia hljs">ocp = @def begin
+
+    s ∈ [0, 1], time
+    y = (x, tf) ∈ R², state
+    u ∈ R, control
+
+    x(0) == 0
+    x(1) == 1
+
+    dx = tf(s)^2 * u(s)
+    dtf = 0 * u(s) # 0
+    ẏ(s) == [dx, dtf]
+
+    tf(1) + 0.5∫(tf(s) * u(s)^2) → min
+
+end
+
+u(y, q) = y[2] * q[1]
+
+f = Flow(ocp, u)
+yf, pf = f(0, [x0, tf], [p0, 0], 1)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">([1.0000000000000002, 1.1066819197003217], [0.7377879464668812, -1.0000000000000004])</code></pre><div class="admonition is-danger"><header class="admonition-header">Bug</header><div class="admonition-body"><p>Note that in the previous optimal control problem, we have <code>dtf = 0 * u(s)</code> instead of <code>dtf = 0</code>. The latter does not work.</p></div></div><div class="admonition is-info"><header class="admonition-header">Goddard problem</header><div class="admonition-body"><p>In the <a href="tutorial-goddard.html#goddard-structure">Goddard problem</a>, you may find other constructions of flows, especially for singular and boundary arcs.</p></div></div><h2 id="Concatenation-of-arcs"><a class="docs-heading-anchor" href="#Concatenation-of-arcs">Concatenation of arcs</a><a id="Concatenation-of-arcs-1"></a><a class="docs-heading-anchor-permalink" href="#Concatenation-of-arcs" title="Permalink"></a></h2><p>In this part, we present how to concatenate several flows. Let us consider the following problem.</p><pre><code class="language-julia hljs">t0 =  0
+tf =  1
+x0 = -1
+xf =  0
+
+@def ocp begin
+
+    t ∈ [ t0, tf ], time
+    x ∈ R, state
+    u ∈ R, control
+
+    x(t0) == x0
+    x(tf) == xf
+
+    -1 ≤ u(t) ≤ 1
+
+    ẋ(t) == -x(t) + u(t)
+
+    ∫( abs(u(t)) ) → min
+
+end</code></pre><p>From the Pontryagin maximum principle, the optimal control is a concatenation of an off arc (<span>$u=0$</span>) followed by a  positive bang arc (<span>$u=1$</span>). The initial costate is </p><p class="math-container">\[p_0 = \frac{1}{x_0 - (x_f-1) e^{t_f}}\]</p><p>and the switching time is <span>$t_1 = -\ln(p_0)$</span>.</p><pre><code class="language-julia hljs">p0 = 1/( x0 - (xf-1) * exp(tf) )
+t1 = -log(p0)</code></pre><p>Let us define the two flows and the concatenation. Note that the concatenation of two flows is a flow.</p><pre><code class="language-julia hljs">f0 = Flow(ocp, (x, p) -&gt; 0)     # off arc: u = 0
+f1 = Flow(ocp, (x, p) -&gt; 1)     # positive bang arc: u = 1
+
+f = f0 * (t1, f1)               # f0 followed by f1 whenever t ≥ t1</code></pre><p>Now, we can check that the state reach the target.</p><pre><code class="language-julia hljs">sol = f((t0, tf), x0, p0)
+plot(sol)</code></pre><img src="tutorial-flow-e3efdf7a.svg" alt="Example block output"/><div class="admonition is-info"><header class="admonition-header">Goddard problem</header><div class="admonition-body"><p>In the <a href="tutorial-goddard.html#goddard-plot">Goddard problem</a>, you may find more complex concatenations.</p></div></div><p>For the moment, this concatenation is not equivalent to an exact concatenation.</p><pre><code class="language-julia hljs">f = Flow(x -&gt;  x)
+g = Flow(x -&gt; -x)
+
+x0 = 1
+φ(t) = (f * (t/2, g))(0, x0, t)
+ψ(t) = g(t/2, f(0, x0, t/2), t)
+
+println(&quot;φ(t) = &quot;, abs(φ(1)-x0))
+println(&quot;ψ(t) = &quot;, abs(ψ(1)-x0))
+
+t = range(1, 5e2, 201)
+
+plt = plot(yaxis=:log, legend=:bottomright, title=&quot;Comparison of concatenations&quot;, xlabel=&quot;t&quot;)
+plot!(plt, t, t-&gt;abs(φ(t)-x0), label=&quot;OptimalControl&quot;)
+plot!(plt, t, t-&gt;abs(ψ(t)-x0), label=&quot;Classical&quot;)</code></pre><img src="tutorial-flow-e989550b.svg" alt="Example block output"/><h2 id="Callbacks"><a class="docs-heading-anchor" href="#Callbacks">Callbacks</a><a id="Callbacks-1"></a><a class="docs-heading-anchor-permalink" href="#Callbacks" title="Permalink"></a></h2><p>You can use any callback from <a href="https://docs.sciml.ai/DiffEqDocs/stable/features/callback_functions"><code>OrdinaryDiffEq.jl</code></a>. For instance, we reproduce the <a href="https://docs.sciml.ai/DiffEqDocs/stable/features/callback_functions/#ContinuousCallback-Examples">bouncing ball example</a>.</p><pre><code class="language-julia hljs">function condition(x, t, integrator) # Event when condition(u, t, integrator) == 0
+    x[1]
+end
+
+function affect!(integrator)
+    integrator.u[2] = -integrator.u[2] # the state is called u
+end
+
+cb = ContinuousCallback(condition, affect!)
+
+g = 9.81
+V(x) = [x[2], -g]
+f = Flow(V; callback = cb)
+
+t0 = 0
+tf = 15
+x0 = [50, 0]
+sol = f((t0, tf), x0)
+plot(sol)</code></pre><img src="tutorial-flow-fa2a6494.svg" alt="Example block output"/><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-abstract.html">« Abstract syntax</a><a class="docs-footer-nextpage" href="tutorial-initial-guess.html">Initial guess »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Monday 12 August 2024 10:57">Monday 12 August 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
