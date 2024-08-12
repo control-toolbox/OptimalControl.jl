@@ -137,8 +137,8 @@ The dynamics is given in the standard vectorial ODE form:
     \dot{x}(t) = f(x(t), u(t)) \quad \text{or} \quad \dot{x}(t) = f(t, x(t), u(t))
 ```
 
-depending on whether it is autonomous or not (the parser will detect dependence time, which entails that time and state must be declared prior to dynamics - an error will be issued otherwise). The symbol `∂` or the dotted state name
-(`ẋ` can be used):
+depending on whether it is autonomous or not (the parser will detect dependence time, which entails that time and state must be declared prior to dynamics - an error will be issued otherwise). The symbol `∂`, or the dotted state name
+(`ẋ`), or the keyword `derivative` can be used:
 
 ```@example main
 @def begin
@@ -147,6 +147,7 @@ depending on whether it is autonomous or not (the parser will detect dependence 
     u ∈ R, control
     ∂(x)(t) == [x₂(t), u(t)]
 end
+nothing # hide
 ```
 
 or
@@ -157,6 +158,18 @@ or
     x ∈ R², state
     u ∈ R, control
     ẋ(t) == [x₂(t), u(t)]
+end
+nothing # hide
+```
+
+or
+
+```@example main
+@def begin
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    derivative(x)(t) == [x₂(t), u(t)]
 end
 ```
 
@@ -291,7 +304,7 @@ end
 :( $e1 * ∫($e2) → max ) 
 ```
 
-Lagrange (integral) costs are defined used the symbol `∫`, *with parenthesis:
+Lagrange (integral) costs are defined used the symbol `∫`, *with parentheses*. The keyword `integral` can also be used:
 
 ```@example main
 @def begin
@@ -299,6 +312,18 @@ Lagrange (integral) costs are defined used the symbol `∫`, *with parenthesis:
     x = (q, v) ∈ R², state
     u ∈ R, control
     0.5∫(q(t) + u(t)^2) → min
+end
+nothing # hide
+```
+
+or
+
+```@example main
+@def begin
+    t ∈ [0, 1], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    0.5integrate(q(t) + u(t)^2) → min
 end
 ```
 
