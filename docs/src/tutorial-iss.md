@@ -102,10 +102,10 @@ and then denote by $\varphi_{t_0, x_0, p_0}(\cdot)$ the solution of the followin
 Our goal becomes to solve
 
 ```math
-\pi( \varphi_{t_0, x_0, p_0}(t_f) ) = x_f, \quad \pi(x, p) = x.
+\pi( \varphi_{t_0, x_0, p_0}(t_f) ) = x_f,
 ```
 
-To compute $\varphi$ with the `OptimalControl` package, we define the flow of the associated Hamiltonian vector field by:
+where $\pi(x, p) = x$. To compute $\varphi$ with the `OptimalControl` package, we define the flow of the associated Hamiltonian vector field by:
 
 ```@example main
 u(x, p) = p
