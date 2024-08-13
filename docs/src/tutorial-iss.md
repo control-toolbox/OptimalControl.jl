@@ -5,11 +5,11 @@ In this tutorial we present the indirect simple shooting method on a simple exam
 Let us start by importing the necessary packages.
 
 ```@example main
-using OptimalControl  # to define the optimal control problem and its flow
-using OrdinaryDiffEq  # to get the Flow function from OptimalControl
-using NonlinearSolve  # interface to NLE solvers
-using MINPACK         # NLE solver: use to solve the shooting equation
-using Plots           # to plot the solution
+using OptimalControl    # to define the optimal control problem and its flow
+using OrdinaryDiffEq    # to get the Flow function from OptimalControl
+using NonlinearSolve    # interface to NLE solvers
+using MINPACK           # NLE solver: use to solve the shooting equation
+using Plots             # to plot the solution
 ```
 
 ## Optimal control problem
@@ -129,7 +129,7 @@ nothing # hide
     ```
     where $\mathbf{H}(z) = H(z, u(z))$ and $\vec{\mathbf{H}} = (\nabla_p \mathbf{H}, -\nabla_x \mathbf{H})$. This is what is actually computed by `Flow`.
 
-Now, to solve the (BVP) we introduce the **shooting function**.
+Now, to solve the (BVP) we introduce the **shooting function**:
 
 ```math
     \begin{array}{rlll}
@@ -139,7 +139,7 @@ Now, to solve the (BVP) we introduce the **shooting function**.
 ```
 
 ```@example main
-S(p0) = π( φ(t0, x0, p0, tf) ) - xf # shooting function
+S(p0) = π( φ(t0, x0, p0, tf) ) - xf    # shooting function
 nothing # hide
 ```
 
@@ -149,7 +149,7 @@ At the end, solving (BVP) is equivalent to solve $S(p_0) = 0$. This is what we c
 **indirect simple shooting method**. We define an initial guess.
 
 ```@example main
-ξ = [ 0.0 ] # initial guess
+ξ = [ 0.1 ]    # initial guess
 nothing # hide
 ```
 
@@ -159,8 +159,8 @@ We first use the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl)
 equation. Let us define the problem.
 
 ```@example main
-nle! = (s, ξ, λ) -> s[1] = S(ξ[1]) # auxiliary function
-prob = NonlinearProblem(nle!, ξ)   # NLE problem with initial guess
+nle! = (s, ξ, λ) -> s[1] = S(ξ[1])    # auxiliary function
+prob = NonlinearProblem(nle!, ξ)      # NLE problem with initial guess
 nothing # hide
 ```
 
@@ -181,8 +181,8 @@ For small nonlinear systems, it could be faster to use the
 Now, let us solve the problem and retrieve the initial costate solution.
 
 ```@example main
-indirect_sol = solve(prob; show_trace=Val(true))    # resolution of S(p0) = 0  
-p0_sol = indirect_sol.u[1]                          # costate solution
+indirect_sol = solve(prob; show_trace=Val(true))      # resolution of S(p0) = 0  
+p0_sol = indirect_sol.u[1]                            # costate solution
 println("\ncostate:    p0 = ", p0_sol)
 println("shoot: |S(p0)| = ", abs(S(p0_sol)), "\n")
 ```
@@ -219,8 +219,8 @@ nothing # hide
 Let us define the problem to solve.
 
 ```@example main
-nle!  = ( s, ξ) -> s[1] = S(ξ[1])                              # auxiliary function
-jnle! = (js, ξ) -> jacobian!(nle!, similar(ξ), js, backend, ξ) # Jacobian of nle
+nle!  = ( s, ξ) -> s[1] = S(ξ[1])                                 # auxiliary function
+jnle! = (js, ξ) -> jacobian!(nle!, similar(ξ), js, backend, ξ)    # Jacobian of nle
 nothing # hide
 ```
 
@@ -228,7 +228,7 @@ We are now in position to solve the problem with the `hybrj` solver from `MINPAC
 function, providing the Jacobian. Let us do some benchmarking.
 
 ```@example main
-@benchmark fsolve(nle!, jnle!, ξ; show_trace=false) # initial guess given to the solver
+@benchmark fsolve(nle!, jnle!, ξ; show_trace=false)    # initial guess given to the solver
 ```
 
 We can also use the [preparation step](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface/stable/tutorial1/#Preparing-for-multiple-gradients) of `DifferentiationInterface.jl`.
@@ -242,8 +242,8 @@ jnle_prepared!(js, ξ) = jacobian!(nle!, similar(ξ), js, backend, ξ, extras)
 Now, let us solve the problem and retrieve the initial costate solution.
 
 ```@example main
-indirect_sol = fsolve(nle!, jnle!, ξ; show_trace=true)  # resolution of S(p0) = 0
-p0_sol = indirect_sol.x[1]                              # costate solution
+indirect_sol = fsolve(nle!, jnle!, ξ; show_trace=true)    # resolution of S(p0) = 0
+p0_sol = indirect_sol.x[1]                                # costate solution
 println("\ncostate:    p0 = ", p0_sol)
 println("shoot: |S(p0)| = ", abs(S(p0_sol)), "\n")
 ```
@@ -253,8 +253,8 @@ println("shoot: |S(p0)| = ", abs(S(p0_sol)), "\n")
 The solution can be plot calling first the flow.
 
 ```@example main
-sol = φ( (t0, tf), x0, p0_sol )
-plot(sol, size=(800, 600))
+sol = φ((t0, tf), x0, p0_sol)
+plot(sol)
 ```
 
 In the indirect shooting method, the research of the optimal control is replaced by the computation
