@@ -291,7 +291,7 @@ end
 ```
 
 Mayer costs are defined in a similar way to boundary conditions and follow the same rules. The symbol `→` is used
-to denote minimisation or maximisation, the latter being treated by minimising the opposite cost. (The symbol `->` can also be used.)
+to denote minimisation or maximisation, the latter being treated by minimising the opposite cost. (The symbol `=>` can also be used.)
 
 ```@example main
 @def begin
