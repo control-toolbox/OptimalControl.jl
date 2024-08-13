@@ -61,6 +61,7 @@ For a first example we use the `ipopt` solver from [`NLPModelsIpopt.jl`](https:/
 
 ```@example main
 using NLPModelsIpopt
+
 nlp_sol = ipopt(nlp; print_level=5, mu_strategy="adaptive", tol=1e-8, sb="yes")
 nothing # hide
 ```
@@ -68,7 +69,7 @@ nothing # hide
 Then we can rebuild and plot an optimal control problem solution (note that the multipliers are optional, but the OCP costate will not be retrieved if the multipliers are not provided).
 
 ```@example main
-sol = OptimalControlSolution(docp, primal=nlp_sol.solution, dual=nlp_sol.multipliers)
+sol = OptimalControlSolution(docp; primal=nlp_sol.solution, dual=nlp_sol.multipliers)
 plot(sol)
 ```
 ## Change the NLP solver
@@ -86,7 +87,7 @@ Another  possible NLP solver is [`Percival.jl`](https://jso.dev/Percival.jl).
 ```@example main
 using Percival
 
-nlp_sol = percival(nlp, verbose=1)
+nlp_sol = percival(nlp; verbose=1)
 ```
 
 ## Initial guess
@@ -94,7 +95,7 @@ nlp_sol = percival(nlp, verbose=1)
 An initial guess, including warm start, can be passed to [`direct_transcription`](@ref) the same way as for `solve`.
 
 ```@example main
-docp, nlp = direct_transcription(ocp, init=sol)
+docp, nlp = direct_transcription(ocp; init=sol)
 nothing # hide
 ```
 
