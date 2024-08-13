@@ -120,6 +120,8 @@ solve(ocp, :direct, :adnlp, :ipopt)
 Let us try `MadNLP.jl`.
 
 ```@example main
+using MadNLP
+
 solve(ocp, :direct, :adnlp, :madnlp; display=true)
 nothing # hide
 ```
