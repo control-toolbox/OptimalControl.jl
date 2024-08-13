@@ -134,10 +134,11 @@ end
 The dynamics is given in the standard vectorial ODE form:
 
 ```math
-    \dot{x}(t) = f(x(t), u(t)) \quad \text{or} \quad \dot{x}(t) = f(t, x(t), u(t))
+    \dot{x}(t) = f([t, ]x(t), u(t)[, v])
 ```
 
-depending on whether it is autonomous or not (the parser will detect dependence time, which entails that time and state must be declared prior to dynamics - an error will be issued otherwise). The symbol `∂`, or the dotted state name
+depending on whether it is autonomous / with a variable or not (the parser will detect time and variable dependences,
+which entails that time, state and variable must be declared prior to dynamics - an error will be issued otherwise). The symbol `∂`, or the dotted state name
 (`ẋ`), or the keyword `derivative` can be used:
 
 ```@example main
@@ -215,9 +216,9 @@ end
 :( $e2 ≥  $e1        ) 
 ```
 
-Constraints 
-- can be of five types: boundary, control, state, mixed, variable,
-- be linear (ranges) or nonlinear (not ranges),
+Admissible constraints can be
+- five types: boundary, control, state, mixed, variable,
+- linear (ranges) or nonlinear (not ranges),
 - equalities or (one or two-sided) inequalities.
 
 Boundary conditions are detected when the expression contains evaluations of the state at initial and / or final time bounds (*e.g.*, `x(0)`), and may not involve the control. Conversely control, state or mixed constraints will involve control, state or both evaluated at the declared time (*e.g.*, `x(t) + u(t)`). 
@@ -240,6 +241,24 @@ In the example below, there are
     tf ≥ 0 
     x₂(t) ≤ 1
     u(t)^2 ≤ 1
+end
+```
+
+!!! note
+    Symbols like `<=` or `>=` are also authorised:
+
+```@example main
+@def begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x ∈ R², state
+    u ∈ R, control
+    x(0) == [-1, 0]
+    x(tf) == [0, 0]
+    ẋ(t) == [x₂(t), u(t)]
+    tf => 0 
+    x₂(t) <= 1
+    u(t)^2 <= 1
 end
 ```
 
