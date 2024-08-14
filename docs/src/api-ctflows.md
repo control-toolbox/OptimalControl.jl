@@ -4,7 +4,7 @@
 CollapsedDocStrings = true
 ```
 
-The `CTFlows.jl` package is part of the [control-toolbox ecosystem](https://github.com/control-toolbox).
+The [CTFlows.jl](control-toolbox.org/CTFlows.jl) package is part of the [control-toolbox ecosystem](https://github.com/control-toolbox).
 
 ```mermaid
 flowchart TD

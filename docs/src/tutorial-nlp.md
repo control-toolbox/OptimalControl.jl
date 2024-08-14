@@ -8,7 +8,7 @@ We describe here some more advanced operations related to the discretized optima
 When calling `solve(ocp)` three steps are performed internally:
 
 - first, the OCP is discretized into a DOCP (a nonlinear optimization problem) with [`direct_transcription`](@ref),
-- then, this DOCP is solved (with the internal function `solve_docp`),
+- then, this DOCP is solved (with the internal function [`solve_docp`](@ref)),
 - finally, a functional solution of the OCP is rebuilt from the solution of the discretized problem, with [`OptimalControlSolution`](@ref).
 
 These steps can also be done separately, for instance if you want to use your own NLP solver. 
@@ -82,7 +82,7 @@ using MadNLP
 nlp_sol = madnlp(nlp)
 ```
 
-Another  possible NLP solver is [`Percival.jl`](https://jso.dev/Percival.jl).
+Another  possible NLP solver is [Percival.jl](https://jso.dev/Percival.jl).
 
 ```@example main
 using Percival

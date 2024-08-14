@@ -4,7 +4,7 @@
 CollapsedDocStrings = true
 ```
 
-The `CTDirect.jl` package is part of the [control-toolbox ecosystem](https://github.com/control-toolbox).
+The [CTDirect.jl](control-toolbox.org/CTDirect.jl) package is part of the [control-toolbox ecosystem](https://github.com/control-toolbox).
 
 ```mermaid
 flowchart TD

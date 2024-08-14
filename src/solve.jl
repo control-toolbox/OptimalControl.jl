@@ -15,7 +15,7 @@ end
 """
 $(TYPEDSIGNATURES)
 
-Remove from the description, the Symbol that are specific to `OptimalControl` and so must not 
+Remove from the description, the Symbol that are specific to [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) and so must not 
 be passed.
 """
 function clean(d::Description)

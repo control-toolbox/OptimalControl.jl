@@ -48,7 +48,7 @@ As you can see, it produces a grid of subplots. The left column contains the sta
 
 Attributes from [Plots.jl](https://docs.juliaplots.org) can be passed to the `plot` function:
 
-- In addition to `sol` you can pass attributes to the full `Plot`, see the [attributes plot documentation](https://docs.juliaplots.org/latest/generated/attributes_plot/) from Plots.jl for more details. For instance, you can specify the size of the figure.
+- In addition to `sol` you can pass attributes to the full plot, see the [attributes plot documentation](https://docs.juliaplots.org/latest/generated/attributes_plot/) from Plots.jl for more details. For instance, you can specify the size of the figure.
 - You can also pass attributes to the subplots, see the [attributes subplot documentation](https://docs.juliaplots.org/latest/generated/attributes_subplot/) from Plots.jl for more details. However, it will affect all the subplots. For instance, you can specify the location of the legend.
 - In the same way, you can pass axis attributes to the subplots, see the [attributes axis documentation](https://docs.juliaplots.org/latest/generated/attributes_axis/) from Plots.jl for more details. It will also affect all the subplots. For instance, you can remove the grid.
 - In the same way, you can pass series attributes to the all the subplots, see the [attributes series documentation](https://docs.juliaplots.org/latest/generated/attributes_series/) from Plots.jl for more details. It will also affect all the subplots. For instance, you can set the width of the curves with `linewidth`.

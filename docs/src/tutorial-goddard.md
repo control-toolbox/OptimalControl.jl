@@ -33,13 +33,13 @@ $v(t) \leq v_{\max}$. The initial state is fixed while only the final mass is pr
     The Hamiltonian is affine with respect to the control, so singular arcs may occur,
     as well as constrained arcs due to the path constraint on the velocity (see below).
 
-We import the OptimalControl.jl package to define the optimal control problem and
+We import the [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package to define the optimal control problem and
 [NLPModelsIpopt.jl](https://github.com/JuliaSmoothOptimizers/NLPModelsIpopt.jl) to solve it. 
 We import the [Plots.jl](https://github.com/JuliaPlots/Plots.jl) package to plot the solution. 
-The [`OrdinaryDiffEq.jl`](https://github.com/SciML/OrdinaryDiffEq.jl) package is used to 
+The [OrdinaryDiffEq.jl](https://github.com/SciML/OrdinaryDiffEq.jl) package is used to 
 define the shooting function for the indirect method and the 
-[`NonlinearSolve.jl`](https://github.com/SciML/NonlinearSolve.jl) and 
-[`MINPACK.jl`](https://github.com/sglyon/MINPACK.jl) packages permit to solve the shooting 
+[NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) and 
+[MINPACK.jl](https://github.com/sglyon/MINPACK.jl) packages permit to solve the shooting 
 equation.
 
 ```@example main
@@ -352,11 +352,11 @@ function fsolve(f, j, x; kwargs...)
 end
 ```
 
-Instead of the [`NonlinearSolve.jl`](https://github.com/SciML/NonlinearSolve.jl) package we can use the 
-[`MINPACK.jl`](https://github.com/sglyon/MINPACK.jl) package to solve 
+Instead of the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package we can use the 
+[MINPACK.jl](https://github.com/sglyon/MINPACK.jl) package to solve 
 the shooting equation. To compute the Jacobian of the shooting function we use the 
-[`DifferentiationInterface.jl`](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface) package with 
-[`ForwardDiff`](https://github.com/JuliaDiff/ForwardDiff.jl) backend.
+[DifferentiationInterface.jl](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface) package with 
+[ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl) backend.
 
 ```@example main
 using DifferentiationInterface
@@ -376,14 +376,14 @@ jnle! = (js, ξ) -> jacobian!(nle!, similar(ξ), js, backend, ξ)
 nothing # hide
 ```
 
-We are now in position to solve the problem with the `hybrj` solver from `MINPACK` through the `fsolve` 
+We are now in position to solve the problem with the `hybrj` solver from MINPACK.jl through the `fsolve` 
 function, providing the Jacobian. Let us do some benchmarking.
 
 ```@example main
 @benchmark fsolve(nle!, jnle!, ξ; show_trace=false) # initial guess given to the solver
 ```
 
-We can also use the [preparation step](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface/stable/tutorial1/#Preparing-for-multiple-gradients) of `DifferentiationInterface.jl`.
+We can also use the [preparation step](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface/stable/tutorial1/#Preparing-for-multiple-gradients) of DifferentiationInterface.jl.
 
 ```@example main
 extras = prepare_jacobian(nle!, similar(ξ), backend, ξ)

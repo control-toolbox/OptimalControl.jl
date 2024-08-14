@@ -4,7 +4,7 @@
 CollapsedDocStrings = true
 ```
 
-The OptimalControl.jl package is part of the [control-toolbox ecosystem](https://github.com/control-toolbox).
+The [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package is part of the [control-toolbox ecosystem](https://github.com/control-toolbox).
 
 ```mermaid
 flowchart TD

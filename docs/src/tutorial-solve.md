@@ -1,6 +1,6 @@
 # [The solve function](@id manual-solve)
 
-In this tutorial, we explain the [`solve`](@ref) function from OptimalControl.jl package.
+In this tutorial, we explain the [`solve`](@ref) function from [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package.
 
 ## Basic usage
 
@@ -62,8 +62,8 @@ In a direct method, the optimal control problem is transcribed to a nonlinear op
 \text{minimize}\quad F(y), \quad\text{subject to the constraints}\quad g(y)=0, \quad h(y)\le 0. 
 ```
 
-The OptimalControl.jl package makes the transcription but it needs a package to modelise the NLP problem and 
-another one to solve it. The NLPModelsIpopt.jl package provides an interface to the well-known solver 
+OptimalControl.jl package makes the transcription but it needs a package to modelise the NLP problem and 
+another one to solve it. NLPModelsIpopt.jl package provides an interface to the well-known solver 
 [Ipopt](https://coin-or.github.io/Ipopt/) that can be used to solve general nonlinear programming problems.
 
 ```@example main
@@ -144,9 +144,7 @@ The options common to all the direct methods may be seen directly in the
 There are `init`, `grid_size` and `time_grid`. 
 
 - The `init` option can be used to set an initial guess for the solver. See this [tutorial](@ref tutorial-init). 
-- The `grid_size` option corresponds to the size of the (uniform) time discretization grid. 
-More precisely, it is the number of steps, that is if `N = grid_size` and if the initial and final times are 
-denoted respectively `t0` and `tf`, then we have:
+- The `grid_size` option corresponds to the size of the (uniform) time discretization grid. More precisely, it is the number of steps, that is if `N = grid_size` and if the initial and final times are denoted respectively `t0` and `tf`, then we have:
 ```julia
 Δt = (tf - t0) / N
 ```
