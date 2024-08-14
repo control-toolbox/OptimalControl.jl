@@ -105,7 +105,7 @@ Our goal becomes to solve
 \pi( \varphi_{t_0, x_0, p_0}(t_f) ) = x_f,
 ```
 
-where $\pi(x, p) = x$. To compute $\varphi$ with the `OptimalControl` package, we define the flow of the associated Hamiltonian vector field by:
+where $\pi(x, p) = x$. To compute $\varphi$ with [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package, we define the flow of the associated Hamiltonian vector field by:
 
 ```@example main
 u(x, p) = p
@@ -203,11 +203,11 @@ function fsolve(f, j, x; kwargs...)
 end
 ```
 
-Instead of the [`NonlinearSolve.jl`](https://github.com/SciML/NonlinearSolve.jl) package we can use the 
-[`MINPACK.jl`](https://github.com/sglyon/MINPACK.jl) package to solve 
+Instead of the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package we can use the 
+[MINPACK.jl](https://github.com/sglyon/MINPACK.jl) package to solve 
 the shooting equation. To compute the Jacobian of the shooting function we use the 
-[`DifferentiationInterface.jl`](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface) package with 
-[`ForwardDiff`](https://github.com/JuliaDiff/ForwardDiff.jl) backend.
+[DifferentiationInterface.jl](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface) package with 
+[ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl) backend.
 
 ```@example main
 using DifferentiationInterface
@@ -224,14 +224,14 @@ jnle! = (js, ξ) -> jacobian!(nle!, similar(ξ), js, backend, ξ)    # Jacobian 
 nothing # hide
 ```
 
-We are now in position to solve the problem with the `hybrj` solver from `MINPACK` through the `fsolve` 
+We are now in position to solve the problem with the `hybrj` solver from MINPACK.jl through the `fsolve` 
 function, providing the Jacobian. Let us do some benchmarking.
 
 ```@example main
 @benchmark fsolve(nle!, jnle!, ξ; show_trace=false)    # initial guess given to the solver
 ```
 
-We can also use the [preparation step](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface/stable/tutorial1/#Preparing-for-multiple-gradients) of `DifferentiationInterface.jl`.
+We can also use the [preparation step](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface/stable/tutorial1/#Preparing-for-multiple-gradients) of DifferentiationInterface.jl.
 
 ```@example main
 extras = prepare_jacobian(nle!, similar(ξ), backend, ξ)

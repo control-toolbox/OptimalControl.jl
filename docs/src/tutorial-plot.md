@@ -37,7 +37,7 @@ The simplest way to plot the solution is to use the `plot` function with only th
 
 !!! note "The plot function"
 
-    The plot function on a solution of an optimal control problem is an extension of the plot function from the package `Plots.jl`. Hence, we need to import this package to plot a solution.
+    The plot function on a solution of an optimal control problem is an extension of the plot function from the package Plots.jl. Hence, we need to import this package to plot a solution.
 
 ```@example main
 using Plots
@@ -46,18 +46,18 @@ plot(sol)
 
 As you can see, it produces a grid of subplots. The left column contains the state trajectories, the right column the costate trajectories, and at the bottom we have the control trajectory.
 
-Attributes from [`Plots.jl`](https://docs.juliaplots.org) can be passed to the `plot` function:
+Attributes from [Plots.jl](https://docs.juliaplots.org) can be passed to the `plot` function:
 
-- In addition to `sol` you can pass attributes to the full `Plot`, see the [attributes plot documentation](https://docs.juliaplots.org/latest/generated/attributes_plot/) from `Plots.jl` for more details. For instance, you can specify the size of the figure.
-- You can also pass attributes to the subplots, see the [attributes subplot documentation](https://docs.juliaplots.org/latest/generated/attributes_subplot/) from `Plots.jl` for more details. However, it will affect all the subplots. For instance, you can specify the location of the legend.
-- In the same way, you can pass axis attributes to the subplots, see the [attributes axis documentation](https://docs.juliaplots.org/latest/generated/attributes_axis/) from `Plots.jl` for more details. It will also affect all the subplots. For instance, you can remove the grid.
-- In the same way, you can pass series attributes to the all the subplots, see the [attributes series documentation](https://docs.juliaplots.org/latest/generated/attributes_series/) from `Plots.jl` for more details. It will also affect all the subplots. For instance, you can set the width of the curves with `linewidth`.
+- In addition to `sol` you can pass attributes to the full plot, see the [attributes plot documentation](https://docs.juliaplots.org/latest/generated/attributes_plot/) from Plots.jl for more details. For instance, you can specify the size of the figure.
+- You can also pass attributes to the subplots, see the [attributes subplot documentation](https://docs.juliaplots.org/latest/generated/attributes_subplot/) from Plots.jl for more details. However, it will affect all the subplots. For instance, you can specify the location of the legend.
+- In the same way, you can pass axis attributes to the subplots, see the [attributes axis documentation](https://docs.juliaplots.org/latest/generated/attributes_axis/) from Plots.jl for more details. It will also affect all the subplots. For instance, you can remove the grid.
+- In the same way, you can pass series attributes to the all the subplots, see the [attributes series documentation](https://docs.juliaplots.org/latest/generated/attributes_series/) from Plots.jl for more details. It will also affect all the subplots. For instance, you can set the width of the curves with `linewidth`.
 
 ```@example main
 plot(sol, size=(700, 450), legend=:bottomright, grid=false, linewidth=2)
 ```
 
-To specify series attributes to a specific subplot, you can use the optional keyword arguments `state_style`, `costate_style` and `control_style` which correspond respectively to the state, costate and control trajectories. See the [attribute series documentation](https://docs.juliaplots.org/latest/generated/attributes_series/) from `Plots.jl` for more details. For instance, you can specify the color of the state trajectories and more.
+To specify series attributes to a specific subplot, you can use the optional keyword arguments `state_style`, `costate_style` and `control_style` which correspond respectively to the state, costate and control trajectories. See the [attribute series documentation](https://docs.juliaplots.org/latest/generated/attributes_series/) from Plots.jl for more details. For instance, you can specify the color of the state trajectories and more.
 
 ```@example main
 plot(sol; 

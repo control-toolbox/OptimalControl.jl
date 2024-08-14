@@ -8,7 +8,7 @@ We describe here some more advanced operations related to the discretized optima
 When calling `solve(ocp)` three steps are performed internally:
 
 - first, the OCP is discretized into a DOCP (a nonlinear optimization problem) with [`direct_transcription`](@ref),
-- then, this DOCP is solved (with the internal function `solve_docp`),
+- then, this DOCP is solved (with the internal function [`solve_docp`](@ref)),
 - finally, a functional solution of the OCP is rebuilt from the solution of the discretized problem, with [`OptimalControlSolution`](@ref).
 
 These steps can also be done separately, for instance if you want to use your own NLP solver. 
@@ -57,7 +57,7 @@ We can now use the solver of our choice to solve it.
 
 ## Resolution of the NLP problem
 
-For a first example we use the `ipopt` solver from [`NLPModelsIpopt.jl`](https://github.com/JuliaSmoothOptimizers/NLPModelsIpopt.jl) package to solve the NLP problem.
+For a first example we use the `ipopt` solver from [NLPModelsIpopt.jl](https://github.com/JuliaSmoothOptimizers/NLPModelsIpopt.jl) package to solve the NLP problem.
 
 ```@example main
 using NLPModelsIpopt
@@ -74,7 +74,7 @@ plot(sol)
 ```
 ## Change the NLP solver
 
-Alternatively, we can use [`MadNLP.jl`](https://jso.dev/Percival.jl) to solve anew the NLP problem:
+Alternatively, we can use [MadNLP.jl](https://jso.dev/Percival.jl) to solve anew the NLP problem:
 
 ```@example main
 using MadNLP
@@ -82,7 +82,7 @@ using MadNLP
 nlp_sol = madnlp(nlp)
 ```
 
-Another  possible NLP solver is [`Percival.jl`](https://jso.dev/Percival.jl).
+Another  possible NLP solver is [Percival.jl](https://jso.dev/Percival.jl).
 
 ```@example main
 using Percival

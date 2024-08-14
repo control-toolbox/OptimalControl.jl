@@ -1,6 +1,6 @@
 # [The solve function](@id manual-solve)
 
-In this tutorial, we explain the [`solve`](@ref) function from `OptimalControl.jl` package.
+In this tutorial, we explain the [`solve`](@ref) function from [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package.
 
 ## Basic usage
 
@@ -52,7 +52,7 @@ end
 solve(ocp)
 ```
 
-As you can see, an error occured since we need the package [`NLPModelsIpopt.jl`](https://jso.dev/NLPModelsIpopt.jl).
+As you can see, an error occured since we need the package [NLPModelsIpopt.jl](https://jso.dev/NLPModelsIpopt.jl).
 
 Actually, the default solving method is what we call a 
 [direct method](https://en.wikipedia.org/wiki/Optimal_control#Numerical_methods_for_optimal_control). 
@@ -62,9 +62,9 @@ In a direct method, the optimal control problem is transcribed to a nonlinear op
 \text{minimize}\quad F(y), \quad\text{subject to the constraints}\quad g(y)=0, \quad h(y)\le 0. 
 ```
 
-The `OptimalControl.jl` package makes the transcription but it needs a package to modelise the NLP problem and 
-another one to solve it. The `NLPModelsIpopt.jl` package provides an interface to the well-known solver 
-[`Ipopt`](https://coin-or.github.io/Ipopt/) that can be used to solve general nonlinear programming problems.
+OptimalControl.jl package makes the transcription but it needs a package to modelise the NLP problem and 
+another one to solve it. NLPModelsIpopt.jl package provides an interface to the well-known solver 
+[Ipopt](https://coin-or.github.io/Ipopt/) that can be used to solve general nonlinear programming problems.
 
 ```@example main
 using NLPModelsIpopt
@@ -75,7 +75,7 @@ nothing # hide
 
 ## Solvers
 
-`OptimalControl.jl` offers a list of methods to solve your optimal control problem. To get the list of methods,
+OptimalControl.jl offers a list of methods to solve your optimal control problem. To get the list of methods,
 simply call `available_methods`.
 
 ```@example main
@@ -95,11 +95,11 @@ solve(ocp, :direct, :adnlp, :ipopt)
 ```
 
 Let us detail the three symbols. As you can see, there are only direct methods. The symbol `:adnlp` is for the 
-choice of modeler. As said before, the NLP problem needs to be modelised in `Julia` code. We use 
-[`ADNLPModels.jl`](https://jso.dev/ADNLPModels.jl) which provides automatic differentiation (AD)-based model implementations that conform to the [`NLPModels.jl`](https://github.com/JuliaSmoothOptimizers/ADNLPModels.jl) API.
+choice of modeler. As said before, the NLP problem needs to be modelised in Julia code. We use 
+[ADNLPModels.jl](https://jso.dev/ADNLPModels.jl) which provides automatic differentiation (AD)-based model implementations that conform to the [NLPModels.jl](https://github.com/JuliaSmoothOptimizers/ADNLPModels.jl) API.
 
 The last symbol is what distinguish the two available methods. It corresponds to the NLP solver. By default, we
-use the `NLPModelsIpopt.jl` package but you can choose [`MadNLP.jl`](https://madnlp.github.io/MadNLP.jl) which
+use the NLPModelsIpopt.jl package but you can choose [MadNLP.jl](https://madnlp.github.io/MadNLP.jl) which
 is an open-source nonlinear programming solver, purely implemented in Julia and which implements a filter 
 line-search interior-point algorithm, as used in Ipopt.
 
@@ -117,7 +117,7 @@ solve(ocp, :direct,         :ipopt)
 solve(ocp, :direct, :adnlp, :ipopt)
 ```
 
-Let us try `MadNLP.jl`.
+Let us try MadNLP.jl.
 
 ```@example main
 using MadNLP
@@ -126,7 +126,7 @@ solve(ocp, :direct, :adnlp, :madnlp; display=true)
 nothing # hide
 ```
 
-Again, there are several equivalent manners to use `MadNLP.jl`.
+Again, there are several equivalent manners to use MadNLP.jl.
 
 ```julia
 solve(ocp,                  :madnlp)
@@ -144,9 +144,7 @@ The options common to all the direct methods may be seen directly in the
 There are `init`, `grid_size` and `time_grid`. 
 
 - The `init` option can be used to set an initial guess for the solver. See this [tutorial](@ref tutorial-init). 
-- The `grid_size` option corresponds to the size of the (uniform) time discretization grid. 
-More precisely, it is the number of steps, that is if `N = grid_size` and if the initial and final times are 
-denoted respectively `t0` and `tf`, then we have:
+- The `grid_size` option corresponds to the size of the (uniform) time discretization grid. More precisely, it is the number of steps, that is if `N = grid_size` and if the initial and final times are denoted respectively `t0` and `tf`, then we have:
 ```julia
 Δt = (tf - t0) / N
 ```
@@ -157,7 +155,7 @@ sol = solve(ocp; grid_size=10, display=false)
 sol.times
 ```
 
-Or with `MadNLP`:
+Or with MadNLP.jl:
 
 ```@example main
 sol = solve(ocp, :madnlp; grid_size=10, display=false)
@@ -166,9 +164,9 @@ sol.times
 
 ### NLPModelsIpopt
 
-You can provide any option of `NLPModelsIpopt` or `Ipopt` with a pair `keyword=value`. Please check
-the list of [`Ipopt` options](https://coin-or.github.io/Ipopt/OPTIONS.html) and the 
-[`NLPModelsIpopt.jl` documentation](https://jso.dev/NLPModelsIpopt.jl).
+You can provide any option of NLPModelsIpopt.jl or Ipopt with a pair `keyword=value`. Please check
+the list of [Ipopt options](https://coin-or.github.io/Ipopt/OPTIONS.html) and the 
+[NLPModelsIpopt.jl documentation](https://jso.dev/NLPModelsIpopt.jl).
 
 ```@example main
 solve(ocp, :ipopt; max_iter=0)
@@ -177,9 +175,9 @@ nothing # hide
 
 ### MadNLP
 
-If you use the `MadNLP` solver, then you can provide any option of it. Please check the
-[`MadNLP.jl` documentation](https://madnlp.github.io/MadNLP.jl) and the list of 
-[`MadNLP.jl`options](https://madnlp.github.io/MadNLP.jl/stable/options/).
+If you use the MadNLP.jl solver, then you can provide any option of it. Please check the
+[MadNLP.jl documentation](https://madnlp.github.io/MadNLP.jl) and the list of 
+[MadNLP.jl options](https://madnlp.github.io/MadNLP.jl/stable/options/).
 
 ```@example main
 solve(ocp, :madnlp; max_iter=1, display=true)

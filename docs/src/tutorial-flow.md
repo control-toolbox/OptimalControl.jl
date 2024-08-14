@@ -1,6 +1,6 @@
 # [How to compute flows](@id manual-flow)
 
-In this tutorial, we explain the `Flow` function from `OptimalControl.jl` package.
+In this tutorial, we explain the `Flow` function from [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package.
 
 ## Basic usage
 
@@ -95,13 +95,13 @@ u(x, p) = p[2]
 f = Flow(ocp, u)
 ```
 
-As you can see, an error occured since we need the package [`OrdinaryDiffEq.jl`](https://docs.sciml.ai/DiffEqDocs).
+As you can see, an error occured since we need the package [OrdinaryDiffEq.jl](https://docs.sciml.ai/DiffEqDocs).
 This package provides numerical integrators to compute solutions of the ordinary differential equation 
 $\dot{z}(t) = \vec{\mathbf{H}}(z(t))$.
 
 !!! note "OrdinaryDiffEq.jl"
 
-    The package `OrdinaryDiffEq.jl` is part of `DifferentialEquations.jl`. You can either use one or the other.
+    The package OrdinaryDiffEq.jl is part of [DifferentialEquations.jl](https://docs.sciml.ai/DiffEqDocs). You can either use one or the other.
 
 ```@example main
 using OrdinaryDiffEq
@@ -149,7 +149,7 @@ sol = f((t0, tf), x0, p0; saveat=range(t0, tf, 100))
 plot(sol)
 ```
 
-The argument `saveat` is an option from `OrdinaryDiffEq.jl`. Please check the 
+The argument `saveat` is an option from OrdinaryDiffEq.jl. Please check the 
 [list of common options](https://docs.sciml.ai/DiffEqDocs/stable/basics/common_solver_opts/#solver_options).
 For instance, one can change the integrator with the keyword argument `alg` or the absolute tolerance with 
 `abstol`. Note that you can set an option when declaring the flow or set an option in a particular call of the flow. 
@@ -184,7 +184,7 @@ xf, pf = z(t0, x0, p0, tf)
 ```
 
 Note that if you call the flow on `tspan=(t0, tf)`, then you obtain the output solution 
-from `OrdinaryDiffEq.jl`.
+from OrdinaryDiffEq.jl.
 
 ```@example main
 sol = z((t0, tf), x0, p0)
@@ -200,7 +200,7 @@ x = Flow((t, x) -> [x[2], u(t)]; autonomous=false) # the vector field depends on
 x(t0, x0, tf)
 ```
 
-Again, giving a `tspan` you get an output solution from `OrdinaryDiffEq.jl`.
+Again, giving a `tspan` you get an output solution from OrdinaryDiffEq.jl.
 
 ```@example main
 sol = x((t0, tf), x0)
@@ -417,7 +417,7 @@ plot!(plt, t, t->abs(ψ(t)-x0), label="Classical")
 
 ## Callbacks
 
-You can use any callback from [`OrdinaryDiffEq.jl`](https://docs.sciml.ai/DiffEqDocs/stable/features/callback_functions). For instance, we reproduce the [bouncing ball example](https://docs.sciml.ai/DiffEqDocs/stable/features/callback_functions/#ContinuousCallback-Examples).
+You can use any [callback from OrdinaryDiffEq.jl](https://docs.sciml.ai/DiffEqDocs/stable/features/callback_functions). For instance, we reproduce the [bouncing ball example](https://docs.sciml.ai/DiffEqDocs/stable/features/callback_functions/#ContinuousCallback-Examples).
 
 ```@example main
 function condition(x, t, integrator) # Event when condition(u, t, integrator) == 0
