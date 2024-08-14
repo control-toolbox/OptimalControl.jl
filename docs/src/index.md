@@ -4,7 +4,7 @@
 CurrentModule =  OptimalControl
 ```
 
-The `OptimalControl.jl` package aims to provide tools to solve optimal control problems by direct and indirect methods.
+The OptimalControl.jl package aims to provide tools to solve optimal control problems by direct and indirect methods.
 It is part of the [control-toolbox ecosystem](https://github.com/control-toolbox).
 
 

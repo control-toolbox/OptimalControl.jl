@@ -24,7 +24,7 @@ You may find in this package:
 - [Exceptions](@ref api-ctbase-exceptions).
 - [Model](@ref api-ctbase-model): tools to modelise an optimal control problem in a functional manner.
 - [Parser](@ref api-ctbase-parser): tools to modelise an optimal control problem in an abstract manner.
-- [Plot](@ref api-ctbase-plot): the `plot` function extended from `Plots.jl` and utils.
+- [Plot](@ref api-ctbase-plot): the `plot` function extended from Plots.jl and utils.
 - [Print](@ref api-ctbase-print): check how an optimal control problem is displayed.
 - [Repl](@ref api-ctbase-repl): control-toolbox repl.
 - [Utils](@ref api-ctbase-utils): auxiliary methods.

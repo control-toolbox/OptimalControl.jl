@@ -57,7 +57,7 @@ We can now use the solver of our choice to solve it.
 
 ## Resolution of the NLP problem
 
-For a first example we use the `ipopt` solver from [`NLPModelsIpopt.jl`](https://github.com/JuliaSmoothOptimizers/NLPModelsIpopt.jl) package to solve the NLP problem.
+For a first example we use the `ipopt` solver from [NLPModelsIpopt.jl](https://github.com/JuliaSmoothOptimizers/NLPModelsIpopt.jl) package to solve the NLP problem.
 
 ```@example main
 using NLPModelsIpopt
@@ -74,7 +74,7 @@ plot(sol)
 ```
 ## Change the NLP solver
 
-Alternatively, we can use [`MadNLP.jl`](https://jso.dev/Percival.jl) to solve anew the NLP problem:
+Alternatively, we can use [MadNLP.jl](https://jso.dev/Percival.jl) to solve anew the NLP problem:
 
 ```@example main
 using MadNLP

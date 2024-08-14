@@ -33,9 +33,9 @@ $v(t) \leq v_{\max}$. The initial state is fixed while only the final mass is pr
     The Hamiltonian is affine with respect to the control, so singular arcs may occur,
     as well as constrained arcs due to the path constraint on the velocity (see below).
 
-We import the `OptimalControl.jl` package to define the optimal control problem and
-[`NLPModelsIpopt.jl`](https://github.com/JuliaSmoothOptimizers/NLPModelsIpopt.jl) to solve it. 
-We import the [`Plots.jl`](https://github.com/JuliaPlots/Plots.jl) package to plot the solution. 
+We import the OptimalControl.jl package to define the optimal control problem and
+[NLPModelsIpopt.jl](https://github.com/JuliaSmoothOptimizers/NLPModelsIpopt.jl) to solve it. 
+We import the [Plots.jl](https://github.com/JuliaPlots/Plots.jl) package to plot the solution. 
 The [`OrdinaryDiffEq.jl`](https://github.com/SciML/OrdinaryDiffEq.jl) package is used to 
 define the shooting function for the indirect method and the 
 [`NonlinearSolve.jl`](https://github.com/SciML/NonlinearSolve.jl) and 

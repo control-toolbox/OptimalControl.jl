@@ -1,6 +1,6 @@
 # [How to compute flows](@id manual-flow)
 
-In this tutorial, we explain the `Flow` function from `OptimalControl.jl` package.
+In this tutorial, we explain the `Flow` function from OptimalControl.jl package.
 
 ## Basic usage
 

@@ -22,8 +22,8 @@ Les us consider a transfer starting at time $t_0 = 0$ and ending at time $t_f = 
 
 starting from the condition $x(0) = (-1, 0)$ and with the goal to reach the target $x(1) = (0, 0)$.
 
-First, we need to import the `OptimalControl.jl` package to define the optimal control problem and `NLPModelsIpopt.jl` to solve it. 
-We also need to import the `Plots.jl` package to plot the solution.
+First, we need to import the OptimalControl.jl package to define the optimal control problem and NLPModelsIpopt.jl to solve it. 
+We also need to import the Plots.jl package to plot the solution.
 
 ```@example main
 using OptimalControl
