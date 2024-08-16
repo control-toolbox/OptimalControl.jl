@@ -22,7 +22,7 @@ using OptimalControl #hide
 end
 ```
 
-Aliases `v₁` and `v₂` are automatically defined and can be used in subsequent expressions instead of `v[1]` and `v[2]`. The user can also define her own aliases for the components (one alias per dimension):
+Aliases `v₁`, `v₂` (and `v1`, v2`) are automatically defined and can be used in subsequent expressions instead of `v[1]` and `v[2]`. The user can also define her own aliases for the components (one alias per dimension):
 
 ```@example main
 @def begin
@@ -94,7 +94,7 @@ The state declaration defines the name and the dimension of the state:
 end
 ```
 
-As for the variable, there are automatic aliases (`x₁` for `x[1]`, *etc.*) and the user can define her own aliases (one per scalar component of the state):
+As for the variable, there are automatic aliases (`x₁` and `x1` for `x[1]`, *etc.*) and the user can define her own aliases (one per scalar component of the state):
 
 ```@example main
 @def begin
@@ -117,7 +117,7 @@ The control declaration defines the name and the dimension of the control:
 end
 ```
 
-As before, there are automatic aliases (`u₁` for `u[1]`, *etc.*) and the user can define her own aliases (one per scalar component of the state):
+As before, there are automatic aliases (`u₁` and `u1` for `u[1]`, *etc.*) and the user can define her own aliases (one per scalar component of the state):
 
 ```@example main
 @def begin
