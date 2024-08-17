@@ -20,7 +20,7 @@ The control-toolbox ecosystem gathers Julia packages for mathematical control an
 
 | **Documentation**  | **Code Status**  | **Release**  | **Citation** |
 |:-------------------|:-----------------|:-------------|:-------------|
-| [![Documentation][doc-stable-img]][doc-stable-url] [![Documentation][doc-dev-img]][doc-dev-url] | [![Build Status][ci-img]][ci-url] [![Covering Status][co-img]][co-url] | [![Release][release-img]][release-url] | [![DOI](https://zenodo.org/badge/541187171.svg)](https://zenodo.org/doi/10.5281/zenodo.13336563) |
+| [![Documentation][doc-stable-img]][doc-stable-url] [![Documentation][doc-dev-img]][doc-dev-url] | [![Build Status][ci-img]][ci-url] [![Covering Status][co-img]][co-url] [![pkgeval](https://juliahub.com/docs/General/OptimalControl/stable/pkgeval.svg)](https://juliahub.com/ui/Packages/General/OptimalControl) | [![Release][release-img]][release-url] | [![DOI](https://zenodo.org/badge/541187171.svg)](https://zenodo.org/doi/10.5281/zenodo.13336563) |
 
 ## Installation
 
