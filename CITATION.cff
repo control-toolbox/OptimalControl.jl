@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Caillau"
+  given-names: "Jean-Baptiste"
+  orcid: "https://orcid.org/0000-0002-1719-2016"
+- family-names: "Cots"
+  given-names: "Olivier"
+  orcid: "https://orcid.org/0000-0002-4703-4369"
+- family-names: "Gergaud"
+  given-names: "Joseph"
+- family-names: "Martinon"
+  given-names: "Pierre"
+  orcid: "https://orcid.org/0000-0003-0571-2376"
+title: "OptimalControl.jl"
+version: 0.11.1
+doi: 10.5281/zenodo.13336563
+date-released: 2024-08-17
+url: "https://github.com/control-toolbox/OptimalControl.jl"
