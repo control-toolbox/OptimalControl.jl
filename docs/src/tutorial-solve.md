@@ -48,8 +48,9 @@ ocp = @def begin
 end
 ```
 
-```@repl main_repl
-solve(ocp)
+```julia
+julia> solve(ocp)
+ERROR: ExtensionError. Please make: julia> using NLPModelsIpopt
 ```
 
 As you can see, an error occured since we need the package [NLPModelsIpopt.jl](https://jso.dev/NLPModelsIpopt.jl).
