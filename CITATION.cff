@@ -1,6 +1,6 @@
 cff-version: 1.2.0
-message: If you use this software, please cite it as below.
-title: OptimalControl.jl: Solvers of optimal control problems
+message: "If you use this software, please cite it as below."
+title: "OptimalControl.jl: Solvers of optimal control problems"
 keywords:
   - Optimal Control
   - Julia
@@ -8,24 +8,20 @@ authors:
 - family-names: Caillau
   given-names: Jean-Baptiste
   email: jean-baptiste.caillau@univ-cotedazur.fr
-  orcid: https://orcid.org/0000-0002-1719-2016
-  affilitation: >-
-    Université Côte d’Azur, CNRS, Inria, LJAD
+  orcid: "https://orcid.org/0000-0002-1719-2016"
+  affilitation: "Université Côte d’Azur, CNRS, Inria, LJAD"
 - family-names: Cots
   given-names: Olivier
   email: olivier.cots@toulouse-inp.fr
-  orcid: https://orcid.org/0000-0002-4703-4369
-  affiliation: >-
-    Université Toulouse, CNRS, ENSEEIHT-IRIT
+  orcid: "https://orcid.org/0000-0002-4703-4369"
+  affiliation: "Université Toulouse, CNRS, ENSEEIHT-IRIT"
 - family-names: Gergaud
   given-names: Joseph
   email: joseph.gergaud@toulouse-inp.fr
-  affiliation: >-
-    Université Toulouse, CNRS, ENSEEIHT-IRIT
+  affiliation: "Université Toulouse, CNRS, ENSEEIHT-IRIT"
 - family-names: Martinon
   given-names: Pierre
-  orcid: https://orcid.org/0000-0003-0571-2376
-  affiliation: >-
-    CAGE team, Inria Paris
+  orcid: "https://orcid.org/0000-0003-0571-2376"
+  affiliation: "CAGE team, Inria Paris"
 doi: 10.5281/zenodo.13336563
-url: https://github.com/control-toolbox/OptimalControl.jl
+url: "https://github.com/control-toolbox/OptimalControl.jl"
