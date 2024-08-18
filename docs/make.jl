@@ -41,6 +41,7 @@ makedocs(
             "Initial guess"   => "tutorial-initial-guess.md",
             "Plot a solution" => "tutorial-plot.md",
             "Flow"            => "tutorial-flow.md",
+            "ct repl"         => "tutorial-repl.md",
         ],
         "Tutorials" => [
             "tutorial-continuation.md",
