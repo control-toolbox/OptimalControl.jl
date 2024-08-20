@@ -33,8 +33,9 @@ The control-toolbox ecosystem gathers Julia packages for mathematical control an
 
 ## Installation
 
-To install a package from the control-toolbox ecosystem, please visit the [installation page](https://github.com/control-toolbox#installation). To install [OptimalControl.jl](https://github.com/control-toolbox/OptimalControl.jl) please <a href="https://docs.julialang.org/en/v1/manual/getting-started/">open
-Julia's interactive session (known as REPL)</a> and press <kbd>]</kbd> key in the REPL to use the package mode, then add the package:
+To install [OptimalControl.jl](https://github.com/control-toolbox/OptimalControl.jl) please 
+<a href="https://docs.julialang.org/en/v1/manual/getting-started/">open Julia's interactive session (known as REPL)</a> 
+and press <kbd>]</kbd> key in the REPL to use the package mode, then add the package:
 
 ```julia
 julia> ]
@@ -47,7 +48,7 @@ If you use OptimalControl.jl in your work, please cite us:
 
 > Caillau, J., Cots, O., Gergaud, J., Martinon, P., & Sed, S. *OptimalControl.jl: a Julia package to modelise and solve optimal control problems with ODE's* [Computer software]. https://doi.org/10.5281/zenodo.13336563
 
-or in `bibtex` format:
+or in bibtex format:
 
 ```bibtex
 @software{Caillau_OptimalControl_jl_a_Julia,
