@@ -32,6 +32,25 @@ julia> ]
 pkg> add OptimalControl
 ```
 
+## How to cite
+
+If you use this in your work, please cite us:
+
+> Caillau, J., Cots, O., Gergaud, J., Martinon, P., & Sed, S. *OptimalControl.jl: a Julia package to modelise and solve optimal control problems with ODE's* [Computer software]. https://doi.org/10.5281/zenodo.13336563
+
+or in `bibtex` format:
+
+```bibtex
+@software{Caillau_OptimalControl_jl_a_Julia,
+author = {Caillau, Jean-Baptiste and Cots, Olivier and Gergaud, Joseph and Martinon, Pierre and Sed, Sophia},
+doi = {10.5281/zenodo.13336563},
+license = {["MIT"]},
+title = {{OptimalControl.jl: a Julia package to modelise and solve optimal control problems with ODE's}},
+url = {https://control-toolbox.org/OptimalControl.jl}
+}
+```
+
+
 ## See also
 
 We acknowledge support of colleagues from [ADNLPModels](https://jso.dev/ADNLPModels.jl/stable) @[Julia Smooth Optimizers](https://jso.dev).

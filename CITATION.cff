@@ -1,27 +1,39 @@
-cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
-title: "OptimalControl.jl: Solvers of optimal control problems"
-keywords:
-  - Optimal Control
-  - Julia
+abstract: <p>The&nbsp;<a href="https://juliahub.com/ui/Packages/General/OptimalControl"
+  rel="nofollow">OptimalControl.jl</a>&nbsp;package is the root package of the&nbsp;<a
+  href="https://github.com/control-toolbox">control-toolbox ecosystem</a>. The control-toolbox
+  ecosystem gathers Julia packages for mathematical control and applications. It aims
+  to provide tools to model and solve optimal control problems with ordinary differential
+  equations by direct and indirect methods.</p>
+title: "OptimalControl.jl: a Julia package to modelise and solve optimal control problems with ODE's"
 authors:
-- family-names: Caillau
+- affiliation: "Universit\xE9 C\xF4te d'Azur, CNRS, Inria, LJAD"
+  family-names: Caillau
   given-names: Jean-Baptiste
-  email: jean-baptiste.caillau@univ-cotedazur.fr
-  orcid: "https://orcid.org/0000-0002-1719-2016"
-  affilitation: "Université Côte d’Azur, CNRS, Inria, LJAD"
-- family-names: Cots
+  orcid: 0000-0002-1719-2016
+- affiliation: "Universit\xE9 Toulouse, CNRS, ENSEEIHT-IRIT"
+  family-names: Cots
   given-names: Olivier
-  email: olivier.cots@toulouse-inp.fr
-  orcid: "https://orcid.org/0000-0002-4703-4369"
-  affiliation: "Université Toulouse, CNRS, ENSEEIHT-IRIT"
-- family-names: Gergaud
+  orcid: 0000-0002-4703-4369
+- affiliation: "Universit\xE9 Toulouse, CNRS, ENSEEIHT-IRIT"
+  family-names: Gergaud
   given-names: Joseph
-  email: joseph.gergaud@toulouse-inp.fr
-  affiliation: "Université Toulouse, CNRS, ENSEEIHT-IRIT"
-- family-names: Martinon
+  orcid: 0009-0005-9825-8652
+- affiliation: CAGE team, Inria Paris
+  family-names: Martinon
   given-names: Pierre
-  orcid: "https://orcid.org/0000-0003-0571-2376"
-  affiliation: "CAGE team, Inria Paris"
+  orcid: 0000-0003-0571-2376
+- affiliation: "Inria Sophia Antipolis M\xE9diterran\xE9e"
+  family-names: Sed
+  given-names: Sophia
+cff-version: 1.2.0
 doi: 10.5281/zenodo.13336563
-url: "https://github.com/control-toolbox/OptimalControl.jl"
+keywords:
+- optimal control
+- control of ODE's
+- optimization
+- direct transcription
+- shooting
+license:
+- MIT
+url: "https://control-toolbox.org/OptimalControl.jl"
+type: software
