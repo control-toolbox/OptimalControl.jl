@@ -12,25 +12,87 @@
 [doc-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
 [doc-stable-url]: https://control-toolbox.org/OptimalControl.jl/stable/
 
-[release-img]: https://img.shields.io/github/v/release/control-toolbox/OptimalControl.jl.svg?style=round-square
+[release-img]: https://juliahub.com/docs/General/OptimalControl/stable/version.svg
 [release-url]: https://github.com/control-toolbox/OptimalControl.jl/releases
+
+[pkg-eval-img]: https://juliahub.com/docs/General/OptimalControl/stable/pkgeval.svg
+[pkg-eval-url]: https://juliahub.com/ui/Packages/General/OptimalControl
+
+[citation-img]: https://zenodo.org/badge/541187171.svg
+[citation-url]: https://zenodo.org/doi/10.5281/zenodo.13336563
+
+[licence-img]: https://img.shields.io/badge/License-MIT-yellow.svg
+[licence-url]: https://github.com/control-toolbox/OptimalControl.jl/blob/master/LICENSE
 
 The [OptimalControl.jl](https://juliahub.com/ui/Packages/General/OptimalControl) package is the root package of the [control-toolbox ecosystem](https://github.com/control-toolbox).
 The control-toolbox ecosystem gathers Julia packages for mathematical control and applications. It aims to provide tools to model and solve optimal control problems with ordinary differential equations by direct and indirect methods.
 
-| **Documentation**  | **Code Status**  | **Release**  | **Citation** |
-|:-------------------|:-----------------|:-------------|:-------------|
-| [![Documentation][doc-stable-img]][doc-stable-url] [![Documentation][doc-dev-img]][doc-dev-url] | [![Build Status][ci-img]][ci-url] [![Covering Status][co-img]][co-url] | [![Release][release-img]][release-url] | [![DOI](https://zenodo.org/badge/541187171.svg)](https://zenodo.org/doi/10.5281/zenodo.13336563) |
+| **Name**          | **Badge**         |
+:-------------------|:------------------|
+| Documentation     | [![Documentation][doc-stable-img]][doc-stable-url] [![Documentation][doc-dev-img]][doc-dev-url]                   | 
+| Code Status       | [![Build Status][ci-img]][ci-url] [![Covering Status][co-img]][co-url] [![pkgeval][pkg-eval-img]][pkg-eval-url]   |
+| Licence           | [![License: MIT][licence-img]][licence-url]   |
+| Release           | [![Release][release-img]][release-url]        |
+| Citation          | [![DOI][citation-img]][citation-url]          |
 
 ## Installation
 
-To install a package from the control-toolbox ecosystem, please visit the [installation page](https://github.com/control-toolbox#installation). To install [OptimalControl.jl](https://github.com/control-toolbox/OptimalControl.jl) please <a href="https://docs.julialang.org/en/v1/manual/getting-started/">open
-Julia's interactive session (known as REPL)</a> and press <kbd>]</kbd> key in the REPL to use the package mode, then add the package:
+To install [OptimalControl.jl](https://github.com/control-toolbox/OptimalControl.jl) please 
+<a href="https://docs.julialang.org/en/v1/manual/getting-started/">open Julia's interactive session (known as REPL)</a> 
+and press <kbd>]</kbd> key in the REPL to use the package mode, then add the package:
 
 ```julia
 julia> ]
 pkg> add OptimalControl
 ```
+
+## Basic usage
+
+Let us modelise, solve and plot a simple optimal control problem.
+
+```julia
+using OptimalControl
+using NLPModelsIpopt
+using Plots
+
+ocp = @def begin
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    x(0) == [ -1, 0 ]
+    x(1) == [ 0, 0 ]
+    ẋ(t) == [ x₂(t), u(t) ]
+    ∫( 0.5u(t)^2 ) → min
+end
+
+sol = solve(ocp)
+
+plot(sol)
+```
+
+For more details about this problem, please check the
+[basic example tutorial](https://control-toolbox.org/OptimalControl.jl/stable/tutorial-basic-example.html). 
+For a comprehensive introduction to the syntax used above to describe the optimal control problem, check the
+[abstract syntax tutorial](https://control-toolbox.org/OptimalControl.jl/stable/tutorial-abstract.html#abstract).
+
+## How to cite
+
+If you use OptimalControl.jl in your work, please cite us:
+
+> Caillau, J., Cots, O., Gergaud, J., Martinon, P., & Sed, S. *OptimalControl.jl: a Julia package to modelise and solve optimal control problems with ODE's* [Computer software]. https://doi.org/10.5281/zenodo.13336563
+
+or in bibtex format:
+
+```bibtex
+@software{Caillau_OptimalControl_jl_a_Julia,
+author = {Caillau, Jean-Baptiste and Cots, Olivier and Gergaud, Joseph and Martinon, Pierre and Sed, Sophia},
+doi = {10.5281/zenodo.13336563},
+license = {["MIT"]},
+title = {{OptimalControl.jl: a Julia package to modelise and solve optimal control problems with ODE's}},
+url = {https://control-toolbox.org/OptimalControl.jl}
+}
+```
+
 
 ## See also
 
