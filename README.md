@@ -46,6 +46,35 @@ julia> ]
 pkg> add OptimalControl
 ```
 
+## Basic usage
+
+Let us modelise, solve and plot a simple optimal control problem.
+
+```julia
+using OptimalControl
+using NLPModelsIpopt
+using Plots
+
+ocp = @def begin
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    x(0) == [ -1, 0 ]
+    x(1) == [ 0, 0 ]
+    ẋ(t) == [ x₂(t), u(t) ]
+    ∫( 0.5u(t)^2 ) → min
+end
+
+sol = solve(ocp)
+
+plot(sol)
+```
+
+For more details about this problem, please check the
+[basic example tutorial](https://control-toolbox.org/OptimalControl.jl/stable/tutorial-basic-example.html). 
+For a comprehensive introduction to the syntax used above to describe the optimal control problem, check the
+[abstract syntax tutorial](https://control-toolbox.org/OptimalControl.jl/stable/tutorial-abstract.html#abstract).
+
 ## How to cite
 
 If you use OptimalControl.jl in your work, please cite us:
