@@ -12,15 +12,24 @@
 [doc-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
 [doc-stable-url]: https://control-toolbox.org/OptimalControl.jl/stable/
 
-[release-img]: https://img.shields.io/github/v/release/control-toolbox/OptimalControl.jl.svg?style=round-square
+[release-img]: https://juliahub.com/docs/General/OptimalControl/stable/version.svg
 [release-url]: https://github.com/control-toolbox/OptimalControl.jl/releases
+
+[pkg-eval-img]: https://juliahub.com/docs/General/OptimalControl/stable/pkgeval.svg
+[pkg-eval-url]: https://juliahub.com/ui/Packages/General/OptimalControl
+
+[citation-img]: https://zenodo.org/badge/541187171.svg
+[citation-url]: https://zenodo.org/doi/10.5281/zenodo.13336563
 
 The [OptimalControl.jl](https://juliahub.com/ui/Packages/General/OptimalControl) package is the root package of the [control-toolbox ecosystem](https://github.com/control-toolbox).
 The control-toolbox ecosystem gathers Julia packages for mathematical control and applications. It aims to provide tools to model and solve optimal control problems with ordinary differential equations by direct and indirect methods.
 
-| **Documentation**  | **Code Status**  | **Release**  | **Citation** |
-|:-------------------|:-----------------|:-------------|:-------------|
-| [![Documentation][doc-stable-img]][doc-stable-url] [![Documentation][doc-dev-img]][doc-dev-url] | [![Build Status][ci-img]][ci-url] [![Covering Status][co-img]][co-url] [![pkgeval](https://juliahub.com/docs/General/OptimalControl/stable/pkgeval.svg)](https://juliahub.com/ui/Packages/General/OptimalControl) | [![Release][release-img]][release-url] | [![DOI](https://zenodo.org/badge/541187171.svg)](https://zenodo.org/doi/10.5281/zenodo.13336563) |
+| **Name**          | **Badge**         |
+:-------------------|:------------------|
+| **Documentation** | [![Documentation][doc-stable-img]][doc-stable-url] [![Documentation][doc-dev-img]][doc-dev-url] | 
+| **Code Status**   | [![Build Status][ci-img]][ci-url] [![Covering Status][co-img]][co-url] [![pkgeval][pkg-eval-img]][pkg-eval-url] |
+| **Release**       | [![Release][release-img]][release-url] |
+| **Citation**      | [![DOI][citation-img]][citation-url] |
 
 ## Installation
 
