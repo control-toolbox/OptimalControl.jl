@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Types · OptimalControl.jl</title><meta name="title" content="Types · OptimalControl.jl"/><meta property="og:title" content="Types · OptimalControl.jl"/><meta property="twitter:title" content="Types · OptimalControl.jl"/><meta name="description" content="Documentation for OptimalControl.jl."/><meta property="og:description" content="Documentation for OptimalControl.jl."/><meta property="twitter:description" content="Documentation for OptimalControl.jl."/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script><link href="https://control-toolbox.org/assets/css/documentation.css" rel="stylesheet" type="text/css"/><script src="https://control-toolbox.org/assets/js/documentation.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../index.html">OptimalControl.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../index.html">Introduction</a></li><li><span class="tocitem">Basic examples</span><ul><li><a class="tocitem" href="../tutorial-basic-example.html">Energy minimisation</a></li><li><a class="tocitem" href="../tutorial-double-integrator.html">Time mininimisation</a></li></ul></li><li><span class="tocitem">Manual</span><ul><li><a class="tocitem" href="../tutorial-abstract.html">Abstract syntax</a></li><li><a class="tocitem" href="../tutorial-initial-guess.html">Initial guess</a></li><li><a class="tocitem" href="../tutorial-solve.html">Solve</a></li><li><a class="tocitem" href="../tutorial-plot.html">Plot a solution</a></li><li><a class="tocitem" href="../tutorial-flow.html">Flow</a></li><li><a class="tocitem" href="../tutorial-functional.html">Functional syntax</a></li></ul></li><li><span class="tocitem">Tutorials</span><ul><li><a class="tocitem" href="../tutorial-continuation.html">Discrete continuation</a></li><li><a class="tocitem" href="../tutorial-goddard.html">Goddard: direct, indirect</a></li><li><a class="tocitem" href="../tutorial-iss.html">Indirect simple shooting</a></li><li><a class="tocitem" href="../tutorial-lqr-basic.html">Linear–quadratic regulator</a></li><li><a class="tocitem" href="../tutorial-nlp.html">NLP and DOCP manipulations</a></li></ul></li><li><span class="tocitem">API</span><ul><li><a class="tocitem" href="../api-optimalcontrol.html">OptimalControl.jl</a></li><li><input class="collapse-toggle" id="menuitem-5-2" type="checkbox"/><label class="tocitem" for="menuitem-5-2"><span class="docs-label">Subpackages</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../api-ctbase.html">CTBase.jl</a></li><li><a class="tocitem" href="../api-ctdirect.html">CTDirect.jl</a></li><li><a class="tocitem" href="../api-ctflows.html">CTFlows.jl</a></li></ul></li></ul></li><li><span class="tocitem">Developers</span><ul><li><a class="tocitem" href="../dev-optimalcontrol.html">OptimalControl.jl</a></li><li><input class="collapse-toggle" id="menuitem-6-2" type="checkbox"/><label class="tocitem" for="menuitem-6-2"><span class="docs-label">Subpackages</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../dev-ctbase.html">CTBase.jl</a></li><li><a class="tocitem" href="../dev-ctdirect.html">CTDirect.jl</a></li><li><a class="tocitem" href="../dev-ctflows.html">CTFlows.jl</a></li></ul></li></ul></li><li><a class="tocitem" href="../juliacon2024.html">JuliaCon 2024</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href="types.html">Types</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="types.html">Types</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl/blob/main/docs/src/api-ctbase/types.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="api-ctbase-types"><a class="docs-heading-anchor" href="#api-ctbase-types">Types</a><a id="api-ctbase-types-1"></a><a class="docs-heading-anchor-permalink" href="#api-ctbase-types" title="Permalink"></a></h1><h2 id="Index"><a class="docs-heading-anchor" href="#Index">Index</a><a id="Index-1"></a><a class="docs-heading-anchor-permalink" href="#Index" title="Permalink"></a></h2><ul><li><a href="types.html#CTBase.AbstractHamiltonian"><code>CTBase.AbstractHamiltonian</code></a></li><li><a href="types.html#CTBase.AmbiguousDescription"><code>CTBase.AmbiguousDescription</code></a></li><li><a href="types.html#CTBase.Autonomous"><code>CTBase.Autonomous</code></a></li><li><a href="types.html#CTBase.BoundaryConstraint"><code>CTBase.BoundaryConstraint</code></a></li><li><a href="types.html#CTBase.BoundaryConstraint-Tuple{Function, Vararg{DataType}}"><code>CTBase.BoundaryConstraint</code></a></li><li><a href="types.html#CTBase.BoundaryConstraint-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.BoundaryConstraint</code></a></li><li><a href="types.html#CTBase.BoundaryConstraint-Tuple{Function}"><code>CTBase.BoundaryConstraint</code></a></li><li><a href="types.html#CTBase.CTCallback"><code>CTBase.CTCallback</code></a></li><li><a href="types.html#CTBase.CTCallbacks"><code>CTBase.CTCallbacks</code></a></li><li><a href="types.html#CTBase.CTException"><code>CTBase.CTException</code></a></li><li><a href="types.html#CTBase.ControlConstraint-Tuple{Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.ControlConstraint</code></a></li><li><a href="types.html#CTBase.ControlConstraint-Tuple{Function}"><code>CTBase.ControlConstraint</code></a></li><li><a href="types.html#CTBase.ControlConstraint"><code>CTBase.ControlConstraint</code></a></li><li><a href="types.html#CTBase.ControlConstraint-Tuple{Function, Vararg{DataType}}"><code>CTBase.ControlConstraint</code></a></li><li><a href="types.html#CTBase.ControlLaw-Tuple{Function, Vararg{DataType}}"><code>CTBase.ControlLaw</code></a></li><li><a href="types.html#CTBase.ControlLaw-Tuple{Function}"><code>CTBase.ControlLaw</code></a></li><li><a href="types.html#CTBase.ControlLaw-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.ControlLaw</code></a></li><li><a href="types.html#CTBase.ControlLaw"><code>CTBase.ControlLaw</code></a></li><li><a href="types.html#CTBase.Controls"><code>CTBase.Controls</code></a></li><li><a href="types.html#CTBase.Costates"><code>CTBase.Costates</code></a></li><li><a href="types.html#CTBase.Description"><code>CTBase.Description</code></a></li><li><a href="types.html#CTBase.Dimension"><code>CTBase.Dimension</code></a></li><li><a href="types.html#CTBase.Dynamics-Tuple{Function, Vararg{DataType}}"><code>CTBase.Dynamics</code></a></li><li><a href="types.html#CTBase.Dynamics-Tuple{Function}"><code>CTBase.Dynamics</code></a></li><li><a href="types.html#CTBase.Dynamics"><code>CTBase.Dynamics</code></a></li><li><a href="types.html#CTBase.Dynamics-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.Dynamics</code></a></li><li><a href="types.html#CTBase.ExtensionError"><code>CTBase.ExtensionError</code></a></li><li><a href="types.html#CTBase.FeedbackControl-Tuple{Function}"><code>CTBase.FeedbackControl</code></a></li><li><a href="types.html#CTBase.FeedbackControl"><code>CTBase.FeedbackControl</code></a></li><li><a href="types.html#CTBase.FeedbackControl-Tuple{Function, Vararg{DataType}}"><code>CTBase.FeedbackControl</code></a></li><li><a href="types.html#CTBase.FeedbackControl-Tuple{Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.FeedbackControl</code></a></li><li><a href="types.html#CTBase.Fixed"><code>CTBase.Fixed</code></a></li><li><a href="types.html#CTBase.Hamiltonian-Tuple{Function}"><code>CTBase.Hamiltonian</code></a></li><li><a href="types.html#CTBase.Hamiltonian"><code>CTBase.Hamiltonian</code></a></li><li><a href="types.html#CTBase.Hamiltonian-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.Hamiltonian</code></a></li><li><a href="types.html#CTBase.Hamiltonian-Tuple{Function, Vararg{DataType}}"><code>CTBase.Hamiltonian</code></a></li><li><a href="types.html#CTBase.HamiltonianLift-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.HamiltonianLift</code></a></li><li><a href="types.html#CTBase.HamiltonianLift-Tuple{Function, Vararg{DataType}}"><code>CTBase.HamiltonianLift</code></a></li><li><a href="types.html#CTBase.HamiltonianLift"><code>CTBase.HamiltonianLift</code></a></li><li><a href="types.html#CTBase.HamiltonianLift-Tuple{Function}"><code>CTBase.HamiltonianLift</code></a></li><li><a href="types.html#CTBase.HamiltonianVectorField-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.HamiltonianVectorField</code></a></li><li><a href="types.html#CTBase.HamiltonianVectorField"><code>CTBase.HamiltonianVectorField</code></a></li><li><a href="types.html#CTBase.HamiltonianVectorField-Tuple{Function}"><code>CTBase.HamiltonianVectorField</code></a></li><li><a href="types.html#CTBase.HamiltonianVectorField-Tuple{Function, Vararg{DataType}}"><code>CTBase.HamiltonianVectorField</code></a></li><li><a href="types.html#CTBase.IncorrectArgument"><code>CTBase.IncorrectArgument</code></a></li><li><a href="types.html#CTBase.IncorrectMethod"><code>CTBase.IncorrectMethod</code></a></li><li><a href="types.html#CTBase.IncorrectOutput"><code>CTBase.IncorrectOutput</code></a></li><li><a href="types.html#CTBase.Index"><code>CTBase.Index</code></a></li><li><a href="types.html#CTBase.Lagrange-Tuple{Function}"><code>CTBase.Lagrange</code></a></li><li><a href="types.html#CTBase.Lagrange-Tuple{Function, Vararg{DataType}}"><code>CTBase.Lagrange</code></a></li><li><a href="types.html#CTBase.Lagrange"><code>CTBase.Lagrange</code></a></li><li><a href="types.html#CTBase.Lagrange-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.Lagrange</code></a></li><li><a href="types.html#CTBase.Mayer"><code>CTBase.Mayer</code></a></li><li><a href="types.html#CTBase.Mayer-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.Mayer</code></a></li><li><a href="types.html#CTBase.Mayer-Tuple{Function, Vararg{DataType}}"><code>CTBase.Mayer</code></a></li><li><a href="types.html#CTBase.Mayer-Tuple{Function}"><code>CTBase.Mayer</code></a></li><li><a href="types.html#CTBase.MixedConstraint-Tuple{Function, Vararg{DataType}}"><code>CTBase.MixedConstraint</code></a></li><li><a href="types.html#CTBase.MixedConstraint-Tuple{Function}"><code>CTBase.MixedConstraint</code></a></li><li><a href="types.html#CTBase.MixedConstraint"><code>CTBase.MixedConstraint</code></a></li><li><a href="types.html#CTBase.MixedConstraint-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.MixedConstraint</code></a></li><li><a href="types.html#CTBase.Multiplier-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.Multiplier</code></a></li><li><a href="types.html#CTBase.Multiplier-Tuple{Function, Vararg{DataType}}"><code>CTBase.Multiplier</code></a></li><li><a href="types.html#CTBase.Multiplier"><code>CTBase.Multiplier</code></a></li><li><a href="types.html#CTBase.Multiplier-Tuple{Function}"><code>CTBase.Multiplier</code></a></li><li><a href="types.html#CTBase.NonAutonomous"><code>CTBase.NonAutonomous</code></a></li><li><a href="types.html#CTBase.NonFixed"><code>CTBase.NonFixed</code></a></li><li><a href="types.html#CTBase.NotImplemented"><code>CTBase.NotImplemented</code></a></li><li><a href="types.html#CTBase.OptimalControlInit"><code>CTBase.OptimalControlInit</code></a></li><li><a href="types.html#CTBase.OptimalControlModel"><code>CTBase.OptimalControlModel</code></a></li><li><a href="types.html#CTBase.OptimalControlSolution"><code>CTBase.OptimalControlSolution</code></a></li><li><a href="types.html#CTBase.OptimalControlSolution-Tuple{OptimalControlModel{&lt;:TimeDependence, NonFixed}}"><code>CTBase.OptimalControlSolution</code></a></li><li><a href="types.html#CTBase.OptimalControlSolution-Tuple{OptimalControlModel{&lt;:TimeDependence, Fixed}}"><code>CTBase.OptimalControlSolution</code></a></li><li><a href="types.html#CTBase.ParsingError"><code>CTBase.ParsingError</code></a></li><li><a href="types.html#CTBase.PrintCallback"><code>CTBase.PrintCallback</code></a></li><li><a href="types.html#CTBase.PrintCallback-Tuple"><code>CTBase.PrintCallback</code></a></li><li><a href="types.html#CTBase.StateConstraint-Tuple{Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.StateConstraint</code></a></li><li><a href="types.html#CTBase.StateConstraint"><code>CTBase.StateConstraint</code></a></li><li><a href="types.html#CTBase.StateConstraint-Tuple{Function, Vararg{DataType}}"><code>CTBase.StateConstraint</code></a></li><li><a href="types.html#CTBase.StateConstraint-Tuple{Function}"><code>CTBase.StateConstraint</code></a></li><li><a href="types.html#CTBase.States"><code>CTBase.States</code></a></li><li><a href="types.html#CTBase.StopCallback-Tuple"><code>CTBase.StopCallback</code></a></li><li><a href="types.html#CTBase.StopCallback"><code>CTBase.StopCallback</code></a></li><li><a href="types.html#CTBase.Time"><code>CTBase.Time</code></a></li><li><a href="types.html#CTBase.TimeDependence"><code>CTBase.TimeDependence</code></a></li><li><a href="types.html#CTBase.Times"><code>CTBase.Times</code></a></li><li><a href="types.html#CTBase.UnauthorizedCall"><code>CTBase.UnauthorizedCall</code></a></li><li><a href="types.html#CTBase.VariableConstraint"><code>CTBase.VariableConstraint</code></a></li><li><a href="types.html#CTBase.VariableConstraint-Tuple{Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.VariableConstraint</code></a></li><li><a href="types.html#CTBase.VariableDependence"><code>CTBase.VariableDependence</code></a></li><li><a href="types.html#CTBase.VectorField-Tuple{Function}"><code>CTBase.VectorField</code></a></li><li><a href="types.html#CTBase.VectorField"><code>CTBase.VectorField</code></a></li><li><a href="types.html#CTBase.VectorField-Tuple{Function, Vararg{DataType}}"><code>CTBase.VectorField</code></a></li><li><a href="types.html#CTBase.VectorField-Tuple{Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.VectorField</code></a></li><li><a href="types.html#CTBase.ctNumber"><code>CTBase.ctNumber</code></a></li></ul><h2 id="Documentation"><a class="docs-heading-anchor" href="#Documentation">Documentation</a><a id="Documentation-1"></a><a class="docs-heading-anchor-permalink" href="#Documentation" title="Permalink"></a></h2><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.AbstractHamiltonian" href="#CTBase.AbstractHamiltonian"><code>CTBase.AbstractHamiltonian</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">abstract type AbstractHamiltonian{time_dependence, variable_dependence}</code></pre><p>Abstract type for hamiltonians.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L110">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.AmbiguousDescription" href="#CTBase.AmbiguousDescription"><code>CTBase.AmbiguousDescription</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct AmbiguousDescription &lt;: CTException</code></pre><p>Exception thrown when the description is ambiguous / incorrect.</p><p><strong>Fields</strong></p><ul><li><code>var::Tuple{Vararg{Symbol}}</code></li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/exception.jl#L8">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Autonomous" href="#CTBase.Autonomous"><code>CTBase.Autonomous</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">abstract type Autonomous &lt;: TimeDependence</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L1129">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.BoundaryConstraint" href="#CTBase.BoundaryConstraint"><code>CTBase.BoundaryConstraint</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct BoundaryConstraint{variable_dependence}</code></pre><p><strong>Fields</strong></p><ul><li><code>f::Function</code></li></ul><p>The default value for <code>variable_dependence</code> is <code>Fixed</code>.</p><p><strong>Constructor</strong></p><p>The constructor <code>BoundaryConstraint</code> returns a <code>BoundaryConstraint</code> of a function. The function must take 2 or 3 arguments <code>(x0, xf)</code> or <code>(x0, xf, v)</code>, if the function is variable, it must be specified.  Dependencies are specified with a boolean, <code>variable</code>, <code>false</code> by default or with a <code>DataType</code>, <code>NonFixed/Fixed</code>, <code>Fixed</code> by default.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; B = BoundaryConstraint((x0, xf) -&gt; [xf[2]-x0[1], 2xf[1]+x0[2]^2])
+julia&gt; B = BoundaryConstraint((x0, xf, v) -&gt; [v[3]+xf[2]-x0[1], v[1]-v[2]+2xf[1]+x0[2]^2], variable=true)
+julia&gt; B = BoundaryConstraint((x0, xf, v) -&gt; [v[3]+xf[2]-x0[1], v[1]-v[2]+2xf[1]+x0[2]^2], NonFixed)</code></pre><div class="admonition is-warning"><header class="admonition-header">Warning</header><div class="admonition-body"><p>When the state is of dimension 1, consider <code>x0</code> and <code>xf</code> as a scalar. When the constraint is dimension 1, return a scalar.</p></div></div><p><strong>Call</strong></p><p>The call returns the evaluation of the <code>BoundaryConstraint</code> for given values. If a variable is given for a non variable dependent boundary constraint, it will be ignored.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; B = BoundaryConstraint((x0, xf) -&gt; [xf[2]-x0[1], 2xf[1]+x0[2]^2])
+julia&gt; B([0, 0], [1, 1])
+[1, 2]
+julia&gt; B = BoundaryConstraint((x0, xf) -&gt; [xf[2]-x0[1], 2xf[1]+x0[2]^2])
+julia&gt; B([0, 0], [1, 1],Real[])
+[1, 2]
+julia&gt; B = BoundaryConstraint((x0, xf, v) -&gt; [v[3]+xf[2]-x0[1], v[1]-v[2]+2xf[1]+x0[2]^2], variable=true)
+julia&gt; B([0, 0], [1, 1], [1, 2, 3])
+[4, 1]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L11">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.BoundaryConstraint-Tuple{Function, Vararg{DataType}}" href="#CTBase.BoundaryConstraint-Tuple{Function, Vararg{DataType}}"><code>CTBase.BoundaryConstraint</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">BoundaryConstraint(
+    f::Function,
+    dependencies::DataType...
+) -&gt; BoundaryConstraint{Fixed}
+</code></pre><p>Return a <code>BoundaryConstraint</code> of a function. Dependencies are specified with a DataType, NonFixed/Fixed, Fixed by default.</p><pre><code class="language- hljs">julia&gt; B = BoundaryConstraint((x0, xf) -&gt; [xf[2]-x0[1], 2xf[1]+x0[2]^2])
+julia&gt; B = BoundaryConstraint((x0, xf, v) -&gt; [v[3]+xf[2]-x0[1], v[1]-v[2]+2xf[1]+x0[2]^2], NonFixed)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L20-L32">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.BoundaryConstraint-Tuple{Function}" href="#CTBase.BoundaryConstraint-Tuple{Function}"><code>CTBase.BoundaryConstraint</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">BoundaryConstraint(
+    f::Function;
+    variable
+) -&gt; BoundaryConstraint{Fixed}
+</code></pre><p>Return a <code>BoundaryConstraint</code> of a function. Dependencies are specified with a boolean, variable, false by default.</p><pre><code class="language- hljs">julia&gt; B = BoundaryConstraint((x0, xf) -&gt; [xf[2]-x0[1], 2xf[1]+x0[2]^2])
+julia&gt; B = BoundaryConstraint((x0, xf, v) -&gt; [v[3]+xf[2]-x0[1], v[1]-v[2]+2xf[1]+x0[2]^2], variable=true)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L2-L14">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.BoundaryConstraint-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}" href="#CTBase.BoundaryConstraint-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.BoundaryConstraint</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Return the evaluation of the BoundaryConstraint.</p><pre><code class="language- hljs">julia&gt; B = BoundaryConstraint((x0, xf) -&gt; [xf[2]-x0[1], 2xf[1]+x0[2]^2])
+julia&gt; B([0, 0], [1, 1])
+[1, 2]
+julia&gt; B = BoundaryConstraint((x0, xf) -&gt; [xf[2]-x0[1], 2xf[1]+x0[2]^2])
+julia&gt; B([0, 0], [1, 1],Real[])
+[1, 2]
+julia&gt; B = BoundaryConstraint((x0, xf, v) -&gt; [v[3]+xf[2]-x0[1], v[1]-v[2]+2xf[1]+x0[2]^2], variable=true)
+julia&gt; B([0, 0], [1, 1], [1, 2, 3])
+[4, 1]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L39-L56">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.CTCallback" href="#CTBase.CTCallback"><code>CTBase.CTCallback</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">abstract type CTCallback</code></pre><p>Abstract type for callbacks.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/callback.jl#L2">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.CTCallbacks" href="#CTBase.CTCallbacks"><code>CTBase.CTCallbacks</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Tuple of callbacks</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/callback.jl#L9-L11">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.CTException" href="#CTBase.CTException"><code>CTBase.CTException</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">abstract type CTException &lt;: Exception</code></pre><p>Abstract type for exceptions.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/exception.jl#L1">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.ControlConstraint" href="#CTBase.ControlConstraint"><code>CTBase.ControlConstraint</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct ControlConstraint{time_dependence, variable_dependence}</code></pre><p><strong>Fields</strong></p><ul><li><code>f::Function</code></li></ul><p>Similar to <code>VectorField</code> in the usage, but the dimension of the output of the function <code>f</code> is arbitrary.</p><p>The default values for <code>time_dependence</code> and <code>variable_dependence</code> are <code>Autonomous</code> and <code>Fixed</code> respectively.</p><p><strong>Constructor</strong></p><p>The constructor <code>ControlConstraint</code> returns a <code>ControlConstraint</code> of a function. The function must take 1 to 3 arguments, <code>u</code> to <code>(t, u, v)</code>, if the function is variable or non autonomous, it must be specified.  Dependencies are specified either with :</p><ul><li>booleans, <code>autonomous</code> and <code>variable</code>, respectively <code>true</code> and <code>false</code> by default </li><li><code>DataType</code>, <code>Autonomous</code>/<code>NonAutonomous</code> and <code>NonFixed</code>/<code>Fixed</code>, respectively <code>Autonomous</code> and <code>Fixed</code> by default.</li></ul><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; IncorrectArgument ControlConstraint(u -&gt; [u[1]^2, 2u[2]], Int64)
+julia&gt; IncorrectArgument ControlConstraint(u -&gt; [u[1]^2, 2u[2]], Int64)
+julia&gt; C = ControlConstraint(u -&gt; [u[1]^2, 2u[2]], Autonomous, Fixed)
+julia&gt; C = ControlConstraint((u, v) -&gt; [u[1]^2, 2u[2]+v[3]], Autonomous, NonFixed)
+julia&gt; C = ControlConstraint((t, u) -&gt; [t+u[1]^2, 2u[2]], NonAutonomous, Fixed)
+julia&gt; C = ControlConstraint((t, u, v) -&gt; [t+u[1]^2, 2u[2]+v[3]], NonAutonomous, NonFixed)
+julia&gt; C = ControlConstraint(u -&gt; [u[1]^2, 2u[2]], autonomous=true, variable=false)
+julia&gt; C = ControlConstraint((u, v) -&gt; [u[1]^2, 2u[2]+v[3]], autonomous=true, variable=true)
+julia&gt; C = ControlConstraint((t, u) -&gt; [t+u[1]^2, 2u[2]], autonomous=false, variable=false)
+julia&gt; C = ControlConstraint((t, u, v) -&gt; [t+u[1]^2, 2u[2]+v[3]], autonomous=false, variable=true)</code></pre><div class="admonition is-warning"><header class="admonition-header">Warning</header><div class="admonition-body"><p>When the control is of dimension 1, consider <code>u</code> as a scalar.</p></div></div><p><strong>Call</strong></p><p>The call returns the evaluation of the <code>ControlConstraint</code> for given values.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; C = ControlConstraint(u -&gt; [u[1]^2, 2u[2]], autonomous=true, variable=false)
+julia&gt; C([1, -1])
+[1, -2]
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; C(t, [1, -1], v)
+[1, -2]
+julia&gt; C = ControlConstraint((u, v) -&gt; [u[1]^2, 2u[2]+v[3]], autonomous=true, variable=true)
+julia&gt; C([1, -1], [1, 2, 3])
+[1, 1]
+julia&gt; C(t, [1, -1], [1, 2, 3])
+[1, 1]
+julia&gt; C = ControlConstraint((t, u) -&gt; [t+u[1]^2, 2u[2]], autonomous=false, variable=false)
+julia&gt; C(1, [1, -1])
+[2, -2]
+julia&gt; C(1, [1, -1], v)
+[2, -2]
+julia&gt; C = ControlConstraint((t, u, v) -&gt; [t+u[1]^2, 2u[2]+v[3]], autonomous=false, variable=true)
+julia&gt; C(1, [1, -1], [1, 2, 3])
+[2, 1]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L657">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.ControlConstraint-Tuple{Function, Vararg{DataType}}" href="#CTBase.ControlConstraint-Tuple{Function, Vararg{DataType}}"><code>CTBase.ControlConstraint</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">ControlConstraint(
+    f::Function,
+    dependencies::DataType...
+) -&gt; ControlConstraint{Autonomous, Fixed}
+</code></pre><p>Return the <code>StateConstraint</code> of a function. Dependencies are specified with DataType, Autonomous, NonAutonomous and Fixed, NonFixed.</p><pre><code class="language- hljs">julia&gt; IncorrectArgument ControlConstraint(u -&gt; [u[1]^2, 2u[2]], Int64)
+julia&gt; IncorrectArgument ControlConstraint(u -&gt; [u[1]^2, 2u[2]], Int64)
+julia&gt; C = ControlConstraint(u -&gt; [u[1]^2, 2u[2]], Autonomous, Fixed)
+julia&gt; C = ControlConstraint((u, v) -&gt; [u[1]^2, 2u[2]+v[3]], Autonomous, NonFixed)
+julia&gt; C = ControlConstraint((t, u) -&gt; [t+u[1]^2, 2u[2]], NonAutonomous, Fixed)
+julia&gt; C = ControlConstraint((t, u, v) -&gt; [t+u[1]^2, 2u[2]+v[3]], NonAutonomous, NonFixed)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L947-L962">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.ControlConstraint-Tuple{Function}" href="#CTBase.ControlConstraint-Tuple{Function}"><code>CTBase.ControlConstraint</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">ControlConstraint(
+    f::Function;
+    autonomous,
+    variable
+) -&gt; ControlConstraint{Autonomous, Fixed}
+</code></pre><p>Return the <code>ControlConstraint</code> of a function. Dependencies are specified with a boolean, variable, false by default, autonomous, true by default.</p><pre><code class="language- hljs">julia&gt; C = ControlConstraint(u -&gt; [u[1]^2, 2u[2]], autonomous=true, variable=false)
+julia&gt; C = ControlConstraint((u, v) -&gt; [u[1]^2, 2u[2]+v[3]], autonomous=true, variable=true)
+julia&gt; C = ControlConstraint((t, u) -&gt; [t+u[1]^2, 2u[2]], autonomous=false, variable=false)
+julia&gt; C = ControlConstraint((t, u, v) -&gt; [t+u[1]^2, 2u[2]+v[3]], autonomous=false, variable=true)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L926-L939">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.ControlConstraint-Tuple{Union{Real, AbstractVector{&lt;:Real}}}" href="#CTBase.ControlConstraint-Tuple{Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.ControlConstraint</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Return the value of the ControlConstraint function.</p><pre><code class="language- hljs">julia&gt; IncorrectArgument ControlConstraint(u -&gt; [u[1]^2, 2u[2]], Int64)
+julia&gt; IncorrectArgument ControlConstraint(u -&gt; [u[1]^2, 2u[2]], Int64)
+julia&gt; C = ControlConstraint(u -&gt; [u[1]^2, 2u[2]], autonomous=true, variable=false)
+julia&gt; C([1, -1])
+[1, -2]
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; C(t, [1, -1], v)
+[1, -2]
+julia&gt; C = ControlConstraint((u, v) -&gt; [u[1]^2, 2u[2]+v[3]], autonomous=true, variable=true)
+julia&gt; C([1, -1], [1, 2, 3])
+[1, 1]
+julia&gt; C(t, [1, -1], [1, 2, 3])
+[1, 1]
+julia&gt; C = ControlConstraint((t, u) -&gt; [t+u[1]^2, 2u[2]], autonomous=false, variable=false)
+julia&gt; C(1, [1, -1])
+[2, -2]
+julia&gt; C(1, [1, -1], v)
+[2, -2]
+julia&gt; C = ControlConstraint((t, u, v) -&gt; [t+u[1]^2, 2u[2]+v[3]], autonomous=false, variable=true)
+julia&gt; C(1, [1, -1], [1, 2, 3])
+[2, 1]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L970-L1000">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.ControlLaw" href="#CTBase.ControlLaw"><code>CTBase.ControlLaw</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct ControlLaw{time_dependence, variable_dependence}</code></pre><p><strong>Fields</strong></p><ul><li><code>f::Function</code></li></ul><p>Similar to <code>Hamiltonian</code> in the usage, but the dimension of the output of the function <code>f</code> is arbitrary.</p><p>The default values for <code>time_dependence</code> and <code>variable_dependence</code> are <code>Autonomous</code> and <code>Fixed</code> respectively.</p><p><strong>Constructor</strong></p><p>The constructor <code>ControlLaw</code> returns a <code>ControlLaw</code> of a function. The function must take 2 to 4 arguments, <code>(x, p)</code> to <code>(t, x, p, v)</code>, if the function is variable or non autonomous, it must be specified.  Dependencies are specified either with :</p><ul><li>booleans, <code>autonomous</code> and <code>variable</code>, respectively <code>true</code> and <code>false</code> by default </li><li><code>DataType</code>, <code>Autonomous</code>/<code>NonAutonomous</code> and <code>NonFixed</code>/<code>Fixed</code>, respectively <code>Autonomous</code> and <code>Fixed</code> by default.</li></ul><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; ControlLaw((x, p) -&gt; x[1]^2+2p[2], Int64)
+IncorrectArgument
+julia&gt; ControlLaw((x, p) -&gt; x[1]^2+2p[2], Int64)
+IncorrectArgument
+julia&gt; u = ControlLaw((x, p) -&gt; x[1]^2+2p[2], Autonomous, Fixed)
+julia&gt; u = ControlLaw((x, p, v) -&gt; x[1]^2+2p[2]+v[3], Autonomous, NonFixed)
+julia&gt; u = ControlLaw((t, x, p) -&gt; t+x[1]^2+2p[2], NonAutonomous, Fixed)
+julia&gt; u = ControlLaw((t, x, p, v) -&gt; t+x[1]^2+2p[2]+v[3], NonAutonomous, NonFixed)
+julia&gt; u = ControlLaw((x, p) -&gt; x[1]^2+2p[2], autonomous=true, variable=false)
+julia&gt; u = ControlLaw((x, p, v) -&gt; x[1]^2+2p[2]+v[3], autonomous=true, variable=true)
+julia&gt; u = ControlLaw((t, x, p) -&gt; t+x[1]^2+2p[2], autonomous=false, variable=false)
+julia&gt; u = ControlLaw((t, x, p, v) -&gt; t+x[1]^2+2p[2]+v[3], autonomous=false, variable=true)</code></pre><div class="admonition is-warning"><header class="admonition-header">Warning</header><div class="admonition-body"><p>When the state and costate are of dimension 1, consider <code>x</code> and <code>p</code> as scalars.</p></div></div><p><strong>Call</strong></p><p>The call returns the evaluation of the <code>ControlLaw</code> for given values.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; u = ControlLaw((x, p) -&gt; x[1]^2+2p[2], autonomous=true, variable=false)
+julia&gt; u([1, 0], [0, 1])
+3
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; u(t, [1, 0], [0, 1])
+MethodError
+julia&gt; u([1, 0], [0, 1], v)
+MethodError
+julia&gt; u(t, [1, 0], [0, 1], v)
+3
+julia&gt; u = ControlLaw((x, p, v) -&gt; x[1]^2+2p[2]+v[3], autonomous=true, variable=true)
+julia&gt; u([1, 0], [0, 1], [1, 2, 3])
+6
+julia&gt; u(t, [1, 0], [0, 1], [1, 2, 3])
+6
+julia&gt; u = ControlLaw((t, x, p) -&gt; t+x[1]^2+2p[2], autonomous=false, variable=false)
+julia&gt; u(1, [1, 0], [0, 1])
+4
+julia&gt; u(1, [1, 0], [0, 1], v)
+4
+julia&gt; u = ControlLaw((t, x, p, v) -&gt; t+x[1]^2+2p[2]+v[3], autonomous=false, variable=true)
+julia&gt; u(1, [1, 0], [0, 1], [1, 2, 3])
+7</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L932">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.ControlLaw-Tuple{Function, Vararg{DataType}}" href="#CTBase.ControlLaw-Tuple{Function, Vararg{DataType}}"><code>CTBase.ControlLaw</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">ControlLaw(
+    f::Function,
+    dependencies::DataType...
+) -&gt; ControlLaw{Autonomous, Fixed}
+</code></pre><p>Return the <code>ControlLaw</code> of a function. Dependencies are specified with DataType, Autonomous, NonAutonomous and Fixed, NonFixed.</p><pre><code class="language- hljs">julia&gt; ControlLaw((x, p) -&gt; x[1]^2+2p[2], Int64)
+IncorrectArgument
+julia&gt; ControlLaw((x, p) -&gt; x[1]^2+2p[2], Int64)
+IncorrectArgument
+julia&gt; u = ControlLaw((x, p) -&gt; x[1]^2+2p[2], Autonomous, Fixed)
+julia&gt; u = ControlLaw((x, p, v) -&gt; x[1]^2+2p[2]+v[3], Autonomous, NonFixed)
+julia&gt; u = ControlLaw((t, x, p) -&gt; t+x[1]^2+2p[2], NonAutonomous, Fixed)
+julia&gt; u = ControlLaw((t, x, p, v) -&gt; t+x[1]^2+2p[2]+v[3], NonAutonomous, NonFixed)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L1290-L1307">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.ControlLaw-Tuple{Function}" href="#CTBase.ControlLaw-Tuple{Function}"><code>CTBase.ControlLaw</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">ControlLaw(
+    f::Function;
+    autonomous,
+    variable
+) -&gt; ControlLaw{Autonomous, Fixed}
+</code></pre><p>Return the <code>ControlLaw</code> of a function. Dependencies are specified with a boolean, variable, false by default, autonomous, true by default.</p><pre><code class="language- hljs">julia&gt; u = ControlLaw((x, p) -&gt; x[1]^2+2p[2], autonomous=true, variable=false)
+julia&gt; u = ControlLaw((x, p, v) -&gt; x[1]^2+2p[2]+v[3], autonomous=true, variable=true)
+julia&gt; u = ControlLaw((t, x, p) -&gt; t+x[1]^2+2p[2], autonomous=false, variable=false)
+julia&gt; u = ControlLaw((t, x, p, v) -&gt; t+x[1]^2+2p[2]+v[3], autonomous=false, variable=true)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L1269-L1282">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.ControlLaw-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}" href="#CTBase.ControlLaw-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.ControlLaw</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Return the value of the ControlLaw function.</p><pre><code class="language- hljs">julia&gt; ControlLaw((x, p) -&gt; x[1]^2+2p[2], Int64)
+IncorrectArgument
+julia&gt; ControlLaw((x, p) -&gt; x[1]^2+2p[2], Int64)
+IncorrectArgument
+julia&gt; u = ControlLaw((x, p) -&gt; x[1]^2+2p[2], autonomous=true, variable=false)
+julia&gt; u([1, 0], [0, 1])
+3
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; u(t, [1, 0], [0, 1])
+MethodError
+julia&gt; u([1, 0], [0, 1], v)
+MethodError
+julia&gt; u(t, [1, 0], [0, 1], v)
+3
+julia&gt; u = ControlLaw((x, p, v) -&gt; x[1]^2+2p[2]+v[3], autonomous=true, variable=true)
+julia&gt; u([1, 0], [0, 1], [1, 2, 3])
+6
+julia&gt; u(t, [1, 0], [0, 1], [1, 2, 3])
+6
+julia&gt; u = ControlLaw((t, x, p) -&gt; t+x[1]^2+2p[2], autonomous=false, variable=false)
+julia&gt; u(1, [1, 0], [0, 1])
+4
+julia&gt; u(1, [1, 0], [0, 1], v)
+4
+julia&gt; u = ControlLaw((t, x, p, v) -&gt; t+x[1]^2+2p[2]+v[3], autonomous=false, variable=true)
+julia&gt; u(1, [1, 0], [0, 1], [1, 2, 3])
+7</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L1315-L1351">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Controls" href="#CTBase.Controls"><code>CTBase.Controls</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Type alias for a vector of controls.</p><pre><code class="language- hljs">julia&gt; const Controls = AbstractVector{&lt;:Control}</code></pre><p>See also: <a href="@ref"><code>Control</code></a>, <a href="types.html#CTBase.States"><code>States</code></a>, <a href="types.html#CTBase.Costates"><code>Costates</code></a>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/CTBase.jl#L152-L160">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Costates" href="#CTBase.Costates"><code>CTBase.Costates</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Type alias for a vector of costates.</p><pre><code class="language- hljs">julia&gt; const Costates = AbstractVector{&lt;:Costate}</code></pre><p>See also: <a href="@ref"><code>Costate</code></a>, <a href="types.html#CTBase.States"><code>States</code></a>, <a href="types.html#CTBase.Controls"><code>Controls</code></a>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/CTBase.jl#L141-L149">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Description" href="#CTBase.Description"><code>CTBase.Description</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>A description is a tuple of symbols. <code>Description</code> is a type alias for a tuple of symbols.</p><pre><code class="language- hljs">julia&gt; const Description = Tuple{DescVarArg}</code></pre><p>See also: <a href="../dev-ctbase.html#CTBase.DescVarArg"><code>DescVarArg</code></a>.</p><p><strong>Example</strong></p><p><a href="../dev-ctbase.html#Base.show-Tuple{IO, MIME{Symbol(&quot;text/plain&quot;)}, OptimalControlModel}"><code>Base.show</code></a> is overloaded for descriptions, that is tuple of descriptions are printed as follows:</p><pre><code class="language- hljs">julia&gt; display( ( (:a, :b), (:b, :c) ) )
+(:a, :b)
+(:b, :c)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/description.jl#L12-L30">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Dimension" href="#CTBase.Dimension"><code>CTBase.Dimension</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Type alias for a dimension. This is used to define the dimension of the state space,  the costate space, the control space, etc.</p><pre><code class="language- hljs">julia&gt; const Dimension = Integer</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/CTBase.jl#L163-L170">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Dynamics" href="#CTBase.Dynamics"><code>CTBase.Dynamics</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct Dynamics{time_dependence, variable_dependence}</code></pre><p><strong>Fields</strong></p><ul><li><code>f::Function</code></li></ul><p>The default value for <code>time_dependence</code> and <code>variable_dependence</code> are <code>Autonomous</code> and <code>Fixed</code> respectively.</p><p><strong>Constructor</strong></p><p>The constructor <code>Dynamics</code> returns a <code>Dynamics</code> of a function. The function must take 2 to 4 arguments, <code>(x, u)</code> to <code>(t, x, u, v)</code>, if the function is variable or non autonomous, it must be specified.  Dependencies are specified either with :</p><ul><li>booleans, <code>autonomous</code> and <code>variable</code>, respectively <code>true</code> and <code>false</code> by default </li><li><code>DataType</code>, <code>Autonomous</code>/<code>NonAutonomous</code> and <code>NonFixed</code>/<code>Fixed</code>, respectively <code>Autonomous</code> and <code>Fixed</code> by default.</li></ul><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; Dynamics((x, u) -&gt; [2x[2]-u^2, x[1]], Int64)
+IncorrectArgument
+julia&gt; Dynamics((x, u) -&gt; [2x[2]-u^2, x[1]], Int64)
+IncorrectArgument
+julia&gt; D = Dynamics((x, u) -&gt; [2x[2]-u^2, x[1]], Autonomous, Fixed)
+julia&gt; D = Dynamics((x, u, v) -&gt; [2x[2]-u^2+v[3], x[1]], Autonomous, NonFixed)
+julia&gt; D = Dynamics((t, x, u) -&gt; [t+2x[2]-u^2, x[1]], NonAutonomous, Fixed)
+julia&gt; D = Dynamics((t, x, u, v) -&gt; [t+2x[2]-u^2+v[3], x[1]], NonAutonomous, NonFixed)
+julia&gt; D = Dynamics((x, u) -&gt; [2x[2]-u^2, x[1]], autonomous=true, variable=false)
+julia&gt; D = Dynamics((x, u, v) -&gt; [2x[2]-u^2+v[3], x[1]], autonomous=true, variable=true)
+julia&gt; D = Dynamics((t, x, u) -&gt; [t+2x[2]-u^2, x[1]], autonomous=false, variable=false)
+julia&gt; D = Dynamics((t, x, u, v) -&gt; [t+2x[2]-u^2+v[3], x[1]], autonomous=false, variable=true)</code></pre><div class="admonition is-warning"><header class="admonition-header">Warning</header><div class="admonition-body"><p>When the state is of dimension 1, consider <code>x</code> as a scalar. Same for the control.</p></div></div><p><strong>Call</strong></p><p>The call returns the evaluation of the <code>Dynamics</code> for given values.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; D = Dynamics((x, u) -&gt; [2x[2]-u^2, x[1]], autonomous=true, variable=false)
+julia&gt; D([1, 0], 1)
+[-1, 1]
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; D(t, [1, 0], 1, v)
+[-1, 1]
+julia&gt; D = Dynamics((x, u, v) -&gt; [2x[2]-u^2+v[3], x[1]], autonomous=true, variable=true)
+julia&gt; D([1, 0], 1, [1, 2, 3])
+[2, 1]
+julia&gt; D(t, [1, 0], 1, [1, 2, 3])
+[2, 1]
+julia&gt; D = Dynamics((t, x, u) -&gt; [t+2x[2]-u^2, x[1]], autonomous=false, variable=false)
+julia&gt; D(1, [1, 0], 1)
+[0, 1]
+julia&gt; D(1, [1, 0], 1, v)
+[0, 1]
+julia&gt; D = Dynamics((t, x, u, v) -&gt; [t+2x[2]-u^2+v[3], x[1]], autonomous=false, variable=true)
+julia&gt; D(1, [1, 0], 1, [1, 2, 3])
+[3, 1]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L506">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Dynamics-Tuple{Function, Vararg{DataType}}" href="#CTBase.Dynamics-Tuple{Function, Vararg{DataType}}"><code>CTBase.Dynamics</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">Dynamics(
+    f::Function,
+    dependencies::DataType...
+) -&gt; Dynamics{Autonomous, Fixed}
+</code></pre><p>Return the <code>Dynamics</code> of a function. Dependencies are specified with DataType, Autonomous, NonAutonomous and Fixed, NonFixed.</p><pre><code class="language- hljs">julia&gt; Dynamics((x, u) -&gt; [2x[2]-u^2, x[1]], Int64)
+IncorrectArgument
+julia&gt; Dynamics((x, u) -&gt; [2x[2]-u^2, x[1]], Int64)
+IncorrectArgument
+julia&gt; D = Dynamics((x, u) -&gt; [2x[2]-u^2, x[1]], Autonomous, Fixed)
+julia&gt; D = Dynamics((x, u, v) -&gt; [2x[2]-u^2+v[3], x[1]], Autonomous, NonFixed)
+julia&gt; D = Dynamics((t, x, u) -&gt; [t+2x[2]-u^2, x[1]], NonAutonomous, Fixed)
+julia&gt; D = Dynamics((t, x, u, v) -&gt; [t+2x[2]-u^2+v[3], x[1]], NonAutonomous, NonFixed)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L734-L751">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Dynamics-Tuple{Function}" href="#CTBase.Dynamics-Tuple{Function}"><code>CTBase.Dynamics</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">Dynamics(
+    f::Function;
+    autonomous,
+    variable
+) -&gt; Dynamics{Autonomous, Fixed}
+</code></pre><p>Return the <code>Dynamics</code> of a function. Dependencies are specified with a boolean, variable, false by default, autonomous, true by default.</p><pre><code class="language- hljs">julia&gt; D = Dynamics((x, u) -&gt; [2x[2]-u^2, x[1]], autonomous=true, variable=false)
+julia&gt; D = Dynamics((x, u, v) -&gt; [2x[2]-u^2+v[3], x[1]], autonomous=true, variable=true)
+julia&gt; D = Dynamics((t, x, u) -&gt; [t+2x[2]-u^2, x[1]], autonomous=false, variable=false)
+julia&gt; D = Dynamics((t, x, u, v) -&gt; [t+2x[2]-u^2+v[3], x[1]], autonomous=false, variable=true)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L713-L726">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Dynamics-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}" href="#CTBase.Dynamics-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.Dynamics</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Return the value of the Dynamics function.</p><pre><code class="language- hljs">julia&gt; D = Dynamics((x, u) -&gt; [2x[2]-u^2, x[1]], autonomous=true, variable=false)
+julia&gt; D([1, 0], 1)
+[-1, 1]
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; D(t, [1, 0], 1, v)
+[-1, 1]
+julia&gt; D = Dynamics((x, u, v) -&gt; [2x[2]-u^2+v[3], x[1]], autonomous=true, variable=true)
+julia&gt; D([1, 0], 1, [1, 2, 3])
+[2, 1]
+julia&gt; D(t, [1, 0], 1, [1, 2, 3])
+[2, 1]
+julia&gt; D = Dynamics((t, x, u) -&gt; [t+2x[2]-u^2, x[1]], autonomous=false, variable=false)
+julia&gt; D(1, [1, 0], 1)
+[0, 1]
+julia&gt; D(1, [1, 0], 1, v)
+[0, 1]
+julia&gt; D = Dynamics((t, x, u, v) -&gt; [t+2x[2]-u^2+v[3], x[1]], autonomous=false, variable=true)
+julia&gt; D(1, [1, 0], 1, [1, 2, 3])
+[3, 1]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L759-L787">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.ExtensionError" href="#CTBase.ExtensionError"><code>CTBase.ExtensionError</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">mutable struct ExtensionError &lt;: CTException</code></pre><p>Exception thrown when an extension is not loaded but the user tries to call a function of it.</p><p><strong>Fields</strong></p><ul><li><code>weakdeps::Tuple{Vararg{Symbol}}</code></li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/exception.jl#L147">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.FeedbackControl" href="#CTBase.FeedbackControl"><code>CTBase.FeedbackControl</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct FeedbackControl{time_dependence, variable_dependence}</code></pre><p><strong>Fields</strong></p><ul><li><code>f::Function</code></li></ul><p>Similar to <code>VectorField</code> in the usage, but the dimension of the output of the function <code>f</code> is arbitrary.</p><p>The default values for <code>time_dependence</code> and <code>variable_dependence</code> are <code>Autonomous</code> and <code>Fixed</code> respectively.</p><p><strong>Constructor</strong></p><p>The constructor <code>FeedbackControl</code> returns a <code>FeedbackControl</code> of a function. The function must take 1 to 3 arguments, <code>x</code> to <code>(t, x, v)</code>, if the function is variable or non autonomous, it must be specified.  Dependencies are specified either with :</p><ul><li>booleans, <code>autonomous</code> and <code>variable</code>, respectively <code>true</code> and <code>false</code> by default </li><li><code>DataType</code>, <code>Autonomous</code>/<code>NonAutonomous</code> and <code>NonFixed</code>/<code>Fixed</code>, respectively <code>Autonomous</code> and <code>Fixed</code> by default.</li></ul><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; FeedbackControl(x -&gt; x[1]^2+2x[2], Int64)
+IncorrectArgument
+julia&gt; FeedbackControl(x -&gt; x[1]^2+2x[2], Int64)
+IncorrectArgument
+julia&gt; u = FeedbackControl(x -&gt; x[1]^2+2x[2], Autonomous, Fixed)
+julia&gt; u = FeedbackControl((x, v) -&gt; x[1]^2+2x[2]+v[3], Autonomous, NonFixed)
+julia&gt; u = FeedbackControl((t, x) -&gt; t+x[1]^2+2x[2], NonAutonomous, Fixed)
+julia&gt; u = FeedbackControl((t, x, v) -&gt; t+x[1]^2+2x[2]+v[3], NonAutonomous, NonFixed)
+julia&gt; u = FeedbackControl(x -&gt; x[1]^2+2x[2], autonomous=true, variable=false)
+julia&gt; u = FeedbackControl((x, v) -&gt; x[1]^2+2x[2]+v[3], autonomous=true, variable=true)
+julia&gt; u = FeedbackControl((t, x) -&gt; t+x[1]^2+2x[2], autonomous=false, variable=false)
+julia&gt; u = FeedbackControl((t, x, v) -&gt; t+x[1]^2+2x[2]+v[3], autonomous=false, variable=true)</code></pre><div class="admonition is-warning"><header class="admonition-header">Warning</header><div class="admonition-body"><p>When the state is of dimension 1, consider <code>x</code> as a scalar.</p></div></div><p><strong>Call</strong></p><p>The call returns the evaluation of the <code>FeedbackControl</code> for given values.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; u = FeedbackControl(x -&gt; x[1]^2+2x[2], autonomous=true, variable=false)
+julia&gt; u([1, 0])
+1
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; u(t, [1, 0])
+MethodError
+julia&gt; u([1, 0], v)
+MethodError
+julia&gt; u(t, [1, 0], v)
+1
+julia&gt; u = FeedbackControl((x, v) -&gt; x[1]^2+2x[2]+v[3], autonomous=true, variable=true)
+julia&gt; u([1, 0], [1, 2, 3])
+4
+julia&gt; u(t, [1, 0], [1, 2, 3])
+4
+julia&gt; u = FeedbackControl((t, x) -&gt; t+x[1]^2+2x[2], autonomous=false, variable=false)
+julia&gt; u(1, [1, 0])
+2
+julia&gt; u(1, [1, 0], v)
+2
+julia&gt; u = FeedbackControl((t, x, v) -&gt; t+x[1]^2+2x[2]+v[3], autonomous=false, variable=true)
+julia&gt; u(1, [1, 0], [1, 2, 3])
+5</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L853">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.FeedbackControl-Tuple{Function, Vararg{DataType}}" href="#CTBase.FeedbackControl-Tuple{Function, Vararg{DataType}}"><code>CTBase.FeedbackControl</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">FeedbackControl(
+    f::Function,
+    dependencies::DataType...
+) -&gt; FeedbackControl{Autonomous, Fixed}
+</code></pre><p>Return the <code>FeedbackControl</code> of a function. Dependencies are specified with DataType, Autonomous, NonAutonomous and Fixed, NonFixed.</p><pre><code class="language- hljs">julia&gt; FeedbackControl(x -&gt; x[1]^2+2x[2], Int64)
+IncorrectArgument
+julia&gt; FeedbackControl(x -&gt; x[1]^2+2x[2], Int64)
+IncorrectArgument
+julia&gt; u = FeedbackControl(x -&gt; x[1]^2+2x[2], Autonomous, Fixed)
+julia&gt; u = FeedbackControl((x, v) -&gt; x[1]^2+2x[2]+v[3], Autonomous, NonFixed)
+julia&gt; u = FeedbackControl((t, x) -&gt; t+x[1]^2+2x[2], NonAutonomous, Fixed)
+julia&gt; u = FeedbackControl((t, x, v) -&gt; t+x[1]^2+2x[2]+v[3], NonAutonomous, NonFixed)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L1178-L1195">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.FeedbackControl-Tuple{Function}" href="#CTBase.FeedbackControl-Tuple{Function}"><code>CTBase.FeedbackControl</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">FeedbackControl(
+    f::Function;
+    autonomous,
+    variable
+) -&gt; FeedbackControl{Autonomous, Fixed}
+</code></pre><p>Return the <code>FeedbackControl</code> of a function. Dependencies are specified with a boolean, variable, false by default, autonomous, true by default.</p><pre><code class="language- hljs">julia&gt; u = FeedbackControl(x -&gt; x[1]^2+2x[2], autonomous=true, variable=false)
+julia&gt; u = FeedbackControl((x, v) -&gt; x[1]^2+2x[2]+v[3], autonomous=true, variable=true)
+julia&gt; u = FeedbackControl((t, x) -&gt; t+x[1]^2+2x[2], autonomous=false, variable=false)
+julia&gt; u = FeedbackControl((t, x, v) -&gt; t+x[1]^2+2x[2]+v[3], autonomous=false, variable=true)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L1157-L1170">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.FeedbackControl-Tuple{Union{Real, AbstractVector{&lt;:Real}}}" href="#CTBase.FeedbackControl-Tuple{Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.FeedbackControl</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Return the value of the FeedbackControl function.</p><pre><code class="language- hljs">julia&gt; FeedbackControl(x -&gt; x[1]^2+2x[2], Int64)
+IncorrectArgument
+julia&gt; FeedbackControl(x -&gt; x[1]^2+2x[2], Int64)
+IncorrectArgument
+julia&gt; u = FeedbackControl(x -&gt; x[1]^2+2x[2], autonomous=true, variable=false)
+julia&gt; u([1, 0])
+1
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; u(t, [1, 0])
+MethodError
+julia&gt; u([1, 0], v)
+MethodError
+julia&gt; u(t, [1, 0], v)
+1
+julia&gt; u = FeedbackControl((x, v) -&gt; x[1]^2+2x[2]+v[3], autonomous=true, variable=true)
+julia&gt; u([1, 0], [1, 2, 3])
+4
+julia&gt; u(t, [1, 0], [1, 2, 3])
+4
+julia&gt; u = FeedbackControl((t, x) -&gt; t+x[1]^2+2x[2], autonomous=false, variable=false)
+julia&gt; u(1, [1, 0])
+2
+julia&gt; u(1, [1, 0], v)
+2
+julia&gt; u = FeedbackControl((t, x, v) -&gt; t+x[1]^2+2x[2]+v[3], autonomous=false, variable=true)
+julia&gt; u(1, [1, 0], [1, 2, 3])
+5</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L1203-L1239">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Fixed" href="#CTBase.Fixed"><code>CTBase.Fixed</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">abstract type Fixed &lt;: VariableDependence</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L1145">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Hamiltonian" href="#CTBase.Hamiltonian"><code>CTBase.Hamiltonian</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct Hamiltonian{time_dependence, variable_dependence} &lt;: AbstractHamiltonian{time_dependence, variable_dependence}</code></pre><p><strong>Fields</strong></p><ul><li><code>f::Function</code></li></ul><p>The default values for <code>time_dependence</code> and <code>variable_dependence</code> are <code>Autonomous</code> and <code>Fixed</code> respectively.</p><p><strong>Constructor</strong></p><p>The constructor <code>Hamiltonian</code> returns a <code>Hamiltonian</code> of a function. The function must take 2 to 4 arguments, <code>(x, p)</code> to <code>(t, x, p, v)</code>, if the function is variable or non autonomous, it must be specified.  Dependencies are specified either with :</p><ul><li>booleans, <code>autonomous</code> and <code>variable</code>, respectively <code>true</code> and <code>false</code> by default </li><li><code>DataType</code>, <code>Autonomous</code>/<code>NonAutonomous</code> and <code>NonFixed</code>/<code>Fixed</code>, respectively <code>Autonomous</code> and <code>Fixed</code> by default.</li></ul><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; Hamiltonian((x, p) -&gt; x + p, Int64)
+IncorrectArgument 
+julia&gt; Hamiltonian((x, p) -&gt; x + p, Int64)
+IncorrectArgument
+julia&gt; H = Hamiltonian((x, p) -&gt; x[1]^2+2p[2])
+julia&gt; H = Hamiltonian((t, x, p, v) -&gt; [t+x[1]^2+2p[2]+v[3]], autonomous=false, variable=true)
+julia&gt; H = Hamiltonian((t, x, p, v) -&gt; [t+x[1]^2+2p[2]+v[3]], NonAutonomous, NonFixed)</code></pre><div class="admonition is-warning"><header class="admonition-header">Warning</header><div class="admonition-body"><p>When the state and costate are of dimension 1, consider <code>x</code> and <code>p</code> as scalars.</p></div></div><p><strong>Call</strong></p><p>The call returns the evaluation of the <code>Hamiltonian</code> for given values.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; H = Hamiltonian((x, p) -&gt; [x[1]^2+2p[2]]) # autonomous=true, variable=false
+julia&gt; H([1, 0], [0, 1])
+MethodError # H must return a scalar
+julia&gt; H = Hamiltonian((x, p) -&gt; x[1]^2+2p[2])
+julia&gt; H([1, 0], [0, 1])
+3
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; H(t, [1, 0], [0, 1])
+MethodError
+julia&gt; H([1, 0], [0, 1], v)
+MethodError 
+julia&gt; H(t, [1, 0], [0, 1], v)
+3
+julia&gt; H = Hamiltonian((x, p, v) -&gt; x[1]^2+2p[2]+v[3], variable=true)
+julia&gt; H([1, 0], [0, 1], [1, 2, 3])
+6
+julia&gt; H(t, [1, 0], [0, 1], [1, 2, 3])
+6
+julia&gt; H = Hamiltonian((t, x, p) -&gt; t+x[1]^2+2p[2], autonomous=false)
+julia&gt; H(1, [1, 0], [0, 1])
+4
+julia&gt; H(1, [1, 0], [0, 1], v)
+4
+julia&gt; H = Hamiltonian((t, x, p, v) -&gt; t+x[1]^2+2p[2]+v[3], autonomous=false, variable=true)
+julia&gt; H(1, [1, 0], [0, 1], [1, 2, 3])
+7</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L124">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Hamiltonian-Tuple{Function, Vararg{DataType}}" href="#CTBase.Hamiltonian-Tuple{Function, Vararg{DataType}}"><code>CTBase.Hamiltonian</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">Hamiltonian(
+    f::Function,
+    dependencies::DataType...
+) -&gt; Hamiltonian{Autonomous, Fixed}
+</code></pre><p>Return an <code>Hamiltonian</code> of a function. Dependencies are specified with DataType, Autonomous, NonAutonomous and Fixed, NonFixed.</p><pre><code class="language- hljs">julia&gt; H = Hamiltonian((x, p) -&gt; x[1]^2+2p[2])
+julia&gt; H = Hamiltonian((t, x, p, v) -&gt; [t+x[1]^2+2p[2]+v[3]], NonAutonomous, NonFixed)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L158-L170">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Hamiltonian-Tuple{Function}" href="#CTBase.Hamiltonian-Tuple{Function}"><code>CTBase.Hamiltonian</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">Hamiltonian(
+    f::Function;
+    autonomous,
+    variable
+) -&gt; Hamiltonian{Autonomous, Fixed}
+</code></pre><p>Return an <code>Hamiltonian</code> of a function. Dependencies are specified with a boolean, variable, false by default, autonomous, true by default.</p><pre><code class="language- hljs">julia&gt; H = Hamiltonian((x, p) -&gt; x[1]^2+2p[2])
+julia&gt; H = Hamiltonian((t, x, p, v) -&gt; [t+x[1]^2+2p[2]+v[3]], autonomous=false, variable=true)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L139-L150">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Hamiltonian-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}" href="#CTBase.Hamiltonian-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.Hamiltonian</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Return the value of the Hamiltonian.</p><pre><code class="language- hljs">julia&gt; Hamiltonian((x, p) -&gt; x + p, Int64)
+IncorrectArgument 
+julia&gt; Hamiltonian((x, p) -&gt; x + p, Int64)
+IncorrectArgument
+julia&gt; H = Hamiltonian((x, p) -&gt; [x[1]^2+2p[2]]) # autonomous=true, variable=false
+julia&gt; H([1, 0], [0, 1])
+MethodError # H must return a scalar
+julia&gt; H = Hamiltonian((x, p) -&gt; x[1]^2+2p[2])
+julia&gt; H([1, 0], [0, 1])
+3
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; H(t, [1, 0], [0, 1])
+MethodError
+julia&gt; H([1, 0], [0, 1], v)
+MethodError 
+julia&gt; H(t, [1, 0], [0, 1], v)
+3
+julia&gt; H = Hamiltonian((x, p, v) -&gt; x[1]^2+2p[2]+v[3], variable=true)
+julia&gt; H([1, 0], [0, 1], [1, 2, 3])
+6
+julia&gt; H(t, [1, 0], [0, 1], [1, 2, 3])
+6
+julia&gt; H = Hamiltonian((t, x, p) -&gt; t+x[1]^2+2p[2], autonomous=false)
+julia&gt; H(1, [1, 0], [0, 1])
+4
+julia&gt; H(1, [1, 0], [0, 1], v)
+4
+julia&gt; H = Hamiltonian((t, x, p, v) -&gt; t+x[1]^2+2p[2]+v[3], autonomous=false, variable=true)
+julia&gt; H(1, [1, 0], [0, 1], [1, 2, 3])
+7</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L178-L217">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.HamiltonianLift" href="#CTBase.HamiltonianLift"><code>CTBase.HamiltonianLift</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct HamiltonianLift{time_dependence, variable_dependence} &lt;: AbstractHamiltonian{time_dependence, variable_dependence}</code></pre><p><strong>Lifts</strong></p><ul><li><code>X::VectorField</code></li></ul><p>The values for <code>time_dependence</code> and <code>variable_dependence</code> are deternimed by the values of those for the VectorField.</p><p><strong>Constructor</strong></p><p>The constructor <code>HamiltonianLift</code> returns a <code>HamiltonianLift</code> of a <code>VectorField</code>.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; H = HamiltonianLift(VectorField(x -&gt; [x[1]^2, 2x[2]]))
+julia&gt; H = HamiltonianLift(VectorField((x, v) -&gt; [x[1]^2, 2x[2]+v[3]], variable=true))
+julia&gt; H = HamiltonianLift(VectorField((t, x) -&gt; [t+x[1]^2, 2x[2]], autonomous=false))
+julia&gt; H = HamiltonianLift(VectorField((t, x, v) -&gt; [t+x[1]^2, 2x[2]+v[3]], autonomous=false, variable=true))
+julia&gt; H = HamiltonianLift(VectorField(x -&gt; [x[1]^2, 2x[2]]))
+julia&gt; H = HamiltonianLift(VectorField((x, v) -&gt; [x[1]^2, 2x[2]+v[3]], NonFixed))
+julia&gt; H = HamiltonianLift(VectorField((t, x) -&gt; [t+x[1]^2, 2x[2]], NonAutonomous))
+julia&gt; H = HamiltonianLift(VectorField((t, x, v) -&gt; [t+x[1]^2, 2x[2]+v[3]], NonAutonomous, NonFixed))</code></pre><div class="admonition is-warning"><header class="admonition-header">Warning</header><div class="admonition-body"><p>When the state and costate are of dimension 1, consider <code>x</code> and <code>p</code> as scalars.</p></div></div><p><strong>Call</strong></p><p>The call returns the evaluation of the <code>HamiltonianLift</code> for given values.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; H = HamiltonianLift(VectorField(x -&gt; [x[1]^2, 2x[2]]))
+julia&gt; H([1, 2], [1, 1])
+5
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; H(t, [1, 0], [0, 1])
+MethodError
+julia&gt; H([1, 0], [0, 1], v)
+MethodError 
+julia&gt; H(t, [1, 0], [0, 1], v)
+5
+julia&gt; H = HamiltonianLift(VectorField((x, v) -&gt; [x[1]^2, 2x[2]+v[3]], variable=true))
+julia&gt; H([1, 0], [0, 1], [1, 2, 3])
+3
+julia&gt; H(t, [1, 0], [0, 1], [1, 2, 3])
+3
+julia&gt; H = HamiltonianLift(VectorField((t, x) -&gt; [t+x[1]^2, 2x[2]], autonomous=false))
+julia&gt; H(1, [1, 2], [1, 1])
+6
+julia&gt; H(1, [1, 0], [0, 1], v)
+6
+julia&gt; H = HamiltonianLift(VectorField((t, x, v) -&gt; [t+x[1]^2, 2x[2]+v[3]], autonomous=false, variable=true))
+julia&gt; H(1, [1, 0], [0, 1], [1, 2, 3])
+3</code></pre><p>Alternatively, it is possible to construct the <code>HamiltonianLift</code> from a <code>Function</code> being the <code>VectorField</code>.</p><pre><code class="language- hljs">julia&gt; HL1 = HamiltonianLift((x, v) -&gt; [x[1]^2,x[2]^2+v], autonomous=true, variable=true)
+julia&gt; HL2 = HamiltonianLift(VectorField((x, v) -&gt; [x[1]^2,x[2]^2+v], autonomous=true, variable=true))
+julia&gt; HL1([1, 0], [0, 1], 1) == HL2([1, 0], [0, 1], 1)
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L345">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.HamiltonianLift-Tuple{Function, Vararg{DataType}}" href="#CTBase.HamiltonianLift-Tuple{Function, Vararg{DataType}}"><code>CTBase.HamiltonianLift</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">HamiltonianLift(
+    f::Function,
+    dependences::DataType...
+) -&gt; HamiltonianLift
+</code></pre><p>Return an <code>HamiltonianLift</code> of a function. Dependencies are specified with DataType, Autonomous, NonAutonomous and Fixed, NonFixed.</p><pre><code class="language- hljs">julia&gt; HamiltonianLift(HamiltonianLift(VectorField(x -&gt; [x[1]^2, 2x[2]], Int64))
+IncorrectArgument 
+julia&gt; HL = HamiltonianLift(x -&gt; [x[1]^2,x[2]^2], Autonomous, Fixed)
+julia&gt; HL = HamiltonianLift((x, v) -&gt; [x[1]^2,x[2]^2+v], Autonomous, NonFixed)
+julia&gt; HL = HamiltonianLift((t, x) -&gt; [t+x[1]^2,x[2]^2], NonAutonomous, Fixed)
+julia&gt; HL = HamiltonianLift((t, x, v) -&gt; [t+x[1]^2,x[2]^2+v], NonAutonomous, NonFixed)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L269-L284">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.HamiltonianLift-Tuple{Function}" href="#CTBase.HamiltonianLift-Tuple{Function}"><code>CTBase.HamiltonianLift</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">HamiltonianLift(
+    f::Function;
+    autonomous,
+    variable
+) -&gt; HamiltonianLift
+</code></pre><p>Return an <code>HamiltonianLift</code> of a function. Dependencies are specified with a boolean, variable, false by default, autonomous, true by default.</p><pre><code class="language- hljs">julia&gt; HL = HamiltonianLift(x -&gt; [x[1]^2,x[2]^2], autonomous=true, variable=false)
+julia&gt; HL = HamiltonianLift((x, v) -&gt; [x[1]^2,x[2]^2+v], autonomous=true, variable=true)
+julia&gt; HL = HamiltonianLift((t, x) -&gt; [t+x[1]^2,x[2]^2], autonomous=false, variable=false)
+julia&gt; HL = HamiltonianLift((t, x, v) -&gt; [t+x[1]^2,x[2]^2+v], autonomous=false, variable=true)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L248-L261">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.HamiltonianLift-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}" href="#CTBase.HamiltonianLift-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.HamiltonianLift</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Return the value of the HamiltonianLift.</p><p><strong>Examples</strong></p><pre><code class="language- hljs">julia&gt; HamiltonianLift(HamiltonianLift(VectorField(x -&gt; [x[1]^2, 2x[2]], Int64))
+IncorrectArgument 
+julia&gt; H = HamiltonianLift(VectorField(x -&gt; [x[1]^2, 2x[2]]))
+julia&gt; H([1, 2], [1, 1])
+5
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; H(t, [1, 0], [0, 1])
+MethodError
+julia&gt; H([1, 0], [0, 1], v)
+MethodError 
+julia&gt; H(t, [1, 0], [0, 1], v)
+5
+julia&gt; H = HamiltonianLift(VectorField((x, v) -&gt; [x[1]^2, 2x[2]+v[3]], variable=true))
+julia&gt; H([1, 0], [0, 1], [1, 2, 3])
+3
+julia&gt; H(t, [1, 0], [0, 1], [1, 2, 3])
+3
+julia&gt; H = HamiltonianLift(VectorField((t, x) -&gt; [t+x[1]^2, 2x[2]], autonomous=false))
+julia&gt; H(1, [1, 2], [1, 1])
+6
+julia&gt; H(1, [1, 0], [0, 1], v)
+6
+julia&gt; H = HamiltonianLift(VectorField((t, x, v) -&gt; [t+x[1]^2, 2x[2]+v[3]], autonomous=false, variable=true))
+julia&gt; H(1, [1, 0], [0, 1], [1, 2, 3])
+3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L292-L328">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.HamiltonianVectorField" href="#CTBase.HamiltonianVectorField"><code>CTBase.HamiltonianVectorField</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct HamiltonianVectorField{time_dependence, variable_dependence} &lt;: CTBase.AbstractVectorField{time_dependence, variable_dependence}</code></pre><p><strong>Fields</strong></p><ul><li><code>f::Function</code></li></ul><p>The default values for <code>time_dependence</code> and <code>variable_dependence</code> are <code>Autonomous</code> and <code>Fixed</code> respectively.</p><p><strong>Constructor</strong></p><p>The constructor <code>HamiltonianVectorField</code> returns a <code>HamiltonianVectorField</code> of a function. The function must take 2 to 4 arguments, <code>(x, p)</code> to <code>(t, x, p, v)</code>, if the function is variable or non autonomous, it must be specified.  Dependencies are specified either with :</p><ul><li>booleans, <code>autonomous</code> and <code>variable</code>, respectively <code>true</code> and <code>false</code> by default </li><li><code>DataType</code>, <code>Autonomous</code>/<code>NonAutonomous</code> and <code>NonFixed</code>/<code>Fixed</code>, respectively <code>Autonomous</code> and <code>Fixed</code> by default.</li></ul><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; HamiltonianVectorField((x, p) -&gt; [x[1]^2+2p[2], x[2]-3p[2]^2], Int64)
+IncorrectArgument
+julia&gt; HamiltonianVectorField((x, p) -&gt; [x[1]^2+2p[2], x[2]-3p[2]^2], Int64)
+IncorrectArgument
+julia&gt; Hv = HamiltonianVectorField((x, p) -&gt; [x[1]^2+2p[2], x[2]-3p[2]^2]) # autonomous=true, variable=false
+julia&gt; Hv = HamiltonianVectorField((x, p, v) -&gt; [x[1]^2+2p[2]+v[3], x[2]-3p[2]^2+v[4]], variable=true)
+julia&gt; Hv = HamiltonianVectorField((t, x, p) -&gt; [t+x[1]^2+2p[2], x[2]-3p[2]^2], autonomous=false)
+julia&gt; Hv = HamiltonianVectorField((t, x, p, v) -&gt; [t+x[1]^2+2p[2]+v[3], x[2]-3p[2]^2+v[4]], autonomous=false, variable=true)
+julia&gt; Hv = HamiltonianVectorField((x, p, v) -&gt; [x[1]^2+2p[2]+v[3], x[2]-3p[2]^2+v[4]], NonFixed)
+julia&gt; Hv = HamiltonianVectorField((t, x, p) -&gt; [t+x[1]^2+2p[2], x[2]-3p[2]^2], NonAutonomous)
+julia&gt; Hv = HamiltonianVectorField((t, x, p, v) -&gt; [t+x[1]^2+2p[2]+v[3], x[2]-3p[2]^2+v[4]], NonAutonomous, NonFixed)</code></pre><div class="admonition is-warning"><header class="admonition-header">Warning</header><div class="admonition-body"><p>When the state and costate are of dimension 1, consider <code>x</code> and <code>p</code> as scalars.</p></div></div><p><strong>Call</strong></p><p>The call returns the evaluation of the <code>HamiltonianVectorField</code> for given values.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; Hv = HamiltonianVectorField((x, p) -&gt; [x[1]^2+2p[2], x[2]-3p[2]^2]) # autonomous=true, variable=false
+julia&gt; Hv([1, 0], [0, 1])
+[3, -3]
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; Hv(t, [1, 0], [0, 1])
+MethodError
+julia&gt; Hv([1, 0], [0, 1], v)
+MethodError
+julia&gt; Hv(t, [1, 0], [0, 1], v)
+[3, -3]
+julia&gt; Hv = HamiltonianVectorField((x, p, v) -&gt; [x[1]^2+2p[2]+v[3], x[2]-3p[2]^2+v[4]], variable=true)
+julia&gt; Hv([1, 0], [0, 1], [1, 2, 3, 4])
+[6, -3]
+julia&gt; Hv(t, [1, 0], [0, 1], [1, 2, 3, 4])
+[6, -3]
+julia&gt; Hv = HamiltonianVectorField((t, x, p) -&gt; [t+x[1]^2+2p[2], x[2]-3p[2]^2], autonomous=false)
+julia&gt; Hv(1, [1, 0], [0, 1])
+[4, -3]
+julia&gt; Hv(1, [1, 0], [0, 1], v)
+[4, -3]
+julia&gt; Hv = HamiltonianVectorField((t, x, p, v) -&gt; [t+x[1]^2+2p[2]+v[3], x[2]-3p[2]^2+v[4]], autonomous=false, variable=true)
+julia&gt; Hv(1, [1, 0], [0, 1], [1, 2, 3, 4])
+[7, -3]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L271">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.HamiltonianVectorField-Tuple{Function, Vararg{DataType}}" href="#CTBase.HamiltonianVectorField-Tuple{Function, Vararg{DataType}}"><code>CTBase.HamiltonianVectorField</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">HamiltonianVectorField(
+    f::Function,
+    dependencies::DataType...
+) -&gt; HamiltonianVectorField{Autonomous, Fixed}
+</code></pre><p>Return an <code>HamiltonianVectorField</code> of a function. Dependencies are specified with DataType, Autonomous, NonAutonomous and Fixed, NonFixed.</p><pre><code class="language- hljs">julia&gt; HamiltonianVectorField((x, p) -&gt; [x[1]^2+2p[2], x[2]-3p[2]^2], Int64)
+IncorrectArgument
+julia&gt; HamiltonianVectorField((x, p) -&gt; [x[1]^2+2p[2], x[2]-3p[2]^2], Int64)
+IncorrectArgument
+julia&gt; Hv = HamiltonianVectorField((x, p) -&gt; [x[1]^2+2p[2], x[2]-3p[2]^2]) # autonomous=true, variable=false
+julia&gt; Hv = HamiltonianVectorField((x, p, v) -&gt; [x[1]^2+2p[2]+v[3], x[2]-3p[2]^2+v[4]], NonFixed)
+julia&gt; Hv = HamiltonianVectorField((t, x, p) -&gt; [t+x[1]^2+2p[2], x[2]-3p[2]^2], NonAutonomous)
+julia&gt; Hv = HamiltonianVectorField((t, x, p, v) -&gt; [t+x[1]^2+2p[2]+v[3], x[2]-3p[2]^2+v[4]], NonAutonomous, NonFixed)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L380-L398">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.HamiltonianVectorField-Tuple{Function}" href="#CTBase.HamiltonianVectorField-Tuple{Function}"><code>CTBase.HamiltonianVectorField</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">HamiltonianVectorField(
+    f::Function;
+    autonomous,
+    variable
+) -&gt; HamiltonianVectorField{Autonomous, Fixed}
+</code></pre><p>Return an <code>HamiltonianVectorField</code> of a function. Dependencies are specified with a boolean, variable, false by default, autonomous, true by default.</p><pre><code class="language- hljs">julia&gt; Hv = HamiltonianVectorField((x, p) -&gt; [x[1]^2+2p[2], x[2]-3p[2]^2]) # autonomous=true, variable=false
+julia&gt; Hv = HamiltonianVectorField((x, p, v) -&gt; [x[1]^2+2p[2]+v[3], x[2]-3p[2]^2+v[4]], variable=true)
+julia&gt; Hv = HamiltonianVectorField((t, x, p) -&gt; [t+x[1]^2+2p[2], x[2]-3p[2]^2], autonomous=false)
+julia&gt; Hv = HamiltonianVectorField((t, x, p, v) -&gt; [t+x[1]^2+2p[2]+v[3], x[2]-3p[2]^2+v[4]], autonomous=false, variable=true)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L358-L372">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.HamiltonianVectorField-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}" href="#CTBase.HamiltonianVectorField-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.HamiltonianVectorField</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Return the value of the HamiltonianVectorField.</p><p><strong>Examples</strong></p><pre><code class="language- hljs">julia&gt; HamiltonianVectorField((x, p) -&gt; [x[1]^2+2p[2], x[2]-3p[2]^2], Int64)
+IncorrectArgument
+julia&gt; HamiltonianVectorField((x, p) -&gt; [x[1]^2+2p[2], x[2]-3p[2]^2], Int64)
+IncorrectArgument
+julia&gt; Hv = HamiltonianVectorField((x, p) -&gt; [x[1]^2+2p[2], x[2]-3p[2]^2]) # autonomous=true, variable=false
+julia&gt; Hv([1, 0], [0, 1])
+[3, -3]
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; Hv(t, [1, 0], [0, 1])
+MethodError
+julia&gt; Hv([1, 0], [0, 1], v)
+MethodError
+julia&gt; Hv(t, [1, 0], [0, 1], v)
+[3, -3]
+julia&gt; Hv = HamiltonianVectorField((x, p, v) -&gt; [x[1]^2+2p[2]+v[3], x[2]-3p[2]^2+v[4]], variable=true)
+julia&gt; Hv([1, 0], [0, 1], [1, 2, 3, 4])
+[6, -3]
+julia&gt; Hv(t, [1, 0], [0, 1], [1, 2, 3, 4])
+[6, -3]
+julia&gt; Hv = HamiltonianVectorField((t, x, p) -&gt; [t+x[1]^2+2p[2], x[2]-3p[2]^2], autonomous=false)
+julia&gt; Hv(1, [1, 0], [0, 1])
+[4, -3]
+julia&gt; Hv(1, [1, 0], [0, 1], v)
+[4, -3]
+julia&gt; Hv = HamiltonianVectorField((t, x, p, v) -&gt; [t+x[1]^2+2p[2]+v[3], x[2]-3p[2]^2+v[4]], autonomous=false, variable=true)
+julia&gt; Hv(1, [1, 0], [0, 1], [1, 2, 3, 4])
+[7, -3]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L406-L444">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.IncorrectArgument" href="#CTBase.IncorrectArgument"><code>CTBase.IncorrectArgument</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct IncorrectArgument &lt;: CTException</code></pre><p>Exception thrown when an argument is inconsistent.</p><p><strong>Fields</strong></p><ul><li><code>var::String</code></li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/exception.jl#L28">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.IncorrectMethod" href="#CTBase.IncorrectMethod"><code>CTBase.IncorrectMethod</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct IncorrectMethod &lt;: CTException</code></pre><p>Exception thrown when a method is incorrect.</p><p><strong>Fields</strong></p><ul><li><code>var::Symbol</code></li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/exception.jl#L48">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.IncorrectOutput" href="#CTBase.IncorrectOutput"><code>CTBase.IncorrectOutput</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct IncorrectOutput &lt;: CTException</code></pre><p>Exception thrown when the output is incorrect.</p><p><strong>Fields</strong></p><ul><li><code>var::String</code></li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/exception.jl#L68">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Index" href="#CTBase.Index"><code>CTBase.Index</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">mutable struct Index</code></pre><p><strong>Fields</strong></p><ul><li><code>val::Int64</code></li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L1092">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Lagrange" href="#CTBase.Lagrange"><code>CTBase.Lagrange</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct Lagrange{time_dependence, variable_dependence}</code></pre><p><strong>Fields</strong></p><ul><li><code>f::Function</code></li></ul><p>The default value for <code>time_dependence</code> and <code>variable_dependence</code> are <code>Autonomous</code> and <code>Fixed</code> respectively.</p><p><strong>Constructor</strong></p><p>The constructor <code>Lagrange</code> returns a <code>Lagrange</code> cost of a function. The function must take 2 to 4 arguments, <code>(x, u)</code> to <code>(t, x, u, v)</code>, if the function is variable or non autonomous, it must be specified.  Dependencies are specified either with :</p><ul><li>booleans, <code>autonomous</code> and <code>variable</code>, respectively <code>true</code> and <code>false</code> by default </li><li><code>DataType</code>, <code>Autonomous</code>/<code>NonAutonomous</code> and <code>NonFixed</code>/<code>Fixed</code>, respectively <code>Autonomous</code> and <code>Fixed</code> by default.</li></ul><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; Lagrange((x, u) -&gt; 2x[2]-u[1]^2, Int64)
+IncorrectArgument
+julia&gt; Lagrange((x, u) -&gt; 2x[2]-u[1]^2, Int64)
+IncorrectArgument
+julia&gt; L = Lagrange((x, u) -&gt; [2x[2]-u[1]^2], autonomous=true, variable=false)
+julia&gt; L = Lagrange((x, u) -&gt; 2x[2]-u[1]^2, autonomous=true, variable=false)
+julia&gt; L = Lagrange((x, u, v) -&gt; 2x[2]-u[1]^2+v[3], autonomous=true, variable=true)
+julia&gt; L = Lagrange((t, x, u) -&gt; t+2x[2]-u[1]^2, autonomous=false, variable=false)
+julia&gt; L = Lagrange((t, x, u, v) -&gt; t+2x[2]-u[1]^2+v[3], autonomous=false, variable=true)
+julia&gt; L = Lagrange((x, u) -&gt; [2x[2]-u[1]^2], Autonomous, Fixed)
+julia&gt; L = Lagrange((x, u) -&gt; 2x[2]-u[1]^2, Autonomous, Fixed)
+julia&gt; L = Lagrange((x, u, v) -&gt; 2x[2]-u[1]^2+v[3], Autonomous, NonFixed)
+julia&gt; L = Lagrange((t, x, u) -&gt; t+2x[2]-u[1]^2, autonomous=false, Fixed)
+julia&gt; L = Lagrange((t, x, u, v) -&gt; t+2x[2]-u[1]^2+v[3], autonomous=false, NonFixed)</code></pre><div class="admonition is-warning"><header class="admonition-header">Warning</header><div class="admonition-body"><p>When the state is of dimension 1, consider <code>x</code> as a scalar. Same for the control.</p></div></div><p><strong>Call</strong></p><p>The call returns the evaluation of the <code>Lagrange</code> cost for given values.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; L = Lagrange((x, u) -&gt; [2x[2]-u[1]^2], autonomous=true, variable=false)
+julia&gt; L([1, 0], [1])
+MethodError
+julia&gt; L = Lagrange((x, u) -&gt; 2x[2]-u[1]^2, autonomous=true, variable=false)
+julia&gt; L([1, 0], [1])
+-1
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; L(t, [1, 0], [1])
+MethodError
+julia&gt; L([1, 0], [1], v)
+MethodError
+julia&gt; L(t, [1, 0], [1], v)
+-1
+julia&gt; L = Lagrange((x, u, v) -&gt; 2x[2]-u[1]^2+v[3], autonomous=true, variable=true)
+julia&gt; L([1, 0], [1], [1, 2, 3])
+2
+julia&gt; L(t, [1, 0], [1], [1, 2, 3])
+2
+julia&gt; L = Lagrange((t, x, u) -&gt; t+2x[2]-u[1]^2, autonomous=false, variable=false)
+julia&gt; L(1, [1, 0], [1])
+0
+julia&gt; L(1, [1, 0], [1], v)
+0
+julia&gt; L = Lagrange((t, x, u, v) -&gt; t+2x[2]-u[1]^2+v[3], autonomous=false, variable=true)
+julia&gt; L(1, [1, 0], [1], [1, 2, 3])
+3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L425">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Lagrange-Tuple{Function, Vararg{DataType}}" href="#CTBase.Lagrange-Tuple{Function, Vararg{DataType}}"><code>CTBase.Lagrange</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">Lagrange(
+    f::Function,
+    dependencies::DataType...
+) -&gt; Lagrange{Autonomous, Fixed}
+</code></pre><p>Return a <code>Lagrange</code> cost of a function. Dependencies are specified with DataType, Autonomous, NonAutonomous and Fixed, NonFixed.</p><pre><code class="language- hljs">julia&gt; Lagrange((x, u) -&gt; 2x[2]-u[1]^2, Int64)
+IncorrectArgument
+julia&gt; Lagrange((x, u) -&gt; 2x[2]-u[1]^2, Int64)
+IncorrectArgument
+julia&gt; L = Lagrange((x, u) -&gt; [2x[2]-u[1]^2], autonomous=true, variable=false)
+julia&gt; L = Lagrange((x, u) -&gt; 2x[2]-u[1]^2, autonomous=true, variable=false)
+julia&gt; L = Lagrange((x, u, v) -&gt; 2x[2]-u[1]^2+v[3], autonomous=true, variable=true)
+julia&gt; L = Lagrange((t, x, u) -&gt; t+2x[2]-u[1]^2, autonomous=false, variable=false)
+julia&gt; L = Lagrange((t, x, u, v) -&gt; t+2x[2]-u[1]^2+v[3], autonomous=false, variable=true)
+</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L614-L634">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Lagrange-Tuple{Function}" href="#CTBase.Lagrange-Tuple{Function}"><code>CTBase.Lagrange</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">Lagrange(
+    f::Function;
+    autonomous,
+    variable
+) -&gt; Lagrange{Autonomous, Fixed}
+</code></pre><p>Return a <code>Lagrange</code> cost of a function. Dependencies are specified with a boolean, variable, false by default, autonomous, true by default.</p><pre><code class="language- hljs">julia&gt; L = Lagrange((x, u) -&gt; [2x[2]-u[1]^2], autonomous=true, variable=false)
+julia&gt; L = Lagrange((x, u) -&gt; 2x[2]-u[1]^2, autonomous=true, variable=false)
+julia&gt; L = Lagrange((x, u, v) -&gt; 2x[2]-u[1]^2+v[3], autonomous=true, variable=true)
+julia&gt; L = Lagrange((t, x, u) -&gt; t+2x[2]-u[1]^2, autonomous=false, variable=false)
+julia&gt; L = Lagrange((t, x, u, v) -&gt; t+2x[2]-u[1]^2+v[3], autonomous=false, variable=true)
+</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L590-L606">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Lagrange-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}" href="#CTBase.Lagrange-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.Lagrange</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Return the value of the Lagrange function.</p><p><strong>Examples</strong></p><pre><code class="language- hljs">julia&gt; Lagrange((x, u) -&gt; 2x[2]-u[1]^2, Int64)
+IncorrectArgument
+julia&gt; Lagrange((x, u) -&gt; 2x[2]-u[1]^2, Int64)
+IncorrectArgument
+julia&gt; L = Lagrange((x, u) -&gt; [2x[2]-u[1]^2], autonomous=true, variable=false)
+julia&gt; L([1, 0], [1])
+MethodError
+julia&gt; L = Lagrange((x, u) -&gt; 2x[2]-u[1]^2, autonomous=true, variable=false)
+julia&gt; L([1, 0], [1])
+-1
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; L(t, [1, 0], [1])
+MethodError
+julia&gt; L([1, 0], [1], v)
+MethodError
+julia&gt; L(t, [1, 0], [1], v)
+-1
+julia&gt; L = Lagrange((x, u, v) -&gt; 2x[2]-u[1]^2+v[3], autonomous=true, variable=true)
+julia&gt; L([1, 0], [1], [1, 2, 3])
+2
+julia&gt; L(t, [1, 0], [1], [1, 2, 3])
+2
+julia&gt; L = Lagrange((t, x, u) -&gt; t+2x[2]-u[1]^2, autonomous=false, variable=false)
+julia&gt; L(1, [1, 0], [1])
+0
+julia&gt; L(1, [1, 0], [1], v)
+0
+julia&gt; L = Lagrange((t, x, u, v) -&gt; t+2x[2]-u[1]^2+v[3], autonomous=false, variable=true)
+julia&gt; L(1, [1, 0], [1], [1, 2, 3])
+3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L642-L683">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Mayer" href="#CTBase.Mayer"><code>CTBase.Mayer</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct Mayer{variable_dependence}</code></pre><p><strong>Fields</strong></p><ul><li><code>f::Function</code></li></ul><p>The default value for <code>variable_dependence</code> is <code>Fixed</code>.</p><p><strong>Constructor</strong></p><p>The constructor <code>Mayer</code> returns a <code>Mayer</code> cost of a function. The function must take 2 or 3 arguments <code>(x0, xf)</code> or <code>(x0, xf, v)</code>, if the function is variable, it must be specified.  Dependencies are specified with a boolean, <code>variable</code>, <code>false</code> by default or with a <code>DataType</code>, <code>NonFixed/Fixed</code>, <code>Fixed</code> by default.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; G = Mayer((x0, xf) -&gt; xf[2]-x0[1])
+julia&gt; G = Mayer((x0, xf, v) -&gt; v[3]+xf[2]-x0[1], variable=true)
+julia&gt; G = Mayer((x0, xf, v) -&gt; v[3]+xf[2]-x0[1], NonFixed)</code></pre><div class="admonition is-warning"><header class="admonition-header">Warning</header><div class="admonition-body"><p>When the state is of dimension 1, consider <code>x0</code> and <code>xf</code> as a scalar.</p></div></div><p><strong>Call</strong></p><p>The call returns the evaluation of the <code>Mayer</code> cost for given values. If a variable is given for a non variable dependent Mayer cost, it will be ignored.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; G = Mayer((x0, xf) -&gt; xf[2]-x0[1])
+julia&gt; G([0, 0], [1, 1])
+1
+julia&gt; G = Mayer((x0, xf) -&gt; xf[2]-x0[1])
+julia&gt; G([0, 0], [1, 1],Real[])
+1
+julia&gt; G = Mayer((x0, xf, v) -&gt; v[3]+xf[2]-x0[1], variable=true)
+julia&gt; G([0, 0], [1, 1], [1, 2, 3])
+4</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L60">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Mayer-Tuple{Function, Vararg{DataType}}" href="#CTBase.Mayer-Tuple{Function, Vararg{DataType}}"><code>CTBase.Mayer</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">Mayer(
+    f::Function,
+    dependencies::DataType...
+) -&gt; Mayer{Fixed}
+</code></pre><p>Return a <code>Mayer</code> cost of a function. Dependencies are specified with a DataType, NonFixed/Fixed, Fixed by default.</p><pre><code class="language- hljs">julia&gt; G = Mayer((x0, xf) -&gt; xf[2]-x0[1])
+julia&gt; G = Mayer((x0, xf, v) -&gt; v[3]+xf[2]-x0[1], NonFixed)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L88-L100">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Mayer-Tuple{Function}" href="#CTBase.Mayer-Tuple{Function}"><code>CTBase.Mayer</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">Mayer(f::Function; variable) -&gt; Mayer{Fixed}
+</code></pre><p>Return a <code>Mayer</code> cost of a function. Dependencies are specified with a boolean, variable, false by default.</p><pre><code class="language- hljs">julia&gt; G = Mayer((x0, xf) -&gt; xf[2]-x0[1])
+julia&gt; G = Mayer((x0, xf, v) -&gt; v[3]+xf[2]-x0[1], variable=true)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L70-L82">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Mayer-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}" href="#CTBase.Mayer-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.Mayer</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Return the evaluation of the Mayer cost.</p><pre><code class="language- hljs">julia&gt; G = Mayer((x0, xf) -&gt; xf[2]-x0[1])
+julia&gt; G([0, 0], [1, 1])
+1
+julia&gt; G = Mayer((x0, xf) -&gt; xf[2]-x0[1])
+julia&gt; G([0, 0], [1, 1], Real[])
+1
+julia&gt; G = Mayer((x0, xf, v) -&gt; v[3]+xf[2]-x0[1], variable=true)
+julia&gt; G([0, 0], [1, 1], [1, 2, 3])
+4</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L107-L124">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.MixedConstraint" href="#CTBase.MixedConstraint"><code>CTBase.MixedConstraint</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct MixedConstraint{time_dependence, variable_dependence}</code></pre><p><strong>Fields</strong></p><ul><li><code>f::Function</code></li></ul><p>Similar to <code>Lagrange</code> in the usage, but the dimension of the output of the function <code>f</code> is arbitrary.</p><p>The default value for <code>time_dependence</code> and <code>variable_dependence</code> are <code>Autonomous</code> and <code>Fixed</code> respectively.</p><p><strong>Constructor</strong></p><p>The constructor <code>MixedConstraint</code> returns a <code>MixedConstraint</code> of a function. The function must take 2 to 4 arguments, <code>(x, u)</code> to <code>(t, x, u, v)</code>, if the function is variable or non autonomous, it must be specified.  Dependencies are specified either with :</p><ul><li>booleans, <code>autonomous</code> and <code>variable</code>, respectively <code>true</code> and <code>false</code> by default </li><li><code>DataType</code>, <code>Autonomous</code>/<code>NonAutonomous</code> and <code>NonFixed</code>/<code>Fixed</code>, respectively <code>Autonomous</code> and <code>Fixed</code> by default.</li></ul><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; MixedConstraint((x, u) -&gt; [2x[2]-u^2, x[1]], Int64)
+IncorrectArgument
+julia&gt; MixedConstraint((x, u) -&gt; [2x[2]-u^2, x[1]], Int64)
+IncorrectArgument
+julia&gt; M = MixedConstraint((x, u) -&gt; [2x[2]-u^2, x[1]], Autonomous, Fixed)
+julia&gt; M = MixedConstraint((x, u, v) -&gt; [2x[2]-u^2+v[3], x[1]], Autonomous, NonFixed)
+julia&gt; M = MixedConstraint((t, x, u) -&gt; [t+2x[2]-u^2, x[1]], NonAutonomous, Fixed)
+julia&gt; M = MixedConstraint((t, x, u, v) -&gt; [t+2x[2]-u^2+v[3], x[1]], NonAutonomous, NonFixed)
+julia&gt; M = MixedConstraint((x, u) -&gt; [2x[2]-u^2, x[1]], autonomous=true, variable=false)
+julia&gt; M = MixedConstraint((x, u, v) -&gt; [2x[2]-u^2+v[3], x[1]], autonomous=true, variable=true)
+julia&gt; M = MixedConstraint((t, x, u) -&gt; [t+2x[2]-u^2, x[1]], autonomous=false, variable=false)
+julia&gt; M = MixedConstraint((t, x, u, v) -&gt; [t+2x[2]-u^2+v[3], x[1]], autonomous=false, variable=true)</code></pre><div class="admonition is-warning"><header class="admonition-header">Warning</header><div class="admonition-body"><p>When the state is of dimension 1, consider <code>x</code> as a scalar. Same for the control.</p></div></div><p><strong>Call</strong></p><p>The call returns the evaluation of the <code>MixedConstraint</code> for given values.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; MixedConstraint((x, u) -&gt; [2x[2]-u^2, x[1]], Int64)
+IncorrectArgument
+julia&gt; MixedConstraint((x, u) -&gt; [2x[2]-u^2, x[1]], Int64)
+IncorrectArgument
+julia&gt; M = MixedConstraint((x, u) -&gt; [2x[2]-u^2, x[1]], autonomous=true, variable=false)
+julia&gt; M([1, 0], 1)
+[-1, 1]
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; MethodError M(t, [1, 0], 1)
+julia&gt; MethodError M([1, 0], 1, v)
+julia&gt; M(t, [1, 0], 1, v)
+[-1, 1]
+julia&gt; M = MixedConstraint((x, u, v) -&gt; [2x[2]-u^2+v[3], x[1]], autonomous=true, variable=true)
+julia&gt; M([1, 0], 1, [1, 2, 3])
+[2, 1]
+julia&gt; M(t, [1, 0], 1, [1, 2, 3])
+[2, 1]
+julia&gt; M = MixedConstraint((t, x, u) -&gt; [t+2x[2]-u^2, x[1]], autonomous=false, variable=false)
+julia&gt; M(1, [1, 0], 1)
+[0, 1]
+julia&gt; M(1, [1, 0], 1, v)
+[0, 1]
+julia&gt; M = MixedConstraint((t, x, u, v) -&gt; [t+2x[2]-u^2+v[3], x[1]], autonomous=false, variable=true)
+julia&gt; M(1, [1, 0], 1, [1, 2, 3])
+[3, 1]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L730">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.MixedConstraint-Tuple{Function, Vararg{DataType}}" href="#CTBase.MixedConstraint-Tuple{Function, Vararg{DataType}}"><code>CTBase.MixedConstraint</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">MixedConstraint(
+    f::Function,
+    dependencies::DataType...
+) -&gt; MixedConstraint{Autonomous, Fixed}
+</code></pre><p>Return the <code>MixedConstraint</code> of a function. Dependencies are specified with DataType, Autonomous, NonAutonomous and Fixed, NonFixed.</p><pre><code class="language- hljs">julia&gt; MixedConstraint((x, u) -&gt; [2x[2]-u^2, x[1]], Int64)
+IncorrectArgument
+julia&gt; MixedConstraint((x, u) -&gt; [2x[2]-u^2, x[1]], Int64)
+IncorrectArgument
+julia&gt; M = MixedConstraint((x, u) -&gt; [2x[2]-u^2, x[1]], Autonomous, Fixed)
+julia&gt; M = MixedConstraint((x, u, v) -&gt; [2x[2]-u^2+v[3], x[1]], Autonomous, NonFixed)
+julia&gt; M = MixedConstraint((t, x, u) -&gt; [t+2x[2]-u^2, x[1]], NonAutonomous, Fixed)
+julia&gt; M = MixedConstraint((t, x, u, v) -&gt; [t+2x[2]-u^2+v[3], x[1]], NonAutonomous, NonFixed)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L1051-L1068">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.MixedConstraint-Tuple{Function}" href="#CTBase.MixedConstraint-Tuple{Function}"><code>CTBase.MixedConstraint</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">MixedConstraint(
+    f::Function;
+    autonomous,
+    variable
+) -&gt; MixedConstraint{Autonomous, Fixed}
+</code></pre><p>Return the <code>MixedConstraint</code> of a function. Dependencies are specified with a boolean, variable, false by default, autonomous, true by default.</p><pre><code class="language- hljs">julia&gt; M = MixedConstraint((x, u) -&gt; [2x[2]-u^2, x[1]], autonomous=true, variable=false)
+julia&gt; M = MixedConstraint((x, u, v) -&gt; [2x[2]-u^2+v[3], x[1]], autonomous=true, variable=true)
+julia&gt; M = MixedConstraint((t, x, u) -&gt; [t+2x[2]-u^2, x[1]], autonomous=false, variable=false)
+julia&gt; M = MixedConstraint((t, x, u, v) -&gt; [t+2x[2]-u^2+v[3], x[1]], autonomous=false, variable=true)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L1030-L1043">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.MixedConstraint-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}" href="#CTBase.MixedConstraint-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.MixedConstraint</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Return the value of the MixedConstraint function.</p><pre><code class="language- hljs">julia&gt; MixedConstraint((x, u) -&gt; [2x[2]-u^2, x[1]], Int64)
+IncorrectArgument
+julia&gt; MixedConstraint((x, u) -&gt; [2x[2]-u^2, x[1]], Int64)
+IncorrectArgument
+julia&gt; M = MixedConstraint((x, u) -&gt; [2x[2]-u^2, x[1]], autonomous=true, variable=false)
+julia&gt; M([1, 0], 1)
+[-1, 1]
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; MethodError M(t, [1, 0], 1)
+julia&gt; MethodError M([1, 0], 1, v)
+julia&gt; M(t, [1, 0], 1, v)
+[-1, 1]
+julia&gt; M = MixedConstraint((x, u, v) -&gt; [2x[2]-u^2+v[3], x[1]], autonomous=true, variable=true)
+julia&gt; M([1, 0], 1, [1, 2, 3])
+[2, 1]
+julia&gt; M(t, [1, 0], 1, [1, 2, 3])
+[2, 1]
+julia&gt; M = MixedConstraint((t, x, u) -&gt; [t+2x[2]-u^2, x[1]], autonomous=false, variable=false)
+julia&gt; M(1, [1, 0], 1)
+[0, 1]
+julia&gt; M(1, [1, 0], 1, v)
+[0, 1]
+julia&gt; M = MixedConstraint((t, x, u, v) -&gt; [t+2x[2]-u^2+v[3], x[1]], autonomous=false, variable=true)
+julia&gt; M(1, [1, 0], 1, [1, 2, 3])
+[3, 1]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L1076-L1110">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Multiplier" href="#CTBase.Multiplier"><code>CTBase.Multiplier</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct Multiplier{time_dependence, variable_dependence}</code></pre><p><strong>Fields</strong></p><ul><li><code>f::Function</code></li></ul><p>Similar to <code>ControlLaw</code> in the usage.</p><p>The default values for <code>time_dependence</code> and <code>variable_dependence</code> are <code>Autonomous</code> and <code>Fixed</code> respectively.</p><p><strong>Constructor</strong></p><p>The constructor <code>Multiplier</code> returns a <code>Multiplier</code> of a function. The function must take 2 to 4 arguments, <code>(x, p)</code> to <code>(t, x, p, v)</code>, if the function is variable or non autonomous, it must be specified.  Dependencies are specified either with :</p><ul><li>booleans, <code>autonomous</code> and <code>variable</code>, respectively <code>true</code> and <code>false</code> by default </li><li><code>DataType</code>, <code>Autonomous</code>/<code>NonAutonomous</code> and <code>NonFixed</code>/<code>Fixed</code>, respectively <code>Autonomous</code> and <code>Fixed</code> by default.</li></ul><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; Multiplier((x, p) -&gt; x[1]^2+2p[2], Int64)
+IncorrectArgument
+julia&gt; Multiplier((x, p) -&gt; x[1]^2+2p[2], Int64)
+IncorrectArgument
+julia&gt; μ = Multiplier((x, p) -&gt; x[1]^2+2p[2], Autonomous, Fixed)
+julia&gt; μ = Multiplier((x, p, v) -&gt; x[1]^2+2p[2]+v[3], Autonomous, NonFixed)
+julia&gt; μ = Multiplier((t, x, p) -&gt; t+x[1]^2+2p[2], NonAutonomous, Fixed)
+julia&gt; μ = Multiplier((t, x, p, v) -&gt; t+x[1]^2+2p[2]+v[3], NonAutonomous, NonFixed)
+julia&gt; μ = Multiplier((x, p) -&gt; x[1]^2+2p[2], autonomous=true, variable=false)
+julia&gt; μ = Multiplier((x, p, v) -&gt; x[1]^2+2p[2]+v[3], autonomous=true, variable=true)
+julia&gt; μ = Multiplier((t, x, p) -&gt; t+x[1]^2+2p[2], autonomous=false, variable=false)
+julia&gt; μ = Multiplier((t, x, p, v) -&gt; t+x[1]^2+2p[2]+v[3], autonomous=false, variable=true)</code></pre><div class="admonition is-warning"><header class="admonition-header">Warning</header><div class="admonition-body"><p>When the state and costate are of dimension 1, consider <code>x</code> and <code>p</code> as scalars.</p></div></div><p><strong>Call</strong></p><p>The call returns the evaluation of the <code>Multiplier</code> for given values.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; μ = Multiplier((x, p) -&gt; x[1]^2+2p[2], autonomous=true, variable=false)
+julia&gt; μ([1, 0], [0, 1])
+3
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; μ(t, [1, 0], [0, 1])
+MethodError
+julia&gt; μ([1, 0], [0, 1], v)
+MethodError
+julia&gt; μ(t, [1, 0], [0, 1], v)
+3
+julia&gt; μ = Multiplier((x, p, v) -&gt; x[1]^2+2p[2]+v[3], autonomous=true, variable=true)
+julia&gt; μ([1, 0], [0, 1], [1, 2, 3])
+6
+julia&gt; μ(t, [1, 0], [0, 1], [1, 2, 3])
+6
+julia&gt; μ = Multiplier((t, x, p) -&gt; t+x[1]^2+2p[2], autonomous=false, variable=false)
+julia&gt; μ(1, [1, 0], [0, 1])
+4
+julia&gt; μ(1, [1, 0], [0, 1], v)
+4
+julia&gt; μ = Multiplier((t, x, p, v) -&gt; t+x[1]^2+2p[2]+v[3], autonomous=false, variable=true)
+julia&gt; μ(1, [1, 0], [0, 1], [1, 2, 3])
+7</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L1011">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Multiplier-Tuple{Function, Vararg{DataType}}" href="#CTBase.Multiplier-Tuple{Function, Vararg{DataType}}"><code>CTBase.Multiplier</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">Multiplier(
+    f::Function,
+    dependencies::DataType...
+) -&gt; Multiplier{Autonomous, Fixed}
+</code></pre><p>Return the <code>Multiplier</code> of a function. Dependencies are specified with DataType, Autonomous, NonAutonomous and Fixed, NonFixed.</p><pre><code class="language- hljs">julia&gt; Multiplier((x, p) -&gt; x[1]^2+2p[2], Int64)
+IncorrectArgument
+julia&gt; Multiplier((x, p) -&gt; x[1]^2+2p[2], Int64)
+IncorrectArgument
+julia&gt; μ = Multiplier((x, p) -&gt; x[1]^2+2p[2], Autonomous, Fixed)
+julia&gt; μ = Multiplier((x, p, v) -&gt; x[1]^2+2p[2]+v[3], Autonomous, NonFixed)
+julia&gt; μ = Multiplier((t, x, p) -&gt; t+x[1]^2+2p[2], NonAutonomous, Fixed)
+julia&gt; μ = Multiplier((t, x, p, v) -&gt; t+x[1]^2+2p[2]+v[3], NonAutonomous, NonFixed)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L1402-L1419">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Multiplier-Tuple{Function}" href="#CTBase.Multiplier-Tuple{Function}"><code>CTBase.Multiplier</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">Multiplier(
+    f::Function;
+    autonomous,
+    variable
+) -&gt; Multiplier{Autonomous, Fixed}
+</code></pre><p>Return the <code>Multiplier</code> of a function. Dependencies are specified with a boolean, variable, false by default, autonomous, true by default.</p><pre><code class="language- hljs">julia&gt; μ = Multiplier((x, p) -&gt; x[1]^2+2p[2], autonomous=true, variable=false)
+julia&gt; μ = Multiplier((x, p, v) -&gt; x[1]^2+2p[2]+v[3], autonomous=true, variable=true)
+julia&gt; μ = Multiplier((t, x, p) -&gt; t+x[1]^2+2p[2], autonomous=false, variable=false)
+julia&gt; μ = Multiplier((t, x, p, v) -&gt; t+x[1]^2+2p[2]+v[3], autonomous=false, variable=true)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L1381-L1394">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Multiplier-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}" href="#CTBase.Multiplier-Tuple{Union{Real, AbstractVector{&lt;:Real}}, Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.Multiplier</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Return the value of the Multiplier function.</p><pre><code class="language- hljs">julia&gt; Multiplier((x, p) -&gt; x[1]^2+2p[2], Int64)
+IncorrectArgument
+julia&gt; Multiplier((x, p) -&gt; x[1]^2+2p[2], Int64)
+IncorrectArgument
+julia&gt; μ = Multiplier((x, p) -&gt; x[1]^2+2p[2], autonomous=true, variable=false)
+julia&gt; μ([1, 0], [0, 1])
+3
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; μ(t, [1, 0], [0, 1])
+MethodError
+julia&gt; μ([1, 0], [0, 1], v)
+MethodError
+julia&gt; μ(t, [1, 0], [0, 1], v)
+3
+julia&gt; μ = Multiplier((x, p, v) -&gt; x[1]^2+2p[2]+v[3], autonomous=true, variable=true)
+julia&gt; μ([1, 0], [0, 1], [1, 2, 3])
+6
+julia&gt; μ(t, [1, 0], [0, 1], [1, 2, 3])
+6
+julia&gt; μ = Multiplier((t, x, p) -&gt; t+x[1]^2+2p[2], autonomous=false, variable=false)
+julia&gt; μ(1, [1, 0], [0, 1])
+4
+julia&gt; μ(1, [1, 0], [0, 1], v)
+4
+julia&gt; μ = Multiplier((t, x, p, v) -&gt; t+x[1]^2+2p[2]+v[3], autonomous=false, variable=true)
+julia&gt; μ(1, [1, 0], [0, 1], [1, 2, 3])
+7</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L1427-L1463">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.NonAutonomous" href="#CTBase.NonAutonomous"><code>CTBase.NonAutonomous</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">abstract type NonAutonomous &lt;: TimeDependence</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L1133">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.NonFixed" href="#CTBase.NonFixed"><code>CTBase.NonFixed</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">abstract type NonFixed &lt;: VariableDependence</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L1141">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.NotImplemented" href="#CTBase.NotImplemented"><code>CTBase.NotImplemented</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct NotImplemented &lt;: CTException</code></pre><p>Exception thrown when a method is not implemented.</p><p><strong>Fields</strong></p><ul><li><code>var::String</code></li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/exception.jl#L88">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.OptimalControlInit" href="#CTBase.OptimalControlInit"><code>CTBase.OptimalControlInit</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Initial guess for OCP, contains</p><ul><li>functions of time for the state and control variables</li><li>vector for optimization variables</li></ul><p>Initialization data for each field can be left to default or: </p><ul><li>vector for optimization variables</li><li>constant / vector / function for state and control  </li><li>existing solution (&#39;warm start&#39;) for all fields</li></ul><p><strong>Constructors:</strong></p><ul><li><code>OptimalControlInit()</code>: default initialization</li><li><code>OptimalControlInit(state, control, variable, time)</code>: constant vector, function handles and / or matrices / vectors interpolated along given time grid</li><li><code>OptimalControlInit(sol)</code>: from existing solution</li></ul><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; init = OptimalControlInit()
+julia&gt; init = OptimalControlInit(state=[0.1, 0.2], control=0.3)
+julia&gt; init = OptimalControlInit(state=[0.1, 0.2], control=0.3, variable=0.5)
+julia&gt; init = OptimalControlInit(state=[0.1, 0.2], controlt=t-&gt;sin(t), variable=0.5)
+julia&gt; init = OptimalControlInit(state=[[0, 0], [1, 2], [5, -1]], time=[0, .3, 1.], controlt=t-&gt;sin(t))
+julia&gt; init = OptimalControlInit(sol)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/init.jl#L117">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.OptimalControlModel" href="#CTBase.OptimalControlModel"><code>CTBase.OptimalControlModel</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">mutable struct OptimalControlModel{time_dependence&lt;:TimeDependence, variable_dependence&lt;:VariableDependence} &lt;: CTBase.AbstractOptimalControlModel</code></pre><p><strong>Fields</strong></p><ul><li><p><code>model_expression::Union{Nothing, Expr}</code>: Default: nothing</p></li><li><p><code>initial_time::Union{Nothing, Index, Real}</code>: Default: nothing</p></li><li><p><code>initial_time_name::Union{Nothing, String}</code>: Default: nothing</p></li><li><p><code>final_time::Union{Nothing, Index, Real}</code>: Default: nothing</p></li><li><p><code>final_time_name::Union{Nothing, String}</code>: Default: nothing</p></li><li><p><code>time_name::Union{Nothing, String}</code>: Default: nothing</p></li><li><p><code>control_dimension::Union{Nothing, Integer}</code>: Default: nothing</p></li><li><p><code>control_components_names::Union{Nothing, Vector{String}}</code>: Default: nothing</p></li><li><p><code>control_name::Union{Nothing, String}</code>: Default: nothing</p></li><li><p><code>state_dimension::Union{Nothing, Integer}</code>: Default: nothing</p></li><li><p><code>state_components_names::Union{Nothing, Vector{String}}</code>: Default: nothing</p></li><li><p><code>state_name::Union{Nothing, String}</code>: Default: nothing</p></li><li><p><code>variable_dimension::Union{Nothing, Integer}</code>: Default: nothing</p></li><li><p><code>variable_components_names::Union{Nothing, Vector{String}}</code>: Default: nothing</p></li><li><p><code>variable_name::Union{Nothing, String}</code>: Default: nothing</p></li><li><p><code>lagrange::Union{Nothing, Lagrange}</code>: Default: nothing</p></li><li><p><code>mayer::Union{Nothing, Mayer}</code>: Default: nothing</p></li><li><p><code>criterion::Union{Nothing, Symbol}</code>: Default: nothing</p></li><li><p><code>dynamics::Union{Nothing, Dynamics}</code>: Default: nothing</p></li><li><p><code>constraints::Dict{Symbol, Tuple}</code>: Default: Dict{Symbol, Tuple{Vararg{Any}}}()</p></li><li><p><code>dim_control_constraints::Union{Nothing, Integer}</code>: Default: nothing</p></li><li><p><code>dim_state_constraints::Union{Nothing, Integer}</code>: Default: nothing</p></li><li><p><code>dim_mixed_constraints::Union{Nothing, Integer}</code>: Default: nothing</p></li><li><p><code>dim_boundary_constraints::Union{Nothing, Integer}</code>: Default: nothing</p></li><li><p><code>dim_variable_constraints::Union{Nothing, Integer}</code>: Default: nothing</p></li><li><p><code>dim_control_range::Union{Nothing, Integer}</code>: Default: nothing</p></li><li><p><code>dim_state_range::Union{Nothing, Integer}</code>: Default: nothing</p></li><li><p><code>dim_variable_range::Union{Nothing, Integer}</code>: Default: nothing</p></li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L1149">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.OptimalControlSolution" href="#CTBase.OptimalControlSolution"><code>CTBase.OptimalControlSolution</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">mutable struct OptimalControlSolution &lt;: CTBase.AbstractOptimalControlSolution</code></pre><p>Type of an optimal control solution.</p><p><strong>Fields</strong></p><ul><li><p><code>times::Union{Nothing, StepRangeLen, AbstractVector{&lt;:Real}}</code>: Default: nothing</p></li><li><p><code>initial_time_name::Union{Nothing, String}</code>: Default: nothing</p></li><li><p><code>final_time_name::Union{Nothing, String}</code>: Default: nothing</p></li><li><p><code>time_name::Union{Nothing, String}</code>: Default: nothing</p></li><li><p><code>control_dimension::Union{Nothing, Integer}</code>: Default: nothing</p></li><li><p><code>control_components_names::Union{Nothing, Vector{String}}</code>: Default: nothing</p></li><li><p><code>control_name::Union{Nothing, String}</code>: Default: nothing</p></li><li><p><code>control::Union{Nothing, Function}</code>: Default: nothing</p></li><li><p><code>state_dimension::Union{Nothing, Integer}</code>: Default: nothing</p></li><li><p><code>state_components_names::Union{Nothing, Vector{String}}</code>: Default: nothing</p></li><li><p><code>state_name::Union{Nothing, String}</code>: Default: nothing</p></li><li><p><code>state::Union{Nothing, Function}</code>: Default: nothing</p></li><li><p><code>variable_dimension::Union{Nothing, Integer}</code>: Default: nothing</p></li><li><p><code>variable_components_names::Union{Nothing, Vector{String}}</code>: Default: nothing</p></li><li><p><code>variable_name::Union{Nothing, String}</code>: Default: nothing</p></li><li><p><code>variable::Union{Nothing, Real, AbstractVector{&lt;:Real}}</code>: Default: nothing</p></li><li><p><code>costate::Union{Nothing, Function}</code>: Default: nothing</p></li><li><p><code>objective::Union{Nothing, Real}</code>: Default: nothing</p></li><li><p><code>iterations::Union{Nothing, Integer}</code>: Default: nothing</p></li><li><p><code>stopping::Union{Nothing, Symbol}</code>: Default: nothing</p></li><li><p><code>message::Union{Nothing, String}</code>: Default: nothing</p></li><li><p><code>success::Union{Nothing, Bool}</code>: Default: nothing</p></li><li><p><code>infos::Dict{Symbol, Any}</code>: Default: Dict{Symbol, Any}()</p></li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L1286">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.OptimalControlSolution-Tuple{OptimalControlModel{&lt;:TimeDependence, Fixed}}" href="#CTBase.OptimalControlSolution-Tuple{OptimalControlModel{&lt;:TimeDependence, Fixed}}"><code>CTBase.OptimalControlSolution</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">OptimalControlSolution(
+    ocp::OptimalControlModel{&lt;:TimeDependence, Fixed};
+    state,
+    control,
+    objective,
+    variable,
+    costate,
+    times,
+    iterations,
+    stopping,
+    message,
+    success,
+    infos
+)
+</code></pre><p>Constructor from an optimal control problem for a Fixed ocp.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L1373">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.OptimalControlSolution-Tuple{OptimalControlModel{&lt;:TimeDependence, NonFixed}}" href="#CTBase.OptimalControlSolution-Tuple{OptimalControlModel{&lt;:TimeDependence, NonFixed}}"><code>CTBase.OptimalControlSolution</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">OptimalControlSolution(
+    ocp::OptimalControlModel{&lt;:TimeDependence, NonFixed};
+    state,
+    control,
+    objective,
+    variable,
+    costate,
+    times,
+    iterations,
+    stopping,
+    message,
+    success,
+    infos
+)
+</code></pre><p>Constructor from an optimal control problem for a NonFixed ocp.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L1406">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.ParsingError" href="#CTBase.ParsingError"><code>CTBase.ParsingError</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct ParsingError &lt;: CTException</code></pre><p>Exception thrown for syntax error during abstract parsing.</p><p><strong>Fields</strong></p><ul><li><code>var::String</code></li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/exception.jl#L127">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.PrintCallback" href="#CTBase.PrintCallback"><code>CTBase.PrintCallback</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">mutable struct PrintCallback &lt;: CTCallback</code></pre><p>Callback for printing.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/callback.jl#L15">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.PrintCallback-Tuple" href="#CTBase.PrintCallback-Tuple"><code>CTBase.PrintCallback</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Call the callback.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/callback.jl#L28">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.StateConstraint" href="#CTBase.StateConstraint"><code>CTBase.StateConstraint</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct StateConstraint{time_dependence, variable_dependence}</code></pre><p><strong>Fields</strong></p><ul><li><code>f::Function</code></li></ul><p>Similar to <code>VectorField</code> in the usage, but the dimension of the output of the function <code>f</code> is arbitrary.</p><p>The default values for <code>time_dependence</code> and <code>variable_dependence</code> are <code>Autonomous</code> and <code>Fixed</code> respectively.</p><p><strong>Constructor</strong></p><p>The constructor <code>StateConstraint</code> returns a <code>StateConstraint</code> of a function. The function must take 1 to 3 arguments, <code>x</code> to <code>(t, x, v)</code>, if the function is variable or non autonomous, it must be specified.  Dependencies are specified either with :</p><ul><li>booleans, <code>autonomous</code> and <code>variable</code>, respectively <code>true</code> and <code>false</code> by default </li><li><code>DataType</code>, <code>Autonomous</code>/<code>NonAutonomous</code> and <code>NonFixed</code>/<code>Fixed</code>, respectively <code>Autonomous</code> and <code>Fixed</code> by default.</li></ul><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; StateConstraint(x -&gt; [x[1]^2, 2x[2]], Int64)
+IncorrectArgument
+julia&gt; StateConstraint(x -&gt; [x[1]^2, 2x[2]], Int64)
+IncorrectArgument
+julia&gt; S = StateConstraint(x -&gt; [x[1]^2, 2x[2]], Autonomous, Fixed)
+julia&gt; S = StateConstraint((x, v) -&gt; [x[1]^2, 2x[2]+v[3]], Autonomous, NonFixed)
+julia&gt; S = StateConstraint((t, x) -&gt; [t+x[1]^2, 2x[2]], NonAutonomous, Fixed)
+julia&gt; S = StateConstraint((t, x, v) -&gt; [t+x[1]^2, 2x[2]+v[3]], NonAutonomous, NonFixed)
+julia&gt; S = StateConstraint(x -&gt; [x[1]^2, 2x[2]], autonomous=true, variable=false)
+julia&gt; S = StateConstraint((x, v) -&gt; [x[1]^2, 2x[2]+v[3]], autonomous=true, variable=true)
+julia&gt; S = StateConstraint((t, x) -&gt; [t+x[1]^2, 2x[2]], autonomous=false, variable=false)
+julia&gt; S = StateConstraint((t, x, v) -&gt; [t+x[1]^2, 2x[2]+v[3]], autonomous=false, variable=true)</code></pre><div class="admonition is-warning"><header class="admonition-header">Warning</header><div class="admonition-body"><p>When the state is of dimension 1, consider <code>x</code> as a scalar.</p></div></div><p><strong>Call</strong></p><p>The call returns the evaluation of the <code>StateConstraint</code> for given values.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; StateConstraint(x -&gt; [x[1]^2, 2x[2]], Int64)
+IncorrectArgument
+julia&gt; StateConstraint(x -&gt; [x[1]^2, 2x[2]], Int64)
+IncorrectArgument
+julia&gt; S = StateConstraint(x -&gt; [x[1]^2, 2x[2]], autonomous=true, variable=false)
+julia&gt; S([1, -1])
+[1, -2]
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; S(t, [1, -1], v)
+[1, -2]
+julia&gt; S = StateConstraint((x, v) -&gt; [x[1]^2, 2x[2]+v[3]], autonomous=true, variable=true)
+julia&gt; S([1, -1], [1, 2, 3])
+[1, 1]
+julia&gt; S(t, [1, -1], [1, 2, 3])
+[1, 1]
+julia&gt; S = StateConstraint((t, x) -&gt; [t+x[1]^2, 2x[2]], autonomous=false, variable=false)
+julia&gt;  S(1, [1, -1])
+[2, -2]
+julia&gt;  S(1, [1, -1], v)
+[2, -2]
+julia&gt; S = StateConstraint((t, x, v) -&gt; [t+x[1]^2, 2x[2]+v[3]], autonomous=false, variable=true)
+julia&gt;  S(1, [1, -1], [1, 2, 3])
+[2, 1]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L579">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.StateConstraint-Tuple{Function, Vararg{DataType}}" href="#CTBase.StateConstraint-Tuple{Function, Vararg{DataType}}"><code>CTBase.StateConstraint</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">StateConstraint(
+    f::Function,
+    dependencies::DataType...
+) -&gt; StateConstraint{Autonomous, Fixed}
+</code></pre><p>Return the <code>StateConstraint</code> of a function. Dependencies are specified with DataType, Autonomous, NonAutonomous and Fixed, NonFixed.</p><pre><code class="language- hljs">julia&gt; StateConstraint(x -&gt; [x[1]^2, 2x[2]], Int64)
+IncorrectArgument
+julia&gt; StateConstraint(x -&gt; [x[1]^2, 2x[2]], Int64)
+IncorrectArgument
+julia&gt; S = StateConstraint(x -&gt; [x[1]^2, 2x[2]], Autonomous, Fixed)
+julia&gt; S = StateConstraint((x, v) -&gt; [x[1]^2, 2x[2]+v[3]], Autonomous, NonFixed)
+julia&gt; S = StateConstraint((t, x) -&gt; [t+x[1]^2, 2x[2]], NonAutonomous, Fixed)
+julia&gt; S = StateConstraint((t, x, v) -&gt; [t+x[1]^2, 2x[2]+v[3]], NonAutonomous, NonFixed)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L838-L855">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.StateConstraint-Tuple{Function}" href="#CTBase.StateConstraint-Tuple{Function}"><code>CTBase.StateConstraint</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">StateConstraint(
+    f::Function;
+    autonomous,
+    variable
+) -&gt; StateConstraint{Autonomous, Fixed}
+</code></pre><p>Return the <code>StateConstraint</code> of a function. Dependencies are specified with a boolean, variable, false by default, autonomous, true by default.</p><pre><code class="language- hljs">julia&gt; S = StateConstraint(x -&gt; [x[1]^2, 2x[2]], autonomous=true, variable=false)
+julia&gt; S = StateConstraint((x, v) -&gt; [x[1]^2, 2x[2]+v[3]], autonomous=true, variable=true)
+julia&gt; S = StateConstraint((t, x) -&gt; [t+x[1]^2, 2x[2]], autonomous=false, variable=false)
+julia&gt; S = StateConstraint((t, x, v) -&gt; [t+x[1]^2, 2x[2]+v[3]], autonomous=false, variable=true)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L817-L830">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.StateConstraint-Tuple{Union{Real, AbstractVector{&lt;:Real}}}" href="#CTBase.StateConstraint-Tuple{Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.StateConstraint</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Return the value of the StateConstraint function.</p><pre><code class="language- hljs">julia&gt; StateConstraint(x -&gt; [x[1]^2, 2x[2]], Int64)
+IncorrectArgument
+julia&gt; StateConstraint(x -&gt; [x[1]^2, 2x[2]], Int64)
+IncorrectArgument
+julia&gt; S = StateConstraint(x -&gt; [x[1]^2, 2x[2]], autonomous=true, variable=false)
+julia&gt; S([1, -1])
+[1, -2]
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; S(t, [1, -1], v)
+[1, -2]
+julia&gt; S = StateConstraint((x, v) -&gt; [x[1]^2, 2x[2]+v[3]], autonomous=true, variable=true)
+julia&gt; S([1, -1], [1, 2, 3])
+[1, 1]
+julia&gt; S(t, [1, -1], [1, 2, 3])
+[1, 1]
+julia&gt; S = StateConstraint((t, x) -&gt; [t+x[1]^2, 2x[2]], autonomous=false, variable=false)
+julia&gt;  S(1, [1, -1])
+[2, -2]
+julia&gt;  S(1, [1, -1], v)
+[2, -2]
+julia&gt; S = StateConstraint((t, x, v) -&gt; [t+x[1]^2, 2x[2]+v[3]], autonomous=false, variable=true)
+julia&gt;  S(1, [1, -1], [1, 2, 3])
+[2, 1]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L863-L895">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.States" href="#CTBase.States"><code>CTBase.States</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Type alias for a vector of states.</p><pre><code class="language- hljs">julia&gt; const States = AbstractVector{&lt;:State}</code></pre><p>See also: <a href="@ref"><code>State</code></a>, <a href="types.html#CTBase.Costates"><code>Costates</code></a>, <a href="types.html#CTBase.Controls"><code>Controls</code></a>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/CTBase.jl#L130-L138">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.StopCallback" href="#CTBase.StopCallback"><code>CTBase.StopCallback</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Stopping callback.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/callback.jl#L67">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.StopCallback-Tuple" href="#CTBase.StopCallback-Tuple"><code>CTBase.StopCallback</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Call the callback.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/callback.jl#L80">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Time" href="#CTBase.Time"><code>CTBase.Time</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Type alias for a time.</p><pre><code class="language- hljs">julia&gt; const Time = ctNumber</code></pre><p>See also: <a href="types.html#CTBase.ctNumber"><code>ctNumber</code></a>, <a href="types.html#CTBase.Times"><code>Times</code></a>, <a href="@ref"><code>TimesDisc</code></a>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/CTBase.jl#L53-L61">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.TimeDependence" href="#CTBase.TimeDependence"><code>CTBase.TimeDependence</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">abstract type TimeDependence</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L1125">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.Times" href="#CTBase.Times"><code>CTBase.Times</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Type alias for a vector of times.</p><pre><code class="language- hljs">julia&gt; const Times = AbstractVector{&lt;:Time}</code></pre><p>See also: <a href="../tutorial-abstract.html#Time"><code>Time</code></a>, <a href="@ref"><code>TimesDisc</code></a>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/CTBase.jl#L64-L72">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.UnauthorizedCall" href="#CTBase.UnauthorizedCall"><code>CTBase.UnauthorizedCall</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct UnauthorizedCall &lt;: CTException</code></pre><p>Exception thrown when a call to a function is not authorized.</p><p><strong>Fields</strong></p><ul><li><code>var::String</code></li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/exception.jl#L108">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.VariableConstraint" href="#CTBase.VariableConstraint"><code>CTBase.VariableConstraint</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct VariableConstraint</code></pre><p><strong>Fields</strong></p><ul><li><code>f::Function</code></li></ul><p>The default values for <code>time_dependence</code> and <code>variable_dependence</code> are <code>Autonomous</code> and <code>Fixed</code> respectively.</p><p><strong>Constructor</strong></p><p>The constructor <code>VariableConstraint</code> returns a <code>VariableConstraint</code> of a function. The function must take 1 argument, <code>v</code>.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; V = VariableConstraint(v -&gt; [v[1]^2, 2v[2]])</code></pre><div class="admonition is-warning"><header class="admonition-header">Warning</header><div class="admonition-body"><p>When the variable is of dimension 1, consider <code>v</code> as a scalar.</p></div></div><p><strong>Call</strong></p><p>The call returns the evaluation of the <code>VariableConstraint</code> for given values.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; V = VariableConstraint(v -&gt; [v[1]^2, 2v[2]])
+julia&gt; V([1, -1])
+[1, -2]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L811">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.VariableConstraint-Tuple{Union{Real, AbstractVector{&lt;:Real}}}" href="#CTBase.VariableConstraint-Tuple{Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.VariableConstraint</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Return the value of the VariableConstraint function.</p><pre><code class="language- hljs">julia&gt; V = VariableConstraint(v -&gt; [v[1]^2, 2v[2]])
+julia&gt; V([1, -1])
+[1, -2]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L1140-L1151">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.VariableDependence" href="#CTBase.VariableDependence"><code>CTBase.VariableDependence</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">abstract type VariableDependence</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L1137">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.VectorField" href="#CTBase.VectorField"><code>CTBase.VectorField</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct VectorField{time_dependence, variable_dependence} &lt;: CTBase.AbstractVectorField{time_dependence, variable_dependence}</code></pre><p><strong>Fields</strong></p><ul><li><code>f::Function</code></li></ul><p>The default values for <code>time_dependence</code> and <code>variable_dependence</code> are <code>Autonomous</code> and <code>Fixed</code> respectively.</p><p><strong>Constructor</strong></p><p>The constructor <code>VectorField</code> returns a <code>VectorField</code> of a function. The function must take 1 to 3 arguments, <code>x</code> to <code>(t, x, v)</code>, if the function is variable or non autonomous, it must be specified.  Dependencies are specified either with :</p><ul><li>booleans, <code>autonomous</code> and <code>variable</code>, respectively <code>true</code> and <code>false</code> by default </li><li><code>DataType</code>, <code>Autonomous</code>/<code>NonAutonomous</code> and <code>NonFixed</code>/<code>Fixed</code>, respectively <code>Autonomous</code> and <code>Fixed</code> by default.</li></ul><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; VectorField(x -&gt; [x[1]^2, 2x[2]], Int64)
+IncorrectArgument
+julia&gt; VectorField(x -&gt; [x[1]^2, 2x[2]], Int64)
+IncorrectArgument
+julia&gt; V = VectorField(x -&gt; [x[1]^2, 2x[2]]) # autonomous=true, variable=false
+julia&gt; V = VectorField((x, v) -&gt; [x[1]^2, 2x[2]+v[3]], variable=true)
+julia&gt; V = VectorField((t, x) -&gt; [t+x[1]^2, 2x[2]], autonomous=false)
+julia&gt; V = VectorField((t, x, v) -&gt; [t+x[1]^2, 2x[2]+v[3]], autonomous=false, variable=true)
+julia&gt; V = VectorField((x, v) -&gt; [x[1]^2, 2x[2]+v[3]], NonFixed)
+julia&gt; V = VectorField((t, x) -&gt; [t+x[1]^2, 2x[2]], NonAutonomous)
+julia&gt; V = VectorField((t, x, v) -&gt; [t+x[1]^2, 2x[2]+v[3]], NonAutonomous, NonFixed)</code></pre><div class="admonition is-warning"><header class="admonition-header">Warning</header><div class="admonition-body"><p>When the state is of dimension 1, consider <code>x</code> as a scalar.</p></div></div><p><strong>Call</strong></p><p>The call returns the evaluation of the <code>VectorField</code> for given values.</p><p><strong><em>Examples</em></strong></p><pre><code class="language- hljs">julia&gt; V = VectorField(x -&gt; [x[1]^2, 2x[2]]) # autonomous=true, variable=false
+julia&gt; V([1, -1])
+[1, -2]
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; V(t, [1, -1])
+MethodError
+julia&gt; V([1, -1], v)
+MethodError
+julia&gt; V(t, [1, -1], v)
+[1, -2]
+julia&gt; V = VectorField((x, v) -&gt; [x[1]^2, 2x[2]+v[3]], variable=true)
+julia&gt; V([1, -1], [1, 2, 3])
+[1, 1]
+julia&gt; V(t, [1, -1], [1, 2, 3])
+[1, 1]
+julia&gt; V = VectorField((t, x) -&gt; [t+x[1]^2, 2x[2]], autonomous=false)
+julia&gt; V(1, [1, -1])
+[2, -2]
+julia&gt; V(1, [1, -1], v)
+[2, -2]
+julia&gt; V = VectorField((t, x, v) -&gt; [t+x[1]^2, 2x[2]+v[3]], autonomous=false, variable=true)
+julia&gt; V(1, [1, -1], [1, 2, 3])
+[2, 1]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/types.jl#L197">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.VectorField-Tuple{Function, Vararg{DataType}}" href="#CTBase.VectorField-Tuple{Function, Vararg{DataType}}"><code>CTBase.VectorField</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">VectorField(
+    f::Function,
+    dependencies::DataType...
+) -&gt; VectorField{Autonomous, Fixed}
+</code></pre><p>Return a <code>VectorField</code> of a function. Dependencies are specified with DataType, Autonomous, NonAutonomous and Fixed, NonFixed.</p><pre><code class="language- hljs">julia&gt; VectorField(x -&gt; [x[1]^2, 2x[2]], Int64)
+IncorrectArgument
+julia&gt; VectorField(x -&gt; [x[1]^2, 2x[2]], Int64)
+IncorrectArgument
+julia&gt; V = VectorField(x -&gt; [x[1]^2, 2x[2]]) # autonomous=true, variable=false
+julia&gt; V = VectorField((x, v) -&gt; [x[1]^2, 2x[2]+v[3]], NonFixed)
+julia&gt; V = VectorField((t, x) -&gt; [t+x[1]^2, 2x[2]], NonAutonomous)
+julia&gt; V = VectorField((t, x, v) -&gt; [t+x[1]^2, 2x[2]+v[3]], NonAutonomous, NonFixed)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L496-L514">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.VectorField-Tuple{Function}" href="#CTBase.VectorField-Tuple{Function}"><code>CTBase.VectorField</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">VectorField(
+    f::Function;
+    autonomous,
+    variable
+) -&gt; VectorField{Autonomous, Fixed}
+</code></pre><p>Return a <code>VectorField</code> of a function. Dependencies are specified with a boolean, variable, false by default, autonomous, true by default.</p><pre><code class="language- hljs">julia&gt; V = VectorField(x -&gt; [x[1]^2, 2x[2]]) # autonomous=true, variable=false
+julia&gt; V = VectorField((x, v) -&gt; [x[1]^2, 2x[2]+v[3]], variable=true)
+julia&gt; V = VectorField((t, x) -&gt; [t+x[1]^2, 2x[2]], autonomous=false)
+julia&gt; V = VectorField((t, x, v) -&gt; [t+x[1]^2, 2x[2]+v[3]], autonomous=false, variable=true)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L474-L488">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.VectorField-Tuple{Union{Real, AbstractVector{&lt;:Real}}}" href="#CTBase.VectorField-Tuple{Union{Real, AbstractVector{&lt;:Real}}}"><code>CTBase.VectorField</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Return the value of the VectorField.</p><p><strong>Examples</strong></p><pre><code class="language- hljs">julia&gt; VectorField(x -&gt; [x[1]^2, 2x[2]], Int64)
+IncorrectArgument
+julia&gt; VectorField(x -&gt; [x[1]^2, 2x[2]], Int64)
+IncorrectArgument
+julia&gt; V = VectorField(x -&gt; [x[1]^2, 2x[2]]) # autonomous=true, variable=false
+julia&gt; V([1, -1])
+[1, -2]
+julia&gt; t = 1
+julia&gt; v = Real[]
+julia&gt; V(t, [1, -1])
+MethodError
+julia&gt; V([1, -1], v)
+MethodError
+julia&gt; V(t, [1, -1], v)
+[1, -2]
+julia&gt; V = VectorField((x, v) -&gt; [x[1]^2, 2x[2]+v[3]], variable=true)
+julia&gt; V([1, -1], [1, 2, 3])
+[1, 1]
+julia&gt; V(t, [1, -1], [1, 2, 3])
+[1, 1]
+julia&gt; V = VectorField((t, x) -&gt; [t+x[1]^2, 2x[2]], autonomous=false)
+julia&gt; V(1, [1, -1])
+[2, -2]
+julia&gt; V(1, [1, -1], v)
+[2, -2]
+julia&gt; V = VectorField((t, x, v) -&gt; [t+x[1]^2, 2x[2]+v[3]], autonomous=false, variable=true)
+julia&gt; V(1, [1, -1], [1, 2, 3])
+[2, 1]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/functions.jl#L522-L560">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTBase.ctNumber" href="#CTBase.ctNumber"><code>CTBase.ctNumber</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Type alias for a real number.</p><pre><code class="language- hljs">julia&gt; const ctNumber = Real</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTBase.jl/blob/v0.12.5/src/CTBase.jl#L33-L39">source</a></section></article><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.6.0 on <span class="colophon-date" title="Wednesday 21 August 2024 07:40">Wednesday 21 August 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body><div data-docstringscollapsed="true"></div></html>
