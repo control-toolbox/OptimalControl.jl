@@ -1,4 +1,4 @@
-# OptimalControl
+# OptimalControl.jl
 
 [ci-img]: https://github.com/control-toolbox/OptimalControl.jl/actions/workflows/CI.yml/badge.svg?branch=main
 [ci-url]: https://github.com/control-toolbox/OptimalControl.jl/actions/workflows/CI.yml?query=branch%3Amain
