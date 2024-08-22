@@ -11,7 +11,7 @@ CommonSolve = "38540f10-b2f7-11e9-35d8-d573e4eb0ff2"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 
 [compat]
-CTBase = "0.12"
+CTBase = "0.12, 0.13"
 CTDirect = "0.11"
 CTFlows = "0.5"
 CommonSolve = "0.2"
