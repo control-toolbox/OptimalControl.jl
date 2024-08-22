@@ -22,7 +22,7 @@ using OptimalControl #hide
 end
 ```
 
-Aliases `v₁`, `v₂` (and `v1`, v2`) are automatically defined and can be used in subsequent expressions instead of `v[1]` and `v[2]`. The user can also define her own aliases for the components (one alias per dimension):
+Aliases `v₁`, `v₂` (and `v1`, `v2`) are automatically defined and can be used in subsequent expressions instead of `v[1]` and `v[2]`. The user can also define her own aliases for the components (one alias per dimension):
 
 ```@example main
 @def begin
