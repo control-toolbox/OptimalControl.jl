@@ -93,6 +93,12 @@ url = {https://control-toolbox.org/OptimalControl.jl}
 }
 ```
 
+## Bug reports and discussions
+
+If you think you found a bug or if you have a feature request or suggestion, feel free to open an [issue](https://github.com/control-toolbox/OptimalControl.jl/issues).
+Before opening a pull request, start an issue or a discussion on the topic, please. Any contributions are welcomed, check out [how to contribute to a Github project](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project). 
+
+If you want to ask a question, feel free to start a discussion [here](https://github.com/orgs/control-toolbox/discussions). This forum is for general discussion about this repository and the [control-toolbox organization](https://github.com/control-toolbox), so questions about any of our packages are welcome.
 
 ## See also
 
