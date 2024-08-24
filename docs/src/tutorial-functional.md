@@ -2,7 +2,7 @@
 
 There are two syntaxes to define an optimal control problem with OptimalControl.jl:
 
-- the standard way is to use the abstract syntax. See for instance [basic example](@ref basic) for a start or for a comprehensive introduction to the abstract syntax, check [this tutorial](@ref abstract).
+- the standard way is to use the abstract syntax. See for instance [basic example](@ref tutorial-basic) for a start or for a comprehensive introduction to the abstract syntax, check [this tutorial](@ref abstract).
 - the old-fashioned functional syntax. In this tutorial with give two examples defined with the functional syntax. For more details please check the [`Model` documentation](@ref api-ctbase-model).
 
 ## Double integrator: energy minimisation
@@ -52,7 +52,7 @@ nothing # hide
 
 !!! note "Nota bene"
 
-    This problem is defined with the abstract syntax [here](@ref basic).
+    This problem is defined with the abstract syntax [here](@ref tutorial-basic).
 
 ## Double integrator: time minimisation    
 
