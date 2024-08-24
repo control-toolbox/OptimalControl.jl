@@ -15,7 +15,13 @@ To enter into the control-toolbox, press `>` key.
     and plot the solution in the Julia REPL. Use the command `NAME` to rename the 
     optimal control problem: `ct> NAME=ocp`.
 
-![Control-toolbox REPL](assets/ct-repl-95x30.gif)
+```@raw html
+<style>
+@media (orientation: landscape) { .ct-repl-img {content:url('assets/ct-repl-95x30.gif');} }
+@media (orientation: portrait)  { .ct-repl-img {content:url('assets/ct-repl-95x60.gif');} }
+</style>
+<p><img alt="Control-toolbox REPL" class="ct-repl-img"> </p>
+```
 
 !!! note "Credits"
 
