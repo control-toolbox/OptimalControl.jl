@@ -20,7 +20,7 @@ To enter into the control-toolbox, press `>` key.
 @media (orientation: landscape) { .ct-repl-img {content:url('assets/ct-repl-95x30.gif');} }
 @media (orientation: portrait)  { .ct-repl-img {content:url('assets/ct-repl-95x60.gif');} }
 </style>
-<p><img alt="Control-toolbox REPL" class="ct-repl-img"> </p>
+<p><img url="assets/ct-repl-95x30.gif" alt="Control-toolbox REPL" class="ct-repl-img"> </p>
 ```
 
 !!! note "Credits"
