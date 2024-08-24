@@ -127,7 +127,7 @@ nothing # hide
 ```
 
 In this case, you obtain a data that you can plot exactly like when solving the optimal control problem 
-with the function `solve`. See for instance the [basic example](@ref basic-solve-plot) or the 
+with the function `solve`. See for instance the [basic example](@ref tutorial-basic-solve-plot) or the 
 [plot tutorial](@ref tutorial-plot).
 
 ```@example main
