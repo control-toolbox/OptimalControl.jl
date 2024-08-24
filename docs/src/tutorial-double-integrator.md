@@ -70,7 +70,7 @@ nothing # hide
 
 !!! note "Nota bene"
 
-    For a comprehensive introduction to the syntax used above to describe the optimal control problem, check [this tutorial](@ref tutorial-abstract).
+    For a comprehensive introduction to the syntax used above to describe the optimal control problem, check [this tutorial](@ref abstract). In particular, there are non-unicode alternatives for derivatives, integrals, *etc.* There is also a non-standard but more classical functional syntax, check [this tutorial](@ref functional).
 
 ## Solve and plot
 

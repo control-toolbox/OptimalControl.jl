@@ -1,0 +1,48 @@
+{
+    "description": "<p>The&nbsp;<a href=\"https://juliahub.com/ui/Packages/General/OptimalControl\" rel=\"nofollow\">OptimalControl.jl</a>&nbsp;package is the root package of the&nbsp;<a href=\"https://github.com/control-toolbox\">control-toolbox ecosystem</a>. The control-toolbox ecosystem gathers Julia packages for mathematical control and applications. It aims to provide tools to model and solve optimal control problems with ordinary differential equations by direct and indirect methods.</p>",
+    "title": "OptimalControl.jl: a Julia package to modelise and solve optimal control problems with ODE's",
+    "upload_type": "software",
+    "doi": "10.5281/zenodo.13336652",
+    "keywords": [
+      "optimal control",
+      "control of ODE's",
+      "optimization",
+      "direct transcription",
+      "shooting"
+    ],
+     "creators": [
+      {
+        "affiliation": "Université Côte d’Azur, CNRS, Inria, LJAD",
+        "name": "Caillau, Jean-Baptiste",
+        "orcid": "0000-0002-1719-2016"
+      },
+      {
+        "affiliation": "Université Toulouse, CNRS, ENSEEIHT-IRIT",
+        "name": "Cots, Olivier",
+        "orcid": "0000-0002-4703-4369"
+      },
+      {
+        "affiliation": "Université Toulouse, CNRS, ENSEEIHT-IRIT",
+        "name": "Gergaud, Joseph",
+        "orcid": "0009-0005-9825-8652"
+      },
+      {
+        "affiliation": "CAGE team, Inria Paris",
+        "name": "Martinon, Pierre",
+        "orcid": "0000-0003-0571-2376"
+      },
+      {
+        "affiliation": "Inria Sophia Antipolis Méditerranée",
+        "name": "Sed, Sophia"
+      }
+    ],
+    "access_right": "open",
+    "related_identifiers": [
+      {
+        "scheme": "url",
+        "identifier": "https://github.com/control-toolbox/OptimalControl.jl/releases/latest",
+        "relation": "isSupplementTo"
+      }
+    ],
+    "license": "MIT"
+  }

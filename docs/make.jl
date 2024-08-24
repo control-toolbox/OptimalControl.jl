@@ -30,17 +30,16 @@ makedocs(
     pages = [
         "Introduction" => "index.md",
         "Basic examples" => [
-            "Energy min (abstract syntax)"   => "tutorial-basic-example.md", 
-            "Energy min (functional syntax)" => "tutorial-basic-example-f.md",
-            "Time min (abstract syntax)"     => "tutorial-double-integrator.md",
-            "Time min (functional syntax)"     => "tutorial-double-integrator-f.md",
+            "Energy minimisation" => "tutorial-basic-example.md", 
+            "Time mininimisation" => "tutorial-double-integrator.md",
         ],
         "Manual" => [
             "Abstract syntax"       => "tutorial-abstract.md",
-            "Solve"                 => "tutorial-solve.md",
             "Initial guess"         => "tutorial-initial-guess.md",
+            "Solve"                 => "tutorial-solve.md",
             "Plot a solution"       => "tutorial-plot.md",
             "Flow"                  => "tutorial-flow.md",
+            "Functional syntax"     => "tutorial-functional.md",
             "Control-toolbox REPL"  => "tutorial-repl.md",
         ],
         "Tutorials" => [
@@ -61,9 +60,9 @@ makedocs(
         "Developers" => [
             "OptimalControl.jl" => "dev-optimalcontrol.md",
             "Subpackages" => [
-                "CTBase.jl" => "dev-ctbase.md",
+                "CTBase.jl"   => "dev-ctbase.md",
                 "CTDirect.jl" => "dev-ctdirect.md",
-                "CTFlows.jl" => "dev-ctflows.md",
+                "CTFlows.jl"  => "dev-ctflows.md",
             ],
         ],
         "JuliaCon 2024"=> "juliacon2024.md",
