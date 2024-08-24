@@ -55,7 +55,7 @@ nothing # hide
 !!! note "Nota bene"
 
     - For details about the syntax used above to describe the optimal control problem, check the [`Model` documentation](@ref api-ctbase-model).
-    - You can also define the optimal control problem with an abstract syntax. See for instance [basic example](@ref basic) to compare or for a comprehensive introduction to the abstract syntax, check [this tutorial](@ref abstract).
+    - You can also define the optimal control problem with an abstract syntax. See for instance [basic example](@ref basic) to compare or for a comprehensive introduction to the abstract syntax, check [this tutorial](@ref tutorial-abstract).
 
 ## Solve and plot
 

@@ -70,7 +70,7 @@ nothing # hide
 
 !!! note "Nota bene"
 
-    For a comprehensive introduction to the syntax used above to describe the optimal control problem, check [this tutorial](@ref abstract).
+    For a comprehensive introduction to the syntax used above to describe the optimal control problem, check [this tutorial](@ref tutorial-abstract).
 
 ## Solve and plot
 

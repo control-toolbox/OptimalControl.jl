@@ -36,12 +36,12 @@ makedocs(
             "Time min (functional syntax)"     => "tutorial-double-integrator-f.md",
         ],
         "Manual" => [
-            "Abstract syntax" => "tutorial-abstract.md",
-            "Solve"           => "tutorial-solve.md",
-            "Initial guess"   => "tutorial-initial-guess.md",
-            "Plot a solution" => "tutorial-plot.md",
-            "Flow"            => "tutorial-flow.md",
-            "ct repl"         => "tutorial-repl.md",
+            "Abstract syntax"       => "tutorial-abstract.md",
+            "Solve"                 => "tutorial-solve.md",
+            "Initial guess"         => "tutorial-initial-guess.md",
+            "Plot a solution"       => "tutorial-plot.md",
+            "Flow"                  => "tutorial-flow.md",
+            "Control-toolbox REPL"  => "tutorial-repl.md",
         ],
         "Tutorials" => [
             "tutorial-continuation.md",
