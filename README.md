@@ -24,7 +24,7 @@
 [licence-img]: https://img.shields.io/badge/License-MIT-yellow.svg
 [licence-url]: https://github.com/control-toolbox/OptimalControl.jl/blob/master/LICENSE
 
-The [OptimalControl.jl](https://juliahub.com/ui/Packages/General/OptimalControl) package is the root package of the [control-toolbox ecosystem](https://github.com/control-toolbox).
+The OptimalControl.jl package is the root package of the [control-toolbox ecosystem](https://github.com/control-toolbox).
 The control-toolbox ecosystem gathers Julia packages for mathematical control and applications. It aims to provide tools to model and solve optimal control problems with ordinary differential equations by direct and indirect methods.
 
 | **Name**          | **Badge**         |
@@ -37,7 +37,7 @@ The control-toolbox ecosystem gathers Julia packages for mathematical control an
 
 ## Installation
 
-To install [OptimalControl.jl](https://github.com/control-toolbox/OptimalControl.jl) please 
+To install OptimalControl.jl please 
 <a href="https://docs.julialang.org/en/v1/manual/getting-started/">open Julia's interactive session (known as REPL)</a> 
 and press <kbd>]</kbd> key in the REPL to use the package mode, then add the package:
 
