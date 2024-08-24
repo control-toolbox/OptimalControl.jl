@@ -1,4 +1,4 @@
-# [The solve function](@id manual-solve)
+# [The solve function](@id tutorial-solve)
 
 In this tutorial, we explain the [`solve`](@ref) function from [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package.
 
