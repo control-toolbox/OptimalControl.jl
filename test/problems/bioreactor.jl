@@ -7,16 +7,16 @@
 
 # growth model MONOD
 function growth(s, mu2m, Ks)
-    return mu2m * s / (s+Ks)
+    return mu2m * s / (s + Ks)
 end
 
 # light model: max^2 (0,sin) * mubar
 # DAY/NIGHT CYCLE: [0,2 halfperiod] rescaled to [0,2pi]
 function light(time, halfperiod)
     pi = 3.141592653589793
-    days = time / (halfperiod*2)
-    tau = (days - floor(days)) * 2*pi
-    return max(0,sin(tau))^2
+    days = time / (halfperiod * 2)
+    tau = (days - floor(days)) * 2 * pi
+    return max(0, sin(tau))^2
 end
 
 # 1 day periodic problem
@@ -34,7 +34,7 @@ function bioreactor_1day_periodic()
         T = halfperiod * 2
 
         # ocp
-        t ∈ [ 0, T ], time
+        t ∈ [0, T], time
         x ∈ R³, state
         u ∈ R, control
         y = x[1]
@@ -42,18 +42,25 @@ function bioreactor_1day_periodic()
         b = x[3]
         mu = light(t, halfperiod) * mubar
         mu2 = growth(s(t), mu2m, Ks)
-        [0,0,0.001] ≤ x(t) ≤ [Inf, Inf, Inf]
+        [0, 0, 0.001] ≤ x(t) ≤ [Inf, Inf, Inf]
         0 ≤ u(t) ≤ 1
         1 ≤ y(0) ≤ Inf
         1 ≤ b(0) ≤ Inf
-        x(0)- x(T) == [0,0,0]
-        ẋ(t) == [mu*y(t)/(1+y(t))-(r+u(t))*y(t),
-                -mu2*b(t) + u(t)*beta*(gamma*y(t)-s(t)),
-                (mu2-u(t)*beta)*b(t)]
-        ∫(mu2*b(t)/(beta+c)) → max
+        x(0) - x(T) == [0, 0, 0]
+        ẋ(t) == [
+            mu * y(t) / (1 + y(t)) - (r + u(t)) * y(t),
+            -mu2 * b(t) + u(t) * beta * (gamma * y(t) - s(t)),
+            (mu2 - u(t) * beta) * b(t),
+        ]
+        ∫(mu2 * b(t) / (beta + c)) → max
     end
 
-    return ((ocp=bioreactor_1, obj=0.614134, name="bioreactor_1day_periodic", init=nothing))
+    return ((
+        ocp = bioreactor_1,
+        obj = 0.614134,
+        name = "bioreactor_1day_periodic",
+        init = nothing,
+    ))
 end
 
 
@@ -73,7 +80,7 @@ function bioreactor_Ndays()
         T = 10 * N
 
         # ocp
-        t ∈ [ 0, T ], time
+        t ∈ [0, T], time
         x ∈ R³, state
         u ∈ R, control
         y = x[1]
@@ -81,16 +88,23 @@ function bioreactor_Ndays()
         b = x[3]
         mu = light(t, halfperiod) * mubar
         mu2 = growth(s(t), mu2m, Ks)
-        [0,0,0.001] ≤ x(t) ≤ [Inf, Inf, Inf]
+        [0, 0, 0.001] ≤ x(t) ≤ [Inf, Inf, Inf]
         0 ≤ u(t) ≤ 1
         0.05 ≤ y(0) ≤ 0.25
         0.5 ≤ s(0) ≤ 5
         0.5 ≤ b(0) ≤ 3
-        ẋ(t) == [mu*y(t)/(1+y(t))-(r+u(t))*y(t),
-                -mu2*b(t) + u(t)*beta*(gamma*y(t)-s(t)),
-                (mu2-u(t)*beta)*b(t)]
-        ∫(mu2*b(t)/(beta+c)) → max
+        ẋ(t) == [
+            mu * y(t) / (1 + y(t)) - (r + u(t)) * y(t),
+            -mu2 * b(t) + u(t) * beta * (gamma * y(t) - s(t)),
+            (mu2 - u(t) * beta) * b(t),
+        ]
+        ∫(mu2 * b(t) / (beta + c)) → max
     end
 
-    return ((ocp=bioreactor_N, obj=19.0745, init=(state=[50,50,50],), name="bioreactor_Ndays"))
+    return ((
+        ocp = bioreactor_N,
+        obj = 19.0745,
+        init = (state = [50, 50, 50],),
+        name = "bioreactor_Ndays",
+    ))
 end

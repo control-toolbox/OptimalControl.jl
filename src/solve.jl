@@ -19,7 +19,7 @@ Remove from the description, the Symbol that are specific to [OptimalControl.jl]
 be passed.
 """
 function clean(d::Description)
-    return remove(d, (:direct, ))
+    return remove(d, (:direct,))
 end
 
 """
@@ -52,15 +52,12 @@ julia> sol = solve(ocp, init=(state=t->[-1+t, t*(t-1)], control=0.5))
 julia> sol = solve(ocp, init=(state=t->[-1+t, t*(t-1)], control=t->6-12*t))
 ```
 """
-function CommonSolve.solve(
-    ocp::OptimalControlModel, 
-    description::Symbol...;
-    kwargs...)
+function CommonSolve.solve(ocp::OptimalControlModel, description::Symbol...; kwargs...)
 
     # get the full description
     method = getFullDescription(description, available_methods())
 
     # solve the problem
-    :direct ∈ method && return CTDirect.direct_solve(ocp, clean(description)...; kwargs...)    
+    :direct ∈ method && return CTDirect.direct_solve(ocp, clean(description)...; kwargs...)
 
 end
