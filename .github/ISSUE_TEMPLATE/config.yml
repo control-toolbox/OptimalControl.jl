@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Control-toolbox support
+  - name: OptimalControl.jl package support
+    url: https://github.com/control-toolbox/OptimalControl.jl/discussions
+    about: Please ask and answer questions about OptimalControl.jl here.
+  - name: Control-toolbox organisation support
     url: https://github.com/orgs/control-toolbox/discussions
-    about: Please ask and answer questions about control-toolbox ecosystem here.
+    about: For more general questions about control-toolbox ecosystem it's here.
