@@ -1,5 +1,5 @@
 ---
-name: General issue
+name: Blank issue
 about: Blank template for general issue
 title: "[General] ..."
 labels: ''
