@@ -48,9 +48,9 @@ Number of inequality constraint evaluations          = 0
 Number of equality constraint Jacobian evaluations   = 3
 Number of inequality constraint Jacobian evaluations = 0
 Number of Lagrangian Hessian evaluations             = 2
-Total seconds in IPOPT                               = 3.103
+Total seconds in IPOPT                               = 3.165
 
-EXIT: Optimal Solution Found.</code></pre><p>And plot the solution with:</p><pre><code class="language-julia hljs">plot(sol)</code></pre><img src="tutorial-basic-example-55f522a8.svg" alt="Example block output"/><h2 id="State-constraint"><a class="docs-heading-anchor" href="#State-constraint">State constraint</a><a id="State-constraint-1"></a><a class="docs-heading-anchor-permalink" href="#State-constraint" title="Permalink"></a></h2><p>We add the path constraint</p><p class="math-container">\[x_2(t) \le 1.2.\]</p><pre><code class="language-julia hljs">ocp = @def begin
+EXIT: Optimal Solution Found.</code></pre><p>And plot the solution with:</p><pre><code class="language-julia hljs">plot(sol)</code></pre><img src="tutorial-basic-example-61d03b8b.svg" alt="Example block output"/><h2 id="State-constraint"><a class="docs-heading-anchor" href="#State-constraint">State constraint</a><a id="State-constraint-1"></a><a class="docs-heading-anchor-permalink" href="#State-constraint" title="Permalink"></a></h2><p>We add the path constraint</p><p class="math-container">\[x_2(t) \le 1.2.\]</p><pre><code class="language-julia hljs">ocp = @def begin
 
     t ∈ [0, 1], time
     x ∈ R², state
@@ -68,7 +68,7 @@ EXIT: Optimal Solution Found.</code></pre><p>And plot the solution with:</p><pre
 end
 
 sol = solve(ocp)
-plot(sol)</code></pre><img src="tutorial-basic-example-685aa2eb.svg" alt="Example block output"/><h2 id="Save-and-load"><a class="docs-heading-anchor" href="#Save-and-load">Save and load</a><a id="Save-and-load-1"></a><a class="docs-heading-anchor-permalink" href="#Save-and-load" title="Permalink"></a></h2><p>We can save the solution in a Julia <code>.jld2</code> data file and reload it later, and also export a discretised version of the solution in a more portable <a href="https://en.wikipedia.org/wiki/JSON">JSON</a> format.</p><pre><code class="language-julia hljs"># load additional modules
+plot(sol)</code></pre><img src="tutorial-basic-example-71e12f10.svg" alt="Example block output"/><h2 id="Save-and-load"><a class="docs-heading-anchor" href="#Save-and-load">Save and load</a><a id="Save-and-load-1"></a><a class="docs-heading-anchor-permalink" href="#Save-and-load" title="Permalink"></a></h2><p>We can save the solution in a Julia <code>.jld2</code> data file and reload it later, and also export a discretised version of the solution in a more portable <a href="https://en.wikipedia.org/wiki/JSON">JSON</a> format.</p><pre><code class="language-julia hljs"># load additional modules
 using JLD2, JSON3
 
 # JLD save / load
