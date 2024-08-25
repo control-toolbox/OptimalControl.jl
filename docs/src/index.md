@@ -73,7 +73,7 @@ For more details about this problem, please check the
 For a comprehensive introduction to the syntax used above to describe the optimal control problem, check the
 [abstract syntax tutorial](@ref tutorial-abstract).
 
-## How to cite
+## Citing us
 
 If you use OptimalControl.jl in your work, please cite us:
 
