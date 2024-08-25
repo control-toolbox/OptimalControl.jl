@@ -1,7 +1,7 @@
 ---
 name: 'Developers '
 about: Suggest internal modifications
-title: "[Dev]"
+title: "[Dev] title"
 labels: internal dev
 assignees: jbcaillau, ocots, PierreMartinon
 
