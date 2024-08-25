@@ -2,7 +2,7 @@
 function insurance()
 
     @def insurance begin
-        
+
         # constants
         gamma = 0.2
         lambda = 0.25
@@ -14,7 +14,7 @@ function insurance()
         alpha = 4
         tf = 10
 
-        t ∈ [ 0, tf ], time
+        t ∈ [0, tf], time
         x ∈ R³, state
         u ∈ R⁵, control
         P ∈ R, variable
@@ -27,7 +27,7 @@ function insurance()
         dUdR = u[5]
 
         0 ≤ I(t) ≤ 1.5
-        0 ≤ m(t) ≤ 1.5    
+        0 ≤ m(t) ≤ 1.5
         0 ≤ h(t) ≤ 25
         0 ≤ R(t) ≤ Inf
         0 ≤ H(t) ≤ Inf
@@ -40,21 +40,19 @@ function insurance()
 
         epsilon = k * t / (tf - t + 1)
         # illness distribution
-        fx = lambda*exp(-lambda*t) + exp(-lambda*tf)/tf
+        fx = lambda * exp(-lambda * t) + exp(-lambda * tf) / tf
         # expense effect
-        v = m(t)^(alpha/2) / (1+m(t)^(alpha/2))
-        vprime = alpha/2 * m(t)^(alpha/2-1) / (1+m(t)^(alpha/2))^2
+        v = m(t)^(alpha / 2) / (1 + m(t)^(alpha / 2))
+        vprime = alpha / 2 * m(t)^(alpha / 2 - 1) / (1 + m(t)^(alpha / 2))^2
 
         R(t) - (w - P + I(t) - m(t) - epsilon) == 0
         H(t) - (h0 - gamma * t * (1 - v)) == 0
-        U(t) - (1 - exp( - s * R(t))+ H(t)) == 0
-        dUdR(t) - (s * exp( - s * R(t))) == 0
+        U(t) - (1 - exp(-s * R(t)) + H(t)) == 0
+        dUdR(t) - (s * exp(-s * R(t))) == 0
 
-        ẋ(t) == [(1-gamma*t*vprime/dUdR(t))*h(t), 
-                h(t), 
-                (1+sigma)*I(t)*fx]
-        ∫(U(t)*fx) → max
+        ẋ(t) == [(1 - gamma * t * vprime / dUdR(t)) * h(t), h(t), (1 + sigma) * I(t) * fx]
+        ∫(U(t) * fx) → max
     end
 
-    return((ocp=insurance, obj=2.059511, name="insurance", init=nothing))
+    return ((ocp = insurance, obj = 2.059511, name = "insurance", init = nothing))
 end

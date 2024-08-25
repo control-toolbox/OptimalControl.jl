@@ -21,10 +21,10 @@ include("problems/goddard.jl")
         :grid,
         :initial_guess,
         :objective,
-        )
+    )
         @testset "$(name)" begin
             test_name = Symbol(:test_, name)
-            println("Testing: "*string(name))
+            println("Testing: " * string(name))
             include("$(test_name).jl")
             @eval $test_name()
         end

@@ -23,7 +23,7 @@ using CTFlows
 import CommonSolve: solve, CommonSolve
 
 # declarations
-const __display  = CTBase.__display
+const __display = CTBase.__display
 const __ocp_init = CTBase.__ocp_init
 
 include("solve.jl")
@@ -53,7 +53,15 @@ export OptimalControlModel, OptimalControlSolution
 export Autonomous, NonAutonomous
 export NonFixed, Fixed
 export Model, __OCPModel
-export variable!, time!, constraint!, dynamics!, objective!, state!, control!, remove_constraint!, constraint
+export variable!,
+    time!,
+    constraint!,
+    dynamics!,
+    objective!,
+    state!,
+    control!,
+    remove_constraint!,
+    constraint
 #export is_time_independent, is_time_dependent, is_min, is_max, is_variable_dependent, is_variable_independent
 export Lie, @Lie, Poisson, Lift, ⋅, ∂ₜ
 export @def
