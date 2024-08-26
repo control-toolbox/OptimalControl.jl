@@ -1,6 +1,5 @@
 # Jackson example from Bocop
 function jackson()
-
     @def jackson begin
         # constants
         k1 = 1

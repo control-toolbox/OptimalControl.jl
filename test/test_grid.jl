@@ -1,7 +1,6 @@
 # test some grid options
 
 function test_grid()
-
     ocp = Model()
     state!(ocp, 1)
     control!(ocp, 2)
@@ -15,7 +14,6 @@ function test_grid()
     time_grid = [0, 0.1, 0.3, 0.6, 0.98, 0.99, 1]
     sol = solve(ocp; time_grid = time_grid, display = false)
     @test sol.objective ≈ 0.309 rtol = 1e-2
-
 
     # 1. simple integrator min energy (dual control for test)
     ocp = Model()
@@ -43,7 +41,6 @@ function test_grid()
         @test sol.objective ≈ 0.309 rtol = 1e-2
     end
 
-
     # 2. integrator free times
     ocp = Model(variable = true)
     state!(ocp, 2)
@@ -60,11 +57,7 @@ function test_grid()
     sol0 = solve(ocp, print_level = 0)
 
     @testset verbose = true showtiming = true ":explicit_grid" begin
-        sol = solve(
-            ocp,
-            time_grid = LinRange(0, 1, CTDirect.__grid_size() + 1),
-            print_level = 0,
-        )
+        sol = solve(ocp, time_grid = LinRange(0, 1, CTDirect.__grid_size() + 1), print_level = 0)
         @test sol.objective == sol0.objective
         @test sol.iterations == sol0.iterations
     end
@@ -92,11 +85,7 @@ function test_grid()
     sol0 = solve(ocpT2, print_level = 0)
 
     @testset verbose = true showtiming = true ":explicit_grid" begin
-        sol = solve(
-            ocpT2,
-            time_grid = LinRange(0, 1, CTDirect.__grid_size() + 1),
-            print_level = 0,
-        )
+        sol = solve(ocpT2, time_grid = LinRange(0, 1, CTDirect.__grid_size() + 1), print_level = 0)
         @test sol.objective == sol0.objective
         @test sol.iterations == sol0.iterations
     end
@@ -105,6 +94,4 @@ function test_grid()
         sol = solve(ocpT2, time_grid = [0, 0.3, 1, 1.9, 2], print_level = 0)
         @test sol.objective ≈ 2.43 rtol = 1e-2
     end
-
-
 end

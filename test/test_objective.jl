@@ -19,7 +19,6 @@ function test_objective()
         @test sol.objective ≈ 2.0 rtol = 1e-2
     end
 
-
     # min tf (lagrange)
     ocp = Model(variable = true)
     state!(ocp, 2)
@@ -37,7 +36,6 @@ function test_objective()
         sol = solve(ocp, print_level = 0, tol = 1e-12)
         @test sol.objective ≈ 2.0 rtol = 1e-2
     end
-
 
     # max t0 (free t0 and tf)
     ocp = Model(variable = true)
@@ -67,5 +65,4 @@ function test_objective()
         sol = solve(ocp, time_grid = [0, 0.1, 0.6, 0.95, 1], print_level = 0, tol = 1e-12)
         @test sol.objective ≈ 7.48 rtol = 1e-2
     end
-
 end

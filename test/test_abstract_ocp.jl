@@ -25,5 +25,4 @@ function test_abstract_ocp()
         sol3 = solve(ocp3, print_level = 0, tol = 1e-12)
         @test sol3.objective ≈ 1.0125 rtol = 1e-2
     end
-
 end

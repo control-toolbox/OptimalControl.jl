@@ -44,7 +44,6 @@ function test_initial_guess()
     x_matrix = [0 0; 1 2; 5 -1]
     u_vec = [0, 0.3, 0.1]
 
-
     #################################################
     # 1 Pass initial guess to all-in-one solve call
 
@@ -128,9 +127,7 @@ function test_initial_guess()
             init = (state = x_func, control = u_func),
             max_iter = maxiter,
         )
-        @test(
-            check_xf(sol, x_func(sol.times[end])) && check_uf(sol, u_func(sol.times[end]))
-        )
+        @test(check_xf(sol, x_func(sol.times[end])) && check_uf(sol, u_func(sol.times[end])))
     end
 
     # 1.d interpolated initial guess
@@ -142,9 +139,7 @@ function test_initial_guess()
             init = (time = t_vec, state = x_vec, control = u_vec, variable = v_const),
             max_iter = maxiter,
         )
-        @test(
-            check_xf(sol, x_vec[end]) && check_uf(sol, u_vec[end]) && check_v(sol, v_const)
-        )
+        @test(check_xf(sol, x_vec[end]) && check_uf(sol, u_vec[end]) && check_v(sol, v_const))
     end
     t_matrix = [0 0.1 v_const]
     @testset verbose = true showtiming = true ":matrix_t :vector_xu :constant_v" begin
@@ -154,9 +149,7 @@ function test_initial_guess()
             init = (time = t_matrix, state = x_vec, control = u_vec, variable = v_const),
             max_iter = maxiter,
         )
-        @test(
-            check_xf(sol, x_vec[end]) && check_uf(sol, u_vec[end]) && check_v(sol, v_const)
-        )
+        @test(check_xf(sol, x_vec[end]) && check_uf(sol, u_vec[end]) && check_v(sol, v_const))
     end
     @testset verbose = true showtiming = true ":matrix_x :vector_tu :constant_v" begin
         sol = solve(
@@ -165,9 +158,7 @@ function test_initial_guess()
             init = (time = t_vec, state = x_matrix, control = u_vec, variable = v_const),
             max_iter = maxiter,
         )
-        @test(
-            check_xf(sol, x_vec[end]) && check_uf(sol, u_vec[end]) && check_v(sol, v_const)
-        )
+        @test(check_xf(sol, x_vec[end]) && check_uf(sol, u_vec[end]) && check_v(sol, v_const))
     end
 
     # 1.e mixed initial guess
@@ -194,5 +185,4 @@ function test_initial_guess()
             check_v(sol, sol.variable)
         )
     end
-
 end
