@@ -107,6 +107,7 @@ You can find first good issues, if any, at the [first good issues page][first-go
 
 If you want to ask a question, feel free to start a discussion [here](https://github.com/orgs/control-toolbox/discussions). This forum is for general discussion about this repository and the [control-toolbox organization](https://github.com/control-toolbox), so questions about any of our packages are welcome.
 
+
 ## See also
 
 We acknowledge support of colleagues from [ADNLPModels](https://jso.dev/ADNLPModels.jl/stable) @[Julia Smooth Optimizers](https://jso.dev).
