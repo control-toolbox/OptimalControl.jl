@@ -5,6 +5,8 @@ name: BreakageApplication
 # no access to secrets
 on:
   pull_request:
+    branches:
+      - breakage-applications
 
 jobs:
   break:
