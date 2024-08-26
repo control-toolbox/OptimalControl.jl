@@ -1,6 +1,5 @@
 # Parametric problem (name ??)
 function myocp(ρ)
-
     relu(x) = max(0, x)
     μ = 10
     p_relu(x) = log(abs(1 + exp(μ * x))) / μ

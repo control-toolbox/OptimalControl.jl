@@ -1,6 +1,5 @@
 # discrete continuation
 function test_continuation()
-
     test1 = true
     test2 = true
     test3 = true
@@ -36,7 +35,6 @@ function test_continuation()
             @test obj_list ≈ [12, 1.5, 0.44, 0.19, 0.096] rtol = 1e-2
         end
     end
-
 
     # parametric ocp definition
     if test2
@@ -77,7 +75,6 @@ function test_continuation()
         end
     end
 
-
     # parametric ocp definition
     if test3
         sol0 = solve(goddard().ocp, print_level = 0)
@@ -110,5 +107,4 @@ function test_continuation()
             end
         end
     end
-
 end

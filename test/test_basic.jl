@@ -1,5 +1,4 @@
 function test_basic()
-
     @def ocp begin
         t ∈ [0, 1], time
         x ∈ R², state
@@ -12,5 +11,4 @@ function test_basic()
 
     sol = solve(ocp; display = false)
     @test sol.objective ≈ 6 atol = 1e-2
-
 end

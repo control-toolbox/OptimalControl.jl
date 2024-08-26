@@ -3,7 +3,6 @@ using OptimalControl
 using Plots
 
 @def ocp begin
-
     t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
@@ -14,7 +13,6 @@ using Plots
     ẋ(t) == [x₂(t), u(t)]
 
     ∫(0.5u(t)^2) → min
-
 end
 
 docp, nlp = direct_transcription(ocp)
@@ -35,13 +33,8 @@ mad_nlp_sol = madnlp(nlp)
 docp, nlp = direct_transcription(ocp, init = sol)
 mad_nlp_sol = madnlp(nlp)
 
-mad_sol = OptimalControlSolution(
-    docp,
-    primal = madnlp_sol.solution,
-    dual = madnlp_sol.multipliers,
-)
+mad_sol = OptimalControlSolution(docp, primal = madnlp_sol.solution, dual = madnlp_sol.multipliers)
 plot(mad_sol)
-
 
 #=
 using Percival

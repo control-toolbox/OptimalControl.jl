@@ -1,6 +1,5 @@
 # Insurance (non audit) example from Bocop
 function insurance()
-
     @def insurance begin
 
         # constants

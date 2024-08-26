@@ -59,5 +59,4 @@ function CommonSolve.solve(ocp::OptimalControlModel, description::Symbol...; kwa
 
     # solve the problem
     :direct ∈ method && return CTDirect.direct_solve(ocp, clean(description)...; kwargs...)
-
 end

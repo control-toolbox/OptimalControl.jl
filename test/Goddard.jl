@@ -66,5 +66,4 @@ function Goddard()
     objective = 1.0125762700748699
 
     return ocp, objective
-
 end

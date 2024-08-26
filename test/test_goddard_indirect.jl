@@ -56,7 +56,6 @@ function test_goddard_indirect()
 
     # shooting function
     function shoot!(s, p0, t1, t2, t3, tf) # B+ S C B0 structure
-
         x1, p1 = f1(t0, x0, p0, t1)
         x2, p2 = fs(t1, x1, p1, t2)
         x3, p3 = fb(t2, x2, p2, t3)
@@ -67,7 +66,6 @@ function test_goddard_indirect()
         s[5] = H01(x1, p1)
         s[6] = g(x2)
         s[7] = H0(xf, pf) # free tf
-
     end
 
     # tests
@@ -112,5 +110,4 @@ function test_goddard_indirect()
     #@test sol.converged
     @test SciMLBase.successful_retcode(sol)
     @test norm(s) < 1e-6
-
 end
