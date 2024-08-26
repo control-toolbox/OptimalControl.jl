@@ -103,7 +103,7 @@ jobs:
       - run: ls
       - run: |
           cd pr
-          echo "| Package name | latest | stable |" > MSG
+          echo "| Application name | latest | stable |" > MSG
           echo "|--|--|--|" >> MSG
           count=0
           for file in *
@@ -111,7 +111,7 @@ jobs:
             [ "$file" == "NR" ] && continue
             [ "$file" == "MSG" ] && continue
             if [ $count == "0" ]; then
-              name=$(echo $file | cut -f1 -d-)
+              name=$(echo $file | cut -f 1-4 -d-)
               echo -n "| $name | "
             else
               echo -n "| "
