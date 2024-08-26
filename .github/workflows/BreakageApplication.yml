@@ -1,5 +1,5 @@
 # Ref: https://securitylab.github.com/research/github-actions-preventing-pwn-requests
-name: Breakage
+name: BreakageApplication
 
 # read-only repo token
 # no access to secrets
