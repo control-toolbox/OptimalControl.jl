@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Solve · OptimalControl.jl</title><meta name="title" content="Solve · OptimalControl.jl"/><meta property="og:title" content="Solve · OptimalControl.jl"/><meta property="twitter:title" content="Solve · OptimalControl.jl"/><meta name="description" content="Documentation for OptimalControl.jl."/><meta property="og:description" content="Documentation for OptimalControl.jl."/><meta property="twitter:description" content="Documentation for OptimalControl.jl."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script><link href="https://control-toolbox.org/assets/css/documentation.css" rel="stylesheet" type="text/css"/><script src="https://control-toolbox.org/assets/js/documentation.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="index.html">OptimalControl.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="index.html">Introduction</a></li><li><span class="tocitem">Basic examples</span><ul><li><a class="tocitem" href="tutorial-basic-example.html">Energy minimisation</a></li><li><a class="tocitem" href="tutorial-double-integrator.html">Time mininimisation</a></li></ul></li><li><span class="tocitem">Manual</span><ul><li><a class="tocitem" href="tutorial-abstract.html">Abstract syntax</a></li><li><a class="tocitem" href="tutorial-initial-guess.html">Initial guess</a></li><li class="is-active"><a class="tocitem" href="tutorial-solve.html">Solve</a><ul class="internal"><li><a class="tocitem" href="#Basic-usage"><span>Basic usage</span></a></li><li><a class="tocitem" href="#Solvers"><span>Solvers</span></a></li><li><a class="tocitem" href="#Options"><span>Options</span></a></li></ul></li><li><a class="tocitem" href="tutorial-plot.html">Plot a solution</a></li><li><a class="tocitem" href="tutorial-flow.html">Flow</a></li><li><a class="tocitem" href="tutorial-functional.html">Functional syntax</a></li><li><a class="tocitem" href="tutorial-repl.html">Control-toolbox REPL</a></li></ul></li><li><span class="tocitem">Tutorials</span><ul><li><a class="tocitem" href="tutorial-continuation.html">Discrete continuation</a></li><li><a class="tocitem" href="tutorial-goddard.html">Goddard: direct, indirect</a></li><li><a class="tocitem" href="tutorial-iss.html">Indirect simple shooting</a></li><li><a class="tocitem" href="tutorial-lqr-basic.html">Linear–quadratic regulator</a></li><li><a class="tocitem" href="tutorial-nlp.html">NLP and DOCP manipulations</a></li></ul></li><li><span class="tocitem">API</span><ul><li><a class="tocitem" href="api-optimalcontrol.html">OptimalControl.jl</a></li><li><input class="collapse-toggle" id="menuitem-5-2" type="checkbox"/><label class="tocitem" for="menuitem-5-2"><span class="docs-label">Subpackages</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="api-ctbase.html">CTBase.jl</a></li><li><a class="tocitem" href="api-ctdirect.html">CTDirect.jl</a></li><li><a class="tocitem" href="api-ctflows.html">CTFlows.jl</a></li></ul></li></ul></li><li><span class="tocitem">Developers</span><ul><li><a class="tocitem" href="dev-optimalcontrol.html">OptimalControl.jl</a></li><li><input class="collapse-toggle" id="menuitem-6-2" type="checkbox"/><label class="tocitem" for="menuitem-6-2"><span class="docs-label">Subpackages</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="dev-ctbase.html">CTBase.jl</a></li><li><a class="tocitem" href="dev-ctdirect.html">CTDirect.jl</a></li><li><a class="tocitem" href="dev-ctflows.html">CTFlows.jl</a></li></ul></li></ul></li><li><a class="tocitem" href="juliacon2024.html">JuliaCon 2024</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Manual</a></li><li class="is-active"><a href="tutorial-solve.html">Solve</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="tutorial-solve.html">Solve</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl/blob/main/docs/src/tutorial-solve.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="tutorial-solve"><a class="docs-heading-anchor" href="#tutorial-solve">The solve function</a><a id="tutorial-solve-1"></a><a class="docs-heading-anchor-permalink" href="#tutorial-solve" title="Permalink"></a></h1><p>In this tutorial, we explain the <a href="api-optimalcontrol.html#CommonSolve.solve-Tuple{OptimalControlModel, Vararg{Symbol}}"><code>solve</code></a> function from <a href="https://control-toolbox.org/OptimalControl.jl">OptimalControl.jl</a> package.</p><h2 id="Basic-usage"><a class="docs-heading-anchor" href="#Basic-usage">Basic usage</a><a id="Basic-usage-1"></a><a class="docs-heading-anchor-permalink" href="#Basic-usage" title="Permalink"></a></h2><p>Les us define a basic optimal control problem.</p><pre><code class="language-julia hljs">using OptimalControl
+
+t0 = 0
+tf = 1
+x0 = [-1, 0]
+
+ocp = @def begin
+
+    t ∈ [ t0, tf ], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+
+    x(t0) == x0
+    x(tf) == [ 0, 0 ]
+
+    ẋ(t)  == [ v(t), u(t) ]
+
+    ∫( 0.5u(t)^2 ) → min
+
+end</code></pre><p>Let us try to solve the problem:</p><pre><code class="language-julia hljs">julia&gt; solve(ocp)
+ERROR: ExtensionError. Please make: julia&gt; using NLPModelsIpopt</code></pre><p>As you can see, an error occured since we need the package <a href="https://jso.dev/NLPModelsIpopt.jl">NLPModelsIpopt.jl</a>.</p><p>Actually, the default solving method is what we call a  <a href="https://en.wikipedia.org/wiki/Optimal_control#Numerical_methods_for_optimal_control">direct method</a>.  In a direct method, the optimal control problem is transcribed to a nonlinear optimization problem (NLP) of the form</p><p class="math-container">\[\text{minimize}\quad F(y), \quad\text{subject to the constraints}\quad g(y)=0, \quad h(y)\le 0. \]</p><p>OptimalControl.jl package makes the transcription but it needs a package to modelise the NLP problem and  another one to solve it. NLPModelsIpopt.jl package provides an interface to the well-known solver  <a href="https://coin-or.github.io/Ipopt/">Ipopt</a> that can be used to solve general nonlinear programming problems.</p><pre><code class="language-julia hljs">using NLPModelsIpopt
+
+solve(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">This is Ipopt version 3.14.16, running with linear solver MUMPS 5.7.3.
+
+Number of nonzeros in equality constraint Jacobian...:     3005
+Number of nonzeros in inequality constraint Jacobian.:        0
+Number of nonzeros in Lagrangian Hessian.............:      251
+
+Total number of variables............................:     1004
+                     variables with only lower bounds:        0
+                variables with lower and upper bounds:        0
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:      755
+Total number of inequality constraints...............:        0
+        inequality constraints with only lower bounds:        0
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:        0
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+   0  1.0000000e-01 1.10e+00 1.99e-14   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
+   1 -5.0000000e-03 7.36e-02 2.66e-15 -11.0 6.08e+00    -  1.00e+00 1.00e+00h  1
+   2  6.0003829e+00 8.88e-16 1.78e-15 -11.0 6.01e+00    -  1.00e+00 1.00e+00h  1
+
+Number of Iterations....: 2
+
+                                   (scaled)                 (unscaled)
+Objective...............:   6.0003828724303254e+00    6.0003828724303254e+00
+Dual infeasibility......:   1.7763568394002505e-15    1.7763568394002505e-15
+Constraint violation....:   8.8817841970012523e-16    8.8817841970012523e-16
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
+Complementarity.........:   0.0000000000000000e+00    0.0000000000000000e+00
+Overall NLP error.......:   1.7763568394002505e-15    1.7763568394002505e-15
+
+
+Number of objective function evaluations             = 3
+Number of objective gradient evaluations             = 3
+Number of equality constraint evaluations            = 3
+Number of inequality constraint evaluations          = 0
+Number of equality constraint Jacobian evaluations   = 3
+Number of inequality constraint Jacobian evaluations = 0
+Number of Lagrangian Hessian evaluations             = 2
+Total seconds in IPOPT                               = 0.031
+
+EXIT: Optimal Solution Found.</code></pre><h2 id="Solvers"><a class="docs-heading-anchor" href="#Solvers">Solvers</a><a id="Solvers-1"></a><a class="docs-heading-anchor-permalink" href="#Solvers" title="Permalink"></a></h2><p>OptimalControl.jl offers a list of methods to solve your optimal control problem. To get the list of methods, simply call <code>available_methods</code>.</p><pre><code class="language-julia hljs">available_methods()</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(:direct, :adnlp, :ipopt)
+(:direct, :adnlp, :madnlp)</code></pre><p>Each line is a method. The priority is given from top to bottom. This means that </p><pre><code class="language-julia hljs">solve(ocp)</code></pre><p>is equivalent to </p><pre><code class="language-julia hljs">solve(ocp, :direct, :adnlp, :ipopt)</code></pre><p>Let us detail the three symbols. As you can see, there are only direct methods. The symbol <code>:adnlp</code> is for the  choice of modeler. As said before, the NLP problem needs to be modelised in Julia code. We use  <a href="https://jso.dev/ADNLPModels.jl">ADNLPModels.jl</a> which provides automatic differentiation (AD)-based model implementations that conform to the <a href="https://github.com/JuliaSmoothOptimizers/ADNLPModels.jl">NLPModels.jl</a> API.</p><p>The last symbol is what distinguish the two available methods. It corresponds to the NLP solver. By default, we use the NLPModelsIpopt.jl package but you can choose <a href="https://madnlp.github.io/MadNLP.jl">MadNLP.jl</a> which is an open-source nonlinear programming solver, purely implemented in Julia and which implements a filter  line-search interior-point algorithm, as used in Ipopt.</p><p>Note that you are not compelled to provide the full description of the method to use it. A partial description, if not ambiguous, will work. Just remember that if several full descriptions contain the partial one, then, the  priority is given to first one in the list. Hence, these calls are all equivalent:</p><pre><code class="language-julia hljs">solve(ocp)
+solve(ocp, :direct                )
+solve(ocp,          :adnlp        )
+solve(ocp,                  :ipopt)
+solve(ocp, :direct, :adnlp        )
+solve(ocp, :direct,         :ipopt)
+solve(ocp, :direct, :adnlp, :ipopt)</code></pre><p>Let us try MadNLP.jl.</p><pre><code class="language-julia hljs">using MadNLP
+
+solve(ocp, :direct, :adnlp, :madnlp; display=true)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">The options set during resolve may not have an effect
+This is MadNLP version v0.8.4, running with umfpack
+
+Number of nonzeros in constraint Jacobian............:     3005
+Number of nonzeros in Lagrangian Hessian.............:      251
+
+Total number of variables............................:     1004
+                     variables with only lower bounds:        0
+                variables with lower and upper bounds:        0
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:      755
+Total number of inequality constraints...............:        0
+        inequality constraints with only lower bounds:        0
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:        0
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+   0  1.0000000e-01 1.10e+00 2.45e-13  -1.0 0.00e+00    -  0.00e+00 0.00e+00   0
+   1 -5.0000000e-03 7.36e-02 3.46e-12  -1.0 6.08e+00    -  1.00e+00 1.00e+00h  1
+   2  6.0003829e+00 1.78e-15 2.66e-15  -2.5 6.01e+00    -  1.00e+00 1.00e+00h  1
+
+Number of Iterations....: 2
+
+                                   (scaled)                 (unscaled)
+Objective...............:   6.0003828724303387e+00    6.0003828724303387e+00
+Dual infeasibility......:   2.6645352591003757e-15    2.6645352591003757e-15
+Constraint violation....:   1.7763568394002505e-15    1.7763568394002505e-15
+Complementarity.........:   0.0000000000000000e+00    0.0000000000000000e+00
+Overall NLP error.......:   2.6645352591003757e-15    2.6645352591003757e-15
+
+Number of objective function evaluations             = 3
+Number of objective gradient evaluations             = 3
+Number of constraint evaluations                     = 3
+Number of constraint Jacobian evaluations            = 3
+Number of Lagrangian Hessian evaluations             = 2
+Total wall-clock secs in solver (w/o fun. eval./lin. alg.)  =  1.660
+Total wall-clock secs in linear solver                      =  0.004
+Total wall-clock secs in NLP function evaluations           =  0.007
+Total wall-clock secs                                       =  1.672
+
+EXIT: Optimal Solution Found (tol = 1.0e-08).</code></pre><p>Again, there are several equivalent manners to use MadNLP.jl.</p><pre><code class="language-julia hljs">solve(ocp,                  :madnlp)
+solve(ocp, :direct,         :madnlp)
+solve(ocp,          :adnlp, :madnlp)
+solve(ocp, :direct, :adnlp, :madnlp)</code></pre><h2 id="Options"><a class="docs-heading-anchor" href="#Options">Options</a><a id="Options-1"></a><a class="docs-heading-anchor-permalink" href="#Options" title="Permalink"></a></h2><h3 id="Direct-method"><a class="docs-heading-anchor" href="#Direct-method">Direct method</a><a id="Direct-method-1"></a><a class="docs-heading-anchor-permalink" href="#Direct-method" title="Permalink"></a></h3><p>The options common to all the direct methods may be seen directly in the  <a href="https://github.com/control-toolbox/CTDirect.jl/blob/23c76374fb91f65f8d10c03b7d8ff5c75a5f4076/src/solve.jl#L68">code</a>. There are <code>init</code>, <code>grid_size</code> and <code>time_grid</code>. </p><ul><li>The <code>init</code> option can be used to set an initial guess for the solver. See this <a href="tutorial-initial-guess.html#tutorial-init">tutorial</a>. </li><li>The <code>grid_size</code> option corresponds to the size of the (uniform) time discretization grid. More precisely, it is the number of steps, that is if <code>N = grid_size</code> and if the initial and final times are denoted respectively <code>t0</code> and <code>tf</code>, then we have:</li></ul><pre><code class="language-julia hljs">Δt = (tf - t0) / N</code></pre><ul><li>The <code>time_grid</code> option is the grid of times: <code>t0, t1, ..., tf</code>. If the initial and/or the final times are free, then you can provide a normalised grid between 0 and 1. Note that you can set either <code>grid_size</code> or <code>time_grid</code> but not both.</li></ul><pre><code class="language-julia hljs">sol = solve(ocp; grid_size=10, display=false)
+time_grid(sol)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">11-element Vector{Float64}:
+ 0.0
+ 0.1
+ 0.2
+ 0.3
+ 0.4
+ 0.5
+ 0.6
+ 0.7
+ 0.8
+ 0.9
+ 1.0</code></pre><p>Or with MadNLP.jl:</p><pre><code class="language-julia hljs">sol = solve(ocp, :madnlp; grid_size=10, display=false)
+time_grid(sol)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">11-element Vector{Float64}:
+ 0.0
+ 0.1
+ 0.2
+ 0.3
+ 0.4
+ 0.5
+ 0.6
+ 0.7
+ 0.8
+ 0.9
+ 1.0</code></pre><h3 id="NLPModelsIpopt"><a class="docs-heading-anchor" href="#NLPModelsIpopt">NLPModelsIpopt</a><a id="NLPModelsIpopt-1"></a><a class="docs-heading-anchor-permalink" href="#NLPModelsIpopt" title="Permalink"></a></h3><p>You can provide any option of NLPModelsIpopt.jl or Ipopt with a pair <code>keyword=value</code>. Please check the list of <a href="https://coin-or.github.io/Ipopt/OPTIONS.html">Ipopt options</a> and the  <a href="https://jso.dev/NLPModelsIpopt.jl">NLPModelsIpopt.jl documentation</a>.</p><pre><code class="language-julia hljs">solve(ocp, :ipopt; max_iter=0)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">This is Ipopt version 3.14.16, running with linear solver MUMPS 5.7.3.
+
+Number of nonzeros in equality constraint Jacobian...:     3005
+Number of nonzeros in inequality constraint Jacobian.:        0
+Number of nonzeros in Lagrangian Hessian.............:      251
+
+Total number of variables............................:     1004
+                     variables with only lower bounds:        0
+                variables with lower and upper bounds:        0
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:      755
+Total number of inequality constraints...............:        0
+        inequality constraints with only lower bounds:        0
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:        0
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+   0  1.0000000e-01 1.10e+00 1.99e-14   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
+
+Number of Iterations....: 0
+
+                                   (scaled)                 (unscaled)
+Objective...............:   1.0000000000000001e-01    1.0000000000000001e-01
+Dual infeasibility......:   1.9885771589406212e-14    1.9885771589406212e-14
+Constraint violation....:   1.1000000000000001e+00    1.1000000000000001e+00
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
+Complementarity.........:   0.0000000000000000e+00    0.0000000000000000e+00
+Overall NLP error.......:   1.1000000000000001e+00    1.1000000000000001e+00
+
+
+Number of objective function evaluations             = 1
+Number of objective gradient evaluations             = 1
+Number of equality constraint evaluations            = 1
+Number of inequality constraint evaluations          = 0
+Number of equality constraint Jacobian evaluations   = 1
+Number of inequality constraint Jacobian evaluations = 0
+Number of Lagrangian Hessian evaluations             = 0
+Total seconds in IPOPT                               = 0.007
+
+EXIT: Maximum Number of Iterations Exceeded.</code></pre><h3 id="MadNLP"><a class="docs-heading-anchor" href="#MadNLP">MadNLP</a><a id="MadNLP-1"></a><a class="docs-heading-anchor-permalink" href="#MadNLP" title="Permalink"></a></h3><p>If you use the MadNLP.jl solver, then you can provide any option of it. Please check the <a href="https://madnlp.github.io/MadNLP.jl">MadNLP.jl documentation</a> and the list of  <a href="https://madnlp.github.io/MadNLP.jl/stable/options/">MadNLP.jl options</a>.</p><pre><code class="language-julia hljs">solve(ocp, :madnlp; max_iter=1, display=true)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">The options set during resolve may not have an effect
+This is MadNLP version v0.8.4, running with umfpack
+
+Number of nonzeros in constraint Jacobian............:     3005
+Number of nonzeros in Lagrangian Hessian.............:      251
+
+Total number of variables............................:     1004
+                     variables with only lower bounds:        0
+                variables with lower and upper bounds:        0
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:      755
+Total number of inequality constraints...............:        0
+        inequality constraints with only lower bounds:        0
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:        0
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+   0  1.0000000e-01 1.10e+00 2.45e-13  -1.0 0.00e+00    -  0.00e+00 0.00e+00   0
+   1 -5.0000000e-03 7.36e-02 3.46e-12  -1.0 6.08e+00    -  1.00e+00 1.00e+00h  1
+
+Number of Iterations....: 1
+
+                                   (scaled)                 (unscaled)
+Objective...............:  -4.9999999999990191e-03   -4.9999999999990191e-03
+Dual infeasibility......:   3.4621194799910882e-12    3.4621194799910882e-12
+Constraint violation....:   7.3553711558341242e-02    7.3553711558341242e-02
+Complementarity.........:   0.0000000000000000e+00    0.0000000000000000e+00
+Overall NLP error.......:   7.3553711558341242e-02    7.3553711558341242e-02
+
+Number of objective function evaluations             = 2
+Number of objective gradient evaluations             = 2
+Number of constraint evaluations                     = 2
+Number of constraint Jacobian evaluations            = 2
+Number of Lagrangian Hessian evaluations             = 1
+Total wall-clock secs in solver (w/o fun. eval./lin. alg.)  =  0.003
+Total wall-clock secs in linear solver                      =  0.003
+Total wall-clock secs in NLP function evaluations           =  0.005
+Total wall-clock secs                                       =  0.011
+
+EXIT: Maximum Number of Iterations Exceeded.</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-initial-guess.html">« Initial guess</a><a class="docs-footer-nextpage" href="tutorial-plot.html">Plot a solution »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.6.0 on <span class="colophon-date" title="Tuesday 27 August 2024 15:28">Tuesday 27 August 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
