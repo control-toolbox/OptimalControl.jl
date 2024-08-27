@@ -5,6 +5,8 @@ on:
     types: [opened]
   pull_request:
     types: [opened]
+    branches-ignore:
+      - breakage-applications
 jobs:
   run:
     runs-on: ubuntu-latest
