@@ -12,7 +12,7 @@ DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 
 [compat]
 CTBase = "0.12"
-CTDirect = "0.11"
+CTDirect = "0.11, 0.12"
 CTFlows = "0.5"
 CommonSolve = "0.2"
 DocStringExtensions = "0.9"
