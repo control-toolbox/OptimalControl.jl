@@ -6,13 +6,13 @@ function test_initial_guess()
 
     # test functions
     function check_xf(sol, xf)
-        return xf == sol.state(sol.time_grid[end])
+        return xf == state(sol)(time_grid(sol)[end])
     end
     function check_uf(sol, uf)
-        return uf == sol.control(sol.time_grid[end])
+        return uf == control(sol)(time_grid(sol)[end])
     end
     function check_v(sol, v)
-        return v == sol.variable
+        return v == variable(sol)
     end
 
     # reference solution
@@ -114,11 +114,11 @@ function test_initial_guess()
     # 1. functional initial guess
     @testset verbose = true showtiming = true ":functional_x" begin
         sol = solve(ocp, print_level = 0, init = (state = x_func,), max_iter = maxiter)
-        @test(check_xf(sol, x_func(sol.time_grid[end])))
+        @test(check_xf(sol, x_func(time_grid(sol)[end])))
     end
     @testset verbose = true showtiming = true ":functional_u" begin
         sol = solve(ocp, print_level = 0, init = (control = u_func,), max_iter = maxiter)
-        @test(check_uf(sol, u_func(sol.time_grid[end])))
+        @test(check_uf(sol, u_func(time_grid(sol)[end])))
     end
     @testset verbose = true showtiming = true ":functional_xu" begin
         sol = solve(
@@ -127,7 +127,7 @@ function test_initial_guess()
             init = (state = x_func, control = u_func),
             max_iter = maxiter,
         )
-        @test(check_xf(sol, x_func(sol.time_grid[end])) && check_uf(sol, u_func(sol.time_grid[end])))
+        @test(check_xf(sol, x_func(time_grid(sol)[end])) && check_uf(sol, u_func(time_grid(sol)[end])))
     end
 
     # 1.d interpolated initial guess
@@ -171,7 +171,7 @@ function test_initial_guess()
         )
         @test(
             check_xf(sol, x_vec[end]) &&
-            check_uf(sol, u_func(sol.time_grid[end])) &&
+            check_uf(sol, u_func(time_grid(sol)[end])) &&
             check_v(sol, v_const)
         )
     end
@@ -180,9 +180,9 @@ function test_initial_guess()
     @testset verbose = true showtiming = true ":warm_start" begin
         sol = solve(ocp, print_level = 0, init = sol0, max_iter = maxiter)
         @test(
-            check_xf(sol, sol.state(sol.time_grid[end])) &&
-            check_uf(sol, sol.control(sol.time_grid[end])) &&
-            check_v(sol, sol.variable)
+            check_xf(sol, state(sol)(time_grid(sol)[end])) &&
+            check_uf(sol, control(sol)(time_grid(sol)[end])) &&
+            check_v(sol, variable(sol))
         )
     end
 end

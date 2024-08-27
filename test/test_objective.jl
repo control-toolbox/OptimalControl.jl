@@ -16,7 +16,7 @@ function test_objective()
 
     @testset verbose = true showtiming = true ":min_tf :mayer" begin
         sol = solve(ocp, print_level = 0, tol = 1e-12)
-        @test sol.objective ≈ 2.0 rtol = 1e-2
+        @test objective(sol) ≈ 2.0 rtol = 1e-2
     end
 
     # min tf (lagrange)
@@ -34,7 +34,7 @@ function test_objective()
 
     @testset verbose = true showtiming = true ":min_tf :lagrange" begin
         sol = solve(ocp, print_level = 0, tol = 1e-12)
-        @test sol.objective ≈ 2.0 rtol = 1e-2
+        @test objective(sol) ≈ 2.0 rtol = 1e-2
     end
 
     # max t0 (free t0 and tf)
@@ -53,16 +53,16 @@ function test_objective()
 
     @testset verbose = true showtiming = true ":max_t0" begin
         sol = solve(ocp, print_level = 0, tol = 1e-12)
-        @test sol.objective ≈ 8.0 rtol = 1e-2
+        @test objective(sol) ≈ 8.0 rtol = 1e-2
     end
 
     @testset verbose = true showtiming = true ":max_t0 :explicit_grid" begin
         sol = solve(ocp, time_grid = LinRange(0, 1, 101), print_level = 0, tol = 1e-12)
-        @test sol.objective ≈ 8.0 rtol = 1e-2
+        @test objective(sol) ≈ 8.0 rtol = 1e-2
     end
 
     @testset verbose = true showtiming = true ":max_t0 :non_uniform_grid" begin
         sol = solve(ocp, time_grid = [0, 0.1, 0.6, 0.95, 1], print_level = 0, tol = 1e-12)
-        @test sol.objective ≈ 7.48 rtol = 1e-2
+        @test objective(sol) ≈ 7.48 rtol = 1e-2
     end
 end

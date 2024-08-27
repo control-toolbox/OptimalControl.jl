@@ -10,5 +10,5 @@ function test_basic()
     end
 
     sol = solve(ocp; display = false)
-    @test sol.objective ≈ 6 atol = 1e-2
+    @test objective(sol) ≈ 6 atol = 1e-2
 end

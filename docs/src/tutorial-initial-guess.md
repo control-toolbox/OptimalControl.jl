@@ -43,7 +43,7 @@ This will default to initialize all variables to 0.1.
 ```@example main
 # solve the optimal control problem without initial guess
 sol = solve(ocp; display=false)
-println("Number of iterations: ", sol.iterations)
+println("Number of iterations: ", iterations(sol))
 nothing # hide
 ```
 
@@ -57,10 +57,10 @@ Note that the following formulations are equivalent to not giving an initial gue
 
 ```@example main
 sol = solve(ocp; init=nothing, display=false)
-println("Number of iterations: ", sol.iterations)
+println("Number of iterations: ", iterations(sol))
 
 sol = solve(ocp; init=(), display=false)
-println("Number of iterations: ", sol.iterations)
+println("Number of iterations: ", iterations(sol))
 nothing # hide
 ```
 
@@ -74,7 +74,7 @@ We first illustrate the constant initial guess, using vectors or scalars accordi
 ```@example main
 # solve the optimal control problem with initial guess with constant values
 sol = solve(ocp; init=(state=[-0.2, 0.1], control=-0.2, variable=0.05), display=false)
-println("Number of iterations: ", sol.iterations)
+println("Number of iterations: ", iterations(sol))
 nothing # hide
 ```
 
@@ -82,15 +82,15 @@ Partial initializations are also valid, as shown below. Note the ending comma wh
 ```@example main
 # initialisation only on the state
 sol = solve(ocp; init=(state=[-0.2, 0.1],), display=false)
-println("Number of iterations: ", sol.iterations)
+println("Number of iterations: ", iterations(sol))
 
 # initialisation only on the control
 sol = solve(ocp; init=(control=-0.2,), display=false)
-println("Number of iterations: ", sol.iterations)
+println("Number of iterations: ", iterations(sol))
 
 # initialisation only on the state and the variable
 sol = solve(ocp; init=(state=[-0.2, 0.1], variable=0.05), display=false)
-println("Number of iterations: ", sol.iterations)
+println("Number of iterations: ", iterations(sol))
 nothing # hide
 ```
 
@@ -103,7 +103,7 @@ x(t) = [ -0.2t, 0.1t ]
 u(t) = -0.2t
 
 sol = solve(ocp; init=(state=x, control=u, variable=0.05), display=false)
-println("Number of iterations: ", sol.iterations)
+println("Number of iterations: ", iterations(sol))
 nothing # hide
 ```
 
@@ -120,7 +120,7 @@ x_vec = [[0, 0], [-0.1, 0.3], [-0.15,0.4], [-0.3, 0.5]]
 u_vec = [0, -0.8,  -0.3, 0]
 
 sol = solve(ocp; init=(time=t_vec, state=x_vec, control=u_vec, variable=0.05), display=false)
-println("Number of iterations: ", sol.iterations)
+println("Number of iterations: ", iterations(sol))
 nothing # hide
 ```
 
@@ -133,11 +133,11 @@ The constant, functional and vector initializations can be mixed, for instance a
 ```@example main
 # we can mix constant values with functions of time
 sol = solve(ocp; init=(state=[-0.2, 0.1], control=u, variable=0.05), display=false)
-println("Number of iterations: ", sol.iterations)
+println("Number of iterations: ", iterations(sol))
 
 # wa can mix every possibility
 sol = solve(ocp; init=(time=t_vec, state=x_vec, control=u, variable=0.05), display=false)
-println("Number of iterations: ", sol.iterations)
+println("Number of iterations: ", iterations(sol))
 nothing # hide
 ```
 
@@ -153,24 +153,24 @@ sol_init = solve(ocp; display=false)
 
 # solve the problem using solution as initial guess
 sol = solve(ocp; init=sol_init, display=false)
-println("Number of iterations: ", sol.iterations)
+println("Number of iterations: ", iterations(sol))
 nothing # hide
 ```
 
 Note that you can also manually pick and choose which data to reuse from a solution, by recovering the 
-functions ```sol.state```, ```sol.control``` and the values ```sol.variable```.
+functions ```state(sol)```, ```control(sol)``` and the values ```variable(sol)```.
 For instance the following formulation is equivalent to the ```init=sol``` one.
 
 ```@example main
 # use a previous solution to initialise picking data
 sol = solve(ocp; 
     init = (
-        state    = sol.state, 
-        control  = sol.control, 
-        variable = sol.variable
+        state    = state(sol), 
+        control  = control(sol), 
+        variable = variable(sol)
     ), 
     display=false)
-println("Number of iterations: ", sol.iterations)
+println("Number of iterations: ", iterations(sol))
 nothing # hide
 ``` 
 

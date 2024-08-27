@@ -284,8 +284,8 @@ function pretty_plot(S, p0; Np0=20, kwargs...)
     p0s = range(p0_min, p0_max, length=Np0)
     for i ∈ eachindex(p0s)
         sol = exp(p0s[i])
-        x = [sol.state(t)   for t ∈ sol.times]
-        p = [sol.costate(t) for t ∈ sol.times]
+        x = [state(sol)(t)   for t ∈ time_grid(sol)]
+        p = [costate(sol)(t) for t ∈ time_grid(sol)]
         label = i==1 ? "extremals" : false
         plot!(plt_flow, x, p, color=:blue, label=label)
     end
@@ -296,8 +296,8 @@ function pretty_plot(S, p0; Np0=20, kwargs...)
     ps  = zeros(length(p0s), length(times))
     for i ∈ eachindex(p0s)
         sol = exp(p0s[i], saveat=times)
-        xs[i, :] .= sol.state.(times)
-        ps[i, :] .= sol.costate.(times)
+        xs[i, :] .= state(sol).(times)
+        ps[i, :] .= costate(sol).(times)
     end
     for j ∈ eachindex(times)
         label = j==1 ? "flow at times" : false
@@ -310,8 +310,8 @@ function pretty_plot(S, p0; Np0=20, kwargs...)
     
     # solution
     sol = exp(p0_sol)
-    x = [sol.state(t)   for t ∈ sol.times]
-    p = [sol.costate(t) for t ∈ sol.times]
+    x = [state(sol)(t)   for t ∈ time_grid(sol)]
+    p = [costate(sol)(t) for t ∈ time_grid(sol)]
     plot!(plt_flow, x, p, color=:red, linewidth=2, label="extremal solution")
     plot!(plt_flow, [x[end]], [p[end]], seriestype=:scatter, color=:green, label=false)
 
@@ -347,8 +347,8 @@ function pretty_plot(S, p0; Np0=20, kwargs...) # hide
     p0s = range(p0_min, p0_max, length=Np0) # hide
     for i ∈ eachindex(p0s) # hide
         sol = exp(p0s[i]) # hide
-        x = [sol.state(t)   for t ∈ sol.times] # hide
-        p = [sol.costate(t) for t ∈ sol.times] # hide
+        x = [state(sol)(t)   for t ∈ time_grid(sol)] # hide
+        p = [costate(sol)(t) for t ∈ time_grid(sol)] # hide
         label = i==1 ? "extremals" : false # hide
         plot!(plt_flow, x, p, color=:blue, label=label) # hide
     end # hide
@@ -359,8 +359,8 @@ function pretty_plot(S, p0; Np0=20, kwargs...) # hide
     ps  = zeros(length(p0s), length(times)) # hide
     for i ∈ eachindex(p0s) # hide
         sol = exp(p0s[i], saveat=times) # hide
-        xs[i, :] .= sol.state.(times) # hide
-        ps[i, :] .= sol.costate.(times) # hide
+        xs[i, :] .= state(sol).(times) # hide
+        ps[i, :] .= costate(sol).(times) # hide
     end # hide
     for j ∈ eachindex(times) # hide
         label = j==1 ? "flow at times" : false # hide
@@ -373,8 +373,8 @@ function pretty_plot(S, p0; Np0=20, kwargs...) # hide
      # hide
     # solution # hide
     sol = exp(p0_sol) # hide
-    x = [sol.state(t)   for t ∈ sol.times] # hide
-    p = [sol.costate(t) for t ∈ sol.times] # hide
+    x = [state(sol)(t)   for t ∈ time_grid(sol)] # hide
+    p = [costate(sol)(t) for t ∈ time_grid(sol)] # hide
     plot!(plt_flow, x, p, color=:red, linewidth=2, label="extremal solution") # hide
     plot!(plt_flow, [x[end]], [p[end]], seriestype=:scatter, color=:green, label=false) # hide
  # hide

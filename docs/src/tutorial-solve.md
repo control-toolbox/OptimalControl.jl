@@ -153,14 +153,14 @@ There are `init`, `grid_size` and `time_grid`.
 
 ```@example main
 sol = solve(ocp; grid_size=10, display=false)
-sol.times
+time_grid(sol)
 ```
 
 Or with MadNLP.jl:
 
 ```@example main
 sol = solve(ocp, :madnlp; grid_size=10, display=false)
-sol.times
+time_grid(sol)
 ```
 
 ### NLPModelsIpopt

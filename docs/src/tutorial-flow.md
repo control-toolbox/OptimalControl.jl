@@ -139,7 +139,7 @@ plot(sol)
 You can notice from the graph of `v` that the integrator has made very few steps:
 
 ```@example main
-sol.times
+time_grid(sol)
 ```
 
 To have a better visualisation (the accuracy won't change), you can provide a fine grid.

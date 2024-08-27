@@ -113,7 +113,7 @@ println("Objective from loaded solution: ", sol_reloaded.objective)
 
 # JSON export / read
 export_ocp_solution(sol, filename_prefix="my_solution")
-sol_json = import_ocp_solution("my_solution")
+sol_json = import_ocp_solution(ocp, filename_prefix="my_solution")
 println("Objective from JSON discrete solution: ", sol_json.objective)
 ```
 
