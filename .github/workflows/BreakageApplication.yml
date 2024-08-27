@@ -18,7 +18,8 @@ jobs:
           "control-toolbox/calculus_of_variations",
           "control-toolbox/control-loss",
           "control-toolbox/preconditioning",
-          "control-toolbox/medical_resonance_imaging"
+          "control-toolbox/medical_resonance_imaging",
+          "control-toolbox/kepler"
         ]
         pkgversion: [latest, stable]
 
