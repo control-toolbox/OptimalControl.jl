@@ -103,7 +103,7 @@ objective!(ocp, :mayer, (x0, xf, v) -> xf[1], :max)
 dynamics!(ocp, (x, u, v) -> F0(x) + u*F1(x) )
 
 sol0 = solve(ocp; display=false)
-@printf("Objective for reference solution %.6f\n", sol0.objective)
+@printf("Objective for reference solution %.6f\n", objective(sol0))
 ```
 
 Then we perform the continuation on the maximal thrust.
@@ -115,9 +115,9 @@ obj_list  = []
 for Tmax_local=3.5:-0.5:1
     global Tmax = Tmax_local  
     global sol = solve(ocp; display=false, init=sol)
-    @printf("Tmax %.2f objective %.6f iterations %d\n", Tmax, sol.objective, sol.iterations)
+    @printf("Tmax %.2f objective %.6f iterations %d\n", Tmax, objective(sol), iterations(sol))
     push!(Tmax_list, Tmax)
-    push!(obj_list, sol.objective)
+    push!(obj_list, objective(sol))
 end 
 ```
 

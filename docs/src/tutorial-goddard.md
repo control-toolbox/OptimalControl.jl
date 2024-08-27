@@ -124,10 +124,10 @@ arc is with zero control. Note that the switching function vanishes along the si
 boundary arcs.
 
 ```@example main
-t = direct_sol.times
-x = direct_sol.state
-u = direct_sol.control
-p = direct_sol.costate
+t = time_grid(direct_sol)
+x = state(direct_sol)
+u = control(direct_sol)
+p = costate(direct_sol)
 
 H1 = Lift(F1)           # H1(x, p) = p' * F1(x)
 φ(t) = H1(x(t), p(t))   # switching function

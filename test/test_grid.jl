@@ -13,7 +13,7 @@ function test_grid()
 
     time_grid = [0, 0.1, 0.3, 0.6, 0.98, 0.99, 1]
     sol = solve(ocp; time_grid = time_grid, display = false)
-    @test sol.objective ≈ 0.309 rtol = 1e-2
+    @test objective(sol) ≈ 0.309 rtol = 1e-2
 
     # 1. simple integrator min energy (dual control for test)
     ocp = Model()
@@ -31,14 +31,14 @@ function test_grid()
     @testset verbose = true showtiming = true ":explicit_grid" begin
         time_grid = LinRange(0, 1, CTDirect.__grid_size() + 1)
         sol = solve(ocp, time_grid = time_grid, print_level = 0)
-        @test sol.objective == sol0.objective
-        @test sol.iterations == sol0.iterations
+        @test objective(sol) == objective(sol0)
+        @test iterations(sol) == iterations(sol0)
     end
 
     @testset verbose = true showtiming = true ":non_uniform_grid" begin
         time_grid = [0, 0.1, 0.3, 0.6, 0.98, 0.99, 1]
         sol = solve(ocp, time_grid = time_grid, print_level = 0)
-        @test sol.objective ≈ 0.309 rtol = 1e-2
+        @test objective(sol) ≈ 0.309 rtol = 1e-2
     end
 
     # 2. integrator free times
@@ -58,14 +58,14 @@ function test_grid()
 
     @testset verbose = true showtiming = true ":explicit_grid" begin
         sol = solve(ocp, time_grid = LinRange(0, 1, CTDirect.__grid_size() + 1), print_level = 0)
-        @test sol.objective == sol0.objective
-        @test sol.iterations == sol0.iterations
+        @test objective(sol) == objective(sol0)
+        @test iterations(sol) == iterations(sol0)
     end
 
     @testset verbose = true showtiming = true ":non_uniform_grid" begin
         sol = solve(ocp, time_grid = [0, 0.1, 0.3, 0.5, 0.6, 0.8, 0.95, 1], print_level = 0)
         #plot(sol, show=true)
-        @test sol.objective ≈ 7.96 rtol = 1e-2
+        @test objective(sol) ≈ 7.96 rtol = 1e-2
     end
 
     # 3. parametric ocp (T=2) with explicit / non-uniform grid
@@ -86,12 +86,12 @@ function test_grid()
 
     @testset verbose = true showtiming = true ":explicit_grid" begin
         sol = solve(ocpT2, time_grid = LinRange(0, 1, CTDirect.__grid_size() + 1), print_level = 0)
-        @test sol.objective == sol0.objective
-        @test sol.iterations == sol0.iterations
+        @test objective(sol) == objective(sol0)
+        @test iterations(sol) == iterations(sol0)
     end
 
     @testset verbose = true showtiming = true ":non_uniform_grid" begin
         sol = solve(ocpT2, time_grid = [0, 0.3, 1, 1.9, 2], print_level = 0)
-        @test sol.objective ≈ 2.43 rtol = 1e-2
+        @test objective(sol) ≈ 2.43 rtol = 1e-2
     end
 end

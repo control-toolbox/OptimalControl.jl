@@ -30,7 +30,7 @@ function test_continuation()
                 ocp = ocp_T(T)
                 sol = solve(ocp, print_level = 0, init = init)
                 init = sol
-                push!(obj_list, sol.objective)
+                push!(obj_list, objective(sol))
             end
             @test obj_list ≈ [12, 1.5, 0.44, 0.19, 0.096] rtol = 1e-2
         end
@@ -69,7 +69,7 @@ function test_continuation()
                 ocp = myocp(ρ)
                 sol = solve(ocp, print_level = 0, init = init)
                 init = sol
-                push!(obj_list, sol.objective)
+                push!(obj_list, objective(sol))
             end
             @test obj_list ≈ [-0.034, -1.7, -6.2, -35, -148] rtol = 1e-2
         end
@@ -86,7 +86,7 @@ function test_continuation()
             for Tmax = 3.5:-0.5:1
                 sol = solve(goddard(Tmax = Tmax).ocp, print_level = 0, init = sol)
                 push!(Tmax_list, Tmax)
-                push!(obj_list, sol.objective)
+                push!(obj_list, objective(sol))
             end
             @test obj_list ≈ [1.0125, 1.0124, 1.0120, 1.0112, 1.0092, 1.0036] rtol = 1e-2
 

@@ -79,7 +79,7 @@ optimal control problem.
 t0 = 0
 tf = 1
 x0 = [ -1, 0 ]
-p0 = sol.costate(t0)
+p0 = costate(sol)(t0)
 f  = Flow(ocp, (x, p) -> p[2])
 sol_flow = f( (t0, tf), x0, p0 )
 plot(sol_flow)
@@ -152,10 +152,10 @@ You can of course create your own plots by getting the `state`, `costate` and `c
 
 ```@example main
 using LinearAlgebra
-t = sol.times
-x = sol.state
-p = sol.costate
-u = sol.control
+t = time_grid(sol)
+x = state(sol)
+p = costate(sol)
+u = control(sol)
 plot(t, norm∘u; label="‖u‖") 
 ```
 
@@ -163,7 +163,7 @@ plot(t, norm∘u; label="‖u‖")
 
     - The `norm` function is from `LinearAlgebra.jl`. 
     - The `∘` operator is the composition operator. Hence, `norm∘u` is the function `t -> norm(u(t))`. 
-    - The `sol.state`, `sol.costate` and `sol.control` are functions that return the state, costate and control trajectories at a given time.
+    - The `state(sol)`, `costate(sol)` and `control(sol)` are functions that return the state, costate and control trajectories at a given time.
 
 
 ## Normalized time
