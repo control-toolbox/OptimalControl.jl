@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - '!breakage-applications'
     tags: '*'
   pull_request:
     branches-ignore:
