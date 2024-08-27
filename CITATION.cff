@@ -4,7 +4,7 @@ abstract: <p>The&nbsp;<a href="https://juliahub.com/ui/Packages/General/OptimalC
   ecosystem gathers Julia packages for mathematical control and applications. It aims
   to provide tools to model and solve optimal control problems with ordinary differential
   equations by direct and indirect methods.</p>
-title: "OptimalControl.jl: a Julia package to modelise and solve optimal control problems with ODE's"
+title: "OptimalControl.jl: a Julia package to model and solve optimal control problems with ODE's"
 authors:
 - affiliation: "Universit\xE9 C\xF4te d'Azur, CNRS, Inria, LJAD"
   family-names: Caillau
