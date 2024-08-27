@@ -9,13 +9,13 @@ CollapsedDocStrings = true
 ```@index
 Pages   = ["dev-ctflows.md"]
 Modules = [CTFlows]
-Order   = [:module, :constant, :type, :function, :macro]
+Order   = [:type, :module, :constant, :type, :function, :macro]
 ```
 
 ## Documentation
 
 ```@autodocs
 Modules = [CTFlows]
-Order   = [:module, :constant, :type, :function, :macro]
+Order   = [:type, :module, :constant, :type, :function, :macro]
 Public  = false
 ```

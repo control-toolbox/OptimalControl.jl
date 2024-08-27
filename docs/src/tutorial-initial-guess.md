@@ -36,7 +36,9 @@ ocp = @def begin
 end
 nothing # hide
 ```
+
 ## Default initial guess
+
 We first solve the problem without giving an initial guess.
 This will default to initialize all variables to 0.1.
 
@@ -68,7 +70,12 @@ To reduce the number of iterations and improve the convergence, we can give an i
 This initial guess can be built from constant values, interpolated vectors, functions, or existing solutions.
 Except when initializing from a solution, the arguments are to be passed as a named tuple ```init=(state=..., control=..., variable=...)``` whose fields are optional. Missing fields will revert to default initialization (ie constant 0.1).
 
+!!! tip "Interactions with an optimal control solution"
+
+    To get the number of iterations of the solver, check the [`iterations`](@ref) function.
+
 ## Constant initial guess
+
 We first illustrate the constant initial guess, using vectors or scalars according to the dimension.
 
 ```@example main
@@ -173,6 +180,10 @@ sol = solve(ocp;
 println("Number of iterations: ", iterations(sol))
 nothing # hide
 ``` 
+
+!!! tip "Interactions with an optimal control solution"
+
+    Please check [`state`](@ref), [`costate`](@ref), [`control`](@ref) and [`variable`](@ref) to get data from the solution. The functions `state`, `costate` and `control` return functions of time and `variable` returns a vector.
 
 ## Costate / multipliers
 

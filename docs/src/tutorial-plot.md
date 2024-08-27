@@ -75,6 +75,10 @@ reconstruct the solution. See the [Indirect Simple Shooting](@ref iss) tutorial 
 In our example, you must provide the maximising control $(x, p) \mapsto p_2$ together with the 
 optimal control problem.
 
+!!! tip "Interactions with an optimal control solution"
+
+    Please check [`state`](@ref), [`costate`](@ref), [`control`](@ref) and [`variable`](@ref) to get data from the solution. The functions `state`, `costate` and `control` return functions of time and `variable` returns a vector.
+
 ```@example main
 t0 = 0
 tf = 1
@@ -150,6 +154,10 @@ plot(sol; control=:norm, size=(800, 300), layout=:group)
 
 You can of course create your own plots by getting the `state`, `costate` and `control` from the optimal control solution. For instance, let us plot the norm of the control for the orbital transfer problem.
 
+!!! tip "Interactions with an optimal control solution"
+
+    Additionally to [`state`](@ref), [`costate`](@ref), [`control`](@ref) and [`variable`](@ref), the function [`time_grid`](@ref) returns the discretized time grid returned by the solver.
+
 ```@example main
 using LinearAlgebra
 t = time_grid(sol)
@@ -163,8 +171,6 @@ plot(t, norm∘u; label="‖u‖")
 
     - The `norm` function is from `LinearAlgebra.jl`. 
     - The `∘` operator is the composition operator. Hence, `norm∘u` is the function `t -> norm(u(t))`. 
-    - The `state(sol)`, `costate(sol)` and `control(sol)` are functions that return the state, costate and control trajectories at a given time.
-
 
 ## Normalized time
 

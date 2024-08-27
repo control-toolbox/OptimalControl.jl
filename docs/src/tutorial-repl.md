@@ -15,6 +15,10 @@ To enter into the control-toolbox, press `>` key.
     and plot the solution in the Julia REPL. Use the command `NAME` to rename the 
     optimal control problem: `ct> NAME=ocp`.
 
+!!! note "Nota bene"
+
+    In the following gif, the plot is not displayed since only the terminal is recorded.
+
 ```@raw html
 <style>
 @media (orientation: landscape) { .ct-repl-img {content:url('assets/ct-repl-95x30.gif');} }

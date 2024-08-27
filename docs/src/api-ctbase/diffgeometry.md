@@ -1,4 +1,4 @@
-# [Differential geometry](@id api-ctbase-diffegeometry)
+# [Differential geometry](@id api-ctbase-differential-geometry)
 
 ```@meta
 CollapsedDocStrings = true
@@ -9,14 +9,14 @@ CollapsedDocStrings = true
 ```@index
 Pages   = ["diffgeometry.md"]
 Modules = [CTBase]
-Order   = [:module, :constant, :function, :macro]
+Order = [:type, :module, :constant, :function, :macro]
 ```
 
 ## Documentation
 
 ```@autodocs
 Modules = [CTBase]
-Order   = [:module, :constant, :function, :macro]
+Order = [:type, :module, :constant, :function, :macro]
 Pages   = ["differential_geometry.jl"]
 Private = false
 ```

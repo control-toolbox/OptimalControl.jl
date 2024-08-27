@@ -140,11 +140,10 @@ solve(ocp, :direct, :adnlp, :madnlp)
 
 ### Direct method
 
-The options common to all the direct methods may be seen directly in the 
-[code](https://github.com/control-toolbox/CTDirect.jl/blob/23c76374fb91f65f8d10c03b7d8ff5c75a5f4076/src/solve.jl#L68).
+The options common to all the direct methods may be seen directly in the [`direct_solve`](@ref) keywords.
 There are `init`, `grid_size` and `time_grid`. 
 
-- The `init` option can be used to set an initial guess for the solver. See this [tutorial](@ref tutorial-init). 
+- The `init` option can be used to set an initial guess for the solver. See the [initial guess tutorial](@ref tutorial-init). 
 - The `grid_size` option corresponds to the size of the (uniform) time discretization grid. More precisely, it is the number of steps, that is if `N = grid_size` and if the initial and final times are denoted respectively `t0` and `tf`, then we have:
 ```julia
 Δt = (tf - t0) / N

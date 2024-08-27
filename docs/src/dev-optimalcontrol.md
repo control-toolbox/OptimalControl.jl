@@ -9,13 +9,13 @@ CollapsedDocStrings = true
 ```@index
 Pages   = ["dev-optimalcontrol.md"]
 Modules = [OptimalControl]
-Order   = [:module, :constant, :type, :function, :macro]
+Order   = [:type, :module, :constant, :type, :function, :macro]
 ```
 
 ## Documentation
 
 ```@autodocs
 Modules = [OptimalControl]
-Order   = [:module, :constant, :type, :function, :macro]
+Order   = [:type, :module, :constant, :type, :function, :macro]
 Public  = false
 ```
