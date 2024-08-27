@@ -142,7 +142,7 @@ You can notice from the graph of `v` that the integrator has made very few steps
 time_grid(sol)
 ```
 
-!!! Note "Time grid"
+!!! note "Time grid"
 
     The function [`time_grid`](@ref) returns the discretized time grid returned by the solver. In this case, the solution has been computed by numerical integration with an adaptive step-length Runge-Kutta scheme.
 
