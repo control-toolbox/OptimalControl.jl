@@ -48,7 +48,7 @@ pkg> add OptimalControl
 
 ## Basic usage
 
-Let us modelise, solve and plot a simple optimal control problem.
+Let us model and solve a simple optimal control problem, then plot the solution:
 
 ```julia
 using OptimalControl
@@ -62,7 +62,7 @@ ocp = @def begin
     x(0) == [ -1, 0 ]
     x(1) == [ 0, 0 ]
     ẋ(t) == [ x₂(t), u(t) ]
-    ∫( 0.5u(t)^2 ) → min
+    0.5∫( u(t)^2 ) → min
 end
 
 sol = solve(ocp)
@@ -79,16 +79,16 @@ For a comprehensive introduction to the syntax used above to describe the optima
 
 If you use OptimalControl.jl in your work, please cite us:
 
-> Caillau, J.-B., Cots, O., Gergaud, J., Martinon, P., & Sed, S. *OptimalControl.jl: a Julia package to modelise and solve optimal control problems with ODE's* [Computer software]. https://doi.org/10.5281/zenodo.13336563
+> Caillau, J.-B., Cots, O., Gergaud, J., Martinon, P., & Sed, S. *OptimalControl.jl: a Julia package to model and solve optimal control problems with ODE's* [Computer software]. https://doi.org/10.5281/zenodo.13336563
 
-or in bibtex format:
+or in BibTeX format:
 
 ```bibtex
 @software{Caillau_OptimalControl_jl_a_Julia,
 author = {Caillau, Jean-Baptiste and Cots, Olivier and Gergaud, Joseph and Martinon, Pierre and Sed, Sophia},
 doi = {10.5281/zenodo.13336563},
 license = {["MIT"]},
-title = {{OptimalControl.jl: a Julia package to modelise and solve optimal control problems with ODE's}},
+title = {{OptimalControl.jl: a Julia package to model and solve optimal control problems with ODE's}},
 url = {https://control-toolbox.org/OptimalControl.jl}
 }
 ```
@@ -98,14 +98,14 @@ url = {https://control-toolbox.org/OptimalControl.jl}
 [issue-url]: https://github.com/control-toolbox/OptimalControl.jl/issues
 [first-good-issue-url]: https://github.com/control-toolbox/OptimalControl.jl/contribute
 
-If you think you found a bug or if you have a feature request or suggestion, feel free to open an [issue][issue-url].
-Before opening a pull request, start an issue or a discussion on the topic, please. 
+If you think you found a bug or if you have a feature request / suggestion, feel free to open an [issue][issue-url].
+Before opening a pull request, please start an issue or a discussion on the topic. 
 
-Any contributions are welcomed, check out [how to contribute to a Github project](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project). 
+Contributions are welcomed, check out [how to contribute to a Github project](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project). 
 If it is your first contribution, you can also check [this first contribution tutorial](https://github.com/firstcontributions/first-contributions).
-You can find first good issues, if any, at the [first good issues page][first-good-issue-url]. You may find other packages to contribute to at the [control-toolbox organization](https://github.com/control-toolbox).
+You can find first good issues (if any 🙂) [here][first-good-issue-url]. You may find other packages to contribute to at the [control-toolbox organization](https://github.com/control-toolbox).
 
-If you want to ask a question, feel free to start a discussion [here](https://github.com/orgs/control-toolbox/discussions). This forum is for general discussion about this repository and the [control-toolbox organization](https://github.com/control-toolbox), so questions about any of our packages are welcome.
+If you want to ask a question, feel free to start a discussion [here](https://github.com/orgs/control-toolbox/discussions). This forum is for general discussion about this repository and the [control-toolbox organization](https://github.com/control-toolbox).
 
 ## See also
 
