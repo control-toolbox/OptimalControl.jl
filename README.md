@@ -79,7 +79,7 @@ For a comprehensive introduction to the syntax used above to describe the optima
 
 If you use OptimalControl.jl in your work, please cite us:
 
-> Caillau, J., Cots, O., Gergaud, J., Martinon, P., & Sed, S. *OptimalControl.jl: a Julia package to modelise and solve optimal control problems with ODE's* [Computer software]. https://doi.org/10.5281/zenodo.13336563
+> Caillau, J.-B., Cots, O., Gergaud, J., Martinon, P., & Sed, S. *OptimalControl.jl: a Julia package to modelise and solve optimal control problems with ODE's* [Computer software]. https://doi.org/10.5281/zenodo.13336563
 
 or in bibtex format:
 
