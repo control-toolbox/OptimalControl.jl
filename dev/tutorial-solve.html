@@ -106,16 +106,16 @@ Number of objective gradient evaluations             = 3
 Number of constraint evaluations                     = 3
 Number of constraint Jacobian evaluations            = 3
 Number of Lagrangian Hessian evaluations             = 2
-Total wall-clock secs in solver (w/o fun. eval./lin. alg.)  =  1.624
+Total wall-clock secs in solver (w/o fun. eval./lin. alg.)  =  1.679
 Total wall-clock secs in linear solver                      =  0.004
-Total wall-clock secs in NLP function evaluations           =  0.007
-Total wall-clock secs                                       =  1.636
+Total wall-clock secs in NLP function evaluations           =  0.070
+Total wall-clock secs                                       =  1.754
 
 EXIT: Optimal Solution Found (tol = 1.0e-08).</code></pre><p>Again, there are several equivalent manners to use MadNLP.jl.</p><pre><code class="language-julia hljs">solve(ocp,                  :madnlp)
 solve(ocp, :direct,         :madnlp)
 solve(ocp,          :adnlp, :madnlp)
 solve(ocp, :direct, :adnlp, :madnlp)</code></pre><h2 id="Options"><a class="docs-heading-anchor" href="#Options">Options</a><a id="Options-1"></a><a class="docs-heading-anchor-permalink" href="#Options" title="Permalink"></a></h2><h3 id="Direct-method"><a class="docs-heading-anchor" href="#Direct-method">Direct method</a><a id="Direct-method-1"></a><a class="docs-heading-anchor-permalink" href="#Direct-method" title="Permalink"></a></h3><p>The options common to all the direct methods may be seen directly in the  <a href="https://github.com/control-toolbox/CTDirect.jl/blob/23c76374fb91f65f8d10c03b7d8ff5c75a5f4076/src/solve.jl#L68">code</a>. There are <code>init</code>, <code>grid_size</code> and <code>time_grid</code>. </p><ul><li>The <code>init</code> option can be used to set an initial guess for the solver. See this <a href="tutorial-initial-guess.html#tutorial-init">tutorial</a>. </li><li>The <code>grid_size</code> option corresponds to the size of the (uniform) time discretization grid. More precisely, it is the number of steps, that is if <code>N = grid_size</code> and if the initial and final times are denoted respectively <code>t0</code> and <code>tf</code>, then we have:</li></ul><pre><code class="language-julia hljs">Δt = (tf - t0) / N</code></pre><ul><li>The <code>time_grid</code> option is the grid of times: <code>t0, t1, ..., tf</code>. If the initial and/or the final times are free, then you can provide a normalised grid between 0 and 1. Note that you can set either <code>grid_size</code> or <code>time_grid</code> but not both.</li></ul><pre><code class="language-julia hljs">sol = solve(ocp; grid_size=10, display=false)
-sol.times</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">11-element Vector{Float64}:
+time_grid(sol)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">11-element Vector{Float64}:
  0.0
  0.1
  0.2
@@ -127,7 +127,7 @@ sol.times</code></pre><pre class="documenter-example-output"><code class="nohigh
  0.8
  0.9
  1.0</code></pre><p>Or with MadNLP.jl:</p><pre><code class="language-julia hljs">sol = solve(ocp, :madnlp; grid_size=10, display=false)
-sol.times</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">11-element Vector{Float64}:
+time_grid(sol)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">11-element Vector{Float64}:
  0.0
  0.1
  0.2
@@ -175,7 +175,7 @@ Number of inequality constraint evaluations          = 0
 Number of equality constraint Jacobian evaluations   = 1
 Number of inequality constraint Jacobian evaluations = 0
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 0.006
+Total seconds in IPOPT                               = 0.007
 
 EXIT: Maximum Number of Iterations Exceeded.</code></pre><h3 id="MadNLP"><a class="docs-heading-anchor" href="#MadNLP">MadNLP</a><a id="MadNLP-1"></a><a class="docs-heading-anchor-permalink" href="#MadNLP" title="Permalink"></a></h3><p>If you use the MadNLP.jl solver, then you can provide any option of it. Please check the <a href="https://madnlp.github.io/MadNLP.jl">MadNLP.jl documentation</a> and the list of  <a href="https://madnlp.github.io/MadNLP.jl/stable/options/">MadNLP.jl options</a>.</p><pre><code class="language-julia hljs">solve(ocp, :madnlp; max_iter=1, display=true)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">The options set during resolve may not have an effect
 This is MadNLP version v0.8.4, running with umfpack
@@ -211,14 +211,14 @@ Number of objective gradient evaluations             = 2
 Number of constraint evaluations                     = 2
 Number of constraint Jacobian evaluations            = 2
 Number of Lagrangian Hessian evaluations             = 1
-Total wall-clock secs in solver (w/o fun. eval./lin. alg.)  =  0.003
+Total wall-clock secs in solver (w/o fun. eval./lin. alg.)  =  0.004
 Total wall-clock secs in linear solver                      =  0.003
 Total wall-clock secs in NLP function evaluations           =  0.005
-Total wall-clock secs                                       =  0.011
+Total wall-clock secs                                       =  0.012
 
 EXIT: Maximum Number of Iterations Exceeded.</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-initial-guess.html">« Initial guess</a><a class="docs-footer-nextpage" href="tutorial-plot.html">Plot a solution »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.6.0 on <span class="colophon-date" title="Monday 26 August 2024 16:52">Monday 26 August 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-initial-guess.html">« Initial guess</a><a class="docs-footer-nextpage" href="tutorial-plot.html">Plot a solution »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.6.0 on <span class="colophon-date" title="Tuesday 27 August 2024 09:19">Tuesday 27 August 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
