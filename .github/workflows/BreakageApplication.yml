@@ -112,7 +112,7 @@ jobs:
             [ "$file" == "NR" ] && continue
             [ "$file" == "MSG" ] && continue
             if [ $count == "0" ]; then
-              name=$(echo $file | cut -f 1-4 -d-)
+              name=$(echo $file | sed 's|\(.*\)-.*|\1|')
               echo -n "| $name | "
             else
               echo -n "| "
