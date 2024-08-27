@@ -27,8 +27,8 @@ makedocs(
     pages = [
         "Introduction" => "index.md",
         "Basic examples" => [
-            "Energy minimisation" => "tutorial-basic-example.md",
-            "Time mininimisation" => "tutorial-double-integrator.md",
+            "Energy minimisation" => "tutorial-double-integrator-energy.md",
+            "Time mininimisation" => "tutorial-double-integrator-time.md",
         ],
         "Manual" => [
             "Abstract syntax" => "tutorial-abstract.md",

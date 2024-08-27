@@ -6,7 +6,7 @@ CollapsedDocStrings = true
 
 ```@autodocs
 Modules = [CTBase]
-Order   = [:module, :constant, :function, :macro]
+Order = [:type, :module, :constant, :function, :macro]
 Pages   = ["plot.jl"]
 Private = false
 ```

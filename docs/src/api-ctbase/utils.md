@@ -9,14 +9,14 @@ CollapsedDocStrings = true
 ```@index
 Pages   = ["utils.md"]
 Modules = [CTBase]
-Order   = [:module, :constant, :function, :macro]
+Order = [:type, :module, :constant, :function, :macro]
 ```
 
 ## Documentation
 
 ```@autodocs
 Modules = [CTBase]
-Order   = [:module, :constant, :function, :macro]
+Order = [:type, :module, :constant, :function, :macro]
 Pages   = ["utils.jl"]
 Private = false
 ```

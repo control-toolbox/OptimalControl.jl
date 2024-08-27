@@ -123,6 +123,10 @@ bang arc with maximal control, followed by a singular arc, then by a boundary ar
 arc is with zero control. Note that the switching function vanishes along the singular and
 boundary arcs.
 
+!!! tip "Interactions with an optimal control solution"
+
+    Please check [`state`](@ref), [`costate`](@ref), [`control`](@ref) and [`variable`](@ref) to get data from the solution. The functions `state`, `costate` and `control` return functions of time and `variable` returns a vector. The function [`time_grid`](@ref) returns the discretized time grid returned by the solver.
+
 ```@example main
 t = time_grid(direct_sol)
 x = state(direct_sol)
@@ -371,7 +375,7 @@ Let us define the problem to solve.
 # auxiliary function with aggregated inputs
 nle!  = ( s, ξ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
 
- # Jacobian of the (auxiliary) shooting function
+# Jacobian of the (auxiliary) shooting function
 jnle! = (js, ξ) -> jacobian!(nle!, similar(ξ), js, backend, ξ)
 nothing # hide
 ```

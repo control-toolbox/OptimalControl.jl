@@ -1,4 +1,4 @@
-# [Types](@id api-ctbase-types)
+# [Initial guess](@id api-ctbase-init)
 
 ```@meta
 CollapsedDocStrings = true
@@ -7,7 +7,7 @@ CollapsedDocStrings = true
 ## Index
 
 ```@index
-Pages   = ["types.md"]
+Pages   = ["init.md"]
 Modules = [CTBase]
 Order   = [:type, :module, :constant, :function, :macro]
 ```
@@ -17,6 +17,6 @@ Order   = [:type, :module, :constant, :function, :macro]
 ```@autodocs
 Modules = [CTBase]
 Order   = [:type, :module, :constant, :function, :macro]
-Pages   = ["types.jl", "functions.jl"]
+Pages   = ["init.jl"]
 Private = false
 ```

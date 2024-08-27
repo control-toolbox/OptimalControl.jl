@@ -6,7 +6,7 @@ CollapsedDocStrings = true
 
 ```@autodocs
 Modules = [CTBase]
-Order   = [:module, :constant, :function, :macro]
+Order = [:type, :module, :constant, :function, :macro]
 Pages   = ["print.jl"]
 Private = false
 ```
@@ -70,7 +70,7 @@ You can also define the optimal control problem in an abstract form:
 ```@example main2
 using OptimalControl
 
-@def ocp begin
+ocp = @def begin
     t ∈ [ 0, 1 ], time
     x ∈ R^2, state
     u ∈ R, control

@@ -1,19 +1,19 @@
-# [Model](@id api-ctbase-model)
+# [Solution](@id api-ctbase-solution)
 
 ```@meta
 CollapsedDocStrings = true
 ```
 
 ```@contents
-Pages   = ["model.md"]
+Pages   = ["solution.md"]
 ```
 
-## Optimal control model type
+## Optimal control solution type
 
 ```@autodocs
 Modules = [CTBase]
 Order   = [:type, :module, :constant, :function, :macro]
-Pages   = ["optimal_control_model-type.jl"]
+Pages   = ["optimal_control_solution-type.jl"]
 Private = false
 ```
 
@@ -22,7 +22,7 @@ Private = false
 ```@autodocs
 Modules = [CTBase]
 Order   = [:type, :module, :constant, :function, :macro]
-Pages   = ["optimal_control_model-getters.jl"]
+Pages   = ["optimal_control_solution-getters.jl"]
 Private = false
 ```
 
@@ -31,6 +31,6 @@ Private = false
 ```@autodocs
 Modules = [CTBase]
 Order   = [:type, :module, :constant, :function, :macro]
-Pages   = ["optimal_control_model-setters.jl"]
+Pages   = ["optimal_control_solution-setters.jl"]
 Private = false
 ```
