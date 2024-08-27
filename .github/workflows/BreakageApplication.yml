@@ -52,6 +52,10 @@ jobs:
           set -v
           mkdir -p ./pr
           echo "${{ github.event.number }}" > ./pr/NR
+          #
+          PKG_SRC_PATH=`pwd`
+          PKG_SRC_NAME=`basename -s ".jl" $PKG_SRC_PATH`
+          #
           git clone https://github.com/$URL
           export PKG=$(echo $URL | cut -f2 -d/)
           cd $PKG
@@ -66,22 +70,27 @@ jobs:
             TAG=$VERSION
           fi
           export TAG
+          #
+          PKG_SRC_VERSION=$(julia --project=docs/ -e 'using Pkg, Logging; with_logger(NullLogger()) do; Pkg.instantiate(); Pkg.installed()["'$PKG_SRC_NAME'"] |> println; end')
+          export PKG_SRC_VERSION
+          #
           julia -e 'using Pkg;
-            PKG, TAG, VERSION = ENV["PKG"], ENV["TAG"], ENV["VERSION"]
+            PKG, TAG, VERSION, PKG_SRC_VERSION = ENV["PKG"], ENV["TAG"], ENV["VERSION"], ENV["PKG_SRC_VERSION"]
             joburl = joinpath(ENV["GITHUB_SERVER_URL"], ENV["GITHUB_REPOSITORY"], "actions/runs", ENV["GITHUB_RUN_ID"])
             open("../pr/$PKG-$VERSION", "w") do io
               try
                 TAG == "no_tag" && error("Not tag for $VERSION")
                 pkg"activate docs";
                 pkg"instantiate";
+                pkg"status";
                 pkg"dev ../";
                 pkg"build";
                 include("docs/make.jl");
 
-                print(io, "[![](https://img.shields.io/badge/$TAG-Pass-green)]($joburl)");
+                print(io, "[![](https://img.shields.io/badge/$TAG-Pass-green)]($joburl) OC compat: ", PKG_SRC_VERSION);
               catch e
                 @error e;
-                print(io, "[![](https://img.shields.io/badge/$TAG-Fail-red)]($joburl)");
+                print(io, "[![](https://img.shields.io/badge/$TAG-Fail-red)]($joburl) OC compat: ", PKG_SRC_VERSION);
               end;
             end'
 
