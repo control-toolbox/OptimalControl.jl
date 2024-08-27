@@ -87,10 +87,10 @@ jobs:
                 pkg"build";
                 include("docs/make.jl");
 
-                print(io, "[![](https://img.shields.io/badge/$TAG-Pass-green)]($joburl) OC compat: ", PKG_SRC_VERSION);
+                print(io, "[![](https://img.shields.io/badge/$TAG-Pass-green)]($joburl) compat: v", PKG_SRC_VERSION);
               catch e
                 @error e;
-                print(io, "[![](https://img.shields.io/badge/$TAG-Fail-red)]($joburl) OC compat: ", PKG_SRC_VERSION);
+                print(io, "[![](https://img.shields.io/badge/$TAG-Fail-red)]($joburl) compat: v", PKG_SRC_VERSION);
               end;
             end'
 
