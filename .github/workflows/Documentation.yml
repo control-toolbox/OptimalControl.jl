@@ -5,10 +5,10 @@ on:
   push:
     branches:
       - main
-    branches-ignore:
-      - breakage-applications
     tags: '*'
   pull_request:
+    branches-ignore:
+      - breakage-applications
   
 jobs:
   build:
