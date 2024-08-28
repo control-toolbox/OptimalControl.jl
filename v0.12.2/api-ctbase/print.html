@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Print · OptimalControl.jl</title><meta name="title" content="Print · OptimalControl.jl"/><meta property="og:title" content="Print · OptimalControl.jl"/><meta property="twitter:title" content="Print · OptimalControl.jl"/><meta name="description" content="Documentation for OptimalControl.jl."/><meta property="og:description" content="Documentation for OptimalControl.jl."/><meta property="twitter:description" content="Documentation for OptimalControl.jl."/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script><link href="https://control-toolbox.org/assets/css/documentation.css" rel="stylesheet" type="text/css"/><script src="https://control-toolbox.org/assets/js/documentation.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../index.html">OptimalControl.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../index.html">Introduction</a></li><li><span class="tocitem">Basic examples</span><ul><li><a class="tocitem" href="../tutorial-double-integrator-energy.html">Energy minimisation</a></li><li><a class="tocitem" href="../tutorial-double-integrator-time.html">Time mininimisation</a></li></ul></li><li><span class="tocitem">Manual</span><ul><li><a class="tocitem" href="../tutorial-abstract.html">Abstract syntax</a></li><li><a class="tocitem" href="../tutorial-initial-guess.html">Initial guess</a></li><li><a class="tocitem" href="../tutorial-solve.html">Solve</a></li><li><a class="tocitem" href="../tutorial-plot.html">Plot a solution</a></li><li><a class="tocitem" href="../tutorial-flow.html">Flow</a></li><li><a class="tocitem" href="../tutorial-functional.html">Functional syntax</a></li><li><a class="tocitem" href="../tutorial-repl.html">Control-toolbox REPL</a></li></ul></li><li><span class="tocitem">Tutorials</span><ul><li><a class="tocitem" href="../tutorial-continuation.html">Discrete continuation</a></li><li><a class="tocitem" href="../tutorial-goddard.html">Goddard: direct, indirect</a></li><li><a class="tocitem" href="../tutorial-iss.html">Indirect simple shooting</a></li><li><a class="tocitem" href="../tutorial-lqr-basic.html">Linear–quadratic regulator</a></li><li><a class="tocitem" href="../tutorial-nlp.html">NLP and DOCP manipulations</a></li></ul></li><li><span class="tocitem">API</span><ul><li><a class="tocitem" href="../api-optimalcontrol.html">OptimalControl.jl</a></li><li><input class="collapse-toggle" id="menuitem-5-2" type="checkbox"/><label class="tocitem" for="menuitem-5-2"><span class="docs-label">Subpackages</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../api-ctbase.html">CTBase.jl</a></li><li><a class="tocitem" href="../api-ctdirect.html">CTDirect.jl</a></li><li><a class="tocitem" href="../api-ctflows.html">CTFlows.jl</a></li></ul></li></ul></li><li><span class="tocitem">Developers</span><ul><li><a class="tocitem" href="../dev-optimalcontrol.html">OptimalControl.jl</a></li><li><input class="collapse-toggle" id="menuitem-6-2" type="checkbox"/><label class="tocitem" for="menuitem-6-2"><span class="docs-label">Subpackages</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../dev-ctbase.html">CTBase.jl</a></li><li><a class="tocitem" href="../dev-ctdirect.html">CTDirect.jl</a></li><li><a class="tocitem" href="../dev-ctflows.html">CTFlows.jl</a></li></ul></li></ul></li><li><a class="tocitem" href="../juliacon2024.html">JuliaCon 2024</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href="print.html">Print</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="print.html">Print</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl/blob/main/docs/src/api-ctbase/print.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="api-ctbase-print"><a class="docs-heading-anchor" href="#api-ctbase-print">Print</a><a id="api-ctbase-print-1"></a><a class="docs-heading-anchor-permalink" href="#api-ctbase-print" title="Permalink"></a></h1><h2 id="Examples"><a class="docs-heading-anchor" href="#Examples">Examples</a><a id="Examples-1"></a><a class="docs-heading-anchor-permalink" href="#Examples" title="Permalink"></a></h2><p>An optimal control problem can be described as minimising the cost functional</p><p class="math-container">\[g(t_0, x(t_0), t_f, x(t_f)) + \int_{t_0}^{t_f} f^{0}(t, x(t), u(t))~\mathrm{d}t\]</p><p>where the state <span>$x$</span> and the control <span>$u$</span> are functions subject, for <span>$t \in [t_0, t_f]$</span>, to the differential constraint</p><p class="math-container">\[   \dot{x}(t) = f(t, x(t), u(t))\]</p><p>and other constraints such as</p><p class="math-container">\[\begin{array}{llcll}
+~\xi_l  &amp;\le&amp; \xi(t, u(t))        &amp;\le&amp; \xi_u, \\
+\eta_l &amp;\le&amp; \eta(t, x(t))       &amp;\le&amp; \eta_u, \\
+\psi_l &amp;\le&amp; \psi(t, x(t), u(t)) &amp;\le&amp; \psi_u, \\
+\phi_l &amp;\le&amp; \phi(t_0, x(t_0), t_f, x(t_f)) &amp;\le&amp; \phi_u.
+\end{array}\]</p><p>Let us define the following optimal control problem.</p><pre><code class="language-julia hljs">using OptimalControl
+
+ocp = Model()
+
+state!(ocp, 2, &quot;x&quot;, [&quot;r&quot;, &quot;v&quot;]) # dimension of the state with the names of the components
+control!(ocp, 1)           # dimension of the control
+time!(ocp, t0=0, tf=1, name=&quot;s&quot;)    # initial and final time, with the name of the variable time
+
+constraint!(ocp, :initial, lb=[-1, 0], ub=[-1, 0])
+constraint!(ocp, :final  , lb=[ 0, 0], ub=[ 0, 0])
+A = [ 0 1
+      0 0 ]
+B = [ 0
+      1 ]
+dynamics!(ocp, (x, u) -&gt; A*x + B*u)
+
+objective!(ocp, :lagrange, (x, u) -&gt; 0.5u^2)</code></pre><p>Then, we can print the form of this optimal control problem:</p><pre><code class="language-julia hljs">ocp</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr1">The (autonomous) optimal control problem is of the form:</span>
+
+<span class="sgr34">    minimize  </span>J(x, u) = ∫ f⁰(x(s), u(s)) ds, over [0, 1]
+
+<span class="sgr34">    subject to</span>
+
+        ẋ(s) = f(x(s), u(s)), s in [0, 1] a.e.,
+
+        ϕl ≤ ϕ(x(0), x(1)) ≤ ϕu, 
+
+    where x(s) = (r(s), v(s)) ∈ R² and u(s) ∈ R.
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr32"><span class="sgr1">   V    │   V    │    V     │</span></span><span class="sgr1"><span class="sgr31">    X     │</span><span class="sgr32">     V     │     V      │      V      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><p>You can also define the optimal control problem in an abstract form:</p><pre><code class="language-julia hljs">using OptimalControl
+
+ocp = @def begin
+    t ∈ [ 0, 1 ], time
+    x ∈ R^2, state
+    u ∈ R, control
+    x(0) == [ -1, 0 ], (1)
+    x(1) == [  0, 0 ]
+    ẋ(t) == A * x(t) + B * u(t)
+    ∫( 0.5u(t)^2 ) → min
+end
+A = [ 0 1
+      0 0 ]
+B = [ 0
+      1 ]</code></pre><p>Then, you can print this optimal control problem:</p><pre><code class="language-julia hljs">ocp</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr1">The (autonomous) optimal control problem is given by:</span>
+
+    t ∈ [0, 1], time
+    x ∈ R ^ 2, state
+    u ∈ R, control
+    x(0) == [-1, 0], 1
+    x(1) == [0, 0]
+    ẋ(t) == A * x(t) + B * u(t)
+    ∫(0.5 * u(t) ^ 2) → min
+
+<span class="sgr1">The (autonomous) optimal control problem is of the form:</span>
+
+<span class="sgr34">    minimize  </span>J(x, u) = ∫ f⁰(x(t), u(t)) dt, over [0, 1]
+
+<span class="sgr34">    subject to</span>
+
+        ẋ(t) = f(x(t), u(t)), t in [0, 1] a.e.,
+
+        ϕl ≤ ϕ(x(0), x(1)) ≤ ϕu, 
+
+    where x(t) ∈ R² and u(t) ∈ R.
+
+<span class="sgr1">Declarations </span>(* required):
+╭────────┬────────┬──────────┬──────────┬───────────┬────────────┬─────────────╮
+│<span class="sgr33"> times* │ state* │ control* │ variable │ dynamics* │ objective* │ constraints │
+├────────┼────────┼──────────┼──────────┼───────────┼────────────┼─────────────┤
+│</span><span class="sgr32"><span class="sgr1">   V    │   V    │    V     │</span></span><span class="sgr1"><span class="sgr31">    X     │</span><span class="sgr32">     V     │     V      │      V      │
+╰────────┴────────┴──────────┴──────────┴───────────┴────────────┴─────────────╯
+</span></span></code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.6.0 on <span class="colophon-date" title="Wednesday 28 August 2024 09:18">Wednesday 28 August 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body><div data-docstringscollapsed="true"></div></html>
