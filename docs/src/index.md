@@ -77,7 +77,7 @@ For a comprehensive introduction to the syntax used above to describe the optima
 
 If you use OptimalControl.jl in your work, please cite us:
 
-> Caillau, J., Cots, O., Gergaud, J., Martinon, P., & Sed, S. *OptimalControl.jl: a Julia package to modelise and solve optimal control problems with ODE's* [Computer software]. https://doi.org/10.5281/zenodo.13336563
+> Caillau, J., Cots, O., Gergaud, J., Martinon, P., & Sed, S. *OptimalControl.jl: a Julia package to model and solve optimal control problems with ODE's* [Computer software]. https://doi.org/10.5281/zenodo.13336563
 
 or in bibtex format:
 
@@ -86,7 +86,7 @@ or in bibtex format:
 author = {Caillau, Jean-Baptiste and Cots, Olivier and Gergaud, Joseph and Martinon, Pierre and Sed, Sophia},
 doi = {10.5281/zenodo.13336563},
 license = {["MIT"]},
-title = {{OptimalControl.jl: a Julia package to modelise and solve optimal control problems with ODE's}},
+title = {{OptimalControl.jl: a Julia package to model and solve optimal control problems with ODE's}},
 url = {https://control-toolbox.org/OptimalControl.jl}
 }
 ```
