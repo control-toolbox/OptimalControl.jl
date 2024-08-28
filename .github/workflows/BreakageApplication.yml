@@ -5,12 +5,12 @@ name: BreakageApplication
 # no access to secrets
 on:
   pull_request:
-    branches:
-      - breakage-applications
+    types: [labeled, opened, synchronize, reopened]
 
 jobs:
   break:
     runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'run breakage applications')
     strategy:
       fail-fast: false
       matrix:
