@@ -16,5 +16,5 @@ jobs:
       uses: pozil/auto-assign-issue@v2
       with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          assignees: ocots, jbcaillau
+          assignees: ocots
           numOfAssignee: 2

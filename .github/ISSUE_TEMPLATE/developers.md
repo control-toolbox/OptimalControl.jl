@@ -3,7 +3,7 @@ name: 'Developers '
 about: Suggest internal modifications
 title: "[Dev] title"
 labels: internal dev
-assignees: jbcaillau, ocots, PierreMartinon
+assignees: ocots, PierreMartinon
 
 ---
 
