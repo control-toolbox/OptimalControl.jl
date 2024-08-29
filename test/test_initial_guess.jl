@@ -127,7 +127,10 @@ function test_initial_guess()
             init = (state = x_func, control = u_func),
             max_iter = maxiter,
         )
-        @test(check_xf(sol, x_func(time_grid(sol)[end])) && check_uf(sol, u_func(time_grid(sol)[end])))
+        @test(
+            check_xf(sol, x_func(time_grid(sol)[end])) &&
+            check_uf(sol, u_func(time_grid(sol)[end]))
+        )
     end
 
     # 1.d interpolated initial guess
