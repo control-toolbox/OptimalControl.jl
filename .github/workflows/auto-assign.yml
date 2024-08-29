@@ -17,4 +17,4 @@ jobs:
       with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           assignees: ocots
-          numOfAssignee: 2
+          numOfAssignee: 1
