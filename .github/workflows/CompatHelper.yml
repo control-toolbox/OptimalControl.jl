@@ -38,7 +38,7 @@ jobs:
       - name: "Run CompatHelper"
         run: |
           import CompatHelper
-          CompatHelper.main(; subdirs=["", "docs", "test"])
+          CompatHelper.main(; subdirs=["", "docs", "test"], entry_type=CompatHelper.DropEntry())
         shell: julia --color=yes {0}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
