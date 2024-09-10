@@ -12,11 +12,13 @@ for Module ∈ Modules
         DocMeta.setdocmeta!(Module, :DocTestSetup, :(using $Module); recursive = true)
 end
 
-#
+repo_url = "github.com/control-toolbox/OptimalControl.jl"
+
 makedocs(
     warnonly = [:cross_references, :autodocs_block],
     sitename = "OptimalControl.jl",
-    format = Documenter.HTML(
+    format = Documenter.HTML(;
+        repolink = "https://"*repo_url,
         prettyurls = false,
         size_threshold_ignore = ["api-ctbase/types.md", "tutorial-plot.md"],
         assets = [
@@ -62,5 +64,6 @@ makedocs(
     ],
 )
 
-#
-deploydocs(repo = "github.com/control-toolbox/OptimalControl.jl.git", devbranch = "main")
+deploydocs(;
+    repo=repo_url*".git", devbranch="main"
+)
