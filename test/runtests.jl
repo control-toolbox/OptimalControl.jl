@@ -1,11 +1,12 @@
-using OptimalControl
-using Test
-using LinearAlgebra
-using SciMLBase
-using NonlinearSolve
-using OrdinaryDiffEq
-using NLPModelsIpopt
+using Aqua
 using CTDirect
+using LinearAlgebra
+using NLPModelsIpopt
+using NonlinearSolve
+using OptimalControl
+using OrdinaryDiffEq
+using SciMLBase
+using Test
 
 include("Goddard.jl")
 include("problems/goddard.jl")
@@ -13,6 +14,7 @@ include("problems/goddard.jl")
 #
 @testset verbose = true showtiming = true "Optimal control tests" begin
     for name ∈ (
+        :aqua,
         :abstract_ocp,
         :basic,
         :continuation,
