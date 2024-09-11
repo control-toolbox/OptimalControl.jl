@@ -18,7 +18,7 @@ makedocs(
     warnonly = [:cross_references, :autodocs_block],
     sitename = "OptimalControl.jl",
     format = Documenter.HTML(;
-        repolink = "https://"*repo_url,
+        repolink = "https://" * repo_url,
         prettyurls = false,
         size_threshold_ignore = ["api-ctbase/types.md", "tutorial-plot.md"],
         assets = [
@@ -64,6 +64,4 @@ makedocs(
     ],
 )
 
-deploydocs(;
-    repo=repo_url*".git", devbranch="main"
-)
+deploydocs(; repo = repo_url * ".git", devbranch = "main")
