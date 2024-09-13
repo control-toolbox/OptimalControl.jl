@@ -30,9 +30,9 @@ plus boundary, control and state constraints
 
 ## OptimalControl.jl for trajectory optimisation
 
-- [Basic example](tutorial-basic-example.html)
+- [Basic example](tutorial-double-integrator-energy.html)
 - [Goddard problem](tutorial-goddard.html)
-- [Orbit transfer](http://control-toolbox.org/kepler)
+- [Orbit transfer](https://control-toolbox.org/Kepler.jl)
 
 ## Wrap up
 
