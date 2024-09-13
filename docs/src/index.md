@@ -46,7 +46,7 @@ and other constraints such as
 
 ## Basic usage
 
-Let us modelise, solve and plot a simple optimal control problem.
+Let us model, solve and plot a simple optimal control problem.
 
 ```julia
 using OptimalControl

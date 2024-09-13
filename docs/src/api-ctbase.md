@@ -22,8 +22,8 @@ You may find in this package:
 - [Differential geometry](@ref api-ctbase-differential-geometry): tools to compute [Lie brackets](https://en.wikipedia.org/w/index.php?title=Lie_bracket_of_vector_fields&oldid=1163591634), [Poisson brackets](https://en.wikipedia.org/w/index.php?title=Poisson_manifold&oldid=1163991099#Formal_definition)...
 - [Exceptions](@ref api-ctbase-exceptions).
 - [Initial guess](@ref api-ctbase-init): tools to define an initial guess.
-- [Model](@ref api-ctbase-model): tools to modelise an optimal control problem in a functional manner.
-- [Parser](@ref api-ctbase-parser): tools to modelise an optimal control problem in an abstract manner.
+- [Model](@ref api-ctbase-model): tools to model an optimal control problem in a functional manner.
+- [Parser](@ref api-ctbase-parser): tools to model an optimal control problem in an abstract manner.
 - [Print](@ref api-ctbase-print): check how an optimal control problem is displayed.
 - [Repl](@ref api-ctbase-repl): control-toolbox repl.
 - [Solution](@ref api-ctbase-solution): optimal control solution.

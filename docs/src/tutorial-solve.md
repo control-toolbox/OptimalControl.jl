@@ -63,7 +63,7 @@ In a direct method, the optimal control problem is transcribed to a nonlinear op
 \text{minimize}\quad F(y), \quad\text{subject to the constraints}\quad g(y)=0, \quad h(y)\le 0. 
 ```
 
-OptimalControl.jl package makes the transcription but it needs a package to modelise the NLP problem and 
+OptimalControl.jl package makes the transcription but it needs a package to model the NLP problem and 
 another one to solve it. NLPModelsIpopt.jl package provides an interface to the well-known solver 
 [Ipopt](https://coin-or.github.io/Ipopt/) that can be used to solve general nonlinear programming problems.
 
@@ -96,7 +96,7 @@ solve(ocp, :direct, :adnlp, :ipopt)
 ```
 
 Let us detail the three symbols. As you can see, there are only direct methods. The symbol `:adnlp` is for the 
-choice of modeler. As said before, the NLP problem needs to be modelised in Julia code. We use 
+choice of modeler. As said before, the NLP problem needs to be modelled in Julia code. We use 
 [ADNLPModels.jl](https://jso.dev/ADNLPModels.jl) which provides automatic differentiation (AD)-based model implementations that conform to the [NLPModels.jl](https://github.com/JuliaSmoothOptimizers/ADNLPModels.jl) API.
 
 The last symbol is what distinguish the two available methods. It corresponds to the NLP solver. By default, we
