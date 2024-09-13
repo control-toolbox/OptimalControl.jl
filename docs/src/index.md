@@ -102,3 +102,7 @@ If it is your first contribution, you can also check [this first contribution tu
 You can find first good issues (if any 🙂) [here](https://github.com/control-toolbox/OptimalControl.jl/contribute). You may find other packages to contribute to at the [control-toolbox organization](https://github.com/control-toolbox).
 
 If you want to ask a question, feel free to start a discussion [here](https://github.com/orgs/control-toolbox/discussions). This forum is for general discussion about this repository and the [control-toolbox organization](https://github.com/control-toolbox).
+
+!!! note
+
+    If you want to add an application or a package to the control-toolbox ecosystem, please follow this [set up tutorial](https://github.com/control-toolbox/CTApp.jl/discussions/9).
