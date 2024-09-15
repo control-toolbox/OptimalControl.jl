@@ -94,7 +94,7 @@ jobs:
               end;
             end'
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: pr
           path: pr/
@@ -103,9 +103,9 @@ jobs:
     needs: break
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: pr
           path: pr/
@@ -113,6 +113,8 @@ jobs:
       - run: ls
       - run: |
           cd pr
+          echo "Breakage test results" > MSG
+          echo "Date: $(date '+%Y-%m-%d %H:%M:%S')" >> MSG
           echo "| Application name | latest | stable |" > MSG
           echo "|--|--|--|" >> MSG
           count=0
@@ -136,7 +138,7 @@ jobs:
             fi
           done >> MSG
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: pr
           path: pr/
