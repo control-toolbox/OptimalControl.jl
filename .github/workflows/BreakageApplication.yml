@@ -114,7 +114,7 @@ jobs:
       - run: |
           cd pr
           echo "Breakage test results" > MSG
-          echo "Date: $(date '+%Y-%m-%d %H:%M:%S')" >> MSG
+          echo "Date: $(TZ=UTC-2 date '+%Y-%m-%d %H:%M:%S')" >> MSG
           echo "| Application name | latest | stable |" > MSG
           echo "|--|--|--|" >> MSG
           count=0
