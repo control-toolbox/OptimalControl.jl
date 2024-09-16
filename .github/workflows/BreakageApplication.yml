@@ -15,11 +15,11 @@ jobs:
       fail-fast: false
       matrix:
         pkg: [
-          "control-toolbox/calculus_of_variations",
-          "control-toolbox/control-loss",
-          "control-toolbox/preconditioning",
-          "control-toolbox/medical_resonance_imaging",
-          "control-toolbox/kepler"
+          "control-toolbox/CalculusOfVariations.jl",
+          "control-toolbox/LossControl.jl",
+          "control-toolbox/GeometricPreconditioner.jl",
+          "control-toolbox/MedicalResonanceImaging.jl",
+          "control-toolbox/Kepler.jl"
         ]
         pkgversion: [latest, stable]
 
