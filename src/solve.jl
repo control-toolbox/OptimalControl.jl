@@ -1,7 +1,7 @@
 """
 $(TYPEDSIGNATURES)
 
-Return the list of available methods to solve the optimal control problem.
+Return the list of available methods that can be used to solve the optimal control problem.
 """
 function available_methods()
     # by order of preference: from top to bottom
@@ -15,8 +15,13 @@ end
 """
 $(TYPEDSIGNATURES)
 
-Remove from the description, the Symbol that are specific to [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) and so must not 
-be passed.
+When calling the function `solve`, the user can provide a description of the method to use to solve the optimal control problem.
+The description can be a partial description or a full description.
+The function `solve` will find the best match from the available methods, thanks to the function `getFullDescription`.
+Then, the description is cleaned by the function `clean` to remove the Symbols that are specific to 
+[OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) and so must not be passed to the solver.
+For instance, the Symbol `:direct` is specific to [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) and must be removed.
+It must not be passed to the CTDirect.jl solver.
 """
 function clean(d::Description)
     return remove(d, (:direct,))
@@ -26,37 +31,67 @@ end
 $(TYPEDSIGNATURES)
 
 Solve the the optimal control problem `ocp` by the method given by the (optional) description.
+The available methods are given by `available_methods()`.
+The higher in the list, the higher is the priority.
+The keyword arguments are specific to the chosen method and represent the options of the solver.
 
-# The (optional) description
+!!! note
+    See the [tutorial on solving optimal control problems](@ref tutorial-solve) for more information.
 
-You can pass a partial description.
-If you give a partial description, then, if several complete descriptions contains the partial one, 
-then, the method with the highest priority is chosen. The higher in the list, 
-the higher is the priority. To get the list of available methods, call `available_methods()`.
+# Arguments
 
-Keyword arguments: you can pass any other option by a pair `keyword=value` according to the chosen method.
+- `ocp::OptimalControlModel`: the optimal control problem to solve.
+- `description::Symbol...`: the description of the method to use to solve the problem.
+- `kwargs...`: the options of the solver.
 
 # Examples
 
-```julia-repl
+The simplest way to solve the optimal control problem is to call the function without any argument.
+
+```julia-rep
 julia> sol = solve(ocp)
-julia> sol = solve(ocp, :direct)
-julia> sol = solve(ocp, :direct, :ipopt)
-julia> sol = solve(ocp, :direct, :ipopt, display=false)
-julia> sol = solve(ocp, :direct, :ipopt, display=false, init=sol)
-julia> sol = solve(ocp, init=(state=[-0.5, 0.2],))
-julia> sol = solve(ocp, init=(state=[-0.5, 0.2], control=0.5))
-julia> sol = solve(ocp, init=(state=[-0.5, 0.2], control=0.5, variable=[1, 2]))
-julia> sol = solve(ocp, init=(state=[-0.5, 0.2], control=t->6-12*t))
-julia> sol = solve(ocp, init=(state=t->[-1+t, t*(t-1)], control=0.5))
-julia> sol = solve(ocp, init=(state=t->[-1+t, t*(t-1)], control=t->6-12*t))
 ```
+
+The method can be specified by passing the description as a Symbol. You can provide a partial description, the function will 
+find the best match.
+
+```julia-rep
+julia> sol = solve(ocp, :direct)
+```
+
+The method can be specified by passing the full description as a list of Symbols.
+
+```julia-repl
+julia> sol = solve(ocp, :direct, :adnlp, :ipopt)
+```
+
+The keyword arguments are specific to the chosen method and represent the options of the solver.
+For example, the keyword `display` is used to display the information of the solver.
+The default value is `true`.
+
+```julia-rep
+julia> sol = solve(ocp, :direct, :ipopt, display=false)
+```
+
+The initial guess can be provided by the keyword `init`.
+You can provide the initial guess for the state, control, and variable.
+
+```julia-rep
+julia> sol = solve(ocp, init=(state=[-0.5, 0.2], control=0.5))
+```
+
+!!! tip 
+    For more information on how to provide the initial guess, see the [tutorial on the initial guess](@ref tutorial-init).
+
 """
-function CommonSolve.solve(ocp::OptimalControlModel, description::Symbol...; kwargs...)
+function CommonSolve.solve(ocp::OptimalControlModel, description::Symbol...; kwargs...)::OptimalControlSolution
 
     # get the full description
     method = getFullDescription(description, available_methods())
 
     # solve the problem
-    :direct ∈ method && return CTDirect.direct_solve(ocp, clean(description)...; kwargs...)
+    if :direct ∈ method 
+        return CTDirect.direct_solve(ocp, clean(description)...; kwargs...)
+    end
+
 end
