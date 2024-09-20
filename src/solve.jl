@@ -6,7 +6,7 @@ Return the list of available methods that can be used to solve the optimal contr
 function available_methods()
     # by order of preference: from top to bottom
     methods = ()
-    for method ∈ CTDirect.available_methods()
+    for method in CTDirect.available_methods()
         methods = add(methods, (:direct, method...))
     end
     return methods
@@ -84,14 +84,15 @@ julia> sol = solve(ocp, init=(state=[-0.5, 0.2], control=0.5))
     For more information on how to provide the initial guess, see the [tutorial on the initial guess](@ref tutorial-init).
 
 """
-function CommonSolve.solve(ocp::OptimalControlModel, description::Symbol...; kwargs...)::OptimalControlSolution
+function CommonSolve.solve(
+    ocp::OptimalControlModel, description::Symbol...; kwargs...
+)::OptimalControlSolution
 
     # get the full description
     method = getFullDescription(description, available_methods())
 
     # solve the problem
-    if :direct ∈ method 
+    if :direct ∈ method
         return CTDirect.direct_solve(ocp, clean(description)...; kwargs...)
     end
-
 end

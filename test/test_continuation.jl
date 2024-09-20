@@ -26,9 +26,9 @@ function test_continuation()
         @testset verbose = true showtiming = true ":parametric_ocp :warm_start" begin
             init = ()
             obj_list = []
-            for T = 1:5
+            for T in 1:5
                 ocp = ocp_T(T)
-                sol = solve(ocp, print_level = 0, init = init)
+                sol = solve(ocp; print_level=0, init=init)
                 init = sol
                 push!(obj_list, objective(sol))
             end
@@ -67,7 +67,7 @@ function test_continuation()
             obj_list = []
             for ρ in [0.1, 5, 10, 30, 100]
                 ocp = myocp(ρ)
-                sol = solve(ocp, print_level = 0, init = init)
+                sol = solve(ocp; print_level=0, init=init)
                 init = sol
                 push!(obj_list, objective(sol))
             end
@@ -77,14 +77,14 @@ function test_continuation()
 
     # parametric ocp definition
     if test3
-        sol0 = solve(goddard().ocp, print_level = 0)
+        sol0 = solve(goddard().ocp; print_level=0)
 
         @testset verbose = true showtiming = true ":global_variable :warm_start" begin
             sol = sol0
             Tmax_list = []
             obj_list = []
-            for Tmax = 3.5:-0.5:1
-                sol = solve(goddard(Tmax = Tmax).ocp, print_level = 0, init = sol)
+            for Tmax in 3.5:-0.5:1
+                sol = solve(goddard(; Tmax=Tmax).ocp; print_level=0, init=sol)
                 push!(Tmax_list, Tmax)
                 push!(obj_list, objective(sol))
             end
@@ -94,16 +94,16 @@ function test_continuation()
                 # plot obj(vmax)
                 pobj = plot(
                     Tmax_list,
-                    obj_list,
-                    label = "r(tf)",
-                    xlabel = "Maximal thrust (Tmax)",
-                    ylabel = "Maximal altitude r(tf)",
-                    seriestype = :scatter,
+                    obj_list;
+                    label="r(tf)",
+                    xlabel="Maximal thrust (Tmax)",
+                    ylabel="Maximal altitude r(tf)",
+                    seriestype=:scatter,
                 )
                 # plot multiple solutions
                 plot(sol0)
                 p = plot!(sol)
-                display(plot(pobj, p, layout = 2, reuse = false, size = (1000, 500)))
+                display(plot(pobj, p; layout=2, reuse=false, size=(1000, 500)))
             end
         end
     end

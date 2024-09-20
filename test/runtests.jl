@@ -12,7 +12,7 @@ include("problems/goddard.jl")
 
 #
 @testset verbose = true showtiming = true "Optimal control tests" begin
-    for name ∈ (
+    for name in (
         :abstract_ocp,
         :basic,
         :continuation,

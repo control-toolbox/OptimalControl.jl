@@ -13,5 +13,5 @@ function beam()
         ∫(u(t)^2) → min
     end
 
-    return ((ocp = beam, obj = 8.898598, name = "beam", init = nothing))
+    return ((ocp=beam, obj=8.898598, name="beam", init=nothing))
 end

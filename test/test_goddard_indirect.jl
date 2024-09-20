@@ -65,7 +65,7 @@ function test_goddard_indirect()
         s[4] = H1(x1, p1)
         s[5] = H01(x1, p1)
         s[6] = g(x2)
-        s[7] = H0(xf, pf) # free tf
+        return s[7] = H0(xf, pf) # free tf
     end
 
     # tests
