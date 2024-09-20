@@ -25,4 +25,4 @@ function myocp(ρ)
 end
 
 # return problem and objective
-return ((ocp = myocp(1.0), obj = -0.335936, name = "param"))
+return ((ocp=myocp(1.0), obj=-0.335936, name="param"))

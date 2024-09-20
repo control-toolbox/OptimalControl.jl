@@ -53,7 +53,8 @@ export OptimalControlModel, OptimalControlSolution
 export Autonomous, NonAutonomous
 export NonFixed, Fixed
 export Model, __OCPModel
-export variable!, time!, constraint!, dynamics!, objective!, state!, control!, remove_constraint!
+export variable!,
+    time!, constraint!, dynamics!, objective!, state!, control!, remove_constraint!
 export constraint
 export time_grid, control, state, variable, costate, objective
 export iterations, stopping, message, infos
@@ -65,7 +66,7 @@ export ParsingError
 # repl
 function __init__()
     isdefined(Base, :active_repl) && ct_repl()
-    nothing
+    return nothing
 end
 
 end

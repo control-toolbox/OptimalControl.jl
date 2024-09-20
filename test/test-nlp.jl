@@ -19,8 +19,8 @@ docp, nlp = direct_transcription(ocp)
 #println(nlp.meta.x0)
 
 using NLPModelsIpopt
-nlp_sol = ipopt(nlp; print_level = 5, mu_strategy = "adaptive", tol = 1e-8, sb = "yes")
-sol = OptimalControlSolution(docp, primal = nlp_sol.solution, dual = nlp_sol.multipliers)
+nlp_sol = ipopt(nlp; print_level=5, mu_strategy="adaptive", tol=1e-8, sb="yes")
+sol = OptimalControlSolution(docp; primal=nlp_sol.solution, dual=nlp_sol.multipliers)
 plot(sol)
 
 using MadNLP
@@ -30,10 +30,12 @@ set_initial_guess(docp, nlp, sol)
 #println(nlp.meta.x0)
 mad_nlp_sol = madnlp(nlp)
 
-docp, nlp = direct_transcription(ocp, init = sol)
+docp, nlp = direct_transcription(ocp; init=sol)
 mad_nlp_sol = madnlp(nlp)
 
-mad_sol = OptimalControlSolution(docp, primal = madnlp_sol.solution, dual = madnlp_sol.multipliers)
+mad_sol = OptimalControlSolution(
+    docp; primal=madnlp_sol.solution, dual=madnlp_sol.multipliers
+)
 plot(mad_sol)
 
 #=

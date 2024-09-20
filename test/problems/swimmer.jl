@@ -43,18 +43,20 @@ function swimmer()
             2 * cos(2 * (b1 - b3)) +
             12 * cos(2 * b1 - b3) +
             186 * cos(b3) +
-            37 * cos(2 * b3) - 6 * cos(b1 + b3) - 3 * cos(2 * (b1 + b3)) - 6 * cos(2 * b1 + b3) -
-            6 * cos(b1 + 2 * b3)
+            37 * cos(2 * b3) - 6 * cos(b1 + b3) - 3 * cos(2 * (b1 + b3)) -
+            6 * cos(2 * b1 + b3) - 6 * cos(b1 + 2 * b3)
 
         g11 =
             (
-                -42 * sin(b1 - th) - 2 * sin(2 * b1 - th) - 24 * sin(th) - 300 * sin(b1 + th) -
-                12 * sin(2 * b1 + th) - 6 * sin(b1 - th - 2 * b3) - sin(2 * b1 - th - 2 * b3) +
-                4 * sin(th - 2 * b3) - 12 * sin(b1 + th - 2 * b3) - sin(2 * b1 + th - 2 * b3) +
+                -42 * sin(b1 - th) - 2 * sin(2 * b1 - th) - 24 * sin(th) -
+                300 * sin(b1 + th) - 12 * sin(2 * b1 + th) - 6 * sin(b1 - th - 2 * b3) -
+                sin(2 * b1 - th - 2 * b3) + 4 * sin(th - 2 * b3) -
+                12 * sin(b1 + th - 2 * b3) - sin(2 * b1 + th - 2 * b3) +
                 18 * sin(b1 - th - b3) +
                 8 * sin(th - b3) - 54 * sin(b1 + th - b3) - 2 * sin(2 * b1 + th - b3) -
                 18 * sin(b1 - th + b3) - 38 * sin(th + b3) - 90 * sin(b1 + th + b3) -
-                6 * sin(b1 - th + 2 * b3) - 18 * sin(th + 2 * b3) - 30 * sin(b1 + th + 2 * b3)
+                6 * sin(b1 - th + 2 * b3) - 18 * sin(th + 2 * b3) -
+                30 * sin(b1 + th + 2 * b3)
             ) / (4 * aux)
 
         g12 =
@@ -62,8 +64,8 @@ function swimmer()
                 -42 * cos(b1 - th) - 2 * cos(2 * b1 - th) +
                 24 * cos(th) +
                 300 * cos(b1 + th) +
-                12 * cos(2 * b1 + th) - 6 * cos(b1 - th - 2 * b3) - cos(2 * b1 - th - 2 * b3) -
-                4 * cos(th - 2 * b3) +
+                12 * cos(2 * b1 + th) - 6 * cos(b1 - th - 2 * b3) -
+                cos(2 * b1 - th - 2 * b3) - 4 * cos(th - 2 * b3) +
                 12 * cos(b1 + th - 2 * b3) +
                 cos(2 * b1 + th - 2 * b3) +
                 18 * cos(b1 - th - b3) - 8 * cos(th - b3) +
@@ -82,7 +84,8 @@ function swimmer()
                 2 * cos(2 * b1) +
                 12 * cos(b1 - 2 * b3) +
                 30 * cos(b1 - b3) +
-                cos(2 * (b1 - b3)) - 4 * cos(2 * b3) - 6 * cos(b1 + b3) - 6 * cos(b1 + 2 * b3)
+                cos(2 * (b1 - b3)) - 4 * cos(2 * b3) - 6 * cos(b1 + b3) -
+                6 * cos(b1 + 2 * b3)
             ) / (2 * aux)
 
         g21 =
@@ -91,8 +94,9 @@ function swimmer()
                 4 * sin(2 * b1 - th) +
                 24 * sin(th) +
                 38 * sin(b1 + th) +
-                18 * sin(2 * b1 + th) - 2 * sin(b1 - th - 2 * b3) - sin(2 * b1 - th - 2 * b3) -
-                2 * sin(th - 2 * b3) - sin(2 * b1 + th - 2 * b3) - 54 * sin(b1 - th - b3) -
+                18 * sin(2 * b1 + th) - 2 * sin(b1 - th - 2 * b3) -
+                sin(2 * b1 - th - 2 * b3) - 2 * sin(th - 2 * b3) -
+                sin(2 * b1 + th - 2 * b3) - 54 * sin(b1 - th - b3) -
                 12 * sin(2 * b1 - th - b3) - 42 * sin(th - b3) + 18 * sin(b1 + th - b3) -
                 6 * sin(2 * b1 + th - b3) +
                 18 * sin(b1 - th + b3) +
@@ -106,10 +110,11 @@ function swimmer()
         g22 =
             (
                 8 * cos(b1 - th) + 4 * cos(2 * b1 - th) - 24 * cos(th) - 38 * cos(b1 + th) -
-                18 * cos(2 * b1 + th) - 2 * cos(b1 - th - 2 * b3) - cos(2 * b1 - th - 2 * b3) +
+                18 * cos(2 * b1 + th) - 2 * cos(b1 - th - 2 * b3) -
+                cos(2 * b1 - th - 2 * b3) +
                 2 * cos(th - 2 * b3) +
-                cos(2 * b1 + th - 2 * b3) - 54 * cos(b1 - th - b3) - 12 * cos(2 * b1 - th - b3) +
-                42 * cos(th - b3) - 18 * cos(b1 + th - b3) +
+                cos(2 * b1 + th - 2 * b3) - 54 * cos(b1 - th - b3) -
+                12 * cos(2 * b1 - th - b3) + 42 * cos(th - b3) - 18 * cos(b1 + th - b3) +
                 6 * cos(2 * b1 + th - b3) +
                 18 * cos(b1 - th + b3) +
                 6 * cos(2 * b1 - th + b3) - 300 * cos(th + b3) - 90 * cos(b1 + th + b3) -
@@ -131,5 +136,5 @@ function swimmer()
         #∫(u1^2 + u2^2) → min
     end
 
-    return ((ocp = swimmer, obj = 0.984273, name = "swimmer", init = nothing))
+    return ((ocp=swimmer, obj=0.984273, name="swimmer", init=nothing))
 end
