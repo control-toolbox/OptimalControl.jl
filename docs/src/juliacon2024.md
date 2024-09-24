@@ -61,3 +61,11 @@ plus boundary, control and state constraints
 - [DifferentiationInterface.jl](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface/stable)
 - [DifferentialEquations.jl](https://github.com/SciML/DifferentialEquations.jl)
 - [MLStyle.jl](https://thautwarm.github.io/MLStyle.jl)
+
+## Acknowledgements
+
+Jean-Baptiste Caillau is partially funded by a **France 2030** support managed by the *Agence Nationale de la Recherche*, under the reference ANR-23-PEIA-0004 ([PDE-AI](https://pde-ai.math.cnrs.fr) project).
+
+```@raw html
+<img width="200" alt="affiliations" src="./assets/france-2030.png">
+```
