@@ -74,7 +74,7 @@ plot(sol)
 ```
 ## Change the NLP solver
 
-Alternatively, we can use [MadNLP.jl](https://jso.dev/Percival.jl) to solve anew the NLP problem:
+Alternatively, we can use [MadNLP.jl](https://madnlp.github.io/MadNLP.jl) to solve anew the NLP problem:
 
 ```@example main
 using MadNLP
