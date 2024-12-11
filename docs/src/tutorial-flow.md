@@ -419,6 +419,7 @@ plot!(plt, t, t->abs(φ(t)-x0), label="OptimalControl")
 plot!(plt, t, t->abs(ψ(t)-x0), label="Classical")
 ```
 
+<!--
 ## Callbacks
 
 You can use any [callback from OrdinaryDiffEq.jl](https://docs.sciml.ai/DiffEqDocs/stable/features/callback_functions). For instance, we reproduce the [bouncing ball example](https://docs.sciml.ai/DiffEqDocs/stable/features/callback_functions/#ContinuousCallback-Examples).
@@ -444,3 +445,4 @@ x0 = [50, 0]
 sol = f((t0, tf), x0)
 plot(sol)
 ```
+-->
