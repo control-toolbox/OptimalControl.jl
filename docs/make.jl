@@ -47,6 +47,7 @@ makedocs(;
             "tutorial-iss.md",
             "Linear–quadratic regulator" => "tutorial-lqr-basic.md",
             "tutorial-nlp.md",
+            "Minimal action" => "oc_mam.md",
         ],
         "API" => [
             "api-optimalcontrol.md",
