@@ -21,6 +21,7 @@ The system's deterministic dynamics are given by:
 # Define the vector field
 f(u, v) = [u - u^3 - 10*u*v^2,  -(1 - u^2)*v]
 f(x) = f(x...)
+nothing # hide
 ```
 
 ## Optimal Control Formulation
@@ -41,6 +42,7 @@ function ocp(T)
   end
   return action
 end
+nothing # hide
 ```
 
 ## Initial Guess
@@ -61,6 +63,7 @@ u(t) = f(x(t))
 
 # Initial guess
 init = (state=x, control=u)
+nothing # hide
 ```
 
 ## Solving the Problem
@@ -105,7 +108,7 @@ To find the maximum likelihood path, we also need to minimize the transient time
 ```@example oc_mam
 objectives = []
 Ts = range(1,100,100)
-sol = solve(ocp(Ts[1]); init=init, grid_size=50)
+sol = solve(ocp(Ts[1]); display=false, init=init, grid_size=50)
 println(" Time   Objective     Iterations")
 for T=Ts
     global sol = solve(ocp(T); display=false, init=sol, grid_size=1000)
@@ -115,8 +118,10 @@ end
 ```
 
 ```@example oc_mam
-@show Ts[argmin(objectives)]
-plt1 = scatter(Ts, log10.(objectives))
-plt2 = scatter(Ts[20:100], log10.(objectives[20:100]))
-plot(plt1,plt2)
+T_min = Ts[argmin(objectives)]
+plt1 = scatter(Ts, log10.(objectives), xlabel="Time", label="Objective (log10)")
+vline!(plt1, [T_min], label="Minimum", z_order=:back)
+plt2 = scatter(Ts[20:100], log10.(objectives[20:100]), xlabel="Time", label="Objective (log10)")
+vline!(plt2, [T_min], label="Minimum", z_order=:back)
+plot(plt1, plt2, layout=(2,1), size=(800,800))
 ```
