@@ -18,8 +18,6 @@ We'll consider a 2D system with a double-well flow, called the Maier-Stein model
 The system's deterministic dynamics are given by:
 
 ```@example oc_mam
-# T = 50  # Time horizon
-
 # Define the vector field
 f(u, v) = [u - u^3 - 10*u*v^2,  -(1 - u^2)*v]
 f(x) = f(x...)
@@ -50,12 +48,18 @@ end
 We provide an initial guess for the path using a simple interpolation:
 
 ```@example oc_mam
+# Time horizon
+T = 50
+
 # Linear interpolation for x₁
 x1(t) = -(1 - t/T) + t/T
+
 # Parabolic guess for x₂
 x2(t) = 0.3(-x1(t)^2 + 1)
 x(t) = [x1(t), x2(t)]
 u(t) = f(x(t))
+
+# Initial guess
 init = (state=x, control=u)
 ```
 
@@ -65,11 +69,15 @@ We solve the problem in two steps for better accuracy:
 
 ```@example oc_mam
 # First solve with coarse grid
-sol = solve(ocp(50); init=init, grid_size=50)
+sol = solve(ocp(T); init=init, grid_size=50)
+
 # Refine solution with finer grid
-sol = solve(ocp(50); init=sol, grid_size=1000)
-```
+sol = solve(ocp(T); init=sol, grid_size=1000)
+
+# Objective value
 sol.objective
+```
+
 ## Visualizing Results
 
 Let's plot the solution trajectory and phase space:
@@ -87,25 +95,26 @@ scatter(first.(MLP), last.(MLP),
         ylabel="v",
         label="Transition path")
 ```
+
 The resulting path shows the most likely transition between the two stable states given a transient time $T=50$, minimizing the action functional while respecting the system's dynamics.
 
 ## Minimize with respect to T
+
 To find the maximum likelihood path, we also need to minimize the transient time `T`. Hence, we perform a discrete continuation over the parameter `T` by solving the optimal control problem over a continuous range of final times `T`, using each solution to initialize the next problem.
 
-````@example oc_mam
+```@example oc_mam
 objectives = []
 Ts = range(1,100,100)
-init1 =  solve(ocp(1); init=init, grid_size=50)
+sol = solve(ocp(Ts[1]); init=init, grid_size=50)
+println(" Time   Objective     Iterations")
 for T=Ts
-    ocp1 = ocp(T)
-    sol1 = solve(ocp1; display=false, init=init1, grid_size=1000)
-    global init1 = sol1
-    @printf("T %.2f objective %9.6f iterations %d\n", T, sol1.objective, sol1.iterations)
-    push!(objectives, sol1.objective)
+    global sol = solve(ocp(T); display=false, init=sol, grid_size=1000)
+    @printf("%6.2f  %9.6e  %d\n", T, sol.objective, sol.iterations)
+    push!(objectives, sol.objective)
 end
 ```
 
-````@example oc_mam
+```@example oc_mam
 @show Ts[argmin(objectives)]
 plt1 = scatter(Ts, log10.(objectives))
 plt2 = scatter(Ts[20:100], log10.(objectives[20:100]))
