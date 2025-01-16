@@ -418,31 +418,3 @@ plt = plot(yaxis=:log, legend=:bottomright, title="Comparison of concatenations"
 plot!(plt, t, t->abs(φ(t)-x0), label="OptimalControl")
 plot!(plt, t, t->abs(ψ(t)-x0), label="Classical")
 ```
-
-<!--
-## Callbacks
-
-You can use any [callback from OrdinaryDiffEq.jl](https://docs.sciml.ai/DiffEqDocs/stable/features/callback_functions). For instance, we reproduce the [bouncing ball example](https://docs.sciml.ai/DiffEqDocs/stable/features/callback_functions/#ContinuousCallback-Examples).
-
-```@example main
-function condition(x, t, integrator) # Event when condition(u, t, integrator) == 0
-    x[1]
-end
-
-function affect!(integrator)
-    integrator.u[2] = -integrator.u[2] # the state is called u
-end
-
-cb = ContinuousCallback(condition, affect!)
-
-g = 9.81
-V(x) = [x[2], -g]
-f = Flow(V; callback = cb)
-
-t0 = 0
-tf = 15
-x0 = [50, 0]
-sol = f((t0, tf), x0)
-plot(sol)
-```
--->
