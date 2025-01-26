@@ -24,7 +24,7 @@ Roots = "f2b01f46-fcfa-551c-844a-d8ac1e96c665"
 [compat]
 BenchmarkTools = "1.5"
 CTBase = "0.13"
-CTDirect = "0.12"
+CTDirect = "0.13"
 CTFlows = "0.6"
 CommonSolve = "0.2"
 DifferentiationInterface = "0.5"
