@@ -1,4 +1,4 @@
-# [Initial guess (or iterate) for the resolution](@id tutorial-init)
+# [Initial guess (or iterate) for the resolution](@id tutorial-initial-guess)
 
 ```@meta
 CurrentModule =  OptimalControl

@@ -6,7 +6,7 @@
 <img src="./assets/Goddard_and_Rocket.jpg" style="float: left; margin: auto 10px;" width="200px">
 ```
 
-For this advanced example, we consider the well-known Goddard problem[^1] [^2] which models the ascent of a rocket
+For this example, we consider the well-known Goddard problem[^1] [^2] which models the ascent of a rocket
 through the atmosphere, and we restrict here ourselves to vertical (one dimensional) trajectories. The state variables
 are the altitude $r$, speed $v$ and mass $m$ of the rocket during the flight, for a total dimension of 3. The rocket is
 subject to gravity $g$, thrust $u$ and drag force $D$ (function of speed and altitude). The final time $t_f$ is free, and the objective is to reach a maximal altitude with a bounded fuel consumption.
