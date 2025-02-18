@@ -8,7 +8,7 @@ SciMLBase = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
-CTDirect = "0.13"
+CTDirect = "0.12"
 NLPModelsIpopt = "0.10"
 NonlinearSolve = "3.14"
 OrdinaryDiffEq = "6.88"
