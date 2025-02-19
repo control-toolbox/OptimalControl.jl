@@ -65,14 +65,13 @@ sol = solve(ocp; init=(), display=false)
 println("Number of iterations: ", iterations(sol))
 nothing # hide
 ```
+!!! tip "Interactions with an optimal control solution"
+
+    To get the number of iterations of the solver, check the [`iterations`](@ref) function.
 
 To reduce the number of iterations and improve the convergence, we can give an initial guess to the solver. 
 This initial guess can be built from constant values, interpolated vectors, functions, or existing solutions.
 Except when initializing from a solution, the arguments are to be passed as a named tuple ```init=(state=..., control=..., variable=...)``` whose fields are optional. Missing fields will revert to default initialization (ie constant 0.1).
-
-!!! tip "Interactions with an optimal control solution"
-
-    To get the number of iterations of the solver, check the [`iterations`](@ref) function.
 
 ## Constant initial guess
 
@@ -85,7 +84,7 @@ println("Number of iterations: ", iterations(sol))
 nothing # hide
 ```
 
-Partial initializations are also valid, as shown below. Note the ending comma when a single argument is passed (tuple).
+Partial initializations are also valid, as shown below. Note the ending comma when a single argument is passed, since it must be a tuple.
 ```@example main
 # initialisation only on the state
 sol = solve(ocp; init=(state=[-0.2, 0.1],), display=false)
@@ -187,5 +186,5 @@ nothing # hide
 
 ## Costate / multipliers
 
-For the moment we can not provide an initial guess for the costate / multipliers.
+For the moment there is no option to provide an initial guess for the costate / multipliers.
 

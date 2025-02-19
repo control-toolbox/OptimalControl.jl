@@ -70,8 +70,7 @@ plot(sol)
 
 For more details about this problem, please check the [basic example tutorial](@ref tutorial-basic).
 For a comprehensive introduction to the syntax used above to describe the optimal control problem, check the [abstract syntax tutorial](@ref tutorial-abstract).
-The solve options are described in the [solve tutorial](@ref tutorial-solve), with some additional examples in the [advanced usage](@ref tutorial-advanced) section.
-
+The solve options are described in the [solve tutorial](@ref tutorial-solve).
 
 ## Citing us
 
