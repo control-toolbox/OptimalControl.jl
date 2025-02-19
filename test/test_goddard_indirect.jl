@@ -1,6 +1,5 @@
 function test_goddard_indirect()
 
-    # include("Goddard.jl")
     ocp, obj = Goddard()
 
     # parameters
