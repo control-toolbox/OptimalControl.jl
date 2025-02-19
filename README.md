@@ -115,4 +115,4 @@ If you want to ask a question, feel free to start a discussion [here](https://gi
 
 ## See also
 
-We acknowledge support of colleagues from [ADNLPModels](https://jso.dev/ADNLPModels.jl/stable) @[Julia Smooth Optimizers](https://jso.dev) and [MadNLP](github.com/MadNLP/MadNLP.jl).
+We acknowledge support of colleagues from [ADNLPModels](https://jso.dev/ADNLPModels.jl/stable) @[Julia Smooth Optimizers](https://jso.dev) and [MadNLP](https://github.com/MadNLP/MadNLP.jl).
