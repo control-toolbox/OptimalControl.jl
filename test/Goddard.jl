@@ -49,7 +49,7 @@ function Goddard()
 
         # objective
         r(tf) → max
-    end
+    end false # not inplace
 
     # dynamics
     function F0(x)
