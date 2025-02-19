@@ -114,19 +114,12 @@ The main options, with their [default values], are:
 - `grid_size` ([250]): size of the (uniform) time discretization grid. More precisely, it is the number of time steps, that is if `N = grid_size` and if the initial and final times are denoted respectively `t0` and `tf`, then we have:
 ```julia
 Δt = (tf - t0) / N
-- `disc_method` ([:trapeze], :midpoint, gauss_legendre_2): discretization method 
-- `time_grid`: explicit time grid vector `t0, t1, ..., tf` (can be non uniform). If the initial and/or the final times are free, then you can provide a normalised grid between 0 and 1. Note that `time_grid` will override `grid_size` if both are present.
-```@example main
-sol1 = solve(ocp; grid_size=10, display=false, disc_method=:midpoint)
-time_grid(sol1)
-
-sol2 = solve(ocp, :madnlp; grid_size=10, disc_method=:gauss_legendre_2, display=false)
-time_grid(sol2)
-
-sol3 = solve(ocp, time_grid=[0, 0.1, 0.5, 0.6, 0.7, 0.8, 1], display=false)
-time_grid(sol3)
-```
+- `disc_method` ([:trapeze], :midpoint, gauss_legendre_2): see [discretisation methods](@ref tutorial-discretisation)
 - `init`: info for the starting guess, which can be provided as numerical values, functions, or an existing solution. See [initial guess tutorial](@ref tutorial-initial-guess). 
+
+For examples of more advanced use, see 
+- [discrete continuation](@ref tutorial-continuation)
+- [NLP direct handling](@ref tutorial-nlp)
 
 
 ### NLP solver specific options
@@ -145,9 +138,3 @@ solve(ocp, :madnlp; tol=1e-2)
 nothing # hide
 ```
 
-## Advanced use
-
-You can see examples of advanced options, such as 
-- [discretisation methods](@ref tutorial-discretisation)
-- [discrete continuation](@ref tutorial-continuation)
-- [NLP direct handling](@ref tutorial-nlp)

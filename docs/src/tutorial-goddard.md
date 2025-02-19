@@ -106,7 +106,7 @@ nothing # hide
 We then solve it
 
 ```@example main
-direct_sol = solve(ocp; grid_size=100, linear_solver="mumps")
+direct_sol = solve(ocp; grid_size=100)
 nothing # hide
 ```
 
