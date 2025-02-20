@@ -1,5 +1,4 @@
 [deps]
-CTDirect = "790bbbee-bee9-49ee-8912-a9de031322d5"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MadNLP = "2621e9c9-9eb4-46b1-8089-e8c72242dfb6"
 NLPModelsIpopt = "f4238b75-b362-5c4c-b852-0801c9a21d71"
@@ -10,7 +9,6 @@ SplitApplyCombine = "03a91e81-4c3e-53e1-a0a4-9c0c8f19dd66"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
-CTDirect = "0.13"
 NLPModelsIpopt = "0.10"
 NonlinearSolve = "3.14"
 OrdinaryDiffEq = "6.88"
