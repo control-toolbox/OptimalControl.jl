@@ -68,7 +68,7 @@ sol = solve(ocp)
 plot(sol)
 ```
 
-For more details about this problem, please check the [basic example tutorial](@ref tutorial-basic).
+For more details about this problem, please check the [basic example tutorial](@ref tutorial-double-integrator-energy).
 For a comprehensive introduction to the syntax used above to describe the optimal control problem, check the [abstract syntax tutorial](@ref tutorial-abstract).
 The solve options are described in the [solve tutorial](@ref tutorial-solve).
 

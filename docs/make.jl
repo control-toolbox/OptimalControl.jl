@@ -43,10 +43,10 @@ makedocs(;
         ],
         "Tutorials" => [
             "tutorial-continuation.md",
+            "tutorial-nlp.md",
             "Goddard: direct, indirect" => "tutorial-goddard.md",
             "tutorial-iss.md",
             "Linear–quadratic regulator" => "tutorial-lqr-basic.md",
-            "tutorial-nlp.md",
             "Minimal action" => "oc_mam.md",
         ],
         "API" => [
