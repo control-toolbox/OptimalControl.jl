@@ -17,8 +17,8 @@ function test_goddard_indirect()
 
     #
     remove_constraint!(ocp, :x_con_rmin)
-    g(x) = vmax - constraint(ocp, :x_con_vmax)(x, Real[]) # g(x, u) ≥ 0 (cf. nonnegative multiplier)
-    final_mass_cons(xf) = constraint(ocp, :final_con)(x0, xf, Real[]) - mf
+    g(x) = vmax - x[2] # g(x, u) ≥ 0 (cf. nonnegative multiplier)
+    final_mass_cons(xf) = xf[3] - mf
 
     function F0(x)
         r, v, m = x
