@@ -91,8 +91,9 @@ end
 u(x, p) = p[2]
 ```
 
-```@repl main_repl
-f = Flow(ocp, u)
+```julia
+julia> f = Flow(ocp, u)
+ERROR: ExtensionError. Please make: julia> using OrdinaryDiffEq
 ```
 
 As you can see, an error occured since we need the package [OrdinaryDiffEq.jl](https://docs.sciml.ai/DiffEqDocs).
