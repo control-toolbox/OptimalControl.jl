@@ -47,8 +47,11 @@ constraint!(ocp, :final;   val=[  0, 0 ])       # final condition
 dynamics!(ocp, (x, u) -> [ x[2], u ])           # dynamics of the double integrator
 
 objective!(ocp, :lagrange, (x, u) -> 0.5u^2)    # cost in Lagrange form
+solve(ocp)
 nothing # hide
 ```
+
+
 
 !!! note "Nota bene"
 
@@ -77,6 +80,7 @@ constraint!(ocp, :state; lb=[-5, -3], ub=[5, 3]) # -5 ≤ q(t) ≤ 5, -3 ≤ v(t
 dynamics!(ocp, (x, u, tf) -> [ x[2], u ])        # dynamics of the double integrator
 
 objective!(ocp, :mayer, (x0, xf, tf) -> tf)      # cost in Mayer form
+solve(ocp)
 nothing # hide
 ```
 
