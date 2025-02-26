@@ -57,16 +57,16 @@ nothing # hide
 ```
 Now let us compare different discretisations
 ```@example main
-sol_trapeze = solve(ocp)
+sol_trapeze = solve(ocp; tol=1e-8)
 plot(sol_trapeze)
 
-sol_midpoint = solve(ocp, disc_method=:midpoint)
+sol_midpoint = solve(ocp, disc_method=:midpoint; tol=1e-8)
 plot!(sol_midpoint)
 
-sol_gl2 = solve(ocp, disc_method=:gauss_legendre_2)
+sol_gl2 = solve(ocp, disc_method=:gauss_legendre_2; tol=1e-8)
 plot!(sol_gl2)
 
-sol_gl3 = solve(ocp, disc_method=:gauss_legendre_3)
+sol_gl3 = solve(ocp, disc_method=:gauss_legendre_3; tol=1e-8)
 plot!(sol_gl3)
 ```
 
@@ -74,6 +74,7 @@ plot!(sol_gl3)
 For some large problems, you may notice that solving spends a long time before the iterations actually begin.
 This is due to the computing of the sparse derivatives, namely the Jacobian of the constraints and the Hessian of the Lagrangian, that can become quite costly.
 A possible alternative is to set the option `adnlp_backend=:manual`, which will use more basic sparsity patterns.
+The resulting matrices are faster to compute but are also less sparse, so this is a trade-off bewteen the AD preparation and the optimization itself.
 
 ```@example main
 solve(ocp, disc_method=:gauss_legendre_3, grid_size=1000, adnlp_backend=:manual)
@@ -86,6 +87,6 @@ In the case of a free initial and/or final time, provide a normalised grid betwe
 Note that `time_grid` will override `grid_size` if both are present.
 
 ```@example main
-sol = solve(ocp, time_grid=[0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.75, 1], display=false)
+sol = solve(ocp, time_grid=[0, 0.1, 0.5, 0.9, 1], display=false)
 println(time_grid(sol))
 ```
