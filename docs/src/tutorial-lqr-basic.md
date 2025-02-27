@@ -18,16 +18,7 @@ and the initial condition
     x(0) = (0,1).
 ```
 
-We define $A$ and $B$ as
-
-```math
-    A = \begin{pmatrix} 0 & 1 \\ -1 & 0 \\ \end{pmatrix}, \quad
-    B = \begin{pmatrix} 0 \\ 1 \\ \end{pmatrix}
-```
-
-in order to get $\dot{x} = Ax + Bu$
-and we aim to solve this optimal control problem for different values of $t_f$.
-
+We aim to solve this optimal control problem for different values of $t_f$.
 First, we need to import the [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package to define the 
 optimal control problem and [NLPModelsIpopt.jl](jso.dev/NLPModelsIpopt.jl) to solve it. 
 We also need to import the [Plots.jl](https://docs.juliaplots.org) package to plot the solution.
@@ -44,12 +35,6 @@ Then, we can define the problem parameterized by the final time `tf`.
 x0 = [ 0
        1 ]
 
-A  = [ 0 1
-      -1 0 ]
-
-B  = [ 0
-       1 ]
-
 function lqr(tf)
 
     ocp = @def begin
@@ -57,7 +42,7 @@ function lqr(tf)
         x ∈ R², state
         u ∈ R, control
         x(0) == x0
-        ẋ(t) == A * x(t) + B * u(t)
+        ẋ(t) == [x₂(t), - x₁(t) + u(t)]
         ∫( 0.5(x₁(t)^2 + x₂(t)^2 + u(t)^2) ) → min
     end
 

@@ -1,5 +1,5 @@
 # Parametric problem (name ??)
-function myocp(ρ)
+function parametric(ρ)
     relu(x) = max(0, x)
     μ = 10
     p_relu(x) = log(abs(1 + exp(μ * x))) / μ
@@ -21,8 +21,6 @@ function myocp(ρ)
         0 ≤ τ ≤ T
         -(x₂(1) - 2)^3 - ∫(ρ * (τ * m(x₁(s))^2 + (T - τ) * m(x₂(s))^2)) → min
     end
-    return param
-end
 
-# return problem and objective
-return ((ocp=myocp(1.0), obj=-0.335936, name="param"))
+    return ((ocp = param, obj = nothing, name = "parametric", init = nothing))
+end

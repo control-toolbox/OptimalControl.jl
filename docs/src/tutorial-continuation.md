@@ -76,31 +76,31 @@ function F1(x)
     r, v, m = x
     return [ 0, Tmax/m, -b*Tmax ]
 end
-
-ocp = Model(variable=true)
-
 r0 = 1
 v0 = 0
 m0 = 1
 mf = 0.6
-x0=[r0,v0,m0]
-
+x0 = [r0, v0, m0]
 vmax = 0.1
 
-state!(ocp, 3)
-control!(ocp, 1)
-variable!(ocp, 1)
-time!(ocp; t0=0, indf=1)
-
-constraint!(ocp, :initial; lb=x0, ub=x0)
-constraint!(ocp, :final; rg=3, lb=mf, ub=Inf)
-constraint!(ocp, :state; lb=[r0,v0,mf], ub=[r0+0.2,vmax,m0])
-constraint!(ocp, :control; lb=0, ub=1)
-constraint!(ocp, :variable; lb=0.01, ub=Inf)
-
-objective!(ocp, :mayer, (x0, xf, v) -> xf[1], :max)
-
-dynamics!(ocp, (x, u, v) -> F0(x) + u*F1(x) )
+@def ocp begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x ∈ R^3, state
+    u ∈ R, control
+    0.01 ≤ tf ≤ Inf
+    r = x[1]
+    v = x[2]
+    m = x[3]
+    x(0) == x0
+    m(tf) == mf
+    r0 ≤ r(t) ≤ r0 + 0.1
+    v0 ≤ v(t) ≤ vmax
+    mf ≤ m(t) ≤ m0
+    0 ≤ u(t) ≤ 1
+    ẋ(t) == F0(x(t)) + u(t) * F1(x(t))
+    r(tf) → max
+end
 
 sol0 = solve(ocp; display=false)
 @printf("Objective for reference solution %.6f\n", objective(sol0))

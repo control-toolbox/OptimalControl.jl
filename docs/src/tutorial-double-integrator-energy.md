@@ -51,7 +51,7 @@ nothing # hide
 
 !!! note "Nota bene"
 
-    For a comprehensive introduction to the syntax used above to describe the optimal control problem, check [this abstract syntax tutorial](@ref abstract). In particular, there are non-unicode alternatives for derivatives, integrals, *etc.* There is also a non-standard but more classical functional syntax, check [this functional syntax tutorial](@ref functional).
+    For a comprehensive introduction to the syntax used above to describe the optimal control problem, check [this abstract syntax tutorial](@ref abstract). In particular, there are non-unicode alternatives for derivatives, integrals, *etc.*
     
 ## [Solve and plot](@id basic-solve-plot)
 
@@ -100,20 +100,23 @@ plot(sol)
 
 ## Save and load
 
-We can save the solution in a Julia `.jld2` data file and reload it later, and also export a discretised version of the solution in a more portable [JSON](https://en.wikipedia.org/wiki/JSON) format.
+We can save the solution in a Julia `.jld2` data file and reload it later, and also export a discretised version of the solution in a more portable [JSON](https://en.wikipedia.org/wiki/JSON) format. Note that the OCP is needed when loading a solution.
 
 ```@example main
 # load additional modules
 using JLD2, JSON3
 
 # JLD save / load
-save(sol, filename_prefix="my_solution")
-sol_reloaded = load("my_solution")
+using Suppressor # hide
+@suppress_err begin # hide
+export_ocp_solution(sol; filename_prefix="my_solution")
+end # hide
+sol_reloaded = import_ocp_solution(ocp; filename_prefix="my_solution")
 println("Objective from loaded solution: ", sol_reloaded.objective)
 
 # JSON export / read
-export_ocp_solution(sol, filename_prefix="my_solution")
-sol_json = import_ocp_solution(ocp, filename_prefix="my_solution")
+export_ocp_solution(sol; filename_prefix="my_solution", format=:JSON)
+sol_json = import_ocp_solution(ocp; filename_prefix="my_solution", format=:JSON)
 println("Objective from JSON discrete solution: ", sol_json.objective)
 ```
 

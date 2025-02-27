@@ -6,7 +6,7 @@
 <img src="./assets/Goddard_and_Rocket.jpg" style="float: left; margin: auto 10px;" width="200px">
 ```
 
-For this advanced example, we consider the well-known Goddard problem[^1] [^2] which models the ascent of a rocket
+For this example, we consider the well-known Goddard problem[^1] [^2] which models the ascent of a rocket
 through the atmosphere, and we restrict here ourselves to vertical (one dimensional) trajectories. The state variables
 are the altitude $r$, speed $v$ and mass $m$ of the rocket during the flight, for a total dimension of 3. The rocket is
 subject to gravity $g$, thrust $u$ and drag force $D$ (function of speed and altitude). The final time $t_f$ is free, and the objective is to reach a maximal altitude with a bounded fuel consumption.
@@ -106,7 +106,7 @@ nothing # hide
 We then solve it
 
 ```@example main
-direct_sol = solve(ocp; grid_size=100, linear_solver="mumps")
+direct_sol = solve(ocp; grid_size=100)
 nothing # hide
 ```
 
@@ -238,7 +238,7 @@ function shoot!(s, p0, t1, t2, t3, tf)
     x3, p3 = fb(t2, x2, p2, t3)
     xf, pf = f0(t3, x3, p3, tf)
 
-    s[1] = constraint(ocp, :eq1)(x0, xf, tf) - mf # final mass constraint (1)
+    s[1] = xf[3] - mf                             # final mass constraint
     s[2:3] = pf[1:2] - [ 1, 0 ]                   # transversality conditions
     s[4] = H1(x1, p1)                             # H1 = H01 = 0
     s[5] = H01(x1, p1)                            # at the entrance of the singular arc

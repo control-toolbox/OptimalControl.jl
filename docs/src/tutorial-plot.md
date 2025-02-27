@@ -80,6 +80,7 @@ optimal control problem.
     Please check [`state`](@ref), [`costate`](@ref), [`control`](@ref) and [`variable`](@ref) to get data from the solution. The functions `state`, `costate` and `control` return functions of time and `variable` returns a vector.
 
 ```@example main
+using OrdinaryDiffEq
 t0 = 0
 tf = 1
 x0 = [ -1, 0 ]
@@ -183,12 +184,6 @@ Then, we plot the solutions on the same figure considering a normalized time $s=
 x0 = [ 0
        1 ]
 
-A  = [ 0 1
-      -1 0 ]
-
-B  = [ 0
-       1 ]
-
 # definition
 function lqr(tf)
 
@@ -197,7 +192,7 @@ function lqr(tf)
         x ∈ R², state
         u ∈ R, control
         x(0) == x0
-        ẋ(t) == A * x(t) + B * u(t)
+        ẋ(t) == [x₂(t), - x₁(t) + u(t)]
         ∫( 0.5(x₁(t)^2 + x₂(t)^2 + u(t)^2) ) → min
     end
 

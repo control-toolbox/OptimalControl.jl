@@ -22,5 +22,5 @@ function jackson()
         x[3](4) → max
     end
 
-    return ((ocp=jackson, obj=0.192011, name="jackson", init=nothing))
+    return ((ocp = jackson, obj = 0.192011, name = "jackson", init = nothing))
 end

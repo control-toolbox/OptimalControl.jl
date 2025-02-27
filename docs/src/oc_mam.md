@@ -111,7 +111,7 @@ Ts = range(1,100,100)
 sol = solve(ocp(Ts[1]); display=false, init=init, grid_size=50)
 println(" Time   Objective     Iterations")
 for T=Ts
-    global sol = solve(ocp(T); display=false, init=sol, grid_size=1000)
+    global sol = solve(ocp(T); display=false, init=sol, grid_size=1000, tol=1e-8)
     @printf("%6.2f  %9.6e  %d\n", T, sol.objective, sol.iterations)
     push!(objectives, sol.objective)
 end
