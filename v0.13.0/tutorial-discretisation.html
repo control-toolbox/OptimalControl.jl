@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Discretisation methods · OptimalControl.jl</title><meta name="title" content="Discretisation methods · OptimalControl.jl"/><meta property="og:title" content="Discretisation methods · OptimalControl.jl"/><meta property="twitter:title" content="Discretisation methods · OptimalControl.jl"/><meta name="description" content="Documentation for OptimalControl.jl."/><meta property="og:description" content="Documentation for OptimalControl.jl."/><meta property="twitter:description" content="Documentation for OptimalControl.jl."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script><link href="https://control-toolbox.org/assets/css/documentation.css" rel="stylesheet" type="text/css"/><script src="https://control-toolbox.org/assets/js/documentation.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="index.html">OptimalControl.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="index.html">Introduction</a></li><li><span class="tocitem">Basic examples</span><ul><li><a class="tocitem" href="tutorial-double-integrator-energy.html">Energy minimisation</a></li><li><a class="tocitem" href="tutorial-double-integrator-time.html">Time mininimisation</a></li></ul></li><li><span class="tocitem">Manual</span><ul><li><a class="tocitem" href="tutorial-abstract.html">Abstract syntax</a></li><li><a class="tocitem" href="tutorial-initial-guess.html">Initial guess</a></li><li><a class="tocitem" href="tutorial-solve.html">Solve</a></li><li><a class="tocitem" href="tutorial-plot.html">Plot a solution</a></li><li><a class="tocitem" href="tutorial-flow.html">Flow</a></li><li><a class="tocitem" href="tutorial-repl.html">Control-toolbox REPL</a></li></ul></li><li><span class="tocitem">Tutorials</span><ul><li><a class="tocitem" href="tutorial-continuation.html">Discrete continuation</a></li><li><a class="tocitem" href="tutorial-nlp.html">NLP and DOCP manipulations</a></li><li><a class="tocitem" href="tutorial-goddard.html">Goddard: direct, indirect</a></li><li><a class="tocitem" href="tutorial-iss.html">Indirect simple shooting</a></li><li><a class="tocitem" href="tutorial-lqr-basic.html">Linear–quadratic regulator</a></li><li><a class="tocitem" href="oc_mam.html">Minimal action</a></li></ul></li><li><span class="tocitem">API</span><ul><li><a class="tocitem" href="api-optimalcontrol.html">OptimalControl.jl</a></li><li><input class="collapse-toggle" id="menuitem-5-2" type="checkbox"/><label class="tocitem" for="menuitem-5-2"><span class="docs-label">Subpackages</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="api-ctbase.html">CTBase.jl</a></li><li><a class="tocitem" href="api-ctdirect.html">CTDirect.jl</a></li><li><a class="tocitem" href="api-ctflows.html">CTFlows.jl</a></li></ul></li></ul></li><li><span class="tocitem">Developers</span><ul><li><a class="tocitem" href="dev-optimalcontrol.html">OptimalControl.jl</a></li><li><input class="collapse-toggle" id="menuitem-6-2" type="checkbox"/><label class="tocitem" for="menuitem-6-2"><span class="docs-label">Subpackages</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="dev-ctbase.html">CTBase.jl</a></li><li><a class="tocitem" href="dev-ctdirect.html">CTDirect.jl</a></li><li><a class="tocitem" href="dev-ctflows.html">CTFlows.jl</a></li></ul></li></ul></li><li><a class="tocitem" href="juliacon2024.html">JuliaCon 2024</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href="tutorial-discretisation.html">Discretisation methods</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="tutorial-discretisation.html">Discretisation methods</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl/blob/main/docs/src/tutorial-discretisation.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Discretisation-methods"><a class="docs-heading-anchor" href="#Discretisation-methods">Discretisation methods</a><a id="Discretisation-methods-1"></a><a class="docs-heading-anchor-permalink" href="#Discretisation-methods" title="Permalink"></a></h1><h2 id="Discretisation-formulas"><a class="docs-heading-anchor" href="#Discretisation-formulas">Discretisation formulas</a><a id="Discretisation-formulas-1"></a><a class="docs-heading-anchor-permalink" href="#Discretisation-formulas" title="Permalink"></a></h2><p>When calling <code>solve</code>, the option <code>disc_method=...</code> can be used to set the discretisation scheme. In addition to the default implicit <code>:trapeze</code> method (aka Crank-Nicolson), other choices are available, namely implicit <code>:midpoint</code> and the Gauss-Legendre collocations with 2 and  stages, <code>:gauss_legendre_2</code> and <code>:gauss_legendre_3</code>, of order 4 and 6 respectively.  Note that higher order methods will typically lead to larger NLP problems for the same number of time steps, and that accuracy will also depend on the smoothness of the problem.</p><p>As an example we will use the <a href="@ref tutorial-goddard">Goddard problem</a></p><pre><code class="language-julia hljs">using OptimalControl  # to define the optimal control problem and more
+using NLPModelsIpopt  # to solve the problem via a direct method
+using Plots           # to plot the solution
+
+t0 = 0      # initial time
+r0 = 1      # initial altitude
+v0 = 0      # initial speed
+m0 = 1      # initial mass
+vmax = 0.1  # maximal authorized speed
+mf = 0.6    # final mass to target
+
+ocp = @def begin # definition of the optimal control problem
+
+    tf ∈ R, variable
+    t ∈ [t0, tf], time
+    x = (r, v, m) ∈ R³, state
+    u ∈ R, control
+
+    x(t0) == [ r0, v0, m0 ]
+    m(tf) == mf,         (1)
+    0 ≤ u(t) ≤ 1
+    r(t) ≥ r0
+    0 ≤ v(t) ≤ vmax
+
+    ẋ(t) == F0(x(t)) + u(t) * F1(x(t))
+
+    r(tf) → max
+
+end;
+
+# Dynamics
+const Cd = 310
+const Tmax = 3.5
+const β = 500
+const b = 2
+
+F0(x) = begin
+    r, v, m = x
+    D = Cd * v^2 * exp(-β*(r - 1)) # Drag force
+    return [ v, -D/m - 1/r^2, 0 ]
+end
+
+F1(x) = begin
+    r, v, m = x
+    return [ 0, Tmax/m, -b*Tmax ]
+end</code></pre><p>Now let us compare different discretisations</p><pre><code class="language-julia hljs">sol_trapeze = solve(ocp; tol=1e-8)
+plot(sol_trapeze)
+
+sol_midpoint = solve(ocp, disc_method=:midpoint; tol=1e-8)
+plot!(sol_midpoint)
+
+sol_gl2 = solve(ocp, disc_method=:gauss_legendre_2; tol=1e-8)
+plot!(sol_gl2)
+
+sol_gl3 = solve(ocp, disc_method=:gauss_legendre_3; tol=1e-8)
+plot!(sol_gl3)</code></pre><img src="tutorial-discretisation-012bfcd7.svg" alt="Example block output"/><h2 id="Large-problems-and-AD-backend"><a class="docs-heading-anchor" href="#Large-problems-and-AD-backend">Large problems and AD backend</a><a id="Large-problems-and-AD-backend-1"></a><a class="docs-heading-anchor-permalink" href="#Large-problems-and-AD-backend" title="Permalink"></a></h2><p>For some large problems, you may notice that solving spends a long time before the iterations actually begin. This is due to the computing of the sparse derivatives, namely the Jacobian of the constraints and the Hessian of the Lagrangian, that can become quite costly. A possible alternative is to set the option <code>adnlp_backend=:manual</code>, which will use more basic sparsity patterns. The resulting matrices are faster to compute but are also less sparse, so this is a trade-off bewteen the AD preparation and the optimization itself.</p><pre><code class="language-julia hljs">solve(ocp, disc_method=:gauss_legendre_3, grid_size=1000, adnlp_backend=:manual)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">This is Ipopt version 3.14.17, running with linear solver MUMPS 5.7.3.
+
+Number of nonzeros in equality constraint Jacobian...:   174028
+Number of nonzeros in inequality constraint Jacobian.:        0
+Number of nonzeros in Lagrangian Hessian.............:   104024
+
+Total number of variables............................:    13005
+                     variables with only lower bounds:     1001
+                variables with lower and upper bounds:     2002
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:    12004
+Total number of inequality constraints...............:        0
+        inequality constraints with only lower bounds:        0
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:        0
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+   0 -1.0100000e+00 2.22e+00 2.00e+00   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
+   1 -1.0359529e+00 2.61e+00 2.26e+04  -1.0 6.29e+00    -  1.26e-01 9.81e-01f  1
+   2 -1.0421903e+00 2.59e+00 2.25e+04   0.5 1.60e+02    -  1.00e+00 5.66e-03f  1
+   3 -1.0582140e+00 2.39e+00 1.93e+05   1.6 2.27e+01    -  1.00e+00 7.95e-02f  1
+   4 -1.0294143e+00 1.38e+00 5.24e+05   2.3 1.01e+01    -  1.00e+00 6.06e-01h  1
+   5 -1.0170778e+00 6.49e-01 1.29e+06   2.3 4.79e+00    -  5.59e-01 9.71e-01h  1
+   6 -1.0090667e+00 1.21e-01 8.34e+05   2.3 1.72e+00    -  1.00e+00 9.90e-01h  1
+   7 -1.0088579e+00 6.71e-03 2.61e+05   1.4 5.76e-01    -  1.00e+00 1.00e+00f  1
+   8 -1.0088710e+00 1.29e-05 3.03e+02  -0.3 3.20e-02    -  1.00e+00 1.00e+00f  1
+   9 -1.0088630e+00 2.91e-06 3.53e+00  -2.0 2.66e-02    -  1.00e+00 1.00e+00f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  10 -1.0088611e+00 3.76e-07 1.72e-02  -4.1 9.41e-03    -  1.00e+00 1.00e+00h  1
+  11 -1.0089761e+00 1.14e-04 1.05e-02  -5.7 5.87e-02    -  1.00e+00 1.00e+00h  1
+  12 -1.0112880e+00 6.61e-02 2.84e+01  -6.3 1.20e+00    -  1.00e+00 8.23e-01h  1
+  13 -1.0122362e+00 2.38e-02 2.37e+00  -6.4 8.46e-01    -  1.00e+00 9.42e-01h  1
+  14 -1.0124428e+00 5.32e-03 2.72e-05  -6.8 6.25e-01    -  1.00e+00 1.00e+00h  1
+  15 -1.0125348e+00 3.20e-03 2.57e+00  -7.6 5.69e-01    -  1.00e+00 7.97e-01h  1
+  16 -1.0125662e+00 2.80e-03 1.09e-01  -7.9 6.43e-01    -  1.00e+00 9.71e-01h  1
+  17 -1.0125732e+00 9.79e-04 1.61e-02  -8.4 5.34e-01    -  1.00e+00 9.83e-01h  1
+  18 -1.0125757e+00 5.41e-04 3.24e-03  -9.1 6.09e-01    -  1.00e+00 9.90e-01h  1
+  19 -1.0125752e+00 6.08e-05 5.69e-08  -8.9 5.89e-01    -  1.00e+00 1.00e+00h  1
+
+Number of Iterations....: 19
+
+                                   (scaled)                 (unscaled)
+Objective...............:  -1.0125752405719328e+00   -1.0125752405719328e+00
+Dual infeasibility......:   5.6884035624551104e-08    5.6884035624551104e-08
+Constraint violation....:   6.8163530375642267e-09    6.0821078073036709e-05
+Variable bound violation:   3.6204831538217627e-34    3.6204831538217627e-34
+Complementarity.........:   1.8623473996684293e-09    1.8623473996684293e-09
+Overall NLP error.......:   5.6884035624551104e-08    6.0821078073036709e-05
+
+
+Number of objective function evaluations             = 20
+Number of objective gradient evaluations             = 20
+Number of equality constraint evaluations            = 20
+Number of inequality constraint evaluations          = 0
+Number of equality constraint Jacobian evaluations   = 20
+Number of inequality constraint Jacobian evaluations = 0
+Number of Lagrangian Hessian evaluations             = 19
+Total seconds in IPOPT                               = 7.790
+
+EXIT: Optimal Solution Found.</code></pre><h2 id="Explicit-time-grid"><a class="docs-heading-anchor" href="#Explicit-time-grid">Explicit time grid</a><a id="Explicit-time-grid-1"></a><a class="docs-heading-anchor-permalink" href="#Explicit-time-grid" title="Permalink"></a></h2><p>The option <code>time_grid=...</code> allows to pass the complete time grid vector <code>t0, t1, ..., tf</code>, which is typically useful if one wants a non uniform grid.  In the case of a free initial and/or final time, provide a normalised grid between 0 and 1.  Note that <code>time_grid</code> will override <code>grid_size</code> if both are present.</p><pre><code class="language-julia hljs">sol = solve(ocp, time_grid=[0, 0.1, 0.5, 0.9, 1], display=false)
+println(time_grid(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">[0.0, 0.016495556123488363, 0.0824777806174418, 0.14846000511139526, 0.1649555612348836]</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.1 on <span class="colophon-date" title="Thursday 27 February 2025 11:56">Thursday 27 February 2025</span>. Using Julia version 1.11.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
