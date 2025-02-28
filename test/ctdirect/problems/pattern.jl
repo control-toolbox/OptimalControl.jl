@@ -11,5 +11,5 @@ function pattern()
         ∫(u(t)^2 + x(t)^2 + v^2) → min
     end
 
-    return ((ocp = ocp, obj = nothing, name = "pattern", init = nothing))
+    return ((ocp=ocp, obj=nothing, name="pattern", init=nothing))
 end

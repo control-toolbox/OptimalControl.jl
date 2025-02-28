@@ -1,5 +1,4 @@
 function test_goddard_indirect()
-
     ocp, obj = Goddard()
 
     # parameters

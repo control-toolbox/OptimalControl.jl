@@ -7,7 +7,7 @@ end
 
 @testset verbose = true showtiming = true ":min_tf :mayer" begin
     prob = double_integrator_mintf()
-    sol = direct_solve(prob.ocp, display = false)
+    sol = direct_solve(prob.ocp; display=false)
     @test sol.objective ≈ prob.obj rtol = 1e-2
 end
 
@@ -23,7 +23,7 @@ end
 # max t0 (free t0 and tf)
 @testset verbose = true showtiming = true ":max_t0" begin
     prob = double_integrator_freet0tf()
-    sol = direct_solve(prob.ocp, display = false)
+    sol = direct_solve(prob.ocp; display=false)
     @test sol.objective ≈ prob.obj rtol = 1e-2
 end
 
@@ -33,7 +33,7 @@ if !isdefined(Main, :bolza_freetf)
 end
 prob = bolza_freetf()
 @testset verbose = true showtiming = true ":bolza :tf_in_dyn_and_cost" begin
-    sol = direct_solve(prob.ocp, display = false)
+    sol = direct_solve(prob.ocp; display=false)
     @test sol.objective ≈ prob.obj rtol = 1e-2
 end
 
