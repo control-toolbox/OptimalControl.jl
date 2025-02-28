@@ -22,5 +22,5 @@ function parametric(ρ)
         -(x₂(1) - 2)^3 - ∫(ρ * (τ * m(x₁(s))^2 + (T - τ) * m(x₂(s))^2)) → min
     end
 
-    return ((ocp = param, obj = nothing, name = "parametric", init = nothing))
+    return ((ocp=param, obj=nothing, name="parametric", init=nothing))
 end
