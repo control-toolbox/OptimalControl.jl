@@ -17,56 +17,44 @@ using DocStringExtensions
 # include core modules
 using CTBase
 using CTDirect
-using CTFlows
+#using CTFlows
+using CTModels
+using CTParser
 
 # extend
 import CommonSolve: solve, CommonSolve
 
-# declarations
-const __display = CTBase.__display
-const __ocp_init = CTBase.__ocp_init
-
+#
 include("solve.jl")
 
 # export functions only for user
 export solve
 export available_methods
 
+# CTBase
+export ParsingError
+
 # CTFlows
-export VectorField
-export Hamiltonian
-export HamiltonianLift
-export HamiltonianVectorField
-export Flow
-export *
+#export VectorField
+#export Hamiltonian
+#export HamiltonianLift
+#export HamiltonianVectorField
+#export Flow
+#export *
 
 # CTDirect
 export direct_transcription
 export set_initial_guess
-export save
-export load
+
+# CTModels: warning, the functions below are not exported by CTModels
 export export_ocp_solution
 export import_ocp_solution
-
-# CTBase
-export OptimalControlModel, OptimalControlSolution
-export Autonomous, NonAutonomous
-export NonFixed, Fixed
-export Model, __OCPModel
-export variable!,
-    time!, constraint!, dynamics!, objective!, state!, control!, remove_constraint!
+export Model
 export constraint
 export time_grid, control, state, variable, costate, objective
 export iterations, stopping, message, infos
-export Lie, @Lie, Poisson, Lift, ⋅, ∂ₜ
-export @def
-export ct_repl, ct_repl_update_model
-export ParsingError
 
-# repl
-function __init__()
-    isdefined(Base, :active_repl) && ct_repl()
-    return nothing
-end
+# CTParser
+export @def
 
 end
