@@ -60,7 +60,7 @@ makedocs(;
                 "CTFlows.jl" => "dev-ctflows.md",
             ],
         ],
-        "JuliaCon 2024" => "juliacon2024.md",
+        "Zhejiang 2025" => "zhejiang-2025.md",
     ],
 )
 
