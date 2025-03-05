@@ -4,7 +4,7 @@
 
 # Solving optimal control problems in Julia: the OptimalControl.jl package
 
-### [Jean-Baptiste Caillau](http://caillau.perso.math.cnrs.fr), [Olivier Cots](https://ocots.github.io), [Joseph Gergaud](https://www.uni.lu/snt-en/people/alesia-herasimenka), [Pierre Martinon](https://github.com/PierreMartinon), [Sophia Sed](https://sed-sam-blog.gitlabpages.inria.fr)
+### [Jean-Baptiste Caillau](http://caillau.perso.math.cnrs.fr), [Olivier Cots](https://ocots.github.io), [Joseph Gergaud](https://github.com/joseph-gergaud), [Pierre Martinon](https://github.com/PierreMartinon), [Sophia Sed](https://sed-sam-blog.gitlabpages.inria.fr)
 
 ```@raw html
 <img width="800" alt="affiliations" src="./assets/affil.jpg">
