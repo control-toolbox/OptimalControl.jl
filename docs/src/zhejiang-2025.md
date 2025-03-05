@@ -47,7 +47,7 @@ plus boundary, control and state constraints
 - ... and open to contributions! If you like the package, please give us a star ⭐️
 
 ```@raw html
-<a href="https://control-toolbox.org"><img width="800" alt="https://github.com/control-toolbox/OptimalControl.jl" src="./assets/star.jpg"></a>
+<a href="https://github.com/control-toolbox/OptimalControl.jl"><img width="800" alt="OptimalControl.jl" src="./assets/star.jpg"></a>
 ```
 
 ## control-toolbox.org
@@ -67,6 +67,12 @@ plus boundary, control and state constraints
 - [Ipopt.jl](https://github.com/jump-dev/Ipopt.jl)
 - [MadNLP.jl](https://github.com/MadNLP/MadNLP.jl)
 - [MLStyle.jl](https://thautwarm.github.io/MLStyle.jl)
+
+## Stand up for science 2025
+
+```@raw html
+<a href="https://standupforscience2025.org"><img width="100" alt="stand up for science 2025" src="./assets/standup.jpg"></a>
+```
 
 ## Acknowledgements
 
