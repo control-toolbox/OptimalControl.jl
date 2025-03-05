@@ -71,7 +71,7 @@ plus boundary, control and state constraints
 ## Stand up for science 2025
 
 ```@raw html
-<a href="https://standupforscience2025.org"><img width="100" alt="stand up for science 2025" src="./assets/standup.jpg"></a>
+<a href="https://standupforscience2025.org"><img width="200" alt="stand up for science 2025" src="./assets/standup.jpg"></a>
 ```
 
 ## Acknowledgements
@@ -79,5 +79,5 @@ plus boundary, control and state constraints
 Jean-Baptiste Caillau is partially funded by a **France 2030** support managed by the *Agence Nationale de la Recherche*, under the reference ANR-23-PEIA-0004 ([PDE-AI](https://pde-ai.math.cnrs.fr) project).
 
 ```@raw html
-<img width="200" alt="affiliations" src="./assets/france-2030.png">
+<img width="150" alt="affiliations" src="./assets/france-2030.png">
 ```
