@@ -6,7 +6,7 @@ if !isdefined(Main, :beam)
 end
 @testset verbose = true showtiming = true ":beam" begin
     prob = beam()
-    sol = direct_solve(prob.ocp, display = false)
+    sol = solve(prob.ocp, display = false)
     @test sol.objective ≈ prob.obj rtol = 1e-2
 end
 
@@ -16,7 +16,7 @@ if !isdefined(Main, :double_integrator_mintf)
 end
 @testset verbose = true showtiming = true ":double_integrator :min_tf" begin
     prob = double_integrator_mintf()
-    sol = direct_solve(prob.ocp, display = false)
+    sol = solve(prob.ocp, display = false)
     @test sol.objective ≈ prob.obj rtol = 1e-2
 end
 
@@ -26,7 +26,7 @@ if !isdefined(Main, :fuller)
 end
 @testset verbose = true showtiming = true ":fuller" begin
     prob = fuller()
-    sol = direct_solve(prob.ocp, display = false)
+    sol = solve(prob.ocp, display = false)
     @test sol.objective ≈ prob.obj rtol = 1e-2
 end
 
@@ -36,7 +36,7 @@ if !isdefined(Main, :goddard)
 end
 @testset verbose = true showtiming = true ":goddard :max_rf" begin
     prob = goddard()
-    sol = direct_solve(prob.ocp, display = false)
+    sol = solve(prob.ocp, display = false)
     @test sol.objective ≈ prob.obj rtol = 1e-2
 end
 
@@ -46,7 +46,7 @@ if !isdefined(Main, :jackson)
 end
 @testset verbose = true showtiming = true ":jackson" begin
     prob = jackson()
-    sol = direct_solve(prob.ocp, display = false)
+    sol = solve(prob.ocp, display = false)
     @test sol.objective ≈ prob.obj rtol = 1e-2
 end
 
@@ -56,7 +56,7 @@ if !isdefined(Main, :robbins)
 end
 @testset verbose = true showtiming = true ":robbins" begin
     prob = robbins()
-    sol = direct_solve(prob.ocp, display = false)
+    sol = solve(prob.ocp, display = false)
     @test sol.objective ≈ prob.obj rtol = 1e-2
 end
 
@@ -66,7 +66,7 @@ if !isdefined(Main, :simple_integrator)
 end
 @testset verbose = true showtiming = true ":simple_integrator" begin
     prob = simple_integrator()
-    sol = direct_solve(prob.ocp, display = false)
+    sol = solve(prob.ocp, display = false)
     @test sol.objective ≈ prob.obj rtol = 1e-2
 end
 
@@ -76,6 +76,6 @@ if !isdefined(Main, :vanderpol)
 end
 @testset verbose = true showtiming = true ":vanderpol" begin
     prob = vanderpol()
-    sol = direct_solve(prob.ocp, display = false)
+    sol = solve(prob.ocp, display = false)
     @test sol.objective ≈ prob.obj rtol = 1e-2
 end

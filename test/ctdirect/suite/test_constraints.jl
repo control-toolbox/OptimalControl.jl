@@ -12,14 +12,14 @@ if !check_constraint_mult
     # box constraints
     @testset verbose = true showtiming = true ":goddard :box_constraints" begin
         prob = goddard()
-        sol = direct_solve(prob.ocp, display = false)
+        sol = solve(prob.ocp, display = false)
         @test sol.objective ≈ prob.obj rtol = 1e-2
     end
 
     # all constraints
     @testset verbose = true showtiming = true ":goddard :all_constraints" begin
         prob = goddard_all()
-        sol = direct_solve(prob.ocp, display = false, init = prob.init)
+        sol = solve(prob.ocp, display = false, init = prob.init)
         @test sol.objective ≈ prob.obj rtol = 1e-2
     end
 
@@ -31,7 +31,7 @@ else
     pyplot()
 
     ocp = goddard_all()
-    sol = direct_solve(ocp.ocp, display = false, init = ocp.init)
+    sol = solve(ocp.ocp, display = false, init = ocp.init)
 
     # plot state, control and costate
     psol = plot(sol)

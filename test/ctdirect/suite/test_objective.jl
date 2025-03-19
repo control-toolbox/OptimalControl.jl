@@ -7,7 +7,7 @@ end
 
 @testset verbose = true showtiming = true ":min_tf :mayer" begin
     prob = double_integrator_mintf()
-    sol = direct_solve(prob.ocp, display = false)
+    sol = solve(prob.ocp, display = false)
     @test sol.objective ≈ prob.obj rtol = 1e-2
 end
 
@@ -15,7 +15,7 @@ end
 # max t0 (free t0 and tf)
 @testset verbose = true showtiming = true ":max_t0" begin
     prob = double_integrator_freet0tf()
-    sol = direct_solve(prob.ocp, display = false)
+    sol = solve(prob.ocp, display = false)
     @test sol.objective ≈ prob.obj rtol = 1e-2
 end
 
@@ -25,7 +25,7 @@ if !isdefined(Main, :bolza_freetf)
 end
 prob = bolza_freetf()
 @testset verbose = true showtiming = true ":bolza :tf_in_dyn_and_cost" begin
-    sol = direct_solve(prob.ocp, display = false)
+    sol = solve(prob.ocp, display = false)
     @test sol.objective ≈ prob.obj rtol = 1e-2
 end
 
@@ -43,7 +43,7 @@ end
     (t0^2 + tf) + 0.5∫(u(t)^2) → min
 end
 @testset verbose = true showtiming = true ":bolza :t0_tf_in_dyn_and_cost" begin
-    sol = direct_solve(ocp, print_level=5)
+    sol = solve(ocp, print_level=5)
     @test sol.variable[1] ≈ 1.107 rtol=1e-2
 end
 
@@ -57,5 +57,5 @@ end
     y[1](1) == 0
     ∫(u(s)^2) → min
 end
-sol = direct_solve(ocp2)
+sol = solve(ocp2)
 =#
