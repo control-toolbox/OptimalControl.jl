@@ -63,6 +63,12 @@ plot(sol_trapeze)
 sol_midpoint = solve(ocp, disc_method=:midpoint; tol=1e-8)
 plot!(sol_midpoint)
 
+sol_euler = solve(ocp, disc_method=:euler; tol=1e-8)
+plot!(sol_euler)
+
+sol_euler_imp = solve(ocp, disc_method=:euler_implicit; tol=1e-8)
+plot!(sol_euler_imp)
+
 sol_gl2 = solve(ocp, disc_method=:gauss_legendre_2; tol=1e-8)
 plot!(sol_gl2)
 

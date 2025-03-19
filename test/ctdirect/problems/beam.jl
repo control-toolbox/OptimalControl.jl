@@ -27,8 +27,8 @@ function beam()
     return ((ocp = ocp, obj = 8.898598, name = "beam", init = nothing))
 end
 
-#=
-function beam()
+
+function beam2()
     @def beam begin
         t ∈ [0, 1], time
         x ∈ R², state
@@ -43,4 +43,3 @@ function beam()
 
     return ((ocp = beam, obj = 8.898598, name = "beam", init = nothing))
 end
-=#

@@ -93,6 +93,6 @@ function CommonSolve.solve(
 
     # solve the problem
     if :direct ∈ method
-        return CTDirect.direct_solve(ocp, clean(description)...; kwargs...)
+        return CTDirect.solve(ocp, clean(description)...; kwargs...)
     end
 end
