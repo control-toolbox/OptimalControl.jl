@@ -1,5 +1,5 @@
 # Insurance (non audit) example from Bocop
-function insurance()
+#=function insurance()
     @def insurance begin
 
         # constants
@@ -53,5 +53,5 @@ function insurance()
         ∫(U(t) * fx) → max
     end
 
-    return ((ocp=insurance, obj=2.059511, name="insurance", init=nothing))
-end
+    return ((ocp = insurance, obj = 2.059511, name = "insurance", init = nothing))
+end=#

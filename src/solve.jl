@@ -7,7 +7,7 @@ function available_methods()
     # by order of preference: from top to bottom
     methods = ()
     for method in CTDirect.available_methods()
-        methods = add(methods, (:direct, method...))
+        methods = CTBase.add(methods, (:direct, method...))
     end
     return methods
 end
@@ -23,8 +23,8 @@ Then, the description is cleaned by the function `clean` to remove the Symbols t
 For instance, the Symbol `:direct` is specific to [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) and must be removed.
 It must not be passed to the CTDirect.jl solver.
 """
-function clean(d::Description)
-    return remove(d, (:direct,))
+function clean(d::CTBase.Description)
+    return CTBase.remove(d, (:direct,))
 end
 
 """
@@ -85,11 +85,11 @@ julia> sol = solve(ocp, init=(state=[-0.5, 0.2], control=0.5))
 
 """
 function CommonSolve.solve(
-    ocp::OptimalControlModel, description::Symbol...; kwargs...
-)::OptimalControlSolution
+    ocp::CTModels.Model, description::Symbol...; kwargs...
+)::CTModels.Solution
 
     # get the full description
-    method = getFullDescription(description, available_methods())
+    method = CTBase.getFullDescription(description, available_methods())
 
     # solve the problem
     if :direct ∈ method

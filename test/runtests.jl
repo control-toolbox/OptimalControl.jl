@@ -6,7 +6,8 @@ using SciMLBase
 using NonlinearSolve
 using OrdinaryDiffEq
 
-using CTDirect
+using CTDirect # remove ?
+using CTModels # +++ required for now to use def macro ...
 using NLPModelsIpopt
 using MadNLP
 using SplitApplyCombine # for flatten in some tests
