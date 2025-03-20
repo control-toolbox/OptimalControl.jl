@@ -17,7 +17,7 @@ if test1
             ocp = double_integrator_minenergy(T).ocp
             sol = solve(ocp, display = false, init = init, grid_size=100)
             init = sol
-            push!(obj_list, CTModels.objective(sol))
+            push!(obj_list, objective(sol))
         end
         @test obj_list ≈ [12, 1.5, 0.44, 0.19, 0.096] rtol = 1e-2
     end
@@ -36,7 +36,7 @@ if test2
             ocp = parametric(ρ).ocp
             sol = solve(ocp, display = false, init = init)
             init = sol
-            push!(obj_list, CTModels.objective(sol))
+            push!(obj_list, objective(sol))
         end
         @test obj_list ≈ [-0.034, -1.67, -6.2, -35, -148] rtol = 1e-2
     end
@@ -56,7 +56,7 @@ if test3
         for Tmax = 3.5:-0.5:1
             sol = solve(goddard(Tmax = Tmax).ocp, display = false, init = sol)
             push!(Tmax_list, Tmax)
-            push!(obj_list, CTModels.objective(sol))
+            push!(obj_list, objective(sol))
         end
         @test obj_list ≈ [1.0125, 1.0124, 1.0120, 1.0112, 1.0092, 1.0036] rtol = 1e-2
 

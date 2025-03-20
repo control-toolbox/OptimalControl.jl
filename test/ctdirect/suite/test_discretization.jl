@@ -14,13 +14,13 @@ sol0 = solve(ocp, display = false)
 @testset verbose = true showtiming = true ":explicit_grid" begin
     time_grid = LinRange(0, 1, N + 1)
     sol = solve(ocp, time_grid = time_grid, display = false)
-    @test (CTModels.objective(sol) == CTModels.objective(sol0)) && (CTModels.iterations(sol) == CTModels.iterations(sol0))
+    @test (objective(sol) == objective(sol0)) && (iterations(sol) == iterations(sol0))
 end
 
 @testset verbose = true showtiming = true ":non_uniform_grid" begin
     time_grid = [0, 0.1, 0.3, 0.6, 0.98, 0.99, 1]
     sol = solve(ocp, time_grid = time_grid, display = false)
-    @test CTModels.time_grid(sol) ≈ time_grid
+    @test time_grid(sol) ≈ time_grid
 end
 
 # 2. integrator free times
@@ -32,13 +32,13 @@ sol0 = solve(ocp, display = false)
 
 @testset verbose = true showtiming = true ":explicit_grid" begin
     sol = solve(ocp, time_grid = LinRange(0, 1, N + 1), display = false)
-    @test (CTModels.objective(sol) == CTModels.objective(sol0)) && (CTModels.iterations(sol) == CTModels.iterations(sol0))
+    @test (objective(sol) == objective(sol0)) && (iterations(sol) == iterations(sol0))
 end
 
 @testset verbose = true showtiming = true ":max_t0 :non_uniform_grid" begin
     time_grid = [0, 0.1, 0.6, 0.95, 1]
     sol = solve(ocp, time_grid = time_grid, display = false)
-    @test normalize_grid(CTModels.time_grid(sol)) ≈ time_grid
+    @test normalize_grid(time_grid(sol)) ≈ time_grid
 end
 
 # 3. double integrator min energy ocp (T=2) with explicit / non-uniform grid
@@ -50,13 +50,13 @@ sol0 = solve(ocp, display = false)
 
 @testset verbose = true showtiming = true ":explicit_grid" begin
     sol = solve(ocp, time_grid = LinRange(0, 1, N + 1), display = false)
-    @test (CTModels.objective(sol) == CTModels.objective(sol0)) && (CTModels.iterations(sol) == CTModels.iterations(sol0))
+    @test (objective(sol) == objective(sol0)) && (iterations(sol) == iterations(sol0))
 end
 
 @testset verbose = true showtiming = true ":non_uniform_grid" begin
     time_grid = [0, 0.3, 1, 1.9, 2]
     sol = solve(ocp, time_grid = time_grid, display = false)
-    @test CTModels.time_grid(sol) ≈ time_grid
+    @test time_grid(sol) ≈ time_grid
 end
 
 # discretization methods
@@ -67,42 +67,42 @@ end
 @testset verbose = true showtiming = true ":simple_integrator :disc_method" begin
     prob = simple_integrator()
     sol = solve(prob.ocp, display = false, disc_method = :trapeze)
-    @test CTModels.objective(sol) ≈ prob.obj rtol = 1e-2
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :midpoint)
-    @test CTModels.objective(sol) ≈ prob.obj rtol = 1e-2
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :gauss_legendre_1)
-    @test CTModels.objective(sol) ≈ prob.obj rtol = 1e-2
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :gauss_legendre_2)
-    @test CTModels.objective(sol) ≈ prob.obj rtol = 1e-2
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :gauss_legendre_3)
-    @test CTModels.objective(sol) ≈ prob.obj rtol = 1e-2 
+    @test objective(sol) ≈ prob.obj rtol = 1e-2 
 end
 
 @testset verbose = true showtiming = true ":double_integrator :disc_method" begin
     prob = double_integrator_freet0tf()
     sol = solve(prob.ocp, display = false, disc_method = :trapeze)
-    @test CTModels.objective(sol) ≈ prob.obj rtol = 1e-2
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :midpoint)
-    @test CTModels.objective(sol) ≈ prob.obj rtol = 1e-2
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :gauss_legendre_1)
-    @test CTModels.objective(sol) ≈ prob.obj rtol = 1e-2
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :gauss_legendre_2)
-    @test CTModels.objective(sol) ≈ prob.obj rtol = 1e-2
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :gauss_legendre_3)
-    @test CTModels.objective(sol) ≈ prob.obj rtol = 1e-2  
+    @test objective(sol) ≈ prob.obj rtol = 1e-2  
 end
 
 @testset verbose = true showtiming = true ":goddard :disc_method" begin
     prob = goddard_all()
     sol = solve(prob.ocp, display = false, disc_method = :trapeze)
-    @test CTModels.objective(sol) ≈ prob.obj rtol = 1e-2
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :midpoint)
-    @test CTModels.objective(sol) ≈ prob.obj rtol = 1e-2
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :gauss_legendre_1)
-    @test CTModels.objective(sol) ≈ prob.obj rtol = 1e-2
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :gauss_legendre_2)
-    @test CTModels.objective(sol) ≈ prob.obj rtol = 1e-2
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :gauss_legendre_3)
-    @test CTModels.objective(sol) ≈ prob.obj rtol = 1e-2
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
 end
 
