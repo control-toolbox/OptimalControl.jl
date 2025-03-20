@@ -3,7 +3,7 @@ using CTParser
 using CTModels
 CTParser.set_prefix(:CTModels)
 
-@def beam begin
+beam = @def begin
         t ∈ [0, 1], time
         x ∈ R², state
         u ∈ R, control
