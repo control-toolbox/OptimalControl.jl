@@ -1,6 +1,7 @@
 # Microswimmer example from Bocop
 
 # +++ make 2 versions: 1 stroke periodic and free N strokes
+# +++ redo
 
 #=function swimmer(tf = 25)
     @def swimmer begin

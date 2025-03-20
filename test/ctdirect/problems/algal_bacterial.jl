@@ -1,5 +1,7 @@
 # Optimal control of an algal-bacterial consortium system. Original code from Rand Asswad.
 
+# +++ redo with abstract formulation
+
 function algal_bacterial()
 
     # parameters

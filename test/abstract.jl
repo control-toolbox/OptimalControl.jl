@@ -1,8 +1,9 @@
-# Beam example from bocop
-import CTModels.PreModel
+using OptimalControl
+using CTParser
+using CTModels
+CTParser.set_prefix(:CTModels)
 
-function beam()
-    @def beam begin
+@def beam begin
         t ∈ [0, 1], time
         x ∈ R², state
         u ∈ R, control
@@ -12,7 +13,4 @@ function beam()
         0 ≤ x₁(t) ≤ 0.1
         -10 ≤ u(t) ≤ 10
         ∫(u(t)^2) → min
-    end
-
-    return ((ocp = beam, obj = 8.898598, name = "beam", init = nothing))
 end

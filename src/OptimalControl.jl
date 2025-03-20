@@ -49,7 +49,7 @@ export set_initial_guess
 # CTModels: warning, the functions below are not exported by CTModels
 export export_ocp_solution
 export import_ocp_solution
-export Model
+export Model, PreModel
 export constraint
 export time_grid, control, state, variable, costate, objective
 export iterations, stopping, message, infos

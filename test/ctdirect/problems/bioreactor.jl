@@ -19,6 +19,8 @@ function light(time, halfperiod)
     return max(0, sin(tau))^2
 end
 
+# +++ redo
+
 # 1 day periodic problem
 #=function bioreactor_1day()
     @def bioreactor_1 begin
