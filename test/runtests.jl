@@ -6,7 +6,6 @@ using SciMLBase
 using NonlinearSolve
 using OrdinaryDiffEq
 
-using CTModels # +++ required for now to use functional definition
 using NLPModelsIpopt
 using MadNLP
 using SplitApplyCombine # for flatten in some tests
