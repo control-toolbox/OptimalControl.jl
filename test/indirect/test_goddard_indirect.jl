@@ -2,21 +2,20 @@ function test_goddard_indirect()
     ocp, obj = Goddard()
 
     # parameters
-    Cd = 310
-    Tmax = 3.5
-    β = 500
-    b = 2
-    t0 = 0
-    r0 = 1
-    v0 = 0
-    vmax = 0.1
-    m0 = 1
-    mf = 0.6
+    const Cd = 310
+    const Tmax = 3.5
+    const β = 500
+    const b = 2
+    const t0 = 0
+    const r0 = 1
+    const v0 = 0
+    const vmax = 0.1
+    const m0 = 1
+    const mf = 0.6
     x0 = [r0, v0, m0]
 
     #
-    remove_constraint!(ocp, :x_con_rmin)
-    g(x) = vmax - x[2] # g(x, u) ≥ 0 (cf. nonnegative multiplier)
+    g(x) = vmax - x[2] # todo: g(x, u) ≥ 0 (cf. nonnegative multiplier), could be retrieved from constraints
     final_mass_cons(xf) = xf[3] - mf
 
     function F0(x)

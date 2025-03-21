@@ -19,11 +19,8 @@ function Goddard()
         # variables
         tf ∈ R, variable
         t ∈ [t0, tf], time
-        x ∈ R³, state
+        x = (r, v, m) ∈ R³, state
         u ∈ R, control
-        r = x₁
-        v = x₂
-        m = x₃
 
         # constraints
         0 ≤ u(t) ≤ 1, (u_con)
