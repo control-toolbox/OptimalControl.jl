@@ -12,15 +12,14 @@ sol0 = solve(ocp, display = false)
 
 # solve with explicit and non uniform time grid
 @testset verbose = true showtiming = true ":explicit_grid" begin
-    time_grid = LinRange(0, 1, N + 1)
-    sol = solve(ocp, time_grid = time_grid, display = false)
+    sol = solve(ocp, time_grid = LinRange(0, 1, N + 1), display = false)
     @test (objective(sol) == objective(sol0)) && (iterations(sol) == iterations(sol0))
 end
 
 @testset verbose = true showtiming = true ":non_uniform_grid" begin
-    time_grid = [0, 0.1, 0.3, 0.6, 0.98, 0.99, 1]
-    sol = solve(ocp, time_grid = time_grid, display = false)
-    @test time_grid(sol) ≈ time_grid
+    grid = [0, 0.1, 0.3, 0.6, 0.98, 0.99, 1]
+    sol = solve(ocp, time_grid = grid, display = false)
+    @test time_grid(sol) ≈ grid
 end
 
 # 2. integrator free times
@@ -36,9 +35,9 @@ sol0 = solve(ocp, display = false)
 end
 
 @testset verbose = true showtiming = true ":max_t0 :non_uniform_grid" begin
-    time_grid = [0, 0.1, 0.6, 0.95, 1]
-    sol = solve(ocp, time_grid = time_grid, display = false)
-    @test normalize_grid(time_grid(sol)) ≈ time_grid
+    grid = [0, 0.1, 0.6, 0.95, 1]
+    sol = solve(ocp, time_grid = grid, display = false)
+    @test normalize_grid(time_grid(sol)) ≈ grid
 end
 
 # 3. double integrator min energy ocp (T=2) with explicit / non-uniform grid
@@ -54,9 +53,9 @@ sol0 = solve(ocp, display = false)
 end
 
 @testset verbose = true showtiming = true ":non_uniform_grid" begin
-    time_grid = [0, 0.3, 1, 1.9, 2]
-    sol = solve(ocp, time_grid = time_grid, display = false)
-    @test time_grid(sol) ≈ time_grid
+    grid = [0, 0.3, 1, 1.9, 2]
+    sol = solve(ocp, time_grid = grid, display = false)
+    @test time_grid(sol) ≈ grid
 end
 
 # discretization methods
@@ -70,7 +69,9 @@ end
     @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :midpoint)
     @test objective(sol) ≈ prob.obj rtol = 1e-2
-    sol = solve(prob.ocp, display = false, disc_method = :gauss_legendre_1)
+    sol = solve(prob.ocp, display = false, disc_method = :euler)
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
+    sol = solve(prob.ocp, display = false, disc_method = :euler_implicit)
     @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :gauss_legendre_2)
     @test objective(sol) ≈ prob.obj rtol = 1e-2
@@ -84,7 +85,9 @@ end
     @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :midpoint)
     @test objective(sol) ≈ prob.obj rtol = 1e-2
-    sol = solve(prob.ocp, display = false, disc_method = :gauss_legendre_1)
+    sol = solve(prob.ocp, display = false, disc_method = :euler)
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
+    sol = solve(prob.ocp, display = false, disc_method = :euler_implicit)
     @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :gauss_legendre_2)
     @test objective(sol) ≈ prob.obj rtol = 1e-2
@@ -98,11 +101,12 @@ end
     @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :midpoint)
     @test objective(sol) ≈ prob.obj rtol = 1e-2
-    sol = solve(prob.ocp, display = false, disc_method = :gauss_legendre_1)
+    sol = solve(prob.ocp, display = false, disc_method = :euler)
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
+    sol = solve(prob.ocp, display = false, disc_method = :euler_implicit)
     @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :gauss_legendre_2)
     @test objective(sol) ≈ prob.obj rtol = 1e-2
     sol = solve(prob.ocp, display = false, disc_method = :gauss_legendre_3)
     @test objective(sol) ≈ prob.obj rtol = 1e-2
 end
-

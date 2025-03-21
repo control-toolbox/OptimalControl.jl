@@ -2,6 +2,8 @@
 # free final time, fixed final mass, max altitude
 # constraint on max speed
 
+using CTModels # for functional definitions
+
 # aux functions
 # NB defining these inside the problem function does not seem to change the allocations
 function F0(x, Cd, beta)
@@ -67,7 +69,7 @@ function goddard_all()
     vmax = 0.1
     Tmax = 3.5
 
-    pre_ocp = CTModels.PreModel()
+    pre_ocp = PreModel()
     CTModels.state!(pre_ocp, 3)
     CTModels.control!(pre_ocp, 1)
     CTModels.variable!(pre_ocp, 1)
