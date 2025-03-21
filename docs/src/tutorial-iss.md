@@ -48,7 +48,7 @@ ocp = @def begin
 
     ∫( 0.5u(t)^2 ) → min
     
-end;
+end
 nothing # hide
 ```
 
