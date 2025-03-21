@@ -176,7 +176,7 @@ plot(t, norm∘u; label="‖u‖")
 ## Normalized time
 
 We consider a [LQR example](@ref) and solve the problem for different values of the final time `tf`.
-Then, we plot the solutions on the same figure considering a normalized time $s=(t-t_0)/(t_f-t_0)$, thanks to the keyword argument `time=:normalized` of the `plot` function.
+Then, we plot the solutions on the same figure considering a normalized time $s=(t-t_0)/(t_f-t_0)$, thanks to the keyword argument `time=:normalize` of the `plot` function.
 
 ```@example main
 
@@ -208,9 +208,9 @@ for tf ∈ tfs
 end
 
 # create plots
-plt = plot(solutions[1]; time=:normalized)
+plt = plot(solutions[1]; time=:normalize)
 for sol ∈ solutions[2:end]
-    plot!(plt, sol; time=:normalized)
+    plot!(plt, sol; time=:normalize)
 end
 
 # make a custom plot from created plots: only state and control are plotted
