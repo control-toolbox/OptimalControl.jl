@@ -8,7 +8,7 @@ end
 @testset verbose = true showtiming = true ":min_tf :mayer" begin
     prob = double_integrator_mintf()
     sol = solve(prob.ocp, display = false)
-    @test sol.objective ≈ prob.obj rtol = 1e-2
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
 end
 
 
@@ -16,7 +16,7 @@ end
 @testset verbose = true showtiming = true ":max_t0" begin
     prob = double_integrator_freet0tf()
     sol = solve(prob.ocp, display = false)
-    @test sol.objective ≈ prob.obj rtol = 1e-2
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
 end
 
 # bolza, non-autonomous mayer term, tf in dynamics
@@ -26,7 +26,7 @@ end
 prob = bolza_freetf()
 @testset verbose = true showtiming = true ":bolza :tf_in_dyn_and_cost" begin
     sol = solve(prob.ocp, display = false)
-    @test sol.objective ≈ prob.obj rtol = 1e-2
+    @test objective(sol) ≈ prob.obj rtol = 1e-2
 end
 
 #= +++retry with :default AD backend ?

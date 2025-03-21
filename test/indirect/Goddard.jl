@@ -15,18 +15,6 @@ function Goddard()
 
     # the model    
     @def ocp begin
-        # parameters
-        Cd = 310
-        Tmax = 3.5
-        β = 500
-        b = 2
-        t0 = 0
-        r0 = 1
-        v0 = 0
-        vmax = 0.1
-        m0 = 1
-        mf = 0.6
-        x0 = [r0, v0, m0]
 
         # variables
         tf ∈ R, variable

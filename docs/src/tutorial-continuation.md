@@ -51,7 +51,7 @@ for T=1:5
     ocp1 = ocp_T(T) 
     sol1 = solve(ocp1; display=false, init=init1)
     global init1 = sol1
-    @printf("T %.2f objective %9.6f iterations %d\n", T, sol1.objective, sol1.iterations)
+    @printf("T %.2f objective %9.6f iterations %d\n", T, objective(sol1), iterations(sol1))
 end
 ```
 

@@ -69,7 +69,7 @@ nothing # hide
 Then we can rebuild and plot an optimal control problem solution (note that the multipliers are optional, but the OCP costate will not be retrieved if the multipliers are not provided).
 
 ```@example main
-sol = OptimalControlSolution(docp; primal=nlp_sol.solution, dual=nlp_sol.multipliers)
+sol = build_OCP_solution(docp; primal=nlp_sol.solution, dual=nlp_sol.multipliers)
 plot(sol)
 ```
 ## Change the NLP solver
