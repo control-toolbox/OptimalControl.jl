@@ -33,8 +33,8 @@ import CTParser: CTParser, @def
 export @def
 
 # CTDirect
-import CTDirect: CTDirect, direct_transcription, set_initial_guess # debug: complete?
-export direct_transcription, set_initial_guess
+import CTDirect: CTDirect, direct_transcription, set_initial_guess, build_OCP_solution # debug: complete?
+export direct_transcription, set_initial_guess, build_OCP_solution
 
 # CTFlows
 import CTFlows: CTFlows, VectorField, Hamiltonian, HamiltonianLift, HamiltonianVectorField, Flow, ⋅, Lie, Poisson, @Lie # debug: complete?
