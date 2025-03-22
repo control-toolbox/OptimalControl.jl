@@ -15,43 +15,52 @@ While the syntax will be transparent to those users familiar with Julia expressi
 
 A variable (only one is allowed) is a finite dimensional vector or reals that will be *optimised* along with state and control values. To define an (almost empty!) optimal control problem, named `ocp`, having a dimension two variable named `v`, do the following:
 
-```@example main
+```julia
 using OptimalControl #hide
 @def begin
     v ∈ R², variable
+    ...
 end
 ```
 
+!!! caveat
+    Note that the full code of the definition above is not provided (hence the `...`) The same is true for most examples below (only those without
+    `...` are indeed complete). Also note that incomplete problem definitions, that is definitions *not* including at least time, state, control
+    declarations, dynamics and cost are *not* allowed.
+
+
 Aliases `v₁`, `v₂` (and `v1`, `v2`) are automatically defined and can be used in subsequent expressions instead of `v[1]` and `v[2]`. The user can also define her own aliases for the components (one alias per dimension):
 
-```@example main
+```julia
 @def begin
     v = (a, b) ∈ R², variable
+    ...
 end
 ```
 
 A one dimensional variable can be declared according to
 
-```@example main
+```julia
 @def begin
     v ∈ R, variable
+    ...
 end
 ```
 
 !!! note
     It is also possible to use the following syntax
-    ```@example main
+    ```julia
     @def ocp begin
         v ∈ R, variable
+        ...
     end
-    nothing # hide
     ```
     that is equivalent to
-    ```@example main
+    ```julia
     ocp = @def begin
         v ∈ R, variable
+        ...
     end
-    nothing # hide
     ```
 
 ## Time
@@ -62,20 +71,22 @@ end
 
 The independent variable or *time* is a scalar bound to a given interval. Its name is arbitrary.
 
-```@example main
+```julia
 t0 = 1
 tf = 5
 @def begin
     t ∈ [t0, tf], time
+    ...
 end
 ```
 
 One (or even the two bounds) can be variable, typically for minimum time problems (see [Mayer cost](#mayer) section):
 
-```@example main
+```julia
 @def begin
     v = (T, λ) ∈ R², variable
     t ∈ [0, T], time
+    ...
 end
 ```
 
@@ -88,17 +99,19 @@ end
 
 The state declaration defines the name and the dimension of the state:
 
-```@example main
+```julia
 @def begin
     x ∈ R⁴, state
+    ...
 end
 ```
 
 As for the variable, there are automatic aliases (`x₁` and `x1` for `x[1]`, *etc.*) and the user can define her own aliases (one per scalar component of the state):
 
-```@example main
+```julia
 @def begin
     x = (q₁, q₂, v₁, v₂) ∈ R⁴, state
+    ...
 end
 ```
 
@@ -111,17 +124,19 @@ end
 
 The control declaration defines the name and the dimension of the control:
 
-```@example main
+```julia
 @def begin
     u ∈ R², control
+    ...
 end
 ```
 
 As before, there are automatic aliases (`u₁` and `u1` for `u[1]`, *etc.*) and the user can define her own aliases (one per scalar component of the state):
 
-```@example main
+```julia
 @def begin
     u = (α, β) ∈ R², control
+    ...
 end
 ```
 
@@ -141,52 +156,53 @@ depending on whether it is autonomous / with a variable or not (the parser will 
 which entails that time, state and variable must be declared prior to dynamics - an error will be issued otherwise). The symbol `∂`, or the dotted state name
 (`ẋ`), or the keyword `derivative` can be used:
 
-```@example main
+```julia
 @def begin
     t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
     ∂(x)(t) == [x₂(t), u(t)]
+    ...
 end
-nothing # hide
 ```
 
 or
 
-```@example main
+```julia
 @def begin
     t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
     ẋ(t) == [x₂(t), u(t)]
+    ...
 end
-nothing # hide
 ```
 
 or
 
-```@example main
+```julia
 @def begin
     t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
     derivative(x)(t) == [x₂(t), u(t)]
+    ...
 end
 ```
 
 Any Julia code can be used, so the following is also OK: 
 
-```@example main
+```julia
 ocp = @def begin
     t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
     ẋ(t) == F₀(x(t)) + u(t) * F₁(x(t))
+    ...
 end
 
 F₀(x) = [x[2], 0]
 F₁(x) = [0, 1]
-nothing # hide
 ```
 
 !!! note
@@ -194,7 +210,7 @@ nothing # hide
 
 Currently, it is not possible to declare the dynamics component after component, but a simple workaround is to use *aliases* (check the relevant [aliases](#aliases) section below):
 
-```@example main
+```julia
 @def damped_integrator begin
     tf ∈ R, variable
     t ∈ [0, tf], time
@@ -203,6 +219,7 @@ Currently, it is not possible to declare the dynamics component after component,
     q̇ = v(t)
     v̇ = u(t) - c(t)
     ẋ(t) == [q̇, v̇]
+    ...
 end
 ```
 
@@ -229,7 +246,7 @@ In the example below, there are
 - one linear state constraint,
 - one (two-sided) nonlinear control constraint.
 
-```@example main
+```julia
 @def begin
     tf ∈ R, variable
     t ∈ [0, tf], time
@@ -241,13 +258,14 @@ In the example below, there are
     tf ≥ 0 
     x₂(t) ≤ 1
     u(t)^2 ≤ 1
+    ...
 end
 ```
 
 !!! note
     Symbols like `<=` or `>=` are also authorised:
 
-```@example main
+```julia
 @def begin
     tf ∈ R, variable
     t ∈ [0, tf], time
@@ -259,6 +277,7 @@ end
     tf >= 0 
     x₂(t) <= 1
     u(t)^2 <= 1
+    ...
 end
 ```
 
@@ -325,24 +344,25 @@ end
 
 Lagrange (integral) costs are defined used the symbol `∫`, *with parentheses*. The keyword `integral` can also be used:
 
-```@example main
+```julia
 @def begin
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
     u ∈ R, control
     0.5∫(q(t) + u(t)^2) → min
+    ...
 end
-nothing # hide
 ```
 
 or
 
-```@example main
+```julia
 @def begin
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
     u ∈ R, control
     0.5integrate(q(t) + u(t)^2) → min
+    ...
 end
 ```
 
@@ -376,37 +396,40 @@ As for the dynamics, the parser will detect whether the integrand depends or not
 
 Quite readily, Mayer and Lagrange costs can be combined into general Bolza costs. For instance as follows:
 
-```@example main
+```julia
 @def begin
     p = (t0, tf) ∈ R², variable
     t ∈ [t0, tf], time
     x = (q, v) ∈ R², state
     u ∈ R², control
     (tf - t0) + 0.5∫(c(t) * u(t)^2) → min
+    ...
 end
 ```
 
 !!! caveat
     The expression must be the sum of two terms (plus, possibly, a scalar factor before the integral), not *more*, so mind the parentheses. For instance, the following errors:
 
-```@repl main-repl
+```julia
 @def begin
     p = (t0, tf) ∈ R², variable
     t ∈ [t0, tf], time
     x = (q, v) ∈ R², state
     u ∈ R², control
     (tf - t0) + q(tf) + 0.5∫( c(t) * u(t)^2 ) → min
+    ...
 end
 ```
 
 The correct syntax is
-```@example main
+```julia
 @def begin
     p = (t0, tf) ∈ R², variable
     t ∈ [t0, tf], time
     x = (q, v) ∈ R², state
     u ∈ R², control
     ((tf - t0) + q(tf)) + 0.5∫( c(t) * u(t)^2 ) → min
+    ...
 end
 ```
 
@@ -418,7 +441,7 @@ end
 
 The single `=` symbol is used to define not a constraint but an alias, that is a purely syntactic replacement. There are some automatic aliases, *e.g.* `x₁` for `x[1]` if `x` is the state, and we have also seen that the user can define her own aliases when declaring the [variable](#variable), [state](#state) and [control](#control). Arbitrary aliases can be further defined, as below (compare with previous examples in the [dynamics](#dynamics) section):
 
-```@example main
+```julia
 @def begin
     t ∈ [0, 1], time
     x ∈ R², state
@@ -426,6 +449,7 @@ The single `=` symbol is used to define not a constraint but an alias, that is a
     F₀ = [x₂(t), 0]
     F₁ = [0, 1]
     ẋ(t) == F₀ + u(t) * F₁
+    ...
 end
 ```
 
@@ -467,7 +491,7 @@ end
 - Declarations (of variable - if any -, time, state and control) must be done first. Then, dynamics, constraints and cost can be introduced in an arbitrary order.
 - It is possible to provide numbers / labels (as in math equations) for the constraints to improve readability (this is mostly for future use, typically to retrieve the Lagrange multiplier associated with the discretisation of a given constraint):
 
-```@example main
+```julia
 @def damped_integrator begin
     tf ∈ R, variable
     t ∈ [0, tf], time
@@ -479,6 +503,7 @@ end
     v̇ = u(t) - c(t)
     ẋ(t) == [q̇, v̇]
     x(t).^2  ≤ [1, 2], (state_con) 
+    ...
 end
 ```
 
