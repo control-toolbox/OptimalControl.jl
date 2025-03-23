@@ -1,13 +1,11 @@
-using OptimalControl
 using Test
-
-using LinearAlgebra
-using SciMLBase
-using NonlinearSolve
-using OrdinaryDiffEq
-
+using OptimalControl
 using NLPModelsIpopt
-using MadNLP
+using LinearAlgebra
+using OrdinaryDiffEq
+using MINPACK
+using DifferentiationInterface
+import ForwardDiff
 using SplitApplyCombine # for flatten in some tests
 
 @testset verbose = true showtiming = true "Optimal control tests" begin

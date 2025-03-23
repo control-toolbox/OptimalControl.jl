@@ -13,7 +13,7 @@ const x0 = [r0, v0, m0]
 
 function Goddard()
 
-    # the model    
+    # model    
     ocp = @def ocp begin
 
         # variables
@@ -36,8 +36,6 @@ function Goddard()
         r(tf) → max
     end
 
-
-    #
     objective = 1.0125762700748699
 
     return ocp, objective
