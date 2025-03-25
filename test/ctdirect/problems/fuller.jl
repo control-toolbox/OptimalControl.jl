@@ -1,4 +1,5 @@
 # Fuller example
+
 function fuller()
     @def fuller begin
         t ∈ [0, 3.5], time

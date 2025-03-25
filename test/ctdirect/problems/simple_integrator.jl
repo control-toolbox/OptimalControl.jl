@@ -1,5 +1,6 @@
 # simple intergator
 # min enery, dual control
+
 function simple_integrator()
     @def ocp begin
         t ∈ [0, 1], time
