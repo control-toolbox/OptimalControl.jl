@@ -38,7 +38,6 @@ makedocs(;
             "Solve" => "tutorial-solve.md",
             "Plot a solution" => "tutorial-plot.md",
             "Flow" => "tutorial-flow.md",
-            "Control-toolbox REPL" => "tutorial-repl.md",
         ],
         "Tutorials" => [
             "tutorial-continuation.md",
