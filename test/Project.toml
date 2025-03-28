@@ -1,5 +1,4 @@
 [deps]
-CTDirect = "790bbbee-bee9-49ee-8912-a9de031322d5"
 CTModels = "34c4fa32-2049-4079-8329-de33c2a22e2d"
 DifferentiationInterface = "a0c0ee7d-e4b9-4e03-894e-1c5f64a51d63"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
@@ -11,7 +10,6 @@ SplitApplyCombine = "03a91e81-4c3e-53e1-a0a4-9c0c8f19dd66"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
-CTDirect = "0.14"
 NLPModelsIpopt = "0.10"
 OrdinaryDiffEq = "6"
 SplitApplyCombine = "1.2"
