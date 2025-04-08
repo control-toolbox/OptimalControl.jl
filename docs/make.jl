@@ -22,7 +22,7 @@ makedocs(;
     format=Documenter.HTML(;
         repolink="https://" * repo_url,
         prettyurls=false,
-        size_threshold_ignore=["api-ctbase/types.md", "tutorial-plot.md"],
+        size_threshold_ignore=["api-ctbase/types.md","dev-ctmodels.md", "tutorial-plot.md"],
         assets=[
             asset("https://control-toolbox.org/assets/css/documentation.css"),
             asset("https://control-toolbox.org/assets/js/documentation.js"),
