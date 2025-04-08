@@ -48,7 +48,7 @@ makedocs(;
             "Goddard: direct, indirect" => "tutorial-goddard.md",
             "tutorial-iss.md",
             "Linear–quadratic regulator" => "tutorial-lqr-basic.md",
-            "Minimal action" => "oc_mam.md",
+            "Minimal action" => "tutorial_mam.md",
         ],
         "Developers" => [
             "OptimalControl.jl" => "dev-optimalcontrol.md",
