@@ -270,62 +270,68 @@ the solution.
 </header>
 <section style="display: none;"><div><pre><code class="language-julia hljs">using Plots.PlotMeasures
 
-exp(p0; saveat=[]) = φ((t0, tf), x0, p0, saveat=saveat)
+function pretty_plot(S, p0; Np0=20, kwargs...) 
+ 
+    # times for wavefronts
+    times = range(t0, tf, length=3)
 
-function pretty_plot(S, p0; Np0=20, kwargs...)
+    # times for trajectories
+    tspan = range(t0, tf, length=100)
 
-    times = range(t0, tf, length=2)
-    p0_min = -0.5
-    p0_max = 2
-    p0_sol = p0
+    # interval of initial covector
+    p0_min = -0.5 
+    p0_max = 2 
 
+    # covector solution
+    p0_sol = p0 
+ 
     # plot of the flow in phase space
-    plt_flow = plot()
-    p0s = range(p0_min, p0_max, length=Np0)
-    for i ∈ eachindex(p0s)
-        sol = exp(p0s[i])
-        x = [state(sol)(t)   for t ∈ time_grid(sol)]
-        p = [costate(sol)(t) for t ∈ time_grid(sol)]
-        label = i==1 ? "extremals" : false
-        plot!(plt_flow, x, p, color=:blue, label=label)
-    end
-
-    # plot of wavefronts in phase space
-    p0s = range(p0_min, p0_max, length=200)
-    xs  = zeros(length(p0s), length(times))
-    ps  = zeros(length(p0s), length(times))
-    for i ∈ eachindex(p0s)
-        sol = exp(p0s[i], saveat=times)
-        xs[i, :] .= state(sol).(times)
-        ps[i, :] .= costate(sol).(times)
-    end
-    for j ∈ eachindex(times)
-        label = j==1 ? "flow at times" : false
-        plot!(plt_flow, xs[:, j], ps[:, j], color=:green, linewidth=2, label=label)
-    end
-
-    # 
-    plot!(plt_flow, xlims=(-1.1, 1), ylims=(p0_min, p0_max))
-    plot!(plt_flow, [0, 0], [p0_min, p0_max], color=:black, xlabel="x", ylabel="p", label="x=xf")
-    
-    # solution
-    sol = exp(p0_sol)
-    x = [state(sol)(t)   for t ∈ time_grid(sol)]
-    p = [costate(sol)(t) for t ∈ time_grid(sol)]
-    plot!(plt_flow, x, p, color=:red, linewidth=2, label="extremal solution")
-    plot!(plt_flow, [x[end]], [p[end]], seriestype=:scatter, color=:green, label=false)
-
-    # plot of the shooting function 
-    p0s = range(p0_min, p0_max, length=200)
-    plt_shoot = plot(xlims=(p0_min, p0_max), ylims=(-2, 4), xlabel="p₀", ylabel="y")
-    plot!(plt_shoot, p0s, S, linewidth=2, label="S(p₀)", color=:green)
-    plot!(plt_shoot, [p0_min, p0_max], [0, 0], color=:black, label="y=0")
-    plot!(plt_shoot, [p0_sol, p0_sol], [-2, 0], color=:black, label="p₀ solution", linestyle=:dash)
-    plot!(plt_shoot, [p0_sol], [0], seriestype=:scatter, color=:green, label=false)
-
-    # final plot
-    plot(plt_flow, plt_shoot; layout=(1,2), leftmargin=15px, bottommargin=15px, kwargs...)
-
+    plt_flow = plot() 
+    p0s = range(p0_min, p0_max, length=Np0) 
+    for i ∈ eachindex(p0s) 
+        sol = φ((t0, tf), x0, p0s[i])
+        x = state(sol).(tspan)
+        p = costate(sol).(tspan)
+        label = i==1 ? "extremals" : false 
+        plot!(plt_flow, x, p, color=:blue, label=label) 
+    end 
+ 
+    # plot of wavefronts in phase space 
+    p0s = range(p0_min, p0_max, length=200) 
+    xs  = zeros(length(p0s), length(times)) 
+    ps  = zeros(length(p0s), length(times)) 
+    for i ∈ eachindex(p0s) 
+        sol = φ((t0, tf), x0, p0s[i], saveat=times)
+        xs[i, :] .= state(sol).(times) 
+        ps[i, :] .= costate(sol).(times) 
+    end 
+    for j ∈ eachindex(times) 
+        label = j==1 ? "flow at times" : false 
+        plot!(plt_flow, xs[:, j], ps[:, j], color=:green, linewidth=2, label=label) 
+    end 
+ 
+    #  
+    plot!(plt_flow, xlims=(-1.1, 1), ylims=(p0_min, p0_max)) 
+    plot!(plt_flow, [0, 0], [p0_min, p0_max], color=:black, xlabel="x", ylabel="p", label="x=xf") 
+     
+    # solution 
+    sol = φ((t0, tf), x0, p0_sol)
+    x = state(sol).(tspan)
+    p = costate(sol).(tspan)
+    plot!(plt_flow, x, p, color=:red, linewidth=2, label="extremal solution") 
+    plot!(plt_flow, [x[end]], [p[end]], seriestype=:scatter, color=:green, label=false) 
+ 
+    # plot of the shooting function  
+    p0s = range(p0_min, p0_max, length=200) 
+    plt_shoot = plot(xlims=(p0_min, p0_max), ylims=(-2, 4), xlabel="p₀", ylabel="y") 
+    plot!(plt_shoot, p0s, S, linewidth=2, label="S(p₀)", color=:green) 
+    plot!(plt_shoot, [p0_min, p0_max], [0, 0], color=:black, label="y=0") 
+    plot!(plt_shoot, [p0_sol, p0_sol], [-2, 0], color=:black, label="p₀ solution", linestyle=:dash) 
+    plot!(plt_shoot, [p0_sol], [0], seriestype=:scatter, color=:green, label=false) 
+ 
+    # final plot 
+    plot(plt_flow, plt_shoot; layout=(1,2), leftmargin=15px, bottommargin=15px, kwargs...) 
+ 
 end</code><button class="copy-button fa-solid fa-copy" aria-label="Copy this code ;opblock" title="Copy"></button></pre></div>
 </section>
 </article>
@@ -333,22 +339,28 @@ end</code><button class="copy-button fa-solid fa-copy" aria-label="Copy this cod
 
 ```@example main
 using Plots.PlotMeasures # hide
-exp(p0; saveat=[]) = φ((t0, tf), x0, p0, saveat=saveat) # hide
- # hide
 function pretty_plot(S, p0; Np0=20, kwargs...) # hide
  # hide
-    times = range(t0, tf, length=2) # hide
+    # times for wavefronts# hide
+    times = range(t0, tf, length=3)# hide
+# hide
+    # times for trajectories# hide
+    tspan = range(t0, tf, length=100)# hide
+# hide
+    # interval of initial covector# hide
     p0_min = -0.5 # hide
     p0_max = 2 # hide
+# hide
+    # covector solution# hide
     p0_sol = p0 # hide
  # hide
-    # plot of the flow in phase space # hide
+    # plot of the flow in phase space# hide
     plt_flow = plot() # hide
     p0s = range(p0_min, p0_max, length=Np0) # hide
     for i ∈ eachindex(p0s) # hide
-        sol = exp(p0s[i]) # hide
-        x = [state(sol)(t)   for t ∈ time_grid(sol)] # hide
-        p = [costate(sol)(t) for t ∈ time_grid(sol)] # hide
+        sol = φ((t0, tf), x0, p0s[i])# hide
+        x = state(sol).(tspan)# hide
+        p = costate(sol).(tspan)# hide
         label = i==1 ? "extremals" : false # hide
         plot!(plt_flow, x, p, color=:blue, label=label) # hide
     end # hide
@@ -358,7 +370,7 @@ function pretty_plot(S, p0; Np0=20, kwargs...) # hide
     xs  = zeros(length(p0s), length(times)) # hide
     ps  = zeros(length(p0s), length(times)) # hide
     for i ∈ eachindex(p0s) # hide
-        sol = exp(p0s[i], saveat=times) # hide
+        sol = φ((t0, tf), x0, p0s[i], saveat=times)# hide
         xs[i, :] .= state(sol).(times) # hide
         ps[i, :] .= costate(sol).(times) # hide
     end # hide
@@ -372,9 +384,9 @@ function pretty_plot(S, p0; Np0=20, kwargs...) # hide
     plot!(plt_flow, [0, 0], [p0_min, p0_max], color=:black, xlabel="x", ylabel="p", label="x=xf") # hide
      # hide
     # solution # hide
-    sol = exp(p0_sol) # hide
-    x = [state(sol)(t)   for t ∈ time_grid(sol)] # hide
-    p = [costate(sol)(t) for t ∈ time_grid(sol)] # hide
+    sol = φ((t0, tf), x0, p0_sol)# hide
+    x = state(sol).(tspan)# hide
+    p = costate(sol).(tspan)# hide
     plot!(plt_flow, x, p, color=:red, linewidth=2, label="extremal solution") # hide
     plot!(plt_flow, [x[end]], [p[end]], seriestype=:scatter, color=:green, label=false) # hide
  # hide
@@ -389,7 +401,7 @@ function pretty_plot(S, p0; Np0=20, kwargs...) # hide
     # final plot # hide
     plot(plt_flow, plt_shoot; layout=(1,2), leftmargin=15px, bottommargin=15px, kwargs...) # hide
  # hide
-end # hide
+end# hide
 nothing # hide
 ```
 
