@@ -37,37 +37,9 @@ and other constraints such as
 \end{array}
 ```
 
-Let us define the following optimal control problem.
+Let us define the following optimal control problem in abstract form:
 
 ```@example main
-using OptimalControl
-
-ocp = Model()
-
-state!(ocp, 2, "x", ["r", "v"]) # dimension of the state with the names of the components
-control!(ocp, 1)           # dimension of the control
-time!(ocp, t0=0, tf=1, name="s")    # initial and final time, with the name of the variable time
-
-constraint!(ocp, :initial, lb=[-1, 0], ub=[-1, 0])
-constraint!(ocp, :final  , lb=[ 0, 0], ub=[ 0, 0])
-A = [ 0 1
-      0 0 ]
-B = [ 0
-      1 ]
-dynamics!(ocp, (x, u) -> A*x + B*u)
-
-objective!(ocp, :lagrange, (x, u) -> 0.5u^2)
-```
-
-Then, we can print the form of this optimal control problem:
-
-```@example main
-ocp
-```
-
-You can also define the optimal control problem in an abstract form:
-
-```@example main2
 using OptimalControl
 
 ocp = @def begin
@@ -88,6 +60,6 @@ nothing #hide
 
 Then, you can print this optimal control problem:
 
-```@example main2
+```@example main
 ocp
 ```

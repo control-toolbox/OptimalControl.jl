@@ -78,7 +78,7 @@ sol = solve(ocp(T); init=init, grid_size=50)
 sol = solve(ocp(T); init=sol, grid_size=1000)
 
 # Objective value
-sol.objective
+objective(sol)
 ```
 
 ## Visualizing Results
@@ -91,7 +91,7 @@ plot(sol)
 
 ```@example oc_mam
 # Phase space plot
-MLP = sol.state.(sol.time_grid)
+MLP = state(sol).(time_grid(sol))
 scatter(first.(MLP), last.(MLP), 
         title="Minimal Action Path",
         xlabel="u",
@@ -112,8 +112,8 @@ sol = solve(ocp(Ts[1]); display=false, init=init, grid_size=50)
 println(" Time   Objective     Iterations")
 for T=Ts
     global sol = solve(ocp(T); display=false, init=sol, grid_size=1000, tol=1e-8)
-    @printf("%6.2f  %9.6e  %d\n", T, sol.objective, sol.iterations)
-    push!(objectives, sol.objective)
+    @printf("%6.2f  %9.6e  %d\n", T, objective(sol), iterations(sol))
+    push!(objectives, objective(sol))
 end
 ```
 
