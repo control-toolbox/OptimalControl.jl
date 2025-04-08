@@ -1,4 +1,5 @@
 # Van der Pol example from Bocop
+
 function vanderpol()
     @def vanderpol begin
         # constants
@@ -15,4 +16,3 @@ function vanderpol()
 
     return ((ocp = vanderpol, obj = 1.047921, name = "vanderpol", init = nothing))
 end
-

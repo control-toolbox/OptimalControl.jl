@@ -1,4 +1,5 @@
 # Parametric problem (name ??)
+
 function parametric(ρ)
     relu(x) = max(0, x)
     μ = 10

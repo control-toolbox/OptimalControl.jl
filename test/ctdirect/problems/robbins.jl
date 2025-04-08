@@ -1,4 +1,5 @@
 # Robbins example from Bocop
+
 function robbins()
     @def robbins begin
         # constants

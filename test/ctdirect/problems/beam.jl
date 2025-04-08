@@ -1,5 +1,4 @@
 # Beam example from bocop
-import CTModels.PreModel
 
 function beam()
     @def beam begin

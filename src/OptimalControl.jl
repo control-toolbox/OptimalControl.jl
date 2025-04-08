@@ -33,12 +33,12 @@ import CTParser: CTParser, @def
 export @def
 
 # CTDirect
-import CTDirect: CTDirect, direct_transcription, set_initial_guess, build_OCP_solution # debug: complete?
+import CTDirect: CTDirect, direct_transcription, set_initial_guess, build_OCP_solution
 export direct_transcription, set_initial_guess, build_OCP_solution
 
 # CTFlows
-import CTFlows: CTFlows, VectorField, Hamiltonian, HamiltonianLift, HamiltonianVectorField, Flow, ⋅, Lie, Poisson, @Lie # debug: complete?
-export VectorField, Hamiltonian, HamiltonianLift, HamiltonianVectorField, Flow, ⋅, Lie, Poisson, @Lie
+import CTFlows: CTFlows, VectorField, Lift, Hamiltonian, HamiltonianLift, HamiltonianVectorField, Flow, ⋅, Lie, Poisson, @Lie, * # debug: complete?
+export VectorField, Lift, Hamiltonian, HamiltonianLift, HamiltonianVectorField, Flow, ⋅, Lie, Poisson, @Lie, *
 
 # CommonSolve
 import CommonSolve: CommonSolve, solve
