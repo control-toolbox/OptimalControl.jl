@@ -16,7 +16,6 @@ While the syntax will be transparent to those users familiar with Julia expressi
 A variable (only one is allowed) is a finite dimensional vector or reals that will be *optimised* along with state and control values. To define an (almost empty!) optimal control problem, named `ocp`, having a dimension two variable named `v`, do the following:
 
 ```julia
-using OptimalControl #hide
 @def begin
     v ∈ R², variable
     ...
@@ -24,9 +23,7 @@ end
 ```
 
 !!! caveat
-    Note that the full code of the definition above is not provided (hence the `...`) The same is true for most examples below (only those without
-    `...` are indeed complete). Also note that incomplete problem definitions, that is definitions *not* including at least time, state, control
-    declarations, dynamics and cost are *not* allowed.
+    Note that the full code of the definition above is not provided (hence the `...`) The same is true for most examples below (only those without `...` are indeed complete). Also note that problem definitions must at least include definitions for time, state, control, and dynamics.
 
 
 Aliases `v₁`, `v₂` (and `v1`, `v2`) are automatically defined and can be used in subsequent expressions instead of `v[1]` and `v[2]`. The user can also define her own aliases for the components (one alias per dimension):
@@ -312,7 +309,7 @@ end
 Mayer costs are defined in a similar way to boundary conditions and follow the same rules. The symbol `→` is used
 to denote minimisation or maximisation, the latter being treated by minimising the opposite cost. (The symbol `=>` can also be used.)
 
-```@example main
+```@repl main-repl
 @def begin
     tf ∈ R, variable
     t ∈ [0, tf], time
