@@ -53,9 +53,7 @@ ERROR: ExtensionError. Please make: julia> using NLPModelsIpopt
 
 See below for the NLP solver options.
 
-## Options
-
-### Methods
+## Resolution methods and algorithms
 
 OptimalControl.jl offers a list of methods to solve your optimal control problem. To get the list of methods, simply call `available_methods`.
 
@@ -107,7 +105,7 @@ solve(ocp, :direct,         :ipopt)
 solve(ocp, :direct, :adnlp, :ipopt)
 ```
 
-### Direct method
+## Direct method
 
 The options for the direct method are listed in the [`direct_solve`](@ref) keywords.
 The main options, with their [default values], are:
@@ -121,7 +119,7 @@ For examples of more advanced use, see
 - [NLP direct handling](@ref tutorial-nlp)
 
 
-### NLP solver specific options
+## NLP solver specific options
 
 In addition to these options, all remaining keyword arguments passed to `solve` will be transmitted to the NLP solver used.
 
@@ -136,4 +134,3 @@ Similarly, please check the [MadNLP.jl documentation](https://madnlp.github.io/M
 solve(ocp, :madnlp; max_iter=0)
 nothing # hide
 ```
-

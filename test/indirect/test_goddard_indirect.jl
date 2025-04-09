@@ -1,33 +1,8 @@
 function test_goddard_indirect()
+
     ocp, obj = Goddard()
-
-    # parameters
-    Cd = 310
-    Tmax = 3.5
-    β = 500
-    b = 2
-    t0 = 0
-    r0 = 1
-    v0 = 0
-    vmax = 0.1
-    m0 = 1
-    mf = 0.6
-    x0 = [r0, v0, m0]
-
-    #
     g(x) = vmax - x[2] # todo: g(x, u) ≥ 0 (cf. nonnegative multiplier), could be retrieved from constraints
     final_mass_cons(xf) = xf[3] - mf
-
-    function F0(x)
-        r, v, m = x
-        D = Cd * v^2 * exp(-β * (r - 1))
-        return [v, -D / m - 1 / r^2, 0]
-    end
-
-    function F1(x)
-        r, v, m = x
-        return [0, Tmax / m, -b * Tmax]
-    end
 
     # bang controls
     u0 = 0
@@ -42,9 +17,11 @@ function test_goddard_indirect()
     us(x, p) = -H001(x, p) / H101(x, p)
 
     # boundary control
+    #ub(x) = -(F0 ⋅ g)(x) / (F1 ⋅ g)(x)
     ub(x) = -Lie(F0, g)(x) / Lie(F1, g)(x)
-    μ(x, p) = H01(x, p) / Lie(F1, g)(x)
-
+    #μ(x, p) = H01(x, p) / (F1 ⋅ g)(x) 
+    μ(x, p) = H01(x, p) / Lie(F1, g)(x) 
+    
     # flows
     f0 = Flow(ocp, (x, p, v) -> u0)
     f1 = Flow(ocp, (x, p, v) -> u1)
@@ -86,25 +63,19 @@ function test_goddard_indirect()
     ]
     @test s ≈ s_guess_sol atol = 1e-6
 
-    #
+    # solve and compare
     ξ0 = [p0; t1; t2; t3; tf]
+    backend = AutoForwardDiff()
+    nle!  = ( s, ξ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
+    jnle! = (js, ξ) -> jacobian!(nle!, similar(ξ), js, backend, ξ)
+    indirect_sol = fsolve(nle!, jnle!, ξ0; show_trace=true)
 
-    #
-    foo!(s, ξ, λ) = shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
-    #sol = fsolve(foo!, ξ0, show_trace=true); println(sol)
-    prob = NonlinearProblem(foo!, ξ0)
-    #sol = NonlinearSolve.solve(prob)
-    sol = solve(prob)
-
-    p0 = sol.u[1:3]
-    t1 = sol.u[4]
-    t2 = sol.u[5]
-    t3 = sol.u[6]
-    tf = sol.u[7]
+    p0 = indirect_sol.x[1:3]
+    t1 = indirect_sol.x[4]
+    t2 = indirect_sol.x[5]
+    t3 = indirect_sol.x[6]
+    tf = indirect_sol.x[7]
 
     shoot!(s, p0, t1, t2, t3, tf)
-
-    #@test sol.converged
-    @test SciMLBase.successful_retcode(sol)
     @test norm(s) < 1e-6
 end

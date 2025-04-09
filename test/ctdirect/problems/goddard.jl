@@ -69,7 +69,7 @@ function goddard_all()
     vmax = 0.1
     Tmax = 3.5
 
-    pre_ocp = PreModel()
+    pre_ocp = CTModels.PreModel()
     CTModels.state!(pre_ocp, 3)
     CTModels.control!(pre_ocp, 1)
     CTModels.variable!(pre_ocp, 1)

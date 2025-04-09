@@ -29,18 +29,17 @@ nothing # hide
 The minimal action path minimizes the deviation from the deterministic dynamics:
 
 ```@example oc_mam
-mysqrt(x) = sqrt(x + 1e-1)
 function ocp(T)
-  action = @def begin
-      t ∈ [0, T], time
-      x ∈ R², state
-      u ∈ R², control
-      x(0) == [-1, 0]    # Starting point (left well)
-      x(T) == [1, 0]     # End point (right well)
-      ẋ(t) == u(t)       # Path dynamics
-      ∫( sum((u(t) - f(x(t))).^2) ) → min  # Minimize deviation from deterministic flow
-  end
-  return action
+    action = @def begin
+        t ∈ [0, T], time
+        x ∈ R², state
+        u ∈ R², control
+        x(0) == [-1, 0]    # Starting point (left well)
+        x(T) == [1, 0]     # End point (right well)
+        ẋ(t) == u(t)       # Path dynamics
+        ∫( sum((u(t) - f(x(t))).^2) ) → min  # Minimize deviation from deterministic flow
+    end
+    return action
 end
 nothing # hide
 ```
