@@ -22,7 +22,7 @@ Suppressor = "fd094767-a336-5f1f-9728-57cf17d0bbfb"
 
 [compat]
 BenchmarkTools = "1.6"
-CTBase = "0.14"
+CTBase = "0.16"
 CTDirect = "0.13"
 CTFlows = "0.7"
 CommonSolve = "0.2"
