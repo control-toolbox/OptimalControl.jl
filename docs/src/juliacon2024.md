@@ -24,7 +24,7 @@ subject to
 \dot{x}(t) = f(x(t), u(t)),\quad t \in [t_0, t_f]
 ```
 
-plus boundary, control and state constraints
+plus boundary conditions, control and state constraints
 
 - Our core interests: numerical & geometrical methods in control, applications
 

@@ -46,9 +46,9 @@ makedocs(;
             "Discrete continuation" => "tutorial-continuation.md",
             "NLP options" => "tutorial-nlp.md",
             "Goddard: direct, indirect" => "tutorial-goddard.md",
-            "tutorial-iss.md",
+            "Indirect simple shooting" => "tutorial-iss.md",
             "Linear–quadratic regulator" => "tutorial-lqr-basic.md",
-            "Minimal action" => "tutorial_mam.md",
+            "Minimal action" => "tutorial-mam.md",
         ],
         "Developers" => [
             "OptimalControl.jl" => "dev-optimalcontrol.md",
