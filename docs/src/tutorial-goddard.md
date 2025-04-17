@@ -303,20 +303,9 @@ nothing # hide
 
 Let us do some benchmarking. This will be useful to compare the performance with the MINPACK.jl package below.
 
-```@setup main
-function nlsolve(prob; kwargs...)
-    try
-        NonlinearSolve.solve(prob; kwargs...)
-    catch e
-        println("Error using NonlinearSolve")
-        println(e)
-    end
-end
-@benchmark nlsolve(prob; abstol=1e-8, reltol=1e-8, show_trace=Val(false))
-```
+!!! note
 
-For small nonlinear systems, it could be faster to use the 
-[`SimpleNewtonRaphson()` descent algorithm](https://docs.sciml.ai/NonlinearSolve/stable/tutorials/code_optimization/).
+    For small nonlinear systems, the [`SimpleNewtonRaphson()` descent algorithm](https://docs.sciml.ai/NonlinearSolve/stable/tutorials/code_optimization/) may be faster.
 
 ```@setup main
 function nlsolve(prob, meth; kwargs...)
