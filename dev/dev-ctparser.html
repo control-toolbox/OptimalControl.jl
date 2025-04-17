@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>CTParser.jl · OptimalControl.jl</title><meta name="title" content="CTParser.jl · OptimalControl.jl"/><meta property="og:title" content="CTParser.jl · OptimalControl.jl"/><meta property="twitter:title" content="CTParser.jl · OptimalControl.jl"/><meta name="description" content="Documentation for OptimalControl.jl."/><meta property="og:description" content="Documentation for OptimalControl.jl."/><meta property="twitter:description" content="Documentation for OptimalControl.jl."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script><link href="https://control-toolbox.org/assets/css/documentation.css" rel="stylesheet" type="text/css"/><script src="https://control-toolbox.org/assets/js/documentation.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="index.html">OptimalControl.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="index.html">Introduction</a></li><li><span class="tocitem">Basic examples</span><ul><li><a class="tocitem" href="tutorial-double-integrator-energy.html">Energy minimisation</a></li><li><a class="tocitem" href="tutorial-double-integrator-time.html">Time mininimisation</a></li></ul></li><li><span class="tocitem">Manual</span><ul><li><a class="tocitem" href="tutorial-abstract.html">Abstract syntax</a></li><li><a class="tocitem" href="tutorial-initial-guess.html">Initial guess</a></li><li><a class="tocitem" href="tutorial-solve.html">Solve</a></li><li><a class="tocitem" href="tutorial-plot.html">Plot a solution</a></li><li><a class="tocitem" href="tutorial-flow.html">Flow</a></li></ul></li><li><span class="tocitem">Tutorials</span><ul><li><a class="tocitem" href="tutorial-discretisation.html">Discretisation options</a></li><li><a class="tocitem" href="tutorial-continuation.html">Discrete continuation</a></li><li><a class="tocitem" href="tutorial-nlp.html">NLP options</a></li><li><a class="tocitem" href="tutorial-goddard.html">Goddard: direct, indirect</a></li><li><a class="tocitem" href="tutorial-iss.html">Indirect simple shooting</a></li><li><a class="tocitem" href="tutorial-lqr-basic.html">Linear–quadratic regulator</a></li><li><a class="tocitem" href="tutorial-mam.html">Minimal action</a></li></ul></li><li><span class="tocitem">Developers</span><ul><li><a class="tocitem" href="dev-optimalcontrol.html">OptimalControl.jl</a></li><li><input class="collapse-toggle" id="menuitem-5-2" type="checkbox" checked/><label class="tocitem" for="menuitem-5-2"><span class="docs-label">Subpackages</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="dev-ctbase.html">CTBase.jl</a></li><li><a class="tocitem" href="dev-ctdirect.html">CTDirect.jl</a></li><li><a class="tocitem" href="dev-ctflows.html">CTFlows.jl</a></li><li><a class="tocitem" href="dev-ctmodels.html">CTModels.jl</a></li><li class="is-active"><a class="tocitem" href="dev-ctparser.html">CTParser.jl</a><ul class="internal"><li><a class="tocitem" href="#Index"><span>Index</span></a></li><li><a class="tocitem" href="#Documentation"><span>Documentation</span></a></li></ul></li></ul></li></ul></li><li><a class="tocitem" href="zhejiang-2025.html">Zhejiang 2025</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Developers</a></li><li><a class="is-disabled">Subpackages</a></li><li class="is-active"><a href="dev-ctparser.html">CTParser.jl</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="dev-ctparser.html">CTParser.jl</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl/blob/main/docs/src/dev-ctparser.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="CTParser.jl"><a class="docs-heading-anchor" href="#CTParser.jl">CTParser.jl</a><a id="CTParser.jl-1"></a><a class="docs-heading-anchor-permalink" href="#CTParser.jl" title="Permalink"></a></h1><p>The <a href="control-toolbox.org/CTParser.jl">CTParser.jl</a> package is part of the <a href="https://github.com/control-toolbox">control-toolbox ecosystem</a>.</p><div class="mermaid">flowchart TD
+B(&lt;a href=&#39;https://control-toolbox.org/OptimalControl.jl/stable/api-ctbase.html&#39;&gt;CTBase&lt;/a&gt;)
+M(&lt;a href=&#39;https://control-toolbox.org/OptimalControl.jl/stable/api-ctmodels.html&#39;&gt;CTModels&lt;/a&gt;)
+P(&lt;a href=&#39;https://control-toolbox.org/OptimalControl.jl/stable/api-ctparser.html&#39;&gt;CTParser&lt;/a&gt;)
+O(&lt;a href=&#39;https://control-toolbox.org/OptimalControl.jl/stable/api-optimalcontrol.html&#39;&gt;OptimalControl&lt;/a&gt;)
+D(&lt;a href=&#39;https://control-toolbox.org/OptimalControl.jl/stable/api-ctdirect.html&#39;&gt;CTDirect&lt;/a&gt;)
+F(&lt;a href=&#39;https://control-toolbox.org/OptimalControl.jl/stable/api-ctflows.html&#39;&gt;CTFlows&lt;/a&gt;)
+O --&gt; D
+O --&gt; M
+O --&gt; F
+O --&gt; P
+F --&gt; M
+O --&gt; B
+F --&gt; B
+D --&gt; B
+D --&gt; M
+P --&gt; B
+M --&gt; B
+style P fill:#FBF275</div><h2 id="Index"><a class="docs-heading-anchor" href="#Index">Index</a><a id="Index-1"></a><a class="docs-heading-anchor-permalink" href="#Index" title="Permalink"></a></h2><ul><li><a href="dev-ctparser.html#CTParser.CTParser"><code>CTParser.CTParser</code></a></li><li><a href="dev-ctparser.html#CTParser.ParsingInfo"><code>CTParser.ParsingInfo</code></a></li><li><a href="dev-ctparser.html#CTParser.constraint_type-NTuple{7, Any}"><code>CTParser.constraint_type</code></a></li><li><a href="dev-ctparser.html#CTParser.expr_it-Tuple{Any, Any, Any}"><code>CTParser.expr_it</code></a></li><li><a href="dev-ctparser.html#CTParser.has-Tuple{Any, Any, Any}"><code>CTParser.has</code></a></li><li><a href="dev-ctparser.html#CTParser.has-Tuple{Any, Any}"><code>CTParser.has</code></a></li><li><a href="dev-ctparser.html#CTParser.parse!-Tuple{Any, Any, Any}"><code>CTParser.parse!</code></a></li><li><a href="dev-ctparser.html#CTParser.replace_call-Tuple{Any, Vector{Symbol}, Any, Any}"><code>CTParser.replace_call</code></a></li><li><a href="dev-ctparser.html#CTParser.replace_call-Tuple{Any, Symbol, Any, Any}"><code>CTParser.replace_call</code></a></li><li><a href="dev-ctparser.html#CTParser.subs-Tuple{Any, Union{Real, Symbol}, Any}"><code>CTParser.subs</code></a></li><li><a href="dev-ctparser.html#CTParser.@def-Tuple{Any}"><code>CTParser.@def</code></a></li></ul><h2 id="Documentation"><a class="docs-heading-anchor" href="#Documentation">Documentation</a><a id="Documentation-1"></a><a class="docs-heading-anchor-permalink" href="#Documentation" title="Permalink"></a></h2><h3 id="Public"><a class="docs-heading-anchor" href="#Public">Public</a><a id="Public-1"></a><a class="docs-heading-anchor-permalink" href="#Public" title="Permalink"></a></h3><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTParser.CTParser" href="#CTParser.CTParser"><code>CTParser.CTParser</code></a> — <span class="docstring-category">Module</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p><a href="dev-ctparser.html#CTParser.CTParser"><code>CTParser</code></a> module.</p><p>Lists all the imported modules and packages:</p><ul><li><code>Base</code></li><li><code>Core</code></li><li><code>DocStringExtensions</code></li><li><code>MLStyle</code></li><li><code>OrderedCollections</code></li><li><code>Parameters</code></li><li><code>Unicode</code></li></ul><p>List of all the exported names:</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTParser.jl/blob/v0.2.3/src/CTParser.jl#L1-L11">source</a></section></article><h3 id="Private"><a class="docs-heading-anchor" href="#Private">Private</a><a id="Private-1"></a><a class="docs-heading-anchor-permalink" href="#Private" title="Permalink"></a></h3><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTParser.ParsingInfo" href="#CTParser.ParsingInfo"><code>CTParser.ParsingInfo</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">mutable struct ParsingInfo</code></pre><p><strong>Fields</strong></p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTParser.jl/blob/v0.2.3/src/onepass.jl#L20">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTParser.constraint_type-NTuple{7, Any}" href="#CTParser.constraint_type-NTuple{7, Any}"><code>CTParser.constraint_type</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">constraint_type(
+    e,
+    t,
+    t0,
+    tf,
+    x,
+    u,
+    v
+) -&gt; Union{Symbol, Tuple{Symbol, Any}}
+</code></pre><p>Return the type constraint among <code>:initial</code>, <code>:final</code>, <code>:boundary</code>, <code>:control_range</code>, <code>:control_fun</code>, <code>:state_range</code>, <code>:state_fun</code>, <code>:mixed</code>, <code>:variable_range</code>, <code>:variable_fun</code> (<code>:other</code> otherwise), together with the appropriate value (range, updated expression...) Expressions like <code>u(t0)</code> where <code>u</code> is the control and <code>t0</code> the initial time return <code>:other</code>.</p><p><strong>Example</strong></p><pre><code class="language- hljs">julia&gt; t = :t; t0 = 0; tf = :tf; x = :x; u = :u; v = :v
+
+julia&gt; constraint_type(:( ẏ(t) ), t, t0, tf, x, u, v)
+:other
+
+julia&gt; constraint_type(:( ẋ(s) ), t, t0, tf, x, u, v)
+:other
+
+julia&gt; constraint_type(:( x(0)&#39; ), t, t0, tf, x, u, v)
+:boundary
+
+julia&gt; constraint_type(:( x(t)&#39; ), t, t0, tf, x, u, v)
+:state_fun
+
+julia&gt; constraint_type(:( x(0) ), t, t0, tf, x, u, v)
+(:initial, nothing)
+
+julia&gt; constraint_type(:( x[1:2:5](0) ), t, t0, tf, x, u, v)
+(:initial, 1:2:5)
+
+julia&gt; constraint_type(:( x[1:2](0) ), t, t0, tf, x, u, v)
+(:initial, 1:2)
+
+julia&gt; constraint_type(:( x[1](0) ), t, t0, tf, x, u, v)
+(:initial, 1)
+
+julia&gt; constraint_type(:( 2x[1](0)^2 ), t, t0, tf, x, u, v)
+:boundary
+
+julia&gt; constraint_type(:( x(tf) ), t, t0, tf, x, u, v)
+(:final, nothing)
+j
+julia&gt; constraint_type(:( x[1:2:5](tf) ), t, t0, tf, x, u, v)
+(:final, 1:2:5)
+
+julia&gt; constraint_type(:( x[1:2](tf) ), t, t0, tf, x, u, v)
+(:final, 1:2)
+
+julia&gt; constraint_type(:( x[1](tf) ), t, t0, tf, x, u, v)
+(:final, 1)
+
+julia&gt; constraint_type(:( 2x[1](tf)^2 ), t, t0, tf, x, u, v)
+:boundary
+
+julia&gt; constraint_type(:( x[1](tf) - x[2](0) ), t, t0, tf, x, u, v)
+:boundary
+
+julia&gt; constraint_type(:( u[1:2:5](t) ), t, t0, tf, x, u, v)
+(:control_range, 1:2:5)
+
+julia&gt; constraint_type(:( u[1:2](t) ), t, t0, tf, x, u, v)
+(:control_range, 1:2)
+
+julia&gt; constraint_type(:( u[1](t) ), t, t0, tf, x, u, v)
+(:control_range, 1)
+
+julia&gt; constraint_type(:( u(t) ), t, t0, tf, x, u, v)
+(:control_range, nothing)
+
+julia&gt; constraint_type(:( 2u[1](t)^2 ), t, t0, tf, x, u, v)
+:control_fun
+
+julia&gt; constraint_type(:( x[1:2:5](t) ), t, t0, tf, x, u, v)
+(:state_range, 1:2:5)
+
+julia&gt; constraint_type(:( x[1:2](t) ), t, t0, tf, x, u, v)
+(:state_range, 1:2)
+
+julia&gt; constraint_type(:( x[1](t) ), t, t0, tf, x, u, v)
+(:state_range, 1)
+
+julia&gt; constraint_type(:( x(t) ), t, t0, tf, x, u, v)
+(:state_range, nothing)
+
+julia&gt; constraint_type(:( 2x[1](t)^2 ), t, t0, tf, x, u, v)
+:state_fun
+
+julia&gt; constraint_type(:( 2u[1](t)^2 * x(t) ), t, t0, tf, x, u, v)
+:mixed
+
+julia&gt; constraint_type(:( 2u[1](0)^2 * x(t) ), t, t0, tf, x, u, v)
+:other
+
+julia&gt; constraint_type(:( 2u[1](0)^2 * x(t) ), t, t0, tf, x, u, v)
+:other
+
+julia&gt; constraint_type(:( 2u[1](t)^2 * x(t) + v ), t, t0, tf, x, u, v)
+:mixed
+
+julia&gt; constraint_type(:( v[1:2:10] ), t, t0, tf, x, u, v)
+(:variable_range, 1:2:9)
+
+julia&gt; constraint_type(:( v[1:10] ), t, t0, tf, x, u, v)
+(:variable_range, 1:10)
+
+julia&gt; constraint_type(:( v[2] ), t, t0, tf, x, u, v)
+(:variable_range, 2)
+
+julia&gt; constraint_type(:( v ), t, t0, tf, x, u, v)
+(:variable_range, nothing)
+
+julia&gt; constraint_type(:( v^2  + 1 ), t, t0, tf, x, u, v)
+:variable_fun
+julia&gt; constraint_type(:( v[2]^2 + 1 ), t, t0, tf, x, u, v)
+:variable_fun</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTParser.jl/blob/v0.2.3/src/utils.jl#L222">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTParser.expr_it-Tuple{Any, Any, Any}" href="#CTParser.expr_it-Tuple{Any, Any, Any}"><code>CTParser.expr_it</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">expr_it(e, _Expr, f) -&gt; Any
+</code></pre><p>Expr iterator: apply <code>_Expr</code> to nodes and <code>f</code> to leaves of the AST.</p><p><strong>Example</strong></p><pre><code class="language- hljs">julia&gt; id(e) = expr_it(e, Expr, x -&gt; x)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTParser.jl/blob/v0.2.3/src/utils.jl#L3">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTParser.has-Tuple{Any, Any, Any}" href="#CTParser.has-Tuple{Any, Any, Any}"><code>CTParser.has</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">has(e, x, t) -&gt; Union{Missing, Bool}
+</code></pre><p>Return true if e contains a <code>(...x...)(t)</code> call.</p><p><strong>Example</strong></p><pre><code class="language- hljs">julia&gt; e = :( ∫( x[1](t)^2 + 2*u(t) ) → min )
+:(∫((x[1])(t) ^ 2 + 2 * u(t)) → min)
+
+julia&gt; has(e, :x, :t)
+true
+
+julia&gt; has(e, :u, :t)
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTParser.jl/blob/v0.2.3/src/utils.jl#L189">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTParser.has-Tuple{Any, Any}" href="#CTParser.has-Tuple{Any, Any}"><code>CTParser.has</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">has(e, e1) -&gt; Union{Missing, Bool}
+</code></pre><p>Return true if e contains e1.</p><p><strong>Example</strong></p><pre><code class="language- hljs">julia&gt; e = :( ∫( x[1](t)^2 + 2*u(t) ) → min )
+:(∫((x[1])(t) ^ 2 + 2 * u(t)) → min)
+
+julia&gt; has(e, 2)
+true
+
+julia&gt; has(e, :x)
+true
+
+julia&gt; has(e, :min)
+true
+
+julia&gt; has(e, :( x[1](t)^2 ))
+true
+
+julia&gt; !has(e, :( x[1](t)^3 ))
+true
+
+julia&gt; !has(e, 3)
+true
+
+julia&gt; !has(e, :max)
+true
+
+julia&gt; has(:x, :x)
+true
+
+julia&gt; !has(:x, 2)
+true
+
+julia&gt; !has(:x, :y)
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTParser.jl/blob/v0.2.3/src/utils.jl#L136">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTParser.parse!-Tuple{Any, Any, Any}" href="#CTParser.parse!-Tuple{Any, Any, Any}"><code>CTParser.parse!</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">parse!(p, p_ocp, e; log) -&gt; Union{Expr, LineNumberNode}
+</code></pre><p>Parse the expression <code>e</code> and update the <code>ParsingInfo</code> structure <code>p</code>.</p><p><strong>Example</strong></p><pre><code class="language- hljs">parse!(p, :p_ocp, :(v ∈ R, variable))</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTParser.jl/blob/v0.2.3/src/onepass.jl#L69">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTParser.replace_call-Tuple{Any, Symbol, Any, Any}" href="#CTParser.replace_call-Tuple{Any, Symbol, Any, Any}"><code>CTParser.replace_call</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">replace_call(e, x::Symbol, t, y) -&gt; Any
+</code></pre><p>Replace calls in e of the form <code>(...x...)(t)</code> by <code>(...y...)</code>.</p><p><strong>Example</strong></p><pre><code class="language- hljs">
+julia&gt; t = :t; t0 = 0; tf = :tf; x = :x; u = :u;
+
+julia&gt; e = :( x[1](0) * 2x(tf) - x[2](tf) * 2x(0) )
+:((x[1])(0) * (2 * x(tf)) - (x[2])(tf) * (2 * x(0)))
+
+julia&gt; x0 = Symbol(x, 0); e = replace_call(e, x, t0, x0)
+:(x0[1] * (2 * x(tf)) - (x[2])(tf) * (2x0))
+
+julia&gt; xf = Symbol(x, &quot;f&quot;); replace_call(ans, x, tf, xf)
+:(x0[1] * (2xf) - xf[2] * (2x0))
+
+julia&gt; e = :( A*x(t) + B*u(t) ); replace_call(replace_call(e, x, t, x), u, t, u)
+:(A * x + B * u)
+
+julia&gt; e = :( F0(x(t)) + u(t)*F1(x(t)) ); replace_call(replace_call(e, x, t, x), u, t, u)
+:(F0(x) + u * F1(x))
+
+julia&gt; e = :( 0.5u(t)^2 ); replace_call(e, u, t, u)
+:(0.5 * u ^ 2)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTParser.jl/blob/v0.2.3/src/utils.jl#L63">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTParser.replace_call-Tuple{Any, Vector{Symbol}, Any, Any}" href="#CTParser.replace_call-Tuple{Any, Vector{Symbol}, Any, Any}"><code>CTParser.replace_call</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">replace_call(e, x::Vector{Symbol}, t, y) -&gt; Any
+</code></pre><p>Replace calls in e of the form <code>(...x1...x2...)(t)</code> by <code>(...y1...y2...)</code> for all symbols <code>x1</code>, <code>x2</code>... in the vector <code>x</code>.</p><p><strong>Example</strong></p><pre><code class="language- hljs">
+julia&gt; t = :t; t0 = 0; tf = :tf; x = :x; u = :u;
+
+julia&gt; e = :( (x^2 + u[1])(t) ); replace_call(e, [ x, u ], t , [ :xx, :uu ])
+:(xx ^ 2 + uu[1])
+
+julia&gt; e = :( ((x^2)(t) + u[1])(t) ); replace_call(e, [ x, u ], t , [ :xx, :uu ])
+:(xx ^ 2 + uu[1])
+
+julia&gt; e = :( ((x^2)(t0) + u[1])(t) ); replace_call(e, [ x, u ], t , [ :xx, :uu ])
+:((xx ^ 2)(t0) + uu[1])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTParser.jl/blob/v0.2.3/src/utils.jl#L94">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTParser.subs-Tuple{Any, Union{Real, Symbol}, Any}" href="#CTParser.subs-Tuple{Any, Union{Real, Symbol}, Any}"><code>CTParser.subs</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">subs(e, e1::Union{Real, Symbol}, e2) -&gt; Any
+</code></pre><p>Substitute expression <code>e1</code> by expression <code>e2</code> in expression <code>e</code>.</p><p><strong>Examples</strong></p><pre><code class="language- hljs">julia&gt; e = :( ∫( r(t)^2 + 2u₁(t)) → min )
+:(∫(r(t) ^ 2 + 2 * u₁(t)) → min)
+
+julia&gt; subs(e, :r, :( x[1] ))
+:(∫((x[1])(t) ^ 2 + 2 * u₁(t)) → min)
+
+julia&gt; e = :( ∫( u₁(t)^2 + 2u₂(t)) → min )
+:(∫(u₁(t) ^ 2 + 2 * u₂(t)) → min)
+
+julia&gt; for i ∈ 1:2
+       e = subs(e, Symbol(:u, Char(8320+i)), :( u[$i] ))
+       end; e
+:(∫((u[1])(t) ^ 2 + 2 * (u[2])(t)) → min)
+
+julia&gt; t = :t; t0 = 0; tf = :tf; x = :x; u = :u;
+
+julia&gt; e = :( x[1](0) * 2x(tf) - x[2](tf) * 2x(0) )
+:((x[1])(0) * (2 * x(tf)) - (x[2])(tf) * (2 * x(0)))
+
+julia&gt; x0 = Symbol(x, 0); subs(e, :( $x[1]($(t0)) ), :( $x0[1] ))
+:(x0[1] * (2 * x(tf)) - (x[2])(tf) * (2 * x(0)))</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTParser.jl/blob/v0.2.3/src/utils.jl#L23">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTParser.@def-Tuple{Any}" href="#CTParser.@def-Tuple{Any}"><code>CTParser.@def</code></a> — <span class="docstring-category">Macro</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><p>Define an optimal control problem. One pass parsing of the definition. Can be used writing either <code>ocp = @def begin ... end</code> or <code>@def ocp begin ... end</code>. In the second case, setting <code>log</code> to <code>true</code> will display the parsing steps.</p><p><strong>Example</strong></p><pre><code class="language- hljs">ocp = @def begin
+    tf ∈ R, variable
+    t ∈ [ 0, tf ], time
+    x ∈ R², state
+    u ∈ R, control
+    tf ≥ 0
+    -1 ≤ u(t) ≤ 1
+    q = x₁
+    v = x₂
+    q(0) == 1
+    v(0) == 2
+    q(tf) == 0
+    v(tf) == 0
+    0 ≤ q(t) ≤ 5,       (1)
+    -2 ≤ v(t) ≤ 3,      (2)
+    ẋ(t) == [ v(t), u(t) ]
+    tf → min
+end
+
+@def ocp begin
+    tf ∈ R, variable
+    t ∈ [ 0, tf ], time
+    x ∈ R², state
+    u ∈ R, control
+    tf ≥ 0
+    -1 ≤ u(t) ≤ 1
+    q = x₁
+    v = x₂
+    q(0) == 1
+    v(0) == 2
+    q(tf) == 0
+    v(tf) == 0
+    0 ≤ q(t) ≤ 5,       (1)
+    -2 ≤ v(t) ≤ 3,      (2)
+    ẋ(t) == [ v(t), u(t) ]
+    tf → min
+end true # final boolean to show parsing log</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTParser.jl/blob/v0.2.3/src/onepass.jl#L546">source</a></section></article><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="dev-ctmodels.html">« CTModels.jl</a><a class="docs-footer-nextpage" href="zhejiang-2025.html">Zhejiang 2025 »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.10.1 on <span class="colophon-date" title="Thursday 17 April 2025 23:52">Thursday 17 April 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body><div data-docstringscollapsed="true"></div></html>
