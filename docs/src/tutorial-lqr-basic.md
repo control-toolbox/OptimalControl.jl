@@ -64,12 +64,12 @@ end
 nothing # hide
 ```
 
-We plot the state and control variables considering a normalized time $s=(t-t_0)/(t_f-t_0)$, thanks to the keyword argument `time=:normalized` of the `plot` function.
+We plot the state and control variables considering a normalized time $s=(t-t_0)/(t_f-t_0)$, thanks to the keyword argument `time=:normalize` of the `plot` function.
 
 ```@example main
-plt = plot(solutions[1], time=:normalized)
+plt = plot(solutions[1], time=:normalize)
 for sol ∈ solutions[2:end]
-    plot!(plt, sol, time=:normalized)
+    plot!(plt, sol, time=:normalize)
 end
 
 # we plot only the state and control variables and we add the legend

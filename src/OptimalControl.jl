@@ -11,62 +11,39 @@ $(EXPORTS)
 """
 module OptimalControl
 
-# using
 using DocStringExtensions
 
-# include core modules
-using CTBase
-using CTDirect
-using CTFlows
-
-# extend
-import CommonSolve: solve, CommonSolve
-
-# declarations
-const __display = CTBase.__display
-const __ocp_init = CTBase.__ocp_init
-
-include("solve.jl")
-
-# export functions only for user
-export solve
-export available_methods
-
-# CTFlows
-export VectorField
-export Hamiltonian
-export HamiltonianLift
-export HamiltonianVectorField
-export Flow
-export *
-
-# CTDirect
-export direct_transcription
-export set_initial_guess
-export save
-export load
-export export_ocp_solution
-export import_ocp_solution
-
 # CTBase
-export OptimalControlModel, OptimalControlSolution
-export Autonomous, NonAutonomous
-export NonFixed, Fixed
-export Model, __OCPModel
-export variable!,
-    time!, constraint!, dynamics!, objective!, state!, control!, remove_constraint!
-export constraint
-export time_grid, control, state, variable, costate, objective
-export iterations, stopping, message, infos
-export Lie, @Lie, Poisson, Lift, ⋅, ∂ₜ
-export @def
-export ct_repl, ct_repl_update_model
+import CTBase: CTBase, ParsingError
 export ParsingError
 
-# repl
-function __init__()
-    isdefined(Base, :active_repl) && ct_repl()
-    return nothing
-end
+# CTModels
+import CTModels: CTModels,
+    # setters
+    variable!, time!, state!, control!, dynamics!, constraint!, objective!, definition!,
+    # model
+    build_model, Model, PreModel,
+    # getters
+    initial_time, final_time, time_name, variable_dimension, variable_components, variable_name, state_dimension, state_components, state_name, control_dimension, control_components, control_name, constraint, dynamics, mayer, lagrange, criterion, export_ocp_solution, import_ocp_solution, constraint, time_grid, control, state, variable, costate, objective, iterations, stopping, message, infos
+export Model
+export initial_time, final_time, time_name, variable_dimension, variable_components, variable_name, state_dimension, state_components, state_name, control_dimension, control_components, control_name, constraint, dynamics, mayer, lagrange, criterion, export_ocp_solution, import_ocp_solution, constraint, time_grid, control, state, variable, costate, objective, iterations, stopping, message, infos
+
+# CTParser
+import CTParser: CTParser, @def
+export @def
+
+# CTDirect
+import CTDirect: CTDirect, direct_transcription, set_initial_guess, build_OCP_solution
+export direct_transcription, set_initial_guess, build_OCP_solution
+
+# CTFlows
+import CTFlows: CTFlows, VectorField, Lift, Hamiltonian, HamiltonianLift, HamiltonianVectorField, Flow, ⋅, Lie, Poisson, @Lie, * # debug: complete?
+export VectorField, Lift, Hamiltonian, HamiltonianLift, HamiltonianVectorField, Flow, ⋅, Lie, Poisson, @Lie, *
+
+# CommonSolve
+import CommonSolve: CommonSolve, solve
+export solve
+export available_methods
+include("solve.jl")
 
 end

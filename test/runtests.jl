@@ -1,15 +1,14 @@
-using OptimalControl
 using Test
-
-using LinearAlgebra
-using SciMLBase
-using NonlinearSolve
-using OrdinaryDiffEq
-
-using CTDirect
+using OptimalControl
 using NLPModelsIpopt
-using MadNLP
+using LinearAlgebra
+using OrdinaryDiffEq
+using MINPACK
+using DifferentiationInterface
+import ForwardDiff
 using SplitApplyCombine # for flatten in some tests
+
+# NB some direct tests use functional definition and are `using CTModels`
 
 @testset verbose = true showtiming = true "Optimal control tests" begin
 

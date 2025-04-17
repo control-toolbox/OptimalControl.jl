@@ -1,4 +1,4 @@
-# [Double integrator: time minimisation (abstract syntax)](@id double-int)
+# [Double integrator: time minimisation (abstract syntax)](@id double-integrator-time)
 
 The problem consists in minimising the final time $t_f$ for the double integrator system
 

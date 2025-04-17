@@ -53,9 +53,7 @@ ERROR: ExtensionError. Please make: julia> using NLPModelsIpopt
 
 See below for the NLP solver options.
 
-## Options
-
-### Methods
+## Resolution methods and algorithms
 
 OptimalControl.jl offers a list of methods to solve your optimal control problem. To get the list of methods, simply call `available_methods`.
 
@@ -107,13 +105,13 @@ solve(ocp, :direct,         :ipopt)
 solve(ocp, :direct, :adnlp, :ipopt)
 ```
 
-### Direct method
+## Direct method
 
 The options for the direct method are listed in the [`direct_solve`](@ref) keywords.
 The main options, with their [default values], are:
 - `display` ([true], false): setting `display` to false will disable output
 - `grid_size` ([250]): size of the (uniform) time discretization grid. More precisely, it is the number of time steps, that is if `N = grid_size` and if the initial and final times are denoted respectively `t0` and `tf`, then we have `Δt = (tf - t0) / N`
-- `disc_method` ([`:trapeze`], `:midpoint`, `:gauss_legendre_2`): see [discretisation methods](@ref tutorial-discretisation)
+- `disc_method` ([`:trapeze`], `:midpoint`, `:euler`, `:euler_implicit`, `:gauss_legendre_2`, `:gauss_legendre_3`): see [discretisation methods](@ref tutorial-discretisation)
 - `init`: info for the starting guess, which can be provided as numerical values, functions, or an existing solution. See [initial guess tutorial](@ref tutorial-initial-guess). 
 
 For examples of more advanced use, see 
@@ -121,7 +119,7 @@ For examples of more advanced use, see
 - [NLP direct handling](@ref tutorial-nlp)
 
 
-### NLP solver specific options
+## NLP solver specific options
 
 In addition to these options, all remaining keyword arguments passed to `solve` will be transmitted to the NLP solver used.
 
@@ -136,4 +134,3 @@ Similarly, please check the [MadNLP.jl documentation](https://madnlp.github.io/M
 solve(ocp, :madnlp; max_iter=0)
 nothing # hide
 ```
-

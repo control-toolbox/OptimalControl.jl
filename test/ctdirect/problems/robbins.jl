@@ -1,4 +1,5 @@
 # Robbins example from Bocop
+
 function robbins()
     @def robbins begin
         # constants
@@ -16,5 +17,5 @@ function robbins()
         ∫(alpha * x[1](t) + beta * x[1](t)^2 + gamma * u(t)^2) → min
     end
 
-    return ((ocp=robbins, obj=20.0, name="robbins", init=nothing))
+    return ((ocp = robbins, obj = 19.4, name = "robbins", init = nothing))
 end

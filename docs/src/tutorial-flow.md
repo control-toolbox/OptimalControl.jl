@@ -277,7 +277,7 @@ x1, p1 = f(t0, x0, p0, t1, tf)
     xf, pf = f(t0, x0, p0, tf)
     ```
 
-Since the variable is the final time, we can make the time-reparameterisation $t = t_f \, s$ to normalise
+Since the variable is the final time, we can make the time-reparameterisation $t = s\, t_f$ to normalise
 the time $s$ in $[0, 1]$.
 
 ```@example main

@@ -14,5 +14,5 @@ function bolza_freetf()
         tf + 0.5∫(u(t)^2) → min
     end
 
-    return ((ocp=ocp, obj=1.476, name="bolza_freetf", init=nothing))
+    return ((ocp = ocp, obj = 1.476, name = "bolza_freetf", init = nothing))
 end

@@ -1,4 +1,5 @@
 # Fuller example
+
 function fuller()
     @def fuller begin
         t ∈ [0, 3.5], time
@@ -11,5 +12,5 @@ function fuller()
         ∫(x₁(t)^2) → min
     end
 
-    return ((ocp=fuller, obj=2.683944e-1, name="fuller", init=nothing))
+    return ((ocp = fuller, obj = 2.683944e-1, name = "fuller", init = nothing))
 end

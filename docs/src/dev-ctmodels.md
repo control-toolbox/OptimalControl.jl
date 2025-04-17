@@ -1,10 +1,10 @@
-# CTBase.jl
+# CTModels.jl
 
 ```@meta
 CollapsedDocStrings = true
 ```
 
-The [CTBase.jl](control-toolbox.org/CTBase.jl/) package is part of the [control-toolbox ecosystem](https://github.com/control-toolbox).
+The [CTModels.jl](control-toolbox.org/CTModels.jl) package is part of the [control-toolbox ecosystem](https://github.com/control-toolbox).
 
 ```mermaid
 flowchart TD
@@ -25,14 +25,14 @@ D --> B
 D --> M
 P --> B
 M --> B
-style B fill:#FBF275
+style M fill:#FBF275
 ```
 
 ## Index
 
 ```@index
-Pages   = ["dev-ctbase.md"]
-Modules = [CTBase]
+Pages   = ["dev-ctmodels.md"]
+Modules = [CTModels]
 Order   = [:module, :constant, :type, :function, :macro]
 ```
 
@@ -41,7 +41,7 @@ Order   = [:module, :constant, :type, :function, :macro]
 ### Public
 
 ```@autodocs
-Modules = [CTBase]
+Modules = [CTModels]
 Order   = [:module, :constant, :type, :function, :macro]
 Private = false
 ```
@@ -49,7 +49,7 @@ Private = false
 ### Private
 
 ```@autodocs
-Modules = [CTBase]
+Modules = [CTModels]
 Order   = [:type, :module, :constant, :type, :function, :macro]
 Public  = false
 ```
