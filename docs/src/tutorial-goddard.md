@@ -56,12 +56,12 @@ using Plots           # to plot the solution
 We define the problem
 
 ```@example main
-t0 = 0      # initial time
-r0 = 1      # initial altitude
-v0 = 0      # initial speed
-m0 = 1      # initial mass
-vmax = 0.1  # maximal authorized speed
-mf = 0.6    # final mass to target
+const t0 = 0      # initial time
+const r0 = 1      # initial altitude
+const v0 = 0      # initial speed
+const m0 = 1      # initial mass
+const vmax = 0.1  # maximal authorized speed
+const mf = 0.6    # final mass to target
 
 ocp = @def begin # definition of the optimal control problem
 
@@ -70,7 +70,7 @@ ocp = @def begin # definition of the optimal control problem
     x = (r, v, m) ∈ R³, state
     u ∈ R, control
 
-    x(t0) == [ r0, v0, m0 ]
+    x(t0) == [r0, v0, m0]
     m(tf) == mf,         (1)
     0 ≤ u(t) ≤ 1
     r(t) ≥ r0
@@ -80,7 +80,7 @@ ocp = @def begin # definition of the optimal control problem
 
     r(tf) → max
 
-end;
+end
 
 # Dynamics
 const Cd = 310
@@ -91,12 +91,12 @@ const b = 2
 F0(x) = begin
     r, v, m = x
     D = Cd * v^2 * exp(-β*(r - 1)) # Drag force
-    return [ v, -D/m - 1/r^2, 0 ]
+    return [v, -D/m - 1/r^2, 0]
 end
 
 F1(x) = begin
     r, v, m = x
-    return [ 0, Tmax/m, -b*Tmax ]
+    return [0, Tmax/m, -b*Tmax]
 end
 nothing # hide
 ```
@@ -203,13 +203,13 @@ these expressions are straightforwardly translated into Julia code:
 
 ```@example main
 # Controls
-u0 = 0                                  # off control
-u1 = 1                                  # bang control
+const u0 = 0                            # off control
+const u1 = 1                            # bang control
 
 H0 = Lift(F0)                           # H0(x, p) = p' * F0(x)
-H01  = @Lie { H0, H1 }
-H001 = @Lie { H0, H01 }
-H101 = @Lie { H1, H01 }
+H01  = @Lie {H0, H1}
+H001 = @Lie {H0, H01}
+H101 = @Lie {H1, H01}
 us(x, p) = -H001(x, p) / H101(x, p)     # singular control
 
 ub(x) = -(F0⋅g)(x) / (F1⋅g)(x)          # boundary control
@@ -229,7 +229,7 @@ Then, we define the shooting function according to the optimal structure we have
 that is a concatenation of four arcs.
 
 ```@example main
-x0 = [ r0, v0, m0 ] # initial state
+x0 = [r0, v0, m0] # initial state
 
 function shoot!(s, p0, t1, t2, t3, tf)
 
@@ -239,7 +239,7 @@ function shoot!(s, p0, t1, t2, t3, tf)
     xf, pf = f0(t3, x3, p3, tf)
 
     s[1] = xf[3] - mf                             # final mass constraint
-    s[2:3] = pf[1:2] - [ 1, 0 ]                   # transversality conditions
+    s[2:3] = pf[1:2] - [1, 0]                     # transversality conditions
     s[4] = H1(x1, p1)                             # H1 = H01 = 0
     s[5] = H01(x1, p1)                            # at the entrance of the singular arc
     s[6] = g(x2)                                  # g = 0 when entering the boundary arc
@@ -283,84 +283,29 @@ println("\nNorm of the shooting function: ‖s‖ = ", norm(s), "\n")
 We aggregate the data to define the initial guess vector.
 
 ```@example main
-ξ = [ p0 ; t1 ; t2 ; t3 ; tf ] # initial guess
-```
-
-### NonlinearSolve.jl
-
-We first use the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package to solve the shooting
-equation. Let us define the problem.
-
-```@example main
-# auxiliary function with aggregated inputs
-nle! = (s, ξ, λ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
-
-# NLE problem with initial guess
-prob = NonlinearProblem(nle!, ξ)
-nothing # hide
-```
-
-Let us do some benchmarking.
-
-```@example main
-using BenchmarkTools
-@benchmark solve(prob; abstol=1e-8, reltol=1e-8, show_trace=Val(false))
-```
-
-For small nonlinear systems, it could be faster to use the 
-[`SimpleNewtonRaphson()` descent algorithm](https://docs.sciml.ai/NonlinearSolve/stable/tutorials/code_optimization/).
-
-```@example main
-@benchmark solve(prob, SimpleNewtonRaphson(); abstol=1e-8, reltol=1e-8, show_trace=Val(false))
-```
-
-Now, let us solve the problem and retrieve the initial costate solution.
-
-```@example main
-# resolution of S(ξ) = 0
-indirect_sol = solve(prob; abstol=1e-8, reltol=1e-8, show_trace=Val(true))
-
-# we retrieve the costate solution together with the times
-p0 = indirect_sol.u[1:3]
-t1 = indirect_sol.u[4]
-t2 = indirect_sol.u[5]
-t3 = indirect_sol.u[6]
-tf = indirect_sol.u[7]
-
-println("")
-println("p0 = ", p0)
-println("t1 = ", t1)
-println("t2 = ", t2)
-println("t3 = ", t3)
-println("tf = ", tf)
-
-# Norm of the shooting function at solution
-s = similar(p0, 7)
-shoot!(s, p0, t1, t2, t3, tf)
-println("\nNorm of the shooting function: ‖s‖ = ", norm(s), "\n")
+ξ = [p0..., t1, t2, t3, tf] # initial guess
 ```
 
 ### MINPACK.jl
 
+We can use [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package or, instead, the 
+[MINPACK.jl](https://github.com/sglyon/MINPACK.jl) package to solve 
+the shooting equation. To compute the Jacobian of the shooting function we use the 
+[DifferentiationInterface.jl](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface) package with 
+[ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl) backend.
+
 ```@setup main
-using MINPACK
 function fsolve(f, j, x; kwargs...)
     try
         MINPACK.fsolve(f, j, x; kwargs...)
     catch e
-        println("Erreur using MINPACK")
+        println("Error using MINPACK")
         println(e)
         println("hybrj not supported. Replaced by hybrd even if it is not visible on the doc.")
         MINPACK.fsolve(f, x; kwargs...)
     end
 end
 ```
-
-Instead of the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package we can use the 
-[MINPACK.jl](https://github.com/sglyon/MINPACK.jl) package to solve 
-the shooting equation. To compute the Jacobian of the shooting function we use the 
-[DifferentiationInterface.jl](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface) package with 
-[ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl) backend.
 
 ```@example main
 using DifferentiationInterface
@@ -381,21 +326,8 @@ nothing # hide
 ```
 
 We are now in position to solve the problem with the `hybrj` solver from MINPACK.jl through the `fsolve` 
-function, providing the Jacobian. Let us do some benchmarking.
-
-```@example main
-@benchmark fsolve(nle!, jnle!, ξ; show_trace=false) # initial guess given to the solver
-```
-
-We can also use the [preparation step](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface/stable/tutorial1/#Preparing-for-multiple-gradients) of DifferentiationInterface.jl.
-
-```@example main
-extras = prepare_jacobian(nle!, similar(ξ), backend, ξ)
-jnle_prepared!(js, ξ) = jacobian!(nle!, similar(ξ), js, backend, ξ, extras)
-@benchmark fsolve(nle!, jnle_prepared!, ξ; show_trace=false)
-```
-
-Now, let us solve the problem and retrieve the initial costate solution.
+function, providing the Jacobian.
+Let us solve the problem and retrieve the initial costate solution.
 
 ```@example main
 # resolution of S(ξ) = 0
