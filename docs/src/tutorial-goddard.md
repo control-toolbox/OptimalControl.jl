@@ -303,6 +303,7 @@ nothing # hide
 Let us do some benchmarking.
 
 ```@example main
+using SciMLSensitivity
 using BenchmarkTools
 @benchmark solve(prob; abstol=1e-8, reltol=1e-8, show_trace=Val(false))
 ```
