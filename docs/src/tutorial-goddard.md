@@ -49,7 +49,6 @@ using OrdinaryDiffEq  # to get the Flow function from OptimalControl
 using NonlinearSolve  # interface to NLE solvers
 using MINPACK         # NLE solver: use to solve the shooting equation
 using Plots           # to plot the solution
-using BenchmarkTools  # do some benchmarking
 ```
 
 ## Optimal control problem
@@ -287,52 +286,9 @@ We aggregate the data to define the initial guess vector.
 ξ = [p0; t1; t2; t3; tf] # initial guess
 ```
 
-### NonlinearSolve.jl
-
-We first use the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package to solve the shooting
-equation. Let us define the problem.
-
-```@example main
-# auxiliary function with aggregated inputs
-nle! = (s, ξ, λ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
-
-# NLE problem with initial guess
-prob = NonlinearProblem(nle!, ξ)
-nothing # hide
-```
-
-Let us do some benchmarking. This will be useful to compare the performance with the MINPACK.jl package below.
-
-```@setup main
-function nlsolve(prob; kwargs...)
-    try
-        NonlinearSolve.solve(prob; kwargs...)
-    catch e
-        println("Error using NonlinearSolve")
-        println(e)
-    end
-end
-@benchmark nlsolve(prob; abstol=1e-8, reltol=1e-8, show_trace=Val(false))
-```
-
-For small nonlinear systems, it could be faster to use the 
-[`SimpleNewtonRaphson()` descent algorithm](https://docs.sciml.ai/NonlinearSolve/stable/tutorials/code_optimization/).
-
-```@setup main
-function nlsolve(prob, meth; kwargs...)
-    try
-        NonlinearSolve.solve(prob, meth; kwargs...)
-    catch e
-        println("Error using NonlinearSolve")
-        println(e)
-    end
-end
-@benchmark nlsolve(prob, SimpleNewtonRaphson(); abstol=1e-8, reltol=1e-8, show_trace=Val(false))
-```
-
 ### MINPACK.jl
 
-Instead of the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package we can use the 
+We can use [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package or, instead, the 
 [MINPACK.jl](https://github.com/sglyon/MINPACK.jl) package to solve 
 the shooting equation. To compute the Jacobian of the shooting function we use the 
 [DifferentiationInterface.jl](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface) package with 
@@ -370,13 +326,8 @@ nothing # hide
 ```
 
 We are now in position to solve the problem with the `hybrj` solver from MINPACK.jl through the `fsolve` 
-function, providing the Jacobian. Let us do some benchmarking.
-
-```@example main
-@benchmark fsolve(nle!, jnle!, ξ; show_trace=true) # initial guess given to the solver
-```
-
-Now, let us solve the problem and retrieve the initial costate solution.
+function, providing the Jacobian.
+Let us solve the problem and retrieve the initial costate solution.
 
 ```@example main
 # resolution of S(ξ) = 0

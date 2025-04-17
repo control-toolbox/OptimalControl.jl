@@ -30,11 +30,11 @@ Let us consider the following optimal control problem:
 with $t_0 = 0$, $t_f = 1$, $x_0 = -1$, $x_f = 0$, $\alpha=1.5$ and $\forall\, t \in [t_0, t_f]$, $x(t) \in \R$.
 
 ```@example main
-t0 = 0
-tf = 1
-x0 = -1
-xf = 0
-α  = 1.5
+const t0 = 0
+const tf = 1
+const x0 = -1
+const xf = 0
+const α  = 1.5
 ocp = @def begin
 
     t ∈ [t0, tf], time
@@ -148,48 +148,13 @@ nothing # hide
 At the end, solving (BVP) is equivalent to solve $S(p_0) = 0$. This is what we call the **indirect simple shooting method**. We define an initial guess.
 
 ```@example main
-ξ = [ 0.1 ]    # initial guess
+ξ = [0.1]    # initial guess
 nothing # hide
-```
-
-### NonlinearSolve.jl
-
-We first use the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package to solve the shooting equation. Let us define the problem.
-
-```@example main
-nle! = (s, ξ, λ) -> s[1] = S(ξ[1])    # auxiliary function
-prob = NonlinearProblem(nle!, ξ)      # NLE problem with initial guess
-nothing # hide
-```
-
-Let us do some benchmarking. This will be useful to compare the performance with the MINPACK.jl package below.
-
-```@example main
-using SciMLSensitivity
-using BenchmarkTools
-@benchmark solve(prob, SimpleNewtonRaphson(); show_trace=Val(false))
-```
-
-!!! note
-
-    For small nonlinear systems, the [`SimpleNewtonRaphson()` descent algorithm](https://docs.sciml.ai/NonlinearSolve/stable/tutorials/code_optimization/) may be faster.
-
-```@example main
-@benchmark solve(prob, SimpleNewtonRaphson(); show_trace=Val(false))
-```
-
-Now, let us solve the problem and retrieve the initial costate solution.
-
-```@example main
-indirect_sol = solve(prob; show_trace=Val(true))      # resolution of S(p0) = 0  
-p0_sol = indirect_sol.u[1]                            # costate solution
-println("\ncostate:    p0 = ", p0_sol)
-println("shoot: |S(p0)| = ", abs(S(p0_sol)), "\n")
 ```
 
 ### MINPACK.jl
 
-Instead of the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package we can use [MINPACK.jl](https://github.com/sglyon/MINPACK.jl) to solve the shooting equation. To compute the Jacobian of the shooting function we use [DifferentiationInterface.jl](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface) with [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl) backend.
+We can use [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package or, instead, [MINPACK.jl](https://github.com/sglyon/MINPACK.jl) to solve the shooting equation. To compute the Jacobian of the shooting function we use [DifferentiationInterface.jl](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface) with [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl) backend.
 
 ```@setup main
 using MINPACK
@@ -220,21 +185,8 @@ jnle! = (js, ξ) -> jacobian!(nle!, similar(ξ), js, backend, ξ)    # Jacobian 
 nothing # hide
 ```
 
-We are now in position to solve the problem with the `hybrj` solver from MINPACK.jl through the `fsolve`  function, providing the Jacobian. Let us do some benchmarking to compare the performance with the NonlinearSolve.jl package above.
-
-```@example main
-@benchmark fsolve(nle!, jnle!, ξ; show_trace=false)    # initial guess given to the solver
-```
-
-We can also use the [preparation step](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface/stable/tutorial1/#Preparing-for-multiple-gradients) of DifferentiationInterface.jl.
-
-```@example main
-extras = prepare_jacobian(nle!, similar(ξ), backend, ξ)
-jnle_prepared!(js, ξ) = jacobian!(nle!, similar(ξ), js, backend, ξ, extras)
-@benchmark fsolve(nle!, jnle_prepared!, ξ; show_trace=false)
-```
-
-Now, let us solve the problem and retrieve the initial costate solution.
+We are now in position to solve the problem with the `hybrj` solver from MINPACK.jl through the `fsolve` function, providing the Jacobian.
+Let us solve the problem and retrieve the initial costate solution.
 
 ```@example main
 indirect_sol = fsolve(nle!, jnle!, ξ; show_trace=true)    # resolution of S(p0) = 0
@@ -400,5 +352,3 @@ nothing # hide
 ```@example main
 pretty_plot(S, p0_sol; size=(800, 450))
 ```
-
-
