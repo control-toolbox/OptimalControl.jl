@@ -300,10 +300,9 @@ prob = NonlinearProblem(nle!, ξ)
 nothing # hide
 ```
 
-Let us do some benchmarking.
+Let us do some benchmarking. This will be useful to compare the performance with the MINPACK.jl package below.
 
 ```@example main
-using SciMLSensitivity
 using BenchmarkTools
 function nlsolve(prob; kwargs...)
     try
@@ -313,7 +312,7 @@ function nlsolve(prob; kwargs...)
         println(e)
     end
 end
-@benchmark solve(prob; abstol=1e-8, reltol=1e-8, show_trace=Val(false))
+@benchmark nlsolve(prob; abstol=1e-8, reltol=1e-8, show_trace=Val(false))
 ```
 
 For small nonlinear systems, it could be faster to use the 

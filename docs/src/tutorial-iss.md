@@ -145,8 +145,7 @@ nothing # hide
 
 ## Resolution of the shooting equation
 
-At the end, solving (BVP) is equivalent to solve $S(p_0) = 0$. This is what we call the 
-**indirect simple shooting method**. We define an initial guess.
+At the end, solving (BVP) is equivalent to solve $S(p_0) = 0$. This is what we call the **indirect simple shooting method**. We define an initial guess.
 
 ```@example main
 ξ = [ 0.1 ]    # initial guess
@@ -155,8 +154,7 @@ nothing # hide
 
 ### NonlinearSolve.jl
 
-We first use the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package to solve the shooting
-equation. Let us define the problem.
+We first use the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package to solve the shooting equation. Let us define the problem.
 
 ```@example main
 nle! = (s, ξ, λ) -> s[1] = S(ξ[1])    # auxiliary function
@@ -164,15 +162,17 @@ prob = NonlinearProblem(nle!, ξ)      # NLE problem with initial guess
 nothing # hide
 ```
 
-Let us do some benchmarking.
+Let us do some benchmarking. This will be useful to compare the performance with the MINPACK.jl package below.
 
 ```@example main
+using SciMLSensitivity
 using BenchmarkTools
-@benchmark solve(prob; show_trace=Val(false))
+@benchmark solve(prob, SimpleNewtonRaphson(); show_trace=Val(false))
 ```
 
-For small nonlinear systems, it could be faster to use the 
-[`SimpleNewtonRaphson()` descent algorithm](https://docs.sciml.ai/NonlinearSolve/stable/tutorials/code_optimization/).
+!!! note
+
+    For small nonlinear systems, the [`SimpleNewtonRaphson()` descent algorithm](https://docs.sciml.ai/NonlinearSolve/stable/tutorials/code_optimization/) may be faster.
 
 ```@example main
 @benchmark solve(prob, SimpleNewtonRaphson(); show_trace=Val(false))
@@ -189,6 +189,8 @@ println("shoot: |S(p0)| = ", abs(S(p0_sol)), "\n")
 
 ### MINPACK.jl
 
+Instead of the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package we can use [MINPACK.jl](https://github.com/sglyon/MINPACK.jl) to solve the shooting equation. To compute the Jacobian of the shooting function we use [DifferentiationInterface.jl](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface) with [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl) backend.
+
 ```@setup main
 using MINPACK
 function fsolve(f, j, x; kwargs...)
@@ -202,12 +204,6 @@ function fsolve(f, j, x; kwargs...)
     end
 end
 ```
-
-Instead of the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package we can use the 
-[MINPACK.jl](https://github.com/sglyon/MINPACK.jl) package to solve 
-the shooting equation. To compute the Jacobian of the shooting function we use the 
-[DifferentiationInterface.jl](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface) package with 
-[ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl) backend.
 
 ```@example main
 using DifferentiationInterface
@@ -224,8 +220,7 @@ jnle! = (js, ξ) -> jacobian!(nle!, similar(ξ), js, backend, ξ)    # Jacobian 
 nothing # hide
 ```
 
-We are now in position to solve the problem with the `hybrj` solver from MINPACK.jl through the `fsolve` 
-function, providing the Jacobian. Let us do some benchmarking.
+We are now in position to solve the problem with the `hybrj` solver from MINPACK.jl through the `fsolve`  function, providing the Jacobian. Let us do some benchmarking to compare the performance with the NonlinearSolve.jl package above.
 
 ```@example main
 @benchmark fsolve(nle!, jnle!, ξ; show_trace=false)    # initial guess given to the solver
@@ -257,10 +252,7 @@ sol = φ((t0, tf), x0, p0_sol)
 plot(sol)
 ```
 
-In the indirect shooting method, the research of the optimal control is replaced by the computation
-of its associated extremal. This computation is equivalent to finding the initial covector solution
-to the shooting function. Let us plot the extremal in the phase space and the shooting function with 
-the solution.
+In the indirect shooting method, the research of the optimal control is replaced by the computation of its associated extremal. This computation is equivalent to finding the initial covector solution to the shooting function. Let us plot the extremal in the phase space and the shooting function with  the solution.
 
 ```@raw html
 <article class="docstring">
