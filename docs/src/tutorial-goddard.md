@@ -56,12 +56,12 @@ using Plots           # to plot the solution
 We define the problem
 
 ```@example main
-t0 = 0      # initial time
-r0 = 1      # initial altitude
-v0 = 0      # initial speed
-m0 = 1      # initial mass
-vmax = 0.1  # maximal authorized speed
-mf = 0.6    # final mass to target
+const t0 = 0      # initial time
+const r0 = 1      # initial altitude
+const v0 = 0      # initial speed
+const m0 = 1      # initial mass
+const vmax = 0.1  # maximal authorized speed
+const mf = 0.6    # final mass to target
 
 ocp = @def begin # definition of the optimal control problem
 
@@ -70,7 +70,7 @@ ocp = @def begin # definition of the optimal control problem
     x = (r, v, m) ∈ R³, state
     u ∈ R, control
 
-    x(t0) == [ r0, v0, m0 ]
+    x(t0) == [r0, v0, m0]
     m(tf) == mf,         (1)
     0 ≤ u(t) ≤ 1
     r(t) ≥ r0
@@ -80,7 +80,7 @@ ocp = @def begin # definition of the optimal control problem
 
     r(tf) → max
 
-end;
+end
 
 # Dynamics
 const Cd = 310
@@ -91,12 +91,12 @@ const b = 2
 F0(x) = begin
     r, v, m = x
     D = Cd * v^2 * exp(-β*(r - 1)) # Drag force
-    return [ v, -D/m - 1/r^2, 0 ]
+    return [v, -D/m - 1/r^2, 0]
 end
 
 F1(x) = begin
     r, v, m = x
-    return [ 0, Tmax/m, -b*Tmax ]
+    return [0, Tmax/m, -b*Tmax]
 end
 nothing # hide
 ```
@@ -203,13 +203,13 @@ these expressions are straightforwardly translated into Julia code:
 
 ```@example main
 # Controls
-u0 = 0                                  # off control
-u1 = 1                                  # bang control
+const u0 = 0                            # off control
+const u1 = 1                            # bang control
 
 H0 = Lift(F0)                           # H0(x, p) = p' * F0(x)
-H01  = @Lie { H0, H1 }
-H001 = @Lie { H0, H01 }
-H101 = @Lie { H1, H01 }
+H01  = @Lie {H0, H1}
+H001 = @Lie {H0, H01}
+H101 = @Lie {H1, H01}
 us(x, p) = -H001(x, p) / H101(x, p)     # singular control
 
 ub(x) = -(F0⋅g)(x) / (F1⋅g)(x)          # boundary control
@@ -239,7 +239,7 @@ function shoot!(s, p0, t1, t2, t3, tf)
     xf, pf = f0(t3, x3, p3, tf)
 
     s[1] = xf[3] - mf                             # final mass constraint
-    s[2:3] = pf[1:2] - [ 1, 0 ]                   # transversality conditions
+    s[2:3] = pf[1:2] - [1, 0]                     # transversality conditions
     s[4] = H1(x1, p1)                             # H1 = H01 = 0
     s[5] = H01(x1, p1)                            # at the entrance of the singular arc
     s[6] = g(x2)                                  # g = 0 when entering the boundary arc
@@ -283,7 +283,7 @@ println("\nNorm of the shooting function: ‖s‖ = ", norm(s), "\n")
 We aggregate the data to define the initial guess vector.
 
 ```@example main
-ξ = [ p0 ; t1 ; t2 ; t3 ; tf ] # initial guess
+ξ = [p0, t1, t2, t3, tf] # initial guess
 ```
 
 ### NonlinearSolve.jl
@@ -343,25 +343,28 @@ println("\nNorm of the shooting function: ‖s‖ = ", norm(s), "\n")
 
 ### MINPACK.jl
 
-```@setup main
+Instead of the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package we can use the 
+[MINPACK.jl](https://github.com/sglyon/MINPACK.jl) package to solve 
+the shooting equation. To compute the Jacobian of the shooting function we use the 
+[DifferentiationInterface.jl](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface) package with 
+[ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl) backend.
+
+```@example main
 using MINPACK
+```
+
+```@setup main
 function fsolve(f, j, x; kwargs...)
     try
         MINPACK.fsolve(f, j, x; kwargs...)
     catch e
-        println("Erreur using MINPACK")
+        println("Error using MINPACK")
         println(e)
         println("hybrj not supported. Replaced by hybrd even if it is not visible on the doc.")
         MINPACK.fsolve(f, x; kwargs...)
     end
 end
 ```
-
-Instead of the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) package we can use the 
-[MINPACK.jl](https://github.com/sglyon/MINPACK.jl) package to solve 
-the shooting equation. To compute the Jacobian of the shooting function we use the 
-[DifferentiationInterface.jl](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface) package with 
-[ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl) backend.
 
 ```@example main
 using DifferentiationInterface
