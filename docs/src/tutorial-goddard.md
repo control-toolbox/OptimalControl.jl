@@ -229,7 +229,7 @@ Then, we define the shooting function according to the optimal structure we have
 that is a concatenation of four arcs.
 
 ```@example main
-x0 = [ r0, v0, m0 ] # initial state
+x0 = [r0, v0, m0] # initial state
 
 function shoot!(s, p0, t1, t2, t3, tf)
 
@@ -283,7 +283,7 @@ println("\nNorm of the shooting function: ‖s‖ = ", norm(s), "\n")
 We aggregate the data to define the initial guess vector.
 
 ```@example main
-ξ = [p0, t1, t2, t3, tf] # initial guess
+ξ = [p0; t1; t2; t3; tf] # initial guess
 ```
 
 ### NonlinearSolve.jl
@@ -305,6 +305,14 @@ Let us do some benchmarking.
 ```@example main
 using SciMLSensitivity
 using BenchmarkTools
+function nlsolve(prob; kwargs...)
+    try
+        NonlinearSolve.solve(prob; kwargs...)
+    catch e
+        println("Error using NonlinearSolve")
+        println(e)
+    end
+end
 @benchmark solve(prob; abstol=1e-8, reltol=1e-8, show_trace=Val(false))
 ```
 
@@ -312,33 +320,15 @@ For small nonlinear systems, it could be faster to use the
 [`SimpleNewtonRaphson()` descent algorithm](https://docs.sciml.ai/NonlinearSolve/stable/tutorials/code_optimization/).
 
 ```@example main
-@benchmark solve(prob, SimpleNewtonRaphson(); abstol=1e-8, reltol=1e-8, show_trace=Val(false))
-```
-
-Now, let us solve the problem and retrieve the initial costate solution.
-
-```@example main
-# resolution of S(ξ) = 0
-indirect_sol = solve(prob; abstol=1e-8, reltol=1e-8, show_trace=Val(true))
-
-# we retrieve the costate solution together with the times
-p0 = indirect_sol.u[1:3]
-t1 = indirect_sol.u[4]
-t2 = indirect_sol.u[5]
-t3 = indirect_sol.u[6]
-tf = indirect_sol.u[7]
-
-println("")
-println("p0 = ", p0)
-println("t1 = ", t1)
-println("t2 = ", t2)
-println("t3 = ", t3)
-println("tf = ", tf)
-
-# Norm of the shooting function at solution
-s = similar(p0, 7)
-shoot!(s, p0, t1, t2, t3, tf)
-println("\nNorm of the shooting function: ‖s‖ = ", norm(s), "\n")
+function nlsolve(prob, meth; kwargs...)
+    try
+        NonlinearSolve.solve(prob, meth; kwargs...)
+    catch e
+        println("Error using NonlinearSolve")
+        println(e)
+    end
+end
+@benchmark nlsolve(prob, SimpleNewtonRaphson(); abstol=1e-8, reltol=1e-8, show_trace=Val(false))
 ```
 
 ### MINPACK.jl
@@ -348,10 +338,6 @@ Instead of the [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) p
 the shooting equation. To compute the Jacobian of the shooting function we use the 
 [DifferentiationInterface.jl](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface) package with 
 [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl) backend.
-
-```@example main
-using MINPACK
-```
 
 ```@setup main
 function fsolve(f, j, x; kwargs...)
@@ -388,15 +374,7 @@ We are now in position to solve the problem with the `hybrj` solver from MINPACK
 function, providing the Jacobian. Let us do some benchmarking.
 
 ```@example main
-@benchmark fsolve(nle!, jnle!, ξ; show_trace=false) # initial guess given to the solver
-```
-
-We can also use the [preparation step](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface/stable/tutorial1/#Preparing-for-multiple-gradients) of DifferentiationInterface.jl.
-
-```@example main
-extras = prepare_jacobian(nle!, similar(ξ), backend, ξ)
-jnle_prepared!(js, ξ) = jacobian!(nle!, similar(ξ), js, backend, ξ, extras)
-@benchmark fsolve(nle!, jnle_prepared!, ξ; show_trace=false)
+@benchmark fsolve(nle!, jnle!, ξ; show_trace=true) # initial guess given to the solver
 ```
 
 Now, let us solve the problem and retrieve the initial costate solution.
