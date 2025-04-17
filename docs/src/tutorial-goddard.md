@@ -300,26 +300,22 @@ prob = NonlinearProblem(nle!, ξ)
 nothing # hide
 ```
 
-Let us do some benchmarking.
+Let us do some benchmarking. This will be useful to compare the performance with the MINPACK.jl package below.
 
 ```@example main
-using SciMLSensitivity
 using BenchmarkTools
-@benchmark solve(prob; abstol=1e-8, reltol=1e-8, show_trace=Val(false))
-```
-
-For small nonlinear systems, it could be faster to use the 
-[`SimpleNewtonRaphson()` descent algorithm](https://docs.sciml.ai/NonlinearSolve/stable/tutorials/code_optimization/).
-
-```@example main
 @benchmark solve(prob, SimpleNewtonRaphson(); abstol=1e-8, reltol=1e-8, show_trace=Val(false))
 ```
 
+!!! note
+
+    For small nonlinear systems, the [`SimpleNewtonRaphson()` descent algorithm](https://docs.sciml.ai/NonlinearSolve/stable/tutorials/code_optimization/) may be faster.
+    
 Now, let us solve the problem and retrieve the initial costate solution.
 
 ```@example main
 # resolution of S(ξ) = 0
-indirect_sol = solve(prob; abstol=1e-8, reltol=1e-8, show_trace=Val(true))
+indirect_sol = solve(prob, SimpleNewtonRaphson(); abstol=1e-8, reltol=1e-8, show_trace=Val(true))
 
 # we retrieve the costate solution together with the times
 p0 = indirect_sol.u[1:3]
