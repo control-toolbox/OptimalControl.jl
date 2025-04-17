@@ -49,6 +49,7 @@ using OrdinaryDiffEq  # to get the Flow function from OptimalControl
 using NonlinearSolve  # interface to NLE solvers
 using MINPACK         # NLE solver: use to solve the shooting equation
 using Plots           # to plot the solution
+using BenchmarkTools  # do some benchmarking
 ```
 
 ## Optimal control problem
@@ -302,8 +303,7 @@ nothing # hide
 
 Let us do some benchmarking. This will be useful to compare the performance with the MINPACK.jl package below.
 
-```@example main
-using BenchmarkTools
+```@setup main
 function nlsolve(prob; kwargs...)
     try
         NonlinearSolve.solve(prob; kwargs...)
@@ -318,7 +318,7 @@ end
 For small nonlinear systems, it could be faster to use the 
 [`SimpleNewtonRaphson()` descent algorithm](https://docs.sciml.ai/NonlinearSolve/stable/tutorials/code_optimization/).
 
-```@example main
+```@setup main
 function nlsolve(prob, meth; kwargs...)
     try
         NonlinearSolve.solve(prob, meth; kwargs...)
