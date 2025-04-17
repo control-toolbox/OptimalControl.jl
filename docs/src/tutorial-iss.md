@@ -167,6 +167,7 @@ nothing # hide
 Let us do some benchmarking.
 
 ```@example main
+using SciMLSensitivity
 using BenchmarkTools
 @benchmark solve(prob; show_trace=Val(false))
 ```
