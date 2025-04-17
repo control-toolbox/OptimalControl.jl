@@ -284,7 +284,7 @@ println("\nNorm of the shooting function: ‖s‖ = ", norm(s), "\n")
 We aggregate the data to define the initial guess vector.
 
 ```@example main
-ξ = [p0; t1; t2; t3; tf] # initial guess
+ξ = [p0..., t1, t2, t3, tf] # initial guess
 ```
 
 ### NonlinearSolve.jl

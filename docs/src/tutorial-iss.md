@@ -165,7 +165,6 @@ nothing # hide
 Let us do some benchmarking. This will be useful to compare the performance with the MINPACK.jl package below.
 
 ```@example main
-using SciMLSensitivity
 using BenchmarkTools
 @benchmark solve(prob, SimpleNewtonRaphson(); show_trace=Val(false))
 ```
