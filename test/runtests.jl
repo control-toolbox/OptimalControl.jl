@@ -5,7 +5,7 @@ using LinearAlgebra
 using OrdinaryDiffEq
 using MINPACK
 using DifferentiationInterface
-import ForwardDiff
+using ForwardDiff: ForwardDiff
 using SplitApplyCombine # for flatten in some tests
 
 # NB some direct tests use functional definition and are `using CTModels`

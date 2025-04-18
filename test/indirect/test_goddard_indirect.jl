@@ -1,5 +1,4 @@
 function test_goddard_indirect()
-
     ocp, obj = Goddard()
     g(x) = vmax - x[2] # todo: g(x, u) ≥ 0 (cf. nonnegative multiplier), could be retrieved from constraints
     final_mass_cons(xf) = xf[3] - mf
@@ -20,8 +19,8 @@ function test_goddard_indirect()
     #ub(x) = -(F0 ⋅ g)(x) / (F1 ⋅ g)(x)
     ub(x) = -Lie(F0, g)(x) / Lie(F1, g)(x)
     #μ(x, p) = H01(x, p) / (F1 ⋅ g)(x) 
-    μ(x, p) = H01(x, p) / Lie(F1, g)(x) 
-    
+    μ(x, p) = H01(x, p) / Lie(F1, g)(x)
+
     # flows
     f0 = Flow(ocp, (x, p, v) -> u0)
     f1 = Flow(ocp, (x, p, v) -> u1)
@@ -66,7 +65,7 @@ function test_goddard_indirect()
     # solve and compare
     ξ0 = [p0; t1; t2; t3; tf]
     backend = AutoForwardDiff()
-    nle!  = ( s, ξ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
+    nle! = (s, ξ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
     jnle! = (js, ξ) -> jacobian!(nle!, similar(ξ), js, backend, ξ)
     indirect_sol = fsolve(nle!, jnle!, ξ0; show_trace=true)
 

@@ -13,9 +13,9 @@ if test1
     @testset verbose = true showtiming = true ":continuation :double_integrator" begin
         init = nothing
         obj_list = []
-        for T = 1:5
+        for T in 1:5
             ocp = double_integrator_minenergy(T).ocp
-            sol = solve(ocp, display = false, init = init, grid_size=100)
+            sol = solve(ocp, display=false, init=init, grid_size=100)
             init = sol
             push!(obj_list, objective(sol))
         end
@@ -34,7 +34,7 @@ if test2
         obj_list = []
         for ρ in [0.1, 5, 10, 30, 100]
             ocp = parametric(ρ).ocp
-            sol = solve(ocp, display = false, init = init)
+            sol = solve(ocp, display=false, init=init)
             init = sol
             push!(obj_list, objective(sol))
         end
@@ -47,14 +47,14 @@ if test3
     if !isdefined(Main, :goddard)
         include("../problems/goddard.jl")
     end
-    sol0 = solve(goddard().ocp, display = false)
+    sol0 = solve(goddard().ocp; display=false)
 
     @testset verbose = true showtiming = true ":continuation :goddard" begin
         sol = sol0
         Tmax_list = []
         obj_list = []
-        for Tmax = 3.5:-0.5:1
-            sol = solve(goddard(Tmax = Tmax).ocp, display = false, init = sol)
+        for Tmax in 3.5:-0.5:1
+            sol = solve(goddard(Tmax=Tmax).ocp, display=false, init=sol)
             push!(Tmax_list, Tmax)
             push!(obj_list, objective(sol))
         end
@@ -66,15 +66,15 @@ if test3
             pobj = plot(
                 Tmax_list,
                 obj_list,
-                label = "r(tf)",
-                xlabel = "Maximal thrust (Tmax)",
-                ylabel = "Maximal altitude r(tf)",
-                seriestype = :scatter,
+                label="r(tf)",
+                xlabel="Maximal thrust (Tmax)",
+                ylabel="Maximal altitude r(tf)",
+                seriestype=:scatter,
             )
             # plot multiple solutions
             plot(sol0)
             p = plot!(sol)
-            display(plot(pobj, p, layout = 2, reuse = false, size = (1000, 500)))
+            display(plot(pobj, p, layout=2, reuse=false, size=(1000, 500)))
         end
     end
 end
