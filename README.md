@@ -74,8 +74,7 @@ plot(sol)
 ```
 
 For more details about this problem, please check the
-[basic example tutorial](https://control-toolbox.org/OptimalControl.jl/stable/tutorial-basic-example.html). 
-For a comprehensive introduction to the syntax used above to describe the optimal control problem, check the
+[basic example tutorial](https://control-toolbox.org/OptimalControl.jl/stable/tutorial-double-integrator-energy.html). For a comprehensive introduction to the syntax used above to describe the optimal control problem, check the
 [abstract syntax tutorial](https://control-toolbox.org/OptimalControl.jl/stable/tutorial-abstract.html#abstract).
 
 ## Citing us
