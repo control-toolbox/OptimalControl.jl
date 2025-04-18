@@ -1,4 +1,4 @@
-# [Indirect simple shooting](@id iss)
+# [Indirect simple shooting](@id tutorial-indirect-simple-shooting)
 
 In this tutorial we present the indirect simple shooting method on a simple example.
 

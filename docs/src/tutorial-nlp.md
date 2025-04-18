@@ -20,8 +20,6 @@ using OptimalControl
 using Plots
 ```
 
-## Definition of the optimal control problem
-
 We define a test problem
 
 ```@example main

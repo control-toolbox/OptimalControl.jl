@@ -81,7 +81,7 @@ julia> sol = solve(ocp, init=(state=[-0.5, 0.2], control=0.5))
 ```
 
 !!! tip 
-    For more information on how to provide the initial guess, see the [tutorial on the initial guess](@ref tutorial-init).
+    For more information on how to provide the initial guess, see the [tutorial on the initial guess](@ref tutorial-initial-guess).
 
 """
 function CommonSolve.solve(

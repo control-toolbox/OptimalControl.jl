@@ -68,12 +68,7 @@ plot(sol;
 
 ## From Flow
 
-The previous resolution of the optimal control problem was done with the `solve` function.
-If you use an indirect shooting method and solve shooting equations, you may want to plot the 
-associated solution. To do so, you need to use the `Flow` function to 
-reconstruct the solution. See the [Indirect Simple Shooting](@ref iss) tutorial for an example.
-In our example, you must provide the maximising control $(x, p) \mapsto p_2$ together with the 
-optimal control problem.
+The previous resolution of the optimal control problem was done with the `solve` function. If you use an indirect shooting method and solve shooting equations, you may want to plot the associated solution. To do so, you need to use the `Flow` function to  reconstruct the solution. See the [Indirect Simple Shooting](@ref tutorial-indirect-simple-shooting) tutorial for an example. In our example, you must provide the maximising control $(x, p) \mapsto p_2$ together with the optimal control problem.
 
 !!! tip "Interactions with an optimal control solution"
 
@@ -90,8 +85,7 @@ sol_flow = f( (t0, tf), x0, p0 )
 plot(sol_flow)
 ```
 
-You can notice that the time grid has very few points. To have a better visualisation (the accuracy 
-won't change), you can give a finer grid.
+You can notice that the time grid has very few points. To have a better visualisation (the accuracy won't change), you can give a finer grid.
 
 ```@example main
 sol_flow = f( (t0, tf), x0, p0; saveat=range(t0, tf, 100) )
@@ -175,8 +169,7 @@ plot(t, norm∘u; label="‖u‖")
 
 ## Normalized time
 
-We consider a [LQR example](@ref) and solve the problem for different values of the final time `tf`.
-Then, we plot the solutions on the same figure considering a normalized time $s=(t-t_0)/(t_f-t_0)$, thanks to the keyword argument `time=:normalize` of the `plot` function.
+We consider a [LQR example](@ref) and solve the problem for different values of the final time `tf`. Then, we plot the solutions on the same figure considering a normalized time $s=(t-t_0)/(t_f-t_0)$, thanks to the keyword argument `time=:normalize` of the `plot` function.
 
 ```@example main
 

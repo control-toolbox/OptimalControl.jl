@@ -31,24 +31,24 @@ makedocs(;
         ],
     ),
     pages=[
-        "Introduction" => "index.md",
-        "Basic examples" => [
+        "Getting Started" => "index.md",
+        "Basic Examples" => [
             "Energy minimisation" => "tutorial-double-integrator-energy.md",
             "Time mininimisation" => "tutorial-double-integrator-time.md",
         ],
         "Manual" => [
-            "Abstract syntax" => "tutorial-abstract.md",
-            "Initial guess" => "tutorial-initial-guess.md",
-            "Solve" => "tutorial-solve.md",
+            "Define a problem" => "tutorial-abstract.md",
+            "Set an initial guess" => "tutorial-initial-guess.md",
+            "Solve a problem" => "tutorial-solve.md",
             "Plot a solution" => "tutorial-plot.md",
-            "Flow" => "tutorial-flow.md",
+            "Compute flows" => "tutorial-flow.md",
         ],
-        "Tutorials" => [
-            "Discretisation options" => "tutorial-discretisation.md",
+        "Tutorials and Advanced Features" => [
             "Discrete continuation" => "tutorial-continuation.md",
-            "NLP options" => "tutorial-nlp.md",
-            "Goddard: direct, indirect" => "tutorial-goddard.md",
+            "Discretisation options" => "tutorial-discretisation.md",
+            "NLP manipulations" => "tutorial-nlp.md",
             "Indirect simple shooting" => "tutorial-iss.md",
+            "Goddard: direct, indirect" => "tutorial-goddard.md",
             "Linear–quadratic regulator" => "tutorial-lqr-basic.md",
             "Minimal action" => "tutorial-mam.md",
         ],

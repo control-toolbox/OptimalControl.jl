@@ -1,4 +1,4 @@
-# [Direct and indirect methods for the Goddard problem](@id goddard)
+# Direct and indirect methods for the Goddard problem
 
 ## Introduction
 
@@ -116,7 +116,7 @@ and plot the solution
 plt = plot(direct_sol, solution_label="(direct)", size=(800, 800))
 ```
 
-## [Structure of the solution](@id goddard-structure)
+## [Structure of the solution](@id tutorial-goddard-structure)
 
 We first determine visually the structure of the optimal solution which is composed of a
 bang arc with maximal control, followed by a singular arc, then by a boundary arc and the final
@@ -353,7 +353,7 @@ shoot!(s, p0, t1, t2, t3, tf)
 println("\nNorm of the shooting function: ‖s‖ = ", norm(s), "\n")
 ```
 
-## [Plot of the solution](@id goddard-plot)
+## [Plot of the solution](@id tutorial-goddard-plot)
 
 We plot the solution of the indirect solution (in red) over the solution of the direct method 
 (in blue).
