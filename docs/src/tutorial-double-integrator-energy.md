@@ -1,4 +1,4 @@
-# [Double integrator: energy min (abstract syntax)](@id tutorial-double-integrator-energy)
+# [Double integrator: energy min](@id tutorial-double-integrator-energy)
 
 Let us consider a wagon moving along a rail, whom acceleration can be controlled by a force $u$.
 We denote by $x = (x_1, x_2)$ the state of the wagon, that is its position $x_1$ and its velocity $x_2$.
@@ -51,7 +51,7 @@ nothing # hide
 
 !!! note "Nota bene"
 
-    For a comprehensive introduction to the syntax used above to describe the optimal control problem, check [this abstract syntax tutorial](@ref abstract). In particular, there are non-unicode alternatives for derivatives, integrals, *etc.*
+    For a comprehensive introduction to the syntax used above to define the optimal control problem, check [this abstract syntax tutorial](@ref tutorial-abstract-syntax). In particular, there are non-unicode alternatives for derivatives, integrals, *etc.*
     
 ## [Solve and plot](@id basic-solve-plot)
 
@@ -68,6 +68,10 @@ And plot the solution with:
 plot(sol)
 ```
 
+!!! note "Nota bene"
+
+    The `solve` function has options, see the [solve tutorial](@ref tutorial-solve). You can customise the plot with the `plot` function, see the [plot tutorial](@ref tutorial-plot).
+
 ## State constraint
 
 We add the path constraint
@@ -75,6 +79,8 @@ We add the path constraint
 ```math
 x_2(t) \le 1.2.
 ```
+
+Let us model, solve and plot the optimal control problem with this constraint.
 
 ```@example main
 ocp = @def begin
@@ -95,28 +101,40 @@ ocp = @def begin
 end
 
 sol = solve(ocp)
+
 plot(sol)
 ```
 
-## Save and load
+## Exporting and importing the solution
 
-We can save the solution in a Julia `.jld2` data file and reload it later, and also export a discretised version of the solution in a more portable [JSON](https://en.wikipedia.org/wiki/JSON) format. Note that the OCP is needed when loading a solution.
+We can export (or save) the solution in a Julia `.jld2` data file and reload it later, and also export a discretised version of the solution in a more portable [JSON](https://en.wikipedia.org/wiki/JSON) format. Note that the optimal control problem is needed when loading a solution.
+
+### JLD2
 
 ```@example main
-# load additional modules
-using JLD2, JSON3
+using JLD2
 
-# JLD save / load
 using Suppressor # hide
 @suppress_err begin # hide
 export_ocp_solution(sol; filename_prefix="my_solution")
 end # hide
-sol_reloaded = import_ocp_solution(ocp; filename_prefix="my_solution")
-println("Objective from loaded solution: ", sol_reloaded.objective)
 
-# JSON export / read
-export_ocp_solution(sol; filename_prefix="my_solution", format=:JSON)
-sol_json = import_ocp_solution(ocp; filename_prefix="my_solution", format=:JSON)
-println("Objective from JSON discrete solution: ", sol_json.objective)
+sol_jld = import_ocp_solution(ocp; filename_prefix="my_solution")
+
+println("Objective from computed solution: ", objective(sol))
+println("Objective from imported solution: ", objective(sol_jld))
 ```
 
+### JSON
+
+```@example main
+# load additional modules
+using JSON3
+
+export_ocp_solution(sol; filename_prefix="my_solution", format=:JSON)
+
+sol_json = import_ocp_solution(ocp; filename_prefix="my_solution", format=:JSON)
+
+println("Objective from computed solution: ", objective(sol))
+println("Objective from imported solution: ", objective(sol_json))
+```

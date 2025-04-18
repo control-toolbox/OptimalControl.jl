@@ -1,4 +1,4 @@
-# [Double integrator: time minimisation (abstract syntax)](@id double-integrator-time)
+# [Double integrator: time minimisation](@id double-integrator-time)
 
 The problem consists in minimising the final time $t_f$ for the double integrator system
 
@@ -70,7 +70,7 @@ nothing # hide
 
 !!! note "Nota bene"
 
-    For a comprehensive introduction to the syntax used above to describe the optimal control problem, check [this abstract syntax tutorial](@ref abstract). In particular, there are non-unicode alternatives for derivatives, integrals, *etc.*
+    For a comprehensive introduction to the syntax used above to define the optimal control problem, check [this abstract syntax tutorial](@ref tutorial-abstract-syntax). In particular, there are non-unicode alternatives for derivatives, integrals, *etc.*
 
 ## Solve and plot
 
@@ -86,3 +86,7 @@ and plot the solution
 ```@example main
 plot(sol)
 ```
+
+!!! note "Nota bene"
+
+    The `solve` function has options, see the [solve tutorial](@ref tutorial-solve). You can customise the plot with the `plot` function, see the [plot tutorial](@ref tutorial-plot).
