@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Minimal action · OptimalControl.jl</title><meta name="title" content="Minimal action · OptimalControl.jl"/><meta property="og:title" content="Minimal action · OptimalControl.jl"/><meta property="twitter:title" content="Minimal action · OptimalControl.jl"/><meta name="description" content="Documentation for OptimalControl.jl."/><meta property="og:description" content="Documentation for OptimalControl.jl."/><meta property="twitter:description" content="Documentation for OptimalControl.jl."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script><link href="https://control-toolbox.org/assets/css/documentation.css" rel="stylesheet" type="text/css"/><script src="https://control-toolbox.org/assets/js/documentation.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="index.html">OptimalControl.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="index.html">Getting Started</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="tutorial-double-integrator-energy.html">Energy minimisation</a></li><li><a class="tocitem" href="tutorial-double-integrator-time.html">Time mininimisation</a></li></ul></li><li><span class="tocitem">Manual</span><ul><li><a class="tocitem" href="tutorial-abstract.html">Define a problem</a></li><li><a class="tocitem" href="tutorial-initial-guess.html">Set an initial guess</a></li><li><a class="tocitem" href="tutorial-solve.html">Solve a problem</a></li><li><a class="tocitem" href="tutorial-plot.html">Plot a solution</a></li><li><a class="tocitem" href="tutorial-flow.html">Compute flows</a></li></ul></li><li><span class="tocitem">Tutorials and Advanced Features</span><ul><li><a class="tocitem" href="tutorial-continuation.html">Discrete continuation</a></li><li><a class="tocitem" href="tutorial-discretisation.html">Discretisation options</a></li><li><a class="tocitem" href="tutorial-nlp.html">NLP manipulations</a></li><li><a class="tocitem" href="tutorial-iss.html">Indirect simple shooting</a></li><li><a class="tocitem" href="tutorial-goddard.html">Goddard: direct, indirect</a></li><li><a class="tocitem" href="tutorial-lqr-basic.html">Linear–quadratic regulator</a></li><li class="is-active"><a class="tocitem" href="tutorial-mam.html">Minimal action</a><ul class="internal"><li><a class="tocitem" href="#Required-Packages"><span>Required Packages</span></a></li><li><a class="tocitem" href="#Problem-Setup"><span>Problem Setup</span></a></li><li><a class="tocitem" href="#Optimal-Control-Formulation"><span>Optimal Control Formulation</span></a></li><li><a class="tocitem" href="#Initial-Guess"><span>Initial Guess</span></a></li><li><a class="tocitem" href="#Solving-the-Problem"><span>Solving the Problem</span></a></li><li><a class="tocitem" href="#Visualizing-Results"><span>Visualizing Results</span></a></li><li><a class="tocitem" href="#Minimize-with-respect-to-T"><span>Minimize with respect to T</span></a></li></ul></li></ul></li><li><span class="tocitem">Developers</span><ul><li><a class="tocitem" href="dev-optimalcontrol.html">OptimalControl.jl</a></li><li><input class="collapse-toggle" id="menuitem-5-2" type="checkbox"/><label class="tocitem" for="menuitem-5-2"><span class="docs-label">Subpackages</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="dev-ctbase.html">CTBase.jl</a></li><li><a class="tocitem" href="dev-ctdirect.html">CTDirect.jl</a></li><li><a class="tocitem" href="dev-ctflows.html">CTFlows.jl</a></li><li><a class="tocitem" href="dev-ctmodels.html">CTModels.jl</a></li><li><a class="tocitem" href="dev-ctparser.html">CTParser.jl</a></li></ul></li></ul></li><li><a class="tocitem" href="zhejiang-2025.html">Zhejiang 2025</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Tutorials and Advanced Features</a></li><li class="is-active"><a href="tutorial-mam.html">Minimal action</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="tutorial-mam.html">Minimal action</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl/blob/main/docs/src/tutorial-mam.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Minimal-Action-Method-using-Optimal-Control"><a class="docs-heading-anchor" href="#Minimal-Action-Method-using-Optimal-Control">Minimal Action Method using Optimal Control</a><a id="Minimal-Action-Method-using-Optimal-Control-1"></a><a class="docs-heading-anchor-permalink" href="#Minimal-Action-Method-using-Optimal-Control" title="Permalink"></a></h1><p>The Minimal Action Method (MAM) is used to find the maximum likelihood transition paths between stable states in dynamical systems.  The Minimal Action Method is a numerical technique for finding the most probable transition pathway between stable states in stochastic dynamical systems. It achieves this by minimizing an action functional that represents the path&#39;s deviation from the deterministic dynamics, effectively identifying the path of least resistance through the system&#39;s landscape. This tutorial demonstrates how to implement MAM as an optimal control problem.</p><h2 id="Required-Packages"><a class="docs-heading-anchor" href="#Required-Packages">Required Packages</a><a id="Required-Packages-1"></a><a class="docs-heading-anchor-permalink" href="#Required-Packages" title="Permalink"></a></h2><pre><code class="language-julia hljs">using OptimalControl
+using NLPModelsIpopt
+using Plots, Printf</code></pre><h2 id="Problem-Setup"><a class="docs-heading-anchor" href="#Problem-Setup">Problem Setup</a><a id="Problem-Setup-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-Setup" title="Permalink"></a></h2><p>We&#39;ll consider a 2D system with a double-well flow, called the Maier-Stein model. It is a famous benchmark problem as it exhibits non-gradient dynamics with two stable equilibrium points at (-1,0) and (1,0), connected by a non-trivial transition path. The system&#39;s deterministic dynamics are given by:</p><pre><code class="language-julia hljs"># Define the vector field
+f(u, v) = [u - u^3 - 10*u*v^2,  -(1 - u^2)*v]
+f(x) = f(x...)</code></pre><h2 id="Optimal-Control-Formulation"><a class="docs-heading-anchor" href="#Optimal-Control-Formulation">Optimal Control Formulation</a><a id="Optimal-Control-Formulation-1"></a><a class="docs-heading-anchor-permalink" href="#Optimal-Control-Formulation" title="Permalink"></a></h2><p>The minimal action path minimizes the deviation from the deterministic dynamics:</p><pre><code class="language-julia hljs">function ocp(T)
+    action = @def begin
+        t ∈ [0, T], time
+        x ∈ R², state
+        u ∈ R², control
+        x(0) == [-1, 0]    # Starting point (left well)
+        x(T) == [1, 0]     # End point (right well)
+        ẋ(t) == u(t)       # Path dynamics
+        ∫( sum((u(t) - f(x(t))).^2) ) → min  # Minimize deviation from deterministic flow
+    end
+    return action
+end</code></pre><h2 id="Initial-Guess"><a class="docs-heading-anchor" href="#Initial-Guess">Initial Guess</a><a id="Initial-Guess-1"></a><a class="docs-heading-anchor-permalink" href="#Initial-Guess" title="Permalink"></a></h2><p>We provide an initial guess for the path using a simple interpolation:</p><pre><code class="language-julia hljs"># Time horizon
+T = 50
+
+# Linear interpolation for x₁
+x1(t) = -(1 - t/T) + t/T
+
+# Parabolic guess for x₂
+x2(t) = 0.3(-x1(t)^2 + 1)
+x(t) = [x1(t), x2(t)]
+u(t) = f(x(t))
+
+# Initial guess
+init = (state=x, control=u)</code></pre><h2 id="Solving-the-Problem"><a class="docs-heading-anchor" href="#Solving-the-Problem">Solving the Problem</a><a id="Solving-the-Problem-1"></a><a class="docs-heading-anchor-permalink" href="#Solving-the-Problem" title="Permalink"></a></h2><p>We solve the problem in two steps for better accuracy:</p><pre><code class="language-julia hljs"># First solve with coarse grid
+sol = solve(ocp(T); init=init, grid_size=50)
+
+# Refine solution with finer grid
+sol = solve(ocp(T); init=sol, grid_size=1000)
+
+# Objective value
+objective(sol)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">0.24942810238630472</code></pre><h2 id="Visualizing-Results"><a class="docs-heading-anchor" href="#Visualizing-Results">Visualizing Results</a><a id="Visualizing-Results-1"></a><a class="docs-heading-anchor-permalink" href="#Visualizing-Results" title="Permalink"></a></h2><p>Let&#39;s plot the solution trajectory and phase space:</p><pre><code class="language-julia hljs">plot(sol)</code></pre><img src="tutorial-mam-be559548.svg" alt="Example block output"/><pre><code class="language-julia hljs"># Phase space plot
+MLP = state(sol).(time_grid(sol))
+scatter(first.(MLP), last.(MLP),
+        title=&quot;Minimal Action Path&quot;,
+        xlabel=&quot;u&quot;,
+        ylabel=&quot;v&quot;,
+        label=&quot;Transition path&quot;)</code></pre><img src="tutorial-mam-48ef3902.svg" alt="Example block output"/><p>The resulting path shows the most likely transition between the two stable states given a transient time <span>$T=50$</span>, minimizing the action functional while respecting the system&#39;s dynamics.</p><h2 id="Minimize-with-respect-to-T"><a class="docs-heading-anchor" href="#Minimize-with-respect-to-T">Minimize with respect to T</a><a id="Minimize-with-respect-to-T-1"></a><a class="docs-heading-anchor-permalink" href="#Minimize-with-respect-to-T" title="Permalink"></a></h2><p>To find the maximum likelihood path, we also need to minimize the transient time <code>T</code>. Hence, we perform a discrete continuation over the parameter <code>T</code> by solving the optimal control problem over a continuous range of final times <code>T</code>, using each solution to initialize the next problem.</p><pre><code class="language-julia hljs">objectives = []
+Ts = range(1,100,100)
+sol = solve(ocp(Ts[1]); display=false, init=init, grid_size=50)
+println(&quot; Time   Objective     Iterations&quot;)
+for T=Ts
+    global sol = solve(ocp(T); display=false, init=sol, grid_size=1000, tol=1e-8)
+    @printf(&quot;%6.2f  %9.6e  %d\n&quot;, T, objective(sol), iterations(sol))
+    push!(objectives, objective(sol))
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> Time   Objective     Iterations
+  1.00  4.076020e+00  2
+  2.00  1.653532e+00  22
+  3.00  9.192122e-01  36
+  4.00  6.108613e-01  13
+  5.00  4.576650e-01  5
+  6.00  3.744832e-01  6
+  7.00  3.269081e-01  6
+  8.00  2.987674e-01  6
+  9.00  2.817036e-01  6
+ 10.00  2.711315e-01  7
+ 11.00  2.644391e-01  7
+ 12.00  2.601049e-01  7
+ 13.00  2.572288e-01  8
+ 14.00  2.552712e-01  8
+ 15.00  2.539047e-01  8
+ 16.00  2.529271e-01  9
+ 17.00  2.522114e-01  10
+ 18.00  2.516760e-01  10
+ 19.00  2.512676e-01  12
+ 20.00  2.509506e-01  13
+ 21.00  2.507006e-01  12
+ 22.00  2.505007e-01  12
+ 23.00  2.503386e-01  12
+ 24.00  2.502058e-01  12
+ 25.00  2.500959e-01  11
+ 26.00  2.500040e-01  42
+ 27.00  2.499266e-01  286
+ 28.00  2.498608e-01  18
+ 29.00  2.498046e-01  15
+ 30.00  2.497563e-01  15
+ 31.00  2.497144e-01  15
+ 32.00  2.496780e-01  13
+ 33.00  2.496462e-01  13
+ 34.00  2.496183e-01  13
+ 35.00  2.495937e-01  13
+ 36.00  2.495719e-01  13
+ 37.00  2.495526e-01  13
+ 38.00  2.495354e-01  25
+ 39.00  2.495201e-01  31
+ 40.00  2.495064e-01  28
+ 41.00  2.494942e-01  17
+ 42.00  2.494832e-01  20
+ 43.00  2.494733e-01  19
+ 44.00  2.494644e-01  37
+ 45.00  2.494563e-01  39
+ 46.00  2.494491e-01  41
+ 47.00  2.494426e-01  37
+ 48.00  2.494367e-01  69
+ 49.00  2.494314e-01  20
+ 50.00  2.494266e-01  32
+ 51.00  2.494223e-01  37
+ 52.00  2.494185e-01  30
+ 53.00  2.494150e-01  55
+ 54.00  2.494119e-01  38
+ 55.00  2.494091e-01  51
+ 56.00  2.494066e-01  54
+ 57.00  2.494044e-01  35
+ 58.00  2.494025e-01  38
+ 59.00  2.494008e-01  51
+ 60.00  2.493993e-01  38
+ 61.00  2.493981e-01  46
+ 62.00  2.493970e-01  31
+ 63.00  2.493962e-01  38
+ 64.00  2.493955e-01  29
+ 65.00  2.493949e-01  62
+ 66.00  2.493945e-01  106
+ 67.00  2.493943e-01  52
+ 68.00  2.493942e-01  50
+ 69.00  2.493942e-01  57
+ 70.00  2.493943e-01  75
+ 71.00  2.493945e-01  53
+ 72.00  2.493949e-01  47
+ 73.00  2.493954e-01  38
+ 74.00  2.493959e-01  20
+ 75.00  2.493966e-01  59
+ 76.00  2.493973e-01  79
+ 77.00  2.493981e-01  62
+ 78.00  2.493990e-01  63
+ 79.00  2.494000e-01  36
+ 80.00  2.494011e-01  51
+ 81.00  2.494022e-01  45
+ 82.00  2.494034e-01  43
+ 83.00  2.494046e-01  31
+ 84.00  2.494060e-01  61
+ 85.00  2.494074e-01  20
+ 86.00  2.494088e-01  99
+ 87.00  2.494104e-01  40
+ 88.00  2.494119e-01  51
+ 89.00  2.494136e-01  67
+ 90.00  2.494152e-01  27
+ 91.00  2.494170e-01  41
+ 92.00  2.494188e-01  51
+ 93.00  2.494206e-01  77
+ 94.00  2.494225e-01  36
+ 95.00  2.494244e-01  45
+ 96.00  2.494264e-01  82
+ 97.00  2.494282e-01  25
+ 98.00  2.494306e-01  148
+ 99.00  2.494327e-01  62
+100.00  2.494349e-01  96</code></pre><pre><code class="language-julia hljs">T_min = Ts[argmin(objectives)]
+plt1 = scatter(Ts, log10.(objectives), xlabel=&quot;Time&quot;, label=&quot;Objective (log10)&quot;)
+vline!(plt1, [T_min], label=&quot;Minimum&quot;, z_order=:back)
+plt2 = scatter(Ts[20:100], log10.(objectives[20:100]), xlabel=&quot;Time&quot;, label=&quot;Objective (log10)&quot;)
+vline!(plt2, [T_min], label=&quot;Minimum&quot;, z_order=:back)
+plot(plt1, plt2, layout=(2,1), size=(800,800))</code></pre><img src="tutorial-mam-03298dce.svg" alt="Example block output"/><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-lqr-basic.html">« Linear–quadratic regulator</a><a class="docs-footer-nextpage" href="dev-optimalcontrol.html">OptimalControl.jl »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.10.1 on <span class="colophon-date" title="Friday 18 April 2025 17:28">Friday 18 April 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
