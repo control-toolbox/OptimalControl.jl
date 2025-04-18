@@ -15,9 +15,8 @@ function double_integrator_mintf()
         tf → min
     end
 
-    return ((ocp = ocp, obj = 2.0, name = "double_integrator_mintf", init = nothing))
+    return ((ocp=ocp, obj=2.0, name="double_integrator_mintf", init=nothing))
 end
-
 
 # min energy with fixed tf
 function double_integrator_minenergy(T=2)
@@ -35,7 +34,7 @@ function double_integrator_minenergy(T=2)
         ∫(u(t)^2) → min
     end
 
-    return ((ocp = ocp, obj = nothing, name = "double_integrator_minenergy", init = nothing))
+    return ((ocp=ocp, obj=nothing, name="double_integrator_minenergy", init=nothing))
 end
 
 # max t0 with free t0,tf
@@ -50,12 +49,12 @@ function double_integrator_freet0tf()
         -1 ≤ u(t) ≤ 1
         x(t0) == [0, 0]
         x(tf) == [1, 0]
-        0.05 ≤ t0 ≤ 10        
+        0.05 ≤ t0 ≤ 10
         0.05 ≤ tf ≤ 10
         0.01 ≤ tf - t0 ≤ Inf
         ẋ(t) == [x₂(t), u(t)]
         t0 → max
     end
 
-    return ((ocp = ocp, obj = 8.0, name = "double_integrator_freet0tf", init = nothing))
+    return ((ocp=ocp, obj=8.0, name="double_integrator_freet0tf", init=nothing))
 end
