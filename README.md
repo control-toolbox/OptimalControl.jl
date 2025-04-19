@@ -12,8 +12,8 @@
 [doc-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
 [doc-stable-url]: https://control-toolbox.org/OptimalControl.jl/stable/
 
-[release-img]: https://juliahub.com/docs/General/OptimalControl/stable/version.svg
-[release-url]: https://juliahub.com/ui/Packages/General/OptimalControl
+[release-img]: https://img.shields.io/github/v/release/control-toolbox/OptimalControl.jl.svg
+[release-url]: https://github.com/control-toolbox/OptimalControl.jl/releases
 
 [pkg-eval-img]: https://img.shields.io/badge/Julia-package-purple
 [pkg-eval-url]: https://juliahub.com/ui/Packages/General/OptimalControl
