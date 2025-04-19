@@ -279,7 +279,7 @@ end
 ```
 
 !!! caveat
-    Write either `u(t)^2` or `(u^2)(t)`, not `u^2(t)` since in Julia the latter is means `u^(2t)`. Moreover,
+    Write either `u(t)^2` or `(u^2)(t)`, not `u^2(t)` since in Julia the latter means `u^(2t)`. Moreover,
     in the case of equalities or of one-sided inequalities, the control and / or the state must belong to the *left-hand side*. The following will error:
 
 ```@setup main-repl
@@ -358,14 +358,14 @@ or
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
     u ∈ R, control
-    0.5integrate(q(t) + u(t)^2) → min
+    0.5integral(q(t) + u(t)^2) → min
     ...
 end
 ```
 
 The integration range is implicitly equal to the time range, so the cost above is to be understood as
 ```math
-\int_0^1 \left( q(t) + u^2(t) \right) \mathrm{d}t \to \min.
+\frac{1}{2} \int_0^1 \left( q(t) + u^2(t) \right) \mathrm{d}t \to \min.
 ```
 
 As for the dynamics, the parser will detect whether the integrand depends or not on time (autonomous / non-autonomous case).
