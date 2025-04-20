@@ -45,7 +45,7 @@ makedocs(;
         ],
         "Tutorials and Advanced Features" => [
             "Discrete continuation" => "tutorial-continuation.md",
-            "Discretisation options" => "tutorial-discretisation.md",
+            "Discretisation methods" => "tutorial-discretisation.md",
             "NLP manipulations" => "tutorial-nlp.md",
             "Indirect simple shooting" => "tutorial-iss.md",
             "Goddard: direct, indirect" => "tutorial-goddard.md",
