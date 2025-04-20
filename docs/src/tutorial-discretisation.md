@@ -1,4 +1,4 @@
-# Discretisation methods
+# [Discretisation methods](@id tutorial-discretisation-methods)
 
 ## Discretisation formulas
 When calling `solve`, the option `disc_method=...` can be used to set the discretisation scheme.
