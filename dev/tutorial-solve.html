@@ -59,7 +59,7 @@ Number of inequality constraint evaluations          = 0
 Number of equality constraint Jacobian evaluations   = 3
 Number of inequality constraint Jacobian evaluations = 0
 Number of Lagrangian Hessian evaluations             = 2
-Total seconds in IPOPT                               = 1.860
+Total seconds in IPOPT                               = 1.988
 
 EXIT: Optimal Solution Found.</code></pre><p>Notice that we need to load the <code>NLPModelsIpopt</code> package before calling <code>solve</code>. This is because the method currently implements a direct approach, where the optimal control problem is transcribed to a nonlinear optimization problem (NLP) of the form</p><p class="math-container">\[\text{minimize}\quad F(y), \quad\text{subject to the constraints}\quad g(y)=0, \quad h(y)\le 0. \]</p><p>Note: calling <code>solve</code> without loading a NLP solver package first will notify the user:</p><pre><code class="language-julia hljs">julia&gt; solve(ocp)
 ERROR: ExtensionError. Please make: julia&gt; using NLPModelsIpopt</code></pre><p>See below for the NLP solver options.</p><h2 id="Resolution-methods-and-algorithms"><a class="docs-heading-anchor" href="#Resolution-methods-and-algorithms">Resolution methods and algorithms</a><a id="Resolution-methods-and-algorithms-1"></a><a class="docs-heading-anchor-permalink" href="#Resolution-methods-and-algorithms" title="Permalink"></a></h2><p>OptimalControl.jl offers a list of methods to solve your optimal control problem. To get the list of methods, simply call <code>available_methods</code>.</p><pre><code class="language-julia hljs">available_methods()</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(:direct, :adnlp, :ipopt)
@@ -100,10 +100,10 @@ Number of objective gradient evaluations             = 3
 Number of constraint evaluations                     = 3
 Number of constraint Jacobian evaluations            = 3
 Number of Lagrangian Hessian evaluations             = 2
-Total wall-clock secs in solver (w/o fun. eval./lin. alg.)  =  0.083
+Total wall-clock secs in solver (w/o fun. eval./lin. alg.)  =  0.090
 Total wall-clock secs in linear solver                      =  0.005
-Total wall-clock secs in NLP function evaluations           =  0.323
-Total wall-clock secs                                       =  0.411
+Total wall-clock secs in NLP function evaluations           =  0.339
+Total wall-clock secs                                       =  0.434
 
 EXIT: Optimal Solution Found (tol = 1.0e-06).</code></pre><p>Note that you can provide a partial description.  If several full descriptions contain it, the priority is given to first one in the list.  Hence, these calls are all equivalent:</p><pre><code class="language-julia hljs">solve(ocp)
 solve(ocp, :direct                )
@@ -184,7 +184,7 @@ Number of constraint Jacobian evaluations            = 1
 Number of Lagrangian Hessian evaluations             = 1
 Total wall-clock secs in solver (w/o fun. eval./lin. alg.)  =  0.001
 Total wall-clock secs in linear solver                      =  0.002
-Total wall-clock secs in NLP function evaluations           =  0.001
+Total wall-clock secs in NLP function evaluations           =  0.000
 Total wall-clock secs                                       =  0.004
 
 EXIT: Maximum Number of Iterations Exceeded.</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
