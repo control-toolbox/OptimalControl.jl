@@ -113,6 +113,7 @@ We can export (or save) the solution in a Julia `.jld2` data file and reload it 
 
 ```@example main
 using JLD2
+using JSON3 # hide
 
 using Suppressor # hide
 @suppress_err begin # hide
