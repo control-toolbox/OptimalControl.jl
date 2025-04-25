@@ -6,7 +6,7 @@ The full grammar of [OptimalControl.jl](https://control-toolbox.org/OptimalContr
 
 While the syntax will be transparent to those users familiar with Julia expressions (`Expr`'s), we provide examples for every case that should be widely understandable. We rely heavily on [MLStyle.jl](https://github.com/thautwarm/MLStyle.jl) and its pattern matching abilities 👍🏽 for the semantic pass. Abstract definitions use the macro `@def`.
 
-## [Variable](@id variable)
+## [Variable](@id tutorial-abstract-variable)
 
 ```julia
 :( $v ∈ R^$q, variable ) 
@@ -87,7 +87,7 @@ One (or even the two bounds) can be variable, typically for minimum time problem
 end
 ```
 
-## [State](@id state)
+## [State](@id tutorial-abstract-state)
 
 ```julia
 :( $x ∈ R^$n, state ) 
@@ -112,7 +112,7 @@ As for the variable, there are automatic aliases (`x₁` and `x1` for `x[1]`, *e
 end
 ```
 
-## [Control](@id control)
+## [Control](@id tutorial-abstract-control)
 
 ```julia
 :( $u ∈ R^$m, control ) 
@@ -137,7 +137,7 @@ As before, there are automatic aliases (`u₁` and `u1` for `u[1]`, *etc.*) and 
 end
 ```
 
-## [Dynamics](@id dynamics)
+## [Dynamics](@id tutorial-abstract-dynamics)
 
 ```julia
 :( ∂($x)($t) == $e1 ) 
@@ -299,7 +299,7 @@ using OptimalControl
 end
 ```
 
-## [Mayer cost](@id mayer)
+## [Mayer cost](@id tutorial-abstract-mayer)
 
 ```julia                                      
 :( $e1 → min ) 
@@ -430,7 +430,7 @@ The correct syntax is
 end
 ```
 
-## [Aliases](@id aliases)
+## [Aliases](@id tutorial-abstract-aliases)
 
 ```julia
 :( $a = $e1 )
