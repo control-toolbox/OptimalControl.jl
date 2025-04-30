@@ -13,10 +13,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        pkgname: [CalculusOfVariations, LossControl, GeometricPreconditioner, MedicalResonanceImaging, Kepler]
+        pkgname: [CalculusOfVariations, LossControl, GeometricPreconditioner, MedicalResonanceImaging, Kepler, PWLdynamics]
         pkgversion: [latest, stable]
         include:
           - pkgpath: control-toolbox
+          - pkgpath: agustinyabo
+            pkgname: PWLdynamics
     uses: control-toolbox/CTActions/.github/workflows/breakage-application.yml@main
     with:
       pkgname: ${{ matrix.pkgname }}
