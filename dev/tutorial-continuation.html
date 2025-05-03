@@ -27,7 +27,7 @@ end</code></pre><pre class="documenter-example-output"><code class="nohighlight 
 T 2.00 objective  1.500096 iterations 3
 T 3.00 objective  0.444473 iterations 3
 T 4.00 objective  0.187512 iterations 3
-T 5.00 objective  0.095994 iterations 2</code></pre><h2 id="Continuation-on-global-variable"><a class="docs-heading-anchor" href="#Continuation-on-global-variable">Continuation on global variable</a><a id="Continuation-on-global-variable-1"></a><a class="docs-heading-anchor-permalink" href="#Continuation-on-global-variable" title="Permalink"></a></h2><p>As a second example, we show how to avoid redefining a new OCP each time, and modify the original one instead. More precisely we now solve a Goddard problem for a decreasing maximal thrust. If we store the value for <em>Tmax</em> in a global variable, we can simply modify this variable and keep the same OCP problem during the continuation.</p><p>Let us first define the Goddard problem (note that the formulation below illustrates all the possible constraints types, and the problem could be defined in a more compact way).</p><pre><code class="language-julia hljs">Cd = 310
+T 5.00 objective  0.096006 iterations 3</code></pre><h2 id="Continuation-on-global-variable"><a class="docs-heading-anchor" href="#Continuation-on-global-variable">Continuation on global variable</a><a id="Continuation-on-global-variable-1"></a><a class="docs-heading-anchor-permalink" href="#Continuation-on-global-variable" title="Permalink"></a></h2><p>As a second example, we show how to avoid redefining a new OCP each time, and modify the original one instead. More precisely we now solve a Goddard problem for a decreasing maximal thrust. If we store the value for <em>Tmax</em> in a global variable, we can simply modify this variable and keep the same OCP problem during the continuation.</p><p>Let us first define the Goddard problem (note that the formulation below illustrates all the possible constraints types, and the problem could be defined in a more compact way).</p><pre><code class="language-julia hljs">Cd = 310
 Tmax = 3.5
 β = 500
 b = 2
@@ -67,7 +67,7 @@ vmax = 0.1
 end
 
 sol0 = solve(ocp; display=false)
-@printf(&quot;Objective for reference solution %.6f\n&quot;, objective(sol0))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Objective for reference solution 1.012575</code></pre><p>Then we perform the continuation on the maximal thrust.</p><pre><code class="language-julia hljs">sol       = sol0
+@printf(&quot;Objective for reference solution %.6f\n&quot;, objective(sol0))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Objective for reference solution 1.012576</code></pre><p>Then we perform the continuation on the maximal thrust.</p><pre><code class="language-julia hljs">sol       = sol0
 Tmax_list = []
 obj_list  = []
 for Tmax_local=3.5:-0.5:1
@@ -76,11 +76,11 @@ for Tmax_local=3.5:-0.5:1
     @printf(&quot;Tmax %.2f objective %.6f iterations %d\n&quot;, Tmax, objective(sol), iterations(sol))
     push!(Tmax_list, Tmax)
     push!(obj_list, objective(sol))
-end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Tmax 3.50 objective 1.012575 iterations 10
-Tmax 3.00 objective 1.012371 iterations 13
-Tmax 2.50 objective 1.012023 iterations 15
-Tmax 2.00 objective 1.011252 iterations 14
-Tmax 1.50 objective 1.009172 iterations 20
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Tmax 3.50 objective 1.012576 iterations 14
+Tmax 3.00 objective 1.012372 iterations 17
+Tmax 2.50 objective 1.012023 iterations 20
+Tmax 2.00 objective 1.011262 iterations 19
+Tmax 1.50 objective 1.009172 iterations 18
 Tmax 1.00 objective 1.003593 iterations 19</code></pre><p>We plot now the objective w.r.t the maximal thrust, as well as both solutions for <em>Tmax</em>=3.5 and <em>Tmax</em>=1.</p><pre><code class="language-julia hljs">using Plots.PlotMeasures # for leftmargin
 
 plt_obj = plot(Tmax_list, obj_list;
@@ -94,9 +94,9 @@ plt_sol = plot(sol0; solution_label=&quot;(Tmax = &quot;*string(Tmax_list[1])*&q
 plot!(plt_sol, sol;  solution_label=&quot;(Tmax = &quot;*string(Tmax_list[end])*&quot;)&quot;)
 
 layout = grid(2, 1, heights=[0.2, 0.8])
-plot(plt_obj, plt_sol; layout=layout, size=(800, 1000), leftmargin=5mm)</code></pre><img src="tutorial-continuation-480d0472.svg" alt="Example block output"/><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+plot(plt_obj, plt_sol; layout=layout, size=(800, 1000), leftmargin=5mm)</code></pre><img src="tutorial-continuation-5d9d4739.svg" alt="Example block output"/><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-flow.html">« Compute flows</a><a class="docs-footer-nextpage" href="tutorial-discretisation.html">Discretisation methods »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.10.2 on <span class="colophon-date" title="Wednesday 30 April 2025 19:29">Wednesday 30 April 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-flow.html">« Compute flows</a><a class="docs-footer-nextpage" href="tutorial-discretisation.html">Discretisation methods »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.10.2 on <span class="colophon-date" title="Saturday 3 May 2025 16:31">Saturday 3 May 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
