@@ -137,6 +137,9 @@ As before, there are automatic aliases (`u₁` and `u1` for `u[1]`, *etc.*) and 
 end
 ```
 
+!!! note
+    One dimensional variable, state or control are treated as scalars (`Real`), not vectors (`Vector`). In Julia, for `x::Real`, it is possible to write `x[1]` (and `x[1][1]`...) so it is OK (though useless) to write `x₁`, `x1` or `x[1]` instead of simply `x` to access the corresponding value. Conversely it is *not* OK to use such an `x` as a vector, for instance as in `...f(x)...` where `f(x::Vector{T}) where {T <: Real}`.
+
 ## [Dynamics](@id tutorial-abstract-dynamics)
 
 ```julia
@@ -296,6 +299,38 @@ using OptimalControl
     ẋ(t) == [x₂(t), u(t)]
     1 ≤ x₂(t)
     -1 ≤ u(t) ≤ 1
+end
+```
+
+!!! caveat
+     Constraint bounds must be *effective*, that is must not depend on a variable. For instance, instead of
+```julia
+o = @def begin
+    v ∈ R, variable
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    -1 ≤ v ≤ 1
+    x₁(0) == -1
+    x₂(0) == v # wrong: the bound is not effective (as it depends on the variable)
+    x(1) == [0, 0]
+    ẋ(t) == [x₂(t), u(t)]
+    ∫( 0.5u(t)^2 ) → min
+end
+```
+write
+```julia
+o = @def begin
+    v ∈ R, variable
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    -1 ≤ v ≤ 1
+    x₁(0) == -1
+    x₂(0) - v == 0 # OK: the boundary contraint may involve the variable
+    x(1) == [0, 0]
+    ẋ(t) == [x₂(t), u(t)]
+    ∫( 0.5u(t)^2 ) → min
 end
 ```
 
@@ -506,3 +541,7 @@ end
 
 - Parsing errors should be explicit enough (with line number in the `@def` `begin ... end` block indicated) 🤞🏾
 - Check tutorials and applications in the documentation for further use.
+
+## Known issues
+
+- [Constants and (reverse over forward) AD](https://github.com/JuliaSmoothOptimizers/ADNLPModels.jl/issues/346)

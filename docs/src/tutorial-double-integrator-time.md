@@ -37,7 +37,7 @@ Let us define the problem
 ocp = @def begin
 
     tf ∈ R,          variable
-    t ∈ [ 0, tf ],   time
+    t ∈ [0, tf],   time
     x = (q, v) ∈ R², state
     u ∈ R,           control
 
@@ -52,7 +52,7 @@ ocp = @def begin
     -5 ≤ q(t) ≤ 5,          (1)
     -3 ≤ v(t) ≤ 3,          (2)
 
-    ẋ(t) == [ v(t), u(t) ]
+    ẋ(t) == [v(t), u(t)]
 
     tf → min
 
@@ -65,7 +65,7 @@ nothing # hide
     In order to ensure convergence of the direct solver, we have added the state constraints labelled (1) and (2):
 
     ```math
-    -5 \leq q(t) \leq 5,\quad -3 \leq v(t) \leq 3,\quad t \in [ 0, t_f ].
+    -5 \leq q(t) \leq 5,\quad -3 \leq v(t) \leq 3,\quad t \in [0, t_f].
     ```
 
 !!! note "Nota bene"
