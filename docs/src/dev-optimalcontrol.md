@@ -23,6 +23,7 @@ O --> B
 F --> B
 D --> B
 D --> M
+P --> M
 P --> B
 M --> B
 style O fill:#FBF275
