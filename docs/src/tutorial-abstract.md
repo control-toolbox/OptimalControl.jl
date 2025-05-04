@@ -544,4 +544,4 @@ end
 
 ## Known issues
 
-- [Constants and (reverse over forward) AD](https://github.com/JuliaSmoothOptimizers/ADNLPModels.jl/issues/346)
+- [Constants and (reverse over forward) AD](https://github.com/control-toolbox/OptimalControl.jl/issues/481)
