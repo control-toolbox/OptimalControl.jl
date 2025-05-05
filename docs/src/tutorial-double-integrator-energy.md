@@ -113,15 +113,8 @@ We can export (or save) the solution in a Julia `.jld2` data file and reload it 
 
 ```@example main
 using JLD2
-using JSON3 # hide
-
-using Suppressor # hide
-@suppress_err begin # hide
-export_ocp_solution(sol; filename_prefix="my_solution")
-end # hide
-
-sol_jld = import_ocp_solution(ocp; filename_prefix="my_solution")
-
+export_ocp_solution(sol; filename="my_solution")
+sol_jld = import_ocp_solution(ocp; filename="my_solution")
 println("Objective from computed solution: ", objective(sol))
 println("Objective from imported solution: ", objective(sol_jld))
 ```
@@ -129,13 +122,9 @@ println("Objective from imported solution: ", objective(sol_jld))
 ### JSON
 
 ```@example main
-# load additional modules
 using JSON3
-
-export_ocp_solution(sol; filename_prefix="my_solution", format=:JSON)
-
-sol_json = import_ocp_solution(ocp; filename_prefix="my_solution", format=:JSON)
-
+export_ocp_solution(sol; filename="my_solution", format=:JSON)
+sol_json = import_ocp_solution(ocp; filename="my_solution", format=:JSON)
 println("Objective from computed solution: ", objective(sol))
 println("Objective from imported solution: ", objective(sol_json))
 ```
