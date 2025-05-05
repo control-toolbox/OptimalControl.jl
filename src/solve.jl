@@ -89,7 +89,7 @@ function CommonSolve.solve(
 )::CTModels.Solution
 
     # get the full description
-    method = CTBase.getFullDescription(description, available_methods())
+    method = CTBase.complete(description; descriptions=available_methods())
 
     # solve the problem
     if :direct ∈ method
