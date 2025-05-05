@@ -1,0 +1,22 @@
+# Ref: https://securitylab.github.com/research/github-actions-preventing-pwn-requests
+name: Breakage
+
+# read-only repo token
+# no access to secrets
+on:
+  pull_request:
+
+jobs:
+  break:
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgname: [OptimalControlProblems]
+        pkgversion: [latest, stable]
+        include:
+          - pkgpath: control-toolbox
+    uses: control-toolbox/CTActions/.github/workflows/breakage.yml@main
+    with:
+      pkgname: ${{ matrix.pkgname }}
+      pkgpath: ${{ matrix.pkgpath }}
+      pkgversion: ${{ matrix.pkgversion }}
