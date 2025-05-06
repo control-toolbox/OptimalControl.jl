@@ -113,7 +113,10 @@ We can export (or save) the solution in a Julia `.jld2` data file and reload it 
 
 ```@example main
 using JLD2
+using Suppressor # hide
+@suppress_err begin # hide
 export_ocp_solution(sol; filename="my_solution")
+end # hide
 sol_jld = import_ocp_solution(ocp; filename="my_solution")
 println("Objective from computed solution: ", objective(sol))
 println("Objective from imported solution: ", objective(sol_jld))
