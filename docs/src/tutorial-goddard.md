@@ -37,16 +37,12 @@ We import the [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl)
 [NLPModelsIpopt.jl](https://github.com/JuliaSmoothOptimizers/NLPModelsIpopt.jl) to solve it. 
 We import the [Plots.jl](https://github.com/JuliaPlots/Plots.jl) package to plot the solution. 
 The [OrdinaryDiffEq.jl](https://github.com/SciML/OrdinaryDiffEq.jl) package is used to 
-define the shooting function for the indirect method and the 
-[NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) and 
-[MINPACK.jl](https://github.com/sglyon/MINPACK.jl) packages permit to solve the shooting 
-equation.
+define the shooting function for the indirect method and the [MINPACK.jl](https://github.com/sglyon/MINPACK.jl) package permits to solve the shooting equation.
 
 ```@example main
 using OptimalControl  # to define the optimal control problem and more
 using NLPModelsIpopt  # to solve the problem via a direct method
 using OrdinaryDiffEq  # to get the Flow function from OptimalControl
-using NonlinearSolve  # interface to NLE solvers
 using MINPACK         # NLE solver: use to solve the shooting equation
 using Plots           # to plot the solution
 ```
@@ -295,14 +291,21 @@ the shooting equation. To compute the Jacobian of the shooting function we use t
 [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl) backend.
 
 ```@setup main
+using NonlinearSolve  # interface to NLE solvers
+struct MYSOL
+    x::Vector{Float64}
+end
 function fsolve(f, j, x; kwargs...)
     try
         MINPACK.fsolve(f, j, x; kwargs...)
     catch e
         println("Error using MINPACK")
         println(e)
-        println("hybrj not supported. Replaced by hybrd even if it is not visible on the doc.")
-        MINPACK.fsolve(f, x; kwargs...)
+        println("hybrj not supported. Replaced by NonlinearSolve even if it is not visible on the doc.")
+        nle! = (s, ξ, λ) -> f(s, ξ)
+        prob = NonlinearProblem(nle!, ξ)
+        sol = solve(prob; abstol=1e-8, reltol=1e-8, show_trace=Val(true))
+        return MYSOL(sol.u)
     end
 end
 ```
