@@ -5,9 +5,29 @@ name: Breakage
 # no access to secrets
 on:
   pull_request:
+    types: [labeled, opened, synchronize, reopened]
 
 jobs:
-  break:
+  break-pkg:
+    if: ${{ ! contains(github.event.pull_request.labels.*.name, 'run breakage applications') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgname: 
+          - OptimalControlProblems
+        pkgversion: 
+          - latest
+          - stable
+        include:
+          - pkgpath: control-toolbox
+    uses: control-toolbox/CTActions/.github/workflows/breakage.yml@main
+    with:
+      pkgname: ${{ matrix.pkgname }}
+      pkgpath: ${{ matrix.pkgpath }}
+      pkgversion: ${{ matrix.pkgversion }}
+      pkgbreak: ${{ matrix.pkgbreak }}
+  break-pkg-app:
+    if: contains(github.event.pull_request.labels.*.name, 'run breakage applications')
     strategy:
       fail-fast: false
       matrix:
