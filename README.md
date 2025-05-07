@@ -27,6 +27,12 @@
 [blue-img]: https://img.shields.io/badge/code%20style-blue-4495d1.svg
 [blue-url]: https://github.com/JuliaDiff/BlueStyle
 
+[downloads-month-img]: https://img.shields.io/badge/dynamic/json?url=http%3A%2F%2Fjuliapkgstats.com%2Fapi%2Fv1%2Fmonthly_downloads%2FOptimalControl&query=total_requests&suffix=%2Fmonth&label=Monthly%20Downloads
+[downloads-month-url]: https://juliapkgstats.com/pkg/OptimalControl
+
+[downloads-total-img]: https://img.shields.io/badge/dynamic/json?url=http%3A%2F%2Fjuliapkgstats.com%2Fapi%2Fv1%2Ftotal_downloads%2FOptimalControl&query=total_requests&&label=Total%20Downloads
+[downloads-total-url]: https://juliapkgstats.com/pkg/OptimalControl
+
 The OptimalControl.jl package is the root package of the [control-toolbox ecosystem](https://github.com/control-toolbox).
 The control-toolbox ecosystem gathers Julia packages for mathematical control and applications. It aims to provide tools to model and solve optimal control problems with ordinary differential equations by direct and indirect methods.
 
@@ -37,6 +43,7 @@ The control-toolbox ecosystem gathers Julia packages for mathematical control an
 | Licence           | [![License: MIT][licence-img]][licence-url]   |
 | Release           | [![Release][release-img]][release-url]        |
 | Citation          | [![DOI][citation-img]][citation-url]          |
+| Downloads         | [![Month][downloads-month-img]][downloads-month-url]  [![Total][downloads-total-img]][downloads-total-url] |
 
 ## Installation
 
