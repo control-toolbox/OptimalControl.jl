@@ -11,12 +11,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        pkgname: [OptimalControlProblems]
-        pkgversion: [latest, stable]
+        pkgname: 
+          - OptimalControlProblems
+          - CalculusOfVariations
+          - LossControl
+          - GeometricPreconditioner
+          - MedicalResonanceImaging
+          - Kepler
+          - PWLdynamics
+        pkgversion: 
+          - latest
+          - stable
         include:
+          - pkgbreak: doc
+          - pkgbreak: test
+            pkgname: OptimalControlProblems
           - pkgpath: control-toolbox
+          - pkgpath: agustinyabo
+            pkgname: PWLdynamics
     uses: control-toolbox/CTActions/.github/workflows/breakage.yml@main
     with:
       pkgname: ${{ matrix.pkgname }}
       pkgpath: ${{ matrix.pkgpath }}
       pkgversion: ${{ matrix.pkgversion }}
+      pkgbreak: ${{ matrix.pkgbreak }}
