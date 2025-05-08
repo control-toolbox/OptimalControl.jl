@@ -17,7 +17,6 @@ function plot(
     control,        # plot the norm or components of the control
     time,           # normalise the time or not
     size,           # size of the figure
-    solution_label, # suffix for the labels
     state_style,    # style for the state trajectory
     costate_style,  # style for the costate trajectory
     control_style,  # style for the control trajectory
@@ -33,9 +32,10 @@ In the following, we detail the roles of the arguments.
 | [Split versus group layout](@ref tutorial-plot-layout)     | `layout`         |
 | [Plot the norm of the control](@ref tutorial-plot-control) | `control`        |
 | [Normalised time](@ref tutorial-plot-time)                 | `time`           |
-| [Add a plot](@ref tutorial-plot-add)                       | `solution_label` |
 
 You can plot a solution obtained from the `solve` function, as well as from the flow computed using an optimal control problem and a control law. See, respectively, [Basic Concepts](@ref tutorial-plot-basic) and [From Flow](@ref tutorial-plot-flow) sections for more details.
+
+You can [add a plot](@ref tutorial-plot-add) to an existing one, thanks to the `plot!` function.
 
 You can also retrieve the state, the costate and the control to create your own plots, see [Custom plot](@ref tutorial-plot-custom) section.
 
@@ -169,7 +169,7 @@ plot(sol_flow)
 If you prefer to get a more compact figure, you can use the `layout` optional keyword argument with `:group` value. It will group the state, costate and control trajectories in one subplot for each.
 
 ```@example main
-plot(sol; layout=:group, size=(800, 300))
+plot(sol; layout=:group)
 ```
     
 The default layout value is `:split` which corresponds to the grid of subplots presented above.
@@ -204,8 +204,8 @@ nothing # hide
 We first plot the solution of the first optimal control problem, then, we plot the solution of the second optimal control problem on the same figure, but with dashed lines.
 
 ```@example main
-plt = plot(sol; solution_label="(sol1)", size=(700, 500))
-plot!(plt, sol2; solution_label="(sol2)", linestyle=:dash)
+plt = plot(sol; label="sol1", size=(700, 500))
+plot!(plt, sol2; label="sol2", linestyle=:dash)
 ```
 
 ## [Plot the norm of the control](@id tutorial-plot-control)
@@ -229,10 +229,8 @@ You can, of course, create your own plots by extracting the `state`, `costate`, 
 ```@example main
 using LinearAlgebra
 t = time_grid(sol)
-x = state(sol)
-p = costate(sol)
 u = control(sol)
-plot(t, norm∘u; label="‖u‖") 
+plot(t, norm∘u; label="‖u‖", xlabel="t") 
 ```
 
 !!! note "Nota bene"
