@@ -53,7 +53,7 @@ nothing # hide
 
     For a comprehensive introduction to the syntax used above to define the optimal control problem, check [this abstract syntax tutorial](@ref tutorial-abstract-syntax). In particular, there are non-unicode alternatives for derivatives, integrals, *etc.*
     
-## [Solve and plot](@id basic-solve-plot)
+## [Solve and plot](@id tutorial-basic-solve-plot)
 
 We can solve it simply with:
 
