@@ -102,12 +102,12 @@ solve(ocp, :direct, :adnlp, :ipopt)
 The options for the direct method are listed [here](https://control-toolbox.org/OptimalControl.jl/stable/dev-ctdirect.html#CTDirect.solve-Tuple{Model,%20Vararg{Symbol}}). The main options, with their [default values], are:
 - `display` ([true], false): setting `display` to false will disable output.
 - `grid_size` ([250]): size of the (uniform) time discretization grid. More precisely, it is the number of time steps, that is if `N = grid_size` and if the initial and final times are denoted respectively `t0` and `tf`, then we have `Δt = (tf - t0) / N`.
-- `disc_method` ([`:trapeze`], `:midpoint`, `:euler`, `:euler_implicit`, `:gauss_legendre_2`, `:gauss_legendre_3`): see [discretisation methods](https://control-toolbox.org/Tutorials.jl/stable/tutorial-discretisation/).
+- `disc_method` ([`:trapeze`], `:midpoint`, `:euler`, `:euler_implicit`, `:gauss_legendre_2`, `:gauss_legendre_3`): see [discretisation methods](https://control-toolbox.org/Tutorials.jl/stable/tutorial-discretisation.html).
 - `init`: info for the starting guess, which can be provided as numerical values, functions, or an existing solution. See [initial guess tutorial](@ref tutorial-initial-guess). 
 
 For examples of more advanced use, see 
-- [discrete continuation](https://control-toolbox.org/Tutorials.jl/stable/tutorial-continuation/)
-- [NLP direct handling](https://control-toolbox.org/Tutorials.jl/stable/tutorial-nlp/)
+- [discrete continuation](https://control-toolbox.org/Tutorials.jl/stable/tutorial-continuation.html)
+- [NLP direct handling](https://control-toolbox.org/Tutorials.jl/stable/tutorial-nl.html)
 
 
 ## NLP solver specific options
