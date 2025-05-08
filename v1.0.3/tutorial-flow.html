@@ -130,7 +130,7 @@ t1 = -log(p0)</code></pre><p>Let us define the two flows and the concatenation. 
 f1 = Flow(ocp, (x, p) -&gt; 1)     # positive bang arc: u = 1
 
 f = f0 * (t1, f1)               # f0 followed by f1 whenever t ≥ t1</code></pre><p>Now, we can check that the state reach the target.</p><pre><code class="language-julia hljs">sol = f((t0, tf), x0, p0)
-plot(sol)</code></pre><img src="tutorial-flow-f7a8bb6d.svg" alt="Example block output"/><div class="admonition is-info"><header class="admonition-header">Goddard problem</header><div class="admonition-body"><p>In the <a href="https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard/#tutorial-goddard-plot">Goddard problem</a>, you may find more complex concatenations.</p></div></div><p>For the moment, this concatenation is not equivalent to an exact concatenation.</p><pre><code class="language-julia hljs">f = Flow(x -&gt;  x)
+plot(sol)</code></pre><img src="tutorial-flow-f7a8bb6d.svg" alt="Example block output"/><div class="admonition is-info"><header class="admonition-header">Goddard problem</header><div class="admonition-body"><p>In the <a href="https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html#tutorial-goddard-plot">Goddard problem</a>, you may find more complex concatenations.</p></div></div><p>For the moment, this concatenation is not equivalent to an exact concatenation.</p><pre><code class="language-julia hljs">f = Flow(x -&gt;  x)
 g = Flow(x -&gt; -x)
 
 x0 = 1
