@@ -208,7 +208,7 @@ F₁(x) = [0, 1]
 !!! note
     The vector fields `F₀` and `F₁` can be defined afterwards, as they only need to be available when the dynamics will be evaluated.
 
-Currently, it is not possible to declare the dynamics component after component, but a simple workaround is to use *aliases* (check the relevant [aliases](#aliases) section below):
+Currently, it is not possible to declare the dynamics component after component, but a simple workaround is to use *aliases* (check the relevant [aliases](@ref tutorial-abstract-aliases) section below):
 
 ```julia
 @def damped_integrator begin
@@ -471,7 +471,7 @@ end
 :( $a = $e1 )
 ```
 
-The single `=` symbol is used to define not a constraint but an alias, that is a purely syntactic replacement. There are some automatic aliases, *e.g.* `x₁` for `x[1]` if `x` is the state, and we have also seen that the user can define her own aliases when declaring the [variable](#variable), [state](#state) and [control](#control). Arbitrary aliases can be further defined, as below (compare with previous examples in the [dynamics](#dynamics) section):
+The single `=` symbol is used to define not a constraint but an alias, that is a purely syntactic replacement. There are some automatic aliases, *e.g.* `x₁` for `x[1]` if `x` is the state, and we have also seen that the user can define her own aliases when declaring the [variable](@ref tutorial-abstract-variable), [state](@ref tutorial-abstract-state) and [control](@ref tutorial-abstract-control). Arbitrary aliases can be further defined, as below (compare with previous examples in the [dynamics](@ref tutorial-abstract-dynamics) section):
 
 ```julia
 @def begin

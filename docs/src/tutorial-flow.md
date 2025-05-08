@@ -333,7 +333,7 @@ yf, pf = f(0, [x0, tf], [p0, 0], 1)
 
 !!! note "Goddard problem"
 
-    In the [Goddard problem](@ref tutorial-goddard-structure), you may find other constructions of flows, especially for singular and boundary arcs.
+    In the [Goddard problem](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard/#tutorial-goddard-structure), you may find other constructions of flows, especially for singular and boundary arcs.
 
 ## Concatenation of arcs
 
@@ -398,7 +398,7 @@ plot(sol)
 
 !!! note "Goddard problem"
 
-    In the [Goddard problem](@ref tutorial-goddard-plot), you may find more complex concatenations.
+    In the [Goddard problem](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard/#tutorial-goddard-plot), you may find more complex concatenations.
 
 For the moment, this concatenation is not equivalent to an exact concatenation.
 

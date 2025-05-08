@@ -21,7 +21,7 @@ makedocs(;
     sitename="OptimalControl.jl",
     format=Documenter.HTML(;
         repolink="https://" * repo_url,
-        prettyurls=true,
+        prettyurls=false,
         size_threshold_ignore=[
             "api-ctbase/types.md", "dev-ctmodels.md", "tutorial-plot.md"
         ],
