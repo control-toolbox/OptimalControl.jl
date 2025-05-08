@@ -4,7 +4,7 @@ The full grammar of [OptimalControl.jl](https://control-toolbox.org/OptimalContr
 - pure Julia (and, as such, effortlessly analysed by the standard Julia parser),
 - as close as possible to the mathematical description of an optimal control problem. 
 
-While the syntax will be transparent to those users familiar with Julia expressions (`Expr`'s), we provide examples for every case that should be widely understandable. We rely heavily on [MLStyle.jl](https://github.com/thautwarm/MLStyle.jl) and its pattern matching abilities 👍🏽 for the semantic pass. Abstract definitions use the macro `@def`.
+While the syntax will be transparent to those users familiar with Julia expressions (`Expr`'s), we provide examples for every case that should be widely understandable. We rely heavily on [MLStyle.jl](https://thautwarm.github.io/MLStyle.jl) and its pattern matching abilities 👍🏽 for the semantic pass. Abstract definitions use the macro `@def`.
 
 ## [Variable](@id tutorial-abstract-variable)
 
@@ -77,7 +77,7 @@ tf = 5
 end
 ```
 
-One (or even the two bounds) can be variable, typically for minimum time problems (see [Mayer cost](#mayer) section):
+One (or even the two bounds) can be variable, typically for minimum time problems (see [Mayer cost](@ref tutorial-abstract-mayer) section):
 
 ```julia
 @def begin

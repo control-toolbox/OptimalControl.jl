@@ -4,7 +4,7 @@
 CollapsedDocStrings = false
 ```
 
-The [CTParser.jl](control-toolbox.org/CTParser.jl) package is part of the [control-toolbox ecosystem](https://github.com/control-toolbox).
+The [CTParser.jl](https://github.com/control-toolbox/CTParser.jl) package is part of the [control-toolbox ecosystem](https://github.com/control-toolbox).
 
 ```mermaid
 flowchart TD

@@ -4,7 +4,7 @@
 CollapsedDocStrings = false
 ```
 
-The [CTModels.jl](control-toolbox.org/CTModels.jl) package is part of the [control-toolbox ecosystem](https://github.com/control-toolbox).
+The [CTModels.jl](https://github.com/control-toolbox/CTModels.jl) package is part of the [control-toolbox ecosystem](https://github.com/control-toolbox).
 
 ```mermaid
 flowchart TD
