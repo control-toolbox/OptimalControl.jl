@@ -133,7 +133,7 @@ plot(sol;
 
 ## [From Flow](@id tutorial-plot-flow)
 
-The previous solution of the optimal control problem was obtained using the `solve` function. If you prefer using an indirect shooting method and solving shooting equations, you may also want to plot the associated solution. To do this, you need to use the `Flow` function to reconstruct the solution. See the manual on [how to compute flows](@ref manual-flow) for more details. In our case, you must provide the maximizing control $(x, p) \mapsto p_2$ along with the optimal control problem. For an introduction to simple indirect shooting, see the [indirect simple shooting](https://control-toolbox.org/Tutorials.jl/stable/tutorial-iss/) tutorial for an example.
+The previous solution of the optimal control problem was obtained using the `solve` function. If you prefer using an indirect shooting method and solving shooting equations, you may also want to plot the associated solution. To do this, you need to use the `Flow` function to reconstruct the solution. See the manual on [how to compute flows](@ref manual-flow) for more details. In our case, you must provide the maximizing control $(x, p) \mapsto p_2$ along with the optimal control problem. For an introduction to simple indirect shooting, see the [indirect simple shooting](https://control-toolbox.org/Tutorials.jl/stable/tutorial-iss.html) tutorial for an example.
 
 !!! tip "Interactions with an optimal control solution"
 
@@ -240,7 +240,7 @@ plot(t, norm∘u; label="‖u‖", xlabel="t")
 
 ## [Normalised time](@id tutorial-plot-time)
 
-We consider a [LQR example](https://control-toolbox.org/Tutorials.jl/stable/tutorial-lqr-basic/) and solve the problem for different values of the final time `tf`. Then, we plot the solutions on the same figure using a normalized time $s = (t - t_0) / (t_f - t_0)$, enabled by the keyword argument `time = :normalize` (or `:normalise`) in the `plot` function.
+We consider a [LQR example](https://control-toolbox.org/Tutorials.jl/stable/tutorial-lqr-basic.html) and solve the problem for different values of the final time `tf`. Then, we plot the solutions on the same figure using a normalized time $s = (t - t_0) / (t_f - t_0)$, enabled by the keyword argument `time = :normalize` (or `:normalise`) in the `plot` function.
 
 ```@example main
 # definition of the problem, parameterised by the final time
