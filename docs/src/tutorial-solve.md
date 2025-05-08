@@ -106,8 +106,8 @@ The options for the direct method are listed [here](https://control-toolbox.org/
 - `init`: info for the starting guess, which can be provided as numerical values, functions, or an existing solution. See [initial guess tutorial](@ref tutorial-initial-guess). 
 
 For examples of more advanced use, see 
-- [discrete continuation](https://control-toolbox.org/Tutorials.jl/stable/tutorial-continuation.html)
-- [NLP direct handling](https://control-toolbox.org/Tutorials.jl/stable/tutorial-nl.html)
+- [discrete continuation](https://control-toolbox.org/Tutorials.jl/stable/tutorial-continuation.html),
+- [NLP direct handling](https://control-toolbox.org/Tutorials.jl/stable/tutorial-nl.html).
 
 
 ## NLP solver specific options
