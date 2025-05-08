@@ -4,7 +4,7 @@ The full grammar of [OptimalControl.jl](https://control-toolbox.org/OptimalContr
 - pure Julia (and, as such, effortlessly analysed by the standard Julia parser),
 - as close as possible to the mathematical description of an optimal control problem. 
 
-While the syntax will be transparent to those users familiar with Julia expressions (`Expr`'s), we provide examples for every case that should be widely understandable. We rely heavily on [MLStyle.jl](https://github.com/thautwarm/MLStyle.jl) and its pattern matching abilities 👍🏽 for the semantic pass. Abstract definitions use the macro `@def`.
+While the syntax will be transparent to those users familiar with Julia expressions (`Expr`'s), we provide examples for every case that should be widely understandable. We rely heavily on [MLStyle.jl](https://thautwarm.github.io/MLStyle.jl) and its pattern matching abilities 👍🏽 for the semantic pass. Abstract definitions use the macro `@def`.
 
 ## [Variable](@id tutorial-abstract-variable)
 
@@ -77,7 +77,7 @@ tf = 5
 end
 ```
 
-One (or even the two bounds) can be variable, typically for minimum time problems (see [Mayer cost](#mayer) section):
+One (or even the two bounds) can be variable, typically for minimum time problems (see [Mayer cost](@ref tutorial-abstract-mayer) section):
 
 ```julia
 @def begin
@@ -208,7 +208,7 @@ F₁(x) = [0, 1]
 !!! note
     The vector fields `F₀` and `F₁` can be defined afterwards, as they only need to be available when the dynamics will be evaluated.
 
-Currently, it is not possible to declare the dynamics component after component, but a simple workaround is to use *aliases* (check the relevant [aliases](#aliases) section below):
+Currently, it is not possible to declare the dynamics component after component, but a simple workaround is to use *aliases* (check the relevant [aliases](@ref tutorial-abstract-aliases) section below):
 
 ```julia
 @def damped_integrator begin
@@ -471,7 +471,7 @@ end
 :( $a = $e1 )
 ```
 
-The single `=` symbol is used to define not a constraint but an alias, that is a purely syntactic replacement. There are some automatic aliases, *e.g.* `x₁` for `x[1]` if `x` is the state, and we have also seen that the user can define her own aliases when declaring the [variable](#variable), [state](#state) and [control](#control). Arbitrary aliases can be further defined, as below (compare with previous examples in the [dynamics](#dynamics) section):
+The single `=` symbol is used to define not a constraint but an alias, that is a purely syntactic replacement. There are some automatic aliases, *e.g.* `x₁` for `x[1]` if `x` is the state, and we have also seen that the user can define her own aliases when declaring the [variable](@ref tutorial-abstract-variable), [state](@ref tutorial-abstract-state) and [control](@ref tutorial-abstract-control). Arbitrary aliases can be further defined, as below (compare with previous examples in the [dynamics](@ref tutorial-abstract-dynamics) section):
 
 ```julia
 @def begin

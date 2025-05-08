@@ -30,8 +30,8 @@ plus boundary conditions, control and state constraints
 
 ## OptimalControl.jl for trajectory optimisation
 
-- [Basic example](tutorial-double-integrator-energy.html)
-- [Goddard problem](tutorial-goddard.html)
+- [Basic example](@ref tutorial-double-integrator-energy)
+- [Goddard problem](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard/)
 - [Orbit transfer](https://control-toolbox.org/Kepler.jl)
 
 ## Wrap up
@@ -58,8 +58,8 @@ plus boundary conditions, control and state constraints
 ## Credits (not exhaustive!)
 
 - [ADNLPModels.jl](https://jso.dev/ADNLPModels.jl)
-- [DifferentiationInterface.jl](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface/stable)
-- [DifferentialEquations.jl](https://github.com/SciML/DifferentialEquations.jl)
+- [DifferentiationInterface.jl](https://juliadiff.org/DifferentiationInterface.jl/DifferentiationInterface)
+- [DifferentialEquations.jl](https://docs.sciml.ai/DiffEqDocs)
 - [MLStyle.jl](https://thautwarm.github.io/MLStyle.jl)
 
 ## Acknowledgements

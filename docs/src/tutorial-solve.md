@@ -14,18 +14,13 @@ tf = 1
 x0 = [-1, 0]
 
 ocp = @def begin
-
     t ∈ [ t0, tf ], time
     x = (q, v) ∈ R², state
     u ∈ R, control
-
     x(t0) == x0
     x(tf) == [ 0, 0 ]
-
     ẋ(t)  == [ v(t), u(t) ]
-
     ∫( 0.5u(t)^2 ) → min
-
 end
 nothing # hide
 ```
@@ -34,7 +29,6 @@ We can now solve the problem:
 
 ```@example main
 using NLPModelsIpopt
-
 solve(ocp)
 nothing # hide
 ```
@@ -45,17 +39,16 @@ This is because the method currently implements a direct approach, where the opt
 \text{minimize}\quad F(y), \quad\text{subject to the constraints}\quad g(y)=0, \quad h(y)\le 0. 
 ```
 
-Note: calling `solve` without loading a NLP solver package first will notify the user:
+Calling `solve` without loading a NLP solver package first will notify the user:
+
 ```julia
 julia> solve(ocp)
 ERROR: ExtensionError. Please make: julia> using NLPModelsIpopt
 ```
 
-See below for the NLP solver options.
-
 ## Resolution methods and algorithms
 
-OptimalControl.jl offers a list of methods to solve your optimal control problem. To get the list of methods, simply call `available_methods`.
+OptimalControl offers a list of methods to solve your optimal control problem. To get the list of methods, simply call `available_methods`.
 
 ```@example main
 available_methods()
@@ -86,7 +79,6 @@ For instance, let us try MadNLP.jl.
 
 ```@example main
 using MadNLP
-
 solve(ocp, :madnlp)
 nothing # hide
 ```
@@ -107,16 +99,15 @@ solve(ocp, :direct, :adnlp, :ipopt)
 
 ## Direct method
 
-The options for the direct method are listed in the [`direct_solve`](@ref) keywords.
-The main options, with their [default values], are:
-- `display` ([true], false): setting `display` to false will disable output
-- `grid_size` ([250]): size of the (uniform) time discretization grid. More precisely, it is the number of time steps, that is if `N = grid_size` and if the initial and final times are denoted respectively `t0` and `tf`, then we have `Δt = (tf - t0) / N`
-- `disc_method` ([`:trapeze`], `:midpoint`, `:euler`, `:euler_implicit`, `:gauss_legendre_2`, `:gauss_legendre_3`): see [discretisation methods](@ref tutorial-discretisation-methods).
+The options for the direct method are listed [here](https://control-toolbox.org/OptimalControl.jl/stable/dev-ctdirect.html#CTDirect.solve-Tuple{Model,%20Vararg{Symbol}}). The main options, with their [default values], are:
+- `display` ([true], false): setting `display` to false will disable output.
+- `grid_size` ([250]): size of the (uniform) time discretization grid. More precisely, it is the number of time steps, that is if `N = grid_size` and if the initial and final times are denoted respectively `t0` and `tf`, then we have `Δt = (tf - t0) / N`.
+- `disc_method` ([`:trapeze`], `:midpoint`, `:euler`, `:euler_implicit`, `:gauss_legendre_2`, `:gauss_legendre_3`): see [discretisation methods](https://control-toolbox.org/Tutorials.jl/stable/tutorial-discretisation/).
 - `init`: info for the starting guess, which can be provided as numerical values, functions, or an existing solution. See [initial guess tutorial](@ref tutorial-initial-guess). 
 
 For examples of more advanced use, see 
-- [discrete continuation](@ref tutorial-continuation)
-- [NLP direct handling](@ref tutorial-nlp)
+- [discrete continuation](https://control-toolbox.org/Tutorials.jl/stable/tutorial-continuation/)
+- [NLP direct handling](https://control-toolbox.org/Tutorials.jl/stable/tutorial-nlp/)
 
 
 ## NLP solver specific options

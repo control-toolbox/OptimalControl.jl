@@ -21,7 +21,7 @@ makedocs(;
     sitename="OptimalControl.jl",
     format=Documenter.HTML(;
         repolink="https://" * repo_url,
-        prettyurls=true,
+        prettyurls=false,
         size_threshold_ignore=[
             "api-ctbase/types.md", "dev-ctmodels.md", "tutorial-plot.md"
         ],
@@ -42,15 +42,6 @@ makedocs(;
             "Solve a problem" => "tutorial-solve.md",
             "Plot a solution" => "tutorial-plot.md",
             "Compute flows" => "tutorial-flow.md",
-        ],
-        "Tutorials and Advanced Features" => [
-            "Discrete continuation" => "tutorial-continuation.md",
-            "Discretisation methods" => "tutorial-discretisation.md",
-            "NLP manipulations" => "tutorial-nlp.md",
-            "Indirect simple shooting" => "tutorial-iss.md",
-            "Goddard: direct, indirect" => "tutorial-goddard.md",
-            "Linear–quadratic regulator" => "tutorial-lqr-basic.md",
-            "Minimal action" => "tutorial-mam.md",
         ],
         "Developers" => [
             "OptimalControl.jl" => "dev-optimalcontrol.md",
