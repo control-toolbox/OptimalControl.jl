@@ -398,7 +398,7 @@ plot(sol)
 
 !!! note "Goddard problem"
 
-    In the [Goddard problem](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard/#tutorial-goddard-plot), you may find more complex concatenations.
+    In the [Goddard problem](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html#tutorial-goddard-plot), you may find more complex concatenations.
 
 For the moment, this concatenation is not equivalent to an exact concatenation.
 
