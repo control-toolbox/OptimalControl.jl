@@ -15,10 +15,14 @@ jobs:
       matrix:
         pkgname: 
           - OptimalControlProblems
+          - Tutorials
         pkgversion: 
           - latest
           - stable
         include:
+          - pkgbreak: test
+          - pkgbreak: doc
+            pkgname: Tutorials
           - pkgpath: control-toolbox
     uses: control-toolbox/CTActions/.github/workflows/breakage.yml@main
     with:
@@ -39,6 +43,7 @@ jobs:
           - MedicalResonanceImaging
           - Kepler
           - PWLdynamics
+          - Tutorials
         pkgversion: 
           - latest
           - stable
