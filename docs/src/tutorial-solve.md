@@ -99,9 +99,11 @@ solve(ocp, :direct, :adnlp, :ipopt)
 
 The options for the direct method are listed [here](https://control-toolbox.org/OptimalControl.jl/stable/dev-ctdirect.html#CTDirect.solve-Tuple{Model,%20Vararg{Symbol}}). The main options, with their [default values], are:
 - `display` ([true], false): setting `display` to false will disable output.
+- `init`: info for the starting guess, which can be provided as numerical values, functions, or an existing solution. See [initial guess tutorial](@ref tutorial-initial-guess).
 - `grid_size` ([250]): size of the (uniform) time discretization grid. More precisely, it is the number of time steps, that is if `N = grid_size` and if the initial and final times are denoted respectively `t0` and `tf`, then we have `Δt = (tf - t0) / N`.
+- `time_grid` ([`nothing`]): explicit time grid (can be non uniform). If `time_grid` is nothing then, a uniform grid is built of length `grid_size`.
 - `disc_method` ([`:trapeze`], `:midpoint`, `:euler`, `:euler_implicit`, `:gauss_legendre_2`, `:gauss_legendre_3`): see [discretisation methods](https://control-toolbox.org/Tutorials.jl/stable/tutorial-discretisation.html).
-- `init`: info for the starting guess, which can be provided as numerical values, functions, or an existing solution. See [initial guess tutorial](@ref tutorial-initial-guess). 
+- `adnlp_backend`: backend for automatic differentiation in ADNLPModels ([`:optimized`], `:manual`, `:default`).
 
 For examples of more advanced use, see 
 - [discrete continuation](https://control-toolbox.org/Tutorials.jl/stable/tutorial-continuation.html),
@@ -114,12 +116,12 @@ In addition to these options, all remaining keyword arguments passed to `solve` 
 
 Please check the list of [Ipopt options](https://coin-or.github.io/Ipopt/OPTIONS.html) and the [NLPModelsIpopt.jl documentation](https://jso.dev/NLPModelsIpopt.jl).
 ```@example main
-solve(ocp; max_iter=0)
-nothing # hide
+sol = solve(ocp; max_iter=0, display=false)
+iterations(sol)
 ```
 
 Similarly, please check the [MadNLP.jl documentation](https://madnlp.github.io/MadNLP.jl) and the list of [MadNLP.jl options](https://madnlp.github.io/MadNLP.jl/stable/options/).
 ```@example main
-solve(ocp, :madnlp; max_iter=0)
-nothing # hide
+sol = solve(ocp, :madnlp; max_iter=0, display=false)
+iterations(sol)
 ```
