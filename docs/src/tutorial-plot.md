@@ -8,36 +8,67 @@ plot!(args...; kw...)          # modifies Plot `current()`
 plot!(plt, args...; kw...)     # modifies Plot `plt`
 ```
 
-More precisely, the signature of `plot` is as follows.
+More precisely, the signature of `plot`, to plot a solution, is as follows.
 
 ```julia
+# only sol is required
 function plot(
-    sol;            # optimal control solution
-    layout,         # layout of the subplots
-    control,        # plot the norm or components of the control
-    time,           # normalise the time or not
-    size,           # size of the figure
-    state_style,    # style for the state trajectory
-    costate_style,  # style for the costate trajectory
-    control_style,  # style for the control trajectory
-    kwargs...,      # attributes from Plots
+    sol::CTModels.Solution,                   # optimal control solution
+    description::Symbol...;                   # description to choose what to plot
+    layout::Symbol,                           # layout of the subplots
+    control::Symbol,                          # plot the norm or components of the control
+    time::Symbol,                             # normalise the time or not
+    size::Tuple,                              # size of the figure
+    state_style::Union{NamedTuple,Symbol},    # style: state trajectory
+    costate_style::Union{NamedTuple,Symbol},  # style: costate trajectory
+    control_style::Union{NamedTuple,Symbol},  # style: control trajectory
+    kwargs...,                                # other attributes from Plots
 )
 ```
 
-In the following, we detail the roles of the arguments.
+You can provide additional information to the `plot` function by supplying the optimal control problem: `plot(sol, ocp)`. The function signature when including the optimal control problem is as follows:
 
-| Section                                                    | Arguments        |
-| :------                                                    | :------          |
-| [Basic concepts](@ref tutorial-plot-basic)                 | `size`, `state_style`, `costate_style`, `control_style`, `kwargs...` |
-| [Split versus group layout](@ref tutorial-plot-layout)     | `layout`         |
-| [Plot the norm of the control](@ref tutorial-plot-control) | `control`        |
-| [Normalised time](@ref tutorial-plot-time)                 | `time`           |
+```julia
+# only sol and model are required
+function Plots.plot(
+    sol::CTModels.Solution,
+    ocp::CTModels.Model,                            # optimal control problem
+    description::Symbol...;
+    layout::Symbol,
+    control::Symbol,
+    time::Symbol,
+    size::Tuple,
+    time_style::Union{NamedTuple,Symbol},           # style: vertical time axes
+    state_style::Union{NamedTuple,Symbol},
+    state_bounds_style::Union{NamedTuple,Symbol},   # style: state bounds
+    control_style::Union{NamedTuple,Symbol},
+    control_bounds_style::Union{NamedTuple,Symbol}, # style: control bounds
+    costate_style::Union{NamedTuple,Symbol},
+    path_style::Union{NamedTuple,Symbol},           # style: path constraints
+    path_bounds_style::Union{NamedTuple,Symbol},    # style: path constraints bounds
+    dual_style::Union{NamedTuple,Symbol},           # style: path constraints dual variable
+    kwargs...,
+)
+```
 
-You can plot a solution obtained from the `solve` function, as well as from the flow computed using an optimal control problem and a control law. See, respectively, [Basic Concepts](@ref tutorial-plot-basic) and [From Flow](@ref tutorial-plot-flow) sections for more details.
+## Argument Overview
 
-You can [add a plot](@ref tutorial-plot-add) to an existing one, thanks to the `plot!` function.
+The table below summarizes the main plotting arguments and links to the corresponding documentation sections for detailed explanations:
 
-You can also retrieve the state, the costate and the control to create your own plots, see [Custom plot](@ref tutorial-plot-custom) section.
+| Section                                             | Relevant Arguments                                                                            |
+| :---------------------------------------------------| :-------------------------------------------------------------------------------------------- |
+| [Basic concepts](@ref tutorial-plot-basic)          | `size`, `state_style`, `costate_style`, `control_style`, `time_style`, `kwargs...`            |
+| [Split vs. group layout](@ref tutorial-plot-layout) | `layout`                                                                                      |
+| [Plotting control norm](@ref tutorial-plot-control) | `control`                                                                                     |
+| [Normalized time](@ref tutorial-plot-time)          | `time`                                                                                        |
+| [Constraints](@ref tutorial-plot-constraints)       | `state_bounds_style`, `control_bounds_style`, `path_style`, `path_bounds_style`, `dual_style` |
+| [What to plot](@ref tutorial-plot-select)           | `description...`                                                                              |
+
+You can plot solutions obtained from the `solve` function or from a flow computed using an optimal control problem and a control law. See the [Basic Concepts](@ref tutorial-plot-basic) and [From Flow function](@ref tutorial-plot-flow) sections for details.
+
+To overlay a new plot on an existing one, use the `plot!` function (see [Add a plot](@ref tutorial-plot-add)).
+
+If you prefer full control over the visualization, you can extract the state, costate, and control to create your own plots. Refer to the [Custom plot](@ref tutorial-plot-custom) section for guidance.
 
 ## The problem and the solution
 
@@ -51,10 +82,10 @@ using NLPModelsIpopt
 We consider the simple optimal control problem from the [basic example tutorial](@ref tutorial-double-integrator-energy).
 
 ```@example main
-const t0 = 0            # initial time
-const tf = 1            # final time
-const x0 = [ -1, 0 ]    # initial condition
-const xf = [  0, 0 ]    # final condition
+t0 = 0            # initial time
+tf = 1            # final time
+x0 = [ -1, 0 ]    # initial condition
+xf = [  0, 0 ]    # final condition
 
 ocp = @def begin
 
@@ -126,12 +157,33 @@ To specify series attributes for a specific group of subplots (state, costate or
 
 ```@example main
 plot(sol; 
-     state_style   = (color=:blue,),                    # style of the state trajectory
-     costate_style = (color=:black, linestyle=:dash),   # style of the costate trajectory
-     control_style = (color=:red, linewidth=2))         # style of the control trajectory
+     state_style   = (color=:blue,),                  # style: state trajectory
+     costate_style = (color=:black, linestyle=:dash), # style: costate trajectory
+     control_style = (color=:red, linewidth=2))       # style: control trajectory
 ```
 
-## [From Flow](@id tutorial-plot-flow)
+If you provide the optimal control problem, vertical axes at the initial and final times are automatically plotted.  
+Additionally, you can choose not to display the state and costate trajectories by setting their styles to `:none`.
+
+```@example main
+plot(sol, ocp; 
+     state_style    = :none,             # do not plot the state
+     costate_style  = :none,             # do not plot the costate
+     control_style  = (color = :red,),   # plot the control in red
+     time_style     = (color = :green,)) # vertical axes at initial and final times in green
+```
+
+To select what to display, you can also use the `description` argument by providing a list of symbols such as `:state`, `:costate`, and `:control`.
+
+```@example main
+plot(sol, ocp, :state, :control)  # plot the state and the control
+```
+
+!!! note "Select what to plot"
+
+    For more details on how to choose what to plot, see the [What to plot](@ref tutorial-plot-select) section.
+
+## [From Flow function](@id tutorial-plot-flow)
 
 The previous solution of the optimal control problem was obtained using the `solve` function. If you prefer using an indirect shooting method and solving shooting equations, you may also want to plot the associated solution. To do this, you need to use the `Flow` function to reconstruct the solution. See the manual on [how to compute flows](@ref manual-flow) for more details. In our case, you must provide the maximizing control $(x, p) \mapsto p_2$ along with the optimal control problem. For an introduction to simple indirect shooting, see the [indirect simple shooting](https://control-toolbox.org/Tutorials.jl/stable/tutorial-iss.html) tutorial for an example.
 
@@ -164,7 +216,7 @@ sol_flow = f( (t0, tf), x0, p0; saveat=fine_grid )
 plot(sol_flow)
 ```
 
-## [Split versus group layout](@id tutorial-plot-layout)
+## [Split vs. group layout](@id tutorial-plot-layout)
 
 If you prefer to get a more compact figure, you can use the `layout` optional keyword argument with `:group` value. It will group the state, costate and control trajectories in one subplot for each.
 
@@ -208,7 +260,7 @@ plt = plot(sol; label="sol1", size=(700, 500))
 plot!(plt, sol2; label="sol2", linestyle=:dash)
 ```
 
-## [Plot the norm of the control](@id tutorial-plot-control)
+## [Plotting control norm](@id tutorial-plot-control)
 
 For some problem, it is interesting to plot the (Euclidean) norm of the control. You can do it by using the `control` optional keyword argument with `:norm` value.
 
@@ -222,6 +274,12 @@ The default value is `:components`.
 plot(sol; control=:components, size=(800, 300), layout=:group)
 ```
 
+You can also plot the control and is norm.
+
+```@example main
+plot(sol; control=:all, layout=:group)
+```
+
 ## [Custom plot](@id tutorial-plot-custom)
 
 You can, of course, create your own plots by extracting the `state`, `costate`, and `control` from the optimal control solution. For instance, let us plot the norm of the control.
@@ -231,12 +289,7 @@ using LinearAlgebra
 t = time_grid(sol)
 u = control(sol)
 plot(t, norm∘u; label="‖u‖", xlabel="t") 
-```
-
-!!! note "Nota bene"
-
-    - The `norm` function is from `LinearAlgebra.jl`. 
-    - The `∘` operator is the composition operator. Hence, `norm∘u` is the function `t -> norm(u(t))`. 
+``` 
 
 ## [Normalised time](@id tutorial-plot-time)
 
@@ -280,4 +333,77 @@ pu  = plot(plt[5]; legend=false, xlabel="s", ylabel="u")
 
 using Plots.PlotMeasures # for leftmargin, bottommargin
 plot(px1, px2, pu; layout=(1, 3), size=(800, 300), leftmargin=5mm, bottommargin=5mm)
+```
+
+## [Constraints](@id tutorial-plot-constraints)
+
+We define an optimal control problem with constraints, solve it and plot the solution.
+
+```@example main
+ocp = @def begin
+    tf ∈ R,          variable
+    t ∈ [0, tf],     time
+    x = (q, v) ∈ R², state
+    u ∈ R,           control
+    tf ≥ 0
+    -1 ≤ u(t) ≤ 1
+    q(0)  == -1
+    v(0)  == 0
+    q(tf) == 0
+    v(tf) == 0
+    1 ≤ v(t)+1 ≤ 1.8, (1)
+    ẋ(t) == [v(t), u(t)]
+    tf → min
+end
+sol = solve(ocp)
+plot(sol, ocp)
+```
+
+On the plot, you can see the lower and upper bounds of the path constraint. Additionally, the dual variable associated with the path constraint is displayed alongside it.
+
+You can customize the plot styles. For style options related to the state, costate, and control, refer to the [Basic Concepts](@ref tutorial-plot-basic) section.
+
+```@example main
+plot(sol, ocp; 
+     state_bounds_style = (linestyle = :dash,),
+     control_bounds_style = (linestyle = :dash,),
+     path_style = (color = :green,),
+     path_bounds_style = (linestyle = :dash,),
+     dual_style = (color = :red,),
+     time_style = :none, # do not plot axes at t0 and tf
+)
+```
+
+## [What to plot](@id tutorial-plot-select)
+
+You can choose what to plot using the `description` argument. To plot only one subgroup:
+
+```julia
+plot(sol, ocp, :state)   # plot only the state
+plot(sol, ocp, :costate) # plot only the costate
+plot(sol, ocp, :control) # plot only the control
+plot(sol, ocp, :path)    # plot only the path constraint
+plot(sol, ocp, :dual)    # plot only the path constraint dual variable
+```
+
+You can combine elements to plot exactly what you need:
+
+```@example main
+plot(sol, ocp, :state, :control, :path)
+```
+
+Similarly, you can choose what not to plot passing `:none` to the corresponding style.
+
+```julia
+plot(sol, ocp; state_style=:none)   # do not plot the state
+plot(sol, ocp; costate_style=:none) # do not plot the costate
+plot(sol, ocp; control_style=:none) # do not plot the control
+plot(sol, ocp; path_style=:none)    # do not plot the path constraint
+plot(sol, ocp; dual_style=:none)    # do not plot the path constraint dual variable
+```
+
+For instance, let's plot everything except the dual variable associated with the path constraint.
+
+```@example main
+plot(sol, ocp; dual_style=:none)
 ```
