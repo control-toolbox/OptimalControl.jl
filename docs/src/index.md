@@ -42,7 +42,7 @@ plot(sol)
 - For more details about this problem, please check the [basic example tutorial](@ref tutorial-double-integrator-energy). 
 - For a comprehensive introduction to the syntax used above to describe the optimal control problem, check the [abstract syntax tutorial](@ref tutorial-abstract-syntax). 
 - The `solve` function has options, see the [solve tutorial](@ref tutorial-solve).
-- You can customise the plot with the `plot` function, see the [plot tutorial](@ref tutorial-plot).
+- You can customise the plot, see the [plot tutorial](@ref tutorial-plot).
 
 ## Citing us
 
