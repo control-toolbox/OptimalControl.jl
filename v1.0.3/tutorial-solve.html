@@ -98,7 +98,7 @@ Total wall-clock secs in linear solver                      =  0.306
 Total wall-clock secs in NLP function evaluations           =  0.343
 Total wall-clock secs                                       = 12.149
 
-EXIT: Optimal Solution Found (tol = 1.0e-08).</code></pre><p>Note that you can provide a partial description.  If several full descriptions contain it, the priority is given to first one in the list.  Hence, these calls are all equivalent:</p><pre><code class="language-julia hljs">solve(ocp)
+EXIT: Optimal Solution Found (tol = 1.0e-08).</code></pre><p>Note that you can provide a partial description. If multiple full descriptions contain it, priority is given to the first one in the list. Hence, all of the following calls are equivalent:</p><pre><code class="language-julia hljs">solve(ocp)
 solve(ocp, :direct                )
 solve(ocp,          :adnlp        )
 solve(ocp,                  :ipopt)
