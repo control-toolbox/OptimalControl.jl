@@ -14,6 +14,9 @@ for Module in Modules
         DocMeta.setdocmeta!(Module, :DocTestSetup, :(using $Module); recursive=true)
 end
 
+cp("./docs/Manifest.toml", "./docs/src/assets/Manifest.toml", force = true)
+cp("./docs/Project.toml", "./docs/src/assets/Project.toml", force = true)
+
 repo_url = "github.com/control-toolbox/OptimalControl.jl"
 
 makedocs(;
