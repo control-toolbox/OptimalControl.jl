@@ -70,7 +70,7 @@ plot(sol)
 
 !!! note "Nota bene"
 
-    The `solve` function has options, see the [solve tutorial](@ref tutorial-solve). You can customise the plot with the `plot` function, see the [plot tutorial](@ref tutorial-plot).
+    The `solve` function has options, see the [solve tutorial](@ref tutorial-solve). You can customise the plot, see the [plot tutorial](@ref tutorial-plot).
 
 ## State constraint
 
