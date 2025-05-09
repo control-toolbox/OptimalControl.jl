@@ -82,10 +82,10 @@ using NLPModelsIpopt
 We consider the simple optimal control problem from the [basic example tutorial](@ref tutorial-double-integrator-energy).
 
 ```@example main
-const t0 = 0            # initial time
-const tf = 1            # final time
-const x0 = [ -1, 0 ]    # initial condition
-const xf = [  0, 0 ]    # final condition
+t0 = 0            # initial time
+tf = 1            # final time
+x0 = [ -1, 0 ]    # initial condition
+xf = [  0, 0 ]    # final condition
 
 ocp = @def begin
 
@@ -274,6 +274,12 @@ The default value is `:components`.
 plot(sol; control=:components, size=(800, 300), layout=:group)
 ```
 
+You can also plot the control and is norm.
+
+```@example main
+plot(sol; control=:all, layout=:group)
+```
+
 ## [Custom plot](@id tutorial-plot-custom)
 
 You can, of course, create your own plots by extracting the `state`, `costate`, and `control` from the optimal control solution. For instance, let us plot the norm of the control.
@@ -283,12 +289,7 @@ using LinearAlgebra
 t = time_grid(sol)
 u = control(sol)
 plot(t, norm∘u; label="‖u‖", xlabel="t") 
-```
-
-!!! note "Nota bene"
-
-    - The `norm` function is from `LinearAlgebra.jl`. 
-    - The `∘` operator is the composition operator. Hence, `norm∘u` is the function `t -> norm(u(t))`. 
+``` 
 
 ## [Normalised time](@id tutorial-plot-time)
 
@@ -336,4 +337,73 @@ plot(px1, px2, pu; layout=(1, 3), size=(800, 300), leftmargin=5mm, bottommargin=
 
 ## [Constraints](@id tutorial-plot-constraints)
 
+We define an optimal control problem with constraints, solve it and plot the solution.
+
+```@example main
+ocp = @def begin
+    tf ∈ R,          variable
+    t ∈ [0, tf],     time
+    x = (q, v) ∈ R², state
+    u ∈ R,           control
+    tf ≥ 0
+    -1 ≤ u(t) ≤ 1
+    q(0)  == -1
+    v(0)  == 0
+    q(tf) == 0
+    v(tf) == 0
+    1 ≤ v(t)+1 ≤ 1.8, (1)
+    ẋ(t) == [v(t), u(t)]
+    tf → min
+end
+sol = solve(ocp)
+plot(sol, ocp)
+```
+
+On the plot, you can see the lower and upper bounds of the path constraint. Additionally, the dual variable associated with the path constraint is displayed alongside it.
+
+You can customize the plot styles. For style options related to the state, costate, and control, refer to the [Basic Concepts](@ref tutorial-plot-basic) section.
+
+```@example main
+plot(sol, ocp; 
+     state_bounds_style = (linestyle = :dash,),
+     control_bounds_style = (linestyle = :dash,),
+     path_style = (color = :green,),
+     path_bounds_style = (linestyle = :dash,),
+     dual_style = (color = :red,),
+     time_style = :none, # do not plot axes at t0 and tf
+)
+```
+
 ## [What to plot](@id tutorial-plot-select)
+
+You can choose what to plot using the `description` argument. To plot only one subgroup:
+
+```julia
+plot(sol, ocp, :state)   # plot only the state
+plot(sol, ocp, :costate) # plot only the costate
+plot(sol, ocp, :control) # plot only the control
+plot(sol, ocp, :path)    # plot only the path constraint
+plot(sol, ocp, :dual)    # plot only the path constraint dual variable
+```
+
+You can combine elements to plot exactly what you need:
+
+```@example main
+plot(sol, ocp, :state, :control, :path)
+```
+
+Similarly, you can choose what not to plot passing `:none` to the corresponding style.
+
+```julia
+plot(sol, ocp; state_style=:none)   # do not plot the state
+plot(sol, ocp; costate_style=:none) # do not plot the costate
+plot(sol, ocp; control_style=:none) # do not plot the control
+plot(sol, ocp; path_style=:none)    # do not plot the path constraint
+plot(sol, ocp; dual_style=:none)    # do not plot the path constraint dual variable
+```
+
+For instance, let's plot everything except the dual variable associated with the path constraint.
+
+```@example main
+plot(sol, ocp; dual_style=:none)
+```
