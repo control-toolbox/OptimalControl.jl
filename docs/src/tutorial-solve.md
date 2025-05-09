@@ -118,12 +118,10 @@ Please check the list of [Ipopt options](https://coin-or.github.io/Ipopt/OPTIONS
 ```@example main
 sol = solve(ocp; max_iter=0, display=false)
 iterations(sol)
-nothing # hide
 ```
 
 Similarly, please check the [MadNLP.jl documentation](https://madnlp.github.io/MadNLP.jl) and the list of [MadNLP.jl options](https://madnlp.github.io/MadNLP.jl/stable/options/).
 ```@example main
 sol = solve(ocp, :madnlp; max_iter=0, display=false)
 iterations(sol)
-nothing # hide
 ```
