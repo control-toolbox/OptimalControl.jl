@@ -83,9 +83,7 @@ solve(ocp, :madnlp)
 nothing # hide
 ```
 
-Note that you can provide a partial description. 
-If several full descriptions contain it, the priority is given to first one in the list. 
-Hence, these calls are all equivalent:
+Note that you can provide a partial description. If multiple full descriptions contain it, priority is given to the first one in the list. Hence, all of the following calls are equivalent:
 
 ```julia
 solve(ocp)
