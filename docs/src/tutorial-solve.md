@@ -68,7 +68,7 @@ solve(ocp, :direct, :adnlp, :ipopt)
 
 The first symbol `:direct` refers to the general class of method, with only the so-called [direct approach](https://en.wikipedia.org/wiki/Optimal_control#Numerical_methods_for_optimal_control) currently implemented.
 Direct methods discretize the original optimal control problem and solve the resulting NLP problem.
-The second symbol `:adnlp` is for the choice of NLP modeller. 
+The second symbol `:adnlp` is for the choice of NLP modeler. 
 We currently use [ADNLPModels.jl](https://jso.dev/ADNLPModels.jl) which provides an automatic differentiation (AD)-based model implementations that conform to the [NLPModels.jl](https://github.com/JuliaSmoothOptimizers/ADNLPModels.jl) API.
 The third symbol corresponds to the NLP solver, with the possible values:
 - `:ipopt` (default value) for Ipopt (via the [NLPModelsIpopt.jl](https://github.com/JuliaSmoothOptimizers/NLPModelsIpopt.jl) package).
