@@ -106,7 +106,6 @@ $\dot{z}(t) = \vec{\mathbf{H}}(z(t))$.
 
 ```@example main
 using OrdinaryDiffEq
-
 f = Flow(ocp, u)
 nothing # hide
 ```
@@ -133,7 +132,6 @@ with the function `solve`. See for instance the [basic example](@ref tutorial-ba
 
 ```@example main
 using Plots
-
 plot(sol)
 ```
 
