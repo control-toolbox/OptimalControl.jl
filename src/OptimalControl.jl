@@ -96,9 +96,12 @@ export initial_time,
     message,
     infos
 
+# ExaModels
+import ExaModels
+
 # CTParser
-import CTParser: CTParser, @def
-export @def
+import CTParser: CTParser, parsing_backend, parsing_backend!, @def
+export parsing_backend, parsing_backend!, @def
 
 # CTDirect
 import CTDirect: CTDirect, direct_transcription, set_initial_guess, build_OCP_solution
