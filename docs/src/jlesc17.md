@@ -27,7 +27,7 @@ subject to
 plus boundary, control and state constraints
 
 - Our core interests: numerical & geometrical methods in control, applications
-- Why Julia: fast (+ JIT), strongly typed, high-level (AD, macros), available fast optimisation and ODE solvers, rapidly growing community
+- Why Julia: fast (+ JIT), strongly typed, high-level (AD, macros), fast optimisation and ODE solvers available, rapidly growing community
 
 ```@raw html
 <img width="800" alt="juliacon2025" src="./assets/juliacon2025.jpg">
@@ -54,7 +54,7 @@ b(t_0, X_0, t_N, X_N) = 0
 ```
 
 ```math
-g(t_i, X_i, U_i) = 0,\quad i = 0,\dots,N
+g(X_i, U_i) = 0,\quad i = 0,\dots,N
 ```
 
 - SIMD parallelism ($f0$, $f$, $g$) + sparsity: Kernels for GPU ([KernelAbstraction.jl](https://juliagpu.github.io/KernelAbstractions.jl/stable/)) and sparse linear algebra ([CUDSS.jl](https://github.com/exanauts/CUDSS.jl))
@@ -293,11 +293,6 @@ end
 ```@raw html
 </details>
 ```
-
-- **Remark.** Automated scalarisation of (linear) range constraints
-```julia
-XXXX
-```
 - Solving (MadNLP + CUDSS)
 ```julia
 This is MadNLP version v0.8.7, running with cuDSS v0.4.0
@@ -319,27 +314,27 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
    0  1.0000000e-01 1.10e+00 1.00e+00  -1.0 0.00e+00    -  0.00e+00 0.00e+00   0
    1  1.0001760e-01 1.10e+00 3.84e-03  -1.0 6.88e+02  -4.0 1.00e+00 2.00e-07h  2
    2 -5.2365072e-03 1.89e-02 1.79e-07  -1.0 6.16e+00  -4.5 1.00e+00 1.00e+00h  1
-   3  5.9939627e+00 2.28e-03 1.66e-04  -3.8 6.00e+00  -5.0 9.99e-01 1.00e+00h  1
-   4  5.9996194e+00 3.00e-06 1.05e-06  -3.8 7.77e-02    -  1.00e+00 1.00e+00h  1
+   3  5.9939621e+00 2.28e-03 1.66e-04  -3.8 6.00e+00  -5.0 9.99e-01 1.00e+00h  1
+   4  5.9996210e+00 2.94e-06 8.38e-07  -3.8 7.70e-02    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 4
 
                                    (scaled)                 (unscaled)
-Objective...............:   5.9996194116826898e+00    5.9996194116826898e+00
-Dual infeasibility......:   1.0504883830561350e-06    1.0504883830561350e-06
-Constraint violation....:   2.9972943093481582e-06    2.9972943093481582e-06
-Complementarity.........:   2.0007458990898193e-06    2.0007458990898193e-06
-Overall NLP error.......:   2.9972943093481582e-06    2.9972943093481582e-06
+Objective...............:   5.9996210189633494e+00    5.9996210189633494e+00
+Dual infeasibility......:   8.3756005011360529e-07    8.3756005011360529e-07
+Constraint violation....:   2.9426923277963834e-06    2.9426923277963834e-06
+Complementarity.........:   2.0007459547789288e-06    2.0007459547789288e-06
+Overall NLP error.......:   2.9426923277963834e-06    2.9426923277963834e-06
 
 Number of objective function evaluations             = 6
 Number of objective gradient evaluations             = 5
 Number of constraint evaluations                     = 6
 Number of constraint Jacobian evaluations            = 5
 Number of Lagrangian Hessian evaluations             = 4
-Total wall-clock secs in solver (w/o fun. eval./lin. alg.)  =  0.423
-Total wall-clock secs in linear solver                      =  0.055
-Total wall-clock secs in NLP function evaluations           =  0.005
-Total wall-clock secs                                       =  0.483
+Total wall-clock secs in solver (w/o fun. eval./lin. alg.)  =  0.072
+Total wall-clock secs in linear solver                      =  0.008
+Total wall-clock secs in NLP function evaluations           =  0.003
+Total wall-clock secs                                       =  0.083
 ```
 - [Goddard problem](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard/)
 ```julia
