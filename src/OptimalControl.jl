@@ -97,7 +97,8 @@ export initial_time,
     infos
 
 # ExaModels
-import ExaModels
+import ExaModels: ExaModels
+export ExaModels
 
 # CTParser
 import CTParser: CTParser, parsing_backend, parsing_backend!, @def
