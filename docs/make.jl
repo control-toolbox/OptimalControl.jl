@@ -58,6 +58,7 @@ makedocs(;
             ],
         ],
         "Zhejiang 2025" => "zhejiang-2025.md",
+        "JLESC17" => "jlesc17.md",
     ],
 )
 
