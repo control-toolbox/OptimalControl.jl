@@ -45,21 +45,25 @@ $$ b(t_0, X_0, t_N, X_N) = 0 $$
 
 $$ g(t_i, X_i, U_i) = 0,\quad i = 0,\dots,N $$
 
-- SIMD parallelism ($f0$, $f$, $g$) + sparsity: Kernels for GPU ([KernelAbstraction.jl](XXXX)) and sparse linear algebra ([CUDSS.jl](https://github.com/exanauts/CUDSS.jl))
+- SIMD parallelism ($f0$, $f$, $g$) + sparsity: Kernels for GPU ([KernelAbstraction.jl](https://juliagpu.github.io/KernelAbstractions.jl/stable/)) and sparse linear algebra ([CUDSS.jl](https://github.com/exanauts/CUDSS.jl))
 - Modelling and optimising for GPU: [ExaModels.jl](https://exanauts.github.io/ExaModels.jl/dev/guide)  + [MadNLP.jl](https://madnlp.github.io/MadNLP.jl), with **built-in AD**
 - [Simple example, DSL](@ref tutorial-double-integrator-energy)
-- Compile into an ExaModel (one pass compiler, [syntax + semantics](XXXX))
+- Compile into an ExaModel (one pass compiler, [syntax + semantics](https://github.com/control-toolbox/CTParser.jl/blob/20c6be5c953587fef10b054a95f9dc8c66b90577/src/onepass.jl#L145))
 - Simple example, generated code
 ```julia
+XXXX
 ```
 - **Remark.** Automated scalarisation of (linear) range constraints
 ```julia
+XXXX
 ```
 - Solving (MadNLP + CUDSS)
 ```julia
+XXXX
 ```
 - [Goddard problem](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard/)
 ```julia
+XXXX
 ```
 
 ## Wrap up
@@ -69,9 +73,9 @@ $$ g(t_i, X_i, U_i) = 0,\quad i = 0,\dots,N $$
 
 ## Future
 
-- New [applications](XXXX) (space mechanics, biology, quantum mechanics and more)
+- New applications (space mechanics, biology, quantum mechanics and more)
 - Additional solvers: benchmarking on CPU / GPU for optimisation, Hamiltonian shooting and pathfollowing
-- Improved AD: collab between Argonne and Inria, [JLESC Shared Infra AD](https://jlesc.github.io/projects/shared_infra_ad) project (XXXX team)...
+- Improved AD: collab between Argonne and Inria, [JLESC Shared Infra AD](https://jlesc.github.io/projects/shared_infra_ad) project...
 - ... and open to contributions! If you like the package, please give us a star ⭐️
 
 ```@raw html
