@@ -336,7 +336,7 @@ Total wall-clock secs in linear solver                      =  0.008
 Total wall-clock secs in NLP function evaluations           =  0.003
 Total wall-clock secs                                       =  0.083
 ```
-- [Goddard problem](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard/)
+- [Goddard problem](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html)
 ```julia
 This is MadNLP version v0.8.4, running with cuDSS v0.3.0
 
