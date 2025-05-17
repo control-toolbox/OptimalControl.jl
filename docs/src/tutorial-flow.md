@@ -459,3 +459,72 @@ plt = plot(yaxis=:log, legend=:bottomright, title="Comparison of concatenations"
 plot!(plt, t, t->abs(φ(t)-x0), label="OptimalControl")
 plot!(plt, t, t->abs(ψ(t)-x0), label="Classical")
 ```
+
+## State constraints
+
+We consider an optimal control problem with a state constraints of order 1.[^1] 
+
+[^1]: B. Bonnard, L. Faubourg, G. Launay & E. Tr´elat, Optimal Control With State Constraints And The Space Shuttle Re-entry Problem, J. Dyn. Control Syst., 9 (2003), no. 2, 155–199.
+
+```@example main
+t0 = 0
+tf = 2
+x0 = 1
+xf = 1/2
+lb = 0.1
+
+ocp = @def begin
+
+    t ∈ [t0, tf], time
+    x ∈ R, state
+    u ∈ R, control
+
+    -1 ≤ u(t) ≤ 1
+
+    x(t0) == x0
+    x(tf) == xf
+
+    x(t) - lb ≥ 0, (1)      # state constraint
+
+    ẋ(t) == u(t)
+
+    ∫( x(t)^2 ) → min
+
+end
+nothing # hide
+```
+
+The **pseudo-Hamiltonian** of this problem is
+
+```math
+    H(t, x, p, u, \eta) = p\, u + p^0 x^2 + \eta\, g(x),
+```
+
+where $p^0 = -1$ since we are in the normal case. From the Pontryagin maximum principle, the maximising control is given in feedback form by
+
+```math
+u(t, x, p) = p\, (1+\tan\, t)
+```
+
+since $\partial^2_{uu} H = p^0 = - 1 < 0$. 
+
+```@example main
+u(t, x, p) = p * (1 + tan(t))
+nothing # hide
+```
+
+As before, the `Flow` function aims to compute $(x, p)$ from the optimal control problem `ocp` and the control in feedback form `u(t, x, p)`. However, we must indicate that the control depends on $t$, that is it is non-autonomous.
+
+```@example main
+using OrdinaryDiffEq
+f = Flow(ocp, u; autonomous=false)
+nothing # hide
+```
+
+Now we have the flow of the associated Hamiltonian vector field, we can use it. Some simple calculations shows that the initial covector $p(0)$ solution of the Pontryagin maximum principle is $1$. Let us check that integrating the flow from $(t_0, x_0) = (0, 0)$ to the final time $t_f = \pi/4$ we reach the target $x_f = \tan(\pi/4) - 2 \log(\sqrt{2}/2)$.
+
+```@example main
+p0 = 1
+xf, pf = f(t0, x0, p0, tf)
+xf - (tan(π/4) - 2log(√(2)/2))
+```
