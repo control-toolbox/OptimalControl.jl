@@ -60,8 +60,7 @@ and such that the pair $(x, p)$ satisfies:
 \end{array}
 ```
 
-The `Flow` function aims to compute $(x, p)$ from the optimal control problem `ocp` and the control in 
-feedback form `u(x, p)`.
+The `Flow` function aims to compute $(x, p)$ from the optimal control problem `ocp` and the control in feedback form `u(x, p)`.
 
 !!! note "Nota bene"
 
@@ -73,23 +72,6 @@ feedback form `u(x, p)`.
     where $\mathbf{H}(z) = H(z, u(z))$ and $\vec{\mathbf{H}} = (\nabla_p \mathbf{H}, -\nabla_x \mathbf{H})$. This is what is actually computed by `Flow`.
 
 Let us try to get the associated flow:
-
-```@setup main_repl
-using OptimalControl
-t0 = 0
-tf = 1
-x0 = [-1, 0]
-ocp = @def begin
-    t ∈ [ t0, tf ], time
-    x = (q, v) ∈ R², state
-    u ∈ R, control
-    x(t0) == x0
-    x(tf) == [ 0, 0 ]
-    ẋ(t)  == [ v(t), u(t) ]
-    ∫( 0.5u(t)^2 ) → min
-end
-u(x, p) = p[2]
-```
 
 ```julia
 julia> f = Flow(ocp, u)
@@ -110,16 +92,15 @@ f = Flow(ocp, u)
 nothing # hide
 ```
 
-Now we have the flow of the associated Hamiltonian vector field, we can use it. Some simple calculations shows
-that the initial covector $p(0)$ solution of the Pontryagin maximum principle is $[12, 6]$. Let us check that
-integrating the flow from $(t_0, x_0) = (0, [-1, 0])$ to the final time $t_f$ we reach the target $x_f = [0, 0]$.
+Now we have the flow of the associated Hamiltonian vector field, we can use it. Some simple calculations shows that the initial covector $p(0)$ solution of the Pontryagin maximum principle is $[12, 6]$. Let us check that integrating the flow from $(t_0, x_0) = (0, [-1, 0])$ to the final time $t_f$ we reach the target $x_f = [0, 0]$.
 
 ```@example main
 p0 = [12, 6]
 xf, pf = f(t0, x0, p0, tf)
+xf
 ```
 
-If you prefer to get the state, costate and control trajectories at any time, you can call the flow:
+If you prefer to get the state, costate and control trajectories at any time, you can call the flow like this:
 
 ```@example main
 sol = f((t0, tf), x0, p0)
@@ -165,9 +146,7 @@ xf, pf = f(t0, x0, p0, tf; abstol=1e-8) # alg=BS5(), abstol=1e-8
 
 ## Extremals and trajectories
 
-The pairs $(x, p)$ solution of the Hamitonian vector field are called *extremals*. We can compute some constructing
-the flow from the optimal control problem and the control in feedback form. Another way to compute extremals is 
-to define explicitely the Hamiltonian.
+The pairs $(x, p)$ solution of the Hamitonian vector field are called *extremals*. We can compute some constructing the flow from the optimal control problem and the control in feedback form. Another way to compute extremals is to define explicitely the Hamiltonian.
 
 ```@example main
 H(x, p, u) = p[1] * x[2] + p[2] * u - 0.5 * u^2     # pseudo-Hamiltonian
@@ -208,6 +187,68 @@ Again, giving a `tspan` you get an output solution from OrdinaryDiffEq.jl.
 ```@example main
 sol = x((t0, tf), x0)
 plot(sol)
+```
+
+## Non-autonomous case
+
+Let us consider the following optimal control problem:
+
+```@example main
+t0 = 0
+tf = π/4
+x0 = 0
+xf = tan(π/4) - 2log(√(2)/2)
+
+ocp = @def begin
+
+    t ∈ [t0, tf], time
+    x ∈ R, state
+    u ∈ R, control
+
+    x(t0) == x0
+    x(tf) == xf
+
+    ẋ(t) == u(t) * (1 + tan(t)) # The dynamics depend explicitly on t
+
+    0.5∫( u(t)^2 ) → min
+
+end
+nothing # hide
+```
+
+The **pseudo-Hamiltonian** of this problem is
+
+```math
+    H(t, x, p, u) = p\, u\, (1+\tan\, t) + p^0 u^2 /2,
+```
+
+where $p^0 = -1$ since we are in the normal case. From the Pontryagin maximum principle, the maximising control is given in feedback form by
+
+```math
+u(t, x, p) = p\, (1+\tan\, t)
+```
+
+since $\partial^2_{uu} H = p^0 = - 1 < 0$. 
+
+```@example main
+u(t, x, p) = p * (1 + tan(t))
+nothing # hide
+```
+
+As before, the `Flow` function aims to compute $(x, p)$ from the optimal control problem `ocp` and the control in feedback form `u(t, x, p)`. However, we must indicate that the control depends on $t$, that is it is non-autonomous.
+
+```@example main
+using OrdinaryDiffEq
+f = Flow(ocp, u; autonomous=false)
+nothing # hide
+```
+
+Now we have the flow of the associated Hamiltonian vector field, we can use it. Some simple calculations shows that the initial covector $p(0)$ solution of the Pontryagin maximum principle is $1$. Let us check that integrating the flow from $(t_0, x_0) = (0, 0)$ to the final time $t_f = \pi/4$ we reach the target $x_f = \tan(\pi/4) - 2 \log(\sqrt{2}/2)$.
+
+```@example main
+p0 = 1
+xf, pf = f(t0, x0, p0, tf)
+xf - (tan(π/4) - 2log(√(2)/2))
 ```
 
 ## Variable
@@ -332,6 +373,7 @@ yf, pf = f(0, [x0, tf], [p0, 0], 1)
 !!! note "Goddard problem"
 
     In the [Goddard problem](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html#tutorial-goddard-structure), you may find other constructions of flows, especially for singular and boundary arcs.
+
 
 ## Concatenation of arcs
 
