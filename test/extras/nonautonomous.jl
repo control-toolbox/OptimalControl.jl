@@ -28,3 +28,11 @@ plt = plot(sol, ocp)
 
 u(t) = 1 + tan(t)
 plot!(plt[3], range(t0, tf, 101), u; color=:red, legend=false)
+
+using OrdinaryDiffEq
+u(t, x, p) = p * (1 + tan(t))
+f = Flow(ocp, u; autonomous=false)
+p0 = 1
+xf, pf = f(t0, x0, p0, tf)
+
+xf - (tan(π/4) - 2log(√(2)/2))
