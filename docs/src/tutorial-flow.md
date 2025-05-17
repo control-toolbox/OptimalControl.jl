@@ -512,7 +512,7 @@ From the maximizing condition, along a boundary arc, we have $p(t) = 0$. Differe
 \mu(x) = 2x.
 ```
 
-The optimal control is a concatenation of 3 arcs: a negative bang arc followed by a boundary arc, followed by a positive bang arc. The initial covector is approximately $-0.982237546583301$, the first switching time is $t_1 = 0.9$, and the exit time of the boundary is $t_2 = 1.6$. Let us check this by concatenating the three flows.
+The optimal control is a concatenation of 3 arcs: a negative bang arc followed by a boundary arc, followed by a positive bang arc. The initial covector is approximately $p(0)=-0.982237546583301$, the first switching time is $t_1 = 0.9$, and the exit time of the boundary is $t_2 = 1.6$. Let us check this by concatenating the three flows.
 
 ```@example main
 u(x) = 0     # boundary control
