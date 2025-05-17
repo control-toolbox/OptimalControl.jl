@@ -238,7 +238,6 @@ nothing # hide
 As before, the `Flow` function aims to compute $(x, p)$ from the optimal control problem `ocp` and the control in feedback form `u(t, x, p)`. However, we must indicate that the control depends on $t$, that is it is non-autonomous.
 
 ```@example main
-using OrdinaryDiffEq
 f = Flow(ocp, u; autonomous=false)
 nothing # hide
 ```
@@ -484,7 +483,7 @@ ocp = @def begin
     x(t0) == x0
     x(tf) == xf
 
-    x(t) - lb ≥ 0, (1)      # state constraint
+    x(t) - lb ≥ 0           # state constraint
 
     ẋ(t) == u(t)
 
@@ -497,34 +496,38 @@ nothing # hide
 The **pseudo-Hamiltonian** of this problem is
 
 ```math
-    H(t, x, p, u, \eta) = p\, u + p^0 x^2 + \eta\, g(x),
+    H(t, x, p, u, \eta) = p\, u + p^0 x^2 + \eta\, c(x),
 ```
 
-where $p^0 = -1$ since we are in the normal case. From the Pontryagin maximum principle, the maximising control is given in feedback form by
+where $ p^0 = -1 $ since we are in the normal case, and where $c(x) = x - l_b$. Along a boundary arc, when $c(x(t)) = 0$, we have $x(t) = l_b$, so $ x(\cdot) $ is constant. Differentiating, we obtain $\dot{x}(t) = u(t) = 0$. Hence, along a boundary arc, the control in feedback form is:
+
 
 ```math
-u(t, x, p) = p\, (1+\tan\, t)
+u(x, p) = 0.
 ```
 
-since $\partial^2_{uu} H = p^0 = - 1 < 0$. 
+From the maximizing condition, along a boundary arc, we have $p(t) = 0$. Differentiating, we obtain $\dot{p}(t) = 2 x(t) - \eta(t) = 0$. Hence, along a boundary arc, the dual variable $\eta$ is given in feedback form by:
 
-```@example main
-u(t, x, p) = p * (1 + tan(t))
-nothing # hide
+```math
+\eta(x, p) = 2x.
 ```
 
-As before, the `Flow` function aims to compute $(x, p)$ from the optimal control problem `ocp` and the control in feedback form `u(t, x, p)`. However, we must indicate that the control depends on $t$, that is it is non-autonomous.
+The optimal control is a concatenation of 3 arcs: a negative bang arc followed by a boundary arc, followed by a positive bang arc. The initial covector is approximately $-0.982237546583301$, the first switching time is $t_1 = 0.9$, and the exit time of the boundary is $t_2 = 1.6$. Let us check this by concatenating the three flows.
 
 ```@example main
-using OrdinaryDiffEq
-f = Flow(ocp, u; autonomous=false)
-nothing # hide
-```
+u(x, p) = 0     # boundary control
+c(x, u) = x-lb  # constraint
+η(x, p) = 2x    # dual variable
 
-Now we have the flow of the associated Hamiltonian vector field, we can use it. Some simple calculations shows that the initial covector $p(0)$ solution of the Pontryagin maximum principle is $1$. Let us check that integrating the flow from $(t_0, x_0) = (0, 0)$ to the final time $t_f = \pi/4$ we reach the target $x_f = \tan(\pi/4) - 2 \log(\sqrt{2}/2)$.
+f1 = Flow(ocp, (x, p) -> -1)
+f2 = Flow(ocp, u, c, η)
+f3 = Flow(ocp, (x, p) -> +1)
 
-```@example main
-p0 = 1
+t1 = 0.9
+t2 = 1.6
+f = f1 * (t1, f2) * (t2, f3)
+
+p0 = -0.982237546583301
 xf, pf = f(t0, x0, p0, tf)
-xf - (tan(π/4) - 2log(√(2)/2))
+xf
 ```

@@ -100,3 +100,4 @@ u_flow = control(sol_flow);
 
 H_flow(t) = H(x_flow(t), p_flow(t), u_flow(t), η_flow(t));
 plot!(plt_H, t, H_flow; color=:blue, label="indirect")
+
