@@ -496,31 +496,31 @@ nothing # hide
 The **pseudo-Hamiltonian** of this problem is
 
 ```math
-    H(t, x, p, u, \eta) = p\, u + p^0 x^2 + \eta\, c(x),
+    H(x, p, u, \mu) = p\, u + p^0 x^2 + \mu\, c(x),
 ```
 
 where $ p^0 = -1 $ since we are in the normal case, and where $c(x) = x - l_b$. Along a boundary arc, when $c(x(t)) = 0$, we have $x(t) = l_b$, so $ x(\cdot) $ is constant. Differentiating, we obtain $\dot{x}(t) = u(t) = 0$. Hence, along a boundary arc, the control in feedback form is:
 
 
 ```math
-u(x, p) = 0.
+u(x) = 0.
 ```
 
-From the maximizing condition, along a boundary arc, we have $p(t) = 0$. Differentiating, we obtain $\dot{p}(t) = 2 x(t) - \eta(t) = 0$. Hence, along a boundary arc, the dual variable $\eta$ is given in feedback form by:
+From the maximizing condition, along a boundary arc, we have $p(t) = 0$. Differentiating, we obtain $\dot{p}(t) = 2 x(t) - \mu(t) = 0$. Hence, along a boundary arc, the dual variable $\mu$ is given in feedback form by:
 
 ```math
-\eta(x, p) = 2x.
+\mu(x) = 2x.
 ```
 
 The optimal control is a concatenation of 3 arcs: a negative bang arc followed by a boundary arc, followed by a positive bang arc. The initial covector is approximately $-0.982237546583301$, the first switching time is $t_1 = 0.9$, and the exit time of the boundary is $t_2 = 1.6$. Let us check this by concatenating the three flows.
 
 ```@example main
-u(x, p) = 0     # boundary control
-c(x, u) = x-lb  # constraint
-η(x, p) = 2x    # dual variable
+u(x) = 0     # boundary control
+c(x) = x-lb  # constraint
+μ(x) = 2x    # dual variable
 
 f1 = Flow(ocp, (x, p) -> -1)
-f2 = Flow(ocp, u, c, η)
+f2 = Flow(ocp, (x, p) -> u(x), (x, u) -> c(x), (x, p) -> μ(x))
 f3 = Flow(ocp, (x, p) -> +1)
 
 t1 = 0.9
