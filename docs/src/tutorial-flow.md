@@ -238,7 +238,6 @@ nothing # hide
 As before, the `Flow` function aims to compute $(x, p)$ from the optimal control problem `ocp` and the control in feedback form `u(t, x, p)`. However, we must indicate that the control depends on $t$, that is it is non-autonomous.
 
 ```@example main
-using OrdinaryDiffEq
 f = Flow(ocp, u; autonomous=false)
 nothing # hide
 ```
@@ -458,4 +457,77 @@ t = range(1, 5e2, 201)
 plt = plot(yaxis=:log, legend=:bottomright, title="Comparison of concatenations", xlabel="t")
 plot!(plt, t, t->abs(φ(t)-x0), label="OptimalControl")
 plot!(plt, t, t->abs(ψ(t)-x0), label="Classical")
+```
+
+## State constraints
+
+We consider an optimal control problem with a state constraints of order 1.[^1] 
+
+[^1]: B. Bonnard, L. Faubourg, G. Launay & E. Tr´elat, Optimal Control With State Constraints And The Space Shuttle Re-entry Problem, J. Dyn. Control Syst., 9 (2003), no. 2, 155–199.
+
+```@example main
+t0 = 0
+tf = 2
+x0 = 1
+xf = 1/2
+lb = 0.1
+
+ocp = @def begin
+
+    t ∈ [t0, tf], time
+    x ∈ R, state
+    u ∈ R, control
+
+    -1 ≤ u(t) ≤ 1
+
+    x(t0) == x0
+    x(tf) == xf
+
+    x(t) - lb ≥ 0           # state constraint
+
+    ẋ(t) == u(t)
+
+    ∫( x(t)^2 ) → min
+
+end
+nothing # hide
+```
+
+The **pseudo-Hamiltonian** of this problem is
+
+```math
+    H(x, p, u, \mu) = p\, u + p^0 x^2 + \mu\, c(x),
+```
+
+where $ p^0 = -1 $ since we are in the normal case, and where $c(x) = x - l_b$. Along a boundary arc, when $c(x(t)) = 0$, we have $x(t) = l_b$, so $ x(\cdot) $ is constant. Differentiating, we obtain $\dot{x}(t) = u(t) = 0$. Hence, along a boundary arc, the control in feedback form is:
+
+
+```math
+u(x) = 0.
+```
+
+From the maximizing condition, along a boundary arc, we have $p(t) = 0$. Differentiating, we obtain $\dot{p}(t) = 2 x(t) - \mu(t) = 0$. Hence, along a boundary arc, the dual variable $\mu$ is given in feedback form by:
+
+```math
+\mu(x) = 2x.
+```
+
+The optimal control is a concatenation of 3 arcs: a negative bang arc followed by a boundary arc, followed by a positive bang arc. The initial covector is approximately $p(0)=-0.982237546583301$, the first switching time is $t_1 = 0.9$, and the exit time of the boundary is $t_2 = 1.6$. Let us check this by concatenating the three flows.
+
+```@example main
+u(x) = 0     # boundary control
+c(x) = x-lb  # constraint
+μ(x) = 2x    # dual variable
+
+f1 = Flow(ocp, (x, p) -> -1)
+f2 = Flow(ocp, (x, p) -> u(x), (x, u) -> c(x), (x, p) -> μ(x))
+f3 = Flow(ocp, (x, p) -> +1)
+
+t1 = 0.9
+t2 = 1.6
+f = f1 * (t1, f2) * (t2, f3)
+
+p0 = -0.982237546583301
+xf, pf = f(t0, x0, p0, tf)
+xf
 ```
