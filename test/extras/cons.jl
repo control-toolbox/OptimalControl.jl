@@ -90,7 +90,9 @@ t_flow = time_grid(sol_flow);
 x_flow = state(sol_flow);
 p_flow = costate(sol_flow);
 u_flow = control(sol_flow);
-η_flow = t -> 2x(t) * (t1 ≤ t ≤ t2)
+η_flow = dual(sol, ocp, :eq1) # t -> 2x(t) * (t1 ≤ t ≤ t2)
 
 H_flow(t) = H(x_flow(t), p_flow(t), u_flow(t), η_flow(t));
 plot!(plt_H, t, H_flow; color=:blue, label="indirect")
+
+plot(t_flow, η_flow)
