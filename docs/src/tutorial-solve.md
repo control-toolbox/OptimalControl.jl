@@ -36,7 +36,7 @@ nothing # hide
 Notice that we need to load the `NLPModelsIpopt` package before calling `solve`.
 This is because the method currently implements a direct approach, where the optimal control problem is transcribed to a nonlinear optimization problem (NLP) of the form
 ```math
-\text{minimize}\quad F(y), \quad\text{subject to the constraints}\quad g(y)=0, \quad h(y)\le 0. 
+\text{minimize}\quad F(y), \quad\text{subject to the constraints}\quad g(y) \le 0, \quad h(y) = 0. 
 ```
 
 Calling `solve` without loading a NLP solver package first will notify the user:
