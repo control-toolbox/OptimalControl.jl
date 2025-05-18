@@ -249,7 +249,7 @@ t0 = 0
 x0 = 0
 
 ocp = @def begin
-    tf ∈ R, variable             # the optimisation variable is tf
+    tf ∈ R, variable # the optimisation variable is tf
     t ∈ [t0, tf], time
     x ∈ R, state
     u ∈ R, control
