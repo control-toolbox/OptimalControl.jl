@@ -6,18 +6,13 @@ tf = 1
 x0 = [-1, 0]
 
 ocp = @def begin
-
     t ∈ [ t0, tf ], time
     x = (q, v) ∈ R², state
     u ∈ R, control
-
     x(t0) == x0
     x(tf) == [ 0, 0 ]
-
     ẋ(t)  == [ v(t), u(t) ]
-
     ∫( 0.5u(t)^2 ) → min
-
 end</code></pre><p>The <strong>pseudo-Hamiltonian</strong> of this problem is</p><p class="math-container">\[    H(x, p, u) = p_q\, q + p_v\, v + p^0 u^2 /2,\]</p><p>where <span>$p^0 = -1$</span> since we are in the normal case. From the Pontryagin maximum principle, the maximising control is given in feedback form by</p><p class="math-container">\[u(x, p) = p_v\]</p><p>since <span>$\partial^2_{uu} H = p^0 = - 1 &lt; 0$</span>. </p><pre><code class="language-julia hljs">u(x, p) = p[2]</code></pre><p>Actually, if <span>$(x, u)$</span> is a solution of the optimal control problem,  then, the Pontryagin maximum principle tells us that there exists a costate <span>$p$</span> such that <span>$u(t) = u(x(t), p(t))$</span> and such that the pair <span>$(x, p)$</span> satisfies:</p><p class="math-container">\[\begin{array}{l}
     \dot{x}(t) = \displaystyle\phantom{-}\nabla_p H(x(t), p(t), u(x(t), p(t))), \\[0.5em]
     \dot{p}(t) = \displaystyle         - \nabla_x H(x(t), p(t), u(x(t), p(t))).
@@ -28,14 +23,14 @@ xf, pf = f(t0, x0, p0, tf)
 xf</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2-element Vector{Float64}:
  2.190132298449979e-15
  2.6081896274747272e-14</code></pre><p>If you prefer to get the state, costate and control trajectories at any time, you can call the flow like this:</p><pre><code class="language-julia hljs">sol = f((t0, tf), x0, p0)</code></pre><p>In this case, you obtain a data that you can plot exactly like when solving the optimal control problem  with the function <code>solve</code>. See for instance the <a href="tutorial-double-integrator-energy.html#tutorial-basic-solve-plot">basic example</a> or the  <a href="tutorial-plot.html#tutorial-plot">plot tutorial</a>.</p><pre><code class="language-julia hljs">using Plots
-plot(sol)</code></pre><img src="tutorial-flow-221337ef.svg" alt="Example block output"/><p>You can notice from the graph of <code>v</code> that the integrator has made very few steps:</p><pre><code class="language-julia hljs">time_grid(sol)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">6-element Vector{Float64}:
+plot(sol)</code></pre><img src="tutorial-flow-151d75d9.svg" alt="Example block output"/><p>You can notice from the graph of <code>v</code> that the integrator has made very few steps:</p><pre><code class="language-julia hljs">time_grid(sol)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">6-element Vector{Float64}:
  0.0
  0.0027652656319165627
  0.01991270121146798
  0.11105459493440159
  0.4184583642664539
  1.0</code></pre><div class="admonition is-info" id="Time-grid-f5c73d6082f8cfcb"><header class="admonition-header">Time grid<a class="admonition-anchor" href="#Time-grid-f5c73d6082f8cfcb" title="Permalink"></a></header><div class="admonition-body"><p>The function <a href="dev-ctmodels.html#CTModels.time_grid-Union{Tuple{CTModels.Solution{&lt;:CTModels.TimeGridModel{T}}}, Tuple{T}} where T&lt;:Union{StepRangeLen, AbstractVector{&lt;:Real}}"><code>time_grid</code></a> returns the discretized time grid returned by the solver. In this case, the solution has been computed by numerical integration with an adaptive step-length Runge-Kutta scheme.</p></div></div><p>To have a better visualisation (the accuracy won&#39;t change), you can provide a fine grid.</p><pre><code class="language-julia hljs">sol = f((t0, tf), x0, p0; saveat=range(t0, tf, 100))
-plot(sol)</code></pre><img src="tutorial-flow-0d933040.svg" alt="Example block output"/><p>The argument <code>saveat</code> is an option from OrdinaryDiffEq.jl. Please check the  <a href="https://docs.sciml.ai/DiffEqDocs/stable/basics/common_solver_opts/#solver_options">list of common options</a>. For instance, one can change the integrator with the keyword argument <code>alg</code> or the absolute tolerance with  <code>abstol</code>. Note that you can set an option when declaring the flow or set an option in a particular call of the flow.  In the following example, the integrator will be <code>BS5()</code> and the absolute tolerance will be <code>abstol=1e-8</code>.</p><pre><code class="language-julia hljs">f = Flow(ocp, u; alg=BS5(), abstol=1)   # alg=BS5(), abstol=1
+plot(sol)</code></pre><img src="tutorial-flow-99fa0ad0.svg" alt="Example block output"/><p>The argument <code>saveat</code> is an option from OrdinaryDiffEq.jl. Please check the  <a href="https://docs.sciml.ai/DiffEqDocs/stable/basics/common_solver_opts/#solver_options">list of common options</a>. For instance, one can change the integrator with the keyword argument <code>alg</code> or the absolute tolerance with  <code>abstol</code>. Note that you can set an option when declaring the flow or set an option in a particular call of the flow.  In the following example, the integrator will be <code>BS5()</code> and the absolute tolerance will be <code>abstol=1e-8</code>.</p><pre><code class="language-julia hljs">f = Flow(ocp, u; alg=BS5(), abstol=1)   # alg=BS5(), abstol=1
 xf, pf = f(t0, x0, p0, tf; abstol=1e-8) # alg=BS5(), abstol=1e-8</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">([2.344752072291531e-16, 4.107383693519002e-16], [12.0, -6.0])</code></pre><h2 id="Extremals-and-trajectories"><a class="docs-heading-anchor" href="#Extremals-and-trajectories">Extremals and trajectories</a><a id="Extremals-and-trajectories-1"></a><a class="docs-heading-anchor-permalink" href="#Extremals-and-trajectories" title="Permalink"></a></h2><p>The pairs <span>$(x, p)$</span> solution of the Hamitonian vector field are called <em>extremals</em>. We can compute some constructing the flow from the optimal control problem and the control in feedback form. Another way to compute extremals is to define explicitely the Hamiltonian.</p><pre><code class="language-julia hljs">H(x, p, u) = p[1] * x[2] + p[2] * u - 0.5 * u^2     # pseudo-Hamiltonian
 H(x, p) = H(x, p, u(x, p))                          # Hamiltonian
 
@@ -49,78 +44,58 @@ x = Flow((t, x) -&gt; [x[2], u(t)]; autonomous=false) # the vector field depends
 x(t0, x0, tf)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2-element Vector{Float64}:
  6.661338147750939e-16
  0.0</code></pre><p>Again, giving a <code>tspan</code> you get an output solution from OrdinaryDiffEq.jl.</p><pre><code class="language-julia hljs">sol = x((t0, tf), x0)
-plot(sol)</code></pre><img src="tutorial-flow-6202d5a9.svg" alt="Example block output"/><h2 id="Non-autonomous-case"><a class="docs-heading-anchor" href="#Non-autonomous-case">Non-autonomous case</a><a id="Non-autonomous-case-1"></a><a class="docs-heading-anchor-permalink" href="#Non-autonomous-case" title="Permalink"></a></h2><p>Let us consider the following optimal control problem:</p><pre><code class="language-julia hljs">t0 = 0
+plot(sol)</code></pre><img src="tutorial-flow-730f48a8.svg" alt="Example block output"/><h2 id="Non-autonomous-case"><a class="docs-heading-anchor" href="#Non-autonomous-case">Non-autonomous case</a><a id="Non-autonomous-case-1"></a><a class="docs-heading-anchor-permalink" href="#Non-autonomous-case" title="Permalink"></a></h2><p>Let us consider the following optimal control problem:</p><pre><code class="language-julia hljs">t0 = 0
 tf = π/4
 x0 = 0
 xf = tan(π/4) - 2log(√(2)/2)
 
 ocp = @def begin
-
     t ∈ [t0, tf], time
     x ∈ R, state
     u ∈ R, control
-
     x(t0) == x0
     x(tf) == xf
-
     ẋ(t) == u(t) * (1 + tan(t)) # The dynamics depend explicitly on t
-
     0.5∫( u(t)^2 ) → min
-
-end</code></pre><p>The <strong>pseudo-Hamiltonian</strong> of this problem is</p><p class="math-container">\[    H(t, x, p, u) = p\, u\, (1+\tan\, t) + p^0 u^2 /2,\]</p><p>where <span>$p^0 = -1$</span> since we are in the normal case. From the Pontryagin maximum principle, the maximising control is given in feedback form by</p><p class="math-container">\[u(t, x, p) = p\, (1+\tan\, t)\]</p><p>since <span>$\partial^2_{uu} H = p^0 = - 1 &lt; 0$</span>. </p><pre><code class="language-julia hljs">u(t, x, p) = p * (1 + tan(t))</code></pre><p>As before, the <code>Flow</code> function aims to compute <span>$(x, p)$</span> from the optimal control problem <code>ocp</code> and the control in feedback form <code>u(t, x, p)</code>. However, we must indicate that the control depends on <span>$t$</span>, that is it is non-autonomous.</p><pre><code class="language-julia hljs">f = Flow(ocp, u; autonomous=false)</code></pre><p>Now we have the flow of the associated Hamiltonian vector field, we can use it. Some simple calculations shows that the initial covector <span>$p(0)$</span> solution of the Pontryagin maximum principle is <span>$1$</span>. Let us check that integrating the flow from <span>$(t_0, x_0) = (0, 0)$</span> to the final time <span>$t_f = \pi/4$</span> we reach the target <span>$x_f = \tan(\pi/4) - 2 \log(\sqrt{2}/2)$</span>.</p><pre><code class="language-julia hljs">p0 = 1
+end</code></pre><p>The pseudo-Hamiltonian of this problem is</p><p class="math-container">\[    H(t, x, p, u) = p\, u\, (1+\tan\, t) + p^0 u^2 /2,\]</p><p>where <span>$p^0 = -1$</span> since we are in the normal case. From the Pontryagin maximum principle, the maximising control is given in feedback form by</p><p class="math-container">\[u(t, x, p) = p\, (1+\tan\, t)\]</p><p>since <span>$\partial^2_{uu} H = p^0 = - 1 &lt; 0$</span>. </p><pre><code class="language-julia hljs">u(t, x, p) = p * (1 + tan(t))</code></pre><p>As before, the <code>Flow</code> function aims to compute <span>$(x, p)$</span> from the optimal control problem <code>ocp</code> and the control in feedback form <code>u(t, x, p)</code>. However, we must indicate that the control depends on <span>$t$</span>, that is it is non-autonomous.</p><pre><code class="language-julia hljs">f = Flow(ocp, u; autonomous=false)</code></pre><p>Now we have the flow of the associated Hamiltonian vector field, we can use it. Some simple calculations shows that the initial covector <span>$p(0)$</span> solution of the Pontryagin maximum principle is <span>$1$</span>. Let us check that integrating the flow from <span>$(t_0, x_0) = (0, 0)$</span> to the final time <span>$t_f = \pi/4$</span> we reach the target <span>$x_f = \tan(\pi/4) - 2 \log(\sqrt{2}/2)$</span>.</p><pre><code class="language-julia hljs">p0 = 1
 xf, pf = f(t0, x0, p0, tf)
 xf - (tan(π/4) - 2log(√(2)/2))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">-1.1966649893224712e-11</code></pre><h2 id="Variable"><a class="docs-heading-anchor" href="#Variable">Variable</a><a id="Variable-1"></a><a class="docs-heading-anchor-permalink" href="#Variable" title="Permalink"></a></h2><p>Let us consider an optimal control problem with a (decision / optimisation) variable.</p><pre><code class="language-julia hljs">t0 = 0
 x0 = 0
 
 ocp = @def begin
-
     tf ∈ R, variable             # the optimisation variable is tf
     t ∈ [t0, tf], time
     x ∈ R, state
     u ∈ R, control
-
     x(t0) == x0
     x(tf) == 1
-
     ẋ(t) == tf * u(t)
-
     tf + 0.5∫(u(t)^2) → min
-
 end</code></pre><p>As you can see, the variable is the final time <code>tf</code>. Note that the dynamics depends on <code>tf</code>. From the Pontryagin maximum principle, the solution is given by:</p><pre><code class="language-julia hljs">tf = (3/2)^(1/4)
 p0 = 2tf/3</code></pre><p>The input arguments of the maximising control are now the state <code>x</code>, the costate <code>p</code> and the variable <code>tf</code>.</p><pre><code class="language-julia hljs">u(x, p, tf) = tf * p</code></pre><p>Let us check that the final condition <code>x(tf) = 1</code> is satisfied.</p><pre><code class="language-julia hljs">f = Flow(ocp, u)
 xf, pf = f(t0, x0, p0, tf, tf)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(1.0000000000000004, 0.7377879464668812)</code></pre><p>The usage of the flow <code>f</code> is the following: <code>f(t0, x0, p0, tf, v)</code> where <code>v</code> is the variable. If one wants to compute the state at time <code>t1 = 0.5</code>, then, one must write:</p><pre><code class="language-julia hljs">t1 = 0.5
 x1, p1 = f(t0, x0, p0, t1, tf)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(0.45180100180492255, 0.7377879464668812)</code></pre><div class="admonition is-info" id="Free-times-87578c615e3e2a3c"><header class="admonition-header">Free times<a class="admonition-anchor" href="#Free-times-87578c615e3e2a3c" title="Permalink"></a></header><div class="admonition-body"><p>In the particular cases: the initial time <code>t0</code> is the only variable, the final time <code>tf</code> is the only variable, or the initial and final times <code>t0</code> and <code>tf</code> are the only variables and are in order <code>v=(t0, tf)</code>, the times do not need to be repeated in the call of the flow:</p><pre><code class="language-julia hljs">xf, pf = f(t0, x0, p0, tf)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(1.0000000000000004, 0.7377879464668812)</code></pre></div></div><p>Since the variable is the final time, we can make the time-reparameterisation <span>$t = s\, t_f$</span> to normalise the time <span>$s$</span> in <span>$[0, 1]$</span>.</p><pre><code class="language-julia hljs">ocp = @def begin
-
     tf ∈ R, variable
     s ∈ [0, 1], time
     x ∈ R, state
     u ∈ R, control
-
     x(0) == 0
     x(1) == 1
-
     ẋ(s) == tf^2 * u(s)
-
     tf + (0.5*tf)*∫(u(s)^2) → min
-
 end
 
 f = Flow(ocp, u)
 xf, pf = f(0, x0, p0, 1, tf)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(1.0000000000000002, 0.7377879464668812)</code></pre><p>Another possibility is to add a new state variable <span>$t_f(s)$</span>. The problem has no variable anymore.</p><pre><code class="language-julia hljs">ocp = @def begin
-
     s ∈ [0, 1], time
     y = (x, tf) ∈ R², state
     u ∈ R, control
-
     x(0) == 0
     x(1) == 1
-
     dx = tf(s)^2 * u(s)
     dtf = 0 * u(s) # 0
     ẏ(s) == [dx, dtf]
-
     tf(1) + 0.5∫(tf(s) * u(s)^2) → min
-
 end
 
 u(y, q) = y[2] * q[1]
@@ -132,26 +107,20 @@ x0 = -1
 xf =  0
 
 @def ocp begin
-
     t ∈ [ t0, tf ], time
     x ∈ R, state
     u ∈ R, control
-
     x(t0) == x0
     x(tf) == xf
-
     -1 ≤ u(t) ≤ 1
-
     ẋ(t) == -x(t) + u(t)
-
     ∫( abs(u(t)) ) → min
-
 end</code></pre><p>From the Pontryagin maximum principle, the optimal control is a concatenation of an off arc (<span>$u=0$</span>) followed by a  positive bang arc (<span>$u=1$</span>). The initial costate is </p><p class="math-container">\[p_0 = \frac{1}{x_0 - (x_f-1) e^{t_f}}\]</p><p>and the switching time is <span>$t_1 = -\ln(p_0)$</span>.</p><pre><code class="language-julia hljs">p0 = 1/( x0 - (xf-1) * exp(tf) )
 t1 = -log(p0)</code></pre><p>Let us define the two flows and the concatenation. Note that the concatenation of two flows is a flow.</p><pre><code class="language-julia hljs">f0 = Flow(ocp, (x, p) -&gt; 0)     # off arc: u = 0
 f1 = Flow(ocp, (x, p) -&gt; 1)     # positive bang arc: u = 1
 
 f = f0 * (t1, f1)               # f0 followed by f1 whenever t ≥ t1</code></pre><p>Now, we can check that the state reach the target.</p><pre><code class="language-julia hljs">sol = f((t0, tf), x0, p0)
-plot(sol)</code></pre><img src="tutorial-flow-248ef901.svg" alt="Example block output"/><div class="admonition is-info" id="Goddard-problem-c099cf9cb143b6e"><header class="admonition-header">Goddard problem<a class="admonition-anchor" href="#Goddard-problem-c099cf9cb143b6e" title="Permalink"></a></header><div class="admonition-body"><p>In the <a href="https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html#tutorial-goddard-plot">Goddard problem</a>, you may find more complex concatenations.</p></div></div><p>For the moment, this concatenation is not equivalent to an exact concatenation.</p><pre><code class="language-julia hljs">f = Flow(x -&gt;  x)
+plot(sol)</code></pre><img src="tutorial-flow-c4d56667.svg" alt="Example block output"/><div class="admonition is-info" id="Goddard-problem-c099cf9cb143b6e"><header class="admonition-header">Goddard problem<a class="admonition-anchor" href="#Goddard-problem-c099cf9cb143b6e" title="Permalink"></a></header><div class="admonition-body"><p>In the <a href="https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html#tutorial-goddard-plot">Goddard problem</a>, you may find more complex concatenations.</p></div></div><p>For the moment, this concatenation is not equivalent to an exact concatenation.</p><pre><code class="language-julia hljs">f = Flow(x -&gt;  x)
 g = Flow(x -&gt; -x)
 
 x0 = 1
@@ -165,29 +134,22 @@ t = range(1, 5e2, 201)
 
 plt = plot(yaxis=:log, legend=:bottomright, title=&quot;Comparison of concatenations&quot;, xlabel=&quot;t&quot;)
 plot!(plt, t, t-&gt;abs(φ(t)-x0), label=&quot;OptimalControl&quot;)
-plot!(plt, t, t-&gt;abs(ψ(t)-x0), label=&quot;Classical&quot;)</code></pre><img src="tutorial-flow-fd884b19.svg" alt="Example block output"/><h2 id="State-constraints"><a class="docs-heading-anchor" href="#State-constraints">State constraints</a><a id="State-constraints-1"></a><a class="docs-heading-anchor-permalink" href="#State-constraints" title="Permalink"></a></h2><p>We consider an optimal control problem with a state constraints of order 1.<sup class="footnote-reference"><a id="citeref-1" href="#footnote-1">[1]</a></sup> </p><pre><code class="language-julia hljs">t0 = 0
+plot!(plt, t, t-&gt;abs(ψ(t)-x0), label=&quot;Classical&quot;)</code></pre><img src="tutorial-flow-b89203de.svg" alt="Example block output"/><h2 id="State-constraints"><a class="docs-heading-anchor" href="#State-constraints">State constraints</a><a id="State-constraints-1"></a><a class="docs-heading-anchor-permalink" href="#State-constraints" title="Permalink"></a></h2><p>We consider an optimal control problem with a state constraints of order 1.<sup class="footnote-reference"><a id="citeref-1" href="#footnote-1">[1]</a></sup> </p><pre><code class="language-julia hljs">t0 = 0
 tf = 2
 x0 = 1
 xf = 1/2
 lb = 0.1
 
 ocp = @def begin
-
     t ∈ [t0, tf], time
     x ∈ R, state
     u ∈ R, control
-
     -1 ≤ u(t) ≤ 1
-
     x(t0) == x0
     x(tf) == xf
-
-    x(t) - lb ≥ 0           # state constraint
-
+    x(t) - lb ≥ 0      # state constraint
     ẋ(t) == u(t)
-
     ∫( x(t)^2 ) → min
-
 end</code></pre><p>The <strong>pseudo-Hamiltonian</strong> of this problem is</p><p class="math-container">\[    H(x, p, u, \mu) = p\, u + p^0 x^2 + \mu\, c(x),\]</p><p>where $ p^0 = -1 $ since we are in the normal case, and where <span>$c(x) = x - l_b$</span>. Along a boundary arc, when <span>$c(x(t)) = 0$</span>, we have <span>$x(t) = l_b$</span>, so $ x(\cdot) $ is constant. Differentiating, we obtain <span>$\dot{x}(t) = u(t) = 0$</span>. Hence, along a boundary arc, the control in feedback form is:</p><p class="math-container">\[u(x) = 0.\]</p><p>From the maximizing condition, along a boundary arc, we have <span>$p(t) = 0$</span>. Differentiating, we obtain <span>$\dot{p}(t) = 2 x(t) - \mu(t) = 0$</span>. Hence, along a boundary arc, the dual variable <span>$\mu$</span> is given in feedback form by:</p><p class="math-container">\[\mu(x) = 2x.\]</p><p>The optimal control is a concatenation of 3 arcs: a negative bang arc followed by a boundary arc, followed by a positive bang arc. The initial covector is approximately <span>$p(0)=-0.982237546583301$</span>, the first switching time is <span>$t_1 = 0.9$</span>, and the exit time of the boundary is <span>$t_2 = 1.6$</span>. Let us check this by concatenating the three flows.</p><pre><code class="language-julia hljs">u(x) = 0     # boundary control
 c(x) = x-lb  # constraint
 μ(x) = 2x    # dual variable
@@ -207,4 +169,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a>B. Bonnard, L. Faubourg, G. Launay &amp; E. Tr´elat, Optimal Control With State Constraints And The Space Shuttle Re-entry Problem, J. Dyn. Control Syst., 9 (2003), no. 2, 155–199.</li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-plot.html">« Plot a solution</a><a class="docs-footer-nextpage" href="dev-optimalcontrol.html">OptimalControl.jl »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.11.4 on <span class="colophon-date" title="Sunday 18 May 2025 09:41">Sunday 18 May 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a>B. Bonnard, L. Faubourg, G. Launay &amp; E. Tr´elat, Optimal Control With State Constraints And The Space Shuttle Re-entry Problem, J. Dyn. Control Syst., 9 (2003), no. 2, 155–199.</li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-plot.html">« Plot a solution</a><a class="docs-footer-nextpage" href="dev-optimalcontrol.html">OptimalControl.jl »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.11.4 on <span class="colophon-date" title="Sunday 18 May 2025 09:55">Sunday 18 May 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
