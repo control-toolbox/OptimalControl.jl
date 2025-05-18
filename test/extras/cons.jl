@@ -12,7 +12,6 @@ xf = 1/2
 lb = 0.1
 
 ocp = @def begin
-
     t ∈ [t0, tf], time
     x ∈ R, state
     u ∈ R, control
@@ -26,15 +25,10 @@ ocp = @def begin
 
     ẋ(t) == u(t)
 
-    ∫( x(t)^2 ) → min
-
+    ∫(x(t)^2) → min
 end;
 
-sol = solve(ocp; 
-    grid_size=500, 
-    print_level=4, 
-    disc_method=:gauss_legendre_2,
-);
+sol = solve(ocp; grid_size=500, print_level=4, disc_method=:gauss_legendre_2);
 
 plt = plot(sol, ocp)
 
@@ -58,7 +52,7 @@ plot(pη1, pη2; layout=(2, 1))
 # Voyons la constance du hamiltonien
 g(x) = x - lb;
 ε = 1e-3;
-t12 = t[ 0 .≤ (g ∘ x).(t) .≤ ε ];
+t12 = t[0 .≤ (g ∘ x).(t) .≤ ε];
 t1 = min(t12...)
 t2 = max(t12...)
 
@@ -74,10 +68,10 @@ function S(p0, t1, t2)
     x1, p1 = f1(t0, x0, p0, t1)
     x2, p2 = f2(t1, x1, p1, t2)
     x3, p3 = f3(t2, x2, p2, tf)
-    return [ p1, g(x1), x3-xf ]
+    return [p1, g(x1), x3-xf]
 end;
 
-ξ = [ p(t0), t1, t2 ]    # initial guess
+ξ = [p(t0), t1, t2]    # initial guess
 nle! = (s, ξ, λ) -> s .= S(ξ...)    # auxiliary function
 prob = NonlinearProblem(nle!, ξ)    # NLE problem with initial guess
 
@@ -100,4 +94,3 @@ u_flow = control(sol_flow);
 
 H_flow(t) = H(x_flow(t), p_flow(t), u_flow(t), η_flow(t));
 plot!(plt_H, t, H_flow; color=:blue, label="indirect")
-
