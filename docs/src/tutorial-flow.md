@@ -14,18 +14,13 @@ tf = 1
 x0 = [-1, 0]
 
 ocp = @def begin
-
     t ∈ [ t0, tf ], time
     x = (q, v) ∈ R², state
     u ∈ R, control
-
     x(t0) == x0
     x(tf) == [ 0, 0 ]
-
     ẋ(t)  == [ v(t), u(t) ]
-
     ∫( 0.5u(t)^2 ) → min
-
 end
 nothing # hide
 ```
@@ -200,23 +195,18 @@ x0 = 0
 xf = tan(π/4) - 2log(√(2)/2)
 
 ocp = @def begin
-
     t ∈ [t0, tf], time
     x ∈ R, state
     u ∈ R, control
-
     x(t0) == x0
     x(tf) == xf
-
     ẋ(t) == u(t) * (1 + tan(t)) # The dynamics depend explicitly on t
-
     0.5∫( u(t)^2 ) → min
-
 end
 nothing # hide
 ```
 
-The **pseudo-Hamiltonian** of this problem is
+The pseudo-Hamiltonian of this problem is
 
 ```math
     H(t, x, p, u) = p\, u\, (1+\tan\, t) + p^0 u^2 /2,
@@ -259,19 +249,14 @@ t0 = 0
 x0 = 0
 
 ocp = @def begin
-
     tf ∈ R, variable             # the optimisation variable is tf
     t ∈ [t0, tf], time
     x ∈ R, state
     u ∈ R, control
-
     x(t0) == x0
     x(tf) == 1
-    
     ẋ(t) == tf * u(t)
-
     tf + 0.5∫(u(t)^2) → min
-
 end
 nothing # hide
 ```
@@ -320,19 +305,14 @@ the time $s$ in $[0, 1]$.
 
 ```@example main
 ocp = @def begin
-
     tf ∈ R, variable
     s ∈ [0, 1], time
     x ∈ R, state
     u ∈ R, control
-
     x(0) == 0
     x(1) == 1
-    
     ẋ(s) == tf^2 * u(s)
-
     tf + (0.5*tf)*∫(u(s)^2) → min
-
 end
 
 f = Flow(ocp, u)
@@ -343,20 +323,15 @@ Another possibility is to add a new state variable $t_f(s)$. The problem has no 
 
 ```@example main
 ocp = @def begin
-
     s ∈ [0, 1], time
     y = (x, tf) ∈ R², state
     u ∈ R, control
-
     x(0) == 0
     x(1) == 1
-
     dx = tf(s)^2 * u(s)
     dtf = 0 * u(s) # 0
     ẏ(s) == [dx, dtf]
-
     tf(1) + 0.5∫(tf(s) * u(s)^2) → min
-
 end
 
 u(y, q) = y[2] * q[1]
@@ -385,20 +360,14 @@ x0 = -1
 xf =  0
 
 @def ocp begin
-
     t ∈ [ t0, tf ], time
     x ∈ R, state
     u ∈ R, control
-
     x(t0) == x0
     x(tf) == xf
-
     -1 ≤ u(t) ≤ 1
-
     ẋ(t) == -x(t) + u(t)
-
     ∫( abs(u(t)) ) → min
-
 end
 nothing # hide
 ```
@@ -473,22 +442,15 @@ xf = 1/2
 lb = 0.1
 
 ocp = @def begin
-
     t ∈ [t0, tf], time
     x ∈ R, state
     u ∈ R, control
-
     -1 ≤ u(t) ≤ 1
-
     x(t0) == x0
     x(tf) == xf
-
-    x(t) - lb ≥ 0           # state constraint
-
+    x(t) - lb ≥ 0      # state constraint
     ẋ(t) == u(t)
-
     ∫( x(t)^2 ) → min
-
 end
 nothing # hide
 ```
