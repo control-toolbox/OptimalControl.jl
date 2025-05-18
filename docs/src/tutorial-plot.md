@@ -231,18 +231,13 @@ You can plot the solution of a second optimal control problem on the same figure
 
 ```@example main
 ocp = @def begin
-
     t ∈ [t0, tf], time
     x ∈ R², state
     u ∈ R, control
-
     x(t0) == [-0.5, -0.5]
     x(tf) == xf
-
     ẋ(t) == [x₂(t), u(t)]
-
     ∫( 0.5u(t)^2 ) → min
-
 end
 sol2 = solve(ocp; display=false)
 nothing # hide
