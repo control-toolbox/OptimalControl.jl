@@ -88,18 +88,13 @@ x0 = [ -1, 0 ]    # initial condition
 xf = [  0, 0 ]    # final condition
 
 ocp = @def begin
-
     t ∈ [t0, tf], time
     x ∈ R², state
     u ∈ R, control
-
     x(t0) == x0
     x(tf) == xf
-
     ẋ(t) == [x₂(t), u(t)]
-
     ∫( 0.5u(t)^2 ) → min
-
 end
 
 sol = solve(ocp, display=false)
