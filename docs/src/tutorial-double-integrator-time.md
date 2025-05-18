@@ -37,7 +37,7 @@ Let us define the problem
 ocp = @def begin
 
     tf ∈ R,          variable
-    t ∈ [0, tf],   time
+    t ∈ [0, tf],     time
     x = (q, v) ∈ R², state
     u ∈ R,           control
 
