@@ -34,6 +34,7 @@ import CTModels:
     Model,
     PreModel,
     # getters
+    dual,
     initial_time,
     final_time,
     time_name,
@@ -65,7 +66,8 @@ import CTModels:
     message,
     infos
 export Model
-export initial_time,
+export dual,
+    initial_time,
     final_time,
     time_name,
     variable_dimension,
