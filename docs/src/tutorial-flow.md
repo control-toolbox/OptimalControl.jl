@@ -455,7 +455,7 @@ end
 nothing # hide
 ```
 
-The **pseudo-Hamiltonian** of this problem is
+The pseudo-Hamiltonian of this problem is
 
 ```math
     H(x, p, u, \mu) = p\, u + p^0 x^2 + \mu\, c(x),
