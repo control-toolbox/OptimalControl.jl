@@ -8,7 +8,6 @@ xf = 1/2
 lb = 0.1
 
 ocp = @def begin
-
     t ∈ [t0, tf], time
     x ∈ R, state
     u ∈ R, control
@@ -22,8 +21,7 @@ ocp = @def begin
 
     ẋ(t) == u(t)
 
-    ∫( x(t)^2 ) → min
-
+    ∫(x(t)^2) → min
 end
 
 u(x, p) = 0     # boundary control

@@ -8,7 +8,6 @@ x0 = 0
 xf = tan(π/4) - 2log(√(2)/2)
 
 ocp = @def begin
-
     t ∈ [t0, tf], time
     x ∈ R, state
     u ∈ R, control
@@ -18,8 +17,7 @@ ocp = @def begin
 
     ẋ(t) == u(t) * (1 + tan(t))
 
-    0.5∫( u(t)^2 ) → min
-
+    0.5∫(u(t)^2) → min
 end;
 
 sol = solve(ocp; print_level=4);
