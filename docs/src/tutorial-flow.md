@@ -456,7 +456,7 @@ plot!(plt, t, t->abs(ψ(t)-x0), label="Classical")
 
 We consider an optimal control problem with a state constraints of order 1.[^1] 
 
-[^1]: B. Bonnard, L. Faubourg, G. Launay & E. Tr´elat, Optimal Control With State Constraints And The Space Shuttle Re-entry Problem, J. Dyn. Control Syst., 9 (2003), no. 2, 155–199.
+[^1]: B. Bonnard, L. Faubourg, G. Launay & E. Trélat, Optimal Control With State Constraints And The Space Shuttle Re-entry Problem, J. Dyn. Control Syst., 9 (2003), no. 2, 155–199.
 
 ```@example main
 t0 = 0
