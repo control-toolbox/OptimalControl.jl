@@ -13,102 +13,23 @@ ocp = @def begin
     x(tf) == [ 0, 0 ]
     ẋ(t)  == [ v(t), u(t) ]
     ∫( 0.5u(t)^2 ) → min
-end</code></pre><p>We can now solve the problem:</p><pre><code class="language-julia hljs">using NLPModelsIpopt
-solve(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">This is Ipopt version 3.14.17, running with linear solver MUMPS 5.7.3.
-
-Number of nonzeros in equality constraint Jacobian...:     3005
-Number of nonzeros in inequality constraint Jacobian.:        0
-Number of nonzeros in Lagrangian Hessian.............:      251
-
-Total number of variables............................:     1004
-                     variables with only lower bounds:        0
-                variables with lower and upper bounds:        0
-                     variables with only upper bounds:        0
-Total number of equality constraints.................:      755
-Total number of inequality constraints...............:        0
-        inequality constraints with only lower bounds:        0
-   inequality constraints with lower and upper bounds:        0
-        inequality constraints with only upper bounds:        0
-
-iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
-   0  1.0000000e-01 1.10e+00 2.73e-14   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
-   1 -5.0000000e-03 7.36e-02 2.66e-15 -11.0 6.08e+00    -  1.00e+00 1.00e+00h  1
-   2  6.0003829e+00 1.78e-15 1.78e-15 -11.0 6.01e+00    -  1.00e+00 1.00e+00h  1
-
-Number of Iterations....: 2
-
-                                   (scaled)                 (unscaled)
-Objective...............:   6.0003828724303263e+00    6.0003828724303263e+00
-Dual infeasibility......:   1.7763568394002505e-15    1.7763568394002505e-15
-Constraint violation....:   1.7763568394002505e-15    1.7763568394002505e-15
-Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   0.0000000000000000e+00    0.0000000000000000e+00
-Overall NLP error.......:   1.7763568394002505e-15    1.7763568394002505e-15
-
-
-Number of objective function evaluations             = 3
-Number of objective gradient evaluations             = 3
-Number of equality constraint evaluations            = 3
-Number of inequality constraint evaluations          = 0
-Number of equality constraint Jacobian evaluations   = 3
-Number of inequality constraint Jacobian evaluations = 0
-Number of Lagrangian Hessian evaluations             = 2
-Total seconds in IPOPT                               = 1.887
-
-EXIT: Optimal Solution Found.</code></pre><p>Notice that we need to load the <code>NLPModelsIpopt</code> package before calling <code>solve</code>. This is because the method currently implements a direct approach, where the optimal control problem is transcribed to a nonlinear optimization problem (NLP) of the form</p><p class="math-container">\[\text{minimize}\quad F(y), \quad\text{subject to the constraints}\quad g(y) \le 0, \quad h(y) = 0. \]</p><p>Calling <code>solve</code> without loading a NLP solver package first will notify the user:</p><pre><code class="language-julia hljs">julia&gt; solve(ocp)
-ERROR: ExtensionError. Please make: julia&gt; using NLPModelsIpopt</code></pre><h2 id="Resolution-methods-and-algorithms"><a class="docs-heading-anchor" href="#Resolution-methods-and-algorithms">Resolution methods and algorithms</a><a id="Resolution-methods-and-algorithms-1"></a><a class="docs-heading-anchor-permalink" href="#Resolution-methods-and-algorithms" title="Permalink"></a></h2><p>OptimalControl offers a list of methods to solve your optimal control problem. To get the list of methods, simply call <code>available_methods</code>.</p><pre><code class="language-julia hljs">available_methods()</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(:direct, :adnlp, :ipopt)
-(:direct, :adnlp, :madnlp)
-(:direct, :adnlp, :knitro)</code></pre><p>Each line is a method, with priority going from top to bottom. This means that </p><pre><code class="language-julia hljs">solve(ocp)</code></pre><p>is equivalent to </p><pre><code class="language-julia hljs">solve(ocp, :direct, :adnlp, :ipopt)</code></pre><p>The first symbol <code>:direct</code> refers to the general class of method, with only the so-called <a href="https://en.wikipedia.org/wiki/Optimal_control#Numerical_methods_for_optimal_control">direct approach</a> currently implemented. Direct methods discretize the original optimal control problem and solve the resulting NLP problem. The second symbol <code>:adnlp</code> is for the choice of NLP modeler.  We currently use <a href="https://jso.dev/ADNLPModels.jl">ADNLPModels.jl</a> which provides an automatic differentiation (AD)-based model implementations that conform to the <a href="https://github.com/JuliaSmoothOptimizers/ADNLPModels.jl">NLPModels.jl</a> API. The third symbol corresponds to the NLP solver, with the possible values:</p><ul><li><code>:ipopt</code> (default value) for Ipopt (via the <a href="https://github.com/JuliaSmoothOptimizers/NLPModelsIpopt.jl">NLPModelsIpopt.jl</a> package).</li><li><code>:madnlp</code> is <a href="https://madnlp.github.io/MadNLP.jl">MadNLP.jl</a>, an open-source nonlinear programming solver purely implemented in Julia, which implements a filter line-search interior-point algorithm, as the one in Ipopt.</li><li><code>:knitro</code> for the <a href="https://www.artelys.com/solvers/knitro/">Knitro</a> solver (requires a license).</li></ul><p>For instance, let us try MadNLP.jl.</p><pre><code class="language-julia hljs">using MadNLP
-solve(ocp, :madnlp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">This is MadNLP version v0.8.7, running with umfpack
-
-Number of nonzeros in constraint Jacobian............:     3005
-Number of nonzeros in Lagrangian Hessian.............:      251
-
-Total number of variables............................:     1004
-                     variables with only lower bounds:        0
-                variables with lower and upper bounds:        0
-                     variables with only upper bounds:        0
-Total number of equality constraints.................:      755
-Total number of inequality constraints...............:        0
-        inequality constraints with only lower bounds:        0
-   inequality constraints with lower and upper bounds:        0
-        inequality constraints with only upper bounds:        0
-
-iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
-   0  1.0000000e-01 1.10e+00 2.99e-13  -1.0 0.00e+00    -  0.00e+00 0.00e+00   0
-   1 -5.0000000e-03 7.36e-02 4.90e-12  -1.0 6.08e+00    -  1.00e+00 1.00e+00h  1
-   2  6.0003829e+00 1.78e-15 1.78e-15  -2.5 6.01e+00    -  1.00e+00 1.00e+00h  1
-
-Number of Iterations....: 2
-
-                                   (scaled)                 (unscaled)
-Objective...............:   6.0003828724303343e+00    6.0003828724303343e+00
-Dual infeasibility......:   1.7763568394002505e-15    1.7763568394002505e-15
-Constraint violation....:   1.7763568394002505e-15    1.7763568394002505e-15
-Complementarity.........:   0.0000000000000000e+00    0.0000000000000000e+00
-Overall NLP error.......:   1.7763568394002505e-15    1.7763568394002505e-15
-
-Number of objective function evaluations             = 3
-Number of objective gradient evaluations             = 3
-Number of constraint evaluations                     = 3
-Number of constraint Jacobian evaluations            = 3
-Number of Lagrangian Hessian evaluations             = 2
-Total wall-clock secs in solver (w/o fun. eval./lin. alg.)  = 12.205
-Total wall-clock secs in linear solver                      =  0.318
-Total wall-clock secs in NLP function evaluations           =  0.354
-Total wall-clock secs                                       = 12.877
-
-EXIT: Optimal Solution Found (tol = 1.0e-08).</code></pre><p>Note that you can provide a partial description. If multiple full descriptions contain it, priority is given to the first one in the list. Hence, all of the following calls are equivalent:</p><pre><code class="language-julia hljs">solve(ocp)
+end
+nothing # hide</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&lt;&lt; @example-block not executed in draft mode &gt;&gt;</code></pre><p>We can now solve the problem:</p><pre><code class="language-julia hljs">using NLPModelsIpopt
+solve(ocp)
+nothing # hide</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&lt;&lt; @example-block not executed in draft mode &gt;&gt;</code></pre><p>Notice that we need to load the <code>NLPModelsIpopt</code> package before calling <code>solve</code>. This is because the method currently implements a direct approach, where the optimal control problem is transcribed to a nonlinear optimization problem (NLP) of the form</p><p class="math-container">\[\text{minimize}\quad F(y), \quad\text{subject to the constraints}\quad g(y) \le 0, \quad h(y) = 0. \]</p><p>Calling <code>solve</code> without loading a NLP solver package first will notify the user:</p><pre><code class="language-julia hljs">julia&gt; solve(ocp)
+ERROR: ExtensionError. Please make: julia&gt; using NLPModelsIpopt</code></pre><h2 id="Resolution-methods-and-algorithms"><a class="docs-heading-anchor" href="#Resolution-methods-and-algorithms">Resolution methods and algorithms</a><a id="Resolution-methods-and-algorithms-1"></a><a class="docs-heading-anchor-permalink" href="#Resolution-methods-and-algorithms" title="Permalink"></a></h2><p>OptimalControl offers a list of methods to solve your optimal control problem. To get the list of methods, simply call <code>available_methods</code>.</p><pre><code class="language-julia hljs">available_methods()</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&lt;&lt; @example-block not executed in draft mode &gt;&gt;</code></pre><p>Each line is a method, with priority going from top to bottom. This means that </p><pre><code class="language-julia hljs">solve(ocp)</code></pre><p>is equivalent to </p><pre><code class="language-julia hljs">solve(ocp, :direct, :adnlp, :ipopt)</code></pre><p>The first symbol <code>:direct</code> refers to the general class of method, with only the so-called <a href="https://en.wikipedia.org/wiki/Optimal_control#Numerical_methods_for_optimal_control">direct approach</a> currently implemented. Direct methods discretize the original optimal control problem and solve the resulting NLP problem. The second symbol <code>:adnlp</code> is for the choice of NLP modeler.  We currently use <a href="https://jso.dev/ADNLPModels.jl">ADNLPModels.jl</a> which provides an automatic differentiation (AD)-based model implementations that conform to the <a href="https://github.com/JuliaSmoothOptimizers/ADNLPModels.jl">NLPModels.jl</a> API. The third symbol corresponds to the NLP solver, with the possible values:</p><ul><li><code>:ipopt</code> (default value) for Ipopt (via the <a href="https://github.com/JuliaSmoothOptimizers/NLPModelsIpopt.jl">NLPModelsIpopt.jl</a> package).</li><li><code>:madnlp</code> is <a href="https://madnlp.github.io/MadNLP.jl">MadNLP.jl</a>, an open-source nonlinear programming solver purely implemented in Julia, which implements a filter line-search interior-point algorithm, as the one in Ipopt.</li><li><code>:knitro</code> for the <a href="https://www.artelys.com/solvers/knitro/">Knitro</a> solver (requires a license).</li></ul><p>For instance, let us try MadNLP.jl.</p><pre><code class="language-julia hljs">using MadNLP
+solve(ocp, :madnlp)
+nothing # hide</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&lt;&lt; @example-block not executed in draft mode &gt;&gt;</code></pre><p>Note that you can provide a partial description. If multiple full descriptions contain it, priority is given to the first one in the list. Hence, all of the following calls are equivalent:</p><pre><code class="language-julia hljs">solve(ocp)
 solve(ocp, :direct                )
 solve(ocp,          :adnlp        )
 solve(ocp,                  :ipopt)
 solve(ocp, :direct, :adnlp        )
 solve(ocp, :direct,         :ipopt)
 solve(ocp, :direct, :adnlp, :ipopt)</code></pre><h2 id="Direct-method"><a class="docs-heading-anchor" href="#Direct-method">Direct method</a><a id="Direct-method-1"></a><a class="docs-heading-anchor-permalink" href="#Direct-method" title="Permalink"></a></h2><p>The options for the direct method are listed <a href="https://control-toolbox.org/OptimalControl.jl/stable/dev-ctdirect.html#CTDirect.solve-Tuple{Model,%20Vararg{Symbol}}">here</a>. The main options, with their [default values], are:</p><ul><li><code>display</code> ([true], false): setting <code>display</code> to false will disable output.</li><li><code>init</code>: info for the starting guess, which can be provided as numerical values, functions, or an existing solution. See <a href="tutorial-initial-guess.html#tutorial-initial-guess">initial guess tutorial</a>.</li><li><code>grid_size</code> ([250]): size of the (uniform) time discretization grid. More precisely, it is the number of time steps, that is if <code>N = grid_size</code> and if the initial and final times are denoted respectively <code>t0</code> and <code>tf</code>, then we have <code>Δt = (tf - t0) / N</code>.</li><li><code>time_grid</code> ([<code>nothing</code>]): explicit time grid (can be non uniform). If <code>time_grid</code> is nothing then, a uniform grid is built of length <code>grid_size</code>.</li><li><code>disc_method</code> ([<code>:trapeze</code>], <code>:midpoint</code>, <code>:euler</code>, <code>:euler_implicit</code>, <code>:gauss_legendre_2</code>, <code>:gauss_legendre_3</code>): see <a href="https://control-toolbox.org/Tutorials.jl/stable/tutorial-discretisation.html">discretisation methods</a>.</li><li><code>adnlp_backend</code>: backend for automatic differentiation in ADNLPModels ([<code>:optimized</code>], <code>:manual</code>, <code>:default</code>).</li></ul><p>For examples of more advanced use, see </p><ul><li><a href="https://control-toolbox.org/Tutorials.jl/stable/tutorial-continuation.html">discrete continuation</a>,</li><li><a href="https://control-toolbox.org/Tutorials.jl/stable/tutorial-nl.html">NLP direct handling</a>.</li></ul><h2 id="NLP-solver-specific-options"><a class="docs-heading-anchor" href="#NLP-solver-specific-options">NLP solver specific options</a><a id="NLP-solver-specific-options-1"></a><a class="docs-heading-anchor-permalink" href="#NLP-solver-specific-options" title="Permalink"></a></h2><p>In addition to these options, all remaining keyword arguments passed to <code>solve</code> will be transmitted to the NLP solver used.</p><p>Please check the list of <a href="https://coin-or.github.io/Ipopt/OPTIONS.html">Ipopt options</a> and the <a href="https://jso.dev/NLPModelsIpopt.jl">NLPModelsIpopt.jl documentation</a>.</p><pre><code class="language-julia hljs">sol = solve(ocp; max_iter=0, display=false)
-iterations(sol)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">0</code></pre><p>Similarly, please check the <a href="https://madnlp.github.io/MadNLP.jl">MadNLP.jl documentation</a> and the list of <a href="https://madnlp.github.io/MadNLP.jl/stable/options/">MadNLP.jl options</a>.</p><pre><code class="language-julia hljs">sol = solve(ocp, :madnlp; max_iter=0, display=false)
-iterations(sol)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">0</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+iterations(sol)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&lt;&lt; @example-block not executed in draft mode &gt;&gt;</code></pre><p>Similarly, please check the <a href="https://madnlp.github.io/MadNLP.jl">MadNLP.jl documentation</a> and the list of <a href="https://madnlp.github.io/MadNLP.jl/stable/options/">MadNLP.jl options</a>.</p><pre><code class="language-julia hljs">sol = solve(ocp, :madnlp; max_iter=0, display=false)
+iterations(sol)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&lt;&lt; @example-block not executed in draft mode &gt;&gt;</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-initial-guess.html">« Set an initial guess</a><a class="docs-footer-nextpage" href="tutorial-plot.html">Plot a solution »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.11.4 on <span class="colophon-date" title="Monday 19 May 2025 16:45">Monday 19 May 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-initial-guess.html">« Set an initial guess</a><a class="docs-footer-nextpage" href="tutorial-plot.html">Plot a solution »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.11.4 on <span class="colophon-date" title="Monday 26 May 2025 20:48">Monday 26 May 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

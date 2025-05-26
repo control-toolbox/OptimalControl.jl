@@ -8,55 +8,51 @@ using Plots</code></pre><h2 id="Optimal-control-problem"><a class="docs-heading-
     x = (q, v) ∈ R², state
     u ∈ R,           control
 
-    tf ≥ 0
     -1 ≤ u(t) ≤ 1
 
-    q(0)  == 1
-    v(0)  == 2
+    q(0)  == -1
+    v(0)  == 0
     q(tf) == 0
     v(tf) == 0
-
-    -5 ≤ q(t) ≤ 5,          (1)
-    -3 ≤ v(t) ≤ 3,          (2)
 
     ẋ(t) == [v(t), u(t)]
 
     tf → min
 
-end</code></pre><div class="admonition is-success" id="Convergence-d2a8dfe078420308"><header class="admonition-header">Convergence<a class="admonition-anchor" href="#Convergence-d2a8dfe078420308" title="Permalink"></a></header><div class="admonition-body"><p>In order to ensure convergence of the direct solver, we have added the state constraints labelled (1) and (2):</p><p class="math-container">\[-5 \leq q(t) \leq 5,\quad -3 \leq v(t) \leq 3,\quad t \in [0, t_f].\]</p></div></div><div class="admonition is-info" id="Nota-bene-44fc9f9bc4a5cc4"><header class="admonition-header">Nota bene<a class="admonition-anchor" href="#Nota-bene-44fc9f9bc4a5cc4" title="Permalink"></a></header><div class="admonition-body"><p>For a comprehensive introduction to the syntax used above to define the optimal control problem, check <a href="tutorial-abstract.html#tutorial-abstract-syntax">this abstract syntax tutorial</a>. In particular, there are non-unicode alternatives for derivatives, integrals, <em>etc.</em></p></div></div><h2 id="Solve-and-plot"><a class="docs-heading-anchor" href="#Solve-and-plot">Solve and plot</a><a id="Solve-and-plot-1"></a><a class="docs-heading-anchor-permalink" href="#Solve-and-plot" title="Permalink"></a></h2><p>Solve it</p><pre><code class="language-julia hljs">sol = solve(ocp; print_level=4)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Total number of variables............................:      754
-                     variables with only lower bounds:        1
-                variables with lower and upper bounds:      753
+end</code></pre><div class="admonition is-info" id="Nota-bene-44fc9f9bc4a5cc4"><header class="admonition-header">Nota bene<a class="admonition-anchor" href="#Nota-bene-44fc9f9bc4a5cc4" title="Permalink"></a></header><div class="admonition-body"><p>For a comprehensive introduction to the syntax used above to define the optimal control problem, check <a href="tutorial-abstract.html#tutorial-abstract-syntax">this abstract syntax tutorial</a>. In particular, there are non-unicode alternatives for derivatives, integrals, <em>etc.</em></p></div></div><h2 id="Solve-and-plot"><a class="docs-heading-anchor" href="#Solve-and-plot">Solve and plot</a><a id="Solve-and-plot-1"></a><a class="docs-heading-anchor-permalink" href="#Solve-and-plot" title="Permalink"></a></h2><p>Solve it</p><pre><code class="language-julia hljs">sol = solve(ocp; grid_size=300, print_level=4)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Total number of variables............................:      904
+                     variables with only lower bounds:        0
+                variables with lower and upper bounds:      301
                      variables with only upper bounds:        0
-Total number of equality constraints.................:      504
+Total number of equality constraints.................:      604
 Total number of inequality constraints...............:        0
         inequality constraints with only lower bounds:        0
    inequality constraints with lower and upper bounds:        0
         inequality constraints with only upper bounds:        0
 
 
-Number of Iterations....: 114
+Number of Iterations....: 25
 
                                    (scaled)                 (unscaled)
-Objective...............:   5.4642225321789342e+00    5.4642225321789342e+00
-Dual infeasibility......:   4.7022924663004768e-13    4.7022924663004768e-13
-Constraint violation....:   9.6678220984358632e-13    9.6678220984358632e-13
-Variable bound violation:   9.7857721925720398e-09    9.7857721925720398e-09
-Complementarity.........:   1.1583847648433187e-11    1.1583847648433187e-11
-Overall NLP error.......:   1.1583847648433187e-11    1.1583847648433187e-11
+Objective...............:   2.0000228029572638e+00    2.0000228029572638e+00
+Dual infeasibility......:   1.5270155140356678e-09    1.5270155140356678e-09
+Constraint violation....:   2.4037517531994013e-09    2.4037517531994013e-09
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
+Complementarity.........:   4.3950521313923040e-09    4.3950521313923040e-09
+Overall NLP error.......:   4.3950521313923040e-09    4.3950521313923040e-09
 
 
-Number of objective function evaluations             = 130
-Number of objective gradient evaluations             = 102
-Number of equality constraint evaluations            = 130
+Number of objective function evaluations             = 38
+Number of objective gradient evaluations             = 26
+Number of equality constraint evaluations            = 38
 Number of inequality constraint evaluations          = 0
-Number of equality constraint Jacobian evaluations   = 117
+Number of equality constraint Jacobian evaluations   = 26
 Number of inequality constraint Jacobian evaluations = 0
-Number of Lagrangian Hessian evaluations             = 114
-Total seconds in IPOPT                               = 1.987
+Number of Lagrangian Hessian evaluations             = 25
+Total seconds in IPOPT                               = 5.319
 
-EXIT: Optimal Solution Found.</code></pre><p>and plot the solution</p><pre><code class="language-julia hljs">plot(sol)</code></pre><img src="tutorial-double-integrator-time-61432b10.svg" alt="Example block output"/><div class="admonition is-info" id="Nota-bene-90132bf85e8c4f4e"><header class="admonition-header">Nota bene<a class="admonition-anchor" href="#Nota-bene-90132bf85e8c4f4e" title="Permalink"></a></header><div class="admonition-body"><p>The <code>solve</code> function has options, see the <a href="tutorial-solve.html#tutorial-solve">solve tutorial</a>. You can customise the plot, see the <a href="tutorial-plot.html#tutorial-plot">plot tutorial</a>.</p></div></div><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+EXIT: Optimal Solution Found.</code></pre><p>and plot the solution</p><pre><code class="language-julia hljs">plot(sol)</code></pre><img src="tutorial-double-integrator-time-4402f3bb.svg" alt="Example block output"/><div class="admonition is-info" id="Nota-bene-90132bf85e8c4f4e"><header class="admonition-header">Nota bene<a class="admonition-anchor" href="#Nota-bene-90132bf85e8c4f4e" title="Permalink"></a></header><div class="admonition-body"><p>The <code>solve</code> function has options, see the <a href="tutorial-solve.html#tutorial-solve">solve tutorial</a>. You can customise the plot, see the <a href="tutorial-plot.html#tutorial-plot">plot tutorial</a>.</p></div></div><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-double-integrator-energy.html">« Energy minimisation</a><a class="docs-footer-nextpage" href="tutorial-abstract.html">Define a problem »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.11.4 on <span class="colophon-date" title="Monday 19 May 2025 16:45">Monday 19 May 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="tutorial-double-integrator-energy.html">« Energy minimisation</a><a class="docs-footer-nextpage" href="tutorial-abstract.html">Define a problem »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.11.4 on <span class="colophon-date" title="Monday 26 May 2025 20:48">Monday 26 May 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
