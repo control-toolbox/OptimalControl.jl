@@ -21,6 +21,7 @@ cp("./docs/Project.toml", "./docs/src/assets/Project.toml"; force=true)
 repo_url = "github.com/control-toolbox/OptimalControl.jl"
 
 makedocs(;
+    draft=true, # if draft is true, then the julia code from .md is not executed
     warnonly=[:cross_references, :autodocs_block],
     sitename="OptimalControl.jl",
     format=Documenter.HTML(;

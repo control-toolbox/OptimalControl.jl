@@ -1,5 +1,9 @@
 # [Double integrator: time minimisation](@id double-integrator-time)
 
+```@meta
+Draft = false
+```
+
 The problem consists in minimising the final time $t_f$ for the double integrator system
 
 ```math
@@ -41,16 +45,12 @@ ocp = @def begin
     x = (q, v) ∈ R², state
     u ∈ R,           control
 
-    tf ≥ 0
     -1 ≤ u(t) ≤ 1
 
-    q(0)  == 1
-    v(0)  == 2
+    q(0)  == -1
+    v(0)  == 0
     q(tf) == 0
     v(tf) == 0
-
-    -5 ≤ q(t) ≤ 5,          (1)
-    -3 ≤ v(t) ≤ 3,          (2)
 
     ẋ(t) == [v(t), u(t)]
 
@@ -59,14 +59,6 @@ ocp = @def begin
 end
 nothing # hide
 ```
-
-!!! tip "Convergence"
-
-    In order to ensure convergence of the direct solver, we have added the state constraints labelled (1) and (2):
-
-    ```math
-    -5 \leq q(t) \leq 5,\quad -3 \leq v(t) \leq 3,\quad t \in [0, t_f].
-    ```
 
 !!! note "Nota bene"
 
@@ -77,7 +69,7 @@ nothing # hide
 Solve it
 
 ```@example main
-sol = solve(ocp; print_level=4)
+sol = solve(ocp; grid_size=300, print_level=4)
 nothing # hide
 ```
 
