@@ -1,9 +1,5 @@
 # [Double integrator: time minimisation](@id double-integrator-time)
 
-```@meta
-Draft = false
-```
-
 The problem consists in minimising the final time $t_f$ for the double integrator system
 
 ```math
@@ -69,7 +65,7 @@ nothing # hide
 Solve it
 
 ```@example main
-sol = solve(ocp; grid_size=300, print_level=4)
+sol = solve(ocp; grid_size=200, print_level=4)
 nothing # hide
 ```
 
