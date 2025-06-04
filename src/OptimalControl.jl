@@ -29,8 +29,9 @@ import CTModels:
     constraint!,
     objective!,
     definition!,
+    time_dependence!,
     # model
-    build_model,
+    build,
     Model,
     PreModel,
     # getters

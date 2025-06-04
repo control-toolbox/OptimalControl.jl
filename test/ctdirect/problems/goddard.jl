@@ -113,7 +113,7 @@ function goddard_all()
         label=:boundary,
     )
     CTModels.definition!(pre_ocp, Expr(:goddard_all))
-    ocp = CTModels.build_model(pre_ocp)
+    ocp = CTModels.build(pre_ocp)
 
     return ((
         ocp=ocp,
@@ -174,7 +174,7 @@ function goddard_all_outplace()
         pre_ocp, :boundary; f=bc, lb=[r0, v0, m0, mf], ub=[r0, v0, m0, mf], label=:boundary
     )
     CTModels.definition!(pre_ocp, Expr(:goddard_all))
-    ocp = CTModels.build_model(pre_ocp)
+    ocp = CTModels.build(pre_ocp)
 
     return ((
         ocp=ocp,
