@@ -233,10 +233,11 @@ u(t, x, p) = p * (1 + tan(t))
 nothing # hide
 ```
 
-As before, the `Flow` function aims to compute $(x, p)$ from the optimal control problem `ocp` and the control in feedback form `u(t, x, p)`. However, we must indicate that the control depends on $t$, that is it is non-autonomous.
+As before, the `Flow` function aims to compute $(x, p)$ from the optimal control problem `ocp` and the control in feedback form `u(t, x, p)`. 
+Since the problem is non-autonomous, we must provide a control law that depends on time.
 
 ```@example main
-f = Flow(ocp, u; autonomous=false)
+f = Flow(ocp, u)
 nothing # hide
 ```
 

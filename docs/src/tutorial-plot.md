@@ -10,45 +10,8 @@ plot!(plt, args...; kw...)     # modifies Plot `plt`
 
 More precisely, the signature of `plot`, to plot a solution, is as follows.
 
-```julia
-# only sol is required
-function plot(
-    sol::CTModels.Solution,                   # optimal control solution
-    description::Symbol...;                   # description to choose what to plot
-    layout::Symbol,                           # layout of the subplots
-    control::Symbol,                          # plot the norm or components of the control
-    time::Symbol,                             # normalise the time or not
-    size::Tuple,                              # size of the figure
-    state_style::Union{NamedTuple,Symbol},    # style: state trajectory
-    costate_style::Union{NamedTuple,Symbol},  # style: costate trajectory
-    control_style::Union{NamedTuple,Symbol},  # style: control trajectory
-    kwargs...,                                # other attributes from Plots
-)
-```
-
-You can provide additional information to the `plot` function by supplying the optimal control problem: `plot(sol, ocp)`. The function signature when including the optimal control problem is as follows:
-
-```julia
-# only sol and model are required
-function Plots.plot(
-    sol::CTModels.Solution,
-    ocp::CTModels.Model,                            # optimal control problem
-    description::Symbol...;
-    layout::Symbol,
-    control::Symbol,
-    time::Symbol,
-    size::Tuple,
-    time_style::Union{NamedTuple,Symbol},           # style: vertical time axes
-    state_style::Union{NamedTuple,Symbol},
-    state_bounds_style::Union{NamedTuple,Symbol},   # style: state bounds
-    control_style::Union{NamedTuple,Symbol},
-    control_bounds_style::Union{NamedTuple,Symbol}, # style: control bounds
-    costate_style::Union{NamedTuple,Symbol},
-    path_style::Union{NamedTuple,Symbol},           # style: path constraints
-    path_bounds_style::Union{NamedTuple,Symbol},    # style: path constraints bounds
-    dual_style::Union{NamedTuple,Symbol},           # style: path constraints dual variable
-    kwargs...,
-)
+```@docs
+plot(::CTModels.Solution, ::Symbol...)
 ```
 
 ## Argument Overview
@@ -60,7 +23,7 @@ The table below summarizes the main plotting arguments and links to the correspo
 | [Basic concepts](@ref tutorial-plot-basic)          | `size`, `state_style`, `costate_style`, `control_style`, `time_style`, `kwargs...`            |
 | [Split vs. group layout](@ref tutorial-plot-layout) | `layout`                                                                                      |
 | [Plotting control norm](@ref tutorial-plot-control) | `control`                                                                                     |
-| [Normalized time](@ref tutorial-plot-time)          | `time`                                                                                        |
+| [Normalised time](@ref tutorial-plot-time)          | `time`                                                                                        |
 | [Constraints](@ref tutorial-plot-constraints)       | `state_bounds_style`, `control_bounds_style`, `path_style`, `path_bounds_style`, `dual_style` |
 | [What to plot](@ref tutorial-plot-select)           | `description...`                                                                              |
 
@@ -157,11 +120,11 @@ plot(sol;
      control_style = (color=:red, linewidth=2))       # style: control trajectory
 ```
 
-If you provide the optimal control problem, vertical axes at the initial and final times are automatically plotted.  
+Vertical axes at the initial and final times are automatically plotted.  
 Additionally, you can choose not to display the state and costate trajectories by setting their styles to `:none`.
 
 ```@example main
-plot(sol, ocp; 
+plot(sol; 
      state_style    = :none,             # do not plot the state
      costate_style  = :none,             # do not plot the costate
      control_style  = (color = :red,),   # plot the control in red
@@ -171,7 +134,7 @@ plot(sol, ocp;
 To select what to display, you can also use the `description` argument by providing a list of symbols such as `:state`, `:costate`, and `:control`.
 
 ```@example main
-plot(sol, ocp, :state, :control)  # plot the state and the control
+plot(sol, :state, :control)  # plot the state and the control
 ```
 
 !!! note "Select what to plot"
@@ -283,7 +246,7 @@ plot(t, norm∘u; label="‖u‖", xlabel="t")
 
 ## [Normalised time](@id tutorial-plot-time)
 
-We consider a [LQR example](https://control-toolbox.org/Tutorials.jl/stable/tutorial-lqr-basic.html) and solve the problem for different values of the final time `tf`. Then, we plot the solutions on the same figure using a normalized time $s = (t - t_0) / (t_f - t_0)$, enabled by the keyword argument `time = :normalize` (or `:normalise`) in the `plot` function.
+We consider a [LQR example](https://control-toolbox.org/Tutorials.jl/stable/tutorial-lqr-basic.html) and solve the problem for different values of the final time `tf`. Then, we plot the solutions on the same figure using a normalised time $s = (t - t_0) / (t_f - t_0)$, enabled by the keyword argument `time = :normalize` (or `:normalise`) in the `plot` function.
 
 ```@example main
 # definition of the problem, parameterised by the final time
@@ -310,16 +273,15 @@ for tf ∈ tfs
 end
 
 # create plots
-plt = plot(solutions[1]; time=:normalize)
-for sol ∈ solutions[2:end]
-    plot!(plt, sol; time=:normalize)
+plt = plot()
+for (tf, sol) ∈ zip(tfs, solutions)
+    plot!(plt, sol; time=:normalize, label="tf = $tf", xlabel="s")
 end
 
 # make a custom plot: keep only state and control
-N = length(tfs)
-px1 = plot(plt[1]; legend=false, xlabel="s", ylabel="x₁")
-px2 = plot(plt[2]; label=reshape(["tf = $tf" for tf ∈ tfs], (1, N)), xlabel="s", ylabel="x₂")
-pu  = plot(plt[5]; legend=false, xlabel="s", ylabel="u")
+px1 = plot(plt[1]; legend=false) # x₁
+px2 = plot(plt[2]; legend=true)  # x₂
+pu  = plot(plt[5]; legend=false) # u    
 
 using Plots.PlotMeasures # for leftmargin, bottommargin
 plot(px1, px2, pu; layout=(1, 3), size=(800, 300), leftmargin=5mm, bottommargin=5mm)
@@ -346,15 +308,15 @@ ocp = @def begin
     tf → min
 end
 sol = solve(ocp)
-plot(sol, ocp)
+plot(sol)
 ```
 
 On the plot, you can see the lower and upper bounds of the path constraint. Additionally, the dual variable associated with the path constraint is displayed alongside it.
 
-You can customize the plot styles. For style options related to the state, costate, and control, refer to the [Basic Concepts](@ref tutorial-plot-basic) section.
+You can customise the plot styles. For style options related to the state, costate, and control, refer to the [Basic Concepts](@ref tutorial-plot-basic) section.
 
 ```@example main
-plot(sol, ocp; 
+plot(sol; 
      state_bounds_style = (linestyle = :dash,),
      control_bounds_style = (linestyle = :dash,),
      path_style = (color = :green,),
@@ -369,31 +331,31 @@ plot(sol, ocp;
 You can choose what to plot using the `description` argument. To plot only one subgroup:
 
 ```julia
-plot(sol, ocp, :state)   # plot only the state
-plot(sol, ocp, :costate) # plot only the costate
-plot(sol, ocp, :control) # plot only the control
-plot(sol, ocp, :path)    # plot only the path constraint
-plot(sol, ocp, :dual)    # plot only the path constraint dual variable
+plot(sol, :state)   # plot only the state
+plot(sol, :costate) # plot only the costate
+plot(sol, :control) # plot only the control
+plot(sol, :path)    # plot only the path constraint
+plot(sol, :dual)    # plot only the path constraint dual variable
 ```
 
 You can combine elements to plot exactly what you need:
 
 ```@example main
-plot(sol, ocp, :state, :control, :path)
+plot(sol, :state, :control, :path)
 ```
 
 Similarly, you can choose what not to plot passing `:none` to the corresponding style.
 
 ```julia
-plot(sol, ocp; state_style=:none)   # do not plot the state
-plot(sol, ocp; costate_style=:none) # do not plot the costate
-plot(sol, ocp; control_style=:none) # do not plot the control
-plot(sol, ocp; path_style=:none)    # do not plot the path constraint
-plot(sol, ocp; dual_style=:none)    # do not plot the path constraint dual variable
+plot(sol; state_style=:none)   # do not plot the state
+plot(sol; costate_style=:none) # do not plot the costate
+plot(sol; control_style=:none) # do not plot the control
+plot(sol; path_style=:none)    # do not plot the path constraint
+plot(sol; dual_style=:none)    # do not plot the path constraint dual variable
 ```
 
 For instance, let's plot everything except the dual variable associated with the path constraint.
 
 ```@example main
-plot(sol, ocp; dual_style=:none)
+plot(sol; dual_style=:none)
 ```
