@@ -1,3 +1,14 @@
+function fsolve(f, j, x; kwargs...)
+    try
+        MINPACK.fsolve(f, j, x; kwargs...)
+    catch e
+        println("Erreur using MINPACK")
+        println(e)
+        println("hybrj not supported. Replaced by hybrd even if it is not visible on the doc.")
+        MINPACK.fsolve(f, x; kwargs...)
+    end
+end
+
 function test_goddard_indirect()
     ocp, obj = Goddard()
     g(x) = vmax - x[2] # todo: g(x, u) ≥ 0 (cf. nonnegative multiplier), could be retrieved from constraints
