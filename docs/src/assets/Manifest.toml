@@ -2,7 +2,7 @@
 
 julia_version = "1.11.5"
 manifest_format = "2.0"
-project_hash = "f201ec9730cd601e16f2dcb6094b713a09087553"
+project_hash = "813ef0580617e3fc437ddce63d9c1c4ca46973f5"
 
 [[deps.ADNLPModels]]
 deps = ["ADTypes", "ForwardDiff", "LinearAlgebra", "NLPModels", "Requires", "ReverseDiff", "SparseArrays", "SparseConnectivityTracer", "SparseMatrixColorings"]
@@ -186,9 +186,9 @@ version = "0.16.0"
 
 [[deps.CTDirect]]
 deps = ["ADNLPModels", "CTBase", "CTModels", "CTParser", "DocStringExtensions", "HSL", "MKL", "NLPModelsIpopt", "SparseArrays"]
-git-tree-sha1 = "a73451945bc2651fe25782e107653279ec512cd8"
+git-tree-sha1 = "fae0f99ecd4fc9197bf07264a14d3892b4bcdeed"
 uuid = "790bbbee-bee9-49ee-8912-a9de031322d5"
-version = "0.14.12"
+version = "0.14.13"
 
     [deps.CTDirect.extensions]
     CTSolveExtIpopt = ["NLPModelsIpopt"]
@@ -201,9 +201,9 @@ version = "0.14.12"
 
 [[deps.CTFlows]]
 deps = ["CTBase", "CTModels", "DocStringExtensions", "ForwardDiff", "LinearAlgebra", "MLStyle", "MacroTools"]
-git-tree-sha1 = "3331ba7c6bbd1e42528fa2a10f5fb2786208fe6f"
+git-tree-sha1 = "b55af9b73a945cb900ceed3fea3bd93b86fcc258"
 uuid = "1c39547c-7794-42f7-af83-d98194f657c2"
-version = "0.8.4"
+version = "0.8.5"
 weakdeps = ["OrdinaryDiffEq"]
 
     [deps.CTFlows.extensions]
@@ -211,9 +211,9 @@ weakdeps = ["OrdinaryDiffEq"]
 
 [[deps.CTModels]]
 deps = ["CTBase", "DocStringExtensions", "Interpolations", "LinearAlgebra", "MLStyle", "MacroTools", "OrderedCollections", "Parameters", "PrettyTables", "RecipesBase"]
-git-tree-sha1 = "6ad3451710e83a3056e08be579f082e0e7edcc31"
+git-tree-sha1 = "480926e040598910a44f73fce1aaf8e55a4d4784"
 uuid = "34c4fa32-2049-4079-8329-de33c2a22e2d"
-version = "0.5.1"
+version = "0.5.2"
 weakdeps = ["JLD2", "JSON3", "Plots"]
 
     [deps.CTModels.extensions]
@@ -223,9 +223,9 @@ weakdeps = ["JLD2", "JSON3", "Plots"]
 
 [[deps.CTParser]]
 deps = ["CTBase", "DocStringExtensions", "MLStyle", "OrderedCollections", "Parameters", "Unicode"]
-git-tree-sha1 = "9b3c3ecfad3da38ff54c8dbe4fbb5a2f4b64f072"
+git-tree-sha1 = "1056c6258bc05ead05570a7a7664b8e01d09538b"
 uuid = "32681960-a1b1-40db-9bff-a1ca817385d1"
-version = "0.4.0"
+version = "0.4.1"
 
 [[deps.Cairo_jll]]
 deps = ["Artifacts", "Bzip2_jll", "CompilerSupportLibraries_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "JLLWrappers", "LZO_jll", "Libdl", "Pixman_jll", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Zlib_jll", "libpng_jll"]
@@ -1505,7 +1505,7 @@ version = "0.5.6+0"
 deps = ["CTBase", "CTDirect", "CTFlows", "CTModels", "CTParser", "CommonSolve", "DocStringExtensions"]
 path = "/Users/ocots/Research/logiciels/dev/control-toolbox/OptimalControl"
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
-version = "1.0.3"
+version = "1.0.4"
 
 [[deps.Opus_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]

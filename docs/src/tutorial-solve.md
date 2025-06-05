@@ -1,6 +1,10 @@
 # [The solve function](@id tutorial-solve)
 
-In this tutorial, we explain the [`solve`](@ref) function from [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package.
+In this manual, we explain the [`solve`](@ref) function from [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package.
+
+```@docs; canonical=false
+solve(::CTModels.Model, ::Symbol...)
+```
 
 ## Basic usage
 
@@ -33,8 +37,9 @@ solve(ocp)
 nothing # hide
 ```
 
-Notice that we need to load the `NLPModelsIpopt` package before calling `solve`.
-This is because the method currently implements a direct approach, where the optimal control problem is transcribed to a nonlinear optimization problem (NLP) of the form
+Note that we must import NLPModelsIpopt.jl before calling `solve`.  
+This is because the default method uses a direct approach, which transcribes the optimal control problem into a nonlinear program (NLP) of the form:
+
 ```math
 \text{minimize}\quad F(y), \quad\text{subject to the constraints}\quad g(y) \le 0, \quad h(y) = 0. 
 ```
@@ -48,7 +53,7 @@ ERROR: ExtensionError. Please make: julia> using NLPModelsIpopt
 
 ## Resolution methods and algorithms
 
-OptimalControl offers a list of methods to solve your optimal control problem. To get the list of methods, simply call `available_methods`.
+OptimalControl.jl offers a list of methods. To get it, simply call `available_methods`.
 
 ```@example main
 available_methods()
@@ -66,14 +71,19 @@ is equivalent to
 solve(ocp, :direct, :adnlp, :ipopt)
 ```
 
-The first symbol `:direct` refers to the general class of method, with only the so-called [direct approach](https://en.wikipedia.org/wiki/Optimal_control#Numerical_methods_for_optimal_control) currently implemented.
-Direct methods discretize the original optimal control problem and solve the resulting NLP problem.
-The second symbol `:adnlp` is for the choice of NLP modeler. 
-We currently use [ADNLPModels.jl](https://jso.dev/ADNLPModels.jl) which provides an automatic differentiation (AD)-based model implementations that conform to the [NLPModels.jl](https://github.com/JuliaSmoothOptimizers/ADNLPModels.jl) API.
-The third symbol corresponds to the NLP solver, with the possible values:
-- `:ipopt` (default value) for Ipopt (via the [NLPModelsIpopt.jl](https://github.com/JuliaSmoothOptimizers/NLPModelsIpopt.jl) package).
-- `:madnlp` is [MadNLP.jl](https://madnlp.github.io/MadNLP.jl), an open-source nonlinear programming solver purely implemented in Julia, which implements a filter line-search interior-point algorithm, as the one in Ipopt.
-- `:knitro` for the [Knitro](https://www.artelys.com/solvers/knitro/) solver (requires a license).
+The first symbol, `:direct`, refers to the general class of method.  
+Currently, only the so-called [direct approach](https://en.wikipedia.org/wiki/Optimal_control#Numerical_methods_for_optimal_control) is implemented.  
+Direct methods discretise the original optimal control problem and solve the resulting NLP.
+
+The second symbol, `:adnlp`, selects the NLP modeler.  
+By default, [ADNLPModels.jl](https://jso.dev/ADNLPModels.jl) is used.  
+It provides automatic differentiation (AD)-based models that follow the [NLPModels.jl](https://github.com/JuliaSmoothOptimizers/NLPModels.jl) API.
+
+The third symbol specifies the NLP solver. Possible values are:
+- `:ipopt` (default): uses Ipopt via the [NLPModelsIpopt.jl](https://github.com/JuliaSmoothOptimizers/NLPModelsIpopt.jl) package.
+- `:madnlp`: uses [MadNLP.jl](https://madnlp.github.io/MadNLP.jl), an open-source solver in Julia implementing a filter line-search interior-point algorithm like Ipopt.
+- `:knitro`: uses the [Knitro](https://www.artelys.com/solvers/knitro/) solver (license required).
+
 
 For instance, let us try MadNLP.jl.
 
@@ -97,18 +107,21 @@ solve(ocp, :direct, :adnlp, :ipopt)
 
 ## Direct method
 
-The options for the direct method are listed [here](https://control-toolbox.org/OptimalControl.jl/stable/dev-ctdirect.html#CTDirect.solve-Tuple{Model,%20Vararg{Symbol}}). The main options, with their [default values], are:
-- `display` ([true], false): setting `display` to false will disable output.
-- `init`: info for the starting guess, which can be provided as numerical values, functions, or an existing solution. See [initial guess tutorial](@ref tutorial-initial-guess).
-- `grid_size` ([250]): size of the (uniform) time discretization grid. More precisely, it is the number of time steps, that is if `N = grid_size` and if the initial and final times are denoted respectively `t0` and `tf`, then we have `Δt = (tf - t0) / N`.
-- `time_grid` ([`nothing`]): explicit time grid (can be non uniform). If `time_grid` is nothing then, a uniform grid is built of length `grid_size`.
-- `disc_method` ([`:trapeze`], `:midpoint`, `:euler`, `:euler_implicit`, `:gauss_legendre_2`, `:gauss_legendre_3`): see [discretisation methods](https://control-toolbox.org/Tutorials.jl/stable/tutorial-discretisation.html).
-- `adnlp_backend`: backend for automatic differentiation in ADNLPModels ([`:optimized`], `:manual`, `:default`).
+The main options for the direct method, with their default values, are:
 
-For examples of more advanced use, see 
-- [discrete continuation](https://control-toolbox.org/Tutorials.jl/stable/tutorial-continuation.html),
-- [NLP direct handling](https://control-toolbox.org/Tutorials.jl/stable/tutorial-nl.html).
+- `display` (`true`, `false`): setting `display = false` disables output.
+- `init`: information for the initial guess. It can be given as numerical values, functions, or an existing solution. See [how to set an initial guess](@ref tutorial-initial-guess).
+- `grid_size` (`250`): number of time steps in the (uniform) time discretization grid.  
+  More precisely, if `N = grid_size` and the initial and final times are `t0` and `tf`, then `Δt = (tf - t0) / N`.
+- `time_grid` (`nothing`): explicit time grid (can be non-uniform).  
+  If `time_grid = nothing`, a uniform grid of length `grid_size` is used.
+- `disc_method` (`:trapeze`, `:midpoint`, `:euler`, `:euler_implicit`, `:gauss_legendre_2`, `:gauss_legendre_3`):  
+  see [discretization method tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-discretisation.html).
+- `adnlp_backend`: backend used for automatic differentiation in ADNLPModels (`:optimized`, `:manual`, `:default`).
 
+For advanced usage, see:
+- [discrete continuation tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-continuation.html),
+- [NLP direct handling tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-nlp.html).
 
 ## NLP solver specific options
 

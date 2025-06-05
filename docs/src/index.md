@@ -35,14 +35,13 @@ ocp = @def begin
 end
 
 sol = solve(ocp)
-
 plot(sol)
 ```
 
-- For more details about this problem, please check the [basic example tutorial](@ref tutorial-double-integrator-energy). 
-- For a comprehensive introduction to the syntax used above to describe the optimal control problem, check the [abstract syntax tutorial](@ref tutorial-abstract-syntax). 
-- The `solve` function has options, see the [solve tutorial](@ref tutorial-solve).
-- You can customise the plot, see the [plot tutorial](@ref tutorial-plot).
+- For more details, see the [basic example tutorial](@ref tutorial-double-integrator-energy).  
+- The [`@def`](@ref) macro defines the problem. See the [abstract syntax tutorial](@ref tutorial-abstract-syntax).  
+- The [`solve`](@ref) function has many options. See the [solve tutorial](@ref tutorial-solve).  
+- The [`plot`](@ref) function is flexible. See the [plot tutorial](@ref tutorial-plot).
 
 ## Citing us
 

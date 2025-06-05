@@ -34,7 +34,7 @@ using Plots
 
 ## Optimal control problem
 
-Let us define the problem
+Let us define the problem with the [`@def`](@ref) macro:
 
 ```@example main
 ocp = @def begin
@@ -55,14 +55,14 @@ nothing # hide
     
 ## [Solve and plot](@id tutorial-basic-solve-plot)
 
-We can solve it simply with:
+We can [`solve`](@ref) it simply with:
 
 ```@example main
 sol = solve(ocp)
 nothing # hide
 ```
 
-And plot the solution with:
+And [`plot`](@ref) the solution with:
 
 ```@example main
 plot(sol)
@@ -109,6 +109,11 @@ plot(sol)
 
 We can export (or save) the solution in a Julia `.jld2` data file and reload it later, and also export a discretised version of the solution in a more portable [JSON](https://en.wikipedia.org/wiki/JSON) format. Note that the optimal control problem is needed when loading a solution.
 
+See the two functions:
+
+- [`import_ocp_solution`](@ref),
+- [`export_ocp_solution`](@ref).
+  
 ### JLD2
 
 ```@example main

@@ -2,6 +2,10 @@
 
 In this tutorial, we explain the `Flow` function from [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package.
 
+```@docs; canonical=false
+Flow
+```
+
 ## Basic usage
 
 Les us define a basic optimal control problem.
@@ -107,7 +111,7 @@ nothing # hide
 ```
 
 In this case, you obtain a data that you can plot exactly like when solving the optimal control problem 
-with the function `solve`. See for instance the [basic example](@ref tutorial-basic-solve-plot) or the 
+with the function [`solve`](@ref). See for instance the [basic example](@ref tutorial-basic-solve-plot) or the 
 [plot tutorial](@ref tutorial-plot).
 
 ```@example main
