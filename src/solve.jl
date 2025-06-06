@@ -57,13 +57,14 @@ julia> sol = solve(ocp, :direct)
 ```
 
 The method can be specified by passing the full description as a list of Symbols.
+See the [resolution methods](@ref manual-solve-methods) section for more details.
 
 ```julia-repl
 julia> sol = solve(ocp, :direct, :adnlp, :ipopt)
 ```
 
 The keyword arguments are specific to the chosen method and represent the options of the solver.
-For example, the keyword `display` is used to display the information of the solver.
+For example, the keyword `display` is used to display information.
 The default value is `true`.
 
 ```julia-repl
@@ -72,6 +73,7 @@ julia> sol = solve(ocp, :direct, :ipopt, display=false)
 
 The initial guess can be provided by the keyword `init`.
 You can provide the initial guess for the state, control, and variable.
+See [how to set an initial guess](@ref tutorial-initial-guess) for more details.
 
 ```julia-repl
 julia> sol = solve(ocp, init=(state=[-0.5, 0.2], control=0.5))

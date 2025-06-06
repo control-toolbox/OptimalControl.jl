@@ -1,8 +1,8 @@
 # [How to plot a solution](@id tutorial-plot)
 
 ```@meta
-Draft = false
-```>
+CollapsedDocStrings = true
+```
 
 In this tutorial, we explain the different options for plotting the solution of an optimal control problem using the `plot` and `plot!` functions, which are extensions of the [Plots.jl](https://docs.juliaplots.org) package. Use `plot` to create a new plot object, and `plot!` to add to an existing one:
 
@@ -107,7 +107,7 @@ You can also visit the Plot documentation online to get the descriptions of the 
 
 - To pass attributes to the plot, see the [attributes plot](https://docs.juliaplots.org/latest/generated/attributes_plot/) documentation. For instance, you can specify the size of the figure.
 ```@raw html
-<details><summary>List of plot attributes.</summary>
+<details style="margin-left:3em"><summary>List of plot attributes.</summary>
 ```
 
 ```@example main
@@ -120,8 +120,8 @@ end # hide
 </details>
 ```
 - You can pass attributes to all subplots at once by referring to the [attributes subplot](https://docs.juliaplots.org/latest/generated/attributes_subplot/) documentation. For example, you can specify the location of the legends.
-  ```@raw html
-<details><summary>List of subplot attributes.</summary>
+```@raw html
+<details style="margin-left:3em"><summary>List of subplot attributes.</summary>
 ```
 
 ```@example main
@@ -135,7 +135,7 @@ end # hide
 ```
 - Similarly, you can pass axis attributes to all subplots. See the [attributes axis](https://docs.juliaplots.org/latest/generated/attributes_axis/) documentation. For example, you can remove the grid from every subplot.
 ```@raw html
-<details><summary>List of axis attributes.</summary>
+<details style="margin-left:3em"><summary>List of axis attributes.</summary>
 ```
 
 ```@example main
@@ -149,7 +149,7 @@ end # hide
 ```
 - Finally, you can pass series attributes to all subplots. Refer to the [attributes series](https://docs.juliaplots.org/latest/generated/attributes_series/) documentation. For instance, you can set the width of the curves using `linewidth`.
 ```@raw html
-<details><summary>List of series attributes.</summary>
+<details style="margin-left:3em"><summary>List of series attributes.</summary>
 ```
 
 ```@example main
@@ -160,6 +160,7 @@ end # hide
 
 ```@raw html
 </details>
+</br>
 ```
 
 ```@example main
@@ -225,7 +226,7 @@ To improve visualization (without changing the accuracy), you can provide a fine
 
 ```@example main
 fine_grid = range(t0, tf, 100)
-sol_flow = f( (t0, tf), x0, p0; saveat=fine_grid )
+sol_flow = f((t0, tf), x0, p0; saveat=fine_grid)
 plot(sol_flow)
 ```
 
@@ -317,7 +318,7 @@ function lqr(tf)
     end
 
     return ocp
-end;
+end
 
 # solve the problems and store them
 solutions = []

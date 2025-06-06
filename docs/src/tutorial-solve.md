@@ -1,5 +1,9 @@
 # [The solve function](@id tutorial-solve)
 
+```@meta
+CollapsedDocStrings = true
+```
+
 In this manual, we explain the [`solve`](@ref) function from [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package.
 
 ```@docs; canonical=false
@@ -51,7 +55,7 @@ julia> solve(ocp)
 ERROR: ExtensionError. Please make: julia> using NLPModelsIpopt
 ```
 
-## Resolution methods and algorithms
+## [Resolution methods and algorithms](@id manual-solve-methods)
 
 OptimalControl.jl offers a list of methods. To get it, simply call `available_methods`.
 

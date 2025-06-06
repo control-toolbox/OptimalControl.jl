@@ -1,5 +1,9 @@
 # [How to compute flows](@id manual-flow)
 
+```@meta
+CollapsedDocStrings = true
+```
+
 In this tutorial, we explain the `Flow` function from [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package.
 
 ```@docs; canonical=false
