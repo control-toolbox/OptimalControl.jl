@@ -117,23 +117,19 @@ See the two functions:
 ### JLD2
 
 ```@example main
-using JLD2
+# using JLD2
 using Suppressor # hide
 @suppress_err begin # hide
-export_ocp_solution(sol; filename="my_solution")
+# export_ocp_solution(sol; filename="my_solution")
 end # hide
-sol_jld = import_ocp_solution(ocp; filename="my_solution")
-println("Objective from computed solution: ", objective(sol))
+# sol_jld = import_ocp_solution(ocp; filename="my_solution")
+# println("Objective from computed solution: ", objective(sol))
 # println("Objective from imported solution: ", objective(sol_jld))
-# the type of the imported solution is not the same as the original one
-println("Type of the imported solution: ", typeof(sol_jld))
-# the type of the original solution
-println("Type of the original solution: ", typeof(sol))
 ```
 
 !!! danger "Bug"
 
-    The `import_ocp_solution` function does not return a solution of the same type as the original one. This is a bug that will be fixed in a future release.
+    The code above does not work in the documentation but works locally. This bug will be fixed.
 
 ### JSON
 
