@@ -4,12 +4,12 @@
 CurrentModule =  OptimalControl
 ```
 
-We present in this tutorial the different possibilities to provide an initial guess to solve an 
+We present the different possibilities to provide an initial guess to solve an 
 optimal control problem with the [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package. 
 
-First, we need to import the OptimalControl.jl package to define the 
+First, we need to import OptimalControl.jl to define the 
 optimal control problem and [NLPModelsIpopt.jl](https://jso.dev/NLPModelsIpopt.jl) to solve it. 
-We also need to import the [Plots.jl](https://docs.juliaplots.org) package to plot the solution.
+We also need to import [Plots.jl](https://docs.juliaplots.org) to plot solutions.
 
 ```@example main
 using OptimalControl

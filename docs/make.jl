@@ -6,9 +6,41 @@ using CTDirect
 using CTFlows
 using CTModels
 using CTParser
+using Plots
+using CommonSolve
+using OrdinaryDiffEq
+using DocumenterInterLinks
+using ADNLPModels
+using NLPModelsIpopt
+using MadNLP
+
+#
+links = InterLinks(
+    "CTDirect" => (
+            "https://control-toolbox.org/CTDirect.jl/stable/",
+            "https://control-toolbox.org/CTDirect.jl/stable/objects.inv",
+            joinpath(@__DIR__, "inventories", "CTDirect.toml")
+        ),
+    "ADNLPModels" => (
+            "https://jso.dev/ADNLPModels.jl/stable/",
+            "https://jso.dev/ADNLPModels.jl/stable/objects.inv",
+            joinpath(@__DIR__, "inventories", "ADNLPModels.toml")
+        ),
+    "NLPModelsIpopt" => (
+            "https://jso.dev/NLPModelsIpopt.jl/stable/",
+            "https://jso.dev/NLPModelsIpopt.jl/stable/objects.inv",
+            joinpath(@__DIR__, "inventories", "NLPModelsIpopt.toml")
+        ),
+    "MadNLP" => (
+            "https://madnlp.github.io/MadNLP.jl/stable/",
+            "https://madnlp.github.io/MadNLP.jl/stable/objects.inv",
+            joinpath(@__DIR__, "inventories", "MadNLP.toml")
+        ),
+)
 
 # to add docstrings from external packages
-Modules = [CTBase, CTFlows, CTDirect, CTModels, CTParser, OptimalControl]
+const CTFlowsODE = Base.get_extension(CTFlows, :CTFlowsODE)
+Modules = [CTBase, CTFlows, CTDirect, CTModels, CTParser, OptimalControl, CTFlowsODE]
 for Module in Modules
     isnothing(DocMeta.getdocmeta(Module, :DocTestSetup)) &&
         DocMeta.setdocmeta!(Module, :DocTestSetup, :(using $Module); recursive=true)
@@ -31,9 +63,7 @@ makedocs(;
     format=Documenter.HTML(;
         repolink="https://" * repo_url,
         prettyurls=false,
-        size_threshold_ignore=[
-            "api-ctbase/types.md", "dev-ctmodels.md", "tutorial-plot.md"
-        ],
+        size_threshold_ignore=["api-optimalcontrol-user.md"],
         assets=[
             asset("https://control-toolbox.org/assets/css/documentation.css"),
             asset("https://control-toolbox.org/assets/js/documentation.js"),
@@ -52,19 +82,21 @@ makedocs(;
             "Plot a solution" => "tutorial-plot.md",
             "Compute flows" => "tutorial-flow.md",
         ],
-        "Developers" => [
-            "OptimalControl.jl" => "dev-optimalcontrol.md",
-            "Subpackages" => [
-                "CTBase.jl" => "dev-ctbase.md",
-                "CTDirect.jl" => "dev-ctdirect.md",
-                "CTFlows.jl" => "dev-ctflows.md",
-                "CTModels.jl" => "dev-ctmodels.md",
-                "CTParser.jl" => "dev-ctparser.md",
+        "API" => [
+            "OptimalControl.jl - User" => "api-optimalcontrol-user.md",
+            "Subpackages - Developers" => [
+                "CTBase.jl" => "api-ctbase.md",
+                "CTDirect.jl" => "api-ctdirect.md",
+                "CTFlows.jl" => "api-ctflows.md",
+                "CTModels.jl" => "api-ctmodels.md",
+                "CTParser.jl" => "api-ctparser.md",
+                "OptimalControl.jl" => "api-optimalcontrol-dev.md",
             ],
         ],
         "Zhejiang 2025" => "zhejiang-2025.md",
         "JLESC17" => "jlesc17.md",
     ],
+    plugins=[links],
 )
 
 deploydocs(; repo=repo_url * ".git", devbranch="main")

@@ -34,7 +34,7 @@ using Plots
 
 ## Optimal control problem
 
-Let us define the problem
+Let us define the problem with the [`@def`](@ref) macro:
 
 ```@example main
 ocp = @def begin
@@ -55,14 +55,14 @@ nothing # hide
     
 ## [Solve and plot](@id tutorial-basic-solve-plot)
 
-We can solve it simply with:
+We can [`solve`](@ref) it simply with:
 
 ```@example main
 sol = solve(ocp)
 nothing # hide
 ```
 
-And plot the solution with:
+And [`plot`](@ref) the solution with:
 
 ```@example main
 plot(sol)
@@ -109,26 +109,27 @@ plot(sol)
 
 We can export (or save) the solution in a Julia `.jld2` data file and reload it later, and also export a discretised version of the solution in a more portable [JSON](https://en.wikipedia.org/wiki/JSON) format. Note that the optimal control problem is needed when loading a solution.
 
+See the two functions:
+
+- [`import_ocp_solution`](@ref),
+- [`export_ocp_solution`](@ref).
+  
 ### JLD2
 
 ```@example main
-using JLD2
+# using JLD2
 using Suppressor # hide
 @suppress_err begin # hide
-export_ocp_solution(sol; filename="my_solution")
+# export_ocp_solution(sol; filename="my_solution")
 end # hide
-sol_jld = import_ocp_solution(ocp; filename="my_solution")
-println("Objective from computed solution: ", objective(sol))
+# sol_jld = import_ocp_solution(ocp; filename="my_solution")
+# println("Objective from computed solution: ", objective(sol))
 # println("Objective from imported solution: ", objective(sol_jld))
-# the type of the imported solution is not the same as the original one
-println("Type of the imported solution: ", typeof(sol_jld))
-# the type of the original solution
-println("Type of the original solution: ", typeof(sol))
 ```
 
 !!! danger "Bug"
 
-    The `import_ocp_solution` function does not return a solution of the same type as the original one. This is a bug that will be fixed in a future release.
+    The code above does not work in the documentation but works locally. This bug will be fixed.
 
 ### JSON
 

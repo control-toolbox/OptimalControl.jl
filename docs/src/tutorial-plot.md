@@ -1,5 +1,9 @@
 # [How to plot a solution](@id tutorial-plot)
 
+```@meta
+CollapsedDocStrings = true
+```
+
 In this tutorial, we explain the different options for plotting the solution of an optimal control problem using the `plot` and `plot!` functions, which are extensions of the [Plots.jl](https://docs.juliaplots.org) package. Use `plot` to create a new plot object, and `plot!` to add to an existing one:
 
 ```julia
@@ -10,7 +14,7 @@ plot!(plt, args...; kw...)     # modifies Plot `plt`
 
 More precisely, the signature of `plot`, to plot a solution, is as follows.
 
-```@docs
+```@docs; canonical=false
 plot(::CTModels.Solution, ::Symbol...)
 ```
 
@@ -42,13 +46,13 @@ using OptimalControl
 using NLPModelsIpopt
 ```
 
-We consider the simple optimal control problem from the [basic example tutorial](@ref tutorial-double-integrator-energy).
+We consider the simple optimal control problem from the [basic example page](@ref tutorial-double-integrator-energy).
 
 ```@example main
-t0 = 0            # initial time
-tf = 1            # final time
-x0 = [ -1, 0 ]    # initial condition
-xf = [  0, 0 ]    # final condition
+t0 = 0          # initial time
+tf = 1          # final time
+x0 = [-1, 0]    # initial condition
+xf = [ 0, 0]    # final condition
 
 ocp = @def begin
     t ∈ [t0, tf], time
@@ -68,7 +72,7 @@ nothing # hide
 
 The simplest way to plot the solution is to use the `plot` function with the solution as the only argument.
 
-!!! warning
+!!! caveat
 
     The `plot` function for a solution of an optimal control problem extends the `plot` function from Plots. Therefore, you need to import this package in order to plot a solution.
 
@@ -102,10 +106,62 @@ plotattr("color") # Specific Attribute Example
 You can also visit the Plot documentation online to get the descriptions of the attributes:
 
 - To pass attributes to the plot, see the [attributes plot](https://docs.juliaplots.org/latest/generated/attributes_plot/) documentation. For instance, you can specify the size of the figure.
-- You can pass attributes to all subplots at once by referring to the [attributes subplot](https://docs.juliaplots.org/latest/generated/attributes_subplot/) documentation. For example, you can specify the location of the legends.
-- Similarly, you can pass axis attributes to all subplots. See the [attributes axis](https://docs.juliaplots.org/latest/generated/attributes_axis/) documentation. For example, you can remove the grid from every subplot.
-- Finally, you can pass series attributes to all subplots. Refer to the [attributes series](https://docs.juliaplots.org/latest/generated/attributes_series/) documentation. For instance, you can set the width of the curves using `linewidth`.
+```@raw html
+<details style="margin-left:3em"><summary>List of plot attributes.</summary>
+```
 
+```@example main
+for a in Plots.attributes(:Plot) # hide
+    println(a) # hide
+end # hide
+```
+
+```@raw html
+</details>
+```
+- You can pass attributes to all subplots at once by referring to the [attributes subplot](https://docs.juliaplots.org/latest/generated/attributes_subplot/) documentation. For example, you can specify the location of the legends.
+```@raw html
+<details style="margin-left:3em"><summary>List of subplot attributes.</summary>
+```
+
+```@example main
+for a in Plots.attributes(:Subplot) # hide
+    println(a) # hide
+end # hide
+```
+
+```@raw html
+</details>
+```
+- Similarly, you can pass axis attributes to all subplots. See the [attributes axis](https://docs.juliaplots.org/latest/generated/attributes_axis/) documentation. For example, you can remove the grid from every subplot.
+```@raw html
+<details style="margin-left:3em"><summary>List of axis attributes.</summary>
+```
+
+```@example main
+for a in Plots.attributes(:Axis) # hide
+    println(a) # hide
+end # hide
+```
+
+```@raw html
+</details>
+```
+- Finally, you can pass series attributes to all subplots. Refer to the [attributes series](https://docs.juliaplots.org/latest/generated/attributes_series/) documentation. For instance, you can set the width of the curves using `linewidth`.
+```@raw html
+<details style="margin-left:3em"><summary>List of series attributes.</summary>
+```
+
+```@example main
+for a in Plots.attributes(:Series) # hide
+    println(a) # hide
+end # hide
+```
+
+```@raw html
+</details>
+</br>
+```
 
 ```@example main
 plot(sol, size=(700, 450), legend=:bottomright, grid=false, linewidth=2)
@@ -170,7 +226,7 @@ To improve visualization (without changing the accuracy), you can provide a fine
 
 ```@example main
 fine_grid = range(t0, tf, 100)
-sol_flow = f( (t0, tf), x0, p0; saveat=fine_grid )
+sol_flow = f((t0, tf), x0, p0; saveat=fine_grid)
 plot(sol_flow)
 ```
 
@@ -262,7 +318,7 @@ function lqr(tf)
     end
 
     return ocp
-end;
+end
 
 # solve the problems and store them
 solutions = []
