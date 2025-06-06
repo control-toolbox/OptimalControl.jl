@@ -49,10 +49,10 @@ using NLPModelsIpopt
 We consider the simple optimal control problem from the [basic example page](@ref tutorial-double-integrator-energy).
 
 ```@example main
-t0 = 0            # initial time
-tf = 1            # final time
-x0 = [ -1, 0 ]    # initial condition
-xf = [  0, 0 ]    # final condition
+t0 = 0          # initial time
+tf = 1          # final time
+x0 = [-1, 0]    # initial condition
+xf = [ 0, 0]    # final condition
 
 ocp = @def begin
     t ∈ [t0, tf], time
@@ -72,7 +72,7 @@ nothing # hide
 
 The simplest way to plot the solution is to use the `plot` function with the solution as the only argument.
 
-!!! warning
+!!! caveat
 
     The `plot` function for a solution of an optimal control problem extends the `plot` function from Plots. Therefore, you need to import this package in order to plot a solution.
 

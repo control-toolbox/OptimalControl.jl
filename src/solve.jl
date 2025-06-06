@@ -30,16 +30,19 @@ end
 """
 $(TYPEDSIGNATURES)
 
-Solve the the optimal control problem `ocp` by the method given by the (optional) description.
-The available methods are given by `available_methods()`.
+Solve the optimal control problem `ocp` by the method given by the (optional) description.
+The get the list of available methods:
+```julia-repl
+julia> available_methods()
+```
 The higher in the list, the higher is the priority.
 The keyword arguments are specific to the chosen method and represent the options of the solver.
 
 # Arguments
 
 - `ocp::OptimalControlModel`: the optimal control problem to solve.
-- `description::Symbol...`: the description of the method to use to solve the problem.
-- `kwargs...`: the options of the solver.
+- `description::Symbol...`: the description of the method used to solve the problem.
+- `kwargs...`: the options of the method.
 
 # Examples
 
@@ -49,35 +52,46 @@ The simplest way to solve the optimal control problem is to call the function wi
 julia> sol = solve(ocp)
 ```
 
-The method can be specified by passing the description as a Symbol. You can provide a partial description, the function will 
-find the best match.
-
-```julia-repl
-julia> sol = solve(ocp, :direct)
-```
-
-The method can be specified by passing the full description as a list of Symbols.
-See the [resolution methods](@ref manual-solve-methods) section for more details.
+The method description is a list of Symbols. The default is
 
 ```julia-repl
 julia> sol = solve(ocp, :direct, :adnlp, :ipopt)
 ```
 
-The keyword arguments are specific to the chosen method and represent the options of the solver.
-For example, the keyword `display` is used to display information.
-The default value is `true`.
+You can provide a partial description, the function will find the best match.
 
 ```julia-repl
-julia> sol = solve(ocp, :direct, :ipopt, display=false)
+julia> sol = solve(ocp, :direct)
 ```
 
-The initial guess can be provided by the keyword `init`.
+!!! note
+    
+    See the [resolution methods section](@ref manual-solve-methods) for more details about the available methods.
+
+The keyword arguments are specific to the chosen method and correspond to the options of the different solvers.
+For example, the keyword `max_iter` is an Ipopt option that may be used to set the maximum number of iterations.
+
+```julia-repl
+julia> sol = solve(ocp, :direct, :ipopt, max_iter=100)
+```
+
+!!! note
+    
+    See the [direct method section](@ref manual-solve-direct-method) for more details about associated options.
+    These options also detailed in the [`CTDirect.solve`](@extref) documentation.
+    This main `solve` method redirects to `CTDirect.solve` when the `:direct` Symbol is given in the description.
+    See also the [NLP solvers section](@ref manual-solve-solvers-specific-options) for more details about Ipopt or MadNLP options.
+
+To help the solve converge, an initial guess can be provided within the keyword `init`.
 You can provide the initial guess for the state, control, and variable.
-See [how to set an initial guess](@ref tutorial-initial-guess) for more details.
 
 ```julia-repl
 julia> sol = solve(ocp, init=(state=[-0.5, 0.2], control=0.5))
 ```
+
+!!! note
+
+    See [how to set an initial guess](@ref tutorial-initial-guess) for more details.
 """
 function CommonSolve.solve(
     ocp::CTModels.Model, description::Symbol...; kwargs...

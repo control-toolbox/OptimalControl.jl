@@ -29,4 +29,4 @@ M --> B
 style M fill:#FBF275
 ```
 
-OptimalControl heavily relies on CTModels. Refer to the [CTModels API documentation](https://control-toolbox.org/CTBase.jl) for more details.
+OptimalControl heavily relies on CTModels. Refer to the [CTModels API documentation](https://control-toolbox.org/CTModels.jl) for more details.

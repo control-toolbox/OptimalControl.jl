@@ -9,6 +9,34 @@ using CTParser
 using Plots
 using CommonSolve
 using OrdinaryDiffEq
+using DocumenterInterLinks
+using ADNLPModels
+using NLPModelsIpopt
+using MadNLP
+
+#
+links = InterLinks(
+    "CTDirect" => (
+            "https://control-toolbox.org/CTDirect.jl/stable/",
+            "https://control-toolbox.org/CTDirect.jl/stable/objects.inv",
+            joinpath(@__DIR__, "inventories", "CTDirect.toml")
+        ),
+    "ADNLPModels" => (
+            "https://jso.dev/ADNLPModels.jl/stable/",
+            "https://jso.dev/ADNLPModels.jl/stable/objects.inv",
+            joinpath(@__DIR__, "inventories", "ADNLPModels.toml")
+        ),
+    "NLPModelsIpopt" => (
+            "https://jso.dev/NLPModelsIpopt.jl/stable/",
+            "https://jso.dev/NLPModelsIpopt.jl/stable/objects.inv",
+            joinpath(@__DIR__, "inventories", "NLPModelsIpopt.toml")
+        ),
+    "MadNLP" => (
+            "https://madnlp.github.io/MadNLP.jl/stable/",
+            "https://madnlp.github.io/MadNLP.jl/stable/objects.inv",
+            joinpath(@__DIR__, "inventories", "MadNLP.toml")
+        ),
+)
 
 # to add docstrings from external packages
 const CTFlowsODE = Base.get_extension(CTFlows, :CTFlowsODE)
@@ -68,6 +96,7 @@ makedocs(;
         "Zhejiang 2025" => "zhejiang-2025.md",
         "JLESC17" => "jlesc17.md",
     ],
+    plugins=[links],
 )
 
 deploydocs(; repo=repo_url * ".git", devbranch="main")
