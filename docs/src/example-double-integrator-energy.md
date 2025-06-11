@@ -1,4 +1,4 @@
-# [Double integrator: energy minimisation](@id tutorial-double-integrator-energy)
+# [Double integrator: energy minimisation](@id example-double-integrator-energy)
 
 Let us consider a wagon moving along a rail, whom acceleration can be controlled by a force $u$.
 We denote by $x = (x_1, x_2)$ the state of the wagon, that is its position $x_1$ and its velocity $x_2$.
@@ -51,9 +51,9 @@ nothing # hide
 
 !!! note "Nota bene"
 
-    For a comprehensive introduction to the syntax used above to define the optimal control problem, check [this abstract syntax tutorial](@ref tutorial-abstract-syntax). In particular, there are non-unicode alternatives for derivatives, integrals, *etc.*
+    For a comprehensive introduction to the syntax used above to define the optimal control problem, check [this abstract syntax tutorial](@ref manual-abstract-syntax). In particular, there are non-unicode alternatives for derivatives, integrals, *etc.*
     
-## [Solve and plot](@id tutorial-basic-solve-plot)
+## [Solve and plot](@id example-double-integrator-energy-solve-plot)
 
 We can [`solve`](@ref) it simply with:
 
@@ -70,7 +70,7 @@ plot(sol)
 
 !!! note "Nota bene"
 
-    The `solve` function has options, see the [solve tutorial](@ref tutorial-solve). You can customise the plot, see the [plot tutorial](@ref tutorial-plot).
+    The `solve` function has options, see the [solve tutorial](@ref manual-solve). You can customise the plot, see the [plot tutorial](@ref manual-plot).
 
 ## State constraint
 

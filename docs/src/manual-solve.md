@@ -1,7 +1,7 @@
-# [The solve function](@id tutorial-solve)
+# [The solve function](@id manual-solve)
 
 ```@meta
-CollapsedDocStrings = true
+CollapsedDocStrings = false
 ```
 
 In this manual, we explain the [`solve`](@ref) function from [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package.
@@ -112,7 +112,7 @@ solve(ocp, :direct, :adnlp, :ipopt)
 The main options for the direct method, with their [default] values, are:
 
 - `display` ([`true`], `false`): setting `display = false` disables output.
-- `init`: information for the initial guess. It can be given as numerical values, functions, or an existing solution. See [how to set an initial guess](@ref tutorial-initial-guess).
+- `init`: information for the initial guess. It can be given as numerical values, functions, or an existing solution. See [how to set an initial guess](@ref manual-initial-guess).
 - `grid_size` ([`250`]): number of time steps in the (uniform) time discretization grid.  
   More precisely, if `N = grid_size` and the initial and final times are `t0` and `tf`, then the step length `Δt = (tf - t0) / N`.
 - `time_grid` ([`nothing`]): explicit time grid (can be non-uniform).  

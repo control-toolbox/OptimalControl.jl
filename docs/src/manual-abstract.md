@@ -1,4 +1,4 @@
-# [The syntax to define an optimal control problem](@id tutorial-abstract-syntax)
+# [The syntax to define an optimal control problem](@id manual-abstract-syntax)
 
 The full grammar of [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) small *Domain Specific Language* is given below. The idea is to use a syntax that is
 - pure Julia (and, as such, effortlessly analysed by the standard Julia parser),
@@ -6,7 +6,7 @@ The full grammar of [OptimalControl.jl](https://control-toolbox.org/OptimalContr
 
 While the syntax will be transparent to those users familiar with Julia expressions (`Expr`'s), we provide examples for every case that should be widely understandable. We rely heavily on [MLStyle.jl](https://thautwarm.github.io/MLStyle.jl) and its pattern matching abilities 👍🏽 for the semantic pass. Abstract definitions use the macro [`@def`](@ref).
 
-## [Variable](@id tutorial-abstract-variable)
+## [Variable](@id manual-abstract-variable)
 
 ```julia
 :( $v ∈ R^$q, variable ) 
@@ -77,7 +77,7 @@ tf = 5
 end
 ```
 
-One (or even the two bounds) can be variable, typically for minimum time problems (see [Mayer cost](@ref tutorial-abstract-mayer) section):
+One (or even the two bounds) can be variable, typically for minimum time problems (see [Mayer cost](@ref manual-abstract-mayer) section):
 
 ```julia
 @def begin
@@ -87,7 +87,7 @@ One (or even the two bounds) can be variable, typically for minimum time problem
 end
 ```
 
-## [State](@id tutorial-abstract-state)
+## [State](@id manual-abstract-state)
 
 ```julia
 :( $x ∈ R^$n, state ) 
@@ -112,7 +112,7 @@ As for the variable, there are automatic aliases (`x₁` and `x1` for `x[1]`, *e
 end
 ```
 
-## [Control](@id tutorial-abstract-control)
+## [Control](@id manual-abstract-control)
 
 ```julia
 :( $u ∈ R^$m, control ) 
@@ -140,7 +140,7 @@ end
 !!! note
     One dimensional variable, state or control are treated as scalars (`Real`), not vectors (`Vector`). In Julia, for `x::Real`, it is possible to write `x[1]` (and `x[1][1]`...) so it is OK (though useless) to write `x₁`, `x1` or `x[1]` instead of simply `x` to access the corresponding value. Conversely it is *not* OK to use such an `x` as a vector, for instance as in `...f(x)...` where `f(x::Vector{T}) where {T <: Real}`.
 
-## [Dynamics](@id tutorial-abstract-dynamics)
+## [Dynamics](@id manual-abstract-dynamics)
 
 ```julia
 :( ∂($x)($t) == $e1 ) 
@@ -208,7 +208,7 @@ F₁(x) = [0, 1]
 !!! note
     The vector fields `F₀` and `F₁` can be defined afterwards, as they only need to be available when the dynamics will be evaluated.
 
-Currently, it is not possible to declare the dynamics component after component, but a simple workaround is to use *aliases* (check the relevant [aliases](@ref tutorial-abstract-aliases) section below):
+Currently, it is not possible to declare the dynamics component after component, but a simple workaround is to use *aliases* (check the relevant [aliases](@ref manual-abstract-aliases) section below):
 
 ```julia
 @def damped_integrator begin
@@ -334,7 +334,7 @@ o = @def begin
 end
 ```
 
-## [Mayer cost](@id tutorial-abstract-mayer)
+## [Mayer cost](@id manual-abstract-mayer)
 
 ```julia                                      
 :( $e1 → min ) 
@@ -465,13 +465,13 @@ The correct syntax is
 end
 ```
 
-## [Aliases](@id tutorial-abstract-aliases)
+## [Aliases](@id manual-abstract-aliases)
 
 ```julia
 :( $a = $e1 )
 ```
 
-The single `=` symbol is used to define not a constraint but an alias, that is a purely syntactic replacement. There are some automatic aliases, *e.g.* `x₁` for `x[1]` if `x` is the state, and we have also seen that the user can define her own aliases when declaring the [variable](@ref tutorial-abstract-variable), [state](@ref tutorial-abstract-state) and [control](@ref tutorial-abstract-control). Arbitrary aliases can be further defined, as below (compare with previous examples in the [dynamics](@ref tutorial-abstract-dynamics) section):
+The single `=` symbol is used to define not a constraint but an alias, that is a purely syntactic replacement. There are some automatic aliases, *e.g.* `x₁` for `x[1]` if `x` is the state, and we have also seen that the user can define her own aliases when declaring the [variable](@ref manual-abstract-variable), [state](@ref manual-abstract-state) and [control](@ref manual-abstract-control). Arbitrary aliases can be further defined, as below (compare with previous examples in the [dynamics](@ref manual-abstract-dynamics) section):
 
 ```julia
 @def begin

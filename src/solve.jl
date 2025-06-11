@@ -1,7 +1,7 @@
 """
 $(TYPEDSIGNATURES)
 
-Return the list of available methods that can be used to solve the optimal control problem.
+Return the list of available methods that can be used to solve optimal control problems.
 """
 function available_methods()
     # by order of preference: from top to bottom
@@ -91,7 +91,7 @@ julia> sol = solve(ocp, init=(state=[-0.5, 0.2], control=0.5))
 
 !!! note
 
-    See [how to set an initial guess](@ref tutorial-initial-guess) for more details.
+    See [how to set an initial guess](@ref manual-initial-guess) for more details.
 """
 function CommonSolve.solve(
     ocp::CTModels.Model, description::Symbol...; kwargs...

@@ -24,9 +24,9 @@ ocp = @def begin
     t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
-    x(0) == [ -1, 0 ]
-    x(1) == [ 0, 0 ]
-    ẋ(t) == [ x₂(t), u(t) ]
+    x(0) == [-1, 0]
+    x(1) == [0, 0]
+    ẋ(t) == [x₂(t), u(t)]
     ∫( 0.5u(t)^2 ) → min
 end
 
@@ -34,10 +34,10 @@ sol = solve(ocp)
 plot(sol)
 ```
 
-- For more details, see the [basic example tutorial](@ref tutorial-double-integrator-energy).  
-- The [`@def`](@ref) macro defines the problem. See the [abstract syntax tutorial](@ref tutorial-abstract-syntax).  
-- The [`solve`](@ref) function has many options. See the [solve tutorial](@ref tutorial-solve).  
-- The [`plot`](@ref) function is flexible. See the [plot tutorial](@ref tutorial-plot).
+- For more details, see the [basic example tutorial](@ref example-double-integrator-energy).  
+- The [`@def`](@ref) macro defines the problem. See the [abstract syntax tutorial](@ref manual-abstract-syntax).  
+- The [`solve`](@ref) function has many options. See the [solve tutorial](@ref manual-solve).  
+- The [`plot`](@ref) function is flexible. See the [plot tutorial](@ref manual-plot).
 
 ## Citing us
 

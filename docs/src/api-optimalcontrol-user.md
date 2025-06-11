@@ -10,7 +10,23 @@ CollapsedDocStrings = false
 
 ```@index
 Pages   = ["api-optimalcontrol-user.md"]
-Modules = [OptimalControl, CTBase, CTDirect, CTFlows, CTModels, CTParser, CommonSolve, RecipesBase]
+Modules = [
+    OptimalControl, 
+    CTBase, 
+    CTDirect, 
+    CTFlows, 
+    CTModels, 
+    CTParser, 
+    CommonSolve, 
+    RecipesBase, 
+    CTFlowsODE, 
+    CTModelsPlots, 
+    CTModelsJSON, 
+    CTModelsJLD,
+    CTSolveExtIpopt,
+    CTSolveExtKnitro,
+    CTSolveExtMadNLP,
+]
 Order   = [:module, :constant, :type, :function, :macro]
 ```
 
@@ -22,6 +38,7 @@ Flow
 Lie
 Lift
 Model
+Solution
 ParsingError
 Poisson
 available_methods
@@ -47,13 +64,14 @@ lagrange
 mayer
 message
 objective
-plot(::CTModels.Solution, ::Symbol...)
-plot!(::Plots.Plot, ::CTModels.Solution, ::Symbol...)
+plot(::Solution, ::Symbol...)
+plot!(::Plots.Plot, ::Solution, ::Symbol...)
 set_initial_guess
-solve(::CTModels.Model, ::Symbol...)
+solve(::Model, ::Symbol...)
 state
 state_components
-state_dimension
+state_dimension(::Model)
+state_dimension(::Solution)
 state_name
 stopping
 time_grid
@@ -64,4 +82,25 @@ variable_dimension
 variable_name
 ⋅
 *(::CTFlowsODE.AbstractFlow)
+boundary_constraints_dual
+constraints_violation
+control_constraints_box
+control_constraints_lb_dual
+control_constraints_ub_dual
+final_time_name
+has_fixed_initial_time
+has_fixed_final_time
+has_free_final_time
+has_free_initial_time
+has_lagrange_cost
+has_mayer_cost
+initial_time_name
+is_autonomous(::Model{CTModels.Autonomous, <:CTModels.TimesModel})
+path_constraints_dual
+state_constraints_box
+state_constraints_lb_dual
+state_constraints_ub_dual
+variable_constraints_box
+variable_constraints_lb_dual
+variable_constraints_ub_dual
 ```

@@ -13,6 +13,9 @@ using DocumenterInterLinks
 using ADNLPModels
 using NLPModelsIpopt
 using MadNLP
+using JSON3
+using JLD2
+using NLPModelsKnitro
 
 #
 links = InterLinks(
@@ -36,11 +39,36 @@ links = InterLinks(
             "https://madnlp.github.io/MadNLP.jl/stable/objects.inv",
             joinpath(@__DIR__, "inventories", "MadNLP.toml")
         ),
+    "Tutorials" => (
+            "https://control-toolbox.org/Tutorials.jl/stable/",
+            "https://control-toolbox.org/Tutorials.jl/stable/objects.inv",
+            joinpath(@__DIR__, "inventories", "Tutorials.toml")
+        ),
 )
 
 # to add docstrings from external packages
 const CTFlowsODE = Base.get_extension(CTFlows, :CTFlowsODE)
-Modules = [CTBase, CTFlows, CTDirect, CTModels, CTParser, OptimalControl, CTFlowsODE]
+const CTModelsPlots = Base.get_extension(CTModels, :CTModelsPlots)
+const CTModelsJSON = Base.get_extension(CTModels, :CTModelsJSON)
+const CTModelsJLD = Base.get_extension(CTModels, :CTModelsJLD)
+const CTSolveExtIpopt = Base.get_extension(CTDirect, :CTSolveExtIpopt)
+const CTSolveExtKnitro = Base.get_extension(CTDirect, :CTSolveExtKnitro)
+const CTSolveExtMadNLP = Base.get_extension(CTDirect, :CTSolveExtMadNLP)
+Modules = [
+    CTBase, 
+    CTFlows, 
+    CTDirect, 
+    CTModels, 
+    CTParser, 
+    OptimalControl, 
+    CTFlowsODE, 
+    CTModelsPlots, 
+    CTModelsJSON, 
+    CTModelsJLD,
+    CTSolveExtIpopt,
+    CTSolveExtKnitro,
+    CTSolveExtMadNLP,
+    ]
 for Module in Modules
     isnothing(DocMeta.getdocmeta(Module, :DocTestSetup)) &&
         DocMeta.setdocmeta!(Module, :DocTestSetup, :(using $Module); recursive=true)
@@ -53,12 +81,12 @@ cp("./docs/Project.toml", "./docs/src/assets/Project.toml"; force=true)
 repo_url = "github.com/control-toolbox/OptimalControl.jl"
 
 makedocs(;
-    draft=false, # if draft is true, then the julia code from .md is not executed
+    draft=true, # if draft is true, then the julia code from .md is not executed
     # to disable the draft mode in a specific markdown file, use the following:
     # ```@meta
     # Draft = false
     # ```
-    warnonly=[:cross_references, :autodocs_block],
+    #warnonly=[:cross_references, :autodocs_block],
     sitename="OptimalControl.jl",
     format=Documenter.HTML(;
         repolink="https://" * repo_url,
@@ -72,15 +100,18 @@ makedocs(;
     pages=[
         "Getting Started" => "index.md",
         "Basic Examples" => [
-            "Energy minimisation" => "tutorial-double-integrator-energy.md",
-            "Time mininimisation" => "tutorial-double-integrator-time.md",
+            "Energy minimisation" => "example-double-integrator-energy.md",
+            "Time mininimisation" => "example-double-integrator-time.md",
         ],
         "Manual" => [
-            "Define a problem" => "tutorial-abstract.md",
-            "Set an initial guess" => "tutorial-initial-guess.md",
-            "Solve a problem" => "tutorial-solve.md",
-            "Plot a solution" => "tutorial-plot.md",
-            "Compute flows" => "tutorial-flow.md",
+            "Define a problem" => "manual-abstract.md",
+            "Set an initial guess" => "manual-initial-guess.md",
+            "Solve a problem" => "manual-solve.md",
+            "Plot a solution" => "manual-plot.md",
+            "Compute flows" => [
+                "From optimal control problems" => "manual-flow-ocp.md",
+                "From Hamiltonian and others" => "manual-flow-others.md",
+            ],
         ],
         "API" => [
             "OptimalControl.jl - User" => "api-optimalcontrol-user.md",
