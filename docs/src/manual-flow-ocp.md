@@ -2,7 +2,6 @@
 
 ```@meta
 CollapsedDocStrings = false
-Draft = true
 ```
 
 In this tutorial, we explain the `Flow` function, in particular to compute flows from an optimal control problem.
