@@ -1,4 +1,4 @@
-# [How to compute flows](@id manual-flow-others)
+# [How to compute Hamiltonian flows and trajectories](@id manual-flow-others)
 
 ```@meta
 CollapsedDocStrings = false

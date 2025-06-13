@@ -1,4 +1,4 @@
-# [How to compute flows](@id manual-flow-ocp)
+# [How to compute flows from optimal control problems](@id manual-flow-ocp)
 
 ```@meta
 CollapsedDocStrings = false
