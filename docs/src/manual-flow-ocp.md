@@ -1,6 +1,10 @@
-# [How to compute flows](@id manual-flow)
+# [How to compute flows from optimal control problems](@id manual-flow-ocp)
 
-In this tutorial, we explain the `Flow` function from [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package.
+```@meta
+CollapsedDocStrings = false
+```
+
+In this tutorial, we explain the `Flow` function, in particular to compute flows from an optimal control problem.
 
 ## Basic usage
 
@@ -20,8 +24,8 @@ ocp = @def begin
     u ∈ R, control
 
     x(t0) == x0
-    x(tf) == [ 0, 0 ]
-    ẋ(t)  == [ v(t), u(t) ]
+    x(tf) == [0, 0]
+    ẋ(t)  == [v(t), u(t)]
 
     ∫( 0.5u(t)^2 ) → min
 
@@ -59,7 +63,7 @@ and such that the pair $(x, p)$ satisfies:
 \end{array}
 ```
 
-The `Flow` function aims to compute $(x, p)$ from the optimal control problem `ocp` and the control in feedback form `u(x, p)`.
+The `Flow` function aims to compute $t \mapsto (x(t), p(t))$ from the optimal control problem `ocp` and the control in feedback form `u(x, p)`.
 
 !!! note "Nota bene"
 
@@ -91,7 +95,7 @@ f = Flow(ocp, u)
 nothing # hide
 ```
 
-Now we have the flow of the associated Hamiltonian vector field, we can use it. Some simple calculations shows that the initial covector $p(0)$ solution of the Pontryagin maximum principle is $[12, 6]$. Let us check that integrating the flow from $(t_0, x_0) = (0, [-1, 0])$ to the final time $t_f$ we reach the target $x_f = [0, 0]$.
+Now we have the flow of the associated Hamiltonian vector field, we can use it. Some simple calculations shows that the initial covector $p(0)$ solution of the Pontryagin maximum principle is $[12, 6]$. Let us check that integrating the flow from $(t_0, x_0, p_0) = (0, [-1, 0], [12, 6])$ to the final time $t_f$ we reach the target $x_f = [0, 0]$.
 
 ```@example main
 p0 = [12, 6]
@@ -107,8 +111,8 @@ nothing # hide
 ```
 
 In this case, you obtain a data that you can plot exactly like when solving the optimal control problem 
-with the function `solve`. See for instance the [basic example](@ref tutorial-basic-solve-plot) or the 
-[plot tutorial](@ref tutorial-plot).
+with the function [`solve`](@ref). See for instance the [basic example](@ref example-double-integrator-energy-solve-plot) or the 
+[plot tutorial](@ref manual-plot).
 
 ```@example main
 using Plots
@@ -123,7 +127,7 @@ time_grid(sol)
 
 !!! note "Time grid"
 
-    The function [`time_grid`](@ref) returns the discretized time grid returned by the solver. In this case, the solution has been computed by numerical integration with an adaptive step-length Runge-Kutta scheme.
+    The function [`time_grid`](@ref) returns the discretised time grid returned by the solver. In this case, the solution has been computed by numerical integration with an adaptive step-length Runge-Kutta scheme.
 
 To have a better visualisation (the accuracy won't change), you can provide a fine grid.
 
@@ -141,51 +145,6 @@ In the following example, the integrator will be `BS5()` and the absolute tolera
 ```@example main
 f = Flow(ocp, u; alg=BS5(), abstol=1)   # alg=BS5(), abstol=1
 xf, pf = f(t0, x0, p0, tf; abstol=1e-8) # alg=BS5(), abstol=1e-8
-```
-
-## Extremals and trajectories
-
-The pairs $(x, p)$ solution of the Hamitonian vector field are called *extremals*. We can compute some constructing the flow from the optimal control problem and the control in feedback form. Another way to compute extremals is to define explicitely the Hamiltonian.
-
-```@example main
-H(x, p, u) = p[1] * x[2] + p[2] * u - 0.5 * u^2     # pseudo-Hamiltonian
-H(x, p) = H(x, p, u(x, p))                          # Hamiltonian
-
-z = Flow(Hamiltonian(H))
-xf, pf = z(t0, x0, p0, tf)
-```
-
-You can also provide the Hamiltonian vector field.
-
-```@example main
-Hv(x, p) = [x[2], p[2]], [0.0, -p[1]]     # Hamiltonian vector field
-
-z = Flow(HamiltonianVectorField(Hv))
-xf, pf = z(t0, x0, p0, tf)
-```
-
-Note that if you call the flow on `tspan=(t0, tf)`, then you obtain the output solution 
-from OrdinaryDiffEq.jl.
-
-```@example main
-sol = z((t0, tf), x0, p0)
-xf, pf = sol(tf)[1:2], sol(tf)[3:4]
-```
-
-You can also compute trajectories from the control dynamics $(x, u) \mapsto (v, u)$ and a control law 
-$t \mapsto u(t)$.
-
-```@example main
-u(t) = 6-12t
-x = Flow((t, x) -> [x[2], u(t)]; autonomous=false) # the vector field depends on t
-x(t0, x0, tf)
-```
-
-Again, giving a `tspan` you get an output solution from OrdinaryDiffEq.jl.
-
-```@example main
-sol = x((t0, tf), x0)
-plot(sol)
 ```
 
 ## Non-autonomous case
@@ -220,7 +179,13 @@ The pseudo-Hamiltonian of this problem is
     H(t, x, p, u) = p\, u\, (1+\tan\, t) + p^0 u^2 /2,
 ```
 
-where $p^0 = -1$ since we are in the normal case. From the Pontryagin maximum principle, the maximising control is given in feedback form by
+where $p^0 = -1$ since we are in the normal case. We can notice that the pseudo-Hamiltonian is non-autonomous since it explicitely depends on the time $t$. 
+
+```@example main
+is_autonomous(ocp)
+```
+
+From the Pontryagin maximum principle, the maximising control is given in feedback form by
 
 ```math
 u(t, x, p) = p\, (1+\tan\, t)

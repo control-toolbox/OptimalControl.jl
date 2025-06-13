@@ -1,9 +1,5 @@
 # OptimalControl.jl
 
-```@meta
-CurrentModule =  OptimalControl
-```
-
 The OptimalControl.jl package is the root package of the [control-toolbox ecosystem](https://github.com/control-toolbox). The control-toolbox ecosystem gathers Julia packages for mathematical control and applications. It aims to provide tools to model and solve optimal control problems with ordinary differential equations by direct and indirect methods.
 
 ## Installation
@@ -28,21 +24,20 @@ ocp = @def begin
     t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
-    x(0) == [ -1, 0 ]
-    x(1) == [ 0, 0 ]
-    ẋ(t) == [ x₂(t), u(t) ]
+    x(0) == [-1, 0]
+    x(1) == [0, 0]
+    ẋ(t) == [x₂(t), u(t)]
     ∫( 0.5u(t)^2 ) → min
 end
 
 sol = solve(ocp)
-
 plot(sol)
 ```
 
-- For more details about this problem, please check the [basic example tutorial](@ref tutorial-double-integrator-energy). 
-- For a comprehensive introduction to the syntax used above to describe the optimal control problem, check the [abstract syntax tutorial](@ref tutorial-abstract-syntax). 
-- The `solve` function has options, see the [solve tutorial](@ref tutorial-solve).
-- You can customise the plot, see the [plot tutorial](@ref tutorial-plot).
+- For more details, see the [basic example tutorial](@ref example-double-integrator-energy).  
+- The [`@def`](@ref) macro defines the problem. See the [abstract syntax tutorial](@ref manual-abstract-syntax).  
+- The [`solve`](@ref) function has many options. See the [solve tutorial](@ref manual-solve).  
+- The [`plot`](@ref) function is flexible. See the [plot tutorial](@ref manual-plot).
 
 ## Citing us
 
