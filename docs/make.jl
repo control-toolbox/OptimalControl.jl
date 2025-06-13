@@ -81,7 +81,7 @@ cp("./docs/Project.toml", "./docs/src/assets/Project.toml"; force=true)
 repo_url = "github.com/control-toolbox/OptimalControl.jl"
 
 makedocs(;
-    draft=true, # if draft is true, then the julia code from .md is not executed
+    draft=false, # if draft is true, then the julia code from .md is not executed
     # to disable the draft mode in a specific markdown file, use the following:
     # ```@meta
     # Draft = false
@@ -109,6 +109,7 @@ makedocs(;
             "Solve a problem" => "manual-solve.md",
             "Plot a solution" => "manual-plot.md",
             "Compute flows" => [
+                "Getting started" => "manual-flow-api.md",
                 "From optimal control problems" => "manual-flow-ocp.md",
                 "From Hamiltonian and others" => "manual-flow-others.md",
             ],

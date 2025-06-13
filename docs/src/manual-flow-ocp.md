@@ -7,10 +7,6 @@ Draft = true
 
 In this tutorial, we explain the `Flow` function, in particular to compute flows from an optimal control problem.
 
-```@docs; canonical=false
-Flow
-```
-
 ## Basic usage
 
 Les us define a basic optimal control problem.
