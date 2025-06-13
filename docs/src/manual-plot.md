@@ -37,7 +37,7 @@ You can plot solutions obtained from the `solve` function or from a flow compute
 
 To overlay a new plot on an existing one, use the `plot!` function (see [Add a plot](@ref manual-plot-add)).
 
-If you prefer full control over the visualisation, you can extract the state, costate, and control to create your own plots. Refer to the [Custom plot](@ref manual-plot-custom) section for guidance.
+If you prefer full control over the visualisation, you can extract the state, costate, and control to create your own plots. Refer to the [Custom plot](@ref manual-plot-custom) section for guidance. You can also access the subplots.
 
 ## The problem and the solution
 
@@ -166,7 +166,7 @@ end # hide
 ```
 
 ```@example main
-plot(sol, size=(700, 450), legend=:bottomright, grid=false, linewidth=2)
+plot(sol, size=(700, 450), label="sol", legend=:bottomright, grid=false, linewidth=2)
 ```
 
 To specify series attributes for a specific group of subplots (state, costate or control), you can use the optional keyword arguments `state_style`, `costate_style`, and `control_style`, which correspond to the state, costate, and control trajectories, respectively.
@@ -298,7 +298,7 @@ You can also plot the control and is norm.
 plot(sol; control=:all, layout=:group)
 ```
 
-## [Custom plot](@id manual-plot-custom)
+## [Custom plot and subplots](@id manual-plot-custom)
 
 You can, of course, create your own plots by extracting the `state`, `costate`, and `control` from the optimal control solution. For instance, let us plot the norm of the control.
 
@@ -313,15 +313,24 @@ You can also get access to the subplots. The order is as follows: state, costate
 
 ```@example main
 plt = plot(sol)
-plt[2] # x₂
+plot(plt[1]) # x₁
 ```
 
 ```@example main
-plt[4] # p₂
+plt = plot(sol)
+plot(plt[2]) # x₂
+```
+```@example main
+plt = plot(sol)
+plot(plt[3]) # p₁
 ```
 
 ```@example main
-plt[5] # u
+plot(plt[4]) # p₂
+```
+
+```@example main
+plot(plt[5]) # u
 ```
 
 ## [Normalised time](@id manual-plot-time)
