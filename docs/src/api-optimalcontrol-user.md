@@ -4,7 +4,21 @@
 CollapsedDocStrings = false
 ```
 
-[OptimalControl.jl](https://github.com/control-toolbox/OptimalControl.jl) is the root package of the [control-toolbox ecosystem](https://github.com/control-toolbox).
+[OptimalControl.jl](https://github.com/control-toolbox/OptimalControl.jl) is the core package of the [control-toolbox ecosystem](https://github.com/control-toolbox). Below, we group together all the functions exported by OptimalControl.
+
+!!! tip "Beware!"
+
+    Even if the following functions are prefixed by another package, such as `CTFlows.Lift`, they can all be used with OptimalControl. In fact, all functions prefixed with another package are simply reexported. For example, `Lift` is defined in CTFlows but accessible from OptimalControl.
+
+    ```julia-repl
+    julia> using OptimalControl
+    julia> F(x) = 2x
+    julia> H = Lift(F)
+    julia> x = 1
+    julia> p = 2
+    julia> H(x, p)
+    4
+    ```
 
 ## Index
 
