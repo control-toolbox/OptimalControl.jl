@@ -8,12 +8,12 @@ The [CTFlows.jl](https://github.com/control-toolbox/CTFlows.jl) package is part 
 
 ```mermaid
 flowchart TD
-B(<a href='https://control-toolbox.org/OptimalControl.jl/stable/api-ctbase.html'>CTBase</a>)
-M(<a href='https://control-toolbox.org/OptimalControl.jl/stable/api-ctmodels.html'>CTModels</a>)
-P(<a href='https://control-toolbox.org/OptimalControl.jl/stable/api-ctparser.html'>CTParser</a>)
-O(<a href='https://control-toolbox.org/OptimalControl.jl/stable/api-optimalcontrol-dev.html'>OptimalControl</a>)
-D(<a href='https://control-toolbox.org/OptimalControl.jl/stable/api-ctdirect.html'>CTDirect</a>)
-F(<a href='https://control-toolbox.org/OptimalControl.jl/stable/api-ctflows.html'>CTFlows</a>)
+B(<a href='api-ctbase.html'>CTBase</a>)
+M(<a href='api-ctmodels.html'>CTModels</a>)
+P(<a href='api-ctparser.html'>CTParser</a>)
+O(<a href='api-optimalcontrol-dev.html'>OptimalControl</a>)
+D(<a href='api-ctdirect.html'>CTDirect</a>)
+F(<a href='api-ctflows.html'>CTFlows</a>)
 O --> D
 O --> M
 O --> F
@@ -29,4 +29,4 @@ M --> B
 style F fill:#FBF275
 ```
 
-OptimalControl heavily relies on CTDirect. Refer to the [CTDirect API documentation](https://control-toolbox.org/CTFlows.jl) for more details.
+OptimalControl heavily relies on CTFlows. Refer to the [CTFlows API documentation](@extref CTFlows index) for more details.

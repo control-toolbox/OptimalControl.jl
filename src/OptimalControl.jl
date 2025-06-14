@@ -1,9 +1,5 @@
 """
-[`OptimalControl`](@ref) module.
-
-Lists all the imported modules and packages:
-
-$(IMPORTS)
+OptimalControl module.
 
 List of all the exported names:
 

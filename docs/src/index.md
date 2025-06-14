@@ -11,6 +11,10 @@ using Pkg
 Pkg.add("OptimalControl")
 ```
 
+!!! tip
+
+    If you are new to Julia, please follow this [guidelines](https://github.com/orgs/control-toolbox/discussions/64).
+
 ## Basic usage
 
 Let us model, solve and plot a simple optimal control problem.
