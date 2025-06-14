@@ -56,6 +56,9 @@ julia> ]
 pkg> add OptimalControl
 ```
 
+> [!TIP]
+> If you are new to Julia, please follow this [guidelines](https://github.com/orgs/control-toolbox/discussions/64).
+
 ## Basic usage
 
 Let us model and solve a simple optimal control problem, then plot the solution:
