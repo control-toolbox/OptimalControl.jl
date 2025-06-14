@@ -20,30 +20,30 @@ using NLPModelsKnitro
 #
 links = InterLinks(
     "CTDirect" => (
-            "https://control-toolbox.org/CTDirect.jl/stable/",
-            "https://control-toolbox.org/CTDirect.jl/stable/objects.inv",
-            joinpath(@__DIR__, "inventories", "CTDirect.toml")
-        ),
+        "https://control-toolbox.org/CTDirect.jl/stable/",
+        "https://control-toolbox.org/CTDirect.jl/stable/objects.inv",
+        joinpath(@__DIR__, "inventories", "CTDirect.toml"),
+    ),
     "ADNLPModels" => (
-            "https://jso.dev/ADNLPModels.jl/stable/",
-            "https://jso.dev/ADNLPModels.jl/stable/objects.inv",
-            joinpath(@__DIR__, "inventories", "ADNLPModels.toml")
-        ),
+        "https://jso.dev/ADNLPModels.jl/stable/",
+        "https://jso.dev/ADNLPModels.jl/stable/objects.inv",
+        joinpath(@__DIR__, "inventories", "ADNLPModels.toml"),
+    ),
     "NLPModelsIpopt" => (
-            "https://jso.dev/NLPModelsIpopt.jl/stable/",
-            "https://jso.dev/NLPModelsIpopt.jl/stable/objects.inv",
-            joinpath(@__DIR__, "inventories", "NLPModelsIpopt.toml")
-        ),
+        "https://jso.dev/NLPModelsIpopt.jl/stable/",
+        "https://jso.dev/NLPModelsIpopt.jl/stable/objects.inv",
+        joinpath(@__DIR__, "inventories", "NLPModelsIpopt.toml"),
+    ),
     "MadNLP" => (
-            "https://madnlp.github.io/MadNLP.jl/stable/",
-            "https://madnlp.github.io/MadNLP.jl/stable/objects.inv",
-            joinpath(@__DIR__, "inventories", "MadNLP.toml")
-        ),
+        "https://madnlp.github.io/MadNLP.jl/stable/",
+        "https://madnlp.github.io/MadNLP.jl/stable/objects.inv",
+        joinpath(@__DIR__, "inventories", "MadNLP.toml"),
+    ),
     "Tutorials" => (
-            "https://control-toolbox.org/Tutorials.jl/stable/",
-            "https://control-toolbox.org/Tutorials.jl/stable/objects.inv",
-            joinpath(@__DIR__, "inventories", "Tutorials.toml")
-        ),
+        "https://control-toolbox.org/Tutorials.jl/stable/",
+        "https://control-toolbox.org/Tutorials.jl/stable/objects.inv",
+        joinpath(@__DIR__, "inventories", "Tutorials.toml"),
+    ),
 )
 
 # to add docstrings from external packages
@@ -55,20 +55,20 @@ const CTSolveExtIpopt = Base.get_extension(CTDirect, :CTSolveExtIpopt)
 const CTSolveExtKnitro = Base.get_extension(CTDirect, :CTSolveExtKnitro)
 const CTSolveExtMadNLP = Base.get_extension(CTDirect, :CTSolveExtMadNLP)
 Modules = [
-    CTBase, 
-    CTFlows, 
-    CTDirect, 
-    CTModels, 
-    CTParser, 
-    OptimalControl, 
-    CTFlowsODE, 
-    CTModelsPlots, 
-    CTModelsJSON, 
+    CTBase,
+    CTFlows,
+    CTDirect,
+    CTModels,
+    CTParser,
+    OptimalControl,
+    CTFlowsODE,
+    CTModelsPlots,
+    CTModelsJSON,
     CTModelsJLD,
     CTSolveExtIpopt,
     CTSolveExtKnitro,
     CTSolveExtMadNLP,
-    ]
+]
 for Module in Modules
     isnothing(DocMeta.getdocmeta(Module, :DocTestSetup)) &&
         DocMeta.setdocmeta!(Module, :DocTestSetup, :(using $Module); recursive=true)
