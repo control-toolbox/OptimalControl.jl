@@ -4,7 +4,7 @@
 CollapsedDocStrings = false
 ```
 
-[OptimalControl.jl](https://github.com/control-toolbox/OptimalControl.jl) is the core package of the [control-toolbox ecosystem](https://github.com/control-toolbox). Below, we group together all the functions exported by OptimalControl.
+[OptimalControl.jl](https://github.com/control-toolbox/OptimalControl.jl) is the core package of the [control-toolbox ecosystem](https://github.com/control-toolbox). Below, we group together the documentation of all the functions and types exported by OptimalControl.
 
 !!! tip "Beware!"
 
@@ -20,7 +20,7 @@ CollapsedDocStrings = false
     4
     ```
 
-## Exported functions
+## Exported functions and types
 
 ```@autodocs
 Modules = [OptimalControl]
