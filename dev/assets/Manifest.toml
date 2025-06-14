@@ -198,9 +198,9 @@ weakdeps = ["MadNLP", "NLPModelsKnitro"]
 
 [[deps.CTFlows]]
 deps = ["CTBase", "CTModels", "DocStringExtensions", "ForwardDiff", "LinearAlgebra", "MLStyle", "MacroTools"]
-git-tree-sha1 = "b55af9b73a945cb900ceed3fea3bd93b86fcc258"
+git-tree-sha1 = "02ff3ee4265a192d616dbb9c7a7f5db25f444e9a"
 uuid = "1c39547c-7794-42f7-af83-d98194f657c2"
-version = "0.8.5"
+version = "0.8.6"
 weakdeps = ["OrdinaryDiffEq"]
 
     [deps.CTFlows.extensions]
