@@ -180,9 +180,9 @@ version = "0.2.6"
 
 [[deps.CTBase]]
 deps = ["DocStringExtensions"]
-git-tree-sha1 = "1e0fb19f883cda373412fd40f2ccad71758cb876"
+git-tree-sha1 = "ebc7d07d0bf4db7a841c5e7d51b4271bcf1e921c"
 uuid = "54762871-cc72-4466-b8e8-f6c8b58076cd"
-version = "0.16.1"
+version = "0.16.2"
 
 [[deps.CTDirect]]
 deps = ["ADNLPModels", "CTBase", "CTModels", "CTParser", "DocStringExtensions", "HSL", "MKL", "NLPModelsIpopt", "SparseArrays"]
@@ -208,9 +208,9 @@ weakdeps = ["OrdinaryDiffEq"]
 
 [[deps.CTModels]]
 deps = ["CTBase", "DocStringExtensions", "Interpolations", "LinearAlgebra", "MLStyle", "MacroTools", "OrderedCollections", "Parameters", "PrettyTables", "RecipesBase"]
-git-tree-sha1 = "dec8ae920442bbb4deedb9ca40619c58702b94a5"
+git-tree-sha1 = "73b95a01af8369b5b08d1ecf3edf6b0bb79ce2c3"
 uuid = "34c4fa32-2049-4079-8329-de33c2a22e2d"
-version = "0.5.3"
+version = "0.5.4"
 weakdeps = ["JLD2", "JSON3", "Plots"]
 
     [deps.CTModels.extensions]
