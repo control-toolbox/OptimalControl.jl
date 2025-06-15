@@ -20,30 +20,30 @@ using NLPModelsKnitro
 #
 links = InterLinks(
     "CTBase" => (
-            "https://control-toolbox.org/CTBase.jl/stable/",
-            "https://control-toolbox.org/CTBase.jl/stable/objects.inv",
-            joinpath(@__DIR__, "inventories", "CTBase.toml")
-        ),
+        "https://control-toolbox.org/CTBase.jl/stable/",
+        "https://control-toolbox.org/CTBase.jl/stable/objects.inv",
+        joinpath(@__DIR__, "inventories", "CTBase.toml"),
+    ),
     "CTDirect" => (
-            "https://control-toolbox.org/CTDirect.jl/stable/",
-            "https://control-toolbox.org/CTDirect.jl/stable/objects.inv",
-            joinpath(@__DIR__, "inventories", "CTDirect.toml")
-        ),
+        "https://control-toolbox.org/CTDirect.jl/stable/",
+        "https://control-toolbox.org/CTDirect.jl/stable/objects.inv",
+        joinpath(@__DIR__, "inventories", "CTDirect.toml"),
+    ),
     "CTFlows" => (
-            "https://control-toolbox.org/CTFlows.jl/stable/",
-            "https://control-toolbox.org/CTFlows.jl/stable/objects.inv",
-            joinpath(@__DIR__, "inventories", "CTFlows.toml")
-        ),
+        "https://control-toolbox.org/CTFlows.jl/stable/",
+        "https://control-toolbox.org/CTFlows.jl/stable/objects.inv",
+        joinpath(@__DIR__, "inventories", "CTFlows.toml"),
+    ),
     "CTModels" => (
-            "https://control-toolbox.org/CTModels.jl/stable/",
-            "https://control-toolbox.org/CTModels.jl/stable/objects.inv",
-            joinpath(@__DIR__, "inventories", "CTModels.toml")
-        ),
+        "https://control-toolbox.org/CTModels.jl/stable/",
+        "https://control-toolbox.org/CTModels.jl/stable/objects.inv",
+        joinpath(@__DIR__, "inventories", "CTModels.toml"),
+    ),
     "CTParser" => (
-            "https://control-toolbox.org/CTParser.jl/stable/",
-            "https://control-toolbox.org/CTParser.jl/stable/objects.inv",
-            joinpath(@__DIR__, "inventories", "CTParser.toml")
-        ),
+        "https://control-toolbox.org/CTParser.jl/stable/",
+        "https://control-toolbox.org/CTParser.jl/stable/objects.inv",
+        joinpath(@__DIR__, "inventories", "CTParser.toml"),
+    ),
     "ADNLPModels" => (
         "https://jso.dev/ADNLPModels.jl/stable/",
         "https://jso.dev/ADNLPModels.jl/stable/objects.inv",
