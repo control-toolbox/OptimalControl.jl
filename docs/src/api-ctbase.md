@@ -29,4 +29,4 @@ M --> B
 style B fill:#FBF275
 ```
 
-OptimalControl heavily relies on CTBase. Refer to the [CTBase API documentation](@extref CTBase index) for more details.
+OptimalControl heavily relies on CTBase. We refer to [CTBase API](@extref CTBase index) for more details.

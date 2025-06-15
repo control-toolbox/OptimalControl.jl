@@ -29,4 +29,4 @@ M --> B
 style P fill:#FBF275
 ```
 
-OptimalControl heavily relies on CTParser. Refer to the [CTParser API documentation](@extref CTParser index) for more details.
+OptimalControl heavily relies on CTParser. We refer to [CTParser API](@extref CTParser index) for more details.

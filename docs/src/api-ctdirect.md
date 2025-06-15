@@ -29,4 +29,4 @@ M --> B
 style D fill:#FBF275
 ```
 
-OptimalControl heavily relies on CTDirect. Refer to the [CTDirect API documentation](@extref CTDirect index) for more details.
+OptimalControl heavily relies on CTDirect. We refer to [CTDirect API](@extref CTDirect index) for more details.

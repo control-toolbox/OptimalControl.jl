@@ -70,15 +70,12 @@ Poisson
 Solution
 VectorField
 available_methods
-boundary_constraints_dual
 build_OCP_solution
 constraint
+constraints
 constraints_violation
 control
 control_components
-control_constraints_box
-control_constraints_lb_dual
-control_constraints_ub_dual
 control_dimension
 control_name
 costate
@@ -91,6 +88,7 @@ dynamics
 export_ocp_solution
 final_time
 final_time_name
+get_build_examodel
 has_fixed_final_time
 has_fixed_initial_time
 has_free_final_time
@@ -107,26 +105,20 @@ lagrange
 mayer
 message
 objective
-path_constraints_dual
 plot(::Solution, ::Symbol...)
 plot!(::Plots.Plot, ::Solution, ::Symbol...)
 set_initial_guess
 solve(::Model, ::Symbol...)
 state
 state_components
-state_constraints_box
-state_constraints_lb_dual
-state_constraints_ub_dual
 state_dimension
 state_name
 stopping
 time_grid
 time_name
+times
 variable
 variable_components
-variable_constraints_box
-variable_constraints_lb_dual
-variable_constraints_ub_dual
 variable_dimension
 variable_name
 ⋅

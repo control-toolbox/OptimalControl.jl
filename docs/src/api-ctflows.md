@@ -29,4 +29,4 @@ M --> B
 style F fill:#FBF275
 ```
 
-OptimalControl heavily relies on CTFlows. Refer to the [CTFlows API documentation](@extref CTFlows index) for more details.
+OptimalControl heavily relies on CTFlows. We refer to [CTFlows API](@extref CTFlows index) for more details.
