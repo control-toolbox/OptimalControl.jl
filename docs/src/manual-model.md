@@ -129,7 +129,7 @@ definition(ocp)
 
 ## [Attributes and properties](@id manual-model-attributes)
 
-More attributes can be retrived. To illustrate this, we define a more complex optimal control problem.
+Numerous attributes can be retrieved. To illustrate this, a more complex optimal control problem is defined.
 
 ```@example main
 ocp = @def begin
