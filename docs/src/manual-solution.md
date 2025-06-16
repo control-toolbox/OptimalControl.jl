@@ -1,4 +1,4 @@
-# [Properties of an optimal control solution](@id manual-solution)
+# [The optimal control solution object: structure and usage](@id manual-solution)
 
 ```@meta
 CollapsedDocStrings = false

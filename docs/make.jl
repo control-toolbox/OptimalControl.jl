@@ -131,7 +131,7 @@ makedocs(;
             "Solution characteristics" => "manual-solution.md",
             "Plot a solution" => "manual-plot.md",
             "Compute flows" => [
-                "Getting started" => "manual-flow-api.md",
+                "Flow API" => "manual-flow-api.md",
                 "From optimal control problems" => "manual-flow-ocp.md",
                 "From Hamiltonian and others" => "manual-flow-others.md",
             ],

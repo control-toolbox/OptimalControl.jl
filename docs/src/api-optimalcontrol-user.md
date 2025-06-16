@@ -28,31 +28,6 @@ Order   = [:module]
 Private = false
 ```
 
-## Index
-
-```@index
-Pages   = ["api-optimalcontrol-user.md"]
-Modules = [
-    OptimalControl,
-    CommonSolve, 
-    RecipesBase,
-    CTBase, 
-    CTDirect, 
-    CTFlows, 
-    CTModels, 
-    CTParser, 
-    CTFlowsODE, 
-    CTModelsPlots, 
-    CTModelsJSON, 
-    CTModelsJLD,
-    CTSolveExtIpopt,
-    CTSolveExtKnitro,
-    CTSolveExtMadNLP,
-]
-
-Order = [:module, :constant, :type, :function, :macro]
-```
-
 ## Documentation
 
 ```@docs; canonical=true
