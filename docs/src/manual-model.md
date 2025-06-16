@@ -29,7 +29,7 @@ This structured approach will give you a comprehensive understanding of both wha
 
 ## [Main functionalities](@id manual-model-main-functionalities)
 
-Let us define a basic optimal control problem.
+Let's define a basic optimal control problem.
 
 ```@example main
 using OptimalControl
@@ -101,7 +101,7 @@ The optimal control problem `ocp` is a [`Model`](@ref) struct.
 Model
 ```
 
-Each field can be access directly (`ocp.times`, etc) or by a getter:
+Each field can be accessed directly (`ocp.times`, etc) or by a getter:
 
 - [`times`](@ref)
 - [`state`](@ref)
@@ -152,7 +152,7 @@ nothing # hide
 
 ### Control, state and variable
 
-You can get access to the name of the control, state and variable, the names of the components and their dimensions.
+You can access the name of the control, state, and variable, along with the names of their components and their dimensions..
 
 ```@example main
 using DataFrames
@@ -194,7 +194,7 @@ push!(data,(
 
 ### Constraints
 
-The labelled constraints may be retrieved with the [`constraint`](@ref) function. The method `constraint(ocp, label)` returns a tuple of the form `(type, f, lb, ub)`.
+You can retrieve labelled constraints with the [`constraint`](@ref) function. The `constraint(ocp, label)` method returns a tuple of the form `(type, f, lb, ub)`.
 The signature of the function `f` depends on the symbol `type`. For `:boundary` and `:variable` constraints, the signature is `f(x0, xf, v)` where `x0` is the initial state, `xf` the final state and `v` the variable. For other constraints, the signature is `f(t, x, u, v)`. Here, `t` represents time, `x` the state, `u` the control, and `v` the variable.
 
 ```@example main
@@ -286,7 +286,7 @@ f⁰ = lagrange(ocp)
 f⁰(t, x, u, v)
 ```
 
-To avoid the necessity to capture exceptions, you can check the form of the objective:
+To avoid having to capture exceptions, you can check the form of the objective:
 
 ```@example main
 println("Mayer: ", has_mayer_cost(ocp))
