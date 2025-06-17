@@ -468,6 +468,22 @@ From the maximizing condition, along a boundary arc, we have $p(t) = 0$. Differe
 \mu(x) = 2x.
 ```
 
+!!! note
+
+    Within OptimalControl.jl, the constraint must be given in the form:
+    ```julia
+    c([t, ]x, u[, v])
+    ```
+    the control law in feedback form must be given as:
+    ```julia
+    u([t, ]x, p[, v])
+    ```
+    and the dual variable:
+    ```julia
+    μ([t, ]x, p[, v])
+    ```
+    The time `t` must be provided when the problem is [non-autonomous](@ref manual-model-time-dependence) and the variable `v` must be given when the optimal control problem contains a [variable](@ref manual-abstract-variable) to optimise.
+
 The optimal control is a concatenation of 3 arcs: a negative bang arc followed by a boundary arc, followed by a positive bang arc. The initial covector is approximately $p(0)=-0.982237546583301$, the first switching time is $t_1 = 0.9$, and the exit time of the boundary is $t_2 = 1.6$. Let us check this by concatenating the three flows.
 
 ```@example main

@@ -15,8 +15,6 @@ After covering these core functionalities, we'll delve into the **structure of a
 * **Is autonomous**: Does its dynamics depend explicitly on time?
 * **Has a fixed or free initial/final time**: Is the duration of the control problem predetermined or not?
 
-This structured approach will give you a comprehensive understanding of both what you can *do* with an OCP and what an OCP *is*.
-
 ---
 
 **Content**
@@ -235,6 +233,10 @@ println("lb: ", lb)
 println("ub: ", ub)
 ```
 
+!!! note
+
+    To get the dual variable (or Lagrange multiplier) associated to the constraint, use the [`dual`](@ref) method.
+
 ### Dynamics
 
 The dynamics stored in `ocp` are an [in-place function](https://docs.julialang.org/en/v1/manual/functions/#man-argument-passing) (the first argument is mutated upon call) of the form `f!(dx, t, x, u, v)`. Here, `t` represents time, `x` the state, `u` the control, and `v` the variable, with `dx` being the output value.
@@ -344,7 +346,7 @@ println("Free initial time: ", has_free_initial_time(ocp))
 println("Free final time: ", has_free_final_time(ocp))
 ```
 
-### Time dependence
+### [Time dependence](@id manual-model-time-dependence)
 
 Optimal control problems can be **autonomous** or **non-autonomous**. In an autonomous problem, neither the dynamics nor the Lagrange cost explicitly depends on the time variable.
 
