@@ -17,7 +17,7 @@ After covering these core functionalities, we'll delve into the **structure of a
 **Content**
 
 - [Main functionalities](@ref manual-solution-main-functionalities)
-- [Model struct](@ref manual-solution-struct)
+- [Solution struct](@ref manual-solution-struct)
 - [Attributes and properties](@ref manual-solution-attributes)
 
 ---
@@ -79,7 +79,7 @@ plot(sol)
 
     For more details about plotting a solution, visit the [plot manual](@ref manual-plot).
 
-## [Model struct](@id manual-solution-struct)
+## [Solution struct](@id manual-solution-struct)
 
 The solution `sol` is a [`Solution`](@ref) struct.
 
