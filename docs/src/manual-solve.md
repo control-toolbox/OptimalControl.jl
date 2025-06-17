@@ -122,7 +122,7 @@ The main options for the direct method, with their [default] values, are:
 
 For advanced usage, see:
 - [discrete continuation tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-continuation.html),
-- [NLP direct handling tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-nlp.html).
+- [NLP manipulation tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-nlp.html).
 
 !!! note
 
