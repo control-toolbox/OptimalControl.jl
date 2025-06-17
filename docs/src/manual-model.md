@@ -58,7 +58,7 @@ We can now solve the problem (for more details, visit the [solve manual](@ref ma
 
 ```@example main
 using NLPModelsIpopt
-#solve(ocp)
+solve(ocp)
 nothing # hide
 ```
 
