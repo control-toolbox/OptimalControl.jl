@@ -150,7 +150,7 @@ nothing # hide
 
 ### Control, state and variable
 
-You can access the name of the control, state, and variable, along with the names of their components and their dimensions..
+You can access the name of the control, state, and variable, along with the names of their components and their dimensions.
 
 ```@example main
 using DataFrames
