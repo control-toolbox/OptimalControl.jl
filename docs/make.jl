@@ -133,7 +133,7 @@ makedocs(;
             "Compute flows" => [
                 "Flow API" => "manual-flow-api.md",
                 "From optimal control problems" => "manual-flow-ocp.md",
-                "From Hamiltonian and others" => "manual-flow-others.md",
+                "From Hamiltonians and others" => "manual-flow-others.md",
             ],
         ],
         "API" => [
