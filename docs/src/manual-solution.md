@@ -162,7 +162,11 @@ message(sol)
 ```
 
 ```@example main
-stopping(sol)
+status(sol)
+```
+
+```@example main
+successful(sol)
 ```
 
 ### Dual variables
