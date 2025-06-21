@@ -74,9 +74,10 @@ import CTModels:
     constraints_violation,
     objective,
     iterations,
-    stopping,
+    status,
     message,
-    infos
+    infos,
+    successful
 export Model, Solution
 export constraints,
     get_build_examodel,
@@ -120,9 +121,10 @@ export constraints,
     constraints_violation,
     objective,
     iterations,
-    stopping,
+    status,
     message,
-    infos
+    infos,
+    successful
 
 # CTParser
 import CTParser: CTParser, @def
