@@ -1,6 +1,14 @@
 """
 $(TYPEDSIGNATURES)
 
+Used to set the default display toggle.
+The default value is true.
+"""
+__display() = true
+
+"""
+$(TYPEDSIGNATURES)
+
 Return the list of available methods that can be used to solve optimal control problems.
 """
 function available_methods()
@@ -94,14 +102,26 @@ julia> sol = solve(ocp, init=(state=[-0.5, 0.2], control=0.5))
     See [how to set an initial guess](@ref manual-initial-guess) for more details.
 """
 function CommonSolve.solve(
-    ocp::CTModels.Model, description::Symbol...; kwargs...
+    ocp::CTModels.Model, description::Symbol...; 
+    display::Bool=__display(),
+    kwargs...
 )::CTModels.Solution
 
     # get the full description
     method = CTBase.complete(description; descriptions=available_methods())
 
+    # display the chosen method
+    if display
+        print("▫ This is OptimalControl running with: ")
+        for (i, m) in enumerate(method)
+            sep = i == length(method) ? "." : ", "
+            printstyled(string(m) * sep, color = :cyan, bold = true)
+        end
+        println("\n")
+    end
+
     # solve the problem
     if :direct ∈ method
-        return CTDirect.solve(ocp, clean(description)...; kwargs...)
+        return CTDirect.solve(ocp, clean(description)...; display=display, kwargs...)
     end
 end
