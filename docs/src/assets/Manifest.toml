@@ -2,7 +2,7 @@
 
 julia_version = "1.11.5"
 manifest_format = "2.0"
-project_hash = "aedb19159ec43d1fc78401e06abaeeb58fd73c61"
+project_hash = "7d4f85d2337b5f21e00d34e28c924c893b293773"
 
 [[deps.ADNLPModels]]
 deps = ["ADTypes", "ForwardDiff", "LinearAlgebra", "NLPModels", "Requires", "ReverseDiff", "SparseArrays", "SparseConnectivityTracer", "SparseMatrixColorings"]
@@ -1568,7 +1568,7 @@ version = "0.5.6+0"
 deps = ["CTBase", "CTDirect", "CTFlows", "CTModels", "CTParser", "CommonSolve", "DocStringExtensions"]
 path = "/Users/ocots/Research/logiciels/dev/control-toolbox/OptimalControl"
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
-version = "1.0.4"
+version = "1.1.0"
 
 [[deps.Opus_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
