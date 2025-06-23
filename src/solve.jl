@@ -7,6 +7,19 @@ The default value is true.
 __display() = true
 
 """
+Return the version of the current module as a string.
+
+This function returns the version number defined in the `Project.toml` of the package
+to which the current module belongs. It uses `@__MODULE__` to infer the calling context.
+
+# Example
+```julia-repl
+julia> version()   # e.g., "1.2.3"
+```
+"""
+version() = string(pkgversion(@__MODULE__))
+
+"""
 $(TYPEDSIGNATURES)
 
 Return the list of available methods that can be used to solve optimal control problems.
@@ -112,12 +125,11 @@ function CommonSolve.solve(
 
     # display the chosen method
     if display
-        print("▫ This is OptimalControl running with: ")
+        print("▫ This is OptimalControl version v$(version()) running with: ")
         for (i, m) in enumerate(method)
-            sep = i == length(method) ? "." : ", "
+            sep = i == length(method) ? ".\n\n" : ", "
             printstyled(string(m) * sep, color = :cyan, bold = true)
         end
-        println("\n")
     end
 
     # solve the problem
