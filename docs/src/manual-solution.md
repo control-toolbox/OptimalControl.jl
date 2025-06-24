@@ -1,10 +1,5 @@
 # [The optimal control solution object: structure and usage](@id manual-solution)
 
-```@meta
-CollapsedDocStrings = false
-Draft = false
-```
-
 In this manual, we'll first recall the **main functionalities** you can use when working with a solution of an optimal control problem (SOL). This includes essential operations like:
 
 * **Plotting a SOL**: How to plot the optimal solution for your defined problem.
