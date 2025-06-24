@@ -257,7 +257,7 @@ In the example below, there are
     ẋ(t) == [x₂(t), u(t)]
     tf ≥ 0 
     x₂(t) ≤ 1
-    u(t)^2 ≤ 1
+    0.1 ≤ u(t)^2 ≤ 1
     ...
 end
 ```
@@ -276,7 +276,7 @@ end
     ẋ(t) == [x₂(t), u(t)]
     tf >= 0 
     x₂(t) <= 1
-    u(t)^2 <= 1
+    0.1 ≤ u(t)^2 <= 1
     ...
 end
 ```
