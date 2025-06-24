@@ -71,9 +71,11 @@ const CTFlowsODE = Base.get_extension(CTFlows, :CTFlowsODE)
 const CTModelsPlots = Base.get_extension(CTModels, :CTModelsPlots)
 const CTModelsJSON = Base.get_extension(CTModels, :CTModelsJSON)
 const CTModelsJLD = Base.get_extension(CTModels, :CTModelsJLD)
-const CTSolveExtIpopt = Base.get_extension(CTDirect, :CTSolveExtIpopt)
-const CTSolveExtKnitro = Base.get_extension(CTDirect, :CTSolveExtKnitro)
-const CTSolveExtMadNLP = Base.get_extension(CTDirect, :CTSolveExtMadNLP)
+const CTDirectExtIpopt = Base.get_extension(CTDirect, :CTDirectExtIpopt)
+const CTDirectExtKnitro = Base.get_extension(CTDirect, :CTDirectExtKnitro)
+const CTDirectExtMadNLP = Base.get_extension(CTDirect, :CTDirectExtMadNLP)
+const CTDirectExtADNLP = Base.get_extension(CTDirect, :CTDirectExtADNLP)
+const CTDirectExtExa = Base.get_extension(CTDirect, :CTDirectExtExa)
 Modules = [
     CTBase,
     CTFlows,
@@ -85,9 +87,11 @@ Modules = [
     CTModelsPlots,
     CTModelsJSON,
     CTModelsJLD,
-    CTSolveExtIpopt,
-    CTSolveExtKnitro,
-    CTSolveExtMadNLP,
+    CTDirectExtIpopt,
+    CTDirectExtKnitro,
+    CTDirectExtMadNLP,
+    CTDirectExtADNLP,
+    CTDirectExtExa,
 ]
 for Module in Modules
     isnothing(DocMeta.getdocmeta(Module, :DocTestSetup)) &&

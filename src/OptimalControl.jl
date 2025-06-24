@@ -74,9 +74,10 @@ import CTModels:
     constraints_violation,
     objective,
     iterations,
-    stopping,
+    status,
     message,
-    infos
+    infos,
+    successful
 export Model, Solution
 export constraints,
     get_build_examodel,
@@ -120,17 +121,22 @@ export constraints,
     constraints_violation,
     objective,
     iterations,
-    stopping,
+    status,
     message,
-    infos
+    infos,
+    successful
 
 # CTParser
 import CTParser: CTParser, @def
 export @def
 
 # CTDirect
-import CTDirect: CTDirect, direct_transcription, set_initial_guess, build_OCP_solution
-export direct_transcription, set_initial_guess, build_OCP_solution
+import CTDirect: CTDirect, direct_transcription, set_initial_guess, build_OCP_solution, model
+export direct_transcription, set_initial_guess, build_OCP_solution, model
+
+# To trigger CTDirectExtADNLP and CTDirectExtExa
+using ADNLPModels
+using ExaModels
 
 # CTFlows
 import CTFlows:
@@ -160,8 +166,8 @@ export VectorField,
 
 # CommonSolve
 import CommonSolve: CommonSolve, solve
+include("solve.jl")
 export solve
 export available_methods
-include("solve.jl")
 
 end

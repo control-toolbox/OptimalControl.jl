@@ -88,7 +88,8 @@ state
 state_components
 state_dimension
 state_name
-stopping
+status
+successful
 time_grid
 time_name
 times
