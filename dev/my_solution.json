@@ -2781,6 +2781,8 @@
         0.996,
         1
     ],
+    "successful": true,
+    "status": "first_order",
     "path_constraints_dual": [
         [
         ],
@@ -3288,7 +3290,6 @@
     "variable_constraints_lb_dual": [
     ],
     "iterations": 12,
-    "success": true,
     "constraints_violation": 5.636380251416995e-12,
     "state_constraints_lb_dual": [
         [
@@ -4296,8 +4297,7 @@
             0
         ]
     ],
-    "message": "undefined",
-    "stopping": "undefined",
+    "message": "generic",
     "control": [
         9.52741026341945,
         9.450546804125118,
