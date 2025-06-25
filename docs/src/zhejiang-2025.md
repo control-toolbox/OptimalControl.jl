@@ -42,7 +42,7 @@ plus boundary, control and state constraints
 
 ## Future
 
-- New applications (pace mechanics, biology, quantum mechanics and more)
+- New applications (space mechanics, biology, quantum mechanics and more)
 - Additional solvers: optimisation on GPU, direct shooting, collocation for BVP, Hamiltonian pathfollowing...
 - ... and open to contributions! If you like the package, please give us a star ⭐️
 
