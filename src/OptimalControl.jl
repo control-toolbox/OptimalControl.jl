@@ -131,7 +131,8 @@ import CTParser: CTParser, @def
 export @def
 
 # CTDirect
-import CTDirect: CTDirect, direct_transcription, set_initial_guess, build_OCP_solution, model
+import CTDirect:
+    CTDirect, direct_transcription, set_initial_guess, build_OCP_solution, model
 export direct_transcription, set_initial_guess, build_OCP_solution, model
 
 # To trigger CTDirectExtADNLP and CTDirectExtExa
