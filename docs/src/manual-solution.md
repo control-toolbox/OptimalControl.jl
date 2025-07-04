@@ -82,7 +82,7 @@ The solution `sol` is a [`Solution`](@ref) struct.
 Solution
 ```
 
-Each field can be accessed directly (`ocp.times`, etc) but we recommend to use the sophisticated getters we proveide: the `state(sol::Solution)` method does not return `sol.state` but a function of time that can be called at any time, not only on the grid `time_grid`.
+Each field can be accessed directly (`ocp.times`, etc) but we recommend to use the sophisticated getters we provide: the `state(sol::Solution)` method does not return `sol.state` but a function of time that can be called at any time, not only on the grid `time_grid`.
 
 ```@example main
 0.25 ∈ time_grid(sol)

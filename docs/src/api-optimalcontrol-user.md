@@ -46,7 +46,7 @@ Solution
 VectorField
 available_methods
 build_OCP_solution
-constraint
+constraint(::Model, ::Symbol)
 constraints
 constraints_violation
 control
@@ -79,7 +79,9 @@ iterations
 lagrange
 mayer
 message
-objective
+model
+objective(::Model)
+objective(::Solution)
 plot(::Solution, ::Symbol...)
 plot!(::Plots.Plot, ::Solution, ::Symbol...)
 set_initial_guess
@@ -93,7 +95,8 @@ successful
 time_grid
 time_name
 times
-variable
+variable(::Model)
+variable(::Solution)
 variable_components
 variable_dimension
 variable_name
