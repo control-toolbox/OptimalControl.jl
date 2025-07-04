@@ -11,6 +11,7 @@ using CommonSolve
 using OrdinaryDiffEq
 using DocumenterInterLinks
 using ADNLPModels
+using ExaModels
 using NLPModelsIpopt
 using MadNLP
 using JSON3
@@ -53,6 +54,11 @@ links = InterLinks(
         "https://jso.dev/NLPModelsIpopt.jl/stable/",
         "https://jso.dev/NLPModelsIpopt.jl/stable/objects.inv",
         joinpath(@__DIR__, "inventories", "NLPModelsIpopt.toml"),
+    ),
+    "ExaModels" => (
+        "https://exanauts.github.io/ExaModels.jl/stable/",
+        "https://exanauts.github.io/ExaModels.jl/stable/objects.inv",
+        joinpath(@__DIR__, "inventories", "ExaModels.toml"),
     ),
     "MadNLP" => (
         "https://madnlp.github.io/MadNLP.jl/stable/",

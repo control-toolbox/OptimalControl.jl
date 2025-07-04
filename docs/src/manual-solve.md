@@ -28,7 +28,7 @@ ocp = @def begin
     x(t0) == x0
     x(tf) == [0, 0]
     ẋ(t)  == [v(t), u(t)]
-    ∫( 0.5u(t)^2 ) → min
+    0.5∫( u(t)^2 ) → min
 end
 nothing # hide
 ```
@@ -81,17 +81,33 @@ solve(ocp, :direct, :adnlp, :ipopt)
     - `:direct`: currently, only the so-called [direct approach](https://en.wikipedia.org/wiki/Optimal_control#Numerical_methods_for_optimal_control) is implemented. Direct methods discretise the original optimal control problem and solve the resulting NLP. In this case, the main `solve` method redirects to [`CTDirect.solve`](@extref).
 2. The second symbol refers to the NLP modeler. The possible values are:
     - `:adnlp`: the NLP problem is modeled by a [`ADNLPModels.ADNLPModel`](@extref). It provides automatic differentiation (AD)-based models that follow the [NLPModels.jl](https://github.com/JuliaSmoothOptimizers/NLPModels.jl) API.
+    - `:exa`: the NLP problem is modeled by a [`ExaModels.ExaModel`](@extref). It provides automatic differentiation and [SIMD](https://en.wikipedia.org/wiki/Single_instruction,_multiple_data) abstraction.
 3. The third symbol specifies the NLP solver. Possible values are:
    - `:ipopt`: calls [`NLPModelsIpopt.ipopt`](@extref) to solve the NLP problem.
    - `:madnlp`: creates a [MadNLP.MadNLPSolver](@extref) instance from the NLP problem and solve it. [MadNLP.jl](https://madnlp.github.io/MadNLP.jl) is an open-source solver in Julia implementing a filter line-search interior-point algorithm like Ipopt.
    - `:knitro`: uses the [Knitro](https://www.artelys.com/solvers/knitro/) solver (license required).
 
+!!! warning
 
-For instance, let us try MadNLP.jl.
+    The dynamics must be defined coordinatewise to use ExaModels.jl (`:exa`).
+
+For instance, let us try MadNLP solver with ExaModel modeller.
 
 ```@example main
 using MadNLP
-solve(ocp, :madnlp)
+
+ocp = @def begin
+    t ∈ [ t0, tf ], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    x(t0) == x0
+    x(tf) == [0, 0]
+    ∂(q)(t) == v(t)
+    ∂(v)(t) == u(t)
+    0.5∫( u(t)^2 ) → min
+end
+
+solve(ocp, :exa, :madnlp)
 nothing # hide
 ```
 
@@ -134,12 +150,12 @@ In addition to these options, all remaining keyword arguments passed to `solve` 
 
 Please check the list of [Ipopt options](https://coin-or.github.io/Ipopt/OPTIONS.html) and the [NLPModelsIpopt.jl documentation](https://jso.dev/NLPModelsIpopt.jl).
 ```@example main
-sol = solve(ocp; max_iter=0, display=false)
+sol = solve(ocp; max_iter=0, tol=1e-6, display=false)
 iterations(sol)
 ```
 
 Similarly, please check the [MadNLP.jl documentation](https://madnlp.github.io/MadNLP.jl) and the list of [MadNLP.jl options](https://madnlp.github.io/MadNLP.jl/stable/options/).
 ```@example main
-sol = solve(ocp, :madnlp; max_iter=0, display=false)
+sol = solve(ocp, :madnlp; max_iter=0, tol=1e-6, display=false)
 iterations(sol)
 ```
