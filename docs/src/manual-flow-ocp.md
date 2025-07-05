@@ -36,7 +36,7 @@ nothing # hide
 The **pseudo-Hamiltonian** of this problem is
 
 ```math
-    H(x, p, u) = p_q\, q + p_v\, v + p^0 u^2 /2,
+    H(x, p, u) = p_q\, v + p_v\, u + p^0 u^2 /2,
 ```
 
 where $p^0 = -1$ since we are in the normal case. From the Pontryagin maximum principle, the maximising control is given in feedback form by
