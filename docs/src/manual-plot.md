@@ -205,7 +205,7 @@ The previous solution of the optimal control problem was obtained using the [`so
 
 !!! tip "Interactions with an optimal control solution"
 
-    Please check [`state`](@ref), [`costate`](@ref), [`control`](@ref), and [`variable`](@ref) to retrieve data from the solution. The functions `state`, `costate`, and `control` return functions of time, while `variable` returns a vector.
+    Please check [`state`](@ref), [`costate`](@ref), [`control`](@ref), and [`variable`](@ref variable(::Solution)) to retrieve data from the solution. The functions `state`, `costate`, and `control` return functions of time, while `variable` returns a vector.
 
 ```@example main
 using OrdinaryDiffEq

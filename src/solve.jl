@@ -115,9 +115,7 @@ julia> sol = solve(ocp, init=(state=[-0.5, 0.2], control=0.5))
     See [how to set an initial guess](@ref manual-initial-guess) for more details.
 """
 function CommonSolve.solve(
-    ocp::CTModels.Model, description::Symbol...; 
-    display::Bool=__display(),
-    kwargs...
+    ocp::CTModels.Model, description::Symbol...; display::Bool=__display(), kwargs...
 )::CTModels.Solution
 
     # get the full description
@@ -128,7 +126,7 @@ function CommonSolve.solve(
         print("▫ This is OptimalControl version v$(version()) running with: ")
         for (i, m) in enumerate(method)
             sep = i == length(method) ? ".\n\n" : ", "
-            printstyled(string(m) * sep, color = :cyan, bold = true)
+            printstyled(string(m) * sep; color=:cyan, bold=true)
         end
     end
 

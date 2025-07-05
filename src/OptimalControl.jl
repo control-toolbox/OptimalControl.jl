@@ -13,6 +13,16 @@ using DocStringExtensions
 import CTBase: CTBase, ParsingError
 export ParsingError
 
+# CTParser
+import CTParser: CTParser, @def
+export @def
+
+function __init__()
+    CTParser.prefix_fun!(:OptimalControl)
+    CTParser.prefix_exa!(:OptimalControl)
+    CTParser.e_prefix!(:OptimalControl)
+end
+
 # CTModels
 import CTModels:
     CTModels,
@@ -22,7 +32,7 @@ import CTModels:
     state!,
     control!,
     dynamics!,
-    constraint!,
+    #    constraint!,
     objective!,
     definition!,
     time_dependence!,
@@ -51,7 +61,7 @@ import CTModels:
     control_dimension,
     control_components,
     control_name,
-    constraint,
+    #    constraint,
     dynamics,
     mayer,
     lagrange,
@@ -65,14 +75,13 @@ import CTModels:
     is_autonomous,
     export_ocp_solution,
     import_ocp_solution,
-    constraint,
     time_grid,
     control,
     state,
-    variable,
+    #    variable,
     costate,
     constraints_violation,
-    objective,
+    #    objective,
     iterations,
     status,
     message,
@@ -98,7 +107,7 @@ export constraints,
     control_dimension,
     control_components,
     control_name,
-    constraint,
+    #    constraint,
     dynamics,
     mayer,
     lagrange,
@@ -112,31 +121,23 @@ export constraints,
     is_autonomous,
     export_ocp_solution,
     import_ocp_solution,
-    constraint,
     time_grid,
     control,
     state,
-    variable,
+    #    variable,
     costate,
     constraints_violation,
-    objective,
+    #    objective,
     iterations,
     status,
     message,
     infos,
     successful
 
-# CTParser
-import CTParser: CTParser, @def
-export @def
-
 # CTDirect
-import CTDirect: CTDirect, direct_transcription, set_initial_guess, build_OCP_solution, model
+import CTDirect:
+    CTDirect, direct_transcription, set_initial_guess, build_OCP_solution, model
 export direct_transcription, set_initial_guess, build_OCP_solution, model
-
-# To trigger CTDirectExtADNLP and CTDirectExtExa
-using ADNLPModels
-using ExaModels
 
 # CTFlows
 import CTFlows:
@@ -163,6 +164,78 @@ export VectorField,
     Poisson,
     @Lie,
     *
+
+# To trigger CTDirectExtADNLP and CTDirectExtExa
+using ADNLPModels: ADNLPModels
+import ExaModels: ExaModels, ExaModel, ExaCore, variable, constraint, constraint!, objective
+
+# Conflicts of functions defined in several packages
+# ExaModels.variable, CTModels.variable
+# ExaModels.constraint, CTModels.constraint
+# ExaModels.constraint!, CTModels.constraint!
+# ExaModels.objective, CTModels.objective
+"""
+$(TYPEDSIGNATURES)
+
+See CTModels.variable.
+"""
+variable(ocp::Model) = CTModels.variable(ocp)
+
+"""
+$(TYPEDSIGNATURES)
+
+Return the variable or `nothing`.
+
+```@example
+julia> v = variable(sol)
+```
+"""
+variable(sol::Solution) = CTModels.variable(sol)
+
+"""
+$(TYPEDSIGNATURES)
+
+Get a labelled constraint from the model. Returns a tuple of the form
+`(type, f, lb, ub)` where `type` is the type of the constraint, `f` is the function, 
+`lb` is the lower bound and `ub` is the upper bound. 
+
+The function returns an exception if the label is not found in the model.
+
+## Arguments
+
+- `model`: The model from which to retrieve the constraint.
+- `label`: The label of the constraint to retrieve.
+
+## Returns
+
+- `Tuple`: A tuple containing the type, function, lower bound, and upper bound of the constraint.
+"""
+constraint(ocp::Model, label::Symbol) = CTModels.constraint(ocp, label)
+
+"""
+$(TYPEDSIGNATURES)
+
+See CTModels.constraint!.
+"""
+function constraint!(ocp::PreModel, type::Symbol; kwargs...)
+    CTModels.constraint!(ocp, type; kwargs...)
+end
+
+"""
+$(TYPEDSIGNATURES)
+
+See CTModels.objective.
+"""
+objective(ocp::Model) = CTModels.objective(ocp)
+
+"""
+$(TYPEDSIGNATURES)
+
+Return the objective value.
+"""
+objective(sol::Solution) = CTModels.objective(sol)
+
+export variable, constraint, objective
 
 # CommonSolve
 import CommonSolve: CommonSolve, solve
