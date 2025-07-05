@@ -11,12 +11,20 @@ println("testing: ExaModels (CPU)")
 
 @testset verbose = true showtiming = true ":examodel :cpu :trapeze" begin
     prob = beam2()
-    sol = solve(prob.ocp, :madnlp, :exa; disc_method = :trapeze, display = display)
+    sol = solve(prob.ocp, :madnlp, :exa; disc_method=:trapeze, display=display)
     @test sol.objective ≈ prob.obj rtol = 1e-2
 end
 
 @testset verbose = true showtiming = true ":examodel :cpu :euler :init" begin
     prob = beam2()
-    sol = solve(prob.ocp, :madnlp, :exa; disc_method = :euler, display = display, init=(control=6.66,), max_iter = 0)
+    sol = solve(
+        prob.ocp,
+        :madnlp,
+        :exa;
+        disc_method=:euler,
+        display=display,
+        init=(control=6.66,),
+        max_iter=0,
+    )
     @test control(sol)(0.5) == 6.66
 end
