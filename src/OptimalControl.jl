@@ -32,7 +32,7 @@ import CTModels:
     state!,
     control!,
     dynamics!,
-#    constraint!,
+    #    constraint!,
     objective!,
     definition!,
     time_dependence!,
@@ -61,7 +61,7 @@ import CTModels:
     control_dimension,
     control_components,
     control_name,
-#    constraint,
+    #    constraint,
     dynamics,
     mayer,
     lagrange,
@@ -78,10 +78,10 @@ import CTModels:
     time_grid,
     control,
     state,
-#    variable,
+    #    variable,
     costate,
     constraints_violation,
-#    objective,
+    #    objective,
     iterations,
     status,
     message,
@@ -107,7 +107,7 @@ export constraints,
     control_dimension,
     control_components,
     control_name,
-#    constraint,
+    #    constraint,
     dynamics,
     mayer,
     lagrange,
@@ -124,10 +124,10 @@ export constraints,
     time_grid,
     control,
     state,
-#    variable,
+    #    variable,
     costate,
     constraints_violation,
-#    objective,
+    #    objective,
     iterations,
     status,
     message,
@@ -166,7 +166,7 @@ export VectorField,
     *
 
 # To trigger CTDirectExtADNLP and CTDirectExtExa
-import ADNLPModels
+using ADNLPModels: ADNLPModels
 import ExaModels: ExaModels, ExaModel, ExaCore, variable, constraint, constraint!, objective
 
 # Conflicts of functions defined in several packages
@@ -217,7 +217,9 @@ $(TYPEDSIGNATURES)
 
 See CTModels.constraint!.
 """
-constraint!(ocp::PreModel, type::Symbol; kwargs...) = CTModels.constraint!(ocp, type; kwargs...)
+function constraint!(ocp::PreModel, type::Symbol; kwargs...)
+    CTModels.constraint!(ocp, type; kwargs...)
+end
 
 """
 $(TYPEDSIGNATURES)
