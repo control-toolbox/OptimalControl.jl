@@ -4,7 +4,7 @@ The full grammar of [OptimalControl.jl](https://control-toolbox.org/OptimalContr
 - pure Julia (and, as such, effortlessly analysed by the standard Julia parser),
 - as close as possible to the mathematical description of an optimal control problem. 
 
-While the syntax will be transparent to those users familiar with Julia expressions (`Expr`'s), we provide examples for every case that should be widely understandable. We rely heavily on [MLStyle.jl](https://thautwarm.github.io/MLStyle.jl) and its pattern matching abilities 👍🏽 for the semantic pass. Abstract definitions use the macro [`@def`](@ref).
+While the syntax will be transparent to those users familiar with Julia expressions (`Expr`'s), we provide examples for every case that should be widely understandable. We rely heavily on [MLStyle.jl](https://thautwarm.github.io/MLStyle.jl) and its pattern matching abilities 👍🏽 both for the syntactic and semantic pass. Abstract definitions use the macro [`@def`](@ref).
 
 ## [Variable](@id manual-abstract-variable)
 
