@@ -88,7 +88,7 @@ end</code></pre><h2 id="Constraints"><a class="docs-heading-anchor" href="#Const
     ẋ(t) == [x₂(t), u(t)]
     tf ≥ 0 
     x₂(t) ≤ 1
-    u(t)^2 ≤ 1
+    0.1 ≤ u(t)^2 ≤ 1
     ...
 end</code></pre><div class="admonition is-info" id="Note-d290e73d87669d53"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-d290e73d87669d53" title="Permalink"></a></header><div class="admonition-body"><p>Symbols like <code>&lt;=</code> or <code>&gt;=</code> are also authorised:</p></div></div><pre><code class="language-julia hljs">@def begin
     tf ∈ R, variable
@@ -100,7 +100,7 @@ end</code></pre><div class="admonition is-info" id="Note-d290e73d87669d53"><head
     ẋ(t) == [x₂(t), u(t)]
     tf &gt;= 0 
     x₂(t) &lt;= 1
-    u(t)^2 &lt;= 1
+    0.1 ≤ u(t)^2 &lt;= 1
     ...
 end</code></pre><div class="admonition is-category-caveat" id="Caveat-69bcb3abf9813d32"><header class="admonition-header">Caveat<a class="admonition-anchor" href="#Caveat-69bcb3abf9813d32" title="Permalink"></a></header><div class="admonition-body"><p>Write either <code>u(t)^2</code> or <code>(u^2)(t)</code>, not <code>u^2(t)</code> since in Julia the latter means <code>u^(2t)</code>. Moreover, in the case of equalities or of one-sided inequalities, the control and / or the state must belong to the <em>left-hand side</em>. The following will error:</p></div></div><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; @def begin
            t ∈ [0, 2], time
@@ -301,4 +301,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="example-double-integrator-time.html">« Time mininimisation</a><a class="docs-footer-nextpage" href="manual-model.html">Problem characteristics »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.13.0 on <span class="colophon-date" title="Saturday 5 July 2025 07:59">Saturday 5 July 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="example-double-integrator-time.html">« Time mininimisation</a><a class="docs-footer-nextpage" href="manual-model.html">Problem characteristics »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Friday 11 July 2025 15:59">Friday 11 July 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

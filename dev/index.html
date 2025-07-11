@@ -24,13 +24,13 @@ url = {https://control-toolbox.org/OptimalControl.jl}
 }</code></pre><h2 id="Contributing"><a class="docs-heading-anchor" href="#Contributing">Contributing</a><a id="Contributing-1"></a><a class="docs-heading-anchor-permalink" href="#Contributing" title="Permalink"></a></h2><p>If you think you found a bug or if you have a feature request / suggestion, feel free to open an <a href="https://github.com/control-toolbox/OptimalControl.jl/issues">issue</a>. Before opening a pull request, please start an issue or a discussion on the topic. </p><p>Contributions are welcomed, check out <a href="https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project">how to contribute to a Github project</a>. If it is your first contribution, you can also check <a href="https://github.com/firstcontributions/first-contributions">this first contribution tutorial</a>. You can find first good issues (if any 🙂) <a href="https://github.com/control-toolbox/OptimalControl.jl/contribute">here</a>. You may find other packages to contribute to at the <a href="https://github.com/control-toolbox">control-toolbox organization</a>.</p><p>If you want to ask a question, feel free to start a discussion <a href="https://github.com/orgs/control-toolbox/discussions">here</a>. This forum is for general discussion about this repository and the <a href="https://github.com/control-toolbox">control-toolbox organization</a>.</p><div class="admonition is-info" id="Note-7aa18abeb0899787"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-7aa18abeb0899787" title="Permalink"></a></header><div class="admonition-body"><p>If you want to add an application or a package to the control-toolbox ecosystem, please follow this <a href="https://github.com/control-toolbox/CTApp.jl/discussions/9">set up tutorial</a>.</p></div></div><h2 id="Reproducibility"><a class="docs-heading-anchor" href="#Reproducibility">Reproducibility</a><a id="Reproducibility-1"></a><a class="docs-heading-anchor-permalink" href="#Reproducibility" title="Permalink"></a></h2><details><summary>The documentation of this package was built using these direct dependencies,</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/OptimalControl.jl/OptimalControl.jl/docs/Project.toml`
   [54578032] ADNLPModels v0.8.12
   [54762871] CTBase v0.16.2
-  [790bbbee] CTDirect v0.15.1
+  [790bbbee] CTDirect v0.15.2
   [1c39547c] CTFlows v0.8.7
   [34c4fa32] CTModels v0.6.1
   [32681960] CTParser v0.5.1
   [38540f10] CommonSolve v0.2.4
   [a93c6f00] DataFrames v1.7.0
-  [e30172f5] Documenter v1.13.0
+  [e30172f5] Documenter v1.14.1
   [d12716ef] DocumenterInterLinks v1.0.0
   [a078cd44] DocumenterMermaid v0.2.0
   [1037b233] ExaModels v0.8.3
@@ -44,8 +44,8 @@ url = {https://control-toolbox.org/OptimalControl.jl}
   [91a5bcdd] Plots v1.40.16
   [fd094767] Suppressor v0.2.8
   [37e2e46d] LinearAlgebra v1.11.0
-Info Packages marked with ⌃ have new versions available and may be upgradable.</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.11.5
-Commit 760b2e5b739 (2025-04-14 06:53 UTC)
+Info Packages marked with ⌃ have new versions available and may be upgradable.</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.11.6
+Commit 9615af0f269 (2025-07-09 12:58 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
@@ -72,14 +72,14 @@ Environment:
   [70df07ce] BracketingNonlinearSolve v1.3.0
   [2a0fbf3d] CPUSummary v0.2.6
   [54762871] CTBase v0.16.2
-  [790bbbee] CTDirect v0.15.1
+  [790bbbee] CTDirect v0.15.2
   [1c39547c] CTFlows v0.8.7
   [34c4fa32] CTModels v0.6.1
   [32681960] CTParser v0.5.1
   [d360d2e6] ChainRulesCore v1.25.2
   [fb6a15b2] CloseOpenIntervals v0.1.13
   [944b1d66] CodecZlib v0.7.8
-  [35d6a980] ColorSchemes v3.29.0
+  [35d6a980] ColorSchemes v3.30.0
   [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
   [5ae59095] Colors v0.13.1
@@ -99,13 +99,13 @@ Environment:
   [864edb3b] DataStructures v0.18.22
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v6.177.1
+  [2b5f629d] DiffEqBase v6.177.2
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
-  [a0c0ee7d] DifferentiationInterface v0.7.1
+  [a0c0ee7d] DifferentiationInterface v0.7.2
   [43dc2714] DocInventories v1.0.0
   [ffbed154] DocStringExtensions v0.9.5
-  [e30172f5] Documenter v1.13.0
+  [e30172f5] Documenter v1.14.1
   [d12716ef] DocumenterInterLinks v1.0.0
   [195adf08] DocumenterInventoryWritingBackport v0.1.0
   [a078cd44] DocumenterMermaid v0.2.0
@@ -232,7 +232,7 @@ Environment:
   [f517fe37] Polyester v0.7.18
   [1d0040c9] PolyesterWeave v0.2.2
   [2dfb63ee] PooledArrays v1.4.3
-  [d236fae5] PreallocationTools v0.4.27
+  [d236fae5] PreallocationTools v0.4.28
 ⌅ [aea7be01] PrecompileTools v1.2.1
   [21216c6a] Preferences v1.4.3
   [08abe8d2] PrettyTables v2.4.0
@@ -342,8 +342,7 @@ Environment:
   [e99dba38] Qt6Wayland_jll v6.8.2+1
   [319450e9] SPRAL_jll v2025.5.20+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
-  [a2964d1f] Wayland_jll v1.23.1+2
-⌅ [02c8fc9c] XML2_jll v2.13.6+1
+  [a2964d1f] Wayland_jll v1.24.0+0
   [ffd25f8a] XZ_jll v5.8.1+0
   [f67eecfb] Xorg_libICE_jll v1.1.2+0
   [c834827a] Xorg_libSM_jll v1.2.6+0
@@ -437,4 +436,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="example-double-integrator-energy.html">Energy minimisation »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.13.0 on <span class="colophon-date" title="Saturday 5 July 2025 07:59">Saturday 5 July 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="example-double-integrator-energy.html">Energy minimisation »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Friday 11 July 2025 15:59">Friday 11 July 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
