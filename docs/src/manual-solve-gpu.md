@@ -1,4 +1,4 @@
-# [Solve on GPU](@id manual-solve)
+# [Solve on GPU](@id manual-solve-gpu)
 
 ```@meta
 CollapsedDocStrings = false
