@@ -2,6 +2,7 @@
 
 ```@meta
 CollapsedDocStrings = false
+Draft = false
 ```
 
 In this tutorial, we explain the `Flow` function, in particular to compute flows from an optimal control problem.
@@ -462,7 +463,7 @@ where $ p^0 = -1 $ since we are in the normal case, and where $c(x) = x - l_b$. 
 u(x) = 0.
 ```
 
-From the maximizing condition, along a boundary arc, we have $p(t) = 0$. Differentiating, we obtain $\dot{p}(t) = 2 x(t) - \mu(t) = 0$. Hence, along a boundary arc, the dual variable $\mu$ is given in feedback form by:
+From the maximisation condition, along a boundary arc, we have $p(t) = 0$. Differentiating, we obtain $\dot{p}(t) = 2 x(t) - \mu(t) = 0$. Hence, along a boundary arc, the dual variable $\mu$ is given in feedback form by:
 
 ```math
 \mu(x) = 2x.
@@ -502,4 +503,86 @@ f = f1 * (t1, f2) * (t2, f3)
 p0 = -0.982237546583301
 xf, pf = f(t0, x0, p0, tf)
 xf
+```
+
+## Jump on the costate
+
+Let consider the following problem:
+
+```@example main
+t0=0
+tf=1
+x0=[0, 1]
+l = 1/9
+@def ocp begin
+    t ∈ [ t0, tf ], time
+    x ∈ R², state
+    u ∈ R, control
+    x(t0) == x0
+    x(tf) == [0, -1]
+    x₁(t) ≤ l,                      (x_con)
+    ẋ(t) == [x₂(t), u(t)]
+    0.5∫(u(t)^2) → min
+end
+nothing # hide
+```
+
+The pseudo-Hamiltonian of this problem is
+
+```math
+    H(x, p, u, \mu) = p_1\, x_2 + p_2\, u + 0.5\, p^0 u^2 + \mu\, c(x),
+```
+
+where $ p^0 = -1 $ since we are in the normal case, and where the constraint is $c(x) = l - x_1 \ge 0$. Along a boundary arc, when $c(x(t)) = 0$, we have $x_1(t) = l$, so $\dot{x}_1(t) = x_2(t) = 0$. Differentiating again, we obtain $\dot{x}_2(t) = u(t) = 0$ (the constraint is of order 2). Hence, along a boundary arc, the control in feedback form is:
+
+
+```math
+u(x, p) = 0.
+```
+
+From the maximisation condition, along a boundary arc, we have $p_2(t) = 0$. Differentiating, we obtain $\dot{p}_2(t) = -p_1(t) = 0$. Differentiating again, we obtain $\dot{p}_1(t) = \mu(t) = 0$. Hence, along a boundary arc, the Lagrange multiplier $\mu$ is given in feedback form by:
+
+```math
+\mu(x, p) = 0.
+```
+
+Outside a boundary arc, the maximisation condition gives $u(x, p) = p_2$. A deeper analysis of the problem shows that the optimal solution has 3 arcs, the first and the third ones are interior to the constraint. The second arc is a boundary arc, that is $x_1(t) = l$ along the second arc. We denote by $t_1$ and $t_2$ the two switching times. We have $t_1 = 3l = 1/3$ and $t_2 = 1 - 3l = 2/3$, since $l=1/9$. The initial costate solution is $p(0) = [-18, -6]$.
+
+!!! danger "Important"
+
+    The costate is discontinuous at $t_1$ and $t_2$ with a jump of $18$.
+
+Let us compute the solution concatenating the flows with the jumps.
+
+```@example main
+t1 = 3l
+t2 = 1 - 3l
+p0 = [-18, -6]
+
+fs = Flow(ocp, 
+    (x, p) -> p[2]      # control along regular arc
+    )
+fc = Flow(ocp, 
+    (x, p) -> 0,        # control along boundary arc
+    (x, u) -> l-x[1],   # state constraint
+    (x, p) -> 0         # Lagrange multiplier
+    )
+
+ν = 18  # jump value of p1 at t1 and t2
+
+f = fs * (t1, [ν, 0], fc) * (t2, [ν, 0], fs)
+
+xf, pf = f(t0, x0, p0, tf) # xf should be [0, -1]
+```
+
+Let us solve the problem with a direct method to compare with the solution from the flow.
+
+```@example main
+using NLPModelsIpopt
+
+direct_sol = solve(ocp)
+plot(direct_sol; label="direct")
+
+flow_sol = f((t0, tf), x0, p0)
+plot!(flow_sol; label="flow")
 ```
