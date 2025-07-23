@@ -580,8 +580,8 @@ Let us solve the problem with a direct method to compare with the solution from 
 using NLPModelsIpopt
 
 direct_sol = solve(ocp)
-plot(direct_sol; label="direct")
+plot(direct_sol; label="direct", size=(800, 700))
 
-flow_sol = f((t0, tf), x0, p0)
-plot!(flow_sol; label="flow")
+flow_sol = f((t0, tf), x0, p0; saveat=range(t0, tf, 100))
+plot!(flow_sol; label="flow", state_style=(color=3,), linestyle=:dash)
 ```
