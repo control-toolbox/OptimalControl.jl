@@ -11,10 +11,11 @@ using ADNLPModels
 using NLPModelsIpopt
 using MadNLP
 
+n=2
 @def ocp begin
     tf ∈ R, variable
     t ∈ [0, tf], time
-    x ∈ R², state
+    x ∈ R^n, state
     u ∈ R, control
     -1 ≤ u(t) ≤ 1
     x(0) == [0, 0]
@@ -22,6 +23,6 @@ using MadNLP
     0.05 ≤ tf ≤ Inf
     ẋ(t) == [x₂(t), u(t)]
     tf → min
-end
+end true
 
 sol = solve(ocp, :adnlp, :ipopt; print_level=5);
