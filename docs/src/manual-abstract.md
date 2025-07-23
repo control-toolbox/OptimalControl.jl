@@ -257,7 +257,7 @@ In the example below, there are
     ẋ(t) == [x₂(t), u(t)]
     tf ≥ 0 
     x₂(t) ≤ 1
-    u(t)^2 ≤ 1
+    0.1 ≤ u(t)^2 ≤ 1
     ...
 end
 ```
@@ -276,7 +276,7 @@ end
     ẋ(t) == [x₂(t), u(t)]
     tf >= 0 
     x₂(t) <= 1
-    u(t)^2 <= 1
+    0.1 ≤ u(t)^2 <= 1
     ...
 end
 ```
@@ -471,7 +471,7 @@ end
 :( $a = $e1 )
 ```
 
-The single `=` symbol is used to define not a constraint but an alias, that is a purely syntactic replacement. There are some automatic aliases, *e.g.* `x₁` for `x[1]` if `x` is the state, and we have also seen that the user can define her own aliases when declaring the [variable](@ref manual-abstract-variable), [state](@ref manual-abstract-state) and [control](@ref manual-abstract-control). Arbitrary aliases can be further defined, as below (compare with previous examples in the [dynamics](@ref manual-abstract-dynamics) section):
+The single `=` symbol is used to define not a constraint but an alias, that is a purely syntactic replacement. There are some automatic aliases, *e.g.* `x₁` and `x1` for `x[1]` if `x` is the state (same for variable and control, for indices comprised between 1 and 9), and we have also seen that the user can define her own aliases when declaring the [variable](@ref manual-abstract-variable), [state](@ref manual-abstract-state) and [control](@ref manual-abstract-control). Arbitrary aliases can be further defined, as below (compare with previous examples in the [dynamics](@ref manual-abstract-dynamics) section):
 
 ```julia
 @def begin
