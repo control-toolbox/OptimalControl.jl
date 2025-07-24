@@ -106,8 +106,16 @@ end
 
 # For reproducibility
 mkpath(joinpath(@__DIR__, "src", "assets"))
-cp(joinpath(@__DIR__, "Manifest.toml"), joinpath(@__DIR__, "src", "assets", "Manifest.toml"), force = true)
-cp(joinpath(@__DIR__, "Project.toml"), joinpath(@__DIR__, "src", "assets", "Project.toml"), force = true)
+cp(
+    joinpath(@__DIR__, "Manifest.toml"),
+    joinpath(@__DIR__, "src", "assets", "Manifest.toml");
+    force=true,
+)
+cp(
+    joinpath(@__DIR__, "Project.toml"),
+    joinpath(@__DIR__, "src", "assets", "Project.toml");
+    force=true,
+)
 
 repo_url = "github.com/control-toolbox/OptimalControl.jl"
 
