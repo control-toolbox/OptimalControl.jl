@@ -4,5 +4,5 @@ on:
     - cron: 0 0 * * *
   workflow_dispatch:
 jobs:
-  CompatHelper:
+  call:
     uses: control-toolbox/CTActions/.github/workflows/compat-helper.yml@main

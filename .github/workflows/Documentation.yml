@@ -8,5 +8,5 @@ on:
   pull_request:
   
 jobs:
-  build:
+  call:
     uses: control-toolbox/CTActions/.github/workflows/documentation.yml@main
