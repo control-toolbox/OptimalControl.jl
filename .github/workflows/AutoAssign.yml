@@ -6,7 +6,7 @@ on:
   pull_request:
     types: [opened, reopened]
 jobs:
-  run:
+  call:
     uses: control-toolbox/CTActions/.github/workflows/auto-assign.yml@main
     with:
       assignees: ocots

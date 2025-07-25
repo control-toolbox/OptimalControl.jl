@@ -6,5 +6,5 @@ on:
     workflow_dispatch:
 
 jobs:
-  build:
+  call:
     uses: control-toolbox/CTActions/.github/workflows/formatter.yml@main
