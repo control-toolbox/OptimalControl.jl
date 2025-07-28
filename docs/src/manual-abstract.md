@@ -44,22 +44,6 @@ A one dimensional variable can be declared according to
 end
 ```
 
-!!! note
-    It is also possible to use the following syntax
-    ```julia
-    @def ocp begin
-        v ∈ R, variable
-        ...
-    end
-    ```
-    that is equivalent to
-    ```julia
-    ocp = @def begin
-        v ∈ R, variable
-        ...
-    end
-    ```
-
 ## Time
 
 ```julia
