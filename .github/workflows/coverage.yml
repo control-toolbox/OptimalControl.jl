@@ -6,7 +6,7 @@ on:
       - main
     tags: '*'
 jobs:
-  test:
+  call:
     uses: control-toolbox/CTActions/.github/workflows/coverage.yml@main
     secrets:
       codecov-secret: ${{ secrets.CODECOV_TOKEN }}
