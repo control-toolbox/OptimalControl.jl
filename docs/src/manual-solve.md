@@ -89,7 +89,7 @@ solve(ocp, :direct, :adnlp, :ipopt)
 
 !!! warning
 
-    Dynamics and nonlinear constraints must be defined coordinatewise to use ExaModels.jl (`:exa`). Check [the problem definition section](@manual-abstract) for more information.
+    Dynamics and nonlinear constraints must be defined coordinatewise to use ExaModels.jl (`:exa`). Check [the problem definition section](@manual-abstract-syntax) for more information.
 
 For instance, let us try MadNLP solver with ExaModel modeller.
 
