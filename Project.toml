@@ -16,7 +16,7 @@ ExaModels = "1037b233-b668-4ce9-9b63-f9f681f55dd2"
 
 [compat]
 ADNLPModels = "0.8"
-CTBase = "0.16"
+CTBase = "0.15"
 CTDirect = "0.15"
 CTFlows = "0.8"
 CTModels = "0.6"
