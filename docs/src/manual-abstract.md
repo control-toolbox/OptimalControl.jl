@@ -192,7 +192,7 @@ F₁(x) = [0, 1]
 !!! note
     The vector fields `F₀` and `F₁` can be defined afterwards, as they only need to be available when the dynamics will be evaluated.
 
-Currently, it is not possible to declare the dynamics component after component, but a simple workaround is to use *aliases* (check the relevant [aliases](@ref manual-abstract-aliases) section below):
+While it is also possible to declare the dynamics component after component (see below), one may equivalently use *aliases* (check the relevant [aliases](@ref manual-abstract-aliases) section below):
 
 ```julia
 @def damped_integrator begin
@@ -207,6 +207,29 @@ Currently, it is not possible to declare the dynamics component after component,
 end
 ```
 
+## [Dynamics (coordinatewise)](@id manual-abstract-dynamics-coord)
+
+```julia
+:( ∂($x[$i])($t) == $e1 ) 
+```
+
+The dynamics can also be declared coordinate by coordinate. The previous example can be written as
+
+```julia
+@def damped_integrator begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    ∂(q)(t) == v(t)
+    ∂(v)(t) == u(t) - c(t)
+    ...
+end
+```
+
+!!! caveat
+    Declaring the dynamics coordinate by coordinate is **compulsory** when solving with the option `:exa` to rely on the ExaModels modeller (check the [solve section](@ref manual-solve)), for instance to [solve on GPU](@ref manual-solve-gpu).
+
 ## Constraints
 
 ```julia
@@ -218,7 +241,7 @@ end
 ```
 
 Admissible constraints can be
-- five types: boundary, control, state, mixed, variable,
+- of five types: boundary, variable, control, state, mixed (the last three ones are *path* constraints, that is constraints evaluated all times)
 - linear (ranges) or nonlinear (not ranges),
 - equalities or (one or two-sided) inequalities.
 
@@ -317,6 +340,9 @@ o = @def begin
     ∫( 0.5u(t)^2 ) → min
 end
 ```
+
+!!! caveat
+    When solving with the option `:exa` to rely on the ExaModels modeller (check the [solve section](@ref manual-solve)), for instance to [solve on GPU](@ref manual-solve-gpu), it is **compulsory** that *nonlinear* constraints (not ranges) are *scalar*, whatever the type (boundary, variable, controle, state, mixed).
 
 ## [Mayer cost](@id manual-abstract-mayer)
 
