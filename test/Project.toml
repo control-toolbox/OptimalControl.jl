@@ -1,6 +1,5 @@
 [deps]
 CTModels = "34c4fa32-2049-4079-8329-de33c2a22e2d"
-CTDirect = "790bbbee-bee9-49ee-8912-a9de031322d5"
 DifferentiationInterface = "a0c0ee7d-e4b9-4e03-894e-1c5f64a51d63"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
@@ -13,7 +12,6 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
 CTModels = "0.6"
-CTDirect = "0.16"
 DifferentiationInterface = "0.6"
 ForwardDiff = "0.10"
 LinearAlgebra = "1"
@@ -24,6 +22,3 @@ OrdinaryDiffEq = "6.93"
 SplitApplyCombine = "1.2"
 Test = "1"
 julia = "1.10"
-
-[sources]
-CTDirect = {url = "https://github.com/control-toolbox/CTDirect.jl", rev = "develop"}
