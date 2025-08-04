@@ -2,7 +2,7 @@
 
 julia_version = "1.11.6"
 manifest_format = "2.0"
-project_hash = "d1473c9138f25e0b4f947dedab1352c8392444b5"
+project_hash = "b07537d0ba32facd88088d12c1eeec90716599b8"
 
 [[deps.ADNLPModels]]
 deps = ["ADTypes", "ForwardDiff", "LinearAlgebra", "NLPModels", "Requires", "ReverseDiff", "SparseArrays", "SparseConnectivityTracer", "SparseMatrixColorings"]
@@ -190,9 +190,11 @@ weakdeps = ["HTTP", "JSON"]
 
 [[deps.CTDirect]]
 deps = ["CTBase", "CTModels", "DocStringExtensions", "HSL", "MKL", "SparseArrays"]
-git-tree-sha1 = "901f5c3ff8a97248751a6d307e70677eea5d1eac"
+git-tree-sha1 = "2a3a92c75f7c467c5d829a82ecf9d99112b840b4"
+repo-rev = "develop"
+repo-url = "https://github.com/control-toolbox/CTDirect.jl.git"
 uuid = "790bbbee-bee9-49ee-8912-a9de031322d5"
-version = "0.15.2"
+version = "0.16.0"
 weakdeps = ["ADNLPModels", "ExaModels", "MadNLP", "NLPModelsIpopt", "NLPModelsKnitro"]
 
     [deps.CTDirect.extensions]
@@ -226,9 +228,9 @@ weakdeps = ["JLD2", "JSON3", "Plots"]
 
 [[deps.CTParser]]
 deps = ["CTBase", "DocStringExtensions", "MLStyle", "OrderedCollections", "Parameters", "Unicode"]
-git-tree-sha1 = "4599d17d6b025c711e16107c1d7e0f32d4c28b0e"
+git-tree-sha1 = "c76927648ca8324b07f48b45c3b313033d280922"
 uuid = "32681960-a1b1-40db-9bff-a1ca817385d1"
-version = "0.5.1"
+version = "0.6.2"
 weakdeps = ["MadNLP"]
 
 [[deps.Cairo_jll]]
