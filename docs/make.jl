@@ -17,6 +17,9 @@ using MadNLP
 using JSON3
 using JLD2
 using NLPModelsKnitro
+using Pkg # debug
+
+Pkg.add("https://github.com/control-toolbox/CTDirect.jl"; rev="develop") # debug
 
 #
 links = InterLinks(
