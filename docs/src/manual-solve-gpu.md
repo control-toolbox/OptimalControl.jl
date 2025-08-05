@@ -36,7 +36,10 @@ end
 Computation on GPU is currently only tested with CUDA, and the associated backend must be passed to ExaModels as is done below (also note the `:exa` keyword to indicate the modeller, and `:madnlp` for the solver):
 
 ```julia
-julia> sol = solve(ocp, :exa, :madnlp; exa_backend=CUDABackend())
+sol = solve(ocp, :exa, :madnlp; exa_backend=CUDABackend())
+```
+
+```julia
 ▫ This is OptimalControl version v1.1.0 running with: direct, exa, madnlp.
 
 ▫ The optimal control problem is solved with CTDirect version v0.16.0.
