@@ -214,9 +214,9 @@ weakdeps = ["OrdinaryDiffEq"]
 
 [[deps.CTModels]]
 deps = ["CTBase", "DocStringExtensions", "Interpolations", "LinearAlgebra", "MLStyle", "MacroTools", "OrderedCollections", "Parameters", "PrettyTables", "RecipesBase"]
-git-tree-sha1 = "a8e709e2c1bac3f97fa33266b6eb517c5388ae38"
+git-tree-sha1 = "3a520aa1f66e7fef22bacc71d68af960580de615"
 uuid = "34c4fa32-2049-4079-8329-de33c2a22e2d"
-version = "0.6.2"
+version = "0.6.3"
 weakdeps = ["JLD2", "JSON3", "Plots"]
 
     [deps.CTModels.extensions]
