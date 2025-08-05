@@ -48,7 +48,7 @@ This is because the default method uses a direct approach, which transforms the 
 \text{minimize}\quad F(y), \quad\text{subject to the constraints}\quad g(y) \le 0, \quad h(y) = 0. 
 ```
 
-!!! caveat
+!!! warning
 
     Calling `solve` without loading a NLP solver package first will notify the user:
 

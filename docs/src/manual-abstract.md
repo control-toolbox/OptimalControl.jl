@@ -22,7 +22,7 @@ A variable (only one is allowed) is a finite dimensional vector or reals that wi
 end
 ```
 
-!!! caveat
+!!! warning
     Note that the full code of the definition above is not provided (hence the `...`) The same is true for most examples below (only those without `...` are indeed complete). Also note that problem definitions must at least include definitions for time, state, control, and dynamics.
 
 
@@ -227,10 +227,10 @@ The dynamics can also be declared coordinate by coordinate. The previous example
 end
 ```
 
-!!! caveat
+!!! warning
     Declaring the dynamics coordinate by coordinate is **compulsory** when solving with the option `:exa` to rely on the ExaModels modeller (check the [solve section](@ref manual-solve)), for instance to [solve on GPU](@ref manual-solve-gpu).
 
-## Constraints
+## [Constraints](@id manual-abstract-constraints)
 
 ```julia
 :( $e1 == $e2        ) 
@@ -288,7 +288,7 @@ end
 end
 ```
 
-!!! caveat
+!!! warning
     Write either `u(t)^2` or `(u^2)(t)`, not `u^2(t)` since in Julia the latter means `u^(2t)`. Moreover,
     in the case of equalities or of one-sided inequalities, the control and / or the state must belong to the *left-hand side*. The following will error:
 
@@ -309,7 +309,7 @@ using OptimalControl
 end
 ```
 
-!!! caveat
+!!! warning
      Constraint bounds must be *effective*, that is must not depend on a variable. For instance, instead of
 ```julia
 o = @def begin
@@ -341,7 +341,7 @@ o = @def begin
 end
 ```
 
-!!! caveat
+!!! warning
     When solving with the option `:exa` to rely on the ExaModels modeller (check the [solve section](@ref manual-solve)), for instance to [solve on GPU](@ref manual-solve-gpu), it is **compulsory** that *nonlinear* constraints (not ranges) are *scalar*, whatever the type (boundary, variable, controle, state, mixed).
 
 ## [Mayer cost](@id manual-abstract-mayer)
@@ -449,7 +449,7 @@ Quite readily, Mayer and Lagrange costs can be combined into general Bolza costs
 end
 ```
 
-!!! caveat
+!!! warning
     The expression must be the sum of two terms (plus, possibly, a scalar factor before the integral), not *more*, so mind the parentheses. For instance, the following errors:
 
 ```julia
@@ -495,7 +495,7 @@ The single `=` symbol is used to define not a constraint but an alias, that is a
 end
 ```
 
-!!! caveat
+!!! warning
     Such aliases do *not* define any additional function and are just replaced textually by the parser. In particular, they cannot be used outside the `@def` `begin ... end` block.
 
 !!! hint
@@ -513,7 +513,7 @@ end
 end true;
 ```
 
-!!! caveat
+!!! warning
     The dynamics of an OCP is indeed a particular constraint, be careful to use `==` and not a single `=` that would try to define an alias:
 
 ```@repl main-repl
@@ -554,4 +554,4 @@ end
 
 ## Known issues
 
-- [Constants and (reverse over forward) AD](https://github.com/control-toolbox/OptimalControl.jl/issues/481)
+- [Reverse over forward AD issues with ADNLP](https://github.com/control-toolbox/OptimalControl.jl/issues/481)
