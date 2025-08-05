@@ -4,7 +4,7 @@ The full grammar of [OptimalControl.jl](https://control-toolbox.org/OptimalContr
 - pure Julia (and, as such, effortlessly analysed by the standard Julia parser),
 - as close as possible to the mathematical description of an optimal control problem. 
 
-While the syntax will be transparent to those users familiar with Julia expressions (`Expr`'s), we provide examples for every case that should be widely understandable. We rely heavily on [MLStyle.jl](https://thautwarm.github.io/MLStyle.jl) and its pattern matching abilities 👍🏽 for the semantic pass. Abstract definitions use the macro [`@def`](@ref).
+While the syntax will be transparent to those users familiar with Julia expressions (`Expr`'s), we provide examples for every case that should be widely understandable. We rely heavily on [MLStyle.jl](https://thautwarm.github.io/MLStyle.jl) and its pattern matching abilities 👍🏽 both for the syntactic and semantic pass. Abstract definitions use the macro [`@def`](@ref).
 
 ## [Variable](@id manual-abstract-variable)
 
@@ -22,7 +22,7 @@ A variable (only one is allowed) is a finite dimensional vector or reals that wi
 end
 ```
 
-!!! caveat
+!!! warning
     Note that the full code of the definition above is not provided (hence the `...`) The same is true for most examples below (only those without `...` are indeed complete). Also note that problem definitions must at least include definitions for time, state, control, and dynamics.
 
 
@@ -43,22 +43,6 @@ A one dimensional variable can be declared according to
     ...
 end
 ```
-
-!!! note
-    It is also possible to use the following syntax
-    ```julia
-    @def ocp begin
-        v ∈ R, variable
-        ...
-    end
-    ```
-    that is equivalent to
-    ```julia
-    ocp = @def begin
-        v ∈ R, variable
-        ...
-    end
-    ```
 
 ## Time
 
@@ -208,7 +192,7 @@ F₁(x) = [0, 1]
 !!! note
     The vector fields `F₀` and `F₁` can be defined afterwards, as they only need to be available when the dynamics will be evaluated.
 
-Currently, it is not possible to declare the dynamics component after component, but a simple workaround is to use *aliases* (check the relevant [aliases](@ref manual-abstract-aliases) section below):
+While it is also possible to declare the dynamics component after component (see below), one may equivalently use *aliases* (check the relevant [aliases](@ref manual-abstract-aliases) section below):
 
 ```julia
 @def damped_integrator begin
@@ -223,7 +207,30 @@ Currently, it is not possible to declare the dynamics component after component,
 end
 ```
 
-## Constraints
+## [Dynamics (coordinatewise)](@id manual-abstract-dynamics-coord)
+
+```julia
+:( ∂($x[$i])($t) == $e1 ) 
+```
+
+The dynamics can also be declared coordinate by coordinate. The previous example can be written as
+
+```julia
+@def damped_integrator begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    ∂(q)(t) == v(t)
+    ∂(v)(t) == u(t) - c(t)
+    ...
+end
+```
+
+!!! warning
+    Declaring the dynamics coordinate by coordinate is **compulsory** when solving with the option `:exa` to rely on the ExaModels modeller (check the [solve section](@ref manual-solve)), for instance to [solve on GPU](@ref manual-solve-gpu).
+
+## [Constraints](@id manual-abstract-constraints)
 
 ```julia
 :( $e1 == $e2        ) 
@@ -234,7 +241,7 @@ end
 ```
 
 Admissible constraints can be
-- five types: boundary, control, state, mixed, variable,
+- of five types: boundary, variable, control, state, mixed (the last three ones are *path* constraints, that is constraints evaluated all times)
 - linear (ranges) or nonlinear (not ranges),
 - equalities or (one or two-sided) inequalities.
 
@@ -281,7 +288,7 @@ end
 end
 ```
 
-!!! caveat
+!!! warning
     Write either `u(t)^2` or `(u^2)(t)`, not `u^2(t)` since in Julia the latter means `u^(2t)`. Moreover,
     in the case of equalities or of one-sided inequalities, the control and / or the state must belong to the *left-hand side*. The following will error:
 
@@ -302,7 +309,7 @@ using OptimalControl
 end
 ```
 
-!!! caveat
+!!! warning
      Constraint bounds must be *effective*, that is must not depend on a variable. For instance, instead of
 ```julia
 o = @def begin
@@ -333,6 +340,9 @@ o = @def begin
     ∫( 0.5u(t)^2 ) → min
 end
 ```
+
+!!! warning
+    When solving with the option `:exa` to rely on the ExaModels modeller (check the [solve section](@ref manual-solve)), for instance to [solve on GPU](@ref manual-solve-gpu), it is **compulsory** that *nonlinear* constraints (not ranges) are *scalar*, whatever the type (boundary, variable, controle, state, mixed).
 
 ## [Mayer cost](@id manual-abstract-mayer)
 
@@ -439,7 +449,7 @@ Quite readily, Mayer and Lagrange costs can be combined into general Bolza costs
 end
 ```
 
-!!! caveat
+!!! warning
     The expression must be the sum of two terms (plus, possibly, a scalar factor before the integral), not *more*, so mind the parentheses. For instance, the following errors:
 
 ```julia
@@ -485,7 +495,7 @@ The single `=` symbol is used to define not a constraint but an alias, that is a
 end
 ```
 
-!!! caveat
+!!! warning
     Such aliases do *not* define any additional function and are just replaced textually by the parser. In particular, they cannot be used outside the `@def` `begin ... end` block.
 
 !!! hint
@@ -503,7 +513,7 @@ end
 end true;
 ```
 
-!!! caveat
+!!! warning
     The dynamics of an OCP is indeed a particular constraint, be careful to use `==` and not a single `=` that would try to define an alias:
 
 ```@repl main-repl
@@ -544,4 +554,4 @@ end
 
 ## [Known issues](@id manual-abstract-known-issues)
 
-- [Constants and (reverse over forward) AD](https://github.com/control-toolbox/OptimalControl.jl/issues/481)
+- [Reverse over forward AD issues with ADNLP](https://github.com/control-toolbox/OptimalControl.jl/issues/481)

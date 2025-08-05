@@ -167,7 +167,7 @@ export VectorField,
 
 # To trigger CTDirectExtADNLP and CTDirectExtExa
 using ADNLPModels: ADNLPModels
-import ExaModels: ExaModels, ExaModel, ExaCore, variable, constraint, constraint!, objective
+import ExaModels: ExaModels, ExaModel, ExaCore, variable, constraint, constraint!, objective, solution, multipliers, multipliers_L, multipliers_U, Constraint
 
 # Conflicts of functions defined in several packages
 # ExaModels.variable, CTModels.variable

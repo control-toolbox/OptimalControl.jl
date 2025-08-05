@@ -120,7 +120,7 @@ cp(
 repo_url = "github.com/control-toolbox/OptimalControl.jl"
 
 makedocs(;
-    draft=false, # if draft is true, then the julia code from .md is not executed
+    draft=false, # if draft is true, then the julia code from .md is not executed # debug
     # to disable the draft mode in a specific markdown file, use the following:
     # ```@meta
     # Draft = false
@@ -147,6 +147,7 @@ makedocs(;
             "Problem characteristics" => "manual-model.md",
             "Set an initial guess" => "manual-initial-guess.md",
             "Solve a problem" => "manual-solve.md",
+            "Solve on GPU" => "manual-solve-gpu.md",
             "Solution characteristics" => "manual-solution.md",
             "Plot a solution" => "manual-plot.md",
             "Compute flows" => [
@@ -172,4 +173,4 @@ makedocs(;
     plugins=[links],
 )
 
-deploydocs(; repo=repo_url * ".git", devbranch="main")
+deploydocs(; repo = repo_url * ".git", devbranch = "main", push_preview = true)
