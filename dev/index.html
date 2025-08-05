@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Getting Started · OptimalControl.jl</title><meta name="title" content="Getting Started · OptimalControl.jl"/><meta property="og:title" content="Getting Started · OptimalControl.jl"/><meta property="twitter:title" content="Getting Started · OptimalControl.jl"/><meta name="description" content="Documentation for OptimalControl.jl."/><meta property="og:description" content="Documentation for OptimalControl.jl."/><meta property="twitter:description" content="Documentation for OptimalControl.jl."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script><link href="https://control-toolbox.org/assets/css/documentation.css" rel="stylesheet" type="text/css"/><script src="https://control-toolbox.org/assets/js/documentation.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="index.html">OptimalControl.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li class="is-active"><a class="tocitem" href="index.html">Getting Started</a><ul class="internal"><li><a class="tocitem" href="#Installation"><span>Installation</span></a></li><li><a class="tocitem" href="#Basic-usage"><span>Basic usage</span></a></li><li><a class="tocitem" href="#Citing-us"><span>Citing us</span></a></li><li><a class="tocitem" href="#Contributing"><span>Contributing</span></a></li><li><a class="tocitem" href="#Reproducibility"><span>Reproducibility</span></a></li></ul></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="example-double-integrator-energy.html">Energy minimisation</a></li><li><a class="tocitem" href="example-double-integrator-time.html">Time mininimisation</a></li></ul></li><li><span class="tocitem">Manual</span><ul><li><a class="tocitem" href="manual-abstract.html">Define a problem</a></li><li><a class="tocitem" href="manual-model.html">Problem characteristics</a></li><li><a class="tocitem" href="manual-initial-guess.html">Set an initial guess</a></li><li><a class="tocitem" href="manual-solve.html">Solve a problem</a></li><li><a class="tocitem" href="manual-solution.html">Solution characteristics</a></li><li><a class="tocitem" href="manual-plot.html">Plot a solution</a></li><li><input class="collapse-toggle" id="menuitem-3-7" type="checkbox"/><label class="tocitem" for="menuitem-3-7"><span class="docs-label">Compute flows</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="manual-flow-api.html">Flow API</a></li><li><a class="tocitem" href="manual-flow-ocp.html">From optimal control problems</a></li><li><a class="tocitem" href="manual-flow-others.html">From Hamiltonians and others</a></li></ul></li></ul></li><li><span class="tocitem">API</span><ul><li><a class="tocitem" href="api-optimalcontrol-user.html">OptimalControl.jl - User</a></li><li><input class="collapse-toggle" id="menuitem-4-2" type="checkbox"/><label class="tocitem" for="menuitem-4-2"><span class="docs-label">Subpackages - Developers</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="api-ctbase.html">CTBase.jl</a></li><li><a class="tocitem" href="api-ctdirect.html">CTDirect.jl</a></li><li><a class="tocitem" href="api-ctflows.html">CTFlows.jl</a></li><li><a class="tocitem" href="api-ctmodels.html">CTModels.jl</a></li><li><a class="tocitem" href="api-ctparser.html">CTParser.jl</a></li><li><a class="tocitem" href="api-optimalcontrol-dev.html">OptimalControl.jl</a></li></ul></li></ul></li><li><a class="tocitem" href="zhejiang-2025.html">Zhejiang 2025</a></li><li><a class="tocitem" href="jlesc17.html">JLESC17</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href="index.html">Getting Started</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="index.html">Getting Started</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl/blob/main/docs/src/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="OptimalControl.jl"><a class="docs-heading-anchor" href="#OptimalControl.jl">OptimalControl.jl</a><a id="OptimalControl.jl-1"></a><a class="docs-heading-anchor-permalink" href="#OptimalControl.jl" title="Permalink"></a></h1><p>The OptimalControl.jl package is the root package of the <a href="https://github.com/control-toolbox">control-toolbox ecosystem</a>. The control-toolbox ecosystem gathers Julia packages for mathematical control and applications. It aims to provide tools to model and solve optimal control problems with ordinary differential equations by direct and indirect methods.</p><h2 id="Installation"><a class="docs-heading-anchor" href="#Installation">Installation</a><a id="Installation-1"></a><a class="docs-heading-anchor-permalink" href="#Installation" title="Permalink"></a></h2><p>To install OptimalControl.jl, please <a href="https://docs.julialang.org/en/v1/manual/getting-started">open Julia&#39;s interactive session (known as REPL)</a> and use the Julia package manager:</p><pre><code class="language-julia hljs">using Pkg
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Getting Started · OptimalControl.jl</title><meta name="title" content="Getting Started · OptimalControl.jl"/><meta property="og:title" content="Getting Started · OptimalControl.jl"/><meta property="twitter:title" content="Getting Started · OptimalControl.jl"/><meta name="description" content="Documentation for OptimalControl.jl."/><meta property="og:description" content="Documentation for OptimalControl.jl."/><meta property="twitter:description" content="Documentation for OptimalControl.jl."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script><link href="https://control-toolbox.org/assets/css/documentation.css" rel="stylesheet" type="text/css"/><script src="https://control-toolbox.org/assets/js/documentation.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="index.html">OptimalControl.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li class="is-active"><a class="tocitem" href="index.html">Getting Started</a><ul class="internal"><li><a class="tocitem" href="#Installation"><span>Installation</span></a></li><li><a class="tocitem" href="#Basic-usage"><span>Basic usage</span></a></li><li><a class="tocitem" href="#Citing-us"><span>Citing us</span></a></li><li><a class="tocitem" href="#Contributing"><span>Contributing</span></a></li><li><a class="tocitem" href="#Reproducibility"><span>Reproducibility</span></a></li></ul></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="example-double-integrator-energy.html">Energy minimisation</a></li><li><a class="tocitem" href="example-double-integrator-time.html">Time mininimisation</a></li></ul></li><li><span class="tocitem">Manual</span><ul><li><a class="tocitem" href="manual-abstract.html">Define a problem</a></li><li><a class="tocitem" href="manual-model.html">Problem characteristics</a></li><li><a class="tocitem" href="manual-initial-guess.html">Set an initial guess</a></li><li><a class="tocitem" href="manual-solve.html">Solve a problem</a></li><li><a class="tocitem" href="manual-solve-gpu.html">Solve on GPU</a></li><li><a class="tocitem" href="manual-solution.html">Solution characteristics</a></li><li><a class="tocitem" href="manual-plot.html">Plot a solution</a></li><li><input class="collapse-toggle" id="menuitem-3-8" type="checkbox"/><label class="tocitem" for="menuitem-3-8"><span class="docs-label">Compute flows</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="manual-flow-api.html">Flow API</a></li><li><a class="tocitem" href="manual-flow-ocp.html">From optimal control problems</a></li><li><a class="tocitem" href="manual-flow-others.html">From Hamiltonians and others</a></li></ul></li></ul></li><li><span class="tocitem">API</span><ul><li><a class="tocitem" href="api-optimalcontrol-user.html">OptimalControl.jl - User</a></li><li><input class="collapse-toggle" id="menuitem-4-2" type="checkbox"/><label class="tocitem" for="menuitem-4-2"><span class="docs-label">Subpackages - Developers</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="api-ctbase.html">CTBase.jl</a></li><li><a class="tocitem" href="api-ctdirect.html">CTDirect.jl</a></li><li><a class="tocitem" href="api-ctflows.html">CTFlows.jl</a></li><li><a class="tocitem" href="api-ctmodels.html">CTModels.jl</a></li><li><a class="tocitem" href="api-ctparser.html">CTParser.jl</a></li><li><a class="tocitem" href="api-optimalcontrol-dev.html">OptimalControl.jl</a></li></ul></li></ul></li><li><a class="tocitem" href="zhejiang-2025.html">Zhejiang 2025</a></li><li><a class="tocitem" href="jlesc17.html">JLESC17</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href="index.html">Getting Started</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="index.html">Getting Started</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl/blob/main/docs/src/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="OptimalControl.jl"><a class="docs-heading-anchor" href="#OptimalControl.jl">OptimalControl.jl</a><a id="OptimalControl.jl-1"></a><a class="docs-heading-anchor-permalink" href="#OptimalControl.jl" title="Permalink"></a></h1><p>The OptimalControl.jl package is the root package of the <a href="https://github.com/control-toolbox">control-toolbox ecosystem</a>. The control-toolbox ecosystem gathers Julia packages for mathematical control and applications. It aims to provide tools to model and solve optimal control problems with ordinary differential equations by direct and indirect methods, both on CPU and GPU.</p><h2 id="Installation"><a class="docs-heading-anchor" href="#Installation">Installation</a><a id="Installation-1"></a><a class="docs-heading-anchor-permalink" href="#Installation" title="Permalink"></a></h2><p>To install OptimalControl.jl, please <a href="https://docs.julialang.org/en/v1/manual/getting-started">open Julia&#39;s interactive session (known as REPL)</a> and use the Julia package manager:</p><pre><code class="language-julia hljs">using Pkg
 Pkg.add(&quot;OptimalControl&quot;)</code></pre><div class="admonition is-success" id="Tip-e6c0fe7711d76818"><header class="admonition-header">Tip<a class="admonition-anchor" href="#Tip-e6c0fe7711d76818" title="Permalink"></a></header><div class="admonition-body"><p>If you are new to Julia, please follow this <a href="https://github.com/orgs/control-toolbox/discussions/64">guidelines</a>.</p></div></div><h2 id="Basic-usage"><a class="docs-heading-anchor" href="#Basic-usage">Basic usage</a><a id="Basic-usage-1"></a><a class="docs-heading-anchor-permalink" href="#Basic-usage" title="Permalink"></a></h2><p>Let us model, solve and plot a simple optimal control problem.</p><pre><code class="language-julia hljs">using OptimalControl
 using NLPModelsIpopt
 using Plots
@@ -24,16 +24,16 @@ url = {https://control-toolbox.org/OptimalControl.jl}
 }</code></pre><h2 id="Contributing"><a class="docs-heading-anchor" href="#Contributing">Contributing</a><a id="Contributing-1"></a><a class="docs-heading-anchor-permalink" href="#Contributing" title="Permalink"></a></h2><p>If you think you found a bug or if you have a feature request / suggestion, feel free to open an <a href="https://github.com/control-toolbox/OptimalControl.jl/issues">issue</a>. Before opening a pull request, please start an issue or a discussion on the topic. </p><p>Contributions are welcomed, check out <a href="https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project">how to contribute to a Github project</a>. If it is your first contribution, you can also check <a href="https://github.com/firstcontributions/first-contributions">this first contribution tutorial</a>. You can find first good issues (if any 🙂) <a href="https://github.com/control-toolbox/OptimalControl.jl/contribute">here</a>. You may find other packages to contribute to at the <a href="https://github.com/control-toolbox">control-toolbox organization</a>.</p><p>If you want to ask a question, feel free to start a discussion <a href="https://github.com/orgs/control-toolbox/discussions">here</a>. This forum is for general discussion about this repository and the <a href="https://github.com/control-toolbox">control-toolbox organization</a>.</p><div class="admonition is-info" id="Note-302f80baba1692c6"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-302f80baba1692c6" title="Permalink"></a></header><div class="admonition-body"><p>If you want to add an application or a package to the control-toolbox ecosystem, please follow this <a href="https://github.com/orgs/control-toolbox/discussions/65">set up tutorial</a>.</p></div></div><h2 id="Reproducibility"><a class="docs-heading-anchor" href="#Reproducibility">Reproducibility</a><a id="Reproducibility-1"></a><a class="docs-heading-anchor-permalink" href="#Reproducibility" title="Permalink"></a></h2><details><summary>The documentation of this package was built using these direct dependencies,</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/OptimalControl.jl/OptimalControl.jl/docs/Project.toml`
   [54578032] ADNLPModels v0.8.13
   [54762871] CTBase v0.16.3
-  [790bbbee] CTDirect v0.15.2
+  [790bbbee] CTDirect v0.16.1
   [1c39547c] CTFlows v0.8.8
-  [34c4fa32] CTModels v0.6.2
-  [32681960] CTParser v0.5.1
+  [34c4fa32] CTModels v0.6.3
+  [32681960] CTParser v0.6.2
   [38540f10] CommonSolve v0.2.4
   [a93c6f00] DataFrames v1.7.0
   [e30172f5] Documenter v1.14.1
   [d12716ef] DocumenterInterLinks v1.1.0
   [a078cd44] DocumenterMermaid v0.2.0
-  [1037b233] ExaModels v0.8.3
+⌅ [1037b233] ExaModels v0.8.3
   [033835bb] JLD2 v0.5.15
   [0f8b85d8] JSON3 v1.14.3
 ⌃ [2621e9c9] MadNLP v0.8.7
@@ -44,7 +44,7 @@ url = {https://control-toolbox.org/OptimalControl.jl}
   [91a5bcdd] Plots v1.40.17
   [fd094767] Suppressor v0.2.8
   [37e2e46d] LinearAlgebra v1.11.0
-Info Packages marked with ⌃ have new versions available and may be upgradable.</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.11.6
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.11.6
 Commit 9615af0f269 (2025-07-09 12:58 UTC)
 Build Info:
   Official https://julialang.org/ release
@@ -57,7 +57,7 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)
 Environment:
   JULIA_PKG_SERVER_REGISTRY_PREFERENCE = eager</code></pre></details><details><summary>A more complete overview of all dependencies and their versions is also provided.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/OptimalControl.jl/OptimalControl.jl/docs/Manifest.toml`
   [54578032] ADNLPModels v0.8.13
-  [47edcb42] ADTypes v1.15.0
+  [47edcb42] ADTypes v1.16.0
   [14f7f29c] AMD v0.5.3
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [1520ce14] AbstractTrees v0.4.5
@@ -72,10 +72,10 @@ Environment:
   [70df07ce] BracketingNonlinearSolve v1.3.0
   [2a0fbf3d] CPUSummary v0.2.6
   [54762871] CTBase v0.16.3
-  [790bbbee] CTDirect v0.15.2
+  [790bbbee] CTDirect v0.16.1
   [1c39547c] CTFlows v0.8.8
-  [34c4fa32] CTModels v0.6.2
-  [32681960] CTParser v0.5.1
+  [34c4fa32] CTModels v0.6.3
+  [32681960] CTParser v0.6.2
   [d360d2e6] ChainRulesCore v1.25.2
   [fb6a15b2] CloseOpenIntervals v0.1.13
   [944b1d66] CodecZlib v0.7.8
@@ -86,7 +86,7 @@ Environment:
   [38540f10] CommonSolve v0.2.4
   [bbf7d656] CommonSubexpressions v0.3.1
   [f70d9fcc] CommonWorldInvalidations v1.0.0
-  [34da2185] Compat v4.17.0
+  [34da2185] Compat v4.18.0
   [a33af91c] CompositionsBase v0.1.2
   [2569d6c7] ConcreteStructs v0.2.3
   [f0e56b4a] ConcurrentUtilities v2.5.0
@@ -96,13 +96,13 @@ Environment:
   [a8cc5b0e] Crayons v4.1.1
   [9a962f9c] DataAPI v1.16.0
   [a93c6f00] DataFrames v1.7.0
-  [864edb3b] DataStructures v0.18.22
+⌅ [864edb3b] DataStructures v0.18.22
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v6.178.0
+  [2b5f629d] DiffEqBase v6.181.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
-  [a0c0ee7d] DifferentiationInterface v0.7.3
+  [a0c0ee7d] DifferentiationInterface v0.7.4
   [43dc2714] DocInventories v1.0.0
   [ffbed154] DocStringExtensions v0.9.5
   [e30172f5] Documenter v1.14.1
@@ -110,12 +110,12 @@ Environment:
   [a078cd44] DocumenterMermaid v0.2.0
   [4e289a0a] EnumX v1.0.5
   [f151be2c] EnzymeCore v0.8.12
-  [1037b233] ExaModels v0.8.3
+⌅ [1037b233] ExaModels v0.8.3
   [460bff9d] ExceptionUnwrapping v0.1.11
   [d4d017d3] ExponentialUtilities v1.27.0
   [e2ba6199] ExprTools v0.1.10
   [55351af7] ExproniconLite v0.10.14
-  [c87230d0] FFMPEG v0.4.2
+  [c87230d0] FFMPEG v0.4.4
   [7034ab61] FastBroadcast v0.3.5
   [9aa1b823] FastClosures v0.3.2
   [442a2c76] FastGaussQuadrature v1.0.2
@@ -162,7 +162,7 @@ Environment:
   [87fe0de2] LineSearch v0.1.4
   [d3d80556] LineSearches v7.4.0
   [5c8ed15e] LinearOperators v2.10.0
-  [7ed4a6bd] LinearSolve v3.23.0
+  [7ed4a6bd] LinearSolve v3.24.0
   [2ab3a3ac] LogExpFunctions v0.3.29
   [e6f89c97] LoggingExtras v1.1.0
   [33e6dc65] MKL v0.9.0
@@ -240,7 +240,7 @@ Environment:
   [c84ed2f1] Ratios v0.4.5
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v3.35.0
+  [731186ca] RecursiveArrayTools v3.36.0
   [189a3867] Reexport v1.2.2
   [2792f1a3] RegistryInstances v0.1.0
   [05181044] RelocatableFolders v1.0.1
@@ -248,7 +248,7 @@ Environment:
   [37e2e3b7] ReverseDiff v1.16.1
   [7e49a35a] RuntimeGeneratedFunctions v0.5.15
   [94e857df] SIMDTypes v0.1.0
-  [0bca4576] SciMLBase v2.104.0
+  [0bca4576] SciMLBase v2.107.0
   [19f34311] SciMLJacobianOperators v0.1.8
   [c0aeaf25] SciMLOperators v1.4.0
   [53ae85a6] SciMLStructures v1.7.0
@@ -261,7 +261,7 @@ Environment:
   [727e6d20] SimpleNonlinearSolve v2.7.0
   [ce78b400] SimpleUnPack v1.1.0
   [ff4d7338] SolverCore v0.3.8
-  [a2af1166] SortingAlgorithms v1.2.1
+  [a2af1166] SortingAlgorithms v1.2.2
   [9f842d2f] SparseConnectivityTracer v1.0.0
   [0a514795] SparseMatrixColorings v0.4.21
   [276daf66] SpecialFunctions v2.5.1
@@ -288,7 +288,7 @@ Environment:
   [5c2747f8] URIs v1.6.1
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [1986cc42] Unitful v1.23.1
+  [1986cc42] Unitful v1.24.0
   [45397f5d] UnitfulLatexify v1.7.0
   [41fe7b60] Unzip v0.2.0
   [efce3f68] WoodburyMatrices v1.0.0
@@ -298,7 +298,7 @@ Environment:
   [ee1fde0b] Dbus_jll v1.16.2+0
   [2702e6a9] EpollShim_jll v0.0.20230411+1
   [2e619515] Expat_jll v2.6.5+0
-⌅ [b22a6f82] FFMPEG_jll v4.4.4+1
+  [b22a6f82] FFMPEG_jll v7.1.1+0
   [a3f928ae] Fontconfig_jll v2.16.0+0
   [d7e528f0] FreeType2_jll v2.13.4+0
   [559328eb] FriBidi_jll v1.0.17+0
@@ -308,7 +308,7 @@ Environment:
   [f8c6e375] Git_jll v2.50.1+0
   [7746bdde] Glib_jll v2.84.3+0
   [3b182d85] Graphite2_jll v1.3.15+0
-  [017b0a0e] HSL_jll v4.0.3+0
+  [017b0a0e] HSL_jll v4.0.4+0
   [2e76f6c2] HarfBuzz_jll v8.5.1+0
   [e33a78d0] Hwloc_jll v2.12.1+0
   [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
@@ -326,7 +326,7 @@ Environment:
   [38a345b3] Libuuid_jll v2.41.0+0
   [d00139f3] METIS_jll v5.1.3+0
   [856f044c] MKL_jll v2025.2.0+0
-  [d7ed1dd3] MUMPS_seq_jll v500.800.0+0
+⌅ [d7ed1dd3] MUMPS_seq_jll v500.800.0+0
   [e7412a2a] Ogg_jll v1.3.6+0
   [656ef2d0] OpenBLAS32_jll v0.3.29+0
   [9bd350c2] OpenSSH_jll v10.0.1+0
@@ -370,7 +370,7 @@ Environment:
   [35ca27e7] eudev_jll v3.2.14+0
   [214eeab7] fzf_jll v0.61.1+0
   [a4ae2306] libaom_jll v3.12.1+0
-⌅ [0ac62f75] libass_jll v0.15.2+0
+  [0ac62f75] libass_jll v0.17.4+0
   [1183f4f0] libdecor_jll v0.2.2+0
   [2db6ffa8] libevdev_jll v1.13.4+0
   [f638f0a6] libfdk_aac_jll v2.0.4+0
@@ -379,8 +379,8 @@ Environment:
   [f27f6e37] libvorbis_jll v1.3.8+0
   [009596ad] mtdev_jll v1.1.7+0
   [1317d2d5] oneTBB_jll v2022.0.0+0
-⌅ [1270edf5] x264_jll v2021.5.5+0
-⌅ [dfaa095f] x265_jll v3.5.0+0
+  [1270edf5] x264_jll v10164.0.1+0
+  [dfaa095f] x265_jll v4.1.0+0
   [d8fb68d0] xkbcommon_jll v1.9.2+0
   [0dad84c5] ArgTools v1.1.2
   [56f22d72] Artifacts v1.11.0
@@ -435,4 +435,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="example-double-integrator-energy.html">Energy minimisation »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Friday 25 July 2025 21:12">Friday 25 July 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="example-double-integrator-energy.html">Energy minimisation »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Tuesday 5 August 2025 21:12">Tuesday 5 August 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
