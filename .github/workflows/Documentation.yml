@@ -1,4 +1,3 @@
-# [.github/workflows/Documentation.yml]
 name: Documentation
 
 on:
@@ -9,17 +8,5 @@ on:
   pull_request:
   
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@latest
-      - uses: julia-actions/julia-buildpkg@latest
-      - name: Install dependencies
-        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
-      - name: Build and deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # If authenticating with GitHub Actions token
-          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }} # If authenticating with SSH deploy key
-          GKSwstype: 100 # To make GitHub Action work, disable showing a plot window with the GR backend of the Plots package
-        run: julia --project=docs/ -e 'ENV["GKSwstype"]="nul" ; include("docs/make.jl")'
+  call:
+    uses: control-toolbox/CTActions/.github/workflows/documentation.yml@main

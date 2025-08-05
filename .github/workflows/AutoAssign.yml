@@ -1,0 +1,13 @@
+# https://github.com/marketplace/actions/auto-assign-issue
+name: Auto Assign
+on:
+  issues:
+    types: [opened, reopened]
+  pull_request:
+    types: [opened, reopened]
+jobs:
+  call:
+    uses: control-toolbox/CTActions/.github/workflows/auto-assign.yml@main
+    with:
+      assignees: ocots
+      numOfAssignee: 1

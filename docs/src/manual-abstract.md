@@ -552,6 +552,6 @@ end
 - Parsing errors should be explicit enough (with line number in the `@def` `begin ... end` block indicated) 🤞🏾
 - Check tutorials and applications in the documentation for further use.
 
-## Known issues
+## [Known issues](@id manual-abstract-known-issues)
 
 - [Reverse over forward AD issues with ADNLP](https://github.com/control-toolbox/OptimalControl.jl/issues/481)
