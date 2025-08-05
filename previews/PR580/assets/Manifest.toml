@@ -190,8 +190,8 @@ weakdeps = ["HTTP", "JSON"]
 
 [[deps.CTDirect]]
 deps = ["CTBase", "CTModels", "DocStringExtensions", "HSL", "MKL", "SparseArrays"]
-git-tree-sha1 = "2a3a92c75f7c467c5d829a82ecf9d99112b840b4"
-repo-rev = "develop"
+git-tree-sha1 = "f2315dbb9c61b6cd28e1ce052c5f98eb74a5b905"
+repo-rev = "main"
 repo-url = "https://github.com/control-toolbox/CTDirect.jl"
 uuid = "790bbbee-bee9-49ee-8912-a9de031322d5"
 version = "0.16.0"
@@ -2214,9 +2214,9 @@ version = "0.3.8"
 
 [[deps.SortingAlgorithms]]
 deps = ["DataStructures"]
-git-tree-sha1 = "66e0a8e672a0bdfca2c3f5937efb8538b9ddc085"
+git-tree-sha1 = "64d974c2e6fdf07f8155b5b2ca2ffa9069b608d9"
 uuid = "a2af1166-a08f-5f64-846c-94a0d3cef48c"
-version = "1.2.1"
+version = "1.2.2"
 
 [[deps.SparseArrays]]
 deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
