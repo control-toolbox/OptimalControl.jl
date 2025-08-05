@@ -27,4 +27,4 @@ ExaModels = "0.8"
 julia = "1.10"
 
 [sources]
-CTDirect = {url = "https://github.com/control-toolbox/CTDirect.jl", rev = "main"}
+CTDirect = {url = "https://github.com/control-toolbox/CTDirect.jl", rev = "jbcaillai-patch-1"}
