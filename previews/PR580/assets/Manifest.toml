@@ -190,11 +190,9 @@ weakdeps = ["HTTP", "JSON"]
 
 [[deps.CTDirect]]
 deps = ["CTBase", "CTModels", "DocStringExtensions", "HSL", "MKL", "SparseArrays"]
-git-tree-sha1 = "f2315dbb9c61b6cd28e1ce052c5f98eb74a5b905"
-repo-rev = "main"
-repo-url = "https://github.com/control-toolbox/CTDirect.jl"
+git-tree-sha1 = "0fe1b1dd25053bbce9c6c1d236f2cbdcbec5487c"
 uuid = "790bbbee-bee9-49ee-8912-a9de031322d5"
-version = "0.16.0"
+version = "0.16.1"
 weakdeps = ["ADNLPModels", "ExaModels", "MadNLP", "NLPModelsIpopt", "NLPModelsKnitro"]
 
     [deps.CTDirect.extensions]
