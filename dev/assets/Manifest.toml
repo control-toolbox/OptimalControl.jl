@@ -1245,15 +1245,17 @@ version = "2.10.0"
 
 [[deps.LinearSolve]]
 deps = ["ArrayInterface", "ChainRulesCore", "ConcreteStructs", "DocStringExtensions", "EnumX", "GPUArraysCore", "InteractiveUtils", "Krylov", "LazyArrays", "Libdl", "LinearAlgebra", "MKL_jll", "Markdown", "PrecompileTools", "Preferences", "RecursiveArrayTools", "Reexport", "SciMLBase", "SciMLOperators", "Setfield", "StaticArraysCore", "UnPack"]
-git-tree-sha1 = "d768ff40cc3fe42581708696b24ee65dccc9c6ba"
+git-tree-sha1 = "639bdab552800d0639fb5878c65e80ce7b034daf"
 uuid = "7ed4a6bd-45f5-4d41-b270-4a48e9bafcae"
-version = "3.24.0"
+version = "3.25.0"
 
     [deps.LinearSolve.extensions]
+    LinearSolveBLISExt = ["blis_jll", "LAPACK_jll"]
     LinearSolveBandedMatricesExt = "BandedMatrices"
     LinearSolveBlockDiagonalsExt = "BlockDiagonals"
     LinearSolveCUDAExt = "CUDA"
     LinearSolveCUDSSExt = "CUDSS"
+    LinearSolveCUSOLVERRFExt = ["CUSOLVERRF", "SparseArrays"]
     LinearSolveEnzymeExt = "EnzymeCore"
     LinearSolveFastAlmostBandedMatricesExt = "FastAlmostBandedMatrices"
     LinearSolveFastLapackInterfaceExt = "FastLapackInterface"
@@ -1273,6 +1275,7 @@ version = "3.24.0"
     BlockDiagonals = "0a1fb500-61f7-11e9-3c65-f5ef3456f9f0"
     CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
     CUDSS = "45b445bb-4962-46a0-9369-b4df9d0f772e"
+    CUSOLVERRF = "a8cc9031-bad2-4722-94f5-40deabb4245c"
     EnzymeCore = "f151be2c-9106-41f4-ab19-57ee4f262869"
     FastAlmostBandedMatrices = "9d29842c-ecb8-4973-b1e9-a27b1157504e"
     FastLapackInterface = "29a986be-02c6-4525-aec4-84b980013641"
@@ -1281,11 +1284,13 @@ version = "3.24.0"
     IterativeSolvers = "42fd0dbc-a981-5370-80f2-aaf504508153"
     KernelAbstractions = "63c18a36-062a-441e-b654-da1e3ab1ce7c"
     KrylovKit = "0b1a1467-8014-51b9-945f-bf0ae24f4b77"
+    LAPACK_jll = "51474c39-65e3-53ba-86ba-03b1b862ec14"
     Metal = "dde4c033-4e86-420c-a63e-0dd931031962"
     Pardiso = "46dd5b70-b6fb-5a00-ae2d-e8fea33afaf2"
     RecursiveFactorization = "f2c3362d-daeb-58d1-803e-2bc74f2840b4"
     SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
     Sparspak = "e56a9233-b9d6-4f03-8d0f-1825330902ac"
+    blis_jll = "6136c539-28a5-5bf0-87cc-b183200dce32"
 
 [[deps.LogExpFunctions]]
 deps = ["DocStringExtensions", "IrrationalConstants", "LinearAlgebra"]
