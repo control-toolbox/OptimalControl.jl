@@ -2,7 +2,7 @@
 
 julia_version = "1.11.6"
 manifest_format = "2.0"
-project_hash = "c7065fef600cf2659483b07601380a082445c446"
+project_hash = "27baec8b8d10c79ce9f9bd2460609bfe26ee90e3"
 
 [[deps.ADNLPModels]]
 deps = ["ADTypes", "ForwardDiff", "LinearAlgebra", "NLPModels", "Requires", "ReverseDiff", "SparseArrays", "SparseConnectivityTracer", "SparseMatrixColorings"]
@@ -190,9 +190,9 @@ weakdeps = ["HTTP", "JSON"]
 
 [[deps.CTDirect]]
 deps = ["CTBase", "CTModels", "DocStringExtensions", "HSL", "MKL", "SparseArrays"]
-git-tree-sha1 = "0fe1b1dd25053bbce9c6c1d236f2cbdcbec5487c"
+git-tree-sha1 = "02c7af9ac8f1b7cdf1d94f95529e35ce2a1234b5"
 uuid = "790bbbee-bee9-49ee-8912-a9de031322d5"
-version = "0.16.1"
+version = "0.16.0"
 weakdeps = ["ADNLPModels", "ExaModels", "MadNLP", "NLPModelsIpopt", "NLPModelsKnitro"]
 
     [deps.CTDirect.extensions]
@@ -575,9 +575,9 @@ version = "0.0.20230411+1"
 
 [[deps.ExaModels]]
 deps = ["NLPModels", "Printf", "SolverCore"]
-git-tree-sha1 = "b430d63f00c966a67d573b8021d484feb6b2a249"
+git-tree-sha1 = "d33a033f1623bceaa5a07c8d43aa6fb0696acad5"
 uuid = "1037b233-b668-4ce9-9b63-f9f681f55dd2"
-version = "0.8.3"
+version = "0.9.0"
 
     [deps.ExaModels.extensions]
     ExaModelsAMDGPU = "AMDGPU"
@@ -588,6 +588,7 @@ version = "0.8.3"
     ExaModelsMOI = "MathOptInterface"
     ExaModelsMadNLP = ["MadNLP", "MathOptInterface"]
     ExaModelsOneAPI = "oneAPI"
+    ExaModelsOpenCL = "OpenCL"
     ExaModelsSpecialFunctions = "SpecialFunctions"
 
     [deps.ExaModels.weakdeps]
@@ -599,6 +600,7 @@ version = "0.8.3"
     MadNLP = "2621e9c9-9eb4-46b1-8089-e8c72242dfb6"
     MathOptInterface = "b8f27783-ece8-5eb3-8dc8-9495eed66fee"
     NLPModelsIpopt = "f4238b75-b362-5c4c-b852-0801c9a21d71"
+    OpenCL = "08131aa3-fb12-5dee-8b74-c09406e224a2"
     SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
     oneAPI = "8f75cd03-7ff8-4ecb-9b8f-daf728133b1b"
 
@@ -1612,7 +1614,7 @@ version = "0.5.6+0"
 deps = ["ADNLPModels", "CTBase", "CTDirect", "CTFlows", "CTModels", "CTParser", "CommonSolve", "DocStringExtensions", "ExaModels"]
 path = "/home/runner/work/OptimalControl.jl/OptimalControl.jl"
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
-version = "1.1.0"
+version = "1.1.1"
 
 [[deps.Opus_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]

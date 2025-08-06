@@ -24,7 +24,7 @@ url = {https://control-toolbox.org/OptimalControl.jl}
 }</code></pre><h2 id="Contributing"><a class="docs-heading-anchor" href="#Contributing">Contributing</a><a id="Contributing-1"></a><a class="docs-heading-anchor-permalink" href="#Contributing" title="Permalink"></a></h2><p>If you think you found a bug or if you have a feature request / suggestion, feel free to open an <a href="https://github.com/control-toolbox/OptimalControl.jl/issues">issue</a>. Before opening a pull request, please start an issue or a discussion on the topic. </p><p>Contributions are welcomed, check out <a href="https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project">how to contribute to a Github project</a>. If it is your first contribution, you can also check <a href="https://github.com/firstcontributions/first-contributions">this first contribution tutorial</a>. You can find first good issues (if any 🙂) <a href="https://github.com/control-toolbox/OptimalControl.jl/contribute">here</a>. You may find other packages to contribute to at the <a href="https://github.com/control-toolbox">control-toolbox organization</a>.</p><p>If you want to ask a question, feel free to start a discussion <a href="https://github.com/orgs/control-toolbox/discussions">here</a>. This forum is for general discussion about this repository and the <a href="https://github.com/control-toolbox">control-toolbox organization</a>.</p><div class="admonition is-info" id="Note-302f80baba1692c6"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-302f80baba1692c6" title="Permalink"></a></header><div class="admonition-body"><p>If you want to add an application or a package to the control-toolbox ecosystem, please follow this <a href="https://github.com/orgs/control-toolbox/discussions/65">set up tutorial</a>.</p></div></div><h2 id="Reproducibility"><a class="docs-heading-anchor" href="#Reproducibility">Reproducibility</a><a id="Reproducibility-1"></a><a class="docs-heading-anchor-permalink" href="#Reproducibility" title="Permalink"></a></h2><details><summary>The documentation of this package was built using these direct dependencies,</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/OptimalControl.jl/OptimalControl.jl/docs/Project.toml`
   [54578032] ADNLPModels v0.8.13
   [54762871] CTBase v0.16.3
-  [790bbbee] CTDirect v0.16.1
+⌃ [790bbbee] CTDirect v0.16.0
   [1c39547c] CTFlows v0.8.8
   [34c4fa32] CTModels v0.6.3
   [32681960] CTParser v0.6.2
@@ -33,18 +33,18 @@ url = {https://control-toolbox.org/OptimalControl.jl}
   [e30172f5] Documenter v1.14.1
   [d12716ef] DocumenterInterLinks v1.1.0
   [a078cd44] DocumenterMermaid v0.2.0
-⌅ [1037b233] ExaModels v0.8.3
+  [1037b233] ExaModels v0.9.0
   [033835bb] JLD2 v0.5.15
   [0f8b85d8] JSON3 v1.14.3
 ⌃ [2621e9c9] MadNLP v0.8.7
   [f4238b75] NLPModelsIpopt v0.10.4
   [bec4dd0d] NLPModelsKnitro v0.9.1
-  [5f98b655] OptimalControl v1.1.0 `~/work/OptimalControl.jl/OptimalControl.jl`
+  [5f98b655] OptimalControl v1.1.1 `~/work/OptimalControl.jl/OptimalControl.jl`
   [1dea7af3] OrdinaryDiffEq v6.101.0
   [91a5bcdd] Plots v1.40.17
   [fd094767] Suppressor v0.2.8
   [37e2e46d] LinearAlgebra v1.11.0
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.11.6
+Info Packages marked with ⌃ have new versions available and may be upgradable.</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.11.6
 Commit 9615af0f269 (2025-07-09 12:58 UTC)
 Build Info:
   Official https://julialang.org/ release
@@ -72,7 +72,7 @@ Environment:
   [70df07ce] BracketingNonlinearSolve v1.3.0
   [2a0fbf3d] CPUSummary v0.2.6
   [54762871] CTBase v0.16.3
-  [790bbbee] CTDirect v0.16.1
+⌃ [790bbbee] CTDirect v0.16.0
   [1c39547c] CTFlows v0.8.8
   [34c4fa32] CTModels v0.6.3
   [32681960] CTParser v0.6.2
@@ -110,7 +110,7 @@ Environment:
   [a078cd44] DocumenterMermaid v0.2.0
   [4e289a0a] EnumX v1.0.5
   [f151be2c] EnzymeCore v0.8.12
-⌅ [1037b233] ExaModels v0.8.3
+  [1037b233] ExaModels v0.9.0
   [460bff9d] ExceptionUnwrapping v0.1.11
   [d4d017d3] ExponentialUtilities v1.27.0
   [e2ba6199] ExprTools v0.1.10
@@ -190,7 +190,7 @@ Environment:
   [26075421] NonlinearSolveSpectralMethods v1.2.0
   [6fe1bfb0] OffsetArrays v1.17.0
   [4d8831e6] OpenSSL v1.5.0
-  [5f98b655] OptimalControl v1.1.0 `~/work/OptimalControl.jl/OptimalControl.jl`
+  [5f98b655] OptimalControl v1.1.1 `~/work/OptimalControl.jl/OptimalControl.jl`
   [bac558e1] OrderedCollections v1.8.1
   [1dea7af3] OrdinaryDiffEq v6.101.0
   [89bda076] OrdinaryDiffEqAdamsBashforthMoulton v1.2.0
@@ -430,9 +430,9 @@ Environment:
   [8e850b90] libblastrampoline_jll v5.11.0+0
   [8e850ede] nghttp2_jll v1.59.0+0
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></details><p>You can also download the <a href="https://github.com/control-toolbox/OptimalControl.jl/tree/gh-pages/v1.1.0/assets/Manifest.toml">manifest</a> file and the <a href="https://github.com/control-toolbox/OptimalControl.jl/tree/gh-pages/v1.1.0/assets/Project.toml">project</a> file.</p><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></details><p>You can also download the <a href="https://github.com/control-toolbox/OptimalControl.jl/tree/gh-pages/v1.1.1/assets/Manifest.toml">manifest</a> file and the <a href="https://github.com/control-toolbox/OptimalControl.jl/tree/gh-pages/v1.1.1/assets/Project.toml">project</a> file.</p><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="example-double-integrator-energy.html">Energy minimisation »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Wednesday 6 August 2025 08:28">Wednesday 6 August 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="example-double-integrator-energy.html">Energy minimisation »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Wednesday 6 August 2025 10:06">Wednesday 6 August 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
