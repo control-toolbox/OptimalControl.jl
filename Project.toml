@@ -1,7 +1,7 @@
 name = "OptimalControl"
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
 authors = ["Olivier Cots <olivier.cots@toulouse-inp.fr>"]
-version = "1.1.0"
+version = "1.1.1"
 
 [deps]
 ADNLPModels = "54578032-b7ea-4c30-94aa-7cbd1cce6c9a"
@@ -23,5 +23,5 @@ CTModels = "0.6"
 CTParser = "0.6"
 CommonSolve = "0.2"
 DocStringExtensions = "0.9"
-ExaModels = "0.8"
+ExaModels = "0.9"
 julia = "1.10"
