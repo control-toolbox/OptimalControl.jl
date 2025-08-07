@@ -37,13 +37,14 @@ jobs:
       matrix:
         pkgname: 
           - OptimalControlProblems
+          - Tutorials
           - CalculusOfVariations
           - LossControl
           - GeometricPreconditioner
           - MedicalResonanceImaging
           - Kepler
           - PWLdynamics
-          - Tutorials
+          - SIRcontrol
         pkgversion: 
           - latest
           - stable
@@ -54,6 +55,8 @@ jobs:
           - pkgpath: control-toolbox
           - pkgpath: agustinyabo
             pkgname: PWLdynamics
+          - pkgpath: AnasXbouali
+            pkgname: SIRcontrol
     uses: control-toolbox/CTActions/.github/workflows/breakage.yml@main
     with:
       pkgname: ${{ matrix.pkgname }}
