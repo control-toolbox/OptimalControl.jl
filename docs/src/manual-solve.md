@@ -123,7 +123,7 @@ solve(ocp, :direct,         :ipopt)
 solve(ocp, :direct, :adnlp, :ipopt)
 ```
 
-## [Direct method](@id manual-solve-direct-method)
+## [Direct method and options](@id manual-solve-direct-method)
 
 The main options for the direct method, with their [default] values, are:
 
