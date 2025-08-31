@@ -1,5 +1,5 @@
 {
-    "description": "<p>The&nbsp;<a href=\"https://juliahub.com/ui/Packages/General/OptimalControl\" rel=\"nofollow\">OptimalControl.jl</a>&nbsp;package is the root package of the&nbsp;<a href=\"https://github.com/control-toolbox\">control-toolbox ecosystem</a>. The control-toolbox ecosystem gathers Julia packages for mathematical control and applications. It aims to provide tools to model and solve optimal control problems with ordinary differential equations by direct and indirect methods.</p>",
+    "description": "<p>The&nbsp;<a href=\"https://juliahub.com/ui/Packages/General/OptimalControl\" rel=\"nofollow\">OptimalControl.jl</a>&nbsp;package is the root package of the&nbsp;<a href=\"https://github.com/control-toolbox\">control-toolbox ecosystem</a>. The control-toolbox ecosystem gathers Julia packages for mathematical control and applications. It aims to provide tools to model and solve optimal control problems with ordinary differential equations by direct and indirect methods, both on CPU and GPU.</p>",
     "title": "OptimalControl.jl: a Julia package to model and solve optimal control problems with ODE's",
     "upload_type": "software",
     "doi": "10.5281/zenodo.13336652",
