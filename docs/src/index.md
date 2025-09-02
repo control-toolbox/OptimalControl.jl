@@ -52,7 +52,7 @@ If you use OptimalControl.jl in your work, please cite us:
 or in bibtex format:
 
 ```bibtex
-@software{OptimalControl_jl_a_Julia,
+@software{OptimalControl_jl,
 author = {Caillau, Jean-Baptiste and Cots, Olivier and Gergaud, Joseph and Martinon, Pierre and Sed, Sophia},
 doi = {10.5281/zenodo.13336563},
 license = {["MIT"]},
