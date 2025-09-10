@@ -104,39 +104,3 @@ sol = solve(ocp)
 
 plot(sol)
 ```
-
-## Exporting and importing the solution
-
-We can export (or save) the solution in a Julia `.jld2` data file and reload it later, and also export a discretised version of the solution in a more portable [JSON](https://en.wikipedia.org/wiki/JSON) format. Note that the optimal control problem is needed when loading a solution.
-
-See the two functions:
-
-- [`import_ocp_solution`](@ref),
-- [`export_ocp_solution`](@ref).
-  
-### JLD2
-
-```@example main
-# using JLD2
-using Suppressor # hide
-@suppress_err begin # hide
-# export_ocp_solution(sol; filename="my_solution")
-end # hide
-# sol_jld = import_ocp_solution(ocp; filename="my_solution")
-# println("Objective from computed solution: ", objective(sol))
-# println("Objective from imported solution: ", objective(sol_jld))
-```
-
-!!! danger "Bug"
-
-    The code above does not work in the documentation but works locally. This bug will be fixed.
-
-### JSON
-
-```@example main
-using JSON3
-export_ocp_solution(sol; filename="my_solution", format=:JSON)
-sol_json = import_ocp_solution(ocp; filename="my_solution", format=:JSON)
-println("Objective from computed solution: ", objective(sol))
-println("Objective from imported solution: ", objective(sol_json))
-```
