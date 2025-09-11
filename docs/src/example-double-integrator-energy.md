@@ -151,7 +151,7 @@ plot(sol)
 !!! note
 
     - You can use [MINPACK.jl](@extref Tutorials Resolution-of-the-shooting-equation) instead of [NonlinearSolve.jl](https://docs.sciml.ai/NonlinearSolve).
-    - For more details about the flow construction, visit the [Compute flows from optimal control problems][@ref manual-flow-ocp] page.
+    - For more details about the flow construction, visit the [Compute flows from optimal control problems](@ref manual-flow-ocp) page.
     - In this simple example, we have set an arbitrary initial guess. It can be helpful to use the solution of the direct method to initialise the shooting method. See the [Goddard tutorial](@extref Tutorials tutorial-goddard) for such a concrete application.
 
 ## State constraint
