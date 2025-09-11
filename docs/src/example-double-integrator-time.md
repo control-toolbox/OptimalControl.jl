@@ -127,9 +127,9 @@ function shoot!(s, p0, t1, tf)
     x_t0, p_t0 = x0, p0
     x_t1, p_t1 = f_max(t0, x_t0, p_t0, t1)
     x_tf, p_tf = f_min(t1, x_t1, p_t1, tf)
-    s[1:2] = x_tf - xf                      # target conditions
-    s[3] = p_t1[2]                          # switching condition
-    s[4] = H(x_tf, p_tf, -1)                # free final time
+    s[1:2] = x_tf - xf                          # target conditions
+    s[3] = p_t1[2]                              # switching condition
+    s[4] = H(x_tf, p_tf, -1)                    # free final time
 end
 nothing # hide
 ```
