@@ -1,19 +1,5 @@
 # [Double integrator: energy minimisation](@id example-double-integrator-energy)
 
-```@setup main
-using MINPACK
-function fsolve(f, j, x; kwargs...)
-    try
-        MINPACK.fsolve(f, j, x; kwargs...)
-    catch e
-        println("Error using MINPACK")
-        println(e)
-        println("hybrj not supported. Replaced by hybrd even if it is not visible on the doc.")
-        MINPACK.fsolve(f, x; kwargs...)
-    end
-end
-```
-
 Let us consider a wagon moving along a rail, whose acceleration can be controlled by a force $u$.
 We denote by $x = (x_1, x_2)$ the state of the wagon, where $x_1$ is the position and $x_2$ the velocity.
 

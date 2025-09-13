@@ -141,7 +141,7 @@ We are now ready to solve the shooting equations:
 nle!(s, ξ, λ) = shoot!(s, ξ[1:2], ξ[3], ξ[4]) 
 
 # initial guess: costate and final time
-ξ_guess = [1, 1, 1, 2]
+ξ_guess = [0.1, 0.1, 0.5, 1]
 
 # NLE problem
 prob = NonlinearProblem(nle!, ξ_guess)
