@@ -119,18 +119,21 @@ cp(
 
 repo_url = "github.com/control-toolbox/OptimalControl.jl"
 
+# if draft is true, then the julia code from .md is not executed # debug
+# to disable the draft mode in a specific markdown file, use the following:
+#=
+```@meta
+Draft = false
+```
+=#
 makedocs(;
-    draft=false, # if draft is true, then the julia code from .md is not executed # debug
-    # to disable the draft mode in a specific markdown file, use the following:
-    # ```@meta
-    # Draft = false
-    # ```
+    draft=false,
     #warnonly=[:cross_references, :autodocs_block],
     sitename="OptimalControl.jl",
     format=Documenter.HTML(;
         repolink="https://" * repo_url,
         prettyurls=false,
-        size_threshold_ignore=["api-optimalcontrol-user.md"],
+        size_threshold_ignore=["api-optimalcontrol-user.md", "example-double-integrator-energy.md"],
         assets=[
             asset("https://control-toolbox.org/assets/css/documentation.css"),
             asset("https://control-toolbox.org/assets/js/documentation.js"),
