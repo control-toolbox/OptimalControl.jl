@@ -11,9 +11,9 @@ uuid = "54578032-b7ea-4c30-94aa-7cbd1cce6c9a"
 version = "0.8.13"
 
 [[deps.ADTypes]]
-git-tree-sha1 = "60665b326b75db6517939d0e1875850bc4a54368"
+git-tree-sha1 = "27cecae79e5cc9935255f90c53bb831cc3c870d7"
 uuid = "47edcb42-4c32-4615-8424-f2b9edc5f35b"
-version = "1.17.0"
+version = "1.18.0"
 weakdeps = ["ChainRulesCore", "ConstructionBase", "EnzymeCore"]
 
     [deps.ADTypes.extensions]
