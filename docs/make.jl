@@ -133,7 +133,9 @@ makedocs(;
     format=Documenter.HTML(;
         repolink="https://" * repo_url,
         prettyurls=false,
-        size_threshold_ignore=["api-optimalcontrol-user.md", "example-double-integrator-energy.md"],
+        size_threshold_ignore=[
+            "api-optimalcontrol-user.md", "example-double-integrator-energy.md"
+        ],
         assets=[
             asset("https://control-toolbox.org/assets/css/documentation.css"),
             asset("https://control-toolbox.org/assets/js/documentation.js"),
