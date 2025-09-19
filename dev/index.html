@@ -26,7 +26,7 @@ url = {https://control-toolbox.org/OptimalControl.jl}
   [54762871] CTBase v0.16.4
   [790bbbee] CTDirect v0.16.4
   [1c39547c] CTFlows v0.8.8
-  [34c4fa32] CTModels v0.6.6
+  [34c4fa32] CTModels v0.6.7
   [32681960] CTParser v0.6.4
   [38540f10] CommonSolve v0.2.4
   [a93c6f00] DataFrames v1.8.0
@@ -34,7 +34,7 @@ url = {https://control-toolbox.org/OptimalControl.jl}
   [e30172f5] Documenter v1.14.1
   [d12716ef] DocumenterInterLinks v1.1.0
   [a078cd44] DocumenterMermaid v0.2.0
-  [1037b233] ExaModels v0.9.1
+⌃ [1037b233] ExaModels v0.9.1
   [f6369f11] ForwardDiff v1.2.1
   [033835bb] JLD2 v0.6.2
   [0f8b85d8] JSON3 v1.14.3
@@ -42,14 +42,14 @@ url = {https://control-toolbox.org/OptimalControl.jl}
   [2621e9c9] MadNLP v0.8.12
 ⌅ [f4238b75] NLPModelsIpopt v0.10.4
   [bec4dd0d] NLPModelsKnitro v0.9.3
-  [8913a72c] NonlinearSolve v4.10.0
+  [8913a72c] NonlinearSolve v4.11.0
   [5f98b655] OptimalControl v1.1.1 `~/work/OptimalControl.jl/OptimalControl.jl`
   [1dea7af3] OrdinaryDiffEq v6.102.1
-  [91a5bcdd] Plots v1.40.19
+  [91a5bcdd] Plots v1.40.20
   [fd094767] Suppressor v0.2.8
   [37e2e46d] LinearAlgebra v1.11.0
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.11.6
-Commit 9615af0f269 (2025-07-09 12:58 UTC)
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.11.7
+Commit f2b3dbda30a (2025-09-08 12:10 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
@@ -78,7 +78,7 @@ Environment:
   [54762871] CTBase v0.16.4
   [790bbbee] CTDirect v0.16.4
   [1c39547c] CTFlows v0.8.8
-  [34c4fa32] CTModels v0.6.6
+  [34c4fa32] CTModels v0.6.7
   [32681960] CTParser v0.6.4
   [d360d2e6] ChainRulesCore v1.26.0
   [0b6fb165] ChunkCodecCore v1.0.0
@@ -86,7 +86,7 @@ Environment:
   [55437552] ChunkCodecLibZstd v1.0.0
   [fb6a15b2] CloseOpenIntervals v0.1.13
   [944b1d66] CodecZlib v0.7.8
-  [35d6a980] ColorSchemes v3.30.0
+  [35d6a980] ColorSchemes v3.31.0
   [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
   [5ae59095] Colors v0.13.1
@@ -106,7 +106,7 @@ Environment:
   [864edb3b] DataStructures v0.19.1
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v6.189.1
+  [2b5f629d] DiffEqBase v6.190.2
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
   [a0c0ee7d] DifferentiationInterface v0.7.7
@@ -117,7 +117,7 @@ Environment:
   [a078cd44] DocumenterMermaid v0.2.0
   [4e289a0a] EnumX v1.0.5
   [f151be2c] EnzymeCore v0.8.13
-  [1037b233] ExaModels v0.9.1
+⌃ [1037b233] ExaModels v0.9.1
   [460bff9d] ExceptionUnwrapping v0.1.11
   [d4d017d3] ExponentialUtilities v1.27.0
   [e2ba6199] ExprTools v0.1.10
@@ -158,18 +158,18 @@ Environment:
   [682c06a0] JSON v0.21.4
   [0f8b85d8] JSON3 v1.14.3
   [ae98c720] Jieko v0.2.1
-  [67920dd8] KNITRO v0.14.8
+  [67920dd8] KNITRO v0.14.9
   [ba0b0d4f] Krylov v0.10.1
   [40e66cde] LDLFactorizations v0.10.1
   [b964fa9f] LaTeXStrings v1.4.0
   [23fbe1c1] Latexify v0.16.10
   [10f19ff3] LayoutPointers v0.1.17
   [0e77f7df] LazilyInitializedFields v1.3.0
-  [5078a376] LazyArrays v2.6.2
+  [5078a376] LazyArrays v2.6.3
   [87fe0de2] LineSearch v0.1.4
   [d3d80556] LineSearches v7.4.0
   [5c8ed15e] LinearOperators v2.11.0
-  [7ed4a6bd] LinearSolve v3.40.0
+  [7ed4a6bd] LinearSolve v3.40.1
   [2ab3a3ac] LogExpFunctions v0.3.29
   [e6f89c97] LoggingExtras v1.1.0
   [4854310b] MINPACK v1.3.0
@@ -191,8 +191,8 @@ Environment:
   [e01155f1] NLPModelsModifiers v0.7.2
   [d41bc354] NLSolversBase v7.10.0
   [77ba4419] NaNMath v1.1.3
-  [8913a72c] NonlinearSolve v4.10.0
-  [be0214bd] NonlinearSolveBase v1.15.0
+  [8913a72c] NonlinearSolve v4.11.0
+  [be0214bd] NonlinearSolveBase v1.16.1
   [5959db7a] NonlinearSolveFirstOrder v1.8.0
   [9a2c21bd] NonlinearSolveQuasiNewton v1.9.0
   [26075421] NonlinearSolveSpectralMethods v1.4.0
@@ -223,7 +223,7 @@ Environment:
   [5b33eab2] OrdinaryDiffEqPRK v1.4.0
   [04162be5] OrdinaryDiffEqQPRK v1.4.0
   [af6ede74] OrdinaryDiffEqRKN v1.5.0
-  [43230ef6] OrdinaryDiffEqRosenbrock v1.17.0
+  [43230ef6] OrdinaryDiffEqRosenbrock v1.18.0
   [2d112036] OrdinaryDiffEqSDIRK v1.7.0
   [669c94d9] OrdinaryDiffEqSSPRK v1.7.0
   [e3e12d00] OrdinaryDiffEqStabilizedIRK v1.6.0
@@ -235,7 +235,7 @@ Environment:
   [69de0a69] Parsers v2.8.3
   [ccf2f8ad] PlotThemes v3.3.0
   [995b91a9] PlotUtils v1.4.3
-  [91a5bcdd] Plots v1.40.19
+  [91a5bcdd] Plots v1.40.20
   [f517fe37] Polyester v0.7.18
   [1d0040c9] PolyesterWeave v0.2.2
   [2dfb63ee] PooledArrays v1.4.3
@@ -256,9 +256,9 @@ Environment:
   [37e2e3b7] ReverseDiff v1.16.1
   [7e49a35a] RuntimeGeneratedFunctions v0.5.15
   [94e857df] SIMDTypes v0.1.0
-  [0bca4576] SciMLBase v2.118.0
+  [0bca4576] SciMLBase v2.120.0
   [19f34311] SciMLJacobianOperators v0.1.11
-  [c0aeaf25] SciMLOperators v1.7.1
+  [c0aeaf25] SciMLOperators v1.7.2
   [53ae85a6] SciMLStructures v1.7.0
   [7e506255] ScopedValues v1.5.0
   [6c6a2e73] Scratch v1.3.0
@@ -270,7 +270,7 @@ Environment:
   [ce78b400] SimpleUnPack v1.1.0
   [ff4d7338] SolverCore v0.3.8
   [a2af1166] SortingAlgorithms v1.2.2
-  [9f842d2f] SparseConnectivityTracer v1.0.2
+  [9f842d2f] SparseConnectivityTracer v1.1.0
   [0a514795] SparseMatrixColorings v0.4.21
   [276daf66] SpecialFunctions v2.5.1
   [860ef19b] StableRNGs v1.0.3
@@ -285,7 +285,7 @@ Environment:
   [892a3eda] StringManipulation v0.4.1
   [856f2bd8] StructTypes v1.11.0
   [fd094767] Suppressor v0.2.8
-  [2efcf032] SymbolicIndexingInterface v0.3.43
+  [2efcf032] SymbolicIndexingInterface v0.3.44
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.12.1
   [62fd8b95] TensorCore v0.1.1
@@ -296,7 +296,7 @@ Environment:
   [5c2747f8] URIs v1.6.1
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [1986cc42] Unitful v1.24.0
+⌅ [1986cc42] Unitful v1.24.0
   [45397f5d] UnitfulLatexify v1.7.0
   [41fe7b60] Unzip v0.2.0
   [efce3f68] WoodburyMatrices v1.0.0
@@ -324,6 +324,7 @@ Environment:
   [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
   [9cc047cb] Ipopt_jll v300.1400.1900+0
   [aacddb02] JpegTurbo_jll v3.1.3+0
+  [0e6b36f8] KNITRO_jll v15.0.1
   [c1c5ebd0] LAME_jll v3.100.3+0
   [88015f11] LERC_jll v4.0.1+0
   [1d63c593] LLVMOpenMP_jll v18.1.8+0
@@ -339,17 +340,17 @@ Environment:
   [d7ed1dd3] MUMPS_seq_jll v500.800.100+0
   [e7412a2a] Ogg_jll v1.3.6+0
   [656ef2d0] OpenBLAS32_jll v0.3.29+0
-  [9bd350c2] OpenSSH_jll v10.0.1+0
+  [9bd350c2] OpenSSH_jll v10.0.2+0
   [458c3c95] OpenSSL_jll v3.5.2+0
   [efe28fd5] OpenSpecFun_jll v0.5.6+0
   [91d4177d] Opus_jll v1.5.2+0
-  [36c8627f] Pango_jll v1.56.3+0
+  [36c8627f] Pango_jll v1.56.4+0
 ⌅ [30392449] Pixman_jll v0.44.2+0
   [c0090381] Qt6Base_jll v6.8.2+1
   [629bc702] Qt6Declarative_jll v6.8.2+1
   [ce943373] Qt6ShaderTools_jll v6.8.2+1
   [e99dba38] Qt6Wayland_jll v6.8.2+1
-  [319450e9] SPRAL_jll v2025.5.20+0
+⌅ [319450e9] SPRAL_jll v2025.5.20+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.24.0+0
 ⌅ [02c8fc9c] XML2_jll v2.13.8+0
@@ -448,4 +449,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="example-double-integrator-energy.html">Energy minimisation »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Sunday 14 September 2025 09:46">Sunday 14 September 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="example-double-integrator-energy.html">Energy minimisation »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Friday 19 September 2025 14:16">Friday 19 September 2025</span>. Using Julia version 1.11.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
