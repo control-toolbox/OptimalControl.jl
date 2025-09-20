@@ -14,6 +14,7 @@ using ADNLPModels
 using ExaModels
 using NLPModelsIpopt
 using MadNLP
+using MadNLPMumps
 using JSON3
 using JLD2
 using NLPModelsKnitro
@@ -100,6 +101,7 @@ Modules = [
     CTDirectExtExa,
 ]
 for Module in Modules
+    println("getdocmeta(", Module, ", :DocTestSetup)")
     isnothing(DocMeta.getdocmeta(Module, :DocTestSetup)) &&
         DocMeta.setdocmeta!(Module, :DocTestSetup, :(using $Module); recursive=true)
 end

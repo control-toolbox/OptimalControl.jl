@@ -2,6 +2,7 @@ using Test
 using OptimalControl
 using NLPModelsIpopt
 using MadNLP
+using MadNLPMumps
 using LinearAlgebra
 using OrdinaryDiffEq
 using MINPACK
