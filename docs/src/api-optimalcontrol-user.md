@@ -79,7 +79,6 @@ iterations
 lagrange
 mayer
 message
-model
 objective(::Model)
 objective(::Solution)
 plot(::Solution, ::Symbol...)
