@@ -79,8 +79,10 @@ iterations
 lagrange
 mayer
 message
+nlp_model
 objective(::Model)
 objective(::Solution)
+ocp_model
 plot(::Solution, ::Symbol...)
 plot!(::Plots.Plot, ::Solution, ::Symbol...)
 set_initial_guess
