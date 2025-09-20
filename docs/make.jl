@@ -101,7 +101,6 @@ Modules = [
     CTDirectExtExa,
 ]
 for Module in Modules
-    println("getdocmeta(", Module, ", :DocTestSetup)")
     isnothing(DocMeta.getdocmeta(Module, :DocTestSetup)) &&
         DocMeta.setdocmeta!(Module, :DocTestSetup, :(using $Module); recursive=true)
 end
