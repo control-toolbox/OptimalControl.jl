@@ -107,7 +107,7 @@ ocp = @def begin
     0.5∫( u(t)^2 ) → min
 end
 
-solve(ocp, :exa, :madnlp)
+solve(ocp, :exa, :madnlp; disc_method=:trapeze)
 nothing # hide
 ```
 
