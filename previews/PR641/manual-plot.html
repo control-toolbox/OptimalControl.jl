@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Plot a solution · OptimalControl.jl</title><meta name="title" content="Plot a solution · OptimalControl.jl"/><meta property="og:title" content="Plot a solution · OptimalControl.jl"/><meta property="twitter:title" content="Plot a solution · OptimalControl.jl"/><meta name="description" content="Documentation for OptimalControl.jl."/><meta property="og:description" content="Documentation for OptimalControl.jl."/><meta property="twitter:description" content="Documentation for OptimalControl.jl."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script><link href="https://control-toolbox.org/assets/css/documentation.css" rel="stylesheet" type="text/css"/><script src="https://control-toolbox.org/assets/js/documentation.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="index.html">OptimalControl.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="index.html">Getting Started</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="example-double-integrator-energy.html">Energy minimisation</a></li><li><a class="tocitem" href="example-double-integrator-time.html">Time mininimisation</a></li></ul></li><li><span class="tocitem">Manual</span><ul><li><a class="tocitem" href="manual-abstract.html">Define a problem</a></li><li><a class="tocitem" href="manual-model.html">Problem characteristics</a></li><li><a class="tocitem" href="manual-initial-guess.html">Set an initial guess</a></li><li><a class="tocitem" href="manual-solve.html">Solve a problem</a></li><li><a class="tocitem" href="manual-solve-gpu.html">Solve on GPU</a></li><li><a class="tocitem" href="manual-solution.html">Solution characteristics</a></li><li class="is-active"><a class="tocitem" href="manual-plot.html">Plot a solution</a><ul class="internal"><li><a class="tocitem" href="#Argument-Overview"><span>Argument Overview</span></a></li><li><a class="tocitem" href="#The-problem-and-the-solution"><span>The problem and the solution</span></a></li><li><a class="tocitem" href="#manual-plot-basic"><span>Basic concepts</span></a></li><li><a class="tocitem" href="#manual-plot-flow"><span>From Flow function</span></a></li><li><a class="tocitem" href="#manual-plot-layout"><span>Split vs. group layout</span></a></li><li><a class="tocitem" href="#manual-plot-add"><span>Add a plot</span></a></li><li><a class="tocitem" href="#manual-plot-control"><span>Plotting the control norm</span></a></li><li><a class="tocitem" href="#manual-plot-custom"><span>Custom plot and subplots</span></a></li><li><a class="tocitem" href="#manual-plot-time"><span>Normalised time</span></a></li><li><a class="tocitem" href="#manual-plot-constraints"><span>Constraints</span></a></li><li><a class="tocitem" href="#manual-plot-select"><span>What to plot</span></a></li></ul></li><li><input class="collapse-toggle" id="menuitem-3-8" type="checkbox"/><label class="tocitem" for="menuitem-3-8"><span class="docs-label">Compute flows</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="manual-flow-api.html">Flow API</a></li><li><a class="tocitem" href="manual-flow-ocp.html">From optimal control problems</a></li><li><a class="tocitem" href="manual-flow-others.html">From Hamiltonians and others</a></li></ul></li></ul></li><li><span class="tocitem">API</span><ul><li><a class="tocitem" href="api-optimalcontrol-user.html">OptimalControl.jl - User</a></li><li><input class="collapse-toggle" id="menuitem-4-2" type="checkbox"/><label class="tocitem" for="menuitem-4-2"><span class="docs-label">Subpackages - Developers</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="api-ctbase.html">CTBase.jl</a></li><li><a class="tocitem" href="api-ctdirect.html">CTDirect.jl</a></li><li><a class="tocitem" href="api-ctflows.html">CTFlows.jl</a></li><li><a class="tocitem" href="api-ctmodels.html">CTModels.jl</a></li><li><a class="tocitem" href="api-ctparser.html">CTParser.jl</a></li><li><a class="tocitem" href="api-optimalcontrol-dev.html">OptimalControl.jl</a></li></ul></li></ul></li><li><a class="tocitem" href="zhejiang-2025.html">Zhejiang 2025</a></li><li><a class="tocitem" href="jlesc17.html">JLESC17</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Manual</a></li><li class="is-active"><a href="manual-plot.html">Plot a solution</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="manual-plot.html">Plot a solution</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl/blob/main/docs/src/manual-plot.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="manual-plot"><a class="docs-heading-anchor" href="#manual-plot">How to plot a solution</a><a id="manual-plot-1"></a><a class="docs-heading-anchor-permalink" href="#manual-plot" title="Permalink"></a></h1><p>In this tutorial, we explain the different options for plotting the solution of an optimal control problem using the <code>plot</code> and <code>plot!</code> functions, which are extensions of the <a href="https://docs.juliaplots.org">Plots.jl</a> package. Use <code>plot</code> to create a new plot object, and <code>plot!</code> to add to an existing one:</p><pre><code class="language-julia hljs">plot(args...; kw...)           # creates a new Plot, and set it to be the `current`
+plot!(args...; kw...)          # modifies Plot `current()`
+plot!(plt, args...; kw...)     # modifies Plot `plt`</code></pre><p>More precisely, the signature of <code>plot</code>, to plot a solution, is as follows.</p><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="RecipesBase.plot-Tuple{Solution, Vararg{Symbol}}-manual-plot" href="#RecipesBase.plot-Tuple{Solution, Vararg{Symbol}}-manual-plot"><code>RecipesBase.plot</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">plot(
+    sol::Solution,
+    description::Symbol...;
+    layout,
+    control,
+    time,
+    state_style,
+    state_bounds_style,
+    control_style,
+    control_bounds_style,
+    costate_style,
+    time_style,
+    path_style,
+    path_bounds_style,
+    dual_style,
+    size,
+    color,
+    kwargs...
+) -&gt; Plots.Plot
+</code></pre><p>Plot the components of an optimal control solution.</p><p>This is the main user-facing function to visualise the solution of an optimal control problem solved with the control-toolbox ecosystem.</p><p>It generates a set of subplots showing the evolution of the state, control, costate, path constraints, and dual variables over time, depending on the problem and the user’s choices.</p><p><strong>Arguments</strong></p><ul><li><code>sol::CTModels.Solution</code>: The optimal control solution to visualise.</li><li><code>description::Symbol...</code>: A variable number of symbols indicating which components to include in the plot. Common values include:<ul><li><code>:state</code> – plot the state.</li><li><code>:costate</code> – plot the costate (adjoint).</li><li><code>:control</code> – plot the control.</li><li><code>:path</code> – plot the path constraints.</li><li><code>:dual</code> – plot the dual variables (or Lagrange multipliers) associated with path constraints.</li></ul></li></ul><p>If no symbols are provided, a default set is used based on the problem and styles.</p><p><strong>Keyword Arguments (Optional)</strong></p><ul><li><p><code>layout::Symbol = :group</code>: Specifies how to arrange plots.</p><ul><li><code>:group</code>: Fewer plots, grouping similar variables together (e.g., all states in one subplot).</li><li><code>:split</code>: One plot per variable component, stacked in a layout.</li></ul></li><li><p><code>control::Symbol = :components</code>: Defines how to represent control inputs.</p><ul><li><code>:components</code>: One curve per control component.</li><li><code>:norm</code>: Single curve showing the Euclidean norm ‖u(t)‖.</li><li><code>:all</code>: Plot both components and norm.</li></ul></li><li><p><code>time::Symbol = :default</code>: Time normalisation for plots.</p><ul><li><code>:default</code>: Real time scale.</li><li><code>:normalize</code> or <code>:normalise</code>: Normalised to the interval [0, 1].</li></ul></li><li><p><code>color</code>: set the color of the all the graphs.</p></li></ul><p><strong>Style Options (Optional)</strong></p><p>All style-related keyword arguments can be either a <code>NamedTuple</code> of plotting attributes or the <code>Symbol</code> <code>:none</code> referring to not plot the associated element. These allow you to customise color, line style, markers, etc.</p><ul><li><code>time_style</code>: Style for vertical lines at initial and final times.</li><li><code>state_style</code>: Style for state components.</li><li><code>costate_style</code>: Style for costate components.</li><li><code>control_style</code>: Style for control components.</li><li><code>path_style</code>: Style for path constraint values.</li><li><code>dual_style</code>: Style for dual variables.</li></ul><p><strong>Bounds Decorations (Optional)</strong></p><p>Use these options to customise bounds on the plots if applicable and defined in the model. Set to <code>:none</code> to hide.</p><ul><li><code>state_bounds_style</code>: Style for state bounds.</li><li><code>control_bounds_style</code>: Style for control bounds.</li><li><code>path_bounds_style</code>: Style for path constraint bounds.</li></ul><p><strong>Returns</strong></p><ul><li>A <code>Plots.Plot</code> object, which can be displayed, saved, or further customised.</li></ul><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs"># basic plot
+julia&gt; plot(sol)
+
+# plot only the state and control
+julia&gt; plot(sol, :state, :control)
+
+# customise layout and styles, no costate
+julia&gt; plot(sol;
+       layout = :group,
+       control = :all,
+       state_style = (color=:blue, linestyle=:solid),
+       control_style = (color=:red, linestyle=:dash),
+       costate_style = :none)       </code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTModels.jl/blob/v0.6.7/ext/plot.jl#L1247">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="RecipesBase.plot!-Tuple{Solution, Vararg{Symbol}}-manual-plot" href="#RecipesBase.plot!-Tuple{Solution, Vararg{Symbol}}-manual-plot"><code>RecipesBase.plot!</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">plot!(
+    sol::Solution,
+    description::Symbol...;
+    layout,
+    control,
+    time,
+    state_style,
+    state_bounds_style,
+    control_style,
+    control_bounds_style,
+    costate_style,
+    time_style,
+    path_style,
+    path_bounds_style,
+    dual_style,
+    color,
+    kwargs...
+) -&gt; Any
+</code></pre><p>Modify Plot <code>current()</code> with the optimal control solution <code>sol</code>.</p><p>See <a href="api-optimalcontrol-user.html#RecipesBase.plot-Tuple{Solution, Vararg{Symbol}}"><code>plot</code></a> for full behavior and keyword arguments.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTModels.jl/blob/v0.6.7/ext/plot.jl#L1201">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="RecipesBase.plot!-Tuple{Plots.Plot, Solution, Vararg{Symbol}}-manual-plot" href="#RecipesBase.plot!-Tuple{Plots.Plot, Solution, Vararg{Symbol}}-manual-plot"><code>RecipesBase.plot!</code></a> — <span class="docstring-category">Method</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">plot!(
+    p::Plots.Plot,
+    sol::Solution,
+    description::Symbol...;
+    layout,
+    control,
+    time,
+    state_style,
+    state_bounds_style,
+    control_style,
+    control_bounds_style,
+    costate_style,
+    time_style,
+    path_style,
+    path_bounds_style,
+    dual_style,
+    color,
+    kwargs...
+) -&gt; Plots.Plot
+</code></pre><p>Modify Plot <code>p</code> with the optimal control solution <code>sol</code>.</p><p>See <a href="api-optimalcontrol-user.html#RecipesBase.plot-Tuple{Solution, Vararg{Symbol}}"><code>plot</code></a> for full behavior and keyword arguments.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTModels.jl/blob/v0.6.7/ext/plot.jl#L1113">source</a></section></article><h2 id="Argument-Overview"><a class="docs-heading-anchor" href="#Argument-Overview">Argument Overview</a><a id="Argument-Overview-1"></a><a class="docs-heading-anchor-permalink" href="#Argument-Overview" title="Permalink"></a></h2><p>The table below summarizes the main plotting arguments and links to the corresponding documentation sections for detailed explanations:</p><table><tr><th style="text-align: left">Section</th><th style="text-align: left">Relevant Arguments</th></tr><tr><td style="text-align: left"><a href="manual-plot.html#manual-plot-basic">Basic concepts</a></td><td style="text-align: left"><code>size</code>, <code>state_style</code>, <code>costate_style</code>, <code>control_style</code>, <code>time_style</code>, <code>kwargs...</code></td></tr><tr><td style="text-align: left"><a href="manual-plot.html#manual-plot-layout">Split vs. group layout</a></td><td style="text-align: left"><code>layout</code></td></tr><tr><td style="text-align: left"><a href="manual-plot.html#manual-plot-control">Plotting control norm</a></td><td style="text-align: left"><code>control</code></td></tr><tr><td style="text-align: left"><a href="manual-plot.html#manual-plot-time">Normalised time</a></td><td style="text-align: left"><code>time</code></td></tr><tr><td style="text-align: left"><a href="manual-plot.html#manual-plot-constraints">Constraints</a></td><td style="text-align: left"><code>state_bounds_style</code>, <code>control_bounds_style</code>, <code>path_style</code>, <code>path_bounds_style</code>, <code>dual_style</code></td></tr><tr><td style="text-align: left"><a href="manual-plot.html#manual-plot-select">What to plot</a></td><td style="text-align: left"><code>description...</code></td></tr></table><p>You can plot solutions obtained from the <code>solve</code> function or from a flow computed using an optimal control problem and a control law. See the <a href="manual-plot.html#manual-plot-basic">Basic Concepts</a> and <a href="manual-plot.html#manual-plot-flow">From Flow function</a> sections for details.</p><p>To overlay a new plot on an existing one, use the <code>plot!</code> function (see <a href="manual-plot.html#manual-plot-add">Add a plot</a>).</p><p>If you prefer full control over the visualisation, you can extract the state, costate, and control to create your own plots. Refer to the <a href="manual-plot.html#manual-plot-custom">Custom plot</a> section for guidance. You can also access the subplots.</p><h2 id="The-problem-and-the-solution"><a class="docs-heading-anchor" href="#The-problem-and-the-solution">The problem and the solution</a><a id="The-problem-and-the-solution-1"></a><a class="docs-heading-anchor-permalink" href="#The-problem-and-the-solution" title="Permalink"></a></h2><p>Let us start by importing the packages needed to define and solve the problem.</p><pre><code class="language-julia hljs">using OptimalControl
+using NLPModelsIpopt</code></pre><p>We consider the simple optimal control problem from the <a href="example-double-integrator-energy.html#example-double-integrator-energy">basic example page</a>.</p><pre><code class="language-julia hljs">t0 = 0          # initial time
+tf = 1          # final time
+x0 = [-1, 0]    # initial condition
+xf = [ 0, 0]    # final condition
+
+ocp = @def begin
+    t ∈ [t0, tf], time
+    x ∈ R², state
+    u ∈ R, control
+    x(t0) == x0
+    x(tf) == xf
+    ẋ(t) == [x₂(t), u(t)]
+    ∫( 0.5u(t)^2 ) → min
+end
+
+sol = solve(ocp, display=false)</code></pre><h2 id="manual-plot-basic"><a class="docs-heading-anchor" href="#manual-plot-basic">Basic concepts</a><a id="manual-plot-basic-1"></a><a class="docs-heading-anchor-permalink" href="#manual-plot-basic" title="Permalink"></a></h2><p>The simplest way to plot the solution is to use the <code>plot</code> function with the solution as the only argument.</p><div class="admonition is-category-caveat" id="Caveat-72a0ae3fa18dc7a8"><header class="admonition-header">Caveat<a class="admonition-anchor" href="#Caveat-72a0ae3fa18dc7a8" title="Permalink"></a></header><div class="admonition-body"><p>The <code>plot</code> function for a solution of an optimal control problem extends the <code>plot</code> function from Plots.jl. Therefore, you need to import this package in order to plot a solution.</p></div></div><pre><code class="language-julia hljs">using Plots
+plot(sol)</code></pre><img src="manual-plot-f807da97.svg" alt="Example block output"/><p>In the figure above, we have a grid of subplots: the left column displays the state component trajectories, the right column shows the costate component trajectories, and the bottom row contains the control component trajectory.</p><p>As in Plots.jl, input data is passed positionally (for example, <code>sol</code> in <code>plot(sol)</code>), and attributes are passed as keyword arguments (for example, <code>plot(sol; color = :blue)</code>). After executing <code>using Plots</code> in the REPL, you can use the <code>plotattr()</code> function to print a list of all available attributes for series, plots, subplots, or axes.</p><pre><code class="language-julia hljs"># Valid Operations
+plotattr(:Plot)
+plotattr(:Series)
+plotattr(:Subplot)
+plotattr(:Axis)</code></pre><p>Once you have the list of attributes, you can either use the aliases of a specific attribute or inspect a specific attribute to display its aliases and description.</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; plotattr(&quot;color&quot;) # Specific Attribute Example</code><code class="nohighlight hljs ansi" style="display:block;">:seriescolor
+
+The base color for this series. `:auto` (the default) will select a color from the subplot&#39;s `color_palette`, based on the order it was added to the subplot. Also describes the colormap for surfaces.
+
+Aliases: (:c, :cmap, :color, :colormap, :colour, :seriescolors).
+
+Type: Union{Integer, Symbol, ColorSchemes.ColorScheme, Colorant}.
+
+`Series` attribute, defaults to `auto`.</code></pre><div class="admonition is-warning" id="Warning-ffae8696ffd308e1"><header class="admonition-header">Warning<a class="admonition-anchor" href="#Warning-ffae8696ffd308e1" title="Permalink"></a></header><div class="admonition-body"><p>Some attributes have different default values in OptimalControl.jl compared to Plots.jl. For instance, the default figure size is 600x400 in Plots.jl, while in OptimalControl.jl, it depends on the number of states and controls.</p></div></div><p>You can also visit the Plot documentation online to get the descriptions of the attributes:</p><ul><li>To pass attributes to the plot, see the <a href="https://docs.juliaplots.org/latest/generated/attributes_plot/">attributes plot</a> documentation. For instance, you can specify the size of the figure.</li></ul><details style="margin-left:3em"><summary>List of plot attributes.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">background_color
+background_color_outside
+display_type
+dpi
+extra_kwargs
+extra_plot_kwargs
+fontfamily
+foreground_color
+html_output_format
+inset_subplots
+layout
+link
+overwrite_figure
+plot_title
+plot_titlefontcolor
+plot_titlefontfamily
+plot_titlefonthalign
+plot_titlefontrotation
+plot_titlefontsize
+plot_titlefontvalign
+plot_titleindex
+plot_titlelocation
+plot_titlevspan
+pos
+show
+size
+tex_output_standalone
+thickness_scaling
+warn_on_unsupported
+window_title</code></pre></details><ul><li>You can pass attributes to all subplots at once by referring to the <a href="https://docs.juliaplots.org/latest/generated/attributes_subplot/">attributes subplot</a> documentation. For example, you can specify the location of the legends.</li></ul><details style="margin-left:3em"><summary>List of subplot attributes.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">annotationcolor
+annotationfontfamily
+annotationfontsize
+annotationhalign
+annotationrotation
+annotations
+annotationvalign
+aspect_ratio
+background_color_inside
+background_color_subplot
+bottom_margin
+camera
+clims
+color_palette
+colorbar
+colorbar_continuous_values
+colorbar_discrete_values
+colorbar_fontfamily
+colorbar_formatter
+colorbar_scale
+colorbar_tickfontcolor
+colorbar_tickfontfamily
+colorbar_tickfonthalign
+colorbar_tickfontrotation
+colorbar_tickfontsize
+colorbar_tickfontvalign
+colorbar_ticks
+colorbar_title
+colorbar_title_location
+colorbar_titlefontcolor
+colorbar_titlefontfamily
+colorbar_titlefonthalign
+colorbar_titlefontrotation
+colorbar_titlefontsize
+colorbar_titlefontvalign
+extra_kwargs
+fontfamily_subplot
+foreground_color_subplot
+foreground_color_title
+framestyle
+left_margin
+legend_background_color
+legend_column
+legend_font
+legend_font_color
+legend_font_family
+legend_font_halign
+legend_font_pointsize
+legend_font_rotation
+legend_font_valign
+legend_foreground_color
+legend_position
+legend_title
+legend_title_font
+legend_title_font_color
+legend_title_font_family
+legend_title_font_halign
+legend_title_font_pointsize
+legend_title_font_rotation
+legend_title_font_valign
+margin
+projection
+projection_type
+right_margin
+subplot_index
+title
+titlefontcolor
+titlefontfamily
+titlefonthalign
+titlefontrotation
+titlefontsize
+titlefontvalign
+titlelocation
+top_margin</code></pre></details><ul><li>Similarly, you can pass axis attributes to all subplots. See the <a href="https://docs.juliaplots.org/latest/generated/attributes_axis/">attributes axis</a> documentation. For example, you can remove the grid from every subplot.</li></ul><details style="margin-left:3em"><summary>List of axis attributes.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">discrete_values
+draw_arrow
+flip
+foreground_color_axis
+foreground_color_border
+foreground_color_grid
+foreground_color_guide
+foreground_color_minor_grid
+foreground_color_text
+formatter
+grid
+gridalpha
+gridlinewidth
+gridstyle
+guide
+guide_position
+guidefontcolor
+guidefontfamily
+guidefonthalign
+guidefontrotation
+guidefontsize
+guidefontvalign
+lims
+link
+minorgrid
+minorgridalpha
+minorgridlinewidth
+minorgridstyle
+minorticks
+mirror
+rotation
+scale
+showaxis
+tick_direction
+tickfontcolor
+tickfontfamily
+tickfonthalign
+tickfontrotation
+tickfontsize
+tickfontvalign
+ticks
+unit
+unitformat
+widen</code></pre></details><ul><li>Finally, you can pass series attributes to all subplots. Refer to the <a href="https://docs.juliaplots.org/latest/generated/attributes_series/">attributes series</a> documentation. For instance, you can set the width of the curves using <code>linewidth</code>.</li></ul><details style="margin-left:3em"><summary>List of series attributes.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">arrow
+bar_edges
+bar_position
+bar_width
+bins
+colorbar_entry
+connections
+contour_labels
+contours
+extra_kwargs
+fill_z
+fillalpha
+fillcolor
+fillrange
+fillstyle
+group
+hover
+label
+levels
+line_z
+linealpha
+linecolor
+linestyle
+linewidth
+marker_z
+markeralpha
+markercolor
+markershape
+markersize
+markerstrokealpha
+markerstrokecolor
+markerstrokestyle
+markerstrokewidth
+normalize
+orientation
+permute
+primary
+quiver
+ribbon
+series_annotations
+seriesalpha
+seriescolor
+seriestype
+show_empty_bins
+smooth
+stride
+subplot
+weights
+x
+xerror
+y
+yerror
+z
+z_order
+zerror</code></pre></details>
+</br><pre><code class="language-julia hljs">plot(sol, size=(700, 450), label=&quot;sol&quot;, legend=:bottomright, grid=false, linewidth=2)</code></pre><img src="manual-plot-2d9837f8.svg" alt="Example block output"/><p>To specify series attributes for a specific group of subplots (state, costate or control), you can use the optional keyword arguments <code>state_style</code>, <code>costate_style</code>, and <code>control_style</code>, which correspond to the state, costate, and control trajectories, respectively.</p><pre><code class="language-julia hljs">plot(sol;
+     state_style   = (color=:blue,),                  # style: state trajectory
+     costate_style = (color=:black, linestyle=:dash), # style: costate trajectory
+     control_style = (color=:red, linewidth=2))       # style: control trajectory</code></pre><img src="manual-plot-5d64168a.svg" alt="Example block output"/><p>Vertical axes at the initial and final times are automatically plotted. The style can me modified with the <code>time_style</code> keyword argument.  Additionally, you can choose not to display for instance the state and the costate trajectories by setting their styles to <code>:none</code>. You can set to <code>:none</code> any style.</p><pre><code class="language-julia hljs">plot(sol;
+     state_style    = :none,             # do not plot the state
+     costate_style  = :none,             # do not plot the costate
+     control_style  = (color = :red,),   # plot the control in red
+     time_style     = (color = :green,)) # vertical axes at initial and final times in green</code></pre><img src="manual-plot-c64d030e.svg" alt="Example block output"/><p>To select what to display, you can also use the <code>description</code> argument by providing a list of symbols such as <code>:state</code>, <code>:costate</code>, and <code>:control</code>.</p><pre><code class="language-julia hljs">plot(sol, :state, :control)  # plot the state and the control</code></pre><img src="manual-plot-09d40ad5.svg" alt="Example block output"/><div class="admonition is-info" id="Select-what-to-plot-114ac504f9a6f28c"><header class="admonition-header">Select what to plot<a class="admonition-anchor" href="#Select-what-to-plot-114ac504f9a6f28c" title="Permalink"></a></header><div class="admonition-body"><p>For more details on how to choose what to plot, see the <a href="manual-plot.html#manual-plot-select">What to plot</a> section.</p></div></div><h2 id="manual-plot-flow"><a class="docs-heading-anchor" href="#manual-plot-flow">From Flow function</a><a id="manual-plot-flow-1"></a><a class="docs-heading-anchor-permalink" href="#manual-plot-flow" title="Permalink"></a></h2><p>The previous solution of the optimal control problem was obtained using the <a href="api-optimalcontrol-user.html#CommonSolve.solve-Tuple{Model, Vararg{Symbol}}"><code>solve</code></a> function. If you prefer using an indirect shooting method and solving shooting equations, you may also want to plot the associated solution. To do this, you need to use the <a href="api-optimalcontrol-user.html#CTFlows.Flow"><code>Flow</code></a> function to reconstruct the solution. See the manual on <a href="manual-flow-ocp.html#manual-flow-ocp">how to compute flows</a> for more details. In our case, you must provide the maximizing control <span>$(x, p) \mapsto p_2$</span> along with the optimal control problem. For an introduction to simple indirect shooting, see the <a href="https://control-toolbox.org/Tutorials.jl/stable/tutorial-iss.html#tutorial-indirect-simple-shooting">indirect simple shooting</a> tutorial for an example.</p><div class="admonition is-success" id="Interactions-with-an-optimal-control-solution-b11307ab8397365a"><header class="admonition-header">Interactions with an optimal control solution<a class="admonition-anchor" href="#Interactions-with-an-optimal-control-solution-b11307ab8397365a" title="Permalink"></a></header><div class="admonition-body"><p>Please check <a href="api-optimalcontrol-user.html#CTModels.state"><code>state</code></a>, <a href="api-optimalcontrol-user.html#CTModels.costate"><code>costate</code></a>, <a href="api-optimalcontrol-user.html#CTModels.control"><code>control</code></a>, and <a href="api-optimalcontrol-user.html#ExaModels.variable-Tuple{Solution}"><code>variable</code></a> to retrieve data from the solution. The functions <code>state</code>, <code>costate</code>, and <code>control</code> return functions of time, while <code>variable</code> returns a vector.</p></div></div><pre><code class="language-julia hljs">using OrdinaryDiffEq
+
+p  = costate(sol)                # costate as a function of time
+p0 = p(t0)                       # costate solution at the initial time
+f  = Flow(ocp, (x, p) -&gt; p[2])   # flow from an ocp and a control law in feedback form
+
+sol_flow = f((t0, tf), x0, p0)   # compute the solution
+plot(sol_flow)                   # plot the solution from a flow</code></pre><img src="manual-plot-cf9622fd.svg" alt="Example block output"/><p>We may notice that the time grid contains very few points. This is evident from the subplot of <span>$x_2$</span>, or by retrieving the time grid directly from the solution.</p><pre><code class="language-julia hljs">time_grid(sol_flow)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">6-element Vector{Float64}:
+ 0.0
+ 0.0024074089372624107
+ 0.017438111057187105
+ 0.0838103961728591
+ 0.33673311176946785
+ 1.0</code></pre><p>To improve visualisation (without changing the accuracy), you can provide a finer grid.</p><pre><code class="language-julia hljs">fine_grid = range(t0, tf, 100)
+sol_flow = f((t0, tf), x0, p0; saveat=fine_grid)
+plot(sol_flow)</code></pre><img src="manual-plot-9902cc9e.svg" alt="Example block output"/><h2 id="manual-plot-layout"><a class="docs-heading-anchor" href="#manual-plot-layout">Split vs. group layout</a><a id="manual-plot-layout-1"></a><a class="docs-heading-anchor-permalink" href="#manual-plot-layout" title="Permalink"></a></h2><p>If you prefer to get a more compact figure, you can use the <code>layout</code> optional keyword argument with <code>:group</code> value. It will group the state, costate and control trajectories in one subplot for each.</p><pre><code class="language-julia hljs">plot(sol; layout=:group)</code></pre><img src="manual-plot-b72eb2de.svg" alt="Example block output"/><p>The default layout value is <code>:split</code> which corresponds to the grid of subplots presented above.</p><pre><code class="language-julia hljs">plot(sol; layout=:split)</code></pre><img src="manual-plot-2fb736ca.svg" alt="Example block output"/><h2 id="manual-plot-add"><a class="docs-heading-anchor" href="#manual-plot-add">Add a plot</a><a id="manual-plot-add-1"></a><a class="docs-heading-anchor-permalink" href="#manual-plot-add" title="Permalink"></a></h2><p>You can plot the solution of a second optimal control problem on the same figure if it has the same number of states, costates and controls. For instance, consider the same optimal control problem but with a different initial condition.</p><pre><code class="language-julia hljs">ocp = @def begin
+    t ∈ [t0, tf], time
+    x ∈ R², state
+    u ∈ R, control
+    x(t0) == [-0.5, -0.5]
+    x(tf) == xf
+    ẋ(t) == [x₂(t), u(t)]
+    ∫( 0.5u(t)^2 ) → min
+end
+sol2 = solve(ocp; display=false)</code></pre><p>We first plot the solution of the first optimal control problem, then, we plot the solution of the second optimal control problem on the same figure, but with dashed lines.</p><pre><code class="language-julia hljs">plt = plot(sol; label=&quot;sol1&quot;, size=(700, 500))
+plot!(plt, sol2; label=&quot;sol2&quot;, linestyle=:dash)</code></pre><img src="manual-plot-de8b0038.svg" alt="Example block output"/><p>You can also, implicitely, use the current plot.</p><pre><code class="language-julia hljs">plot(sol; label=&quot;sol1&quot;, size=(700, 500))
+plot!(sol2; label=&quot;sol2&quot;, linestyle=:dash)</code></pre><img src="manual-plot-16377fde.svg" alt="Example block output"/><h2 id="manual-plot-control"><a class="docs-heading-anchor" href="#manual-plot-control">Plotting the control norm</a><a id="manual-plot-control-1"></a><a class="docs-heading-anchor-permalink" href="#manual-plot-control" title="Permalink"></a></h2><p>For some problem, it is interesting to plot the (Euclidean) norm of the control. You can do it by using the <code>control</code> optional keyword argument with <code>:norm</code> value.</p><pre><code class="language-julia hljs">plot(sol; control=:norm, size=(800, 300), layout=:group)</code></pre><img src="manual-plot-05f5c661.svg" alt="Example block output"/><p>The default value is <code>:components</code>.</p><pre><code class="language-julia hljs">plot(sol; control=:components, size=(800, 300), layout=:group)</code></pre><img src="manual-plot-aa20c2b8.svg" alt="Example block output"/><p>You can also plot the control and is norm.</p><pre><code class="language-julia hljs">plot(sol; control=:all, layout=:group)</code></pre><img src="manual-plot-353493f5.svg" alt="Example block output"/><h2 id="manual-plot-custom"><a class="docs-heading-anchor" href="#manual-plot-custom">Custom plot and subplots</a><a id="manual-plot-custom-1"></a><a class="docs-heading-anchor-permalink" href="#manual-plot-custom" title="Permalink"></a></h2><p>You can, of course, create your own plots by extracting the <code>state</code>, <code>costate</code>, and <code>control</code> from the optimal control solution. For instance, let us plot the norm of the control.</p><pre><code class="language-julia hljs">using LinearAlgebra
+t = time_grid(sol)
+u = control(sol)
+plot(t, norm∘u; label=&quot;‖u‖&quot;, xlabel=&quot;t&quot;)</code></pre><img src="manual-plot-6b9682df.svg" alt="Example block output"/><p>You can also get access to the subplots. The order is as follows: state, costate, control, path constraints (if any) and their dual variables.</p><pre><code class="language-julia hljs">plt = plot(sol)
+plot(plt[1]) # x₁</code></pre><img src="manual-plot-1481958b.svg" alt="Example block output"/><pre><code class="language-julia hljs">plt = plot(sol)
+plot(plt[2]) # x₂</code></pre><img src="manual-plot-d90da3c3.svg" alt="Example block output"/><pre><code class="language-julia hljs">plt = plot(sol)
+plot(plt[3]) # p₁</code></pre><img src="manual-plot-2446d752.svg" alt="Example block output"/><pre><code class="language-julia hljs">plot(plt[4]) # p₂</code></pre><img src="manual-plot-e4413abb.svg" alt="Example block output"/><pre><code class="language-julia hljs">plot(plt[5]) # u</code></pre><img src="manual-plot-c2840da1.svg" alt="Example block output"/><h2 id="manual-plot-time"><a class="docs-heading-anchor" href="#manual-plot-time">Normalised time</a><a id="manual-plot-time-1"></a><a class="docs-heading-anchor-permalink" href="#manual-plot-time" title="Permalink"></a></h2><p>We consider a <a href="https://control-toolbox.org/Tutorials.jl/stable/tutorial-lqr.html">LQR example</a> and solve the problem for different values of the final time <code>tf</code>. Then, we plot the solutions on the same figure using a normalised time <span>$s = (t - t_0) / (t_f - t_0)$</span>, enabled by the keyword argument <code>time = :normalize</code> (or <code>:normalise</code>) in the <code>plot</code> function.</p><pre><code class="language-julia hljs"># definition of the problem, parameterised by the final time
+function lqr(tf)
+
+    ocp = @def begin
+        t ∈ [0, tf], time
+        x ∈ R², state
+        u ∈ R, control
+        x(0) == [0, 1]
+        ẋ(t) == [x₂(t), - x₁(t) + u(t)]
+        ∫( 0.5(x₁(t)^2 + x₂(t)^2 + u(t)^2) ) → min
+    end
+
+    return ocp
+end
+
+# solve the problems and store them
+solutions = []
+tfs = [3, 5, 30]
+for tf ∈ tfs
+    solution = solve(lqr(tf); display=false)
+    push!(solutions, solution)
+end
+
+# create plots
+plt = plot()
+for (tf, sol) ∈ zip(tfs, solutions)
+    plot!(plt, sol; time=:normalize, label=&quot;tf = $tf&quot;, xlabel=&quot;s&quot;)
+end
+
+# make a custom plot: keep only state and control
+px1 = plot(plt[1]; legend=false) # x₁
+px2 = plot(plt[2]; legend=true)  # x₂
+pu  = plot(plt[5]; legend=false) # u
+
+using Plots.PlotMeasures # for leftmargin, bottommargin
+plot(px1, px2, pu; layout=(1, 3), size=(800, 300), leftmargin=5mm, bottommargin=5mm)</code></pre><img src="manual-plot-708a34b3.svg" alt="Example block output"/><h2 id="manual-plot-constraints"><a class="docs-heading-anchor" href="#manual-plot-constraints">Constraints</a><a id="manual-plot-constraints-1"></a><a class="docs-heading-anchor-permalink" href="#manual-plot-constraints" title="Permalink"></a></h2><p>We define an optimal control problem with constraints, solve it and plot the solution.</p><pre><code class="language-julia hljs">ocp = @def begin
+    tf ∈ R,          variable
+    t ∈ [0, tf],     time
+    x = (q, v) ∈ R², state
+    u ∈ R,           control
+    tf ≥ 0
+    -1 ≤ u(t) ≤ 1
+    q(0)  == -1
+    v(0)  == 0
+    q(tf) == 0
+    v(tf) == 0
+    1 ≤ v(t)+1 ≤ 1.8, (1)
+    ẋ(t) == [v(t), u(t)]
+    tf → min
+end
+sol = solve(ocp)
+plot(sol)</code></pre><img src="manual-plot-0b68da09.svg" alt="Example block output"/><p>On the plot, you can see the lower and upper bounds of the path constraint. Additionally, the dual variable associated with the path constraint is displayed alongside it.</p><p>You can customise the plot styles. For style options related to the state, costate, and control, refer to the <a href="manual-plot.html#manual-plot-basic">Basic Concepts</a> section.</p><pre><code class="language-julia hljs">plot(sol;
+     state_bounds_style = (linestyle = :dash,),
+     control_bounds_style = (linestyle = :dash,),
+     path_style = (color = :green,),
+     path_bounds_style = (linestyle = :dash,),
+     dual_style = (color = :red,),
+     time_style = :none, # do not plot axes at t0 and tf
+)</code></pre><img src="manual-plot-c958b61b.svg" alt="Example block output"/><h2 id="manual-plot-select"><a class="docs-heading-anchor" href="#manual-plot-select">What to plot</a><a id="manual-plot-select-1"></a><a class="docs-heading-anchor-permalink" href="#manual-plot-select" title="Permalink"></a></h2><p>You can choose what to plot using the <code>description</code> argument. To plot only one subgroup:</p><pre><code class="language-julia hljs">plot(sol, :state)   # plot only the state
+plot(sol, :costate) # plot only the costate
+plot(sol, :control) # plot only the control
+plot(sol, :path)    # plot only the path constraint
+plot(sol, :dual)    # plot only the path constraint dual variable</code></pre><p>You can combine elements to plot exactly what you need:</p><pre><code class="language-julia hljs">plot(sol, :state, :control, :path)</code></pre><img src="manual-plot-b573526e.svg" alt="Example block output"/><p>Similarly, you can choose what not to plot passing <code>:none</code> to the corresponding style.</p><pre><code class="language-julia hljs">plot(sol; state_style=:none)   # do not plot the state
+plot(sol; costate_style=:none) # do not plot the costate
+plot(sol; control_style=:none) # do not plot the control
+plot(sol; path_style=:none)    # do not plot the path constraint
+plot(sol; dual_style=:none)    # do not plot the path constraint dual variable</code></pre><p>For instance, let&#39;s plot everything except the dual variable associated with the path constraint.</p><pre><code class="language-julia hljs">plot(sol; dual_style=:none)</code></pre><img src="manual-plot-eefcde1c.svg" alt="Example block output"/><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-solution.html">« Solution characteristics</a><a class="docs-footer-nextpage" href="manual-flow-api.html">Flow API »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Wednesday 24 September 2025 23:42">Wednesday 24 September 2025</span>. Using Julia version 1.11.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
