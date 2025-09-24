@@ -14,6 +14,7 @@ using ADNLPModels
 using ExaModels
 using NLPModelsIpopt
 using MadNLP
+using MadNLPMumps
 using JSON3
 using JLD2
 using NLPModelsKnitro

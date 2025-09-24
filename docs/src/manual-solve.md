@@ -107,7 +107,7 @@ ocp = @def begin
     0.5∫( u(t)^2 ) → min
 end
 
-solve(ocp, :exa, :madnlp)
+solve(ocp, :exa, :madnlp; disc_method=:trapeze)
 nothing # hide
 ```
 
@@ -133,7 +133,7 @@ The main options for the direct method, with their [default] values, are:
   More precisely, if `N = grid_size` and the initial and final times are `t0` and `tf`, then the step length `Δt = (tf - t0) / N`.
 - `time_grid` ([`nothing`]): explicit time grid (can be non-uniform).  
   If `time_grid = nothing`, a uniform grid of length `grid_size` is used.
-- `disc_method` ([`:trapeze`], `:midpoint`, `:euler`, `:euler_implicit`, `:gauss_legendre_2`, `:gauss_legendre_3`): the discretisation scheme to transform the dynamics into nonlinear equations. See the [discretization method tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-discretisation.html) for more details.
+- `disc_method` (`:trapeze`, [`:midpoint`], `:euler`, `:euler_implicit`, `:gauss_legendre_2`, `:gauss_legendre_3`): the discretisation scheme to transform the dynamics into nonlinear equations. See the [discretization method tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-discretisation.html) for more details.
 - `adnlp_backend` ([`:optimized`], `:manual`, `:default`): backend used for automatic differentiation to create the [`ADNLPModels.ADNLPModel`](@extref).
 
 For advanced usage, see:
