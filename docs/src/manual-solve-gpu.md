@@ -40,19 +40,19 @@ sol = solve(ocp, :exa, :madnlp; exa_backend=CUDABackend())
 ```
 
 ```julia
-▫ This is OptimalControl version v1.1.0 running with: direct, exa, madnlp.
+▫ This is OptimalControl version v1.1.2 running with: direct, exa, madnlp.
 
-▫ The optimal control problem is solved with CTDirect version v0.16.0.
+▫ The optimal control problem is solved with CTDirect version v0.17.2.
 
-   ┌─ The NLP is modelled with ExaModels and solved with MadNLP.
+   ┌─ The NLP is modelled with ExaModels and solved with MadNLPMumps.
    │
    ├─ Number of time steps⋅: 250
-   └─ Discretisation scheme: trapeze
+   └─ Discretisation scheme: midpoint
 
-▫ This is MadNLP version v0.8.7, running with cuDSS v0.4.0
+▫ This is MadNLP version v0.8.12, running with cuDSS v0.6.0
 
-Number of nonzeros in constraint Jacobian............:     2506
-Number of nonzeros in Lagrangian Hessian.............:     2006
+Number of nonzeros in constraint Jacobian............:     2256
+Number of nonzeros in Lagrangian Hessian.............:     1251
 
 Total number of variables............................:      754
                      variables with only lower bounds:        0
@@ -64,21 +64,30 @@ Total number of inequality constraints...............:      251
    inequality constraints with lower and upper bounds:      251
         inequality constraints with only upper bounds:        0
 
-iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
-   0  1.0200000e+00 1.10e+00 1.00e+00  -1.0 0.00e+00    -  0.00e+00 0.00e+00   0
-  ...
-  26  9.8902986e+00 2.22e-16 7.11e-15  -9.0 1.32e-04    -  1.00e+00 1.00e+00h  1
+iter    objective    inf_pr   inf_du inf_compl lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+   0  1.0200000e+00 1.10e+00 1.00e+00 1.01e+01  -1.0 0.00e+00    -  0.00e+00 0.00e+00   0
+   1  1.0199978e+00 1.10e+00 1.45e+00 8.73e-02  -1.0 1.97e+02    -  5.05e-03 4.00e-07h  1
+   ...
+  27  9.8891249e+00 2.22e-16 7.11e-15 1.60e-09  -9.0 2.36e-04    -  1.00e+00 1.00e+00h  1
 
-Number of Iterations....: 26
+Number of Iterations....: 27
 
                                    (scaled)                 (unscaled)
-Objective...............:   9.8902986337530514e+00    9.8902986337530514e+00
+Objective...............:   9.8891248915014458e+00    9.8891248915014458e+00
 Dual infeasibility......:   7.1054273576010019e-15    7.1054273576010019e-15
 Constraint violation....:   2.2204460492503131e-16    2.2204460492503131e-16
-Complementarity.........:   4.8363494304578671e-09    4.8363494304578671e-09
-Overall NLP error.......:   4.8363494304578671e-09    4.8363494304578671e-09
+Complementarity.........:   1.5999963912421547e-09    1.5999963912421547e-09
+Overall NLP error.......:   1.5999963912421547e-09    1.5999963912421547e-09
 
-...
+Number of objective function evaluations             = 28
+Number of objective gradient evaluations             = 28
+Number of constraint evaluations                     = 28
+Number of constraint Jacobian evaluations            = 28
+Number of Lagrangian Hessian evaluations             = 27
+Total wall-clock secs in solver (w/o fun. eval./lin. alg.)  =  0.126
+Total wall-clock secs in linear solver                      =  0.103
+Total wall-clock secs in NLP function evaluations           =  0.022
+Total wall-clock secs                                       =  0.251
 
 EXIT: Optimal Solution Found (tol = 1.0e-08).
 ```
