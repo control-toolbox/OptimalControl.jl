@@ -1,0 +1,39 @@
+name: Update README with ABOUT.md and INSTALL.md
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'   # every Monday at 06:00 UTC
+  workflow_dispatch:       # manual trigger
+
+jobs:
+  check-template:
+    runs-on: ubuntu-latest
+    outputs:
+      has_template: ${{ steps.check.outputs.has_template }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Check for README.template.md
+        id: check
+        shell: bash
+        run: |
+          if [[ -f "README.template.md" ]]; then
+            echo "has_template=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_template=false" >> "$GITHUB_OUTPUT"
+            echo "README.template.md not found. Skipping README update." >&2
+          fi
+
+  call-shared:
+    needs: check-template
+    if: ${{ needs.check-template.outputs.has_template == 'true' }}
+    uses: control-toolbox/CTActions/.github/workflows/update-readme.yml@main
+    with:
+      template_file: README.template.md
+      output_file: README.md
+      package_name: OptimalControl        # package for INSTALL.md
+      repo_name: OptimalControl.jl        # repository for CONTRIBUTING.md links
+      citation_badge: "[![DOI](https://zenodo.org/badge/541187171.svg)](https://zenodo.org/doi/10.5281/zenodo.16753152)" # example, can be empty
+      assignee: "ocots"
+    secrets: inherit

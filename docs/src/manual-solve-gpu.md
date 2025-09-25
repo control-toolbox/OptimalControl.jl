@@ -39,6 +39,7 @@ Computation on GPU is currently only tested with CUDA, and the associated backen
 sol = solve(ocp, :exa, :madnlp; exa_backend=CUDABackend())
 ```
 
+
 ```julia
 ▫ This is OptimalControl version v1.1.2 running with: direct, exa, madnlp.
 

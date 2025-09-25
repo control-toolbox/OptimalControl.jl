@@ -136,8 +136,13 @@ export constraints,
 
 # CTDirect
 import CTDirect:
-    CTDirect, direct_transcription, set_initial_guess, build_OCP_solution, model
-export direct_transcription, set_initial_guess, build_OCP_solution, model
+    CTDirect,
+    direct_transcription,
+    set_initial_guess,
+    build_OCP_solution,
+    nlp_model,
+    ocp_model
+export direct_transcription, set_initial_guess, build_OCP_solution, nlp_model, ocp_model
 
 # CTFlows
 import CTFlows:

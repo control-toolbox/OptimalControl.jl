@@ -107,7 +107,7 @@ ocp = @def begin
     0.5∫( u(t)^2 ) → min
 end
 
-solve(ocp, :exa, :madnlp)
+solve(ocp, :exa, :madnlp; disc_method=:trapeze)
 nothing # hide
 ```
 
@@ -123,7 +123,7 @@ solve(ocp, :direct,         :ipopt)
 solve(ocp, :direct, :adnlp, :ipopt)
 ```
 
-## [Direct method](@id manual-solve-direct-method)
+## [Direct method and options](@id manual-solve-direct-method)
 
 The main options for the direct method, with their [default] values, are:
 
@@ -133,7 +133,7 @@ The main options for the direct method, with their [default] values, are:
   More precisely, if `N = grid_size` and the initial and final times are `t0` and `tf`, then the step length `Δt = (tf - t0) / N`.
 - `time_grid` ([`nothing`]): explicit time grid (can be non-uniform).  
   If `time_grid = nothing`, a uniform grid of length `grid_size` is used.
-- `disc_method` ([`:trapeze`], `:midpoint`, `:euler`, `:euler_implicit`, `:gauss_legendre_2`, `:gauss_legendre_3`): the discretisation scheme to transform the dynamics into nonlinear equations. See the [discretization method tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-discretisation.html) for more details.
+- `disc_method` (`:trapeze`, [`:midpoint`], `:euler`, `:euler_implicit`, `:gauss_legendre_2`, `:gauss_legendre_3`): the discretisation scheme to transform the dynamics into nonlinear equations. See the [discretization method tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-discretisation.html) for more details.
 - `adnlp_backend` ([`:optimized`], `:manual`, `:default`): backend used for automatic differentiation to create the [`ADNLPModels.ADNLPModel`](@extref).
 
 For advanced usage, see:
@@ -146,16 +146,23 @@ For advanced usage, see:
 
 ## [NLP solvers specific options](@id manual-solve-solvers-specific-options)
 
-In addition to these options, all remaining keyword arguments passed to `solve` will be transmitted to the NLP solver used.
+In addition to these options, any remaining keyword arguments passed to `solve` are forwarded to the NLP solver.
 
-Please check the list of [Ipopt options](https://coin-or.github.io/Ipopt/OPTIONS.html) and the [NLPModelsIpopt.jl documentation](https://jso.dev/NLPModelsIpopt.jl).
+!!! warning
+
+    The option names and accepted values depend on the chosen solver. For example, in Ipopt, `print_level` expects an integer, whereas in MadNLP it must be a `MadNLP.LogLevels` value (valid options: `MadNLP.{TRACE, DEBUG, INFO, NOTICE, WARN, ERROR}`). Moreover, some options are solver-specific: for instance, `mu_strategy` exists in Ipopt but not in MadNLP.
+
+
+Please refer to the [Ipopt options list](https://coin-or.github.io/Ipopt/OPTIONS.html) and the [NLPModelsIpopt.jl documentation](https://jso.dev/NLPModelsIpopt.jl).  
+
 ```@example main
-sol = solve(ocp; max_iter=0, tol=1e-6, display=false)
+sol = solve(ocp; max_iter=0, tol=1e-6, print_level=0)
 iterations(sol)
 ```
 
-Similarly, please check the [MadNLP.jl documentation](https://madnlp.github.io/MadNLP.jl) and the list of [MadNLP.jl options](https://madnlp.github.io/MadNLP.jl/stable/options/).
+Likewise, see the [MadNLP.jl options](https://madnlp.github.io/MadNLP.jl/stable/options/) and the [MadNLP.jl documentation](https://madnlp.github.io/MadNLP.jl).  
+
 ```@example main
-sol = solve(ocp, :madnlp; max_iter=0, tol=1e-6, display=false)
+sol = solve(ocp, :madnlp; max_iter=0, tol=1e-6, print_level=MadNLP.ERROR)
 iterations(sol)
 ```
