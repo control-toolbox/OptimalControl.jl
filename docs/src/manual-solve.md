@@ -91,10 +91,14 @@ solve(ocp, :direct, :adnlp, :ipopt)
 
     Dynamics and nonlinear constraints must be defined coordinatewise to use ExaModels.jl (`:exa`). Check [the problem definition manual](@ref manual-abstract-dynamics-coord) for more information.
 
-For instance, let us try MadNLP solver with ExaModel modeller.
+!!! note
+
+    MadNLP is shipped only with two linear solvers (Umfpack and Lapack), which are not adapted is some cases. We recommend to use [MadNLPMumps](https://madsuite.org/MadNLP.jl/stable/installation/#Installation) to solve your optimal control problem with [MUMPS](https://mumps-solver.org) linear solver.
+
+For instance, let us try MadNLPMumps solver with ExaModel modeller.
 
 ```@example main
-using MadNLP
+using MadNLPMumps
 
 ocp = @def begin
     t ∈ [ t0, tf ], time

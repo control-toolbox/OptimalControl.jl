@@ -192,17 +192,17 @@ weakdeps = ["HTTP", "JSON"]
 
 [[deps.CTDirect]]
 deps = ["CTBase", "CTModels", "DocStringExtensions", "HSL", "MKL", "SparseArrays"]
-git-tree-sha1 = "5f7bd0cc0a2b4ff09a6621071bdc07aa121349a2"
+git-tree-sha1 = "a3e796c81478034446feb316816ccfe1f250f211"
 uuid = "790bbbee-bee9-49ee-8912-a9de031322d5"
-version = "0.17.2"
-weakdeps = ["ADNLPModels", "ExaModels", "MadNLPMumps", "NLPModelsIpopt", "NLPModelsKnitro"]
+version = "0.17.3"
+weakdeps = ["ADNLPModels", "ExaModels", "MadNLP", "NLPModelsIpopt", "NLPModelsKnitro"]
 
     [deps.CTDirect.extensions]
     CTDirectExtADNLP = ["ADNLPModels"]
     CTDirectExtExa = ["ExaModels"]
     CTDirectExtIpopt = ["NLPModelsIpopt"]
     CTDirectExtKnitro = ["NLPModelsKnitro"]
-    CTDirectExtMadNLP = ["MadNLPMumps"]
+    CTDirectExtMadNLP = ["MadNLP"]
 
 [[deps.CTFlows]]
 deps = ["CTBase", "CTModels", "DocStringExtensions", "ForwardDiff", "LinearAlgebra", "MLStyle", "MacroTools"]
@@ -216,9 +216,9 @@ weakdeps = ["OrdinaryDiffEq"]
 
 [[deps.CTModels]]
 deps = ["CTBase", "DocStringExtensions", "Interpolations", "LinearAlgebra", "MLStyle", "MacroTools", "OrderedCollections", "Parameters", "RecipesBase"]
-git-tree-sha1 = "5dd30f45b055084374b2613cb4c79e73420962f0"
+git-tree-sha1 = "f5e80274149d9910656b0c94c378cdead3f689ad"
 uuid = "34c4fa32-2049-4079-8329-de33c2a22e2d"
-version = "0.6.7"
+version = "0.6.8"
 weakdeps = ["JLD2", "JSON3", "Plots"]
 
     [deps.CTModels.extensions]
@@ -1224,9 +1224,9 @@ version = "1.18.0+0"
 
 [[deps.Libmount_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "706dfd3c0dd56ca090e86884db6eda70fa7dd4af"
+git-tree-sha1 = "3acf07f130a76f87c041cfb2ff7d7284ca67b072"
 uuid = "4b2f31a3-9ecc-558c-b454-b3730dcb73e9"
-version = "2.41.1+0"
+version = "2.41.2+0"
 
 [[deps.Libtiff_jll]]
 deps = ["Artifacts", "JLLWrappers", "JpegTurbo_jll", "LERC_jll", "Libdl", "XZ_jll", "Zlib_jll", "Zstd_jll"]
@@ -1236,9 +1236,9 @@ version = "4.7.2+0"
 
 [[deps.Libuuid_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "d3c8af829abaeba27181db4acb485b18d15d89c6"
+git-tree-sha1 = "2a7a12fc0a4e7fb773450d17975322aa77142106"
 uuid = "38a345b3-de98-5d2b-a5d3-14cd9215e700"
-version = "2.41.1+0"
+version = "2.41.2+0"
 
 [[deps.LineSearch]]
 deps = ["ADTypes", "CommonSolve", "ConcreteStructs", "FastClosures", "LinearAlgebra", "MaybeInplace", "SciMLBase", "SciMLJacobianOperators", "StaticArraysCore"]
