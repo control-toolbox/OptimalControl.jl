@@ -128,11 +128,6 @@ Draft = false
 ```
 =#
 makedocs(;
-    #draft=true, # if draft is true, then the julia code from .md is not executed # debug
-    # to disable the draft mode in a specific markdown file, use the following:
-    # ```@meta
-    # Draft = false
-    # ```
     draft=false,
     #warnonly=[:cross_references, :autodocs_block],
     sitename="OptimalControl.jl",
