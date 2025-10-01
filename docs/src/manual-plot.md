@@ -292,7 +292,7 @@ The default value is `:components`.
 plot(sol; control=:components, size=(800, 300), layout=:group)
 ```
 
-You can also plot the control and is norm.
+You can also plot the control and its norm.
 
 ```@example main
 plot(sol; control=:all, layout=:group)
