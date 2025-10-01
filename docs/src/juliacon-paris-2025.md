@@ -54,7 +54,7 @@ b(t_0, X_0, t_N, X_N) = 0
 ```
 
 ```math
-c(X_i, U_i) = 0,\quad i = 0,\dots,N
+c(X_i, U_i) \leq 0,\quad i = 0,\dots,N
 ```
 
 - SIMD parallelism ($f_0$, $f$, $g$) + sparsity: Kernels for GPU ([KernelAbstraction.jl](https://juliagpu.github.io/KernelAbstractions.jl/stable/)) and sparse linear algebra ([CUDSS.jl](https://github.com/exanauts/CUDSS.jl))
@@ -338,19 +338,19 @@ Total wall-clock secs                                       =  0.083
 ```
 
 - Mini-benchmark: [Goddard](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html) and [Quadrotor](https://github.com/control-toolbox/CTParser.jl/blob/211042b061be17b3f7fdff41cb53701d30b128db/test/test_onepass_exa.jl#L926) problems
-
+    - Goddard, A100 run
 ```@raw html
 <img width="400" alt="goddard-a100" src="./assets/goddard-a100.jpg">
 ```
-                     
+    - Goddard, H100 run                     
 ```@raw html
 <img width="400" alt="goddard-h100" src="./assets/goddard-h100.jpg">
 ```
-                     
+    - Quadrotor, A100 run                     
 ```@raw html
 <img width="400" alt="quadrotor-a100" src="./assets/quadrotor-a100.jpg">
 ```
-                     
+    - Quadrotor, H100 run                     
 ```@raw html
 <img width="400" alt="quadrotor-h100" src="./assets/quadrotor-h100.jpg">
 ```
@@ -360,12 +360,11 @@ Total wall-clock secs                                       =  0.083
 - High level modelling of optimal control problems
 - Solving on CPU and GPU
 
-## Future
+## What's next
 
-- New applications (space mechanics, biology, quantum mechanics and more)
-- Additional solvers: benchmarking on CPU / GPU for optimisation, Hamiltonian shooting and pathfollowing
+- New applications (space mechanics, biology, quantum mechanics and more) -> check David's talk
 - Collection of problems: [OptimalControlProblems.jl](https://control-toolbox.org/OptimalControlProblems.jl)
-- ... and open to contributions! If you like the package, please give us a star ⭐️
+- ... and open to contributions! Give it a [try](@ref manual-ai-ded), give it a star ⭐️
 
 ```@raw html
 <a href="https://github.com/control-toolbox/OptimalControl.jl"><img width="800" alt="OptimalControl.jl" src="./assets/star.jpg"></a>
