@@ -29,10 +29,6 @@ plus boundary, control and state constraints
 - Our core interests: numerical & geometrical methods in control, applications
 - Why Julia: fast (+ JIT), strongly typed, high-level (AD, macros), fast optimisation and ODE solvers available, rapidly growing community
 
-```@raw html
-<img width="800" alt="juliacon2025" src="./assets/juliacon2025.jpg">
-```
-
 ## Discretise then solve strategy (*aka* direct methods)
 
 - Discretising an OCP into an NLP: $h_i := t_{i+1}-t_i$,
@@ -342,19 +338,19 @@ Total wall-clock secs                                       =  0.083
 ```@raw html
 <img width="400" alt="goddard-a100" src="./assets/goddard-a100.jpg">
 ```
-    - Goddard, H100 run                     
+  - Goddard, H100 run             
 ```@raw html
 <img width="400" alt="goddard-h100" src="./assets/goddard-h100.jpg">
 ```
-    - Quadrotor, A100 run                     
+  - Quadrotor, A100 run    
 ```@raw html
 <img width="400" alt="quadrotor-a100" src="./assets/quadrotor-a100.jpg">
 ```
-    - Quadrotor, H100 run                     
+  - Quadrotor, H100 run             
 ```@raw html
 <img width="400" alt="quadrotor-h100" src="./assets/quadrotor-h100.jpg">
 ```
-                     
+               
 ## Wrap up
 
 - High level modelling of optimal control problems
