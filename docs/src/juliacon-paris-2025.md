@@ -337,7 +337,7 @@ Total wall-clock secs in NLP function evaluations           =  0.003
 Total wall-clock secs                                       =  0.083
 ```
 
-- Mini-benchmark: [Goddard](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html) and [Quadrotor](xxxx) problems
+- Mini-benchmark: [Goddard](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html) and [Quadrotor](https://github.com/control-toolbox/CTParser.jl/blob/211042b061be17b3f7fdff41cb53701d30b128db/test/test_onepass_exa.jl#L926) problems
 
 ```@raw html
 <img width="400" alt="goddard-a100" src="./assets/goddard-a100.jpg">
