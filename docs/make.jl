@@ -129,6 +129,7 @@ Draft = false
 =#
 makedocs(;
     draft=false,
+    #draft=true,
     #warnonly=[:cross_references, :autodocs_block],
     sitename="OptimalControl.jl",
     format=Documenter.HTML(;
@@ -174,8 +175,7 @@ makedocs(;
                 "OptimalControl.jl" => "api-optimalcontrol-dev.md",
             ],
         ],
-        "Zhejiang 2025" => "zhejiang-2025.md",
-        "JLESC17" => "jlesc17.md",
+        "JuliaCon Paris 2025" => "juliacon-paris-2025.md",
     ],
     plugins=[links],
 )
