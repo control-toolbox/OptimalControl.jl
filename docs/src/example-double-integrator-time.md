@@ -32,6 +32,60 @@ using Plots
 
 Let us define the problem:
 
+```@raw html
+<div style="display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1em;">
+<div style="flex: 1;">
+```
+
+```@example main
+ocp = @def begin
+
+    tf ∈ R,          variable
+    t ∈ [0, tf],     time
+    x = (q, v) ∈ R², state
+    u ∈ R,           control
+
+    -1 ≤ u(t) ≤ 1
+
+    q(0)  == -1
+    v(0)  == 0
+    q(tf) == 0
+    v(tf) == 0
+
+    ẋ(t) == [v(t), u(t)]
+
+    tf → min
+
+end
+nothing # hide
+```
+
+```@raw html
+</div>
+<div style="flex: 1;">
+```
+
+### Mathematical formulation
+
+```math
+    \begin{aligned}
+        & \text{Minimise} && t_f \\[0.5em]
+        & \text{subject to} \\[0.5em]
+        & && \dot q(t) = v(t), \\
+        & && \dot v(t) = u(t), \\[0.5em]
+        & && -1 \le u(t) \le 1, \\[0.5em]
+        & && q(0) = -1, \\[0.5em]
+        & && v(0) = 0, \\[0.5em]
+        & && q(t_f) = 0, \\[0.5em]
+        & && v(t_f) = 0.
+    \end{aligned}
+```
+
+```@raw html
+  </div>
+</div>
+```
+
 ```@example main
 ocp = @def begin
 
