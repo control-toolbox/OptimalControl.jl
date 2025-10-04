@@ -34,8 +34,8 @@ using Plots
 Let us define the problem with the [`@def`](@ref) macro:
 
 ```@raw html
-<div style="display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1em;">
-<div style="flex: 1;">
+<div class="responsive-columns-left-priority">
+<div>
 ```
 
 ```@example main
@@ -57,7 +57,7 @@ nothing # hide
 
 ```@raw html
 </div>
-<div style="flex: 1;">
+<div>
 ```
 
 ### Mathematical formulation
@@ -68,7 +68,8 @@ nothing # hide
         & \text{subject to} \\
         & && \dot{x}_1(t) = x_2(t), \\[0.5em]
         & && \dot{x}_2(t) = u(t), \\[1.0em]
-        & && x(0) = (-1,0), \quad x(1) = (0,0).
+        & && x(0) = (-1,0), \\[0.5em] 
+        & && x(1) = (0,0).
     \end{aligned}
 ```
 

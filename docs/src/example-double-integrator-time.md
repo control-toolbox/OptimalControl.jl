@@ -33,8 +33,8 @@ using Plots
 Let us define the problem:
 
 ```@raw html
-<div style="display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1em;">
-<div style="flex: 1;">
+<div class="responsive-columns-left-priority">
+<div>
 ```
 
 ```@example main
@@ -62,7 +62,7 @@ nothing # hide
 
 ```@raw html
 </div>
-<div style="flex: 1;">
+<div>
 ```
 
 ### Mathematical formulation
