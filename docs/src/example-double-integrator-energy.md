@@ -13,8 +13,7 @@ We assume that the mass is constant and equal to one, and that there is no frict
     \dot x_1(t) = x_2(t), \quad \dot x_2(t) = u(t),\quad u(t) \in \R,
 ```
 
-which is simply the [double integrator](https://en.wikipedia.org/w/index.php?title=Double_integrator&oldid=1071399674) system.
-Let us consider a transfer starting at time $t_0 = 0$ and ending at time $t_f = 1$, for which we want to minimise the transfer energy
+which is simply the [double integrator](https://en.wikipedia.org/w/index.php?title=Double_integrator&oldid=1071399674) system. Let us consider a transfer starting at time $t_0 = 0$ and ending at time $t_f = 1$, for which we want to minimise the transfer energy
 
 ```math
     \frac{1}{2}\int_{0}^{1} u^2(t) \, \mathrm{d}t
@@ -22,9 +21,7 @@ Let us consider a transfer starting at time $t_0 = 0$ and ending at time $t_f = 
 
 starting from $x(0) = (-1, 0)$ and aiming to reach the target $x(1) = (0, 0)$.
 
-First, we need to import the [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package to define the 
-optimal control problem, [NLPModelsIpopt.jl](https://jso.dev/NLPModelsIpopt.jl) to solve it, 
-and [Plots.jl](https://docs.juliaplots.org) to visualise the solution.
+First, we need to import the [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package to define the optimal control problem, [NLPModelsIpopt.jl](https://jso.dev/NLPModelsIpopt.jl) to solve it, and [Plots.jl](https://docs.juliaplots.org) to visualise the solution.
 
 ```@example main
 using OptimalControl
@@ -35,6 +32,11 @@ using Plots
 ## Optimal control problem
 
 Let us define the problem with the [`@def`](@ref) macro:
+
+```@raw html
+<div class="responsive-columns-left-priority">
+<div>
+```
 
 ```@example main
 t0 = 0
@@ -47,10 +49,33 @@ ocp = @def begin
     u ∈ R, control
     x(t0) == x0
     x(tf) == xf
-    ẋ(t) == [x₂(t), u(t)]
+    ẋ(t) == [x₂(t), u(t)]
     0.5∫( u(t)^2 ) → min
 end
 nothing # hide
+```
+
+```@raw html
+</div>
+<div>
+```
+
+### Mathematical formulation
+
+```math
+    \begin{aligned}
+        & \text{Minimise} && \frac{1}{2}\int_0^1 u^2(t) \,\mathrm{d}t \\
+        & \text{subject to} \\
+        & && \dot{x}_1(t) = x_2(t), \\[0.5em]
+        & && \dot{x}_2(t) = u(t), \\[1.0em]
+        & && x(0) = (-1,0), \\[0.5em] 
+        & && x(1) = (0,0).
+    \end{aligned}
+```
+
+```@raw html
+</div>
+</div>
 ```
 
 !!! note "Nota bene"
@@ -142,12 +167,12 @@ plot(sol)
 
 ## State constraint
 
-### Direct method
+### Direct method: constrained case
 
 We add the path constraint
 
 ```math
-x_2(t) \le 1.2.
+    x_2(t) \le 1.2.
 ```
 
 Let us model, solve and plot the optimal control problem with this constraint.
@@ -175,7 +200,7 @@ sol = solve(ocp)
 plt = plot(sol; label="Direct", size=(800, 600))
 ```
 
-### Indirect method
+### Indirect method: constrained case
 
 The pseudo-Hamiltonian is (considering the normal case):
 
@@ -186,13 +211,13 @@ H(x, p, u, \mu) = p_1 x_2 + p_2 u - \frac{u^2}{2} + \mu\, c(x),
 with $c(x) = x_2 - a$. Along a boundary arc we have $c(x(t)) = 0$. Differentiating, we obtain:
 
 ```math
-	\frac{\mathrm{d}}{\mathrm{d}t}c(x(t)) = \dot{x}_2(t) = u(t) = 0.
+    \frac{\mathrm{d}}{\mathrm{d}t}c(x(t)) = \dot{x}_2(t) = u(t) = 0.
 ```
 
-The zero control is maximising; hence, $p_2(t) = 0$ along the boundary arc. 
+The zero control is maximising; hence, $p_2(t) = 0$ along the boundary arc.
 
 ```math
-	\dot{p}_2(t) = -p_1(t) - \mu(t) \quad \Rightarrow \mu(t) = -p_1(t).
+    \dot{p}_2(t) = -p_1(t) - \mu(t) \quad \Rightarrow \mu(t) = -p_1(t).
 ```
 
 Since the adjoint vector is continuous at the entry time $t_1$ and the exit time $t_2$, we have four unknowns: the initial costate $p_0 \in \mathbb{R}^2$ and the times $t_1$ and $t_2$. We need four equations: the target condition provides two, reaching the constraint at time $t_1$ gives $c(x(t_1)) = 0$, and finally $p_2(t_1) = 0$.

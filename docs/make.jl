@@ -129,8 +129,6 @@ Draft = false
 =#
 makedocs(;
     draft=false,
-    #draft=true,
-    #warnonly=[:cross_references, :autodocs_block],
     sitename="OptimalControl.jl",
     format=Documenter.HTML(;
         repolink="https://" * repo_url,
@@ -141,6 +139,7 @@ makedocs(;
         assets=[
             asset("https://control-toolbox.org/assets/css/documentation.css"),
             asset("https://control-toolbox.org/assets/js/documentation.js"),
+            "assets/custom.css",
         ],
     ),
     pages=[
