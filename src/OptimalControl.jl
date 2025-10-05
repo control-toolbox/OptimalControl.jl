@@ -10,8 +10,28 @@ module OptimalControl
 using DocStringExtensions
 
 # CTBase
-import CTBase: CTBase, ParsingError
-export ParsingError
+import CTBase: 
+    CTBase, 
+    ParsingError,
+    CTException,
+    AmbiguousDescription,
+    IncorrectArgument,
+    IncorrectMethod,
+    IncorrectOutput,
+    NotImplemented,
+    UnauthorizedCall,
+    ExtensionError,
+    doc_app
+export ParsingError,
+    CTException,
+    AmbiguousDescription,
+    IncorrectArgument,
+    IncorrectMethod,
+    IncorrectOutput,
+    NotImplemented,
+    UnauthorizedCall,
+    ExtensionError,
+    doc_app
 
 # CTParser
 import CTParser: CTParser, @def
@@ -22,6 +42,10 @@ function __init__()
     CTParser.prefix_exa!(:OptimalControl)
     CTParser.e_prefix!(:OptimalControl)
 end
+
+# RecipesBase.plot
+import RecipesBase: RecipesBase, plot
+export plot
 
 # CTModels
 import CTModels:
