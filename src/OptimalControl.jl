@@ -20,8 +20,7 @@ import CTBase:
     IncorrectOutput,
     NotImplemented,
     UnauthorizedCall,
-    ExtensionError,
-    doc_app
+    ExtensionError
 export ParsingError,
     CTException,
     AmbiguousDescription,
@@ -30,8 +29,7 @@ export ParsingError,
     IncorrectOutput,
     NotImplemented,
     UnauthorizedCall,
-    ExtensionError,
-    doc_app
+    ExtensionError
 
 # CTParser
 import CTParser: CTParser, @def
