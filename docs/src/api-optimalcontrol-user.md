@@ -32,18 +32,26 @@ Private = false
 
 ```@docs; canonical=true
 *(::CTFlowsODE.AbstractFlow)
+AmbiguousDescription
+CTException
+ExtensionError
 Flow
 Hamiltonian
 HamiltonianLift
 HamiltonianVectorField
+IncorrectArgument
+IncorrectMethod
+IncorrectOutput
 @Lie
 Lie
 Lift
 Model
+NotImplemented
 ParsingError
 Poisson
 Solution
 VectorField
+UnauthorizedCall
 available_methods
 build_OCP_solution
 constraint(::Model, ::Symbol)
