@@ -10,8 +10,8 @@ module OptimalControl
 using DocStringExtensions
 
 # CTBase
-import CTBase: 
-    CTBase, 
+import CTBase:
+    CTBase,
     ParsingError,
     CTException,
     AmbiguousDescription,
