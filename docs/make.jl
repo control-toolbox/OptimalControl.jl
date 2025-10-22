@@ -128,7 +128,7 @@ Draft = false
 ```
 =#
 makedocs(;
-    draft=false,
+    draft=true,
     sitename="OptimalControl.jl",
     format=Documenter.HTML(;
         repolink="https://" * repo_url,
