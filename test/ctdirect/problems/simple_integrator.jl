@@ -1,5 +1,5 @@
 # simple intergator
-# min enery, dual control
+# min energy, dual control
 
 function simple_integrator()
     @def ocp begin

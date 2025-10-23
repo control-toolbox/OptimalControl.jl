@@ -271,7 +271,7 @@ plt = plot(sol; label="sol1", size=(700, 500))
 plot!(plt, sol2; label="sol2", linestyle=:dash)
 ```
 
-You can also, implicitely, use the current plot.
+You can also, implicitly, use the current plot.
 
 ```@example main
 plot(sol; label="sol1", size=(700, 500))

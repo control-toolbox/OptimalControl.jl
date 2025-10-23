@@ -62,7 +62,7 @@ The package [OrdinaryDiffEq.jl](https://docs.sciml.ai/DiffEqDocs) provides numer
 
 ## Extremals from the Hamiltonian
 
-The pairs $(x, p)$ solution of the Hamitonian vector field are called *extremals*. We can compute some constructing the flow from the optimal control problem and the control in feedback form. Another way to compute extremals is to define explicitely the Hamiltonian.
+The pairs $(x, p)$ solution of the Hamitonian vector field are called *extremals*. We can compute some constructing the flow from the optimal control problem and the control in feedback form. Another way to compute extremals is to define explicitly the Hamiltonian.
 
 ```@example main
 H(x, p, u) = p[1] * x[2] + p[2] * u - 0.5 * u^2     # pseudo-Hamiltonian

@@ -1,4 +1,4 @@
-# [Use AI](@id manual-ai-ded)
+# [Use AI](@id manual-ai-llm)
 
 Using now common models from AI, it is an elementary task to have such an agent learn the syntax of OptimalControl.jl DSL, then use the agent to translate standard math into this DSL. Here is a typical prompt, pointing to the [DSL syntax](@ref manual-abstract-syntax):
 
