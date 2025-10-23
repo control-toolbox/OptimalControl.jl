@@ -334,7 +334,7 @@ o = @def begin
     u ∈ R, control
     -1 ≤ v ≤ 1
     x₁(0) == -1
-    x₂(0) - v == 0 # OK: the boundary contraint may involve the variable
+    x₂(0) - v == 0 # OK: the boundary constraint may involve the variable
     x(1) == [0, 0]
     ẋ(t) == [x₂(t), u(t)]
     ∫( 0.5u(t)^2 ) → min
@@ -342,7 +342,7 @@ end
 ```
 
 !!! warning
-    When solving with the option `:exa` to rely on the ExaModels modeller (check the [solve section](@ref manual-solve)), for instance to [solve on GPU](@ref manual-solve-gpu), it is **compulsory** that *nonlinear* constraints (not ranges) are *scalar*, whatever the type (boundary, variable, controle, state, mixed).
+    When solving with the option `:exa` to rely on the ExaModels modeller (check the [solve section](@ref manual-solve)), for instance to [solve on GPU](@ref manual-solve-gpu), it is **compulsory** that *nonlinear* constraints (not ranges) are *scalar*, whatever the type (boundary, variable, control, state, mixed).
 
 ## [Mayer cost](@id manual-abstract-mayer)
 

@@ -12,7 +12,7 @@ and the limit conditions
     x(0) = (1,2), \quad x(t_f) = (0,0).
 ```
 
-This problem can be interpretated as a simple model for a wagon with constant mass moving along a line without fricton.
+This problem can be interpreted as a simple model for a wagon with constant mass moving along a line without friction.
 
 ```@raw html
 <img src="./assets/chariot.svg" style="display: block; margin: 0 auto 20px auto;" width="400px">

@@ -150,7 +150,7 @@ makedocs(;
         ],
         "Manual" => [
             "Define a problem" => "manual-abstract.md",
-            "Use AI" => "manual-ai-ded.md",
+            "Use AI" => "manual-ai-llm.md",
             "Problem characteristics" => "manual-model.md",
             "Set an initial guess" => "manual-initial-guess.md",
             "Solve a problem" => "manual-solve.md",

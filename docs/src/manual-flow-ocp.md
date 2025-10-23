@@ -81,7 +81,7 @@ julia> f = Flow(ocp, u)
 ERROR: ExtensionError. Please make: julia> using OrdinaryDiffEq
 ```
 
-As you can see, an error occured since we need the package [OrdinaryDiffEq.jl](https://docs.sciml.ai/DiffEqDocs).
+As you can see, an error occurred since we need the package [OrdinaryDiffEq.jl](https://docs.sciml.ai/DiffEqDocs).
 This package provides numerical integrators to compute solutions of the ordinary differential equation 
 $\dot{z}(t) = \vec{\mathbf{H}}(z(t))$.
 
@@ -179,7 +179,7 @@ The pseudo-Hamiltonian of this problem is
     H(t, x, p, u) = p\, u\, (1+\tan\, t) + p^0 u^2 /2,
 ```
 
-where $p^0 = -1$ since we are in the normal case. We can notice that the pseudo-Hamiltonian is non-autonomous since it explicitely depends on the time $t$. 
+where $p^0 = -1$ since we are in the normal case. We can notice that the pseudo-Hamiltonian is non-autonomous since it explicitly depends on the time $t$. 
 
 ```@example main
 is_autonomous(ocp)
