@@ -48,7 +48,8 @@ function test_goddard_indirect()
     t3 = 0.10157134842432228
     tf = 0.20204744057100849
 
-    # test shooting resolution with solve from NonlinearSolve
+    # test shooting function with solve from NonlinearSolve
+    s = zeros(eltype(p0), 7)
     ξ0 = [p0; t1; t2; t3; tf]
     shoot!(s, ξ, λ) = shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
     prob = NonlinearProblem(shoot!, ξ0)
