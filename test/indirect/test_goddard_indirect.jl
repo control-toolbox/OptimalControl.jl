@@ -57,5 +57,4 @@ function test_goddard_indirect()
     ξ = sol.u
     p0, t1, t2, t3, tf = ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7]
     @test norm(s) < 1e-6
-
 end
