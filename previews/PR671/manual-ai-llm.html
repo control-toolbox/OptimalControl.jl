@@ -84,7 +84,55 @@ end</code></pre><p>The answer is syntactically correct and can be updated, for i
     
     # Objective: minimize final time
     tf → min
-end</code></pre><p>It is also possible to feed the model directly with LaTeX-like (markdown) definitions, as in the example below: prompting according to</p><pre><code class="language-text hljs">translate the problem below into OptimalControl.jl DSL:</code></pre><h3 id="Mathematical-formulation"><a class="docs-heading-anchor" href="#Mathematical-formulation">Mathematical formulation</a><a id="Mathematical-formulation-1"></a><a class="docs-heading-anchor-permalink" href="#Mathematical-formulation" title="Permalink"></a></h3><p>The problem can be stated as math \begin{aligned} \min<em>{h,v,m,T} \quad &amp; J = -h(T) \[0.5em] \text{s.t.} \quad \dot{h}(t) &amp;= v(t), \[0.25em] \dot{v}(t) &amp;= \frac{T(t) - D(h(t), v(t)) - m(t) g(h(t))}{m(t)}, \[0.25em] \dot{m}(t) &amp;= -\frac{T(t)}{c}, \[0.25em] 0 \le T(t) &amp;\le T</em>{\max}, \[0.25em] h(t) &amp;\ge h<em>0, \[0.25em] v(t) &amp;\ge v</em>0, \[0.25em] m<em>f \le m(t) &amp;\le m</em>0, \[0.25em] h(0) &amp;= h<em>0, \quad v(0) = v</em>0, \quad m(0) = m<em>0, \[0.25em] m(T) &amp;= m</em>f, \end{aligned}</p><p>where  </p><ul><li><strong>Drag</strong>:  </li></ul><p>math D(h,v) = D<em>c \, v^2 \exp!\left(-h</em>c \frac{h - h<em>0}{h</em>0}\right)</p><ul><li><strong>Gravity</strong>:  </li></ul><p>math g(h) = g<em>0 \left(\frac{h</em>0}{h}\right)^2</p><ul><li><strong>Fuel constant</strong>:  </li></ul><p>math c = \frac{1}{2} \sqrt{g<em>0 h</em>0}</p><ul><li><strong>Maximum thrust</strong>:  </li></ul><p>math T<em>{\max} = T</em>c m<em>0 g</em>0</p><h3 id="Parameters"><a class="docs-heading-anchor" href="#Parameters">Parameters</a><a id="Parameters-1"></a><a class="docs-heading-anchor-permalink" href="#Parameters" title="Permalink"></a></h3><table><tr><th style="text-align: right">Parameter</th><th style="text-align: right">Symbol</th><th style="text-align: right">Value</th></tr><tr><td style="text-align: right">Initial altitude</td><td style="text-align: right"><span>$h_0$</span></td><td style="text-align: right">1</td></tr><tr><td style="text-align: right">Initial velocity</td><td style="text-align: right"><span>$v_0$</span></td><td style="text-align: right">0</td></tr><tr><td style="text-align: right">Initial mass</td><td style="text-align: right"><span>$m_0$</span></td><td style="text-align: right">1</td></tr><tr><td style="text-align: right">Gravitational constant</td><td style="text-align: right"><span>$g_0$</span></td><td style="text-align: right">1</td></tr><tr><td style="text-align: right">Thrust coefficient</td><td style="text-align: right"><span>$T_c$</span></td><td style="text-align: right">3.5</td></tr><tr><td style="text-align: right">Drag coefficient</td><td style="text-align: right"><span>$D_c$</span></td><td style="text-align: right"><span>$\frac{1}{2} v_c \frac{m_0}{g_0}$</span></td></tr><tr><td style="text-align: right">Characteristic altitude</td><td style="text-align: right"><span>$h_c$</span></td><td style="text-align: right">500</td></tr><tr><td style="text-align: right">Characteristic velocity</td><td style="text-align: right"><span>$v_c$</span></td><td style="text-align: right">620</td></tr><tr><td style="text-align: right">Characteristic mass ratio</td><td style="text-align: right"><span>$m_c$</span></td><td style="text-align: right">0.6</td></tr><tr><td style="text-align: right">Final mass</td><td style="text-align: right"><span>$m_f$</span></td><td style="text-align: right"><span>$m_c m_0$</span></td></tr></table><p>This prompt generates the syntactically correct code:</p><pre><code class="language-julia hljs"># Parameters
+end</code></pre><p>It is also possible to feed the model directly with LaTeX-like (markdown) definitions, as in the <a href="https://control-toolbox.org/OptimalControlProblems.jl/stable/problems/rocket.html">example</a> below: prompting according to</p><pre><code class="language-text hljs">translate the problem below into OptimalControl.jl DSL:
+
+### Mathematical formulation
+The problem can be stated as
+math
+\begin{aligned}
+\min_{h,v,m,T} \quad &amp; J = -h(T) \\[0.5em]
+\text{s.t.} \quad
+\dot{h}(t) &amp;= v(t), \\[0.25em]
+\dot{v}(t) &amp;= \frac{T(t) - D(h(t), v(t)) - m(t) g(h(t))}{m(t)}, \\[0.25em]
+\dot{m}(t) &amp;= -\frac{T(t)}{c}, \\[0.25em]
+0 \le T(t) &amp;\le T_{\max}, \\[0.25em]
+h(t) &amp;\ge h_0, \\[0.25em]
+v(t) &amp;\ge v_0, \\[0.25em]
+m_f \le m(t) &amp;\le m_0, \\[0.25em]
+h(0) &amp;= h_0, \quad v(0) = v_0, \quad m(0) = m_0, \\[0.25em]
+m(T) &amp;= m_f,
+\end{aligned}
+
+where  
+- **Drag**:  
+math
+D(h,v) = D_c \, v^2 \exp\!\left(-h_c \frac{h - h_0}{h_0}\right)
+
+- **Gravity**:  
+math
+g(h) = g_0 \left(\frac{h_0}{h}\right)^2
+
+- **Fuel constant**:  
+math
+c = \frac{1}{2} \sqrt{g_0 h_0}
+
+- **Maximum thrust**:  
+math
+T_{\max} = T_c m_0 g_0
+
+### Parameters
+| Parameter                  | Symbol | Value                  |
+|----------------------------|--------|------------------------|
+| Initial altitude           | $h_0$  | 1                      |
+| Initial velocity           | $v_0$  | 0                      |
+| Initial mass               | $m_0$  | 1                      |
+| Gravitational constant     | $g_0$  | 1                      |
+| Thrust coefficient         | $T_c$  | 3.5                    |
+| Drag coefficient           | $D_c$  | $\frac{1}{2} v_c \frac{m_0}{g_0}$ |
+| Characteristic altitude    | $h_c$  | 500                    |
+| Characteristic velocity    | $v_c$  | 620                    |
+| Characteristic mass ratio  | $m_c$  | 0.6                    |
+| Final mass                 | $m_f$  | $m_c m_0$              |</code></pre><p>This prompt generates the syntactically correct code:</p><pre><code class="language-julia hljs"># Parameters
 h₀ = 1
 v₀ = 0
 m₀ = 1
@@ -148,4 +196,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-abstract.html">« Define a problem</a><a class="docs-footer-nextpage" href="manual-model.html">Problem characteristics »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.15.0 on <span class="colophon-date" title="Wednesday 29 October 2025 06:11">Wednesday 29 October 2025</span>. Using Julia version 1.12.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-abstract.html">« Define a problem</a><a class="docs-footer-nextpage" href="manual-model.html">Problem characteristics »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.15.0 on <span class="colophon-date" title="Wednesday 29 October 2025 07:11">Wednesday 29 October 2025</span>. Using Julia version 1.12.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
