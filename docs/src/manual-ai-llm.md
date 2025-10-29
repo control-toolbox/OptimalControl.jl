@@ -115,58 +115,14 @@ Use a form compatible with examodels.
 end
 ```
 
-It is also possible to feed the model directly with LaTeX-like (markdown) definitions, as in the [example](https://control-toolbox.org/OptimalControlProblems.jl/stable/problems/rocket.html) below: prompting according to
+It is also possible to feed the model directly with math definitions (here from a snapshot), as in the [example](https://control-toolbox.org/OptimalControlProblems.jl/stable/problems/rocket.html) below:
 
 ```text
 translate the problem below into OptimalControl.jl DSL:
+```
 
-### Mathematical formulation
-The problem can be stated as
-math
-\begin{aligned}
-\min_{h,v,m,T} \quad & J = -h(T) \\[0.5em]
-\text{s.t.} \quad
-\dot{h}(t) &= v(t), \\[0.25em]
-\dot{v}(t) &= \frac{T(t) - D(h(t), v(t)) - m(t) g(h(t))}{m(t)}, \\[0.25em]
-\dot{m}(t) &= -\frac{T(t)}{c}, \\[0.25em]
-0 \le T(t) &\le T_{\max}, \\[0.25em]
-h(t) &\ge h_0, \\[0.25em]
-v(t) &\ge v_0, \\[0.25em]
-m_f \le m(t) &\le m_0, \\[0.25em]
-h(0) &= h_0, \quad v(0) = v_0, \quad m(0) = m_0, \\[0.25em]
-m(T) &= m_f,
-\end{aligned}
-
-where  
-- **Drag**:  
-math
-D(h,v) = D_c \, v^2 \exp\!\left(-h_c \frac{h - h_0}{h_0}\right)
-
-- **Gravity**:  
-math
-g(h) = g_0 \left(\frac{h_0}{h}\right)^2
-
-- **Fuel constant**:  
-math
-c = \frac{1}{2} \sqrt{g_0 h_0}
-
-- **Maximum thrust**:  
-math
-T_{\max} = T_c m_0 g_0
-
-### Parameters
-| Parameter                  | Symbol | Value                  |
-|----------------------------|--------|------------------------|
-| Initial altitude           | $h_0$  | 1                      |
-| Initial velocity           | $v_0$  | 0                      |
-| Initial mass               | $m_0$  | 1                      |
-| Gravitational constant     | $g_0$  | 1                      |
-| Thrust coefficient         | $T_c$  | 3.5                    |
-| Drag coefficient           | $D_c$  | $\frac{1}{2} v_c \frac{m_0}{g_0}$ |
-| Characteristic altitude    | $h_c$  | 500                    |
-| Characteristic velocity    | $v_c$  | 620                    |
-| Characteristic mass ratio  | $m_c$  | 0.6                    |
-| Final mass                 | $m_f$  | $m_c m_0$              |
+```@raw html
+<img width="800" alt="rocket-def" src="./assets/rocket-def.jpg">
 ```
 
 This prompt generates the syntactically correct code:
