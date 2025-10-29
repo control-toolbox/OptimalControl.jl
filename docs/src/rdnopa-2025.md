@@ -109,11 +109,11 @@ Total wall-clock secs                                       =  0.083
 ```
 
 - Mini-benchmark: [Goddard](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html) and [Quadrotor](https://github.com/control-toolbox/CTParser.jl/blob/211042b061be17b3f7fdff41cb53701d30b128db/test/test_onepass_exa.jl#L926) problems
-    - Goddard, H100 run             
+- Goddard, H100 run             
 ```@raw html
 <img width="400" alt="goddard-h100" src="./assets/goddard-h100.jpg">
 ```
-    - Quadrotor, H100 run             
+- Quadrotor, H100 run             
 ```@raw html
 <img width="400" alt="quadrotor-h100" src="./assets/quadrotor-h100.jpg">
 ```

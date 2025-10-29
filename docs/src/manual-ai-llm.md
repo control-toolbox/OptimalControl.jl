@@ -119,6 +119,8 @@ It is also possible to feed the model directly with LaTeX-like (markdown) defini
 
 ```text
 translate the problem below into OptimalControl.jl DSL:
+```
+
 ### Mathematical formulation
 The problem can be stated as
 math
@@ -166,9 +168,8 @@ T_{\max} = T_c m_0 g_0
 | Characteristic velocity    | $v_c$  | 620                    |
 | Characteristic mass ratio  | $m_c$  | 0.6                    |
 | Final mass                 | $m_f$  | $m_c m_0$              |
-```
 
-generates the syntactically correct code
+This prompt generates the syntactically correct code:
 
 ```julia
 # Parameters
