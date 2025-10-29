@@ -65,6 +65,11 @@ c(X_i, U_i) \leq 0,\quad i = 0,\dots,N
 - Compile into an ExaModel (one pass compiler, [syntax + semantics](https://github.com/control-toolbox/CTParser.jl/blob/20c6be5c953587fef10b054a95f9dc8c66b90577/src/onepass.jl#L145))
 
 - Solving (MadNLP + CUDSS)
+
+```@raw html
+<details><summary>Simple example, generated code</summary>
+```
+
 ```julia
 This is MadNLP version v0.8.7, running with cuDSS v0.4.0
 
@@ -117,7 +122,11 @@ Total wall-clock secs                                       =  0.083
 ```@raw html
 <img width="400" alt="quadrotor-h100" src="./assets/quadrotor-h100.jpg">
 ```
-               
+
+```@raw html
+</details>
+```
+ 
 ## Maths matters
 
 - Coupling direct *and* indirect (*aka* shooting methods)

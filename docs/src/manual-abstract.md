@@ -45,7 +45,7 @@ end
 ```
 
 !!! warning
-    Aliases during definition of variable, state or control are only allowed for multidimensional (dimension two or more) cases. Something like`u = T ∈ R, control` is not allowed... and useless (directly write `T ∈ R, control`).
+    Aliases during definition of variable, state or control are only allowed for multidimensional (dimension two or more) cases. Something like `u = T ∈ R, control` is not allowed... and useless (directly write `T ∈ R, control`).
 
 ## Time
 
@@ -499,7 +499,7 @@ end
 ```
 
 !!! warning
-    Such aliases do *not* define any additional function and are just replaced textually by the parser. In particular, they cannot be used outside the `@def` `begin ... end` block. Conversely, constants and functions used within the `@def` block must defined outside and before this block.
+    Such aliases do *not* define any additional function and are just replaced textually by the parser. In particular, they cannot be used outside the `@def` `begin ... end` block. Conversely, constants and functions used within the `@def` block must be defined outside and before this block.
 
 !!! hint
     You can rely on a trace mode for the macro `@def` to look at your code after expansions of the aliases using the `@def ocp ...` syntax and adding `true` after your `begin ... end` block:
