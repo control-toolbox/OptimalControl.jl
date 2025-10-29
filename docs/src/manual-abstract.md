@@ -23,7 +23,7 @@ end
 ```
 
 !!! warning
-    Note that the full code of the definition above is not provided (hence the `...`) The same is true for most examples below (only those without `...` are indeed complete). Also note that problem definitions must at least include definitions for time, state, control, and dynamics.
+    Note that the full code of the definition above is not provided (hence the `...`) The same is true for most examples below (only those without `...` are indeed complete). Also note that problem definitions must at least include definitions for time, state, control, dynamics and cost.
 
 
 Aliases `v₁`, `v₂` (and `v1`, `v2`) are automatically defined and can be used in subsequent expressions instead of `v[1]` and `v[2]`. The user can also define her own aliases for the components (one alias per dimension):
@@ -43,6 +43,9 @@ A one dimensional variable can be declared according to
     ...
 end
 ```
+
+!!! warning
+    Aliases during definition of variable, state or control are only allowed for multidimensional (dimension two or more) cases. Something like`u = T ∈ R, control` is not allowed... and useless (directly write `T ∈ R, control`).
 
 ## Time
 
@@ -496,7 +499,7 @@ end
 ```
 
 !!! warning
-    Such aliases do *not* define any additional function and are just replaced textually by the parser. In particular, they cannot be used outside the `@def` `begin ... end` block.
+    Such aliases do *not* define any additional function and are just replaced textually by the parser. In particular, they cannot be used outside the `@def` `begin ... end` block. Conversely, constants and functions used within the `@def` block must defined outside and before this block.
 
 !!! hint
     You can rely on a trace mode for the macro `@def` to look at your code after expansions of the aliases using the `@def ocp ...` syntax and adding `true` after your `begin ... end` block:

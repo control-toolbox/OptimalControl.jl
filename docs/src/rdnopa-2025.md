@@ -29,6 +29,8 @@ plus boundary, control and state constraints
 - Our core interests: numerical & geometrical methods in control, applications
 - Why Julia: fast (+ JIT), strongly typed, high-level (AD, macros), fast optimisation and ODE solvers available, rapidly growing community
 
+**What is important to solve such a problem numerically?**
+
 ## Syntax matters
 
 - [Simple example](@ref example-double-integrator-time)
@@ -60,54 +62,8 @@ c(X_i, U_i) \leq 0,\quad i = 0,\dots,N
 
 - SIMD parallelism ($f_0$, $f$, $g$) + sparsity: Kernels for GPU ([KernelAbstraction.jl](https://juliagpu.github.io/KernelAbstractions.jl/stable/)) and sparse linear algebra ([CUDSS.jl](https://github.com/exanauts/CUDSS.jl))
 - Modelling and optimising for GPU: [ExaModels.jl](https://exanauts.github.io/ExaModels.jl/dev/guide)  + [MadNLP.jl](https://madnlp.github.io/MadNLP.jl), with **built-in AD**
-- [Simple example, DSL](@ref example-double-integrator-energy)
 - Compile into an ExaModel (one pass compiler, [syntax + semantics](https://github.com/control-toolbox/CTParser.jl/blob/20c6be5c953587fef10b054a95f9dc8c66b90577/src/onepass.jl#L145))
 
-
-```@raw html
-<details><summary>Simple example, generated code</summary>
-```
-
-```julia
-begin
-    #= /data/caillau/CTParser.jl/src/onepass.jl:1003 =#
-    function (; scheme = :trapezoidal, grid_size = 200, backend = nothing, init = (0.1, 0.1, 0.1), base_type = Float64)
-            ...
-            #= /data/caillau/CTParser.jl/test/test_onepass_exa.jl:28 =#
-            begin
-                #= /data/caillau/CTParser.jl/src/onepass.jl:111 =#
-                local ex
-                #= /data/caillau/CTParser.jl/src/onepass.jl:112 =#
-                try
-                    #= /data/caillau/CTParser.jl/src/onepass.jl:113 =#
-                    begin
-                        #= /data/caillau/CTParser.jl/src/onepass.jl:735 =#
-                        if scheme == :trapezoidal
-                            #= /data/caillau/CTParser.jl/src/onepass.jl:736 =#
-                            ExaModels.constraint(var"##230", ((x[1, j + 1] - x[1, j]) - (var"##232" * (x[2, j] + x[2, j + 1])) / 2 for j = 0:grid_size - 1))
-                        elseif #= /data/caillau/CTParser.jl/src/onepass.jl:737 =# scheme == :euler
-                            #= /data/caillau/CTParser.jl/src/onepass.jl:738 =#
-                            ExaModels.constraint(var"##230", ((x[1, j + 1] - x[1, j]) - var"##232" * x[2, j] for j = 0:grid_size - 1))
-                        elseif #= /data/caillau/CTParser.jl/src/onepass.jl:739 =# scheme == :euler_b
-                            #= /data/caillau/CTParser.jl/src/onepass.jl:740 =#
-                            ExaModels.constraint(var"##230", ((x[1, j + 1] - x[1, j]) - var"##232" * x[2, j + 1] for j = 0:grid_size - 1))
-                        else
-                            #= /data/caillau/CTParser.jl/src/onepass.jl:742 =#
-                            throw("unknown numerical scheme")
-                        end
-                    end
-                catch ex
-                    #= /data/caillau/CTParser.jl/src/onepass.jl:115 =#
-                    println("Line ", 6, ": ", "(∂(x₁))(t) == x₂(t)")
-                    #= /data/caillau/CTParser.jl/src/onepass.jl:116 =#
-                    throw(ex)
-                end
-            end
-```
-
-```@raw html
-</details>
-```
 - Solving (MadNLP + CUDSS)
 ```julia
 This is MadNLP version v0.8.7, running with cuDSS v0.4.0
@@ -152,21 +108,12 @@ Total wall-clock secs in NLP function evaluations           =  0.003
 Total wall-clock secs                                       =  0.083
 ```
 
-### Mini-benchmark: [Goddard](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html) and [Quadrotor](https://github.com/control-toolbox/CTParser.jl/blob/211042b061be17b3f7fdff41cb53701d30b128db/test/test_onepass_exa.jl#L926) problems
-
-- Goddard, A100 run
-```@raw html
-<img width="400" alt="goddard-a100" src="./assets/goddard-a100.jpg">
-```
-- Goddard, H100 run             
+- Mini-benchmark: [Goddard](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html) and [Quadrotor](https://github.com/control-toolbox/CTParser.jl/blob/211042b061be17b3f7fdff41cb53701d30b128db/test/test_onepass_exa.jl#L926) problems
+    - Goddard, H100 run             
 ```@raw html
 <img width="400" alt="goddard-h100" src="./assets/goddard-h100.jpg">
 ```
-- Quadrotor, A100 run    
-```@raw html
-<img width="400" alt="quadrotor-a100" src="./assets/quadrotor-a100.jpg">
-```
-- Quadrotor, H100 run             
+    - Quadrotor, H100 run             
 ```@raw html
 <img width="400" alt="quadrotor-h100" src="./assets/quadrotor-h100.jpg">
 ```
@@ -195,7 +142,7 @@ Total wall-clock secs                                       =  0.083
 <a href="https://control-toolbox.org"><img width="800" alt="control-toolbox.org" src="./assets/control-toolbox.jpg"></a>
 ```
 - Open to contributions! Give it a [try](@ref manual-ai-llm), give it a star ⭐️
-- Collection of problems: [OptimalControlProblems.jl](https://control-toolbox.org/OptimalControlProblems.jl)
+- Collection of problems: [OptimalControlProblems.jl](https://control-toolbox.org/OptimalControlProblems.jl/stable/problems_browser.html)
 
 ## Credits (not exhaustive!)
 
