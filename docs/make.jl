@@ -128,7 +128,7 @@ Draft = false
 ```
 =#
 makedocs(;
-    draft=false,
+    draft=true, # debug
     sitename="OptimalControl.jl",
     format=Documenter.HTML(;
         repolink="https://" * repo_url,
@@ -174,9 +174,10 @@ makedocs(;
                 "OptimalControl.jl" => "api-optimalcontrol-dev.md",
             ],
         ],
-        "JuliaCon Paris 2025" => "juliacon-paris-2025.md",
+        "RDNOPA 2025" => "rdnopa-2025.md",
     ],
     plugins=[links],
 )
 
 deploydocs(; repo=repo_url * ".git", devbranch="main", push_preview=true)
+# push_preview: use https://control-toolbox.org/OptimalControl.jl/previews/PRXXX where XXX is the pull request number
