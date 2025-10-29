@@ -35,6 +35,49 @@ plus boundary, control and state constraints
 
 - [Simple example](@ref example-double-integrator-time)
 - [Use LLM](@ref manual-ai-llm)
+- Do more...
+
+```@raw html
+<details><summary>Simple example, generated code</summary>
+```
+
+```julia
+ocp_fixed = @def begin
+    # Fixed time domain
+    s ∈ [0, 1], time
+    
+    # Augmented state: (position, velocity, final_time)
+    y = (q, v, tf) ∈ R³, state
+    
+    # Control
+    u ∈ R, control
+    
+    # Transformed dynamics (multiply by tf due to ds = dt/tf)
+    ∂(q)(s)  == tf(s) * v(s)
+    ∂(v)(s)  == tf(s) * u(s)
+    ∂(tf)(s) == 0
+    
+    # Initial conditions
+    q(0)  == -1
+    v(0)  == 0
+    # tf(0) is free (no initial condition needed)
+    
+    # Final conditions
+    q(1)  == 0
+    v(1)  == 0
+    # tf(1) is what we minimize
+    
+    # Control constraints
+    -1 ≤ u(s) ≤ 1
+    
+    # Cost: minimize final time
+    tf(1) → min
+end
+```
+
+```@raw html
+</details>
+```
 
 ## Performance matters
 

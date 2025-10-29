@@ -120,7 +120,7 @@ cp(
 
 repo_url = "github.com/control-toolbox/OptimalControl.jl"
 
-# if draft is true, then the julia code from .md is not executed # debug
+# if draft is true, then the julia code from .md is not executed
 # to disable the draft mode in a specific markdown file, use the following:
 #=
 ```@meta
@@ -128,7 +128,7 @@ Draft = false
 ```
 =#
 makedocs(;
-    draft=true, # debug
+    draft=false, # debug
     sitename="OptimalControl.jl",
     format=Documenter.HTML(;
         repolink="https://" * repo_url,
