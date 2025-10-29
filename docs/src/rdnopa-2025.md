@@ -206,6 +206,10 @@ Total wall-clock secs                                       =  0.083
 
 ## control-toolbox.org
 
+```@raw html
+<img width="120" alt="ct-qr" src="./assets/ct-qr-code.svg">
+```
+
 - Collection of Julia Packages rooted at [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl)
 ```@raw html
 <a href="https://control-toolbox.org"><img width="800" alt="control-toolbox.org" src="./assets/control-toolbox.jpg"></a>
