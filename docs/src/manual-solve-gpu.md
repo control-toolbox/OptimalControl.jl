@@ -28,10 +28,7 @@ end
 ```
 
 !!! note
-    We have used MadNLPGPU instead of MadNLP, that is able to solve on GPU (leveraging [CUDSS.jl](https://github.com/exanauts/CUDSS.jl)) optimisation problems modelled with ExaModels.jl. As a direct transcription towards an `ExaModels.ExaModel` is performed, there are limitations on the syntax:  
-    - dynamics must be declared coordinate by coordinate (not globally as a vector valued expression)
-    - nonlinear constraints (boundary, variable, control, state, mixed ones, see [Constraints](@ref manual-abstract-constraints) must also be scalar expressions (linear constraints *aka.* ranges, on the other hand, can be vectors)
-    - all expressions must only involve algebraic operations that are known to ExaModels (check the [documentation](https://exanauts.github.io/ExaModels.jl/stable)), although one can provide additional user defined functions through *registration* (check [ExaModels API](https://exanauts.github.io/ExaModels.jl/stable/core/#ExaModels.@register_univariate-Tuple%7BAny,%2520Any,%2520Any%7D)) 
+    We have used MadNLPGPU instead of MadNLP, that is able to solve on GPU (leveraging [CUDSS.jl](https://github.com/exanauts/CUDSS.jl)) optimisation problems modelled with ExaModels.jl. As a direct transcription towards an `ExaModels.ExaModel` is performed (`:exa` keyword below), there are limitations on the syntax (check the [Solve section](@ref manual-solve-methods)).
 
 Computation on GPU is currently only tested with CUDA, and the associated backend must be passed to ExaModels as is done below (also note the `:exa` keyword to indicate the modeller, and `:madnlp` for the solver):
 
