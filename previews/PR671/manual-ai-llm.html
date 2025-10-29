@@ -84,55 +84,7 @@ end</code></pre><p>The answer is syntactically correct and can be updated, for i
     
     # Objective: minimize final time
     tf → min
-end</code></pre><p>It is also possible to feed the model directly with LaTeX-like (markdown) definitions, as in the <a href="https://control-toolbox.org/OptimalControlProblems.jl/stable/problems/rocket.html">example</a> below: prompting according to</p><pre><code class="language-text hljs">translate the problem below into OptimalControl.jl DSL:
-
-### Mathematical formulation
-The problem can be stated as
-math
-\begin{aligned}
-\min_{h,v,m,T} \quad &amp; J = -h(T) \\[0.5em]
-\text{s.t.} \quad
-\dot{h}(t) &amp;= v(t), \\[0.25em]
-\dot{v}(t) &amp;= \frac{T(t) - D(h(t), v(t)) - m(t) g(h(t))}{m(t)}, \\[0.25em]
-\dot{m}(t) &amp;= -\frac{T(t)}{c}, \\[0.25em]
-0 \le T(t) &amp;\le T_{\max}, \\[0.25em]
-h(t) &amp;\ge h_0, \\[0.25em]
-v(t) &amp;\ge v_0, \\[0.25em]
-m_f \le m(t) &amp;\le m_0, \\[0.25em]
-h(0) &amp;= h_0, \quad v(0) = v_0, \quad m(0) = m_0, \\[0.25em]
-m(T) &amp;= m_f,
-\end{aligned}
-
-where  
-- **Drag**:  
-math
-D(h,v) = D_c \, v^2 \exp\!\left(-h_c \frac{h - h_0}{h_0}\right)
-
-- **Gravity**:  
-math
-g(h) = g_0 \left(\frac{h_0}{h}\right)^2
-
-- **Fuel constant**:  
-math
-c = \frac{1}{2} \sqrt{g_0 h_0}
-
-- **Maximum thrust**:  
-math
-T_{\max} = T_c m_0 g_0
-
-### Parameters
-| Parameter                  | Symbol | Value                  |
-|----------------------------|--------|------------------------|
-| Initial altitude           | $h_0$  | 1                      |
-| Initial velocity           | $v_0$  | 0                      |
-| Initial mass               | $m_0$  | 1                      |
-| Gravitational constant     | $g_0$  | 1                      |
-| Thrust coefficient         | $T_c$  | 3.5                    |
-| Drag coefficient           | $D_c$  | $\frac{1}{2} v_c \frac{m_0}{g_0}$ |
-| Characteristic altitude    | $h_c$  | 500                    |
-| Characteristic velocity    | $v_c$  | 620                    |
-| Characteristic mass ratio  | $m_c$  | 0.6                    |
-| Final mass                 | $m_f$  | $m_c m_0$              |</code></pre><p>This prompt generates the syntactically correct code:</p><pre><code class="language-julia hljs"># Parameters
+end</code></pre><p>It is also possible to feed the model directly with math definitions (here from a snapshot), as in the <a href="https://control-toolbox.org/OptimalControlProblems.jl/stable/problems/rocket.html">example</a> below:</p><pre><code class="language-text hljs">translate the problem below into OptimalControl.jl DSL:</code></pre><img width="800" alt="rocket-def" src="./assets/rocket-def.jpg"><p>This prompt generates the syntactically correct code:</p><pre><code class="language-julia hljs"># Parameters
 h₀ = 1
 v₀ = 0
 m₀ = 1
