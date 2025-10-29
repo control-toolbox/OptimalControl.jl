@@ -35,10 +35,28 @@ plus boundary, control and state constraints
 
 - [Simple example](@ref example-double-integrator-time)
 - [Use LLM](@ref manual-ai-llm)
-- Do more...
 
 ```@raw html
-<details><summary>Simple example, generated code</summary>
+<details><summary>Do more...</summary>
+```
+
+```text
+rewrite in OptimalControl.jl DSL the free time problem below as a problem with fixed final time using:
+- a change time from t to s = t / tf
+- tf as an additional state variable subject to dtf / ds = 0
+ocp = @def begin
+    tf ∈ R,          variable
+    t ∈ [0, tf],     time
+    x = (q, v) ∈ R², state
+    u ∈ R,           control
+    -1 ≤ u(t) ≤ 1
+    q(0)  == -1
+    v(0)  == 0
+    q(tf) == 0
+    v(tf) == 0
+    ẋ(t) == [v(t), u(t)]
+    tf → min
+end
 ```
 
 ```julia
@@ -107,10 +125,9 @@ c(X_i, U_i) \leq 0,\quad i = 0,\dots,N
 - Modelling and optimising for GPU: [ExaModels.jl](https://exanauts.github.io/ExaModels.jl/dev/guide)  + [MadNLP.jl](https://madnlp.github.io/MadNLP.jl), with **built-in AD**
 - Compile into an ExaModel (one pass compiler, [syntax + semantics](https://github.com/control-toolbox/CTParser.jl/blob/20c6be5c953587fef10b054a95f9dc8c66b90577/src/onepass.jl#L145))
 
-- Solving (MadNLP + CUDSS)
 
 ```@raw html
-<details><summary>Simple example, generated code</summary>
+<details><summary>Solving (MadNLP + CUDSS)</summary>
 ```
 
 ```julia
