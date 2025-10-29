@@ -122,7 +122,18 @@ translate the problem below into OptimalControl.jl DSL:
 ```
 
 ```@raw html
-<img width="800" alt="rocket-def" src="./assets/rocket-def.jpg">
+<img src="./assets/rocket-def.png" 
+     alt="rocket-def" 
+     style="
+         display: block;
+         margin-left: 30px;
+         margin-right: 30px;
+         margin-top: 20px;
+         margin-bottom: 20px;
+         width: calc(100% - 60px);
+         height: auto;
+     ">
+
 ```
 
 This prompt generates the syntactically correct code:
