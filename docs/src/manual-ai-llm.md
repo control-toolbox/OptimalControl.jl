@@ -114,3 +114,89 @@ Use a form compatible with examodels.
     tf → min
 end
 ```
+
+It is also possible to feed the model directly with math definitions (here from a snapshot), as in the [example](https://control-toolbox.org/OptimalControlProblems.jl/stable/problems/rocket.html) below:
+
+```text
+translate the problem below into OptimalControl.jl DSL:
+```
+
+```@raw html
+<img src="./assets/rocket-def.png" 
+     alt="rocket-def" 
+     style="
+         display: block;
+         margin-left: 30px;
+         margin-right: 30px;
+         margin-top: 20px;
+         margin-bottom: 20px;
+         width: calc(100% - 60px);
+         height: auto;
+     ">
+
+```
+
+This prompt generates the syntactically correct code:
+
+```julia
+# Parameters
+h₀ = 1
+v₀ = 0
+m₀ = 1
+g₀ = 1
+Tc = 3.5
+hc = 500
+vc = 620
+mc = 0.6
+
+# Derived constants
+Dc = 0.5 * vc * m₀ / g₀
+mf = mc * m₀
+c = 0.5 * sqrt(g₀ * h₀)
+Tmax = Tc * m₀ * g₀
+
+# Auxiliary functions
+D(h, v) = Dc * v^2 * exp(-hc * (h - h₀) / h₀)
+g(h) = g₀ * (h₀ / h)^2
+
+rocket = @def begin
+    # Variable (free final time)
+    tf ∈ R, variable
+    
+    # Time
+    t ∈ [0, tf], time
+    
+    # State: (altitude, velocity, mass)
+    x = (h, v, m) ∈ R³, state
+    
+    # Control: thrust
+    T ∈ R, control
+    
+    # Dynamics
+    ∂(h)(t) == v(t)
+    ∂(v)(t) == (T(t) - D(h(t), v(t)) - m(t) * g(h(t))) / m(t)
+    ∂(m)(t) == -T(t) / c
+    
+    # Initial conditions
+    h(0) == h₀
+    v(0) == v₀
+    m(0) == m₀
+    
+    # Final condition
+    m(tf) == mf
+    
+    # State constraints
+    h(t) ≥ h₀
+    v(t) ≥ v₀
+    mf ≤ m(t) ≤ m₀
+    
+    # Control constraint
+    0 ≤ T(t) ≤ Tmax
+    
+    # Variable constraint
+    tf ≥ 0
+    
+    # Objective: maximize final altitude h(tf)
+    -h(tf) → min
+end
+```
