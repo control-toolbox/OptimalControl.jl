@@ -557,4 +557,4 @@ end
 
 ## [Known issues](@id manual-abstract-known-issues)
 
-- [Reverse over forward AD issues with ADNLP](https://github.com/control-toolbox/OptimalControl.jl/issues/481)
+- [Reverse over forward AD issues with ADNLP](https://github.com/control-toolbox/OptimalControl.jl/issues/481#issuecomment-3471352183)
