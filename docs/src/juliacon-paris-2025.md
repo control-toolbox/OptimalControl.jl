@@ -361,7 +361,7 @@ Total wall-clock secs                                       =  0.083
 
 - New applications (space mechanics, biology, quantum mechanics and more) -> check David's talk
 - Collection of problems: [OptimalControlProblems.jl](https://control-toolbox.org/OptimalControlProblems.jl)
-- ... and open to contributions! Give it a [try](@ref manual-ai-ded), give it a star ⭐️
+- ... and open to contributions! Give it a [try](@ref manual-ai-llm), give it a star ⭐️
 
 ```@raw html
 <a href="https://github.com/control-toolbox/OptimalControl.jl"><img width="800" alt="OptimalControl.jl" src="./assets/star.jpg"></a>

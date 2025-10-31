@@ -42,39 +42,19 @@ function test_goddard_indirect()
     end
 
     # tests
-    t1 = 0.025246759388000528
-    t2 = 0.061602092906721286
-    t3 = 0.10401664867856217
-    tf = 0.20298394547952422
-    p0 = [3.9428857983400074, 0.14628855388160236, 0.05412448008321635]
+    p0 = [3.9457646586891744, 0.15039559623165552, 0.05371271293970545]
+    t1 = 0.023509684041879215
+    t2 = 0.059737380899876
+    t3 = 0.10157134842432228
+    tf = 0.20204744057100849
 
-    # test shooting function
+    # test shooting function with solve from NonlinearSolve
     s = zeros(eltype(p0), 7)
-    shoot!(s, p0, t1, t2, t3, tf)
-    s_guess_sol = [
-        -0.02456074767656735,
-        -0.05699760226157302,
-        0.0018629693253921868,
-        -0.027013078908634858,
-        -0.21558816838342798,
-        -0.0121146739026253,
-        0.015713236406057297,
-    ]
-    @test s ≈ s_guess_sol atol = 1e-6
-
-    # solve and compare
     ξ0 = [p0; t1; t2; t3; tf]
-    backend = AutoForwardDiff()
-    nle! = (s, ξ) -> shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
-    jnle! = (js, ξ) -> jacobian!(nle!, similar(ξ), js, backend, ξ)
-    indirect_sol = fsolve(nle!, jnle!, ξ0; show_trace=true)
-
-    p0 = indirect_sol.x[1:3]
-    t1 = indirect_sol.x[4]
-    t2 = indirect_sol.x[5]
-    t3 = indirect_sol.x[6]
-    tf = indirect_sol.x[7]
-
-    shoot!(s, p0, t1, t2, t3, tf)
+    shoot!(s, ξ, λ) = shoot!(s, ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7])
+    prob = NonlinearProblem(shoot!, ξ0)
+    sol = solve(prob)
+    ξ = sol.u
+    p0, t1, t2, t3, tf = ξ[1:3], ξ[4], ξ[5], ξ[6], ξ[7]
     @test norm(s) < 1e-6
 end

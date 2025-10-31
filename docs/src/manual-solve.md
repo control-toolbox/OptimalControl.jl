@@ -89,7 +89,10 @@ solve(ocp, :direct, :adnlp, :ipopt)
 
 !!! warning
 
-    Dynamics and nonlinear constraints must be defined coordinatewise to use ExaModels.jl (`:exa`). Check [the problem definition manual](@ref manual-abstract-dynamics-coord) for more information.
+    When using `:exa` for more performance (in particular to [solve on GPU](@ref manual-solve-gpu)), there are limitations on the syntax:  
+    - dynamics must be declared coordinate by coordinate (not globally as a vector valued expression)
+    - nonlinear constraints (boundary, variable, control, state, mixed ones, see [Constraints](@ref manual-abstract-constraints) must also be scalar expressions (linear constraints *aka.* ranges, on the other hand, can be vectors)
+    - all expressions must only involve algebraic operations that are known to ExaModels (check the [documentation](https://exanauts.github.io/ExaModels.jl/stable)), although one can provide additional user defined functions through *registration* (check [ExaModels API](https://exanauts.github.io/ExaModels.jl/stable/core/#ExaModels.@register_univariate-Tuple%7BAny,%2520Any,%2520Any%7D)) 
 
 !!! note
 

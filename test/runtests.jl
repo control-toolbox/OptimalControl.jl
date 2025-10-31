@@ -5,10 +5,10 @@ using MadNLP
 using MadNLPMumps
 using LinearAlgebra
 using OrdinaryDiffEq
-using MINPACK
 using DifferentiationInterface
 using ForwardDiff: ForwardDiff
 using SplitApplyCombine # for flatten in some tests
+using NonlinearSolve
 
 # NB some direct tests use functional definition and are `using CTModels`
 
