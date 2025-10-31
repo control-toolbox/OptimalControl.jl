@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Problem characteristics · OptimalControl.jl</title><meta name="title" content="Problem characteristics · OptimalControl.jl"/><meta property="og:title" content="Problem characteristics · OptimalControl.jl"/><meta property="twitter:title" content="Problem characteristics · OptimalControl.jl"/><meta name="description" content="Documentation for OptimalControl.jl."/><meta property="og:description" content="Documentation for OptimalControl.jl."/><meta property="twitter:description" content="Documentation for OptimalControl.jl."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script><link href="https://control-toolbox.org/assets/css/documentation.css" rel="stylesheet" type="text/css"/><script src="https://control-toolbox.org/assets/js/documentation.js"></script><link href="assets/custom.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="index.html">OptimalControl.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="index.html">Getting Started</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="example-double-integrator-energy.html">Energy minimisation</a></li><li><a class="tocitem" href="example-double-integrator-time.html">Time mininimisation</a></li></ul></li><li><span class="tocitem">Manual</span><ul><li><a class="tocitem" href="manual-abstract.html">Define a problem</a></li><li><a class="tocitem" href="manual-ai-llm.html">Use AI</a></li><li class="is-active"><a class="tocitem" href="manual-model.html">Problem characteristics</a><ul class="internal"><li><a class="tocitem" href="#manual-model-main-functionalities"><span>Main functionalities</span></a></li><li><a class="tocitem" href="#manual-model-struct"><span>Model struct</span></a></li><li><a class="tocitem" href="#manual-model-attributes"><span>Attributes and properties</span></a></li></ul></li><li><a class="tocitem" href="manual-initial-guess.html">Set an initial guess</a></li><li><a class="tocitem" href="manual-solve.html">Solve a problem</a></li><li><a class="tocitem" href="manual-solve-gpu.html">Solve on GPU</a></li><li><a class="tocitem" href="manual-solution.html">Solution characteristics</a></li><li><a class="tocitem" href="manual-plot.html">Plot a solution</a></li><li><input class="collapse-toggle" id="menuitem-3-9" type="checkbox"/><label class="tocitem" for="menuitem-3-9"><span class="docs-label">Compute flows</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="manual-flow-api.html">Flow API</a></li><li><a class="tocitem" href="manual-flow-ocp.html">From optimal control problems</a></li><li><a class="tocitem" href="manual-flow-others.html">From Hamiltonians and others</a></li></ul></li></ul></li><li><span class="tocitem">API</span><ul><li><a class="tocitem" href="api-optimalcontrol-user.html">OptimalControl.jl - User</a></li><li><input class="collapse-toggle" id="menuitem-4-2" type="checkbox"/><label class="tocitem" for="menuitem-4-2"><span class="docs-label">Subpackages - Developers</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="api-ctbase.html">CTBase.jl</a></li><li><a class="tocitem" href="api-ctdirect.html">CTDirect.jl</a></li><li><a class="tocitem" href="api-ctflows.html">CTFlows.jl</a></li><li><a class="tocitem" href="api-ctmodels.html">CTModels.jl</a></li><li><a class="tocitem" href="api-ctparser.html">CTParser.jl</a></li><li><a class="tocitem" href="api-optimalcontrol-dev.html">OptimalControl.jl</a></li></ul></li></ul></li><li><a class="tocitem" href="rdnopa-2025.html">RDNOPA 2025</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Manual</a></li><li class="is-active"><a href="manual-model.html">Problem characteristics</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="manual-model.html">Problem characteristics</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl/blob/main/docs/src/manual-model.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="manual-model"><a class="docs-heading-anchor" href="#manual-model">The optimal control problem object: structure and usage</a><a id="manual-model-1"></a><a class="docs-heading-anchor-permalink" href="#manual-model" title="Permalink"></a></h1><p>In this manual, we&#39;ll first recall the <strong>main functionalities</strong> you can use when working with an optimal control problem (OCP). This includes essential operations like:</p><ul><li><strong>Solving an OCP</strong>: How to find the optimal solution for your defined problem.</li><li><strong>Computing flows from an OCP</strong>: Understanding the dynamics and trajectories derived from the optimal solution.</li><li><strong>Printing an OCP</strong>: How to display a summary of your problem&#39;s definition.</li></ul><p>After covering these core functionalities, we&#39;ll delve into the <strong>structure of an OCP</strong>. Since an OCP is structured as a <a href="api-optimalcontrol-user.html#CTModels.Model"><code>Model</code></a> struct, we&#39;ll first explain how to <strong>access its underlying attributes</strong>, such as the problem&#39;s dynamics, costs, and constraints. Following this, we&#39;ll shift our focus to the <strong>simple properties</strong> inherent to an OCP, learning how to determine aspects like whether the problem:</p><ul><li><strong>Is autonomous</strong>: Does its dynamics depend explicitly on time?</li><li><strong>Has a fixed or free initial/final time</strong>: Is the duration of the control problem predetermined or not?</li></ul><hr/><p><strong>Content</strong></p><ul><li><a href="manual-model.html#manual-model-main-functionalities">Main functionalities</a></li><li><a href="manual-model.html#manual-model-struct">Model struct</a></li><li><a href="manual-model.html#manual-model-attributes">Attributes and properties</a></li></ul><hr/><h2 id="manual-model-main-functionalities"><a class="docs-heading-anchor" href="#manual-model-main-functionalities">Main functionalities</a><a id="manual-model-main-functionalities-1"></a><a class="docs-heading-anchor-permalink" href="#manual-model-main-functionalities" title="Permalink"></a></h2><p>Let&#39;s define a basic optimal control problem.</p><pre><code class="language-julia hljs">using OptimalControl
+
+t0 = 0
+tf = 1
+x0 = [-1, 0]
+
+ocp = @def begin
+    t ∈ [ t0, tf ], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    x(t0) == x0
+    x(tf) == [0, 0]
+    ẋ(t)  == [v(t), u(t)]
+    0.5∫( u(t)^2 ) → min
+end</code></pre><p>To print it, simply:</p><pre><code class="language-julia hljs">ocp</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr1">Abstract definition:</span>
+
+    t ∈ [t0, tf], time
+    x = ((q, v) ∈ R², state)
+    u ∈ R, control
+    x(t0) == x0
+    x(tf) == [0, 0]
+    ẋ(t) == [v(t), u(t)]
+    0.5 * ∫(u(t) ^ 2) → min
+
+<span class="sgr1">The (autonomous) optimal control problem is of the form:</span>
+
+<span class="sgr34">    minimize  </span>J(x, u) = ∫ f⁰(x(t), u(t)) dt, over [0, 1]
+
+<span class="sgr34">    subject to</span>
+
+        ẋ(t) = f(x(t), u(t)), t in [0, 1] a.e.,
+
+        ϕ₋ ≤ ϕ(x(0), x(1)) ≤ ϕ₊, 
+
+    where x(t) = (q(t), v(t)) ∈ R² and u(t) ∈ R.
+</code></pre><p>We can now solve the problem (for more details, visit the <a href="manual-solve.html#manual-solve">solve manual</a>):</p><pre><code class="language-julia hljs">using NLPModelsIpopt
+solve(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl version v1.1.5 running with: direct, adnlp, ipopt.
+
+▫ The optimal control problem is solved with CTDirect version v0.17.3.
+
+   ┌─ The NLP is modelled with ADNLPModels and solved with NLPModelsIpopt.
+   │
+   ├─ Number of time steps⋅: 250
+   └─ Discretisation scheme: midpoint
+
+▫ This is Ipopt version 3.14.19, running with linear solver MUMPS 5.8.1.
+
+Number of nonzeros in equality constraint Jacobian...:     1754
+Number of nonzeros in inequality constraint Jacobian.:        0
+Number of nonzeros in Lagrangian Hessian.............:      250
+
+Total number of variables............................:      752
+                     variables with only lower bounds:        0
+                variables with lower and upper bounds:        0
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:      504
+Total number of inequality constraints...............:        0
+        inequality constraints with only lower bounds:        0
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:        0
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+   0  5.0000000e-03 1.10e+00 3.29e-14   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
+   1  6.0000960e+00 2.22e-16 1.78e-15 -11.0 6.08e+00    -  1.00e+00 1.00e+00h  1
+
+Number of Iterations....: 1
+
+                                   (scaled)                 (unscaled)
+Objective...............:   6.0000960015360212e+00    6.0000960015360212e+00
+Dual infeasibility......:   1.7763568394002505e-15    1.7763568394002505e-15
+Constraint violation....:   2.2204460492503131e-16    2.2204460492503131e-16
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
+Complementarity.........:   0.0000000000000000e+00    0.0000000000000000e+00
+Overall NLP error.......:   1.7763568394002505e-15    1.7763568394002505e-15
+
+
+Number of objective function evaluations             = 2
+Number of objective gradient evaluations             = 2
+Number of equality constraint evaluations            = 2
+Number of inequality constraint evaluations          = 0
+Number of equality constraint Jacobian evaluations   = 2
+Number of inequality constraint Jacobian evaluations = 0
+Number of Lagrangian Hessian evaluations             = 1
+Total seconds in IPOPT                               = 2.963
+
+EXIT: Optimal Solution Found.</code></pre><p>You can also compute flows (for more details, see the <a href="manual-flow-ocp.html#manual-flow-ocp">flow manual</a>) from the optimal control problem, providing a control law in feedback form. The <strong>pseudo-Hamiltonian</strong> of this problem is</p><p class="math-container">\[    H(x, p, u) = p_q\, v + p_v\, u + p^0 u^2 /2,\]</p><p>where <span>$p^0 = -1$</span> since we are in the normal case. From the Pontryagin maximum principle, the maximising control is given in feedback form by</p><p class="math-container">\[u(x, p) = p_v\]</p><p>since <span>$\partial^2_{uu} H = p^0 = - 1 &lt; 0$</span>. </p><pre><code class="language-julia hljs">u = (x, p) -&gt; p[2]          # control law in feedback form
+
+using OrdinaryDiffEq        # needed to import numerical integrators
+f = Flow(ocp, u)            # compute the Hamiltonian flow function
+
+p0 = [12, 6]                # initial covector solution
+xf, pf = f(t0, x0, p0, tf)  # flow from (x0, p0) at time t0 to tf
+xf                          # should be (0, 0)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2-element Vector{Float64}:
+ -1.6443649131320877e-15
+  6.0194942550307896e-15</code></pre><div class="admonition is-info" id="Note-971b06f6ecdb2eb5"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-971b06f6ecdb2eb5" title="Permalink"></a></header><div class="admonition-body"><p>A more advanced feature allows for the discretization of the optimal control problem. From the discretized version, you can obtain a Nonlinear Programming problem (or optimization problem) and solve it using any appropriate NLP solver. For more details, visit the <a href="https://control-toolbox.org/Tutorials.jl/stable/tutorial-nlp.html">NLP manipulation tutorial</a>.</p></div></div><h2 id="manual-model-struct"><a class="docs-heading-anchor" href="#manual-model-struct">Model struct</a><a id="manual-model-struct-1"></a><a class="docs-heading-anchor-permalink" href="#manual-model-struct" title="Permalink"></a></h2><p>The optimal control problem <code>ocp</code> is a <a href="api-optimalcontrol-user.html#CTModels.Model"><code>Model</code></a> struct. </p><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="CTModels.Model-manual-model" href="#CTModels.Model-manual-model"><code>CTModels.Model</code></a> — <span class="docstring-category">Type</span><span class="is-flex-grow-1 docstring-article-toggle-button" title="Collapse docstring"></span></header><section><div><pre><code class="language-julia hljs">struct Model{TD&lt;:CTModels.TimeDependence, TimesModelType&lt;:CTModels.AbstractTimesModel, StateModelType&lt;:CTModels.AbstractStateModel, ControlModelType&lt;:CTModels.AbstractControlModel, VariableModelType&lt;:CTModels.AbstractVariableModel, DynamicsModelType&lt;:Function, ObjectiveModelType&lt;:CTModels.AbstractObjectiveModel, ConstraintsModelType&lt;:CTModels.AbstractConstraintsModel, BuildExaModelType&lt;:Union{Nothing, Function}} &lt;: CTModels.AbstractModel</code></pre><p><strong>Fields</strong></p><ul><li><p><code>times::CTModels.AbstractTimesModel</code></p></li><li><p><code>state::CTModels.AbstractStateModel</code></p></li><li><p><code>control::CTModels.AbstractControlModel</code></p></li><li><p><code>variable::CTModels.AbstractVariableModel</code></p></li><li><p><code>dynamics::Function</code></p></li><li><p><code>objective::CTModels.AbstractObjectiveModel</code></p></li><li><p><code>constraints::CTModels.AbstractConstraintsModel</code></p></li><li><p><code>definition::Expr</code></p></li><li><p><code>build_examodel::Union{Nothing, Function}</code></p></li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/control-toolbox/CTModels.jl/blob/v0.6.9/src/types.jl#L242">source</a></section></article><p>Each field can be accessed directly (<code>ocp.times</code>, etc) or by a getter:</p><ul><li><a href="api-optimalcontrol-user.html#CTModels.times"><code>times</code></a></li><li><a href="api-optimalcontrol-user.html#CTModels.state"><code>state</code></a></li><li><a href="api-optimalcontrol-user.html#CTModels.control"><code>control</code></a></li><li><a href="api-optimalcontrol-user.html#ExaModels.variable-Tuple{Model}"><code>variable</code></a></li><li><a href="api-optimalcontrol-user.html#CTModels.dynamics"><code>dynamics</code></a></li><li><a href="api-optimalcontrol-user.html#ExaModels.objective-Tuple{Model}"><code>objective</code></a></li><li><a href="api-optimalcontrol-user.html#CTModels.constraints"><code>constraints</code></a></li><li><a href="api-optimalcontrol-user.html#CTModels.definition"><code>definition</code></a></li><li><a href="api-optimalcontrol-user.html#CTModels.get_build_examodel"><code>get_build_examodel</code></a></li></ul><p>For instance, we can retrieve the <code>times</code> and <code>definition</code> values.</p><pre><code class="language-julia hljs">times(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">CTModels.TimesModel{CTModels.FixedTimeModel{Int64}, CTModels.FixedTimeModel{Int64}}(CTModels.FixedTimeModel{Int64}(0, &quot;0&quot;), CTModels.FixedTimeModel{Int64}(1, &quot;1&quot;), &quot;t&quot;)</code></pre><pre><code class="language-julia hljs">definition(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">quote
+    <span class="sgr90">#= manual-model.md:40 =#</span>
+    (t ∈ [t0, tf], time)
+    <span class="sgr90">#= manual-model.md:41 =#</span>
+    x = ((q, v) ∈ R², state)
+    <span class="sgr90">#= manual-model.md:42 =#</span>
+    (u ∈ R, control)
+    <span class="sgr90">#= manual-model.md:43 =#</span>
+    x(t0) == x0
+    <span class="sgr90">#= manual-model.md:44 =#</span>
+    x(tf) == [0, 0]
+    <span class="sgr90">#= manual-model.md:45 =#</span>
+    ẋ(t) == [v(t), u(t)]
+    <span class="sgr90">#= manual-model.md:46 =#</span>
+    0.5 * ∫(u(t) ^ 2) → min
+end</code></pre><div class="admonition is-info" id="Note-1d9113e577127bef"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-1d9113e577127bef" title="Permalink"></a></header><div class="admonition-body"><p>We refer to <a href="https://control-toolbox.org/CTModels.jl/stable/types.html#Types">CTModels API</a> for more details about this struct and its fields.</p></div></div><h2 id="manual-model-attributes"><a class="docs-heading-anchor" href="#manual-model-attributes">Attributes and properties</a><a id="manual-model-attributes-1"></a><a class="docs-heading-anchor-permalink" href="#manual-model-attributes" title="Permalink"></a></h2><p>Numerous attributes can be retrieved. To illustrate this, a more complex optimal control problem is defined.</p><pre><code class="language-julia hljs">ocp = @def begin
+    v = (w, tf) ∈ R²,   variable
+    s ∈ [0, tf],        time
+    q = (x, y) ∈ R²,    state
+    u ∈ R,              control
+    0 ≤ tf ≤ 2,         (1)
+    u(s) ≥ 0,           (cons_u)
+    x(s) + u(s) ≤ 10,   (cons_mixed)
+    w == 0
+    x(0) == -1
+    y(0) - tf == 0,     (cons_bound)
+    q(tf) == [0, 0]
+    q̇(s) == [y(s)+w, u(s)]
+    0.5∫( u(s)^2 ) → min
+end</code></pre><h3 id="Control,-state-and-variable"><a class="docs-heading-anchor" href="#Control,-state-and-variable">Control, state and variable</a><a id="Control,-state-and-variable-1"></a><a class="docs-heading-anchor-permalink" href="#Control,-state-and-variable" title="Permalink"></a></h3><p>You can access the name of the control, state, and variable, along with the names of their components and their dimensions.</p><pre><code class="language-julia hljs">using DataFrames
+data = DataFrame(
+    Data=Vector{Symbol}(),
+    Name=Vector{String}(),
+    Components=Vector{Vector{String}}(),
+    Dimension=Vector{Int}(),
+)
+
+# control
+push!(data,(
+    :control,
+    control_name(ocp),
+    control_components(ocp),
+    control_dimension(ocp),
+))
+
+# state
+push!(data,(
+    :state,
+    state_name(ocp),
+    state_components(ocp),
+    state_dimension(ocp),
+))
+
+# variable
+push!(data,(
+    :variable,
+    variable_name(ocp),
+    variable_components(ocp),
+    variable_dimension(ocp),
+))</code></pre><div><div style = "float: left;"><span>3×4 DataFrame</span></div><div style = "clear: both;"></div></div><div class = "data-frame" style = "overflow-x: scroll;"><table class = "data-frame" style = "margin-bottom: 6px;"><thead><tr class = "columnLabelRow"><th class = "stubheadLabel" style = "font-weight: bold; text-align: right;">Row</th><th style = "text-align: left;">Data</th><th style = "text-align: left;">Name</th><th style = "text-align: left;">Components</th><th style = "text-align: left;">Dimension</th></tr><tr class = "columnLabelRow"><th class = "stubheadLabel" style = "font-weight: bold; text-align: right;"></th><th title = "Symbol" style = "text-align: left;">Symbol</th><th title = "String" style = "text-align: left;">String</th><th title = "Vector{String}" style = "text-align: left;">Array…</th><th title = "Int64" style = "text-align: left;">Int64</th></tr></thead><tbody><tr class = "dataRow"><td class = "rowLabel" style = "font-weight: bold; text-align: right;">1</td><td style = "text-align: left;">control</td><td style = "text-align: left;">u</td><td style = "text-align: left;">[&quot;u&quot;]</td><td style = "text-align: right;">1</td></tr><tr class = "dataRow"><td class = "rowLabel" style = "font-weight: bold; text-align: right;">2</td><td style = "text-align: left;">state</td><td style = "text-align: left;">q</td><td style = "text-align: left;">[&quot;x&quot;, &quot;y&quot;]</td><td style = "text-align: right;">2</td></tr><tr class = "dataRow"><td class = "rowLabel" style = "font-weight: bold; text-align: right;">3</td><td style = "text-align: left;">variable</td><td style = "text-align: left;">v</td><td style = "text-align: left;">[&quot;w&quot;, &quot;tf&quot;]</td><td style = "text-align: right;">2</td></tr></tbody></table></div><div class="admonition is-info" id="Note-8135cbb28c6df0a0"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-8135cbb28c6df0a0" title="Permalink"></a></header><div class="admonition-body"><p>The names of the components are used for instance when plotting the solution. See the <a href="manual-plot.html#manual-plot">plot manual</a>.</p></div></div><h3 id="Constraints"><a class="docs-heading-anchor" href="#Constraints">Constraints</a><a id="Constraints-1"></a><a class="docs-heading-anchor-permalink" href="#Constraints" title="Permalink"></a></h3><p>You can retrieve labelled constraints with the <a href="api-optimalcontrol-user.html#ExaModels.constraint-Tuple{Model, Symbol}"><code>constraint</code></a> function. The <code>constraint(ocp, label)</code> method returns a tuple of the form <code>(type, f, lb, ub)</code>. The signature of the function <code>f</code> depends on the symbol <code>type</code>. For <code>:boundary</code> and <code>:variable</code> constraints, the signature is <code>f(x0, xf, v)</code> where <code>x0</code> is the initial state, <code>xf</code> the final state and <code>v</code> the variable. For other constraints, the signature is <code>f(t, x, u, v)</code>. Here, <code>t</code> represents time, <code>x</code> the state, <code>u</code> the control, and <code>v</code> the variable.</p><pre><code class="language-julia hljs">(type, f, lb, ub) = constraint(ocp, :eq1)
+println(&quot;type: &quot;, type)
+x0 = [0, 1]
+xf = [2, 3]
+v  = [1, 4]
+println(&quot;val: &quot;, f(x0, xf, v))
+println(&quot;lb: &quot;, lb)
+println(&quot;ub: &quot;, ub)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">type: variable
+val: 4
+lb: 0.0
+ub: 2.0</code></pre><pre><code class="language-julia hljs">(type, f, lb, ub) = constraint(ocp, :cons_bound)
+println(&quot;type: &quot;, type)
+println(&quot;val: &quot;, f(x0, xf, v))
+println(&quot;lb: &quot;, lb)
+println(&quot;ub: &quot;, ub)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">type: boundary
+val: -3.0
+lb: 0.0
+ub: 0.0</code></pre><pre><code class="language-julia hljs">(type, f, lb, ub) = constraint(ocp, :cons_u)
+println(&quot;type: &quot;, type)
+t = 0
+x = [1, 2]
+u = 3
+println(&quot;val: &quot;, f(t, x, u, v))
+println(&quot;lb: &quot;, lb)
+println(&quot;ub: &quot;, ub)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">type: control
+val: 3
+lb: 0.0
+ub: Inf</code></pre><pre><code class="language-julia hljs">(type, f, lb, ub) = constraint(ocp, :cons_mixed)
+println(&quot;type: &quot;, type)
+println(&quot;val: &quot;, f(t, x, u, v))
+println(&quot;lb: &quot;, lb)
+println(&quot;ub: &quot;, ub)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">type: path
+val: 4.0
+lb: -Inf
+ub: 10.0</code></pre><div class="admonition is-info" id="Note-92bf1039902415f2"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-92bf1039902415f2" title="Permalink"></a></header><div class="admonition-body"><p>To get the dual variable (or Lagrange multiplier) associated to the constraint, use the <a href="api-optimalcontrol-user.html#CTModels.dual"><code>dual</code></a> method.</p></div></div><h3 id="Dynamics"><a class="docs-heading-anchor" href="#Dynamics">Dynamics</a><a id="Dynamics-1"></a><a class="docs-heading-anchor-permalink" href="#Dynamics" title="Permalink"></a></h3><p>The dynamics stored in <code>ocp</code> are an <a href="https://docs.julialang.org/en/v1/manual/functions/#man-argument-passing">in-place function</a> (the first argument is mutated upon call) of the form <code>f!(dx, t, x, u, v)</code>. Here, <code>t</code> represents time, <code>x</code> the state, <code>u</code> the control, and <code>v</code> the variable, with <code>dx</code> being the output value.</p><pre><code class="language-julia hljs">f! = dynamics(ocp)
+t = 0
+x = [0., 1]
+u = 2
+v = [1, 4]
+dx = similar(x)
+f!(dx, t, x, u, v)
+dx</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2-element Vector{Float64}:
+ 2.0
+ 2.0</code></pre><h3 id="Criterion-and-objective"><a class="docs-heading-anchor" href="#Criterion-and-objective">Criterion and objective</a><a id="Criterion-and-objective-1"></a><a class="docs-heading-anchor-permalink" href="#Criterion-and-objective" title="Permalink"></a></h3><p>The criterion can be <code>:min</code> or <code>:max</code>.</p><pre><code class="language-julia hljs">criterion(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">:min</code></pre><p>The objective function is either in Mayer, Lagrange or Bolza form. </p><ul><li>Mayer:</li></ul><p class="math-container">\[g(x(t_0), x(t_f), v) \to \min\]</p><ul><li>Lagrange:</li></ul><p class="math-container">\[\int_{t_0}^{t_f} f^0(t, x(t), u(t), v)\, \mathrm{d}t \to \min\]</p><ul><li>Bolza:</li></ul><p class="math-container">\[g(x(t_0), x(t_f), v) + \int_{t_0}^{t_f} f^0(t, x(t), u(t), v)\, \mathrm{d}t \to \min\]</p><p>The objective of problem <code>ocp</code> is <code>0.5∫( u(t)^2 ) → min</code>, hence, in Lagrange form. The signature of the Mayer part of the objective is <code>g(x0, xf, v)</code> but in our case, the method <code>mayer</code> will return an error.</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; g = mayer(ocp)</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: <span class="sgr31"><span class="sgr1">UnauthorizedCall</span></span>: This ocp has no Mayer objective.</code></pre><p>The signature of the Lagrange part of the objective is <code>f⁰(t, x, u, v)</code>.</p><pre><code class="language-julia hljs">f⁰ = lagrange(ocp)
+f⁰(t, x, u, v)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2.0</code></pre><p>To avoid having to capture exceptions, you can check the form of the objective:</p><pre><code class="language-julia hljs">println(&quot;Mayer: &quot;, has_mayer_cost(ocp))
+println(&quot;Lagrange: &quot;, has_lagrange_cost(ocp))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Mayer: false
+Lagrange: true</code></pre><h3 id="Times"><a class="docs-heading-anchor" href="#Times">Times</a><a id="Times-1"></a><a class="docs-heading-anchor-permalink" href="#Times" title="Permalink"></a></h3><p>The time variable is not named <code>t</code> but <code>s</code> in <code>ocp</code>.</p><pre><code class="language-julia hljs">time_name(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&quot;s&quot;</code></pre><p>The initial time is <code>0</code>.</p><pre><code class="language-julia hljs">initial_time(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">0</code></pre><p>Since the initial time has the value <code>0</code>, its name is <code>string(0)</code>. </p><pre><code class="language-julia hljs">initial_time_name(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&quot;0&quot;</code></pre><p>In contrast, the final time is <code>tf</code>, since in <code>ocp</code> we have <code>s ∈ [0, tf]</code>.</p><pre><code class="language-julia hljs">final_time_name(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&quot;tf&quot;</code></pre><p>To get the value of the final time, since it is part of the variable <code>v = (w, tf)</code> of <code>ocp</code>, we need to provide a variable to the function <code>final_time</code>. </p><pre><code class="language-julia hljs">v = [1, 2]
+tf = final_time(ocp, v)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2</code></pre><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; final_time(ocp)</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: <span class="sgr31"><span class="sgr1">UnauthorizedCall</span></span>: You cannot get the final time with this function.</code></pre><p>To check whether the initial or final time is fixed or free (i.e., part of the variable), you can use the following functions:</p><pre><code class="language-julia hljs">println(&quot;Fixed initial time: &quot;, has_fixed_initial_time(ocp))
+println(&quot;Fixed final time: &quot;, has_fixed_final_time(ocp))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Fixed initial time: true
+Fixed final time: false</code></pre><p>Or, similarly:</p><pre><code class="language-julia hljs">println(&quot;Free initial time: &quot;, has_free_initial_time(ocp))
+println(&quot;Free final time: &quot;, has_free_final_time(ocp))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Free initial time: false
+Free final time: true</code></pre><h3 id="manual-model-time-dependence"><a class="docs-heading-anchor" href="#manual-model-time-dependence">Time dependence</a><a id="manual-model-time-dependence-1"></a><a class="docs-heading-anchor-permalink" href="#manual-model-time-dependence" title="Permalink"></a></h3><p>Optimal control problems can be <strong>autonomous</strong> or <strong>non-autonomous</strong>. In an autonomous problem, neither the dynamics nor the Lagrange cost explicitly depends on the time variable.</p><p>The following problem is autonomous.</p><pre><code class="language-julia hljs">ocp = @def begin
+    t ∈ [ 0, 1 ], time
+    x ∈ R, state
+    u ∈ R, control
+    ẋ(t)  == u(t)                       # no explicit dependence on t
+    x(1) + 0.5∫( u(t)^2 ) → min         # no explicit dependence on t
+end
+is_autonomous(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">true</code></pre><p>The following problem is non-autonomous since the dynamics depends on <code>t</code>.</p><pre><code class="language-julia hljs">ocp = @def begin
+    t ∈ [ 0, 1 ], time
+    x ∈ R, state
+    u ∈ R, control
+    ẋ(t)  == u(t) + t                   # explicit dependence on t
+    x(1) + 0.5∫( u(t)^2 ) → min
+end
+is_autonomous(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">false</code></pre><p>Finally, this last problem is non-autonomous because the Lagrange part of the cost depends on <code>t</code>.</p><pre><code class="language-julia hljs">ocp = @def begin
+    t ∈ [ 0, 1 ], time
+    x ∈ R, state
+    u ∈ R, control
+    ẋ(t)  == u(t)
+    x(1) + 0.5∫( t + u(t)^2 ) → min     # explicit dependence on t
+end
+is_autonomous(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">false</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-ai-llm.html">« Use AI</a><a class="docs-footer-nextpage" href="manual-initial-guess.html">Set an initial guess »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.15.0 on <span class="colophon-date" title="Friday 31 October 2025 05:33">Friday 31 October 2025</span>. Using Julia version 1.12.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
