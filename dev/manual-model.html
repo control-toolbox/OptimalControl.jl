@@ -61,13 +61,13 @@ Total number of inequality constraints...............:        0
         inequality constraints with only upper bounds:        0
 
 iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
-   0  5.0000000e-03 1.10e+00 4.01e-14   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
+   0  5.0000000e-03 1.10e+00 3.29e-14   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
    1  6.0000960e+00 2.22e-16 1.78e-15 -11.0 6.08e+00    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 1
 
                                    (scaled)                 (unscaled)
-Objective...............:   6.0000960015360318e+00    6.0000960015360318e+00
+Objective...............:   6.0000960015360212e+00    6.0000960015360212e+00
 Dual infeasibility......:   1.7763568394002505e-15    1.7763568394002505e-15
 Constraint violation....:   2.2204460492503131e-16    2.2204460492503131e-16
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
@@ -82,7 +82,7 @@ Number of inequality constraint evaluations          = 0
 Number of equality constraint Jacobian evaluations   = 2
 Number of inequality constraint Jacobian evaluations = 0
 Number of Lagrangian Hessian evaluations             = 1
-Total seconds in IPOPT                               = 2.719
+Total seconds in IPOPT                               = 3.036
 
 EXIT: Optimal Solution Found.</code></pre><p>You can also compute flows (for more details, see the <a href="manual-flow-ocp.html#manual-flow-ocp">flow manual</a>) from the optimal control problem, providing a control law in feedback form. The <strong>pseudo-Hamiltonian</strong> of this problem is</p><p class="math-container">\[    H(x, p, u) = p_q\, v + p_v\, u + p^0 u^2 /2,\]</p><p>where <span>$p^0 = -1$</span> since we are in the normal case. From the Pontryagin maximum principle, the maximising control is given in feedback form by</p><p class="math-container">\[u(x, p) = p_v\]</p><p>since <span>$\partial^2_{uu} H = p^0 = - 1 &lt; 0$</span>. </p><pre><code class="language-julia hljs">u = (x, p) -&gt; p[2]          # control law in feedback form
 
@@ -229,4 +229,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-ai-llm.html">« Use AI</a><a class="docs-footer-nextpage" href="manual-initial-guess.html">Set an initial guess »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.15.0 on <span class="colophon-date" title="Saturday 8 November 2025 10:18">Saturday 8 November 2025</span>. Using Julia version 1.12.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-ai-llm.html">« Use AI</a><a class="docs-footer-nextpage" href="manual-initial-guess.html">Set an initial guess »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.15.0 on <span class="colophon-date" title="Wednesday 12 November 2025 18:17">Wednesday 12 November 2025</span>. Using Julia version 1.12.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
