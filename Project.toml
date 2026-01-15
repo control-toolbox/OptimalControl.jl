@@ -1,7 +1,7 @@
 name = "OptimalControl"
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
-authors = ["Olivier Cots <olivier.cots@toulouse-inp.fr>"]
 version = "1.1.6"
+authors = ["Olivier Cots <olivier.cots@toulouse-inp.fr>"]
 
 [deps]
 ADNLPModels = "54578032-b7ea-4c30-94aa-7cbd1cce6c9a"
@@ -13,7 +13,11 @@ CTParser = "32681960-a1b1-40db-9bff-a1ca817385d1"
 CommonSolve = "38540f10-b2f7-11e9-35d8-d573e4eb0ff2"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 ExaModels = "1037b233-b668-4ce9-9b63-f9f681f55dd2"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
+
+[sources]
+CTParser = {rev = "develop", url = "https://github.com/control-toolbox/CTParser.jl"}
 
 [compat]
 ADNLPModels = "0.8"
@@ -21,9 +25,10 @@ CTBase = "0.16"
 CTDirect = "0.17"
 CTFlows = "0.8"
 CTModels = "0.6"
-CTParser = "0.7"
+CTParser = "0.7.9"
 CommonSolve = "0.2"
 DocStringExtensions = "0.9"
 ExaModels = "0.9"
+LinearAlgebra = "1.12.0"
 RecipesBase = "1"
 julia = "1.10"

@@ -282,4 +282,6 @@ include("solve.jl")
 export solve
 export available_methods
 
+include("exa_linalg.jl") # debug: just for dev, using OptimalControl.ExaLinAlg
+
 end
