@@ -30,6 +30,9 @@ jobs:
       pkgpath: ${{ matrix.pkgpath }}
       pkgversion: ${{ matrix.pkgversion }}
       pkgbreak: ${{ matrix.pkgbreak }}
+      use_ct_registry: true
+    secrets:
+      SSH_KEY: ${{ secrets.SSH_KEY }}
   break-pkg-app:
     if: contains(github.event.pull_request.labels.*.name, 'run breakage applications')
     strategy:
@@ -63,3 +66,6 @@ jobs:
       pkgpath: ${{ matrix.pkgpath }}
       pkgversion: ${{ matrix.pkgversion }}
       pkgbreak: ${{ matrix.pkgbreak }}
+      use_ct_registry: true
+    secrets:
+      SSH_KEY: ${{ secrets.SSH_KEY }}
