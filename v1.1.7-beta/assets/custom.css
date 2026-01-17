@@ -1,0 +1,36 @@
+/* Responsive layout for two-column content */
+.responsive-columns-left-priority {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1em;
+}
+
+.responsive-columns-left-priority > div {
+    flex: 1;
+    min-width: 0;
+    transition: opacity 0.5s ease-in-out, flex 0.5s ease-in-out, max-width 0.5s ease-in-out, max-height 0.5s ease-in-out;
+}
+
+.responsive-columns-left-priority > div:last-child {
+    opacity: 1;
+    max-width: 100%;
+    max-height: none;
+}
+
+/* Media query for screens smaller than 700px */
+@media (max-width: 700px) {
+    .responsive-columns-left-priority > div:last-child {
+        opacity: 0;
+        max-width: 0;
+        max-height: 0;
+        flex: 0 0 0;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .responsive-columns-left-priority > div:first-child {
+        flex: 1 1 100%;
+    }
+}
