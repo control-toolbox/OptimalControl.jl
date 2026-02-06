@@ -32,7 +32,7 @@ export ParsingError,
     ExtensionError
 
 # CTParser
-import CTParser: CTParser, @def
+import CTParser: CTParser, @def, ExaLinAlg
 export @def
 
 function __init__()
