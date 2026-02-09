@@ -28,11 +28,11 @@ Suppressor = "fd094767-a336-5f1f-9728-57cf17d0bbfb"
 
 [compat]
 ADNLPModels = "0.8"
-CTBase = "0.16"
+CTBase = "0.16, 0.17"
 CTDirect = "0.17"
 CTFlows = "0.8"
 CTModels = "0.6"
-CTParser = "0.7"
+CTParser = "0.8"
 CommonSolve = "0.2"
 DataFrames = "1"
 DifferentiationInterface = "0.7"
