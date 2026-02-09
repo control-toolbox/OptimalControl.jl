@@ -16,8 +16,6 @@ import CTBase:
     CTException,
     AmbiguousDescription,
     IncorrectArgument,
-    IncorrectMethod,
-    IncorrectOutput,
     NotImplemented,
     UnauthorizedCall,
     ExtensionError
