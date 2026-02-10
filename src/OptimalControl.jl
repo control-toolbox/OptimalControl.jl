@@ -23,8 +23,6 @@ export ParsingError,
     CTException,
     AmbiguousDescription,
     IncorrectArgument,
-    IncorrectMethod,
-    IncorrectOutput,
     NotImplemented,
     UnauthorizedCall,
     ExtensionError
