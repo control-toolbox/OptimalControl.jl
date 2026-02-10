@@ -40,8 +40,6 @@ Hamiltonian
 HamiltonianLift
 HamiltonianVectorField
 IncorrectArgument
-IncorrectMethod
-IncorrectOutput
 @Lie
 Lie
 Lift
