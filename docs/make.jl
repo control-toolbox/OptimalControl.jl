@@ -130,6 +130,7 @@ Draft = false
 makedocs(;
     draft=false, # debug
     sitename="OptimalControl.jl",
+    warnonly=true,
     format=Documenter.HTML(;
         repolink="https://" * repo_url,
         prettyurls=false,
