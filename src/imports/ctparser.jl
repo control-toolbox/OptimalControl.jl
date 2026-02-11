@@ -1,8 +1,5 @@
-import CTParser: CTParser, @def, @init
-export @def, @init
+# CTParser reexports
 
-function __init__()
-    CTParser.prefix_fun!(:OptimalControl)
-    CTParser.prefix_exa!(:OptimalControl)
-    CTParser.e_prefix!(:OptimalControl)
-end
+@reexport import CTParser:
+    @def,
+    @init

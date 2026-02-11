@@ -1,153 +1,109 @@
-import CTModels: CTModels
+# CTModels reexports
 
-# # Abstract types
-# import CTModels:
-#     AbstractOptimalControlProblem,
-#     AbstractOptimalControlInitialGuess,
-#     AbstractOptimalControlSolution,
-#     AbstractOptimizationProblem,
-#     AbstractOptimizationModeler,
-#     AbstractOptimizationSolver
+# Generated code
+@reexport import CTModels: 
+    CTModels # for generated code (prefix)
 
-# PreModel
-import CTModels: PreModel
-
-# Modelers
-import CTModels:
-    ADNLPModeler,
-    ExaModeler
-
-# OptimalControlProblem setters, builders
-import CTModels:
-    variable!,
-    time!,
-    state!,
-    control!,
-    dynamics!,
-    constraint!,
-    objective!,
-    definition!,
-    time_dependence!,
-    build
+# Display
+@reexport import RecipesBase: plot
 
 # Initial guess
-import CTModels: initial_guess
+@reexport import CTModels: 
+    AbstractOptimalControlInitialGuess,
+    OptimalControlInitialGuess
 
-#,
-#     # setters
-#     variable!,
-#     time!,
-#     state!,
-#     control!,
-#     dynamics!,
-#     #    constraint!,
-#     objective!,
-#     definition!,
-#     time_dependence!,
-#     # model
-#     build,
-#     Model,
-#     PreModel,
-#     Solution,
-#     # getters
-#     constraints,
-#     get_build_examodel,
-#     times,
-#     definition,
-#     dual,
-#     initial_time,
-#     initial_time_name,
-#     final_time,
-#     final_time_name,
-#     time_name,
-#     variable_dimension,
-#     variable_components,
-#     variable_name,
-#     state_dimension,
-#     state_components,
-#     state_name,
-#     control_dimension,
-#     control_components,
-#     control_name,
-#     #    constraint,
-#     dynamics,
-#     mayer,
-#     lagrange,
-#     criterion,
-#     has_fixed_final_time,
-#     has_fixed_initial_time,
-#     has_free_final_time,
-#     has_free_initial_time,
-#     has_lagrange_cost,
-#     has_mayer_cost,
-#     is_autonomous,
-#     export_ocp_solution,
-#     import_ocp_solution,
-#     time_grid,
-#     control,
-#     state,
-#     #    variable,
-#     costate,
-#     constraints_violation,
-#     #    objective,
-#     iterations,
-#     status,
-#     message,
-#     infos,
-#     successful,
-#     AbstractOptimalControlProblem,
-#     AbstractOptimizationProblem,
-#     AbstractOptimalControlInitialGuess,
-#     AbstractOptimalControlSolution,
-#     AbstractOptimizationModeler
-# # export AbstractOptimalControlProblem,
-# #     AbstractOptimizationProblem,
-# #     AbstractOptimalControlInitialGuess,
-# #     AbstractOptimalControlSolution,
-# #     AbstractOptimizationModeler
-# export Model, Solution
-# export constraints,
-#     get_build_examodel,
-#     times,
-#     definition,
-#     dual,
-#     initial_time,
-#     initial_time_name,
-#     final_time,
-#     final_time_name,
-#     time_name,
-#     variable_dimension,
-#     variable_components,
-#     variable_name,
-#     state_dimension,
-#     state_components,
-#     state_name,
-#     control_dimension,
-#     control_components,
-#     control_name,
-#     #    constraint,
-#     dynamics,
-#     mayer,
-#     lagrange,
-#     criterion,
-#     has_fixed_final_time,
-#     has_fixed_initial_time,
-#     has_free_final_time,
-#     has_free_initial_time,
-#     has_lagrange_cost,
-#     has_mayer_cost,
-#     is_autonomous,
-#     export_ocp_solution,
-#     import_ocp_solution,
-#     time_grid,
-#     control,
-#     state,
-#     #    variable,
-#     costate,
-#     constraints_violation,
-#     #    objective,
-#     iterations,
-#     status,
-#     message,
-#     infos,
-#     successful
+# Serialization
+@reexport import CTModels: 
+    export_ocp_solution, 
+    import_ocp_solution
+
+# OCP
+@reexport import CTModels:
+
+    # api types
+    Model,
+    AbstractModel,
+    AbstractOptimalControlProblem,
+    Solution, 
+    AbstractSolution,
+    AbstractOptimalControlSolution,
+
+    # accessors
+    constraint, 
+    constraints, 
+    name, 
+    dimension, 
+    components,
+    initial_time, 
+    final_time, 
+    time_name, 
+    time_grid, 
+    times,
+    initial_time_name, 
+    final_time_name,
+    criterion, 
+    has_mayer_cost, 
+    has_lagrange_cost,
+    is_mayer_cost_defined, 
+    is_lagrange_cost_defined,
+    has_fixed_initial_time, 
+    has_free_initial_time,
+    has_fixed_final_time, 
+    has_free_final_time,
+    is_autonomous,
+    is_initial_time_fixed, 
+    is_initial_time_free,
+    is_final_time_fixed, 
+    is_final_time_free,
+    state_dimension, 
+    control_dimension, 
+    variable_dimension,
+    state_name, 
+    control_name, 
+    variable_name,
+    state_components, 
+    control_components, 
+    variable_components,
+
+    # Constraint accessors
+    path_constraints_nl, 
+    boundary_constraints_nl,
+    state_constraints_box, 
+    control_constraints_box, 
+    variable_constraints_box,
+    dim_path_constraints_nl, 
+    dim_boundary_constraints_nl,
+    dim_state_constraints_box, 
+    dim_control_constraints_box, 
+    dim_variable_constraints_box,
+    state, 
+    control, 
+    variable, 
+    costate, 
+    objective,
+    dynamics, 
+    mayer, 
+    lagrange,
+    definition, 
+    dual,
+    iterations, 
+    status, 
+    message, 
+    success, 
+    successful,
+    constraints_violation, 
+    infos,
+    get_build_examodel,
+    is_empty, is_empty_time_grid,
+    index, time,
+    model,
+
+    # Dual constraints accessors
+    path_constraints_dual, 
+    boundary_constraints_dual,
+    state_constraints_lb_dual, 
+    state_constraints_ub_dual,
+    control_constraints_lb_dual, 
+    control_constraints_ub_dual,
+    variable_constraints_lb_dual, 
+    variable_constraints_ub_dual

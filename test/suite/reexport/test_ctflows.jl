@@ -14,6 +14,7 @@ function test_ctflows()
                 HamiltonianVectorField,
             )
                 @test isdefined(OptimalControl, nameof(T))
+                @test isdefined(Main, nameof(T))
                 @test T isa DataType || T isa UnionAll
             end
         end
@@ -23,6 +24,7 @@ function test_ctflows()
                 :Flow,
             )
                 @test isdefined(OptimalControl, f)
+                @test isdefined(Main, f)
                 @test getfield(OptimalControl, f) isa Function
             end
         end
@@ -34,10 +36,12 @@ function test_ctflows()
                 :*,
             )
                 @test isdefined(OptimalControl, op)
+                @test isdefined(Main, op)
             end
         end
         @testset "Macros" begin
             @test isdefined(OptimalControl, Symbol("@Lie"))
+            @test isdefined(Main, Symbol("@Lie"))
         end
     end
 end

@@ -13,11 +13,13 @@ function test_ctdirect()
                 Collocation,
             )
                 @test isdefined(OptimalControl, nameof(T))
+                @test isdefined(Main, nameof(T))
                 @test T isa DataType || T isa UnionAll
             end
         end
         @testset "Functions" begin
             @test isdefined(OptimalControl, :discretize)
+            @test isdefined(Main, :discretize)
             @test discretize isa Function
         end
     end
