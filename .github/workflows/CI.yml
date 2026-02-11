@@ -11,4 +11,8 @@ jobs:
   call:
     uses: control-toolbox/CTActions/.github/workflows/ci.yml@main
     with:
-      runs_on: '["ubuntu-latest", "windows-latest"]'
+      runs_on: '["ubuntu-latest", "macos-latest"]'
+      runner_type: 'github'
+      use_ct_registry: true
+    secrets:
+      SSH_KEY: ${{ secrets.SSH_KEY }}
