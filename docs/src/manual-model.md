@@ -123,7 +123,7 @@ definition(ocp)
 
 !!! note
 
-    We refer to [CTModels API](@extref CTModels Types) for more details about this struct and its fields.
+    We refer to the CTModels documentation for more details about this struct and its fields.
 
 ## [Attributes and properties](@id manual-model-attributes)
 
