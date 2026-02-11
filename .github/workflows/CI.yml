@@ -21,8 +21,8 @@ jobs:
   test-gpu-kkt:
     uses: control-toolbox/CTActions/.github/workflows/ci.yml@main
     with:
-      versions: '1'
-      runs_on: 'kkt'
+      versions: '["1"]'
+      runs_on: '[["kkt"]]'
       runner_type: 'self-hosted'
       use_ct_registry: true
     secrets:
