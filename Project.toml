@@ -27,6 +27,7 @@ CTFlows = "0.8"
 CTModels = "0.8"
 CTParser = "0.8"
 CTSolvers = "0.2"
+CUDA = "5"
 CommonSolve = "0.2"
 DifferentiationInterface = "0.7"
 DocStringExtensions = "0.9"
@@ -48,6 +49,7 @@ Test = "1"
 julia = "1.10"
 
 [extras]
+CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
 DifferentiationInterface = "a0c0ee7d-e4b9-4e03-894e-1c5f64a51d63"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
@@ -61,4 +63,4 @@ SplitApplyCombine = "03a91e81-4c3e-53e1-a0a4-9c0c8f19dd66"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["DifferentiationInterface", "ForwardDiff", "LinearAlgebra", "MadNLP", "MadNLPGPU", "MadNLPMumps", "NLPModelsIpopt", "NonlinearSolve", "OrdinaryDiffEq", "SplitApplyCombine", "Test"]
+test = ["CUDA", "DifferentiationInterface", "ForwardDiff", "LinearAlgebra", "MadNLP", "MadNLPGPU", "MadNLPMumps", "NLPModelsIpopt", "NonlinearSolve", "OrdinaryDiffEq", "SplitApplyCombine", "Test"]
