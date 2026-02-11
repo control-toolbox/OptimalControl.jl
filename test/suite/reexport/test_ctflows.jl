@@ -1,0 +1,48 @@
+module TestCtflows
+
+using Test
+using OptimalControl
+const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
+const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
+
+function test_ctflows()
+    @testset "CTFlows reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
+        @testset "Types" begin
+            for T in (
+                Hamiltonian,
+                HamiltonianLift,
+                HamiltonianVectorField,
+            )
+                @test isdefined(OptimalControl, nameof(T))
+                @test T isa DataType || T isa UnionAll
+            end
+        end
+        @testset "Functions" begin
+            for f in (
+                :Lift,
+                :Flow,
+            )
+                @test isdefined(OptimalControl, f)
+                @test getfield(OptimalControl, f) isa Function
+            end
+        end
+        @testset "Operators" begin
+            for op in (
+                :⋅,
+                :Lie,
+                :Poisson,
+                :*,
+            )
+                @test isdefined(OptimalControl, op)
+            end
+        end
+        @testset "Macros" begin
+            @test isdefined(OptimalControl, Symbol("@Lie"))
+        end
+    end
+end
+
+end # module
+
+# Redefine in outer scope for TestRunner
+test_ctflows() = TestCtflows.test_ctflows()
