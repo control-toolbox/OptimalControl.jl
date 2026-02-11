@@ -11,6 +11,7 @@ jobs:
   test-cpu-github:
     uses: control-toolbox/CTActions/.github/workflows/ci.yml@main
     with:
+      versions: '["1.12"]'
       runs_on: '["ubuntu-latest", "macos-latest"]'
       runner_type: 'github'
       use_ct_registry: true
