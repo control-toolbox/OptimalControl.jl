@@ -53,7 +53,7 @@ function test_canonical()
                     for (mname, mod) in modelers
                         for (sname, sol) in solvers
                             label = "$pname / $dname / $mname / $sname"
-                            println("  Testing: $label ...")
+                            print("  Testing: $label ...")
                             @testset "$dname / $mname / $sname" begin
                                 ocp_sol = solve(
                                     pb.ocp, disc, mod, sol;
@@ -64,7 +64,7 @@ function test_canonical()
                                 @test successful(ocp_sol)
                                 @test objective(ocp_sol) ≈ pb.obj rtol = OBJ_RTOL
                             end
-                            println("  ✓ $label done.")
+                            println("  ✓ done.")
                         end
                     end
                 end
