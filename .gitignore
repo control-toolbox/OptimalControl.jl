@@ -40,5 +40,5 @@ Manifest.toml
 */.ipynb_checkpoints
 
 #
-docs/tmp/
-save/
+.tmp/
+.save/
