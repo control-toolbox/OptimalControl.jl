@@ -1,5 +1,7 @@
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
+import CommonSolve: CommonSolve, solve
+
 # Default options
 __display() = true
 __initial_guess() = nothing

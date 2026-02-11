@@ -1,18 +1,6 @@
-import CTDirect: CTDirect
+# CTDirect reexports
 
-# # Abstract types
-# import CTDirect:
-#     AbstractOptimalControlDiscretizer
-
-# Discretizers
-import CTDirect:
+@reexport import CTDirect: 
+    AbstractOptimalControlDiscretizer,
+    discretize,
     Collocation
-
-# direct_transcription,
-# set_initial_guess,
-# build_OCP_solution,
-# nlp_model,
-# ocp_model,
-# AbstractOptimalControlDiscretizer
-# export AbstractOptimalControlDiscretizer
-# export direct_transcription, set_initial_guess, build_OCP_solution, nlp_model, ocp_model
