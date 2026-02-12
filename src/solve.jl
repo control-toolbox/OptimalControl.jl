@@ -26,9 +26,8 @@ function CommonSolve.solve(
     initial_guess=__initial_guess(),
 )::CTModels.AbstractOptimalControlSolution
 
-    # Validate initial guess against the optimal control problem before discretization.
+    # Build and validate initial guess against the optimal control problem before discretization.
     normalized_init = CTModels.build_initial_guess(ocp, initial_guess)
-    CTModels.validate_initial_guess(ocp, normalized_init)
 
     # Discretize the optimal control problem.
     discrete_problem = CTDirect.discretize(ocp, discretizer)
