@@ -9,10 +9,10 @@ function test_ctsolvers()
     @testset "CTSolvers reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
         @testset "DOCP Types" begin
             for T in (
-                DiscretizedOptimalControlProblem,
+                OptimalControl.DiscretizedOptimalControlProblem,
             )
                 @test isdefined(OptimalControl, nameof(T))
-                @test isdefined(Main, nameof(T))
+                @test !isdefined(Main, nameof(T))
                 @test T isa DataType || T isa UnionAll
             end
         end
@@ -29,39 +29,39 @@ function test_ctsolvers()
         end
         @testset "Modeler Types" begin
             for T in (
-                AbstractOptimizationModeler,
-                ADNLPModeler,
-                ExaModeler,
+                OptimalControl.AbstractOptimizationModeler,
+                OptimalControl.ADNLPModeler,
+                OptimalControl.ExaModeler,
             )
                 @test isdefined(OptimalControl, nameof(T))
-                @test isdefined(Main, nameof(T))
+                @test !isdefined(Main, nameof(T))
                 @test T isa DataType || T isa UnionAll
             end
         end
         @testset "Solver Types" begin
             for T in (
-                AbstractOptimizationSolver,
-                IpoptSolver,
-                MadNLPSolver,
-                MadNCLSolver,
-                KnitroSolver,
+                OptimalControl.AbstractOptimizationSolver,
+                OptimalControl.IpoptSolver,
+                OptimalControl.MadNLPSolver,
+                OptimalControl.MadNCLSolver,
+                OptimalControl.KnitroSolver,
             )
                 @test isdefined(OptimalControl, nameof(T))
-                @test isdefined(Main, nameof(T))
+                @test !isdefined(Main, nameof(T))
                 @test T isa DataType || T isa UnionAll
             end
         end
         @testset "Strategy Types" begin
             for T in (
-                AbstractStrategy,
-                StrategyRegistry,
-                StrategyMetadata,
-                StrategyOptions,
-                OptionDefinition,
-                RoutedOption,
+                OptimalControl.AbstractStrategy,
+                OptimalControl.StrategyRegistry,
+                OptimalControl.StrategyMetadata,
+                OptimalControl.StrategyOptions,
+                OptimalControl.OptionDefinition,
+                OptimalControl.RoutedOption,
             )
                 @test isdefined(OptimalControl, nameof(T))
-                @test isdefined(Main, nameof(T))
+                @test !isdefined(Main, nameof(T))
                 @test T isa DataType || T isa UnionAll
             end
         end

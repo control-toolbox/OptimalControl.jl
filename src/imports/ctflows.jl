@@ -1,10 +1,14 @@
 # CTFlows reexports
 
-@reexport import CTFlows:
-    Lift,
+# Types
+import CTFlows:
     Hamiltonian,
     HamiltonianLift,
-    HamiltonianVectorField,
+    HamiltonianVectorField
+
+# Methods
+@reexport import CTFlows:
+    Lift,
     Flow,
     ⋅,
     Lie,

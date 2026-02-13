@@ -1,6 +1,10 @@
 # CTDirect reexports
 
-@reexport import CTDirect: 
+# Types
+import CTDirect:
     AbstractOptimalControlDiscretizer,
-    discretize,
     Collocation
+
+# Methods
+@reexport import CTDirect: 
+    discretize

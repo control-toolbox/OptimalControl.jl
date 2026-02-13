@@ -8,7 +8,7 @@
 @reexport import RecipesBase: plot
 
 # Initial guess
-@reexport import CTModels: 
+import CTModels: 
     AbstractOptimalControlInitialGuess,
     OptimalControlInitialGuess
 
@@ -18,7 +18,7 @@
     import_ocp_solution
 
 # OCP
-@reexport import CTModels:
+import CTModels:
 
     # api types
     Model,
@@ -26,7 +26,9 @@
     AbstractOptimalControlProblem,
     Solution, 
     AbstractSolution,
-    AbstractOptimalControlSolution,
+    AbstractOptimalControlSolution
+
+@reexport import CTModels:
 
     # accessors
     constraint, 

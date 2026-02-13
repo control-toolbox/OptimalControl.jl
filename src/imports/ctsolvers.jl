@@ -1,20 +1,22 @@
 # CTSolvers reexports
 
 # DOCP
+import CTSolvers:
+    DiscretizedOptimalControlProblem
+
 @reexport import CTSolvers:
-    DiscretizedOptimalControlProblem,
     ocp_model,
     nlp_model,
     ocp_solution
 
 # Modelers
-@reexport import CTSolvers:
+import CTSolvers:
     AbstractOptimizationModeler,
     ADNLPModeler,
     ExaModeler
 
 # Solvers
-@reexport import CTSolvers:
+import CTSolvers:
     AbstractOptimizationSolver,
     IpoptSolver,
     MadNLPSolver,
@@ -22,7 +24,7 @@
     KnitroSolver
 
 # Strategies
-@reexport import CTSolvers:
+import CTSolvers:
 
     # Types
     AbstractStrategy, 
@@ -30,7 +32,9 @@
     StrategyMetadata, 
     StrategyOptions, 
     OptionDefinition,
-    RoutedOption,
+    RoutedOption
+
+@reexport import CTSolvers:
 
     # Metadata
     id,

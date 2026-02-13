@@ -22,10 +22,11 @@ function test_ctmodels()
         
         @testset "Initial Guess Types" begin
             for T in (
-                AbstractOptimalControlInitialGuess,
-                OptimalControlInitialGuess,
+                OptimalControl.AbstractOptimalControlInitialGuess,
+                OptimalControl.OptimalControlInitialGuess,
             )
                 @test isdefined(OptimalControl, nameof(T))
+                @test !isdefined(Main, nameof(T))
                 @test T isa DataType || T isa UnionAll
             end
         end
@@ -43,14 +44,15 @@ function test_ctmodels()
         
         @testset "API Types" begin
             for T in (
-                Model,
-                AbstractModel,
-                AbstractOptimalControlProblem,
-                Solution,
-                AbstractSolution,
-                AbstractOptimalControlSolution,
+                OptimalControl.Model,
+                OptimalControl.AbstractModel,
+                OptimalControl.AbstractOptimalControlProblem,
+                OptimalControl.Solution,
+                OptimalControl.AbstractSolution,
+                OptimalControl.AbstractOptimalControlSolution,
             )
                 @test isdefined(OptimalControl, nameof(T))
+                @test !isdefined(Main, nameof(T))
                 @test T isa DataType || T isa UnionAll
             end
         end

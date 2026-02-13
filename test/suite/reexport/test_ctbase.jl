@@ -16,16 +16,16 @@ function test_ctbase()
 
         @testset "Exceptions" begin
             for T in (
-                CTException,
-                IncorrectArgument,
-                PreconditionError,
-                NotImplemented,
-                ParsingError,
-                AmbiguousDescription,
-                ExtensionError,
+                OptimalControl.CTException,
+                OptimalControl.IncorrectArgument,
+                OptimalControl.PreconditionError,
+                OptimalControl.NotImplemented,
+                OptimalControl.ParsingError,
+                OptimalControl.AmbiguousDescription,
+                OptimalControl.ExtensionError,
             )
                 @test isdefined(OptimalControl, nameof(T)) # check if defined in OptimalControl
-                @test isdefined(Main, nameof(T)) # check if exported
+                @test !isdefined(Main, nameof(T)) # check if exported
                 @test T isa DataType
             end
         end

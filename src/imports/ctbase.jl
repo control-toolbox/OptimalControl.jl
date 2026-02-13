@@ -5,7 +5,7 @@
     CTBase # for generated code (prefix)
 
 # Exceptions
-@reexport import CTBase:
+import CTBase:
     CTException,
     IncorrectArgument, 
     PreconditionError, 

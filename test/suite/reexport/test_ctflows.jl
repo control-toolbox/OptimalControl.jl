@@ -9,12 +9,12 @@ function test_ctflows()
     @testset "CTFlows reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
         @testset "Types" begin
             for T in (
-                Hamiltonian,
-                HamiltonianLift,
-                HamiltonianVectorField,
+                OptimalControl.Hamiltonian,
+                OptimalControl.HamiltonianLift,
+                OptimalControl.HamiltonianVectorField,
             )
                 @test isdefined(OptimalControl, nameof(T))
-                @test isdefined(Main, nameof(T))
+                @test !isdefined(Main, nameof(T))
                 @test T isa DataType || T isa UnionAll
             end
         end

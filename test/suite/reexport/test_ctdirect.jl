@@ -9,11 +9,11 @@ function test_ctdirect()
     @testset "CTDirect reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
         @testset "Types" begin
             for T in (
-                AbstractOptimalControlDiscretizer,
-                Collocation,
+                OptimalControl.AbstractOptimalControlDiscretizer,
+                OptimalControl.Collocation,
             )
                 @test isdefined(OptimalControl, nameof(T))
-                @test isdefined(Main, nameof(T))
+                @test !isdefined(Main, nameof(T))
                 @test T isa DataType || T isa UnionAll
             end
         end
