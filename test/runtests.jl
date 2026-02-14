@@ -21,6 +21,15 @@ const SHOWTIMING = true
 end
 using .TestOptions: VERBOSE, SHOWTIMING
 
+# CUDA availability check
+using CUDA
+is_cuda_on() = CUDA.functional()
+if is_cuda_on()
+    println("✓ CUDA functional, GPU tests enabled")
+else
+    println("⚠️  CUDA not functional, GPU tests will be skipped")
+end
+
 # Run tests using the TestRunner extension
 CTBase.run_tests(;
     args=String.(ARGS),

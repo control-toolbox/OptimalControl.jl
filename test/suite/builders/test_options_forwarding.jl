@@ -1,15 +1,16 @@
 module TestOptionsForwarding
 
 using Test
-using OptimalControl
+#import OptimalControl
 import ADNLPModels
 import ExaModels
 import CTSolvers
 import CTDirect
 import CTModels
+import CUDA
 
-# Access KernelAbstractions through CTSolvers (transitive dependency, not a direct dep)
-const KA = CTSolvers.Modelers.KernelAbstractions
+# CUDA availability check
+is_cuda_on() = CUDA.functional()
 
 # Include shared test problems via TestProblems module
 include(joinpath(@__DIR__, "..", "..", "problems", "TestProblems.jl"))
@@ -17,11 +18,6 @@ using .TestProblems
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
-
-# Mock GPU backend for testing ExaModeler backend forwarding.
-# Subclasses KernelAbstractions.GPU so it is accepted by the ExaModeler
-# option validator (which expects Union{Nothing, KernelAbstractions.Backend}).
-struct MockGPUBackend <: KA.GPU end
 
 function test_options_forwarding()
     @testset "Options forwarding" verbose = VERBOSE showtiming = SHOWTIMING begin
@@ -31,57 +27,47 @@ function test_options_forwarding()
         # ----------------------------------------------------------------
         pb = Beam()
         ocp = pb.ocp
-        disc = Collocation(grid_size=50, scheme=:midpoint)
+        disc = CTDirect.Collocation(grid_size=50, scheme=:midpoint)
         normalized_init = CTModels.build_initial_guess(ocp, pb.init)
         docp = CTDirect.discretize(ocp, disc)
 
         # ================================================================
-        # ExaModeler options
-        #
-        # CTDirect.build_exa_model currently does NOT forward the modeler
-        # options (kwarg name mismatch: `backend` vs `exa_backend`, and
-        # `base_type` is not passed through). All tests are @test_broken.
+        # CTSolvers.ExaModeler options
         # ================================================================
         @testset "ExaModeler" begin
 
             # --- base_type: Float32 instead of default Float64 ---
             @testset "base_type" begin
-                @test_broken begin
-                    modeler = ExaModeler(base_type=Float32)
-                    nlp = nlp_model(docp, normalized_init, modeler)
+                @test begin
+                    modeler = CTSolvers.ExaModeler(base_type=Float32)
+                    nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
                     eltype(nlp) == Float32
                 end
             end
 
-            # --- backend: MockGPUBackend instead of default nothing ---
-            # If forwarded, ExaCore would use the mock backend for array
-            # conversion, producing non-Vector arrays. Currently ignored.
-            @testset "backend" begin
-                @test_broken begin
-                    modeler = ExaModeler(backend=MockGPUBackend())
-                    nlp = nlp_model(docp, normalized_init, modeler)
-                    # If forwarded, x0 would NOT be a plain Vector
-                    !(nlp.meta.x0 isa Vector)
+            # --- backend: CUDA backend if available ---
+            if is_cuda_on()
+                @testset "backend (CUDA)" begin
+                    @test begin
+                        modeler = CTSolvers.ExaModeler(backend=CUDA.CUDABackend())
+                        nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
+                        # With CUDA backend, x0 should be CUDA array
+                        nlp.meta.x0 isa CUDA.CuArray
+                    end
                 end
             end
         end
 
         # ================================================================
-        # ADNLPModeler options — basic
-        #
-        # CTDirect.build_adnlp_model forwards `backend` (as the ADNLPModels
-        # backend preset) but does NOT forward `name`, `show_time`, or
-        # other modeler-level options.
+        # CTSolvers.ADNLPModeler options — basic
         # ================================================================
         @testset "ADNLPModeler basic" begin
 
             # --- name: custom model name ---
-            # Not forwarded by CTDirect: the builder always uses the
-            # ADNLPModels default ("Generic").
             @testset "name" begin
-                @test_broken begin
-                    modeler = ADNLPModeler(name="BeamTest")
-                    nlp = nlp_model(docp, normalized_init, modeler)
+                @test begin
+                    modeler = CTSolvers.ADNLPModeler(name="BeamTest")
+                    nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
                     nlp.meta.name == "BeamTest"
                 end
             end
@@ -95,56 +81,97 @@ function test_options_forwarding()
             # :default uses ForwardDiffADGradient, :optimized uses
             # ReverseDiffADGradient — so the adbackend types differ.
             @testset "backend" begin
-                modeler_default = ADNLPModeler(backend=:default)
-                modeler_optimized = ADNLPModeler(backend=:optimized)
-                nlp_default = nlp_model(docp, normalized_init, modeler_default)
-                nlp_optimized = nlp_model(docp, normalized_init, modeler_optimized)
+                modeler_default = CTSolvers.ADNLPModeler(backend=:default)
+                modeler_optimized = CTSolvers.ADNLPModeler(backend=:optimized)
+                nlp_default = CTSolvers.nlp_model(docp, normalized_init, modeler_default)
+                nlp_optimized = CTSolvers.nlp_model(docp, normalized_init, modeler_optimized)
                 @test typeof(nlp_default.adbackend) != typeof(nlp_optimized.adbackend)
             end
         end
 
         # ================================================================
-        # ADNLPModeler options — advanced backend overrides
+        # CTSolvers.ADNLPModeler options — advanced backend overrides
         #
-        # These options are NOT forwarded by CTDirect.build_adnlp_model
-        # (it only handles `backend` and `show_time` kwargs). All tests
-        # are @test_broken.
-        #
-        # Note: the CTSolvers validator expects instances of ADBackend
-        # subtypes (not bare Types) for these options.
+        # CTSolvers v0.2.5-beta now supports backend overrides with both
+        # Types and instances. These tests verify that non-default backends
+        # are properly forwarded through the discretization → modeling pipeline.
         # ================================================================
         @testset "ADNLPModeler advanced" begin
 
-            # --- gradient_backend ---
+            # --- gradient_backend: ReverseDiffADGradient instead of default ForwardDiffADGradient ---
             @testset "gradient_backend" begin
-                @test_broken begin
-                    modeler = ADNLPModeler(
-                        gradient_backend=ADNLPModels.ReverseDiffADGradient(),
+                @test begin
+                    modeler = CTSolvers.ADNLPModeler(
+                        gradient_backend=ADNLPModels.ReverseDiffADGradient,
                     )
-                    nlp = nlp_model(docp, normalized_init, modeler)
+                    nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
                     nlp.adbackend.gradient_backend isa ADNLPModels.ReverseDiffADGradient
                 end
             end
 
-            # --- hessian_backend ---
+            # --- hessian_backend: EmptyADbackend instead of default SparseADHessian ---
             @testset "hessian_backend" begin
-                @test_broken begin
-                    modeler = ADNLPModeler(
-                        hessian_backend=ADNLPModels.EmptyADbackend(),
+                @test begin
+                    modeler = CTSolvers.ADNLPModeler(
+                        hessian_backend=ADNLPModels.EmptyADbackend,
                     )
-                    nlp = nlp_model(docp, normalized_init, modeler)
+                    nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
                     nlp.adbackend.hessian_backend isa ADNLPModels.EmptyADbackend
                 end
             end
 
-            # --- jacobian_backend ---
+            # --- jacobian_backend: EmptyADbackend instead of default SparseADJacobian ---
             @testset "jacobian_backend" begin
-                @test_broken begin
-                    modeler = ADNLPModeler(
-                        jacobian_backend=ADNLPModels.EmptyADbackend(),
+                @test begin
+                    modeler = CTSolvers.ADNLPModeler(
+                        jacobian_backend=ADNLPModels.EmptyADbackend,
                     )
-                    nlp = nlp_model(docp, normalized_init, modeler)
+                    nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
                     nlp.adbackend.jacobian_backend isa ADNLPModels.EmptyADbackend
+                end
+            end
+
+            # --- hprod_backend: ReverseDiffADHvprod instead of default ForwardDiffADHvprod ---
+            @testset "hprod_backend" begin
+                @test begin
+                    modeler = CTSolvers.ADNLPModeler(
+                        hprod_backend=ADNLPModels.ReverseDiffADHvprod,
+                    )
+                    nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
+                    nlp.adbackend.hprod_backend isa ADNLPModels.ReverseDiffADHvprod
+                end
+            end
+
+            # --- jprod_backend: ReverseDiffADJprod instead of default ForwardDiffADJprod ---
+            @testset "jprod_backend" begin
+                @test begin
+                    modeler = CTSolvers.ADNLPModeler(
+                        jprod_backend=ADNLPModels.ReverseDiffADJprod,
+                    )
+                    nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
+                    nlp.adbackend.jprod_backend isa ADNLPModels.ReverseDiffADJprod
+                end
+            end
+
+            # --- jtprod_backend: ReverseDiffADJtprod instead of default ForwardDiffADJtprod ---
+            @testset "jtprod_backend" begin
+                @test begin
+                    modeler = CTSolvers.ADNLPModeler(
+                        jtprod_backend=ADNLPModels.ReverseDiffADJtprod,
+                    )
+                    nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
+                    nlp.adbackend.jtprod_backend isa ADNLPModels.ReverseDiffADJtprod
+                end
+            end
+
+            # --- ghjvprod_backend: EmptyADbackend instead of default ForwardDiffADGHjvprod ---
+            @testset "ghjvprod_backend" begin
+                @test begin
+                    modeler = CTSolvers.ADNLPModeler(
+                        ghjvprod_backend=ADNLPModels.EmptyADbackend,
+                    )
+                    nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
+                    nlp.adbackend.ghjvprod_backend isa ADNLPModels.EmptyADbackend
                 end
             end
         end

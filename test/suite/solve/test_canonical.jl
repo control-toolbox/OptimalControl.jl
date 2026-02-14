@@ -22,11 +22,6 @@ const OBJ_RTOL = 1e-2
 
 # CUDA availability check
 is_cuda_on() = CUDA.functional()
-if is_cuda_on()
-    println("✓ CUDA functional, GPU tests enabled")
-else
-    println("⚠️  CUDA not functional, GPU tests will be skipped")
-end
 
 function test_canonical()
     @testset "Canonical solve" verbose = VERBOSE showtiming = SHOWTIMING begin
