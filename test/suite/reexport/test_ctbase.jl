@@ -5,12 +5,14 @@ using OptimalControl
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
+const CurrentModule = TestCtbase
+
 function test_ctbase()
     @testset "CTBase reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
         
         @testset "Generated Code Prefix" begin
             @test isdefined(OptimalControl, :CTBase)
-            @test isdefined(Main, :CTBase)
+            @test isdefined(CurrentModule, :CTBase)
             @test CTBase isa Module
         end
 
@@ -25,7 +27,7 @@ function test_ctbase()
                 OptimalControl.ExtensionError,
             )
                 @test isdefined(OptimalControl, nameof(T)) # check if defined in OptimalControl
-                @test !isdefined(Main, nameof(T)) # check if exported
+                @test !isdefined(CurrentModule, nameof(T)) # check if exported
                 @test T isa DataType
             end
         end

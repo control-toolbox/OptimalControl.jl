@@ -5,6 +5,8 @@ using OptimalControl
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
+const CurrentModule = TestCtflows
+
 function test_ctflows()
     @testset "CTFlows reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
         @testset "Types" begin
@@ -14,7 +16,7 @@ function test_ctflows()
                 OptimalControl.HamiltonianVectorField,
             )
                 @test isdefined(OptimalControl, nameof(T))
-                @test !isdefined(Main, nameof(T))
+                @test !isdefined(CurrentModule, nameof(T))
                 @test T isa DataType || T isa UnionAll
             end
         end
@@ -24,7 +26,7 @@ function test_ctflows()
                 :Flow,
             )
                 @test isdefined(OptimalControl, f)
-                @test isdefined(Main, f)
+                @test isdefined(CurrentModule, f)
                 @test getfield(OptimalControl, f) isa Function
             end
         end
@@ -36,12 +38,12 @@ function test_ctflows()
                 :*,
             )
                 @test isdefined(OptimalControl, op)
-                @test isdefined(Main, op)
+                @test isdefined(CurrentModule, op)
             end
         end
         @testset "Macros" begin
             @test isdefined(OptimalControl, Symbol("@Lie"))
-            @test isdefined(Main, Symbol("@Lie"))
+            @test isdefined(CurrentModule, Symbol("@Lie"))
         end
     end
 end

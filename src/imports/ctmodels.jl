@@ -33,7 +33,7 @@ import CTModels:
     # accessors
     constraint, 
     constraints, 
-    name, 
+    name,
     dimension, 
     components,
     initial_time, 

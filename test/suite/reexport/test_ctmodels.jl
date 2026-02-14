@@ -5,18 +5,20 @@ using OptimalControl
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
+const CurrentModule = TestCtmodels
+
 function test_ctmodels()
     @testset "CTModels reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
 
         @testset "Generated Code Prefix" begin
             @test isdefined(OptimalControl, :CTModels)
-            @test isdefined(Main, :CTModels)
+            @test isdefined(CurrentModule, :CTModels)
             @test CTModels isa Module
         end
 
         @testset "Display" begin
             @test isdefined(OptimalControl, :plot)
-            @test isdefined(Main, :plot)
+            @test isdefined(CurrentModule, :plot)
             @test plot isa Function
         end
         
@@ -25,9 +27,11 @@ function test_ctmodels()
                 OptimalControl.AbstractOptimalControlInitialGuess,
                 OptimalControl.OptimalControlInitialGuess,
             )
-                @test isdefined(OptimalControl, nameof(T))
-                @test !isdefined(Main, nameof(T))
-                @test T isa DataType || T isa UnionAll
+                @testset "$(nameof(T))" begin
+                    @test isdefined(OptimalControl, nameof(T))
+                    @test !isdefined(CurrentModule, nameof(T))
+                    @test T isa DataType || T isa UnionAll
+                end
             end
         end
         
@@ -36,9 +40,11 @@ function test_ctmodels()
                 :export_ocp_solution,
                 :import_ocp_solution,
             )
-                @test isdefined(OptimalControl, f)
-                @test isdefined(Main, f)
-                @test getfield(OptimalControl, f) isa Function
+                @testset "$f" begin
+                    @test isdefined(OptimalControl, f)
+                    @test isdefined(CurrentModule, f)
+                    @test getfield(OptimalControl, f) isa Function
+                end
             end
         end
         
@@ -51,9 +57,11 @@ function test_ctmodels()
                 OptimalControl.AbstractSolution,
                 OptimalControl.AbstractOptimalControlSolution,
             )
-                @test isdefined(OptimalControl, nameof(T))
-                @test !isdefined(Main, nameof(T))
-                @test T isa DataType || T isa UnionAll
+                @testset "$(nameof(T))" begin
+                    @test isdefined(OptimalControl, nameof(T))
+                    @test !isdefined(CurrentModule, nameof(T))
+                    @test T isa DataType || T isa UnionAll
+                end
             end
         end
         
@@ -73,9 +81,11 @@ function test_ctmodels()
                 :state_name, :control_name, :variable_name,
                 :state_components, :control_components, :variable_components,
             )
-                @test isdefined(OptimalControl, f)
-                @test isdefined(Main, f)
-                @test getfield(OptimalControl, f) isa Function
+                @testset "$f" begin
+                    @test isdefined(OptimalControl, f)
+                    @test isdefined(CurrentModule, f)
+                    @test getfield(OptimalControl, f) isa Function
+                end
             end
         end
 
@@ -96,9 +106,11 @@ function test_ctmodels()
                 :index, :time,
                 :model,
             )
-                @test isdefined(OptimalControl, f)
-                @test isdefined(Main, f)
-                @test getfield(OptimalControl, f) isa Function
+                @testset "$f" begin
+                    @test isdefined(OptimalControl, f)
+                    @test isdefined(CurrentModule, f)
+                    @test getfield(OptimalControl, f) isa Function
+                end
             end
         end
 
@@ -109,9 +121,11 @@ function test_ctmodels()
                 :control_constraints_lb_dual, :control_constraints_ub_dual,
                 :variable_constraints_lb_dual, :variable_constraints_ub_dual,
             )
-                @test isdefined(OptimalControl, f)
-                @test isdefined(Main, f)
-                @test getfield(OptimalControl, f) isa Function
+                @testset "$f" begin
+                    @test isdefined(OptimalControl, f)
+                    @test isdefined(CurrentModule, f)
+                    @test getfield(OptimalControl, f) isa Function
+                end
             end
         end
     

@@ -5,6 +5,8 @@ using OptimalControl
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
+const CurrentModule = TestCtsolvers
+
 function test_ctsolvers()
     @testset "CTSolvers reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
         @testset "DOCP Types" begin
@@ -12,7 +14,7 @@ function test_ctsolvers()
                 OptimalControl.DiscretizedOptimalControlProblem,
             )
                 @test isdefined(OptimalControl, nameof(T))
-                @test !isdefined(Main, nameof(T))
+                @test !isdefined(CurrentModule, nameof(T))
                 @test T isa DataType || T isa UnionAll
             end
         end
@@ -23,7 +25,7 @@ function test_ctsolvers()
                 :ocp_solution,
             )
                 @test isdefined(OptimalControl, f)
-                @test isdefined(Main, f)
+                @test isdefined(CurrentModule, f)
                 @test getfield(OptimalControl, f) isa Function
             end
         end
@@ -34,7 +36,7 @@ function test_ctsolvers()
                 OptimalControl.ExaModeler,
             )
                 @test isdefined(OptimalControl, nameof(T))
-                @test !isdefined(Main, nameof(T))
+                @test !isdefined(CurrentModule, nameof(T))
                 @test T isa DataType || T isa UnionAll
             end
         end
@@ -47,7 +49,7 @@ function test_ctsolvers()
                 OptimalControl.KnitroSolver,
             )
                 @test isdefined(OptimalControl, nameof(T))
-                @test !isdefined(Main, nameof(T))
+                @test !isdefined(CurrentModule, nameof(T))
                 @test T isa DataType || T isa UnionAll
             end
         end
@@ -61,7 +63,7 @@ function test_ctsolvers()
                 OptimalControl.RoutedOption,
             )
                 @test isdefined(OptimalControl, nameof(T))
-                @test !isdefined(Main, nameof(T))
+                @test !isdefined(CurrentModule, nameof(T))
                 @test T isa DataType || T isa UnionAll
             end
         end
@@ -71,7 +73,7 @@ function test_ctsolvers()
                 :metadata,
             )
                 @test isdefined(OptimalControl, f)
-                @test isdefined(Main, f)
+                @test isdefined(CurrentModule, f)
                 @test getfield(OptimalControl, f) isa Function
             end
         end
@@ -90,7 +92,7 @@ function test_ctsolvers()
                 :is_computed,
             )
                 @test isdefined(OptimalControl, f)
-                @test isdefined(Main, f)
+                @test isdefined(CurrentModule, f)
                 @test getfield(OptimalControl, f) isa Function
             end
         end
@@ -102,7 +104,7 @@ function test_ctsolvers()
                 :route_to,
             )
                 @test isdefined(OptimalControl, f)
-                @test isdefined(Main, f)
+                @test isdefined(CurrentModule, f)
                 @test getfield(OptimalControl, f) isa Function
             end
         end
