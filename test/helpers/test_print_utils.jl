@@ -108,6 +108,8 @@ function print_test_header(show_memory::Bool = false)
     # Table header (aligned with data columns)
     print("   ")  # Space for the ✓/✗ symbol (2 characters)
     print(" | ")
+    print(rpad("Type", 4))
+    print(" | ")
     print(rpad("Problem", 8))
     print(" | ")
     print(rpad("Disc", 8))
@@ -137,6 +139,7 @@ end
 
 """
     print_test_line(
+        test_type::String,
         problem::String,
         discretizer::String,
         modeler::String,
@@ -168,6 +171,7 @@ Format inspired by print_benchmark_line() in CTBenchmarks.jl.
 ```
 
 # Arguments
+- `test_type`: Test type ("CPU" or "GPU")
 - `problem`: Problem name (e.g., "Beam", "Goddard")
 - `discretizer`: Discretizer name (e.g., "midpoint", "trapeze")
 - `modeler`: Modeler name (e.g., "ADNLPModeler", "ExaModeler")
@@ -181,6 +185,7 @@ Format inspired by print_benchmark_line() in CTBenchmarks.jl.
 - `show_memory`: Show memory (default: false)
 """
 function print_test_line(
+    test_type::String,
     problem::String,
     discretizer::String,
     modeler::String,
@@ -203,6 +208,10 @@ function print_test_line(
         printstyled("  ✗"; color=:red, bold=true)
     end
     
+    print(" | ")
+    
+    # Type column: CPU or GPU
+    printstyled(rpad(test_type, 4); color=:magenta)
     print(" | ")
     
     # Fixed columns with rpad/lpad (like CTBenchmarks)

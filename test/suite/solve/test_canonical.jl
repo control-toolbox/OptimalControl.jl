@@ -99,7 +99,7 @@ function test_canonical()
                             # Display table line (SRP - responsibility delegated)
                             if VERBOSE
                                 print_test_line(
-                                    pname, d_short, mname, sname,
+                                    "CPU", pname, d_short, mname, sname,
                                     success, solve_time, obj, pb.obj,
                                     iters,
                                     memory_bytes > 0 ? memory_bytes : nothing,
@@ -165,7 +165,7 @@ function test_canonical()
                         # Display table line (SRP - responsibility delegated)
                         if VERBOSE
                             print_test_line(
-                                pname * "(GPU)", d_short, "ExaModeler/GPU", "MadNLP/GPU",
+                                "GPU", pname, d_short, "ExaModeler", "MadNLP",
                                 success, solve_time, obj, pb.obj,
                                 iters,
                                 memory_bytes > 0 ? memory_bytes : nothing,
