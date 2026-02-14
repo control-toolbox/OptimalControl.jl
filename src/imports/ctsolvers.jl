@@ -40,7 +40,9 @@ import CTSolvers:
     id,
     metadata,
 
-    # Introspection functions
+    # Display and introspection functions
+    describe,
+    options,
     option_names, 
     option_type, 
     option_description, 
@@ -54,7 +56,4 @@ import CTSolvers:
     is_computed,
 
     # Utility functions
-    filter_options, 
-    suggest_options, 
-    options_dict,
     route_to
