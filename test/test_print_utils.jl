@@ -94,10 +94,10 @@ end
 """
     print_test_header(show_memory::Bool = false)
 
-Affiche l'en-tête du tableau avec les noms de colonnes.
+Display table header with column names.
 
 # Arguments
-- `show_memory`: Afficher la colonne mémoire (défaut: false)
+- `show_memory`: Show memory column (default: false)
 """
 function print_test_header(show_memory::Bool = false)
     println()
@@ -105,8 +105,8 @@ function print_test_header(show_memory::Bool = false)
     printstyled("==========================\n"; color=:cyan)
     println()
     
-    # En-tête du tableau (aligné avec les colonnes de données)
-    print("   ")  # Espace pour le symbole ✓/✗ (2 caractères)
+    # Table header (aligned with data columns)
+    print("   ")  # Space for the ✓/✗ symbol (2 characters)
     print(" | ")
     print(rpad("Problem", 8))
     print(" | ")
@@ -150,35 +150,35 @@ end
         show_memory::Bool = false
     )
 
-Affiche une ligne de tableau alignée pour un résultat de test.
+Display a formatted table line for a test result.
 
-Responsabilité unique : Affichage formaté d'une ligne de résultat.
-Format inspiré de print_benchmark_line() dans CTBenchmarks.jl.
+Single responsibility: Formatted display of a result line.
+Format inspired by print_benchmark_line() in CTBenchmarks.jl.
 
 # Architecture
-- Utilise prettytime() et prettymemory() (DRY)
-- Colonnes fixes avec rpad/lpad pour alignement
-- Couleurs via printstyled pour lisibilité
-- Flush stdout pour affichage temps réel
-- Signe '-' fantôme pour objectifs positifs (alignement)
+- Uses prettytime() and prettymemory() (DRY)
+- Fixed columns with rpad/lpad for alignment
+- Colors via printstyled for readability
+- Flush stdout for real-time display
+- Phantom '-' sign for positive objectives (alignment)
 
-# Format de sortie
+# Output format
 ```
   ✓ | Beam     | midpoint | ADNLPModeler | Ipopt  |   2.345 s |   15 |  8.898598e+00 |  8.898598e+00 | 0.00%
 ```
 
 # Arguments
-- `problem`: Nom du problème (e.g., "Beam", "Goddard")
-- `discretizer`: Nom du discrétiseur (e.g., "midpoint", "trapeze")
-- `modeler`: Nom du modeler (e.g., "ADNLPModeler", "ExaModeler")
-- `solver`: Nom du solver (e.g., "Ipopt", "MadNLP")
-- `success`: Statut de succès du test
-- `time`: Temps d'exécution en secondes
-- `obj`: Valeur objective obtenue
-- `ref_obj`: Valeur objective de référence
-- `iterations`: Nombre d'itérations (optionnel)
-- `memory_bytes`: Mémoire allouée en bytes (optionnel)
-- `show_memory`: Afficher la mémoire (défaut: false)
+- `problem`: Problem name (e.g., "Beam", "Goddard")
+- `discretizer`: Discretizer name (e.g., "midpoint", "trapeze")
+- `modeler`: Modeler name (e.g., "ADNLPModeler", "ExaModeler")
+- `solver`: Solver name (e.g., "Ipopt", "MadNLP")
+- `success`: Test success status
+- `time`: Execution time in seconds
+- `obj`: Obtained objective value
+- `ref_obj`: Reference objective value
+- `iterations`: Number of iterations (optional)
+- `memory_bytes`: Allocated memory in bytes (optional)
+- `show_memory`: Show memory (default: false)
 """
 function print_test_line(
     problem::String,
@@ -193,10 +193,10 @@ function print_test_line(
     memory_bytes::Union{Int, Nothing} = nothing,
     show_memory::Bool = false
 )
-    # Calcul erreur relative
+    # Relative error calculation
     rel_error = abs(obj - ref_obj) / abs(ref_obj) * 100
     
-    # Status coloré (✓ vert ou ✗ rouge)
+    # Colored status (✓ green or ✗ red)
     if success
         printstyled("  ✓"; color=:green, bold=true)
     else
@@ -205,55 +205,55 @@ function print_test_line(
     
     print(" | ")
     
-    # Colonnes avec largeurs fixes (alignement comme CTBenchmarks)
-    # Problem: 8 caractères
+    # Fixed columns with rpad/lpad (like CTBenchmarks)
+    # Problem: 8 characters
     printstyled(rpad(problem, 8); color=:cyan, bold=true)
     print(" | ")
     
-    # Discretizer: 8 caractères
+    # Discretizer: 8 characters
     printstyled(rpad(discretizer, 8); color=:blue)
     print(" | ")
     
-    # Modeler: 12 caractères
+    # Modeler: 12 characters
     printstyled(rpad(modeler, 12); color=:magenta)
     print(" | ")
     
-    # Solver: 6 caractères
+    # Solver: 6 characters
     printstyled(rpad(solver, 6); color=:yellow)
     print(" | ")
     
-    # Time: aligné à droite, 12 caractères
+    # Time: right-aligned, 12 characters
     print(lpad(prettytime(time), 12))
     print(" | ")
     
-    # Iterations: aligné à droite, 5 caractères
+    # Iterations: right-aligned, 5 characters
     iter_str = iterations === nothing ? "N/A" : string(iterations)
     print(lpad(iter_str, 5))
     print(" | ")
     
-    # Objective: format scientifique avec signe fantôme pour alignement
-    # Ajouter un espace au lieu de '-' pour les valeurs positives
+    # Objective: scientific format with phantom sign for alignment
+    # Add space instead of '-' for positive values
     obj_str = @sprintf("%.6e", obj)
     if obj >= 0
-        obj_str = " " * obj_str  # Signe fantôme
+        obj_str = " " * obj_str  # Phantom sign
     end
     print(lpad(obj_str, 14))
     print(" | ")
     
-    # Reference: format scientifique avec signe fantôme
+    # Reference: scientific format with phantom sign
     ref_str = @sprintf("%.6e", ref_obj)
     if ref_obj >= 0
-        ref_str = " " * ref_str  # Signe fantôme
+        ref_str = " " * ref_str  # Phantom sign
     end
     print(lpad(ref_str, 14))
     print(" | ")
     
-    # Error: notation scientifique avec 2 chiffres après la virgule
-    err_str = @sprintf("%.2e", rel_error / 100)  # Convertir en fraction puis format scientifique
+    # Error: scientific notation with 2 decimal places
+    err_str = @sprintf("%.2e", rel_error / 100)  # Convert to fraction then scientific format
     err_color = rel_error < 1 ? :green : (rel_error < 5 ? :yellow : :red)
     printstyled(lpad(err_str, 7); color=err_color)
     
-    # Memory: optionnel, aligné à droite, 10 caractères
+    # Memory: optional, right-aligned, 10 characters
     if show_memory
         print(" | ")
         if memory_bytes !== nothing
@@ -265,22 +265,22 @@ function print_test_line(
     end
     
     println()
-    flush(stdout)  # Affichage temps réel
+    flush(stdout)  # Real-time display
 end
 
 """
     print_summary(total::Int, passed::Int, total_time::Real)
 
-Affiche un résumé final des tests avec statistiques.
+Display a final summary with test statistics.
 
-Responsabilité unique : Affichage du résumé global.
+Single responsibility: Display global summary.
 
 # Arguments
-- `total`: Nombre total de tests
-- `passed`: Nombre de tests réussis
-- `total_time`: Temps total d'exécution en secondes
+- `total`: Total number of tests
+- `passed`: Number of successful tests
+- `total_time`: Total execution time in seconds
 
-# Format de sortie
+# Output format
 ```
 ✓ Summary: 16/16 tests passed (100.0% success rate) in 45.234 s
 ```
@@ -289,14 +289,14 @@ function print_summary(total::Int, passed::Int, total_time::Real)
     println()
     success_rate = (passed / total) * 100
     
-    # Symbole et couleur selon résultat
+    # Symbol and color based on result
     if passed == total
         printstyled("✓ Summary: "; color=:green, bold=true)
     else
         printstyled("⚠ Summary: "; color=:yellow, bold=true)
     end
     
-    # Statistiques
+    # Statistics
     println("$passed/$total tests passed ($(round(success_rate, digits=1))% success rate) in $(prettytime(total_time))")
     println()
 end
