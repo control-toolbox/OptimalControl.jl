@@ -4,7 +4,7 @@ using Test
 using OptimalControl
 
 # Import du module d'affichage (DIP - dépend de l'abstraction)
-include(joinpath(@__DIR__, "..", "..", "test_print_utils.jl"))
+include(joinpath(@__DIR__, "..", "..", "helpers", "test_print_utils.jl"))
 using .TestPrintUtils
 
 # Load solver extensions (import only to trigger extensions, avoid name conflicts)
