@@ -32,14 +32,14 @@ function test_options_forwarding()
         docp = CTDirect.discretize(ocp, disc)
 
         # ================================================================
-        # CTSolvers.ExaModeler options
+        # CTSolvers.Exa options
         # ================================================================
-        @testset "ExaModeler" begin
+        @testset "Exa" begin
 
             # --- base_type: Float32 instead of default Float64 ---
             @testset "base_type" begin
                 @test begin
-                    modeler = CTSolvers.ExaModeler(base_type=Float32)
+                    modeler = CTSolvers.Exa(base_type=Float32)
                     nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
                     eltype(nlp) == Float32
                 end
@@ -49,7 +49,7 @@ function test_options_forwarding()
             if is_cuda_on()
                 @testset "backend (CUDA)" begin
                     @test begin
-                        modeler = CTSolvers.ExaModeler(backend=CUDA.CUDABackend())
+                        modeler = CTSolvers.Exa(backend=CUDA.CUDABackend())
                         nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
                         # With CUDA backend, x0 should be CUDA array
                         nlp.meta.x0 isa CUDA.CuArray
@@ -59,14 +59,14 @@ function test_options_forwarding()
         end
 
         # ================================================================
-        # CTSolvers.ADNLPModeler options — basic
+        # CTSolvers.ADNLP options — basic
         # ================================================================
-        @testset "ADNLPModeler basic" begin
+        @testset "ADNLP basic" begin
 
             # --- name: custom model name ---
             @testset "name" begin
                 @test begin
-                    modeler = CTSolvers.ADNLPModeler(name="BeamTest")
+                    modeler = CTSolvers.ADNLP(name="BeamTest")
                     nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
                     nlp.meta.name == "BeamTest"
                 end
@@ -81,8 +81,8 @@ function test_options_forwarding()
             # :default uses ForwardDiffADGradient, :optimized uses
             # ReverseDiffADGradient — so the adbackend types differ.
             @testset "backend" begin
-                modeler_default = CTSolvers.ADNLPModeler(backend=:default)
-                modeler_optimized = CTSolvers.ADNLPModeler(backend=:optimized)
+                modeler_default = CTSolvers.ADNLP(backend=:default)
+                modeler_optimized = CTSolvers.ADNLP(backend=:optimized)
                 nlp_default = CTSolvers.nlp_model(docp, normalized_init, modeler_default)
                 nlp_optimized = CTSolvers.nlp_model(docp, normalized_init, modeler_optimized)
                 @test typeof(nlp_default.adbackend) != typeof(nlp_optimized.adbackend)
@@ -90,18 +90,18 @@ function test_options_forwarding()
         end
 
         # ================================================================
-        # CTSolvers.ADNLPModeler options — advanced backend overrides
+        # CTSolvers.ADNLP options — advanced backend overrides
         #
         # CTSolvers v0.2.5-beta now supports backend overrides with both
         # Types and instances. These tests verify that non-default backends
         # are properly forwarded through the discretization → modeling pipeline.
         # ================================================================
-        @testset "ADNLPModeler advanced" begin
+        @testset "ADNLP advanced" begin
 
             # --- gradient_backend: ReverseDiffADGradient instead of default ForwardDiffADGradient ---
             @testset "gradient_backend" begin
                 @test begin
-                    modeler = CTSolvers.ADNLPModeler(
+                    modeler = CTSolvers.ADNLP(
                         gradient_backend=ADNLPModels.ReverseDiffADGradient,
                     )
                     nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
@@ -112,7 +112,7 @@ function test_options_forwarding()
             # --- hessian_backend: EmptyADbackend instead of default SparseADHessian ---
             @testset "hessian_backend" begin
                 @test begin
-                    modeler = CTSolvers.ADNLPModeler(
+                    modeler = CTSolvers.ADNLP(
                         hessian_backend=ADNLPModels.EmptyADbackend,
                     )
                     nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
@@ -123,7 +123,7 @@ function test_options_forwarding()
             # --- jacobian_backend: EmptyADbackend instead of default SparseADJacobian ---
             @testset "jacobian_backend" begin
                 @test begin
-                    modeler = CTSolvers.ADNLPModeler(
+                    modeler = CTSolvers.ADNLP(
                         jacobian_backend=ADNLPModels.EmptyADbackend,
                     )
                     nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
@@ -134,7 +134,7 @@ function test_options_forwarding()
             # --- hprod_backend: ReverseDiffADHvprod instead of default ForwardDiffADHvprod ---
             @testset "hprod_backend" begin
                 @test begin
-                    modeler = CTSolvers.ADNLPModeler(
+                    modeler = CTSolvers.ADNLP(
                         hprod_backend=ADNLPModels.ReverseDiffADHvprod,
                     )
                     nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
@@ -145,7 +145,7 @@ function test_options_forwarding()
             # --- jprod_backend: ReverseDiffADJprod instead of default ForwardDiffADJprod ---
             @testset "jprod_backend" begin
                 @test begin
-                    modeler = CTSolvers.ADNLPModeler(
+                    modeler = CTSolvers.ADNLP(
                         jprod_backend=ADNLPModels.ReverseDiffADJprod,
                     )
                     nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
@@ -156,7 +156,7 @@ function test_options_forwarding()
             # --- jtprod_backend: ReverseDiffADJtprod instead of default ForwardDiffADJtprod ---
             @testset "jtprod_backend" begin
                 @test begin
-                    modeler = CTSolvers.ADNLPModeler(
+                    modeler = CTSolvers.ADNLP(
                         jtprod_backend=ADNLPModels.ReverseDiffADJtprod,
                     )
                     nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)
@@ -167,7 +167,7 @@ function test_options_forwarding()
             # --- ghjvprod_backend: EmptyADbackend instead of default ForwardDiffADGHjvprod ---
             @testset "ghjvprod_backend" begin
                 @test begin
-                    modeler = CTSolvers.ADNLPModeler(
+                    modeler = CTSolvers.ADNLP(
                         ghjvprod_backend=ADNLPModels.EmptyADbackend,
                     )
                     nlp = CTSolvers.nlp_model(docp, normalized_init, modeler)

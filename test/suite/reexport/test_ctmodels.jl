@@ -24,8 +24,8 @@ function test_ctmodels()
         
         @testset "Initial Guess Types" begin
             for T in (
-                OptimalControl.AbstractOptimalControlInitialGuess,
-                OptimalControl.OptimalControlInitialGuess,
+                OptimalControl.AbstractInitialGuess,
+                OptimalControl.InitialGuess,
             )
                 @testset "$(nameof(T))" begin
                     @test isdefined(OptimalControl, nameof(T))
@@ -52,10 +52,10 @@ function test_ctmodels()
             for T in (
                 OptimalControl.Model,
                 OptimalControl.AbstractModel,
-                OptimalControl.AbstractOptimalControlProblem,
+                OptimalControl.AbstractModel,
                 OptimalControl.Solution,
                 OptimalControl.AbstractSolution,
-                OptimalControl.AbstractOptimalControlSolution,
+                OptimalControl.AbstractSolution,
             )
                 @testset "$(nameof(T))" begin
                     @test isdefined(OptimalControl, nameof(T))

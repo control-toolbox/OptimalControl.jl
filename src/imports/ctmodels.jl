@@ -9,8 +9,8 @@
 
 # Initial guess
 import CTModels: 
-    AbstractOptimalControlInitialGuess,
-    OptimalControlInitialGuess
+    AbstractInitialGuess,
+    InitialGuess
 
 # Serialization
 @reexport import CTModels: 
@@ -23,10 +23,10 @@ import CTModels:
     # api types
     Model,
     AbstractModel,
-    AbstractOptimalControlProblem,
+    AbstractModel,
     Solution, 
     AbstractSolution,
-    AbstractOptimalControlSolution
+    AbstractSolution
 
 @reexport import CTModels:
 

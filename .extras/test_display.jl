@@ -27,10 +27,10 @@ function create_test_components()
     discretizer = OptimalControl.Collocation(grid_size=100, scheme=:midpoint)
     
     # Modeler
-    modeler = OptimalControl.ADNLPModeler()
+    modeler = OptimalControl.ADNLP()
     
     # Solver - use real Ipopt solver
-    solver = OptimalControl.IpoptSolver(print_level=0)
+    solver = OptimalControl.Ipopt(print_level=0)
     
     # Method tuple
     method = (:collocation, :adnlp, :ipopt)
@@ -44,22 +44,22 @@ function create_test_variants()
     
     # Variant 1: Different discretizer
     discretizer1 = OptimalControl.Collocation(grid_size=50, scheme=:trapeze)
-    modeler1 = OptimalControl.ADNLPModeler()
-    solver1 = OptimalControl.IpoptSolver(print_level=0)
+    modeler1 = OptimalControl.ADNLP()
+    solver1 = OptimalControl.Ipopt(print_level=0)
     method1 = (:collocation, :ipopt, :adnlp)
     push!(variants, ("Trapezoidal Grid", method1, discretizer1, modeler1, solver1))
     
     # Variant 2: Different modeler
     discretizer2 = OptimalControl.Collocation(grid_size=75, scheme=:midpoint)
-    modeler2 = OptimalControl.ExaModeler()
-    solver2 = OptimalControl.IpoptSolver(print_level=0)
+    modeler2 = OptimalControl.Exa()
+    solver2 = OptimalControl.Ipopt(print_level=0)
     method2 = (:exa, :collocation, :cpu, :ipopt)
-    push!(variants, ("ExaModeler", method2, discretizer2, modeler2, solver2))
+    push!(variants, ("Exa", method2, discretizer2, modeler2, solver2))
     
     # Variant 3: Different solver
     discretizer3 = OptimalControl.Collocation(grid_size=80, scheme=:midpoint)
-    modeler3 = OptimalControl.ADNLPModeler()
-    solver3 = OptimalControl.MadNLPSolver(print_level=MadNLP.ERROR)
+    modeler3 = OptimalControl.ADNLP()
+    solver3 = OptimalControl.MadNLP(print_level=MadNLP.ERROR)
     method3 = (:collocation, :optimized, :adnlp, :gpu, :madnlp)
     push!(variants, ("MadNLP Solver", method3, discretizer3, modeler3, solver3))
     
@@ -324,12 +324,38 @@ improved_display_ocp_method(
     method, discretizer, modeler, solver; display=true, show_options=false
 )
 
+println("\n📋 NEW display_ocp_configuration (default):")
+println("-" ^ 30)
+# Call the NEW display function with default parameters
+OptimalControl.display_ocp_configuration(
+    discretizer, modeler, solver; display=true
+)
+
+println("\n📋 NEW display_ocp_configuration (with sources):")
+println("-" ^ 30)
+# Call the NEW display function with sources shown
+OptimalControl.display_ocp_configuration(
+    discretizer, modeler, solver; display=true, show_sources=true
+)
+
+println("\n📋 NEW display_ocp_configuration (minimal):")
+println("-" ^ 30)
+# Call the NEW display function without options
+OptimalControl.display_ocp_configuration(
+    discretizer, modeler, solver; display=true, show_options=false
+)
+
 println("\n📋 TESTING DIFFERENT CONFIGURATIONS:")
 println("-" ^ 30)
 for (name, meth, disc, mod, solv) in variants
     println("\n🔸 Configuration: ", name)
     improved_display_ocp_method(
         meth, disc, mod, solv; display=true, show_options=true
+    )
+    
+    println("\n🔸 Configuration: ", name, " (NEW display_ocp_configuration)")
+    OptimalControl.display_ocp_configuration(
+        disc, mod, solv; display=true
     )
 end
 

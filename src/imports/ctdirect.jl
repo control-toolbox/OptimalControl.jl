@@ -2,7 +2,7 @@
 
 # Types
 import CTDirect:
-    AbstractOptimalControlDiscretizer,
+    AbstractDiscretizer,
     Collocation
 
 # Methods

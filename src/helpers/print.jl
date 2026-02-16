@@ -7,9 +7,9 @@ import CTSolvers
 """
     display_ocp_configuration(
         io::IO,
-        discretizer::CTDirect.AbstractOptimalControlDiscretizer,
-        modeler::CTSolvers.AbstractOptimizationModeler,
-        solver::CTSolvers.AbstractOptimizationSolver;
+        discretizer::CTDirect.AbstractDiscretizer,
+        modeler::CTSolvers.AbstractNLPModeler,
+        solver::CTSolvers.AbstractNLPSolver;
         display::Bool=true,
         show_options::Bool=true,
         show_sources::Bool=false,
@@ -22,9 +22,9 @@ Si `show_options` est `false`, seules les IDs des composants sont affichées.
 """
 function display_ocp_configuration(
     io::IO,
-    discretizer::CTDirect.AbstractOptimalControlDiscretizer,
-    modeler::CTSolvers.AbstractOptimizationModeler,
-    solver::CTSolvers.AbstractOptimizationSolver;
+    discretizer::CTDirect.AbstractDiscretizer,
+    modeler::CTSolvers.AbstractNLPModeler,
+    solver::CTSolvers.AbstractNLPSolver;
     display::Bool=true,
     show_options::Bool=true,
     show_sources::Bool=false,
@@ -91,8 +91,8 @@ function display_ocp_configuration(
                 print(io, " (")
                 for (i, (key, opt)) in enumerate(user_items)
                     sep = i == n ? "" : ", "
-                    src = show_sources ? " [" * string(opt.source) * "]" : ""
-                    print(io, string(key), " = ", opt.value, src, sep)
+                    src = show_sources ? " [" * string(CTSolvers.Options.source(opt)) * "]" : ""
+                    print(io, string(key), " = ", CTSolvers.Options.value(opt), src, sep)
                 end
                 print(io, ")")
             else
@@ -101,8 +101,8 @@ function display_ocp_configuration(
                 shown = first(user_items, 3)
                 for (i, (key, opt)) in enumerate(shown)
                     sep = i == length(shown) ? "" : ", "
-                    src = show_sources ? " [" * string(opt.source) * "]" : ""
-                    print(io, string(key), " = ", opt.value, src, sep)
+                    src = show_sources ? " [" * string(CTSolvers.Options.source(opt)) * "]" : ""
+                    print(io, string(key), " = ", CTSolvers.Options.value(opt), src, sep)
                 end
                 remaining = n - length(shown)
                 if remaining > 0
@@ -123,9 +123,9 @@ end
 
 # Convenience without io
 function display_ocp_configuration(
-    discretizer::CTDirect.AbstractOptimalControlDiscretizer,
-    modeler::CTSolvers.AbstractOptimizationModeler,
-    solver::CTSolvers.AbstractOptimizationSolver;
+    discretizer::CTDirect.AbstractDiscretizer,
+    modeler::CTSolvers.AbstractNLPModeler,
+    solver::CTSolvers.AbstractNLPSolver;
     display::Bool=true,
     show_options::Bool=true,
     show_sources::Bool=false,

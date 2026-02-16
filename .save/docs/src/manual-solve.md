@@ -84,7 +84,7 @@ solve(ocp, :direct, :adnlp, :ipopt)
     - `:exa`: the NLP problem is modeled by a [`ExaModels.ExaModel`](@extref). It provides automatic differentiation and [SIMD](https://en.wikipedia.org/wiki/Single_instruction,_multiple_data) abstraction.
 3. The third symbol specifies the NLP solver. Possible values are:
    - `:ipopt`: calls [`NLPModelsIpopt.ipopt`](@extref) to solve the NLP problem.
-   - `:madnlp`: creates a [MadNLP.MadNLPSolver](@extref) instance from the NLP problem and solve it. [MadNLP.jl](https://madnlp.github.io/MadNLP.jl) is an open-source solver in Julia implementing a filter line-search interior-point algorithm like Ipopt.
+   - `:madnlp`: creates a [MadNLP.MadNLP](@extref) instance from the NLP problem and solve it. [MadNLP.jl](https://madnlp.github.io/MadNLP.jl) is an open-source solver in Julia implementing a filter line-search interior-point algorithm like Ipopt.
    - `:knitro`: uses the [Knitro](https://www.artelys.com/solvers/knitro/) solver (license required).
 
 !!! warning

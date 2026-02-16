@@ -8,8 +8,8 @@ import NLPModelsIpopt
 function test_display_helper()
     @testset "Display helper - compact default" begin
         disc = OptimalControl.Collocation(grid_size=5, scheme=:midpoint)
-        mod = OptimalControl.ADNLPModeler()
-        sol = OptimalControl.IpoptSolver(print_level=0)
+        mod = OptimalControl.ADNLP()
+        sol = OptimalControl.Ipopt(print_level=0)
 
         io = IOBuffer()
         OptimalControl.display_ocp_configuration(io, disc, mod, sol;
@@ -24,8 +24,8 @@ function test_display_helper()
 
     @testset "Display helper - hide options" begin
         disc = OptimalControl.Collocation(grid_size=5, scheme=:midpoint)
-        mod = OptimalControl.ADNLPModeler()
-        sol = OptimalControl.IpoptSolver(print_level=0)
+        mod = OptimalControl.ADNLP()
+        sol = OptimalControl.Ipopt(print_level=0)
 
         io = IOBuffer()
         OptimalControl.display_ocp_configuration(io, disc, mod, sol;
@@ -38,8 +38,8 @@ function test_display_helper()
 
     @testset "Display helper - sources flag" begin
         disc = OptimalControl.Collocation(grid_size=5, scheme=:midpoint)
-        mod = OptimalControl.ADNLPModeler()
-        sol = OptimalControl.IpoptSolver(print_level=0)
+        mod = OptimalControl.ADNLP()
+        sol = OptimalControl.Ipopt(print_level=0)
 
         io = IOBuffer()
         OptimalControl.display_ocp_configuration(io, disc, mod, sol;

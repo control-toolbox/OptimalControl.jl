@@ -11,7 +11,7 @@ function test_ctdirect()
     @testset "CTDirect reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
         @testset "Types" begin
             for T in (
-                OptimalControl.AbstractOptimalControlDiscretizer,
+                OptimalControl.AbstractDiscretizer,
                 OptimalControl.Collocation,
             )
                 @test isdefined(OptimalControl, nameof(T))

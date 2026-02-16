@@ -49,13 +49,13 @@ function test_canonical()
         ]
 
         modelers = [
-            ("ADNLPModeler", OptimalControl.ADNLPModeler()),
-            ("ExaModeler",   OptimalControl.ExaModeler()),
+            ("ADNLP", OptimalControl.ADNLP()),
+            ("Exa",   OptimalControl.Exa()),
         ]
 
         solvers = [
-            ("Ipopt",  OptimalControl.IpoptSolver(print_level=0)),
-            ("MadNLP", OptimalControl.MadNLPSolver(print_level=MadNLP.ERROR)),
+            ("Ipopt",  OptimalControl.Ipopt(print_level=0)),
+            ("MadNLP", OptimalControl.MadNLP(print_level=MadNLP.ERROR)),
         ]
 
         problems = [
@@ -116,7 +116,7 @@ function test_canonical()
                             @testset "$dname / $mname / $sname" begin
                                 @test success
                                 if success
-                                    @test solve_result isa OptimalControl.AbstractOptimalControlSolution
+                                    @test solve_result isa OptimalControl.AbstractSolution
                                     @test OptimalControl.objective(solve_result) ≈ pb.obj rtol = OBJ_RTOL
                                 end
                             end
@@ -130,8 +130,8 @@ function test_canonical()
         # GPU tests (only if CUDA is available)
         # ----------------------------------------------------------------
         if is_cuda_on()
-            gpu_modeler  = ("ExaModeler/GPU", OptimalControl.ExaModeler(backend=CUDA.CUDABackend()))
-            gpu_solver   = ("MadNLP/GPU",    OptimalControl.MadNLPSolver(print_level=MadNLP.ERROR, linear_solver=MadNLPGPU.CUDSSSolver))
+            gpu_modeler  = ("Exa/GPU", OptimalControl.Exa(backend=CUDA.CUDABackend()))
+            gpu_solver   = ("MadNLP/GPU",    OptimalControl.MadNLP(print_level=MadNLP.ERROR, linear_solver=MadNLPGPU.CUDSSSolver))
 
             for (pname, pb) in problems
                 @testset "GPU / $pname" begin
@@ -163,7 +163,7 @@ function test_canonical()
                         # Display table line (SRP - responsibility delegated)
                         if VERBOSE
                             print_test_line(
-                                "GPU", pname, d_short, "ExaModeler", "MadNLP",
+                                "GPU", pname, d_short, "Exa", "MadNLP",
                                 success, solve_time, obj, pb.obj,
                                 iters,
                                 memory_bytes > 0 ? memory_bytes : nothing,
@@ -181,7 +181,7 @@ function test_canonical()
                         @testset "$dname / $(gpu_modeler[1]) / $(gpu_solver[1])" begin
                             @test success
                             if success
-                                @test solve_result isa OptimalControl.AbstractOptimalControlSolution
+                                @test solve_result isa OptimalControl.AbstractSolution
                                 @test OptimalControl.objective(solve_result) ≈ pb.obj rtol = OBJ_RTOL
                             end
                         end

@@ -11,7 +11,7 @@ function test_ctsolvers()
     @testset "CTSolvers reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
         @testset "DOCP Types" begin
             for T in (
-                OptimalControl.DiscretizedOptimalControlProblem,
+                OptimalControl.DiscretizedModel,
             )
                 @test isdefined(OptimalControl, nameof(T))
                 @test !isdefined(CurrentModule, nameof(T))
@@ -33,9 +33,9 @@ function test_ctsolvers()
         end
         @testset "Modeler Types" begin
             for T in (
-                OptimalControl.AbstractOptimizationModeler,
-                OptimalControl.ADNLPModeler,
-                OptimalControl.ExaModeler,
+                OptimalControl.AbstractNLPModeler,
+                OptimalControl.ADNLP,
+                OptimalControl.Exa,
             )
                 @test isdefined(OptimalControl, nameof(T))
                 @test !isdefined(CurrentModule, nameof(T))
@@ -44,11 +44,11 @@ function test_ctsolvers()
         end
         @testset "Solver Types" begin
             for T in (
-                OptimalControl.AbstractOptimizationSolver,
-                OptimalControl.IpoptSolver,
-                OptimalControl.MadNLPSolver,
-                OptimalControl.MadNCLSolver,
-                OptimalControl.KnitroSolver,
+                OptimalControl.AbstractNLPSolver,
+                OptimalControl.Ipopt,
+                OptimalControl.MadNLP,
+                OptimalControl.MadNCL,
+                OptimalControl.Knitro,
             )
                 @test isdefined(OptimalControl, nameof(T))
                 @test !isdefined(CurrentModule, nameof(T))

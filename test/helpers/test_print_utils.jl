@@ -167,14 +167,14 @@ Format inspired by print_benchmark_line() in CTBenchmarks.jl.
 
 # Output format
 ```
-  ✓ | Beam     | midpoint | ADNLPModeler | Ipopt  |   2.345 s |   15 |  8.898598e+00 |  8.898598e+00 | 0.00%
+  ✓ | Beam     | midpoint | ADNLP | Ipopt  |   2.345 s |   15 |  8.898598e+00 |  8.898598e+00 | 0.00%
 ```
 
 # Arguments
 - `test_type`: Test type ("CPU" or "GPU")
 - `problem`: Problem name (e.g., "Beam", "Goddard")
 - `discretizer`: Discretizer name (e.g., "midpoint", "trapeze")
-- `modeler`: Modeler name (e.g., "ADNLPModeler", "ExaModeler")
+- `modeler`: Modeler name (e.g., "ADNLP", "Exa")
 - `solver`: Solver name (e.g., "Ipopt", "MadNLP")
 - `success`: Test success status
 - `time`: Execution time in seconds

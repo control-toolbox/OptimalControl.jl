@@ -10,13 +10,13 @@ __initial_guess() = nothing
 # ------------------------------------------------------------------------
 # Main solve function
 function _solve(
-    ocp::CTModels.AbstractOptimalControlProblem,
+    ocp::CTModels.AbstractModel,
     initial_guess,
-    discretizer::CTDirect.AbstractOptimalControlDiscretizer,
-    modeler::CTModels.AbstractOptimizationModeler,
-    solver::CTSolvers.AbstractOptimizationSolver;
+    discretizer::CTDirect.AbstractDiscretizer,
+    modeler::CTModels.AbstractNLPModeler,
+    solver::CTSolvers.AbstractNLPSolver;
     display::Bool=__display(),
-)::CTModels.AbstractOptimalControlSolution
+)::CTModels.AbstractSolution
 
     # Validate initial guess against the optimal control problem before discretization.
     # Any inconsistency should trigger a CTBase.IncorrectArgument from the validator.
@@ -197,9 +197,9 @@ end
 function _display_ocp_method(
     io::IO,
     method::Tuple,
-    discretizer::CTDirect.AbstractOptimalControlDiscretizer,
-    modeler::CTModels.AbstractOptimizationModeler,
-    solver::CTSolvers.AbstractOptimizationSolver;
+    discretizer::CTDirect.AbstractDiscretizer,
+    modeler::CTModels.AbstractNLPModeler,
+    solver::CTSolvers.AbstractNLPSolver;
     display::Bool,
 )
     display || return nothing
@@ -276,9 +276,9 @@ end
 
 function _display_ocp_method(
     method::Tuple,
-    discretizer::CTDirect.AbstractOptimalControlDiscretizer,
-    modeler::CTModels.AbstractOptimizationModeler,
-    solver::CTSolvers.AbstractOptimizationSolver;
+    discretizer::CTDirect.AbstractDiscretizer,
+    modeler::CTModels.AbstractNLPModeler,
+    solver::CTSolvers.AbstractNLPSolver;
     display::Bool,
 )
     return _display_ocp_method(
@@ -479,7 +479,7 @@ function _build_description_from_components(discretizer, modeler, solver)
 end
 
 function _solve_from_components_and_description(
-    ocp::CTModels.AbstractOptimalControlProblem, method::Tuple, parsed::_ParsedTopLevelKwargs
+    ocp::CTModels.AbstractModel, method::Tuple, parsed::_ParsedTopLevelKwargs
 )
     # method is a COMPLETE description (e.g., (:collocation, :adnlp, :ipopt))
 
@@ -512,7 +512,7 @@ function _solve_from_components_and_description(
 end
 
 function _solve_explicit_mode(
-    ocp::CTModels.AbstractOptimalControlProblem, parsed::_ParsedTopLevelKwargs
+    ocp::CTModels.AbstractModel, parsed::_ParsedTopLevelKwargs
 )
     # 1. No modeler_options in explicit mode
     if parsed.modeler_options !== nothing
@@ -617,10 +617,10 @@ function _split_kwargs_for_description(method::Tuple, parsed::_ParsedTopLevelKwa
 end
 
 function _solve_from_complete_description(
-    ocp::CTModels.AbstractOptimalControlProblem,
+    ocp::CTModels.AbstractModel,
     method::Tuple{Vararg{Symbol}},
     parsed::_ParsedTopLevelKwargs,
-)::CTModels.AbstractOptimalControlSolution
+)::CTModels.AbstractSolution
     pieces = _split_kwargs_for_description(method, parsed)
 
     discretizer = _build_discretizer_from_method(method, pieces.disc_kwargs)
@@ -635,8 +635,8 @@ function _solve_from_complete_description(
 end
 
 function _solve_descriptif_mode(
-    ocp::CTModels.AbstractOptimalControlProblem, description::Symbol...; kwargs...
-)::CTModels.AbstractOptimalControlSolution
+    ocp::CTModels.AbstractModel, description::Symbol...; kwargs...
+)::CTModels.AbstractSolution
     method = CTBase.complete(description...; descriptions=available_methods())
 
     _ensure_no_ambiguous_description_kwargs(method, (; kwargs...))
@@ -652,8 +652,8 @@ function _solve_descriptif_mode(
 end
 
 function CommonSolve.solve(
-    ocp::CTModels.AbstractOptimalControlProblem, description::Symbol...; kwargs...
-)::CTModels.AbstractOptimalControlSolution
+    ocp::CTModels.AbstractModel, description::Symbol...; kwargs...
+)::CTModels.AbstractSolution
     parsed = _parse_top_level_kwargs((; kwargs...))
 
     if _has_explicit_components(parsed) && !isempty(description)

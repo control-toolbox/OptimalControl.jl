@@ -1,10 +1,10 @@
 # Optimal control-level tests for solve on OCPs.
 
-struct OCDummyOCP <: CTModels.AbstractOptimalControlProblem end
+struct OCDummyOCP <: CTModels.AbstractModel end
 
 struct OCDummyDiscretizedOCP <: CTModels.AbstractOptimizationProblem end
 
-struct OCDummyInit <: CTModels.AbstractOptimalControlInitialGuess
+struct OCDummyInit <: CTModels.AbstractInitialGuess
     x0::Vector{Float64}
 end
 
@@ -12,18 +12,18 @@ struct OCDummyStats <: SolverCore.AbstractExecutionStats
     tag::Symbol
 end
 
-struct OCDummySolution <: CTModels.AbstractOptimalControlSolution end
+struct OCDummySolution <: CTModels.AbstractSolution end
 
-struct OCFakeDiscretizer <: CTDirect.AbstractOptimalControlDiscretizer
+struct OCFakeDiscretizer <: CTDirect.AbstractDiscretizer
     calls::Base.RefValue{Int}
 end
 
-function (d::OCFakeDiscretizer)(ocp::CTModels.AbstractOptimalControlProblem)
+function (d::OCFakeDiscretizer)(ocp::CTModels.AbstractModel)
     d.calls[] += 1
     return OCDummyDiscretizedOCP()
 end
 
-struct OCFakeModeler <: CTModels.AbstractOptimizationModeler
+struct OCFakeModeler <: CTModels.AbstractNLPModeler
     model_calls::Base.RefValue{Int}
     solution_calls::Base.RefValue{Int}
 end
@@ -44,7 +44,7 @@ function (m::OCFakeModeler)(
     return OCDummySolution()
 end
 
-struct OCFakeSolverNLP <: CTSolvers.AbstractOptimizationSolver
+struct OCFakeSolverNLP <: CTSolvers.AbstractNLPSolver
     calls::Base.RefValue{Int}
 end
 
@@ -104,15 +104,15 @@ function test_optimalcontrol_solve_api()
         # _modeler_options_keys / _solver_options_keys should match options_keys
         method_ad_ip = (:collocation, :adnlp, :ipopt)
         Test.@test Set(OptimalControl._modeler_options_keys(method_ad_ip)) ==
-                   Set(CTModels.options_keys(OptimalControl.ADNLPModeler))
+                   Set(CTModels.options_keys(OptimalControl.ADNLP))
         Test.@test Set(OptimalControl._solver_options_keys(method_ad_ip)) ==
-                   Set(CTModels.options_keys(OptimalControl.IpoptSolver))
+                   Set(CTModels.options_keys(OptimalControl.Ipopt))
 
         method_exa_mad = (:collocation, :exa, :madnlp)
         Test.@test Set(OptimalControl._modeler_options_keys(method_exa_mad)) ==
-                   Set(CTModels.options_keys(OptimalControl.ExaModeler))
+                   Set(CTModels.options_keys(OptimalControl.Exa))
         Test.@test Set(OptimalControl._solver_options_keys(method_exa_mad)) ==
-                   Set(CTModels.options_keys(OptimalControl.MadNLPSolver))
+                   Set(CTModels.options_keys(OptimalControl.MadNLP))
 
         # Multiple symbols of the same family in a method should raise an error
         Test.@test_throws OptimalControl.IncorrectArgument OptimalControl._get_modeler_symbol((
@@ -126,23 +126,23 @@ function test_optimalcontrol_solve_api()
         m_ad = OptimalControl._build_modeler_from_method(
             (:collocation, :adnlp, :ipopt), (; backend=:manual)
         )
-        Test.@test m_ad isa OptimalControl.ADNLPModeler
+        Test.@test m_ad isa OptimalControl.ADNLP
 
         m_exa = OptimalControl._build_modeler_from_method(
             (:collocation, :exa, :ipopt), NamedTuple()
         )
-        Test.@test m_exa isa OptimalControl.ExaModeler
+        Test.@test m_exa isa OptimalControl.Exa
 
         # _build_solver_from_method should construct the appropriate solver
         s_ip = OptimalControl._build_solver_from_method(
             (:collocation, :adnlp, :ipopt), NamedTuple()
         )
-        Test.@test s_ip isa OptimalControl.IpoptSolver
+        Test.@test s_ip isa OptimalControl.Ipopt
 
         s_mad = OptimalControl._build_solver_from_method(
             (:collocation, :adnlp, :madnlp), NamedTuple()
         )
-        Test.@test s_mad isa OptimalControl.MadNLPSolver
+        Test.@test s_mad isa OptimalControl.MadNLP
 
         # Modeler options normalization helper
         Test.@test OptimalControl._normalize_modeler_options(nothing) === NamedTuple()
@@ -374,8 +374,8 @@ function test_optimalcontrol_solve_api()
     Test.@testset "display helpers" verbose = VERBOSE showtiming = SHOWTIMING begin
         method = (:collocation, :adnlp, :ipopt)
         discretizer = OptimalControl.Collocation()
-        modeler = OptimalControl.ADNLPModeler()
-        solver = OptimalControl.IpoptSolver()
+        modeler = OptimalControl.ADNLP()
+        solver = OptimalControl.Ipopt()
 
         buf = sprint() do io
             OptimalControl._display_ocp_method(
@@ -513,8 +513,8 @@ function test_optimalcontrol_solve_api()
         init = OptimalControl.initial_guess(ocp; beam_data.init...)
         discretizer = OptimalControl.Collocation()
 
-        modelers = [OptimalControl.ADNLPModeler(; backend=:manual), OptimalControl.ExaModeler()]
-        modelers_names = ["ADNLPModeler (manual)", "ExaModeler (CPU)"]
+        modelers = [OptimalControl.ADNLP(; backend=:manual), OptimalControl.Exa()]
+        modelers_names = ["ADNLP (manual)", "Exa (CPU)"]
 
         # ------------------------------------------------------------------
         # OCP level: solve(ocp, init, discretizer, modeler, solver)
@@ -523,7 +523,7 @@ function test_optimalcontrol_solve_api()
         Test.@testset "OCP level (Ipopt)" verbose = VERBOSE showtiming = SHOWTIMING begin
             for (modeler, modeler_name) in zip(modelers, modelers_names)
                 Test.@testset "$(modeler_name)" verbose = VERBOSE showtiming = SHOWTIMING begin
-                    solver = OptimalControl.IpoptSolver(; ipopt_options...)
+                    solver = OptimalControl.Ipopt(; ipopt_options...)
                     sol = OptimalControl._solve(
                         ocp, init, discretizer, modeler, solver; display=false
                     )
@@ -540,7 +540,7 @@ function test_optimalcontrol_solve_api()
         Test.@testset "OCP level (MadNLP)" verbose = VERBOSE showtiming = SHOWTIMING begin
             for (modeler, modeler_name) in zip(modelers, modelers_names)
                 Test.@testset "$(modeler_name)" verbose = VERBOSE showtiming = SHOWTIMING begin
-                    solver = OptimalControl.MadNLPSolver(; madnlp_options...)
+                    solver = OptimalControl.MadNLP(; madnlp_options...)
                     sol = OptimalControl._solve(
                         ocp, init, discretizer, modeler, solver; display=false
                     )
@@ -555,16 +555,16 @@ function test_optimalcontrol_solve_api()
         end
 
         # ------------------------------------------------------------------
-        # OCP level with @init (Ipopt, ADNLPModeler)
+        # OCP level with @init (Ipopt, ADNLP)
         # ------------------------------------------------------------------
 
-        Test.@testset "OCP level with @init (Ipopt, ADNLPModeler)" verbose = VERBOSE showtiming = SHOWTIMING begin
+        Test.@testset "OCP level with @init (Ipopt, ADNLP)" verbose = VERBOSE showtiming = SHOWTIMING begin
             init_macro = OptimalControl.@init ocp begin
                 x := [0.05, 0.1]
                 u := 0.1
             end
-            modeler = OptimalControl.ADNLPModeler(; backend=:manual)
-            solver = OptimalControl.IpoptSolver(; ipopt_options...)
+            modeler = OptimalControl.ADNLP(; backend=:manual)
+            solver = OptimalControl.Ipopt(; ipopt_options...)
             sol = OptimalControl._solve(
                 ocp, init_macro, discretizer, modeler, solver; display=false
             )
@@ -577,9 +577,9 @@ function test_optimalcontrol_solve_api()
         # OCP level: keyword-based API solve(ocp; ...)
         # ------------------------------------------------------------------
 
-        Test.@testset "OCP level keyword API (Ipopt, ADNLPModeler)" verbose = VERBOSE showtiming = SHOWTIMING begin
-            modeler = OptimalControl.ADNLPModeler(; backend=:manual)
-            solver = OptimalControl.IpoptSolver(; ipopt_options...)
+        Test.@testset "OCP level keyword API (Ipopt, ADNLP)" verbose = VERBOSE showtiming = SHOWTIMING begin
+            modeler = OptimalControl.ADNLP(; backend=:manual)
+            solver = OptimalControl.Ipopt(; ipopt_options...)
             sol = solve(
                 ocp;
                 initial_guess=init,
@@ -694,8 +694,8 @@ function test_optimalcontrol_solve_api()
         init_g = OptimalControl.initial_guess(ocp_g; gdata.init...)
         discretizer_g = OptimalControl.Collocation()
 
-        modelers = [OptimalControl.ADNLPModeler(; backend=:manual), OptimalControl.ExaModeler()]
-        modelers_names = ["ADNLPModeler (manual)", "ExaModeler (CPU)"]
+        modelers = [OptimalControl.ADNLP(; backend=:manual), OptimalControl.Exa()]
+        modelers_names = ["ADNLP (manual)", "Exa (CPU)"]
 
         # ------------------------------------------------------------------
         # OCP level: solve(ocp_g, init_g, discretizer_g, modeler, solver)
@@ -704,7 +704,7 @@ function test_optimalcontrol_solve_api()
         Test.@testset "OCP level (Ipopt)" verbose = VERBOSE showtiming = SHOWTIMING begin
             for (modeler, modeler_name) in zip(modelers, modelers_names)
                 Test.@testset "$(modeler_name)" verbose = VERBOSE showtiming = SHOWTIMING begin
-                    solver = OptimalControl.IpoptSolver(; ipopt_options...)
+                    solver = OptimalControl.Ipopt(; ipopt_options...)
                     sol = OptimalControl._solve(
                         ocp_g, init_g, discretizer_g, modeler, solver; display=false
                     )
@@ -721,7 +721,7 @@ function test_optimalcontrol_solve_api()
         Test.@testset "OCP level (MadNLP)" verbose = VERBOSE showtiming = SHOWTIMING begin
             for (modeler, modeler_name) in zip(modelers, modelers_names)
                 Test.@testset "$(modeler_name)" verbose = VERBOSE showtiming = SHOWTIMING begin
-                    solver = OptimalControl.MadNLPSolver(; madnlp_options...)
+                    solver = OptimalControl.MadNLP(; madnlp_options...)
                     sol = OptimalControl._solve(
                         ocp_g, init_g, discretizer_g, modeler, solver; display=false
                     )
@@ -736,12 +736,12 @@ function test_optimalcontrol_solve_api()
         end
 
         # ------------------------------------------------------------------
-        # OCP level keyword API (Ipopt, ADNLPModeler)
+        # OCP level keyword API (Ipopt, ADNLP)
         # ------------------------------------------------------------------
 
-        Test.@testset "OCP level keyword API (Ipopt, ADNLPModeler)" verbose = VERBOSE showtiming = SHOWTIMING begin
-            modeler = OptimalControl.ADNLPModeler(; backend=:manual)
-            solver = OptimalControl.IpoptSolver(; ipopt_options...)
+        Test.@testset "OCP level keyword API (Ipopt, ADNLP)" verbose = VERBOSE showtiming = SHOWTIMING begin
+            modeler = OptimalControl.ADNLP(; backend=:manual)
+            solver = OptimalControl.Ipopt(; ipopt_options...)
             sol = solve(
                 ocp_g;
                 initial_guess=init_g,

@@ -2,7 +2,7 @@
 
 # DOCP
 import CTSolvers:
-    DiscretizedOptimalControlProblem
+    DiscretizedModel
 
 @reexport import CTSolvers:
     ocp_model,
@@ -11,17 +11,17 @@ import CTSolvers:
 
 # Modelers
 import CTSolvers:
-    AbstractOptimizationModeler,
-    ADNLPModeler,
-    ExaModeler
+    AbstractNLPModeler,
+    ADNLP,
+    Exa
 
 # Solvers
 import CTSolvers:
-    AbstractOptimizationSolver,
-    IpoptSolver,
-    MadNLPSolver,
-    MadNCLSolver,
-    KnitroSolver
+    AbstractNLPSolver,
+    Ipopt,
+    MadNLP,
+    MadNCL,
+    Knitro
 
 # Strategies
 import CTSolvers:
