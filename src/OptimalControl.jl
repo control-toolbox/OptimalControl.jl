@@ -18,9 +18,10 @@ include(joinpath(@__DIR__, "imports", "ctmodels.jl"))
 include(joinpath(@__DIR__, "imports", "ctparser.jl"))
 include(joinpath(@__DIR__, "imports", "ctsolvers.jl"))
 include(joinpath(@__DIR__, "imports", "examodels.jl"))
+include(joinpath(@__DIR__, "helpers", "print.jl"))
 
 # solve
-include(joinpath(@__DIR__, "solve.jl"))
+include(joinpath(@__DIR__, "solve", "solve_canonical.jl"))
 # export available_methods
 
 end

@@ -193,76 +193,66 @@ function improved_display_ocp_method(
     
     println(io)
 
-    # Package information using id()
+    # Combined configuration + options (Proposition 3)
     println(io, "")
     println(io, "  📦 Configuration:")
     
+    discretizer_pkg = OptimalControl.id(typeof(discretizer))
     model_pkg = OptimalControl.id(typeof(modeler))
     solver_pkg = OptimalControl.id(typeof(solver))
-    
-    print(io, "   ├─ Modeler: ")
-    printstyled(io, model_pkg; color=:cyan, bold=true)
-    println(io)
-    print(io, "   └─ Solver: ")
-    printstyled(io, solver_pkg; color=:cyan, bold=true)
-    println(io)
 
-    # Options section
-    if show_options
-        disc_opts = OptimalControl.options(discretizer)
-        mod_opts = OptimalControl.options(modeler)
-        sol_opts = OptimalControl.options(solver)
-        
-        println(io, "")
-        println(io, "  ⚙️  Options:")
-        
-        has_disc = !isempty(propertynames(disc_opts.options))
-        has_mod = !isempty(propertynames(mod_opts.options))
-        has_sol = !isempty(propertynames(sol_opts.options))
+    disc_opts = show_options ? OptimalControl.options(discretizer) : nothing
+    mod_opts = show_options ? OptimalControl.options(modeler) : nothing
+    sol_opts = show_options ? OptimalControl.options(solver) : nothing
 
-        if has_disc
-            print(io, "   ├─ ")
-            printstyled(io, "Discretizer"; color=:cyan, bold=true)
-            print(io, ": ")
-            
-            # Extract individual options from StrategyOptions
-            items = collect(pairs(disc_opts.options))
-            for (i, (key, opt)) in enumerate(items)
-                sep = i == length(items) ? "" : ", "
-                print(io, string(key), " = ", opt.value, " (", opt.source, ")", sep)
+    function print_component(line_prefix, label, pkg, opts)
+        print(io, line_prefix)
+        printstyled(io, label; bold=true)
+        print(io, ": ")
+        printstyled(io, pkg; color=:cyan, bold=true)
+        if show_options && opts !== nothing
+            user_items = Tuple{Symbol, Any}[]
+            for (key, opt) in pairs(opts.options)
+                if OptimalControl.is_user(opts, key)
+                    push!(user_items, (key, opt))
+                end
             end
-            println(io)
-        end
-
-        if has_mod
-            print(io, "   ├─ ")
-            printstyled(io, "Modeler"; color=:cyan, bold=true)
-            print(io, ": ")
-            
-            items = collect(pairs(mod_opts.options))
-            for (i, (key, opt)) in enumerate(items)
-                sep = i == length(items) ? "" : ", "
-                print(io, string(key), " = ", opt.value, " (", opt.source, ")", sep)
+            sort!(user_items, by = x -> string(x[1]))
+            n = length(user_items)
+            if n == 0
+                print(io, " (no user options)")
+            elseif n <= 2
+                print(io, " (")
+                for (i, (key, opt)) in enumerate(user_items)
+                    sep = i == n ? "" : ", "
+                    src = show_sources ? " [" * string(opt.source) * "]" : ""
+                    print(io, string(key), " = ", opt.value, src, sep)
+                end
+                print(io, ")")
+            else
+                # Multiline with truncation after 3 items
+                print(io, "\n     ")
+                shown = first(user_items, 3)
+                for (i, (key, opt)) in enumerate(shown)
+                    sep = i == length(shown) ? "" : ", "
+                    src = show_sources ? " [" * string(opt.source) * "]" : ""
+                    print(io, string(key), " = ", opt.value, src, sep)
+                end
+                remaining = n - length(shown)
+                if remaining > 0
+                    print(io, ", … (+", remaining, ")")
+                end
             end
-            println(io)
         end
-
-        if has_sol
-            print(io, "   └─ ")
-            printstyled(io, "Solver"; color=:cyan, bold=true)
-            print(io, ": ")
-            
-            items = collect(pairs(sol_opts.options))
-            for (i, (key, opt)) in enumerate(items)
-                sep = i == length(items) ? "" : ", "
-                print(io, string(key), " = ", opt.value, " (", opt.source, ")", sep)
-            end
-            println(io)
-        end
+        println(io)
     end
 
+    print_component("   ├─ ", "Discretizer", discretizer_pkg, disc_opts)
+    print_component("   ├─ ", "Modeler", model_pkg, mod_opts)
+    print_component("   └─ ", "Solver", solver_pkg, sol_opts)
+
     println(io)
-    println(io, "🎯 Ready to solve!")
+    #println(io, "🎯 Ready to solve!")
     return nothing
 end
 

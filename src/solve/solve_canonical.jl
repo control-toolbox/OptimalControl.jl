@@ -12,18 +12,18 @@ import CTSolvers
 
 # Default options
 __display() = true
-__initial_guess() = nothing
+#__initial_guess() = nothing
 
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
 # Canonical solve function
 function CommonSolve.solve(
     ocp::CTModels.AbstractOptimalControlProblem,
+    initial_guess,
     discretizer::CTDirect.AbstractOptimalControlDiscretizer,
     modeler::CTSolvers.AbstractOptimizationModeler,
     solver::CTSolvers.AbstractOptimizationSolver;
     display::Bool=__display(),
-    initial_guess=__initial_guess(),
 )::CTModels.AbstractOptimalControlSolution
 
     # Build and validate initial guess against the optimal control problem before discretization.
@@ -31,6 +31,14 @@ function CommonSolve.solve(
 
     # Discretize the optimal control problem.
     discrete_problem = CTDirect.discretize(ocp, discretizer)
+
+    # Display configuration (compact, user options only)
+    if display
+        OptimalControl.display_ocp_configuration(
+            stdout, discretizer, modeler, solver;
+            display=true, show_options=true, show_sources=false,
+        )
+    end
 
     # Solve the discretized optimal control problem.
     return CommonSolve.solve(

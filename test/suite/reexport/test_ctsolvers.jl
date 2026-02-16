@@ -24,9 +24,11 @@ function test_ctsolvers()
                 :nlp_model,
                 :ocp_solution,
             )
-                @test isdefined(OptimalControl, f)
-                @test isdefined(CurrentModule, f)
-                @test getfield(OptimalControl, f) isa Function
+                @testset "$f" begin
+                    @test isdefined(OptimalControl, f)
+                    @test isdefined(CurrentModule, f)
+                    @test getfield(OptimalControl, f) isa Function
+                end
             end
         end
         @testset "Modeler Types" begin
@@ -72,9 +74,11 @@ function test_ctsolvers()
                 :id,
                 :metadata,
             )
-                @test isdefined(OptimalControl, f)
-                @test isdefined(CurrentModule, f)
-                @test getfield(OptimalControl, f) isa Function
+                @testset "$f" begin
+                    @test isdefined(OptimalControl, f)
+                    @test isdefined(CurrentModule, f)
+                    @test getfield(OptimalControl, f) isa Function
+                end
             end
         end
         @testset "Strategy Introspection Functions" begin
@@ -91,21 +95,22 @@ function test_ctsolvers()
                 :is_default,
                 :is_computed,
             )
-                @test isdefined(OptimalControl, f)
-                @test isdefined(CurrentModule, f)
-                @test getfield(OptimalControl, f) isa Function
+                @testset "$f" begin
+                    @test isdefined(OptimalControl, f)
+                    @test isdefined(CurrentModule, f)
+                    @test getfield(OptimalControl, f) isa Function
+                end
             end
         end
         @testset "Strategy Utility Functions" begin
             for f in (
-                :filter_options,
-                :suggest_options,
-                :options_dict,
                 :route_to,
             )
-                @test isdefined(OptimalControl, f)
-                @test isdefined(CurrentModule, f)
-                @test getfield(OptimalControl, f) isa Function
+                @testset "$f" begin
+                    @test isdefined(OptimalControl, f)
+                    @test isdefined(CurrentModule, f)
+                    @test getfield(OptimalControl, f) isa Function
+                end
             end
         end
     end

@@ -1,7 +1,7 @@
 module TestCanonical
 
 using Test
-using OptimalControl
+import OptimalControl
 
 # Import du module d'affichage (DIP - dépend de l'abstraction)
 include(joinpath(@__DIR__, "..", "..", "helpers", "test_print_utils.jl"))
@@ -76,9 +76,8 @@ function test_canonical()
                             
                             # Execute with timing (DRY - single measurement)
                             timed_result = @timed begin
-                                solve(pb.ocp, disc, mod, sol;
-                                      display=false,
-                                      initial_guess=pb.init)
+                                OptimalControl.solve(pb.ocp, pb.init, disc, mod, sol;
+                                      display=false)
                             end
                             
                             # Extract results
@@ -86,12 +85,12 @@ function test_canonical()
                             solve_time = timed_result.time
                             memory_bytes = timed_result.bytes
                             
-                            success = successful(solve_result)
-                            obj = success ? objective(solve_result) : 0.0
+                            success = OptimalControl.successful(solve_result)
+                            obj = success ? OptimalControl.objective(solve_result) : 0.0
                             
                             # Extract iterations using CTModels function
                             iters::Union{Nothing, Int} = try
-                                iterations(solve_result)
+                                OptimalControl.iterations(solve_result)
                             catch
                                 nothing
                             end
@@ -118,7 +117,7 @@ function test_canonical()
                                 @test success
                                 if success
                                     @test solve_result isa OptimalControl.AbstractOptimalControlSolution
-                                    @test objective(solve_result) ≈ pb.obj rtol = OBJ_RTOL
+                                    @test OptimalControl.objective(solve_result) ≈ pb.obj rtol = OBJ_RTOL
                                 end
                             end
                         end
@@ -142,9 +141,8 @@ function test_canonical()
                         
                         # Execute with timing (same structure as CPU tests - DRY)
                         timed_result = @timed begin
-                            solve(pb.ocp, disc, gpu_modeler[2], gpu_solver[2];
-                                  display=false,
-                                  initial_guess=pb.init)
+                            OptimalControl.solve(pb.ocp, pb.init, disc, gpu_modeler[2], gpu_solver[2];
+                                  display=false)
                         end
                         
                         # Extract results
@@ -152,12 +150,12 @@ function test_canonical()
                         solve_time = timed_result.time
                         memory_bytes = timed_result.bytes
                         
-                        success = successful(solve_result)
-                        obj = success ? objective(solve_result) : 0.0
+                        success = OptimalControl.successful(solve_result)
+                        obj = success ? OptimalControl.objective(solve_result) : 0.0
                         
                         # Extract iterations using CTModels function
                         iters::Union{Nothing, Int} = try
-                            iterations(solve_result)
+                            OptimalControl.iterations(solve_result)
                         catch
                             nothing
                         end
@@ -184,7 +182,7 @@ function test_canonical()
                             @test success
                             if success
                                 @test solve_result isa OptimalControl.AbstractOptimalControlSolution
-                                @test objective(solve_result) ≈ pb.obj rtol = OBJ_RTOL
+                                @test OptimalControl.objective(solve_result) ≈ pb.obj rtol = OBJ_RTOL
                             end
                         end
                     end
