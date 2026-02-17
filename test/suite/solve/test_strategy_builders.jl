@@ -4,7 +4,8 @@ using Test
 using OptimalControl
 using CTDirect
 using CTSolvers
-using Main.TestOptions: VERBOSE, SHOWTIMING
+const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
+const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 # ====================================================================
 # TOP-LEVEL MOCKS
@@ -154,6 +155,46 @@ function test_strategy_builders()
             @test_nowarn @inferred OptimalControl._complete_description(())
             @test_nowarn @inferred OptimalControl._complete_description((:collocation,))
             @test_nowarn @inferred OptimalControl._complete_description((:collocation, :adnlp, :ipopt))
+        end
+
+        # ================================================================
+        # UNIT TESTS - _build_or_use_strategy
+        # ================================================================
+
+        # Create registry for _build_or_use_strategy tests
+        registry = OptimalControl.get_strategy_registry()
+
+        @testset "Build or Use Strategy - Provided Path" begin
+            # Test discretizer
+            disc = MockDiscretizer(CTSolvers.Strategies.StrategyOptions())
+            result = OptimalControl._build_or_use_strategy(
+                (:mock_disc, :mock_mod, :mock_sol), disc, CTDirect.AbstractDiscretizer, registry
+            )
+            @test result === disc
+            @test result isa MockDiscretizer
+            
+            # Test modeler
+            mod = MockModeler(CTSolvers.Strategies.StrategyOptions())
+            result = OptimalControl._build_or_use_strategy(
+                (:mock_disc, :mock_mod, :mock_sol), mod, CTSolvers.AbstractNLPModeler, registry
+            )
+            @test result === mod
+            @test result isa MockModeler
+            
+            # Test solver
+            sol = MockSolver(CTSolvers.Strategies.StrategyOptions())
+            result = OptimalControl._build_or_use_strategy(
+                (:mock_disc, :mock_mod, :mock_sol), sol, CTSolvers.AbstractNLPSolver, registry
+            )
+            @test result === sol
+            @test result isa MockSolver
+        end
+
+        @testset "Build or Use Strategy - Type Stability" begin
+            disc = MockDiscretizer(CTSolvers.Strategies.StrategyOptions())
+            @test_nowarn @inferred OptimalControl._build_or_use_strategy(
+                (:mock_disc, :mock_mod, :mock_sol), disc, CTDirect.AbstractDiscretizer, registry
+            )
         end
     end
 end

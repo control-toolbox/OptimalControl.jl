@@ -125,3 +125,52 @@ function _complete_description(
 )::Tuple{Symbol, Symbol, Symbol}
     return CTBase.complete(partial_description...; descriptions=available_methods())
 end
+
+"""
+$(TYPEDSIGNATURES)
+
+Generic strategy builder that either returns a provided strategy or builds one from a method description.
+
+This function works for any strategy family (discretizer, modeler, or solver).
+If a strategy is provided, it is returned directly. If `nothing` is provided,
+a strategy is built from the complete description using the registry.
+
+# Arguments
+- `complete_description`: Complete method triplet (discretizer, modeler, solver)
+- `provided`: Strategy instance or `nothing`
+- `family_type`: Abstract strategy type (e.g., `CTDirect.AbstractDiscretizer`)
+- `registry`: Strategy registry for building new strategies
+
+# Returns
+- `T`: Strategy instance of the specified family type
+
+# Examples
+```julia
+# Use provided strategy
+disc = CTDirect.Collocation()
+result = _build_or_use_strategy((:collocation, :adnlp, :ipopt), disc, CTDirect.AbstractDiscretizer, registry)
+@test result === disc
+```
+
+# See Also
+- [`get_strategy_registry`](@ref): Creates the strategy registry
+- [`_complete_description`](@ref): Completes partial method descriptions
+"""
+function _build_or_use_strategy(
+    complete_description::Tuple{Symbol, Symbol, Symbol},
+    provided::Union{T, Nothing},
+    family_type::Type{T},
+    registry::CTSolvers.Strategies.StrategyRegistry
+)::T where {T <: CTSolvers.Strategies.AbstractStrategy}
+    if !isnothing(provided)
+        return provided::T
+    end
+    
+    # Build path not yet implemented - will be completed in later tasks
+    throw(CTBase.Exceptions.NotImplemented(
+        "Strategy building from registry not implemented",
+        required_method="build_strategy_from_method",
+        suggestion="Provide strategy explicitly or wait for Task 09 implementation",
+        context="_build_or_use_strategy with nothing provided"
+    ))
+end
