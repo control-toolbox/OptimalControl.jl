@@ -18,6 +18,8 @@ include(joinpath(@__DIR__, "imports", "ctmodels.jl"))
 include(joinpath(@__DIR__, "imports", "ctparser.jl"))
 include(joinpath(@__DIR__, "imports", "ctsolvers.jl"))
 include(joinpath(@__DIR__, "imports", "examodels.jl"))
+
+# helpers
 include(joinpath(@__DIR__, "helpers", "print.jl"))
 
 # solve
@@ -25,7 +27,9 @@ include(joinpath(@__DIR__, "solve", "solve_canonical.jl"))
 include(joinpath(@__DIR__, "solve", "helpers", "available_methods.jl"))
 include(joinpath(@__DIR__, "solve", "helpers", "registry.jl"))
 include(joinpath(@__DIR__, "solve", "helpers", "component_checks.jl"))
+include(joinpath(@__DIR__, "solve", "solve_explicit.jl"))
 export available_methods
 export get_strategy_registry
+export solve_explicit
 
 end
