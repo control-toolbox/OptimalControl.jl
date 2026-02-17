@@ -28,6 +28,7 @@ include(joinpath(@__DIR__, "solve", "helpers", "available_methods.jl"))
 include(joinpath(@__DIR__, "solve", "helpers", "registry.jl"))
 include(joinpath(@__DIR__, "solve", "helpers", "component_checks.jl"))
 include(joinpath(@__DIR__, "solve", "helpers", "strategy_builders.jl"))
+include(joinpath(@__DIR__, "solve", "helpers", "component_completion.jl"))
 include(joinpath(@__DIR__, "solve", "solve_explicit.jl"))
 export available_methods
 export get_strategy_registry

@@ -63,22 +63,3 @@ function solve_explicit(
         display=display
     )
 end
-
-"""
-$(TYPEDSIGNATURES)
-
-Placeholder for component completion. Implemented in Task 08.
-"""
-function _complete_components(
-    discretizer::Union{CTDirect.AbstractDiscretizer, Nothing},
-    modeler::Union{CTSolvers.AbstractNLPModeler, Nothing},
-    solver::Union{CTSolvers.AbstractNLPSolver, Nothing},
-    registry::CTSolvers.Strategies.StrategyRegistry
-)::NamedTuple{(:discretizer, :modeler, :solver)}
-    throw(CTBase.Exceptions.NotImplemented(
-        "Component completion not implemented",
-        required_method="_complete_components",
-        suggestion="Implement _complete_components (Task 08)",
-        context="solve_explicit partial component path"
-    ))
-end

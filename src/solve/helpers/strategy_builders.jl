@@ -150,9 +150,14 @@ a strategy is built from the complete description using the registry.
 disc = CTDirect.Collocation()
 result = _build_or_use_strategy((:collocation, :adnlp, :ipopt), disc, CTDirect.AbstractDiscretizer, registry)
 @test result === disc
+
+# Build from registry
+result = _build_or_use_strategy((:collocation, :adnlp, :ipopt), nothing, CTDirect.AbstractDiscretizer, registry)
+@test result isa CTDirect.AbstractDiscretizer
 ```
 
 # See Also
+- [`CTSolvers.Strategies.build_strategy_from_method`](@ref): Builds strategy from method description
 - [`get_strategy_registry`](@ref): Creates the strategy registry
 - [`_complete_description`](@ref): Completes partial method descriptions
 """
@@ -165,12 +170,8 @@ function _build_or_use_strategy(
     if !isnothing(provided)
         return provided::T
     end
-    
-    # Build path not yet implemented - will be completed in later tasks
-    throw(CTBase.Exceptions.NotImplemented(
-        "Strategy building from registry not implemented",
-        required_method="build_strategy_from_method",
-        suggestion="Provide strategy explicitly or wait for Task 09 implementation",
-        context="_build_or_use_strategy with nothing provided"
-    ))
+
+    return CTSolvers.Strategies.build_strategy_from_method(
+        complete_description, family_type, registry
+    )
 end
