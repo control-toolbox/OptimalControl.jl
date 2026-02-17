@@ -22,6 +22,9 @@ include(joinpath(@__DIR__, "helpers", "print.jl"))
 
 # solve
 include(joinpath(@__DIR__, "solve", "solve_canonical.jl"))
-# export available_methods
+include(joinpath(@__DIR__, "solve", "helpers", "available_methods.jl"))
+include(joinpath(@__DIR__, "solve", "helpers", "registry.jl"))
+export available_methods
+export get_strategy_registry
 
 end
