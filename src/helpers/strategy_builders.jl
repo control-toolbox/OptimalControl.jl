@@ -117,13 +117,13 @@ julia> _complete_description((:collocation, :exa))
 
 # See Also
 - [`CTBase.complete`](@ref): Generic completion function
-- [`available_methods`](@ref): Available method triplets
+- [`methods`](@ref): Available method triplets
 - [`_build_partial_description`](@ref): Builds partial description
 """
 function _complete_description(
     partial_description::Tuple{Vararg{Symbol}}
 )::Tuple{Symbol, Symbol, Symbol}
-    return CTBase.complete(partial_description...; descriptions=available_methods())
+    return CTBase.complete(partial_description...; descriptions=OptimalControl.methods())
 end
 
 """

@@ -1,10 +1,11 @@
 module TestRegistry
 
 using Test
-using OptimalControl
-using CTSolvers
-using CTDirect
-using Main.TestOptions: VERBOSE, SHOWTIMING
+import OptimalControl
+import CTSolvers
+import CTDirect
+const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
+const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 function test_registry()
     @testset "Strategy Registry Tests" verbose=VERBOSE showtiming=SHOWTIMING begin

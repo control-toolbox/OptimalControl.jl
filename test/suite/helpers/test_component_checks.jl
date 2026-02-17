@@ -1,10 +1,11 @@
 module TestComponentChecks
 
 using Test
-using OptimalControl
-using CTDirect
-using CTSolvers
-using Main.TestOptions: VERBOSE, SHOWTIMING
+import OptimalControl
+import CTDirect
+import CTSolvers
+const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
+const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 # ====================================================================
 # TOP-LEVEL: Mock strategies for testing (no side effects)

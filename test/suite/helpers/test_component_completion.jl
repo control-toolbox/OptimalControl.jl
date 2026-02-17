@@ -1,11 +1,11 @@
 module TestComponentCompletion
 
 using Test
-using OptimalControl
-using CTDirect
-using CTSolvers
-using CTModels
-using NLPModelsIpopt  # Load extension for Ipopt
+import OptimalControl
+import CTDirect
+import CTSolvers
+import CTModels
+import NLPModelsIpopt  # Load extension for Ipopt
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 

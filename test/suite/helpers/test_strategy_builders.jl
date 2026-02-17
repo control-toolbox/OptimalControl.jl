@@ -1,9 +1,9 @@
 module TestStrategyBuilders
 
 using Test
-using OptimalControl
-using CTDirect
-using CTSolvers
+import OptimalControl
+import CTDirect
+import CTSolvers
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
@@ -113,25 +113,25 @@ function test_strategy_builders()
             result = OptimalControl._complete_description(())
             @test result isa Tuple{Symbol, Symbol, Symbol}
             @test length(result) == 3
-            @test result in OptimalControl.available_methods()
+            @test result in OptimalControl.methods()
         end
 
         @testset "Complete Description - Partial" begin
             result = OptimalControl._complete_description((:collocation,))
             @test result == (:collocation, :adnlp, :ipopt)
-            @test result in OptimalControl.available_methods()
+            @test result in OptimalControl.methods()
         end
 
         @testset "Complete Description - Two Symbols" begin
             result = OptimalControl._complete_description((:collocation, :exa))
             @test result == (:collocation, :exa, :ipopt)
-            @test result in OptimalControl.available_methods()
+            @test result in OptimalControl.methods()
         end
 
         @testset "Complete Description - Already Complete" begin
             result = OptimalControl._complete_description((:collocation, :adnlp, :ipopt))
             @test result == (:collocation, :adnlp, :ipopt)
-            @test result in OptimalControl.available_methods()
+            @test result in OptimalControl.methods()
         end
 
         @testset "Complete Description - Different Combinations" begin
@@ -143,7 +143,7 @@ function test_strategy_builders()
             for combo in combos
                 result = OptimalControl._complete_description(combo)
                 @test result isa Tuple{Symbol, Symbol, Symbol}
-                @test result in OptimalControl.available_methods()
+                @test result in OptimalControl.methods()
                 # Check that the provided symbols are preserved
                 for (i, sym) in enumerate(combo)
                     @test result[i] == sym

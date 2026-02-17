@@ -3,6 +3,8 @@ module TestDisplayHelper
 using Test
 import OptimalControl
 import NLPModelsIpopt
+const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
+const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 # Entry point
 function test_display_helper()

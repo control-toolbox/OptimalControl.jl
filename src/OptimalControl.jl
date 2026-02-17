@@ -24,13 +24,14 @@ include(joinpath(@__DIR__, "helpers", "print.jl"))
 
 # solve
 include(joinpath(@__DIR__, "solve", "solve_canonical.jl"))
-include(joinpath(@__DIR__, "solve", "helpers", "available_methods.jl"))
-include(joinpath(@__DIR__, "solve", "helpers", "registry.jl"))
-include(joinpath(@__DIR__, "solve", "helpers", "component_checks.jl"))
-include(joinpath(@__DIR__, "solve", "helpers", "strategy_builders.jl"))
-include(joinpath(@__DIR__, "solve", "helpers", "component_completion.jl"))
+include(joinpath(@__DIR__, "helpers", "methods.jl"))
+include(joinpath(@__DIR__, "helpers", "registry.jl"))
+include(joinpath(@__DIR__, "helpers", "component_checks.jl"))
+include(joinpath(@__DIR__, "helpers", "strategy_builders.jl"))
+include(joinpath(@__DIR__, "helpers", "component_completion.jl"))
 include(joinpath(@__DIR__, "solve", "solve_explicit.jl"))
-export available_methods
+
+export methods # non useful since it is already in Base
 export get_strategy_registry
 export solve_explicit
 

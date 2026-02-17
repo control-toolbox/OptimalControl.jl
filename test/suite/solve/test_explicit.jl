@@ -1,18 +1,21 @@
 module TestExplicit
 
 using Test
-using OptimalControl
-using CTModels
-using CTDirect
-using CTSolvers
-using CTBase
-using CommonSolve
-using NLPModelsIpopt  # Load extension for Ipopt
+import OptimalControl
+import CTModels
+import CTDirect
+import CTSolvers
+import CTBase
+import CommonSolve
+
+#
 import NLPModelsIpopt
 import MadNLP
 import MadNLPMumps
 import MadNLPGPU
 import CUDA
+
+#
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
@@ -125,9 +128,9 @@ function test_explicit()
             end
             
             @testset "Complete method coverage" begin
-                # Test that all available_methods() are covered by integration tests
+                # Test that all methods() are covered by integration tests
                 # Track which methods we've tested
-                available = Set(OptimalControl.available_methods())
+                available = Set(OptimalControl.methods())
                 tested = Set{Tuple{Symbol, Symbol, Symbol}}()
                 
                 # Define all strategy combinations to test
@@ -183,7 +186,7 @@ function test_explicit()
                 non_knitro_available = setdiff(available, knitro_methods)
                 @test tested == non_knitro_available
                 @test length(tested) == length(non_knitro_available)
-                @test length(tested) + length(knitro_methods) == length(OptimalControl.available_methods())
+                @test length(tested) + length(knitro_methods) == length(OptimalControl.methods())
             end
         end
     end

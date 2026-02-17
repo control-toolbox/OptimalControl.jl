@@ -13,10 +13,10 @@ Each triplet consists of `(discretizer_id, modeler_id, solver_id)` where:
 
 # Examples
 ```julia
-julia> methods = available_methods()
+julia> m = methods()
 ((:collocation, :adnlp, :ipopt), (:collocation, :adnlp, :madnlp), ...)
 
-julia> length(methods)
+julia> length(m)
 6
 ```
 
@@ -24,15 +24,13 @@ julia> length(methods)
 - [`solve`](@ref): Main solve function that uses these methods
 - [`CTBase.complete`](@ref): Completes partial method descriptions
 """
-function available_methods()::Tuple{Vararg{Tuple{Symbol, Symbol, Symbol}}}
-    return AVAILABLE_METHODS
+function Base.methods()::Tuple{Vararg{Tuple{Symbol, Symbol, Symbol}}}
+    return (
+        (:collocation, :adnlp, :ipopt ),
+        (:collocation, :adnlp, :madnlp),
+        (:collocation, :exa,   :ipopt ),
+        (:collocation, :exa,   :madnlp),
+        (:collocation, :adnlp, :knitro),
+        (:collocation, :exa,   :knitro),
+    )
 end
-
-const AVAILABLE_METHODS = (
-    (:collocation, :adnlp, :ipopt),
-    (:collocation, :adnlp, :madnlp),
-    (:collocation, :adnlp, :knitro),
-    (:collocation, :exa, :ipopt),
-    (:collocation, :exa, :madnlp),
-    (:collocation, :exa, :knitro),
-)
