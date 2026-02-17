@@ -5,20 +5,44 @@ import CTModels
 import CTSolvers
 
 """
-    display_ocp_configuration(
-        io::IO,
-        discretizer::CTDirect.AbstractDiscretizer,
-        modeler::CTSolvers.AbstractNLPModeler,
-        solver::CTSolvers.AbstractNLPSolver;
-        display::Bool=true,
-        show_options::Bool=true,
-        show_sources::Bool=false,
-    )
+$(TYPEDSIGNATURES)
 
-Affiche la configuration de résolution (discretizer → modeler → solver) avec les options utilisateur en ligne.
+Display the optimal control problem resolution configuration (discretizer → modeler → solver) with user options.
 
-Par défaut l’affichage est compact (`show_sources=false`) et n’affiche que les options marquées utilisateur.
-Si `show_options` est `false`, seules les IDs des composants sont affichées.
+This function prints a formatted representation of the solving strategy, showing the component
+types and their configuration options. The display is compact by default and only shows
+user-specified options.
+
+# Arguments
+- `io::IO`: Output stream for printing
+- `discretizer::CTDirect.AbstractDiscretizer`: Discretization strategy
+- `modeler::CTSolvers.AbstractNLPModeler`: NLP modeling strategy  
+- `solver::CTSolvers.AbstractNLPSolver`: NLP solver strategy
+- `display::Bool`: Whether to print the configuration (default: `true`)
+- `show_options::Bool`: Whether to show component options (default: `true`)
+- `show_sources::Bool`: Whether to show option sources (default: `false`)
+
+# Examples
+```julia
+julia> disc = CTDirect.Collocation()
+julia> mod = CTSolvers.ADNLP()
+julia> sol = CTSolvers.Ipopt()
+julia> OptimalControl.display_ocp_configuration(stdout, disc, mod, sol)
+▫ OptimalControl v1.1.8-beta solving with: collocation → adnlp → ipopt
+
+  📦 Configuration:
+   ├─ Discretizer: collocation (no user options)
+   ├─ Modeler: adnlp (no user options)
+   └─ Solver: ipopt (no user options)
+```
+
+# Notes
+- By default, only user-specified options are displayed
+- Set `show_sources=true` to see where options were defined
+- Set `show_options=false` to show only component IDs
+- The function returns `nothing` and only produces side effects
+
+See also: [`solve_explicit`](@ref), [`get_strategy_registry`](@ref)
 """
 function display_ocp_configuration(
     io::IO,
@@ -121,7 +145,38 @@ function display_ocp_configuration(
     return nothing
 end
 
-# Convenience without io
+"""
+$(TYPEDSIGNATURES)
+
+Display the optimal control problem resolution configuration to standard output.
+
+This is a convenience method that prints to `stdout` by default. See the main method
+for full documentation of all parameters and behavior.
+
+# Arguments
+- `discretizer::CTDirect.AbstractDiscretizer`: Discretization strategy
+- `modeler::CTSolvers.AbstractNLPModeler`: NLP modeling strategy  
+- `solver::CTSolvers.AbstractNLPSolver`: NLP solver strategy
+- `display::Bool`: Whether to print the configuration (default: `true`)
+- `show_options::Bool`: Whether to show component options (default: `true`)
+- `show_sources::Bool`: Whether to show option sources (default: `false`)
+
+# Examples
+```julia
+julia> disc = CTDirect.Collocation()
+julia> mod = CTSolvers.ADNLP()
+julia> sol = CTSolvers.Ipopt()
+julia> OptimalControl.display_ocp_configuration(disc, mod, sol)
+▫ OptimalControl v1.1.8-beta solving with: collocation → adnlp → ipopt
+
+  📦 Configuration:
+   ├─ Discretizer: collocation (no user options)
+   ├─ Modeler: adnlp (no user options)
+   └─ Solver: ipopt (no user options)
+```
+
+See also: [`display_ocp_configuration(io::IO, ...)`](@ref)
+"""
 function display_ocp_configuration(
     discretizer::CTDirect.AbstractDiscretizer,
     modeler::CTSolvers.AbstractNLPModeler,
