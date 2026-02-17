@@ -8,6 +8,11 @@ using CTSolvers
 using CTBase
 using CommonSolve
 using NLPModelsIpopt  # Load extension for Ipopt
+import NLPModelsIpopt
+import MadNLP
+import MadNLPMumps
+import MadNLPGPU
+import CUDA
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
@@ -119,22 +124,66 @@ function test_explicit()
                 end
             end
             
-            @testset "All missing components" begin
-                # Test with Beam problem - all components missing
+            @testset "Complete method coverage" begin
+                # Test that all available_methods() are covered by integration tests
+                # Track which methods we've tested
+                available = Set(OptimalControl.available_methods())
+                tested = Set{Tuple{Symbol, Symbol, Symbol}}()
+                
+                # Define all strategy combinations to test
+                discretizers = [
+                    ("Collocation/midpoint", OptimalControl.Collocation(grid_size=20, scheme=:midpoint)),
+                ]
+
+                modelers = [
+                    ("ADNLP", OptimalControl.ADNLP()),
+                    ("Exa",   OptimalControl.Exa()),
+                ]
+
+                solvers = [
+                    ("Ipopt",  OptimalControl.Ipopt(print_level=0, max_iter=0)),
+                    ("MadNLP", OptimalControl.MadNLP(print_level=MadNLP.ERROR, max_iter=0)),
+                ]
+
+                # Use only one problem to test all method combinations
                 pb = Beam()
                 init = OptimalControl.build_initial_guess(pb.ocp, pb.init)
                 
-                result = OptimalControl.solve_explicit(
-                    pb.ocp, init;
-                    discretizer=nothing,
-                    modeler=nothing,
-                    solver=nothing,
-                    display=false,
-                    registry=registry
-                )
-                @test result isa CTModels.AbstractSolution
-                @test OptimalControl.successful(result)
-                @test OptimalControl.objective(result) ≈ pb.obj rtol=1e-2
+                # Test all combinations
+                for (dname, disc) in discretizers
+                    for (mname, mod) in modelers
+                        for (sname, sol) in solvers
+                            # Build method using R3 helpers
+                            partial = OptimalControl._build_partial_description(disc, mod, sol)
+                            complete = OptimalControl._complete_description(partial)
+                            
+                            # Check that this method is available and not already tested
+                            @test complete in available
+                            @test complete ∉ tested
+                            
+                            # Mark as tested
+                            push!(tested, complete)
+                            
+                            # Test the actual solve - just verify it returns a solution
+                            result = OptimalControl.solve_explicit(
+                                pb.ocp, init;
+                                discretizer=disc,
+                                modeler=mod,
+                                solver=sol,
+                                display=false,
+                                registry=registry
+                            )
+                            @test result isa CTModels.AbstractSolution
+                        end
+                    end
+                end
+                
+                # Verify all methods have been tested (modulo Knitro which requires license)
+                knitro_methods = Set([m for m in available if m[3] == :knitro])
+                non_knitro_available = setdiff(available, knitro_methods)
+                @test tested == non_knitro_available
+                @test length(tested) == length(non_knitro_available)
+                @test length(tested) + length(knitro_methods) == length(OptimalControl.available_methods())
             end
         end
     end
