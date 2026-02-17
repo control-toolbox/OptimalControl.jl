@@ -24,11 +24,13 @@ function test_methods()
 
             Test.@test (:collocation, :adnlp, :ipopt) in methods
             Test.@test (:collocation, :adnlp, :madnlp) in methods
+            Test.@test (:collocation, :adnlp, :madncl) in methods
             Test.@test (:collocation, :adnlp, :knitro) in methods
             Test.@test (:collocation, :exa, :ipopt) in methods
             Test.@test (:collocation, :exa, :madnlp) in methods
+            Test.@test (:collocation, :exa, :madncl) in methods
             Test.@test (:collocation, :exa, :knitro) in methods
-            Test.@test length(methods) == 6
+            Test.@test length(methods) == 8
         end
 
         Test.@testset "Uniqueness" begin

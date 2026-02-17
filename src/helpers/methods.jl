@@ -17,7 +17,7 @@ julia> m = methods()
 ((:collocation, :adnlp, :ipopt), (:collocation, :adnlp, :madnlp), ...)
 
 julia> length(m)
-6
+8
 ```
 
 # See Also
@@ -30,6 +30,8 @@ function Base.methods()::Tuple{Vararg{Tuple{Symbol, Symbol, Symbol}}}
         (:collocation, :adnlp, :madnlp),
         (:collocation, :exa,   :ipopt ),
         (:collocation, :exa,   :madnlp),
+        (:collocation, :adnlp, :madncl),
+        (:collocation, :exa,   :madncl),
         (:collocation, :adnlp, :knitro),
         (:collocation, :exa,   :knitro),
     )
