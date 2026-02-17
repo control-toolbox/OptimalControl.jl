@@ -35,6 +35,18 @@ function test_ctmodels()
             end
         end
         
+        @testset "Initial Guess Functions" begin
+            for f in (
+                :build_initial_guess,
+            )
+                @testset "$f" begin
+                    @test isdefined(OptimalControl, f)
+                    @test !isdefined(CurrentModule, f)
+                    @test getfield(OptimalControl, f) isa Function
+                end
+            end
+        end
+        
         @testset "Serialization Functions" begin
             for f in (
                 :export_ocp_solution,

@@ -10,7 +10,8 @@
 # Initial guess
 import CTModels: 
     AbstractInitialGuess,
-    InitialGuess
+    InitialGuess,
+    build_initial_guess
 
 # Serialization
 @reexport import CTModels: 

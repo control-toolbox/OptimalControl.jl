@@ -74,9 +74,12 @@ function test_canonical()
                             # Extract short names for display
                             d_short = String(split(dname, "/")[2])  # Get "midpoint" or "trapeze"
                             
+                            # Normalize initial guess before calling canonical solve (Layer 3)
+                            normalized_init = OptimalControl.build_initial_guess(pb.ocp, pb.init)
+                            
                             # Execute with timing (DRY - single measurement)
                             timed_result = @timed begin
-                                OptimalControl.solve(pb.ocp, pb.init, disc, mod, sol;
+                                OptimalControl.solve(pb.ocp, normalized_init, disc, mod, sol;
                                       display=false)
                             end
                             
@@ -140,8 +143,11 @@ function test_canonical()
                         d_short = String(split(dname, "/")[2])  # Get "midpoint" or "trapeze"
                         
                         # Execute with timing (same structure as CPU tests - DRY)
+                        # Normalize initial guess before calling canonical solve (Layer 3)
+                        normalized_init = OptimalControl.build_initial_guess(pb.ocp, pb.init)
+                        
                         timed_result = @timed begin
-                            OptimalControl.solve(pb.ocp, pb.init, disc, gpu_modeler[2], gpu_solver[2];
+                            OptimalControl.solve(pb.ocp, normalized_init, disc, gpu_modeler[2], gpu_solver[2];
                                   display=false)
                         end
                         

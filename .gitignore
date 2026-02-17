@@ -44,3 +44,4 @@ Manifest.toml
 #.extras/
 #.save/
 .windsurf/
+.reports/

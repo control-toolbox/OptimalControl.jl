@@ -1,47 +1,42 @@
-# Solve function
-# todo: 
-# - initial_guess is an option of the solve method, add aliases (init, init_guess, i)
-# - put display in the canonical solve method
+# ============================================================================
+# Layer 3: Canonical Solve - Pure Execution
+# ============================================================================
 
-#
+# This file implements the lowest-level solve function that performs actual
+# resolution with fully specified, concrete components.
+
 import CommonSolve
 @reexport import CommonSolve: solve
 import CTModels
 import CTDirect
 import CTSolvers
 
-# Default options
-__display() = true
-#__initial_guess() = nothing
-
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
-# Canonical solve function
+# Canonical solve function - Layer 3 (Pure Execution)
+# All inputs are concrete types, no defaults, no normalization
 function CommonSolve.solve(
     ocp::CTModels.AbstractModel,
-    initial_guess,
-    discretizer::CTDirect.AbstractDiscretizer,
-    modeler::CTSolvers.AbstractNLPModeler,
-    solver::CTSolvers.AbstractNLPSolver;
-    display::Bool=__display(),
+    initial_guess::CTModels.AbstractInitialGuess,  # Already normalized by Layer 1
+    discretizer::CTDirect.AbstractDiscretizer,     # Concrete type (no Nothing)
+    modeler::CTSolvers.AbstractNLPModeler,          # Concrete type (no Nothing)
+    solver::CTSolvers.AbstractNLPSolver;            # Concrete type (no Nothing)
+    display::Bool                                   # Explicit value (no default)
 )::CTModels.AbstractSolution
-
-    # Build and validate initial guess against the optimal control problem before discretization.
-    normalized_init = CTModels.build_initial_guess(ocp, initial_guess)
-
-    # Discretize the optimal control problem.
+    
+    # 1. Discretize the optimal control problem
     discrete_problem = CTDirect.discretize(ocp, discretizer)
-
-    # Display configuration (compact, user options only)
+    
+    # 2. Display configuration (compact, user options only)
     if display
         OptimalControl.display_ocp_configuration(
             discretizer, modeler, solver;
-            display=true, show_options=true, show_sources=false,
+            display=true, show_options=true, show_sources=false
         )
     end
-
-    # Solve the discretized optimal control problem.
+    
+    # 3. Solve the discretized optimal control problem
     return CommonSolve.solve(
-        discrete_problem, normalized_init, modeler, solver; display=display
+        discrete_problem, initial_guess, modeler, solver; display=display
     )
 end
