@@ -103,6 +103,58 @@ function test_strategy_builders()
             allocs = @allocated OptimalControl._build_partial_description(disc, mod, sol)
             @test allocs == 0
         end
+
+        # ================================================================
+        # UNIT TESTS - _complete_description
+        # ================================================================
+
+        @testset "Complete Description - Empty" begin
+            result = OptimalControl._complete_description(())
+            @test result isa Tuple{Symbol, Symbol, Symbol}
+            @test length(result) == 3
+            @test result in OptimalControl.available_methods()
+        end
+
+        @testset "Complete Description - Partial" begin
+            result = OptimalControl._complete_description((:collocation,))
+            @test result == (:collocation, :adnlp, :ipopt)
+            @test result in OptimalControl.available_methods()
+        end
+
+        @testset "Complete Description - Two Symbols" begin
+            result = OptimalControl._complete_description((:collocation, :exa))
+            @test result == (:collocation, :exa, :ipopt)
+            @test result in OptimalControl.available_methods()
+        end
+
+        @testset "Complete Description - Already Complete" begin
+            result = OptimalControl._complete_description((:collocation, :adnlp, :ipopt))
+            @test result == (:collocation, :adnlp, :ipopt)
+            @test result in OptimalControl.available_methods()
+        end
+
+        @testset "Complete Description - Different Combinations" begin
+            # Test various partial combinations
+            combos = [
+                (:collocation,), (:collocation, :adnlp), (:collocation, :exa),
+                (:collocation, :adnlp, :ipopt), (:collocation, :exa, :madnlp)
+            ]
+            for combo in combos
+                result = OptimalControl._complete_description(combo)
+                @test result isa Tuple{Symbol, Symbol, Symbol}
+                @test result in OptimalControl.available_methods()
+                # Check that the provided symbols are preserved
+                for (i, sym) in enumerate(combo)
+                    @test result[i] == sym
+                end
+            end
+        end
+
+        @testset "Complete Description - Type Stability" begin
+            @test_nowarn @inferred OptimalControl._complete_description(())
+            @test_nowarn @inferred OptimalControl._complete_description((:collocation,))
+            @test_nowarn @inferred OptimalControl._complete_description((:collocation, :adnlp, :ipopt))
+        end
     end
 end
 

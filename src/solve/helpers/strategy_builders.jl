@@ -87,3 +87,41 @@ function _build_partial_description(
         )
     end
 end
+
+"""
+$(TYPEDSIGNATURES)
+
+Complete a partial method description into a full triplet using CTBase.complete().
+
+This function takes a partial description (tuple of strategy symbols) and
+completes it to a full (discretizer, modeler, solver) triplet using the
+available methods as the completion set.
+
+# Arguments
+- `partial_description`: Tuple of strategy symbols (may be empty or partial)
+
+# Returns
+- `Tuple{Symbol, Symbol, Symbol}`: Complete method triplet
+
+# Examples
+```julia
+julia> _complete_description((:collocation,))
+(:collocation, :adnlp, :ipopt)
+
+julia> _complete_description(())
+(:collocation, :adnlp, :ipopt)  # First available method
+
+julia> _complete_description((:collocation, :exa))
+(:collocation, :exa, :ipopt)
+```
+
+# See Also
+- [`CTBase.complete`](@ref): Generic completion function
+- [`available_methods`](@ref): Available method triplets
+- [`_build_partial_description`](@ref): Builds partial description
+"""
+function _complete_description(
+    partial_description::Tuple{Vararg{Symbol}}
+)::Tuple{Symbol, Symbol, Symbol}
+    return CTBase.complete(partial_description...; descriptions=available_methods())
+end
