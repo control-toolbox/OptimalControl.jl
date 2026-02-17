@@ -1,5 +1,8 @@
 # CTDirect reexports
 
+# For internal use
+import CTDirect
+
 # Types
 import CTDirect:
     AbstractDiscretizer,

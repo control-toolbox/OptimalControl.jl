@@ -13,6 +13,7 @@ import NLPModelsIpopt
 import MadNLP
 import MadNLPMumps
 import MadNLPGPU
+import MadNCL
 import CUDA
 
 #
@@ -33,7 +34,7 @@ struct MockSolution <: CTModels.AbstractSolution end
 
 # Include shared test problems via TestProblems module
 include(joinpath(@__DIR__, "..", "..", "problems", "TestProblems.jl"))
-using .TestProblems
+import .TestProblems
 
 struct MockDiscretizer <: CTDirect.AbstractDiscretizer
     options::CTSolvers.StrategyOptions
@@ -63,7 +64,7 @@ function test_explicit()
         disc = MockDiscretizer(CTSolvers.StrategyOptions())
         mod = MockModeler(CTSolvers.StrategyOptions())
         sol = MockSolver(CTSolvers.StrategyOptions())
-        registry = get_strategy_registry()
+        registry = OptimalControl.get_strategy_registry()
 
         # ================================================================
         # COMPLETE COMPONENTS PATH
@@ -88,8 +89,8 @@ function test_explicit()
             
             # Test with real test problems
             problems = [
-                ("Beam", Beam()),
-                ("Goddard", Goddard()),
+                ("Beam", TestProblems.Beam()),
+                ("Goddard", TestProblems.Goddard()),
             ]
             
             for (pname, pb) in problems
@@ -146,10 +147,11 @@ function test_explicit()
                 solvers = [
                     ("Ipopt",  OptimalControl.Ipopt(print_level=0, max_iter=0)),
                     ("MadNLP", OptimalControl.MadNLP(print_level=MadNLP.ERROR, max_iter=0)),
+                    ("MadNCL", OptimalControl.MadNCL(print_level=MadNLP.ERROR, max_iter=0)),
                 ]
 
                 # Use only one problem to test all method combinations
-                pb = Beam()
+                pb = TestProblems.Beam()
                 init = OptimalControl.build_initial_guess(pb.ocp, pb.init)
                 
                 # Test all combinations

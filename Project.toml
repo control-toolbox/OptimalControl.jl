@@ -34,6 +34,7 @@ DocStringExtensions = "0.9"
 ExaModels = "0.9"
 ForwardDiff = "0.10, 1.0"
 LinearAlgebra = "1"
+MadNCL = "0.1"
 MadNLP = "0.8"
 MadNLPGPU = "0.7"
 MadNLPMumps = "0.5"
@@ -54,6 +55,7 @@ CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
 DifferentiationInterface = "a0c0ee7d-e4b9-4e03-894e-1c5f64a51d63"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+MadNCL = "434a0bcb-5a7c-42b2-a9d3-9e3f760e7af0"
 MadNLP = "2621e9c9-9eb4-46b1-8089-e8c72242dfb6"
 MadNLPGPU = "d72a61cc-809d-412f-99be-fd81f4b8a598"
 MadNLPMumps = "3b83494e-c0a4-4895-918b-9157a7a085a1"
@@ -65,18 +67,4 @@ SplitApplyCombine = "03a91e81-4c3e-53e1-a0a4-9c0c8f19dd66"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = [
-    "CUDA", 
-    "DifferentiationInterface", 
-    "ForwardDiff", 
-    "LinearAlgebra", 
-    "MadNLP", 
-    "MadNLPGPU", 
-    "MadNLPMumps", 
-    "NLPModelsIpopt", 
-    "NonlinearSolve", 
-    "OrdinaryDiffEq", 
-    "Printf", 
-    "SplitApplyCombine", 
-    "Test"
-]
+test = ["CUDA", "DifferentiationInterface", "ForwardDiff", "LinearAlgebra", "MadNCL", "MadNLP", "MadNLPGPU", "MadNLPMumps", "NLPModelsIpopt", "NonlinearSolve", "OrdinaryDiffEq", "Printf", "SplitApplyCombine", "Test"]

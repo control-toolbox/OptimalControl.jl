@@ -1,9 +1,5 @@
 # Display helpers for OptimalControl
 
-import CTDirect
-import CTModels
-import CTSolvers
-
 """
 $(TYPEDSIGNATURES)
 

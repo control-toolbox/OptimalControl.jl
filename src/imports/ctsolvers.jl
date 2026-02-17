@@ -1,5 +1,8 @@
 # CTSolvers reexports
 
+# For internal use
+import CTSolvers
+
 # DOCP
 import CTSolvers:
     DiscretizedModel

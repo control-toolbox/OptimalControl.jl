@@ -1,5 +1,8 @@
 # CTModels reexports
 
+# For internal use
+import CTModels
+
 # Generated code
 @reexport import CTModels: 
     CTModels # for generated code (prefix)

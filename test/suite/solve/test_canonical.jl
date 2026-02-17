@@ -12,6 +12,7 @@ import NLPModelsIpopt
 import MadNLP
 import MadNLPMumps
 import MadNLPGPU
+import MadNCL
 import CUDA
 
 # Include shared test problems via TestProblems module
@@ -56,6 +57,7 @@ function test_canonical()
         solvers = [
             ("Ipopt",  OptimalControl.Ipopt(print_level=0)),
             ("MadNLP", OptimalControl.MadNLP(print_level=MadNLP.ERROR)),
+            ("MadNCL", OptimalControl.MadNCL(print_level=MadNLP.ERROR)),
         ]
 
         problems = [

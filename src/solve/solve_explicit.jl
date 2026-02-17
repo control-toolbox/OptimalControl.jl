@@ -43,23 +43,19 @@ function solve_explicit(
     registry::CTSolvers.Strategies.StrategyRegistry
 )::CTModels.AbstractSolution
 
-    if _has_complete_components(discretizer, modeler, solver)
-        return CommonSolve.solve(
-            ocp, initial_guess,
-            discretizer, modeler, solver;
-            display=display
-        )
+    # Resolve components: use provided ones or complete via registry
+    components = if _has_complete_components(discretizer, modeler, solver)
+        (discretizer=discretizer, modeler=modeler, solver=solver)
+    else
+        _complete_components(discretizer, modeler, solver, registry)
     end
 
-    complete_components = _complete_components(
-        discretizer, modeler, solver, registry
-    )
-
+    # Single solve call with resolved components
     return CommonSolve.solve(
         ocp, initial_guess,
-        complete_components.discretizer,
-        complete_components.modeler,
-        complete_components.solver;
+        components.discretizer,
+        components.modeler,
+        components.solver;
         display=display
     )
 end
