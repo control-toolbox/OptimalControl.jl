@@ -1,6 +1,6 @@
 module TestExplicit
 
-using Test
+import Test
 import OptimalControl
 import CTModels
 import CTDirect
@@ -36,15 +36,15 @@ include(joinpath(@__DIR__, "..", "..", "problems", "TestProblems.jl"))
 using .TestProblems
 
 struct MockDiscretizer <: CTDirect.AbstractDiscretizer
-    options::CTSolvers.Strategies.StrategyOptions
+    options::CTSolvers.StrategyOptions
 end
 
 struct MockModeler <: CTSolvers.AbstractNLPModeler
-    options::CTSolvers.Strategies.StrategyOptions
+    options::CTSolvers.StrategyOptions
 end
 
 struct MockSolver <: CTSolvers.AbstractNLPSolver
-    options::CTSolvers.Strategies.StrategyOptions
+    options::CTSolvers.StrategyOptions
 end
 
 CommonSolve.solve(
@@ -57,18 +57,18 @@ CommonSolve.solve(
 )::MockSolution = MockSolution()
 
 function test_explicit()
-    @testset "solve_explicit (contract tests with mocks)" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "solve_explicit (contract tests with mocks)" verbose=VERBOSE showtiming=SHOWTIMING begin
         ocp = MockOCP()
         init = MockInit()
-        disc = MockDiscretizer(CTSolvers.Strategies.StrategyOptions())
-        mod = MockModeler(CTSolvers.Strategies.StrategyOptions())
-        sol = MockSolver(CTSolvers.Strategies.StrategyOptions())
+        disc = MockDiscretizer(CTSolvers.StrategyOptions())
+        mod = MockModeler(CTSolvers.StrategyOptions())
+        sol = MockSolver(CTSolvers.StrategyOptions())
         registry = get_strategy_registry()
 
         # ================================================================
         # COMPLETE COMPONENTS PATH
         # ================================================================
-        @testset "Complete components -> direct path" begin
+        Test.@testset "Complete components -> direct path" begin
             result = OptimalControl.solve_explicit(
                 ocp, init;
                 discretizer=disc,
@@ -77,13 +77,13 @@ function test_explicit()
                 display=false,
                 registry=registry
             )
-            @test result isa MockSolution
+            Test.@test result isa MockSolution
         end
 
         # ================================================================
         # INTEGRATION TESTS WITH REAL STRATEGIES
         # ================================================================
-        @testset "Integration with real strategies" begin
+        Test.@testset "Integration with real strategies" begin
             registry = OptimalControl.get_strategy_registry()
             
             # Test with real test problems
@@ -93,25 +93,25 @@ function test_explicit()
             ]
             
             for (pname, pb) in problems
-                @testset "$pname" begin
+                Test.@testset "$pname" begin
                     # Build initial guess
                     init = OptimalControl.build_initial_guess(pb.ocp, pb.init)
                     
-                    @testset "Complete components - real strategies" begin
+                    Test.@testset "Complete components - real strategies" begin
                         result = OptimalControl.solve_explicit(
                             pb.ocp, init;
                             discretizer=CTDirect.Collocation(),
-                            modeler=CTSolvers.Modelers.ADNLP(),
-                            solver=CTSolvers.Solvers.Ipopt(),
+                            modeler=CTSolvers.ADNLP(),
+                            solver=CTSolvers.Ipopt(),
                             display=false,
                             registry=registry
                         )
-                        @test result isa CTModels.AbstractSolution
-                        @test OptimalControl.successful(result)
-                        @test OptimalControl.objective(result) ≈ pb.obj rtol=1e-2
+                        Test.@test result isa CTModels.AbstractSolution
+                        Test.@test OptimalControl.successful(result)
+                        Test.@test OptimalControl.objective(result) ≈ pb.obj rtol=1e-2
                     end
                     
-                    @testset "Partial components - completion" begin
+                    Test.@testset "Partial components - completion" begin
                         # Test with only discretizer provided
                         result = OptimalControl.solve_explicit(
                             pb.ocp, init;
@@ -121,13 +121,13 @@ function test_explicit()
                             display=false,
                             registry=registry
                         )
-                        @test result isa CTModels.AbstractSolution
-                        @test OptimalControl.successful(result)
+                        Test.@test result isa CTModels.AbstractSolution
+                        Test.@test OptimalControl.successful(result)
                     end
                 end
             end
             
-            @testset "Complete method coverage" begin
+            Test.@testset "Complete method coverage" begin
                 # Test that all methods() are covered by integration tests
                 # Track which methods we've tested
                 available = Set(OptimalControl.methods())
@@ -161,8 +161,8 @@ function test_explicit()
                             complete = OptimalControl._complete_description(partial)
                             
                             # Check that this method is available and not already tested
-                            @test complete in available
-                            @test complete ∉ tested
+                            Test.@test complete in available
+                            Test.@test complete ∉ tested
                             
                             # Mark as tested
                             push!(tested, complete)
@@ -176,7 +176,7 @@ function test_explicit()
                                 display=false,
                                 registry=registry
                             )
-                            @test result isa CTModels.AbstractSolution
+                            Test.@test result isa CTModels.AbstractSolution
                         end
                     end
                 end
@@ -184,9 +184,9 @@ function test_explicit()
                 # Verify all methods have been tested (modulo Knitro which requires license)
                 knitro_methods = Set([m for m in available if m[3] == :knitro])
                 non_knitro_available = setdiff(available, knitro_methods)
-                @test tested == non_knitro_available
-                @test length(tested) == length(non_knitro_available)
-                @test length(tested) + length(knitro_methods) == length(OptimalControl.methods())
+                Test.@test tested == non_knitro_available
+                Test.@test length(tested) == length(non_knitro_available)
+                Test.@test length(tested) + length(knitro_methods) == length(OptimalControl.methods())
             end
         end
     end

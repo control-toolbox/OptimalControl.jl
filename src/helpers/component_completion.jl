@@ -22,14 +22,14 @@ This function orchestrates the component completion workflow:
 # Examples
 ```julia
 # Complete from scratch
-result = _complete_components(nothing, nothing, nothing, registry)
+result = OptimalControl._complete_components(nothing, nothing, nothing, registry)
 @test result.discretizer isa CTDirect.AbstractDiscretizer
 @test result.modeler isa CTSolvers.AbstractNLPModeler
 @test result.solver isa CTSolvers.AbstractNLPSolver
 
 # Partial completion
 disc = CTDirect.Collocation()
-result = _complete_components(disc, nothing, nothing, registry)
+result = OptimalControl._complete_components(disc, nothing, nothing, registry)
 @test result.discretizer === disc
 @test result.modeler isa CTSolvers.AbstractNLPModeler
 @test result.solver isa CTSolvers.AbstractNLPSolver

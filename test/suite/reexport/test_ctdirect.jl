@@ -1,28 +1,29 @@
 module TestCtdirect
 
-using Test
-using OptimalControl
+import Test
+using OptimalControl # using is mandatory since we test exported symbols
+
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 const CurrentModule = TestCtdirect
 
 function test_ctdirect()
-    @testset "CTDirect reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
-        @testset "Types" begin
+    Test.@testset "CTDirect reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
+        Test.@testset "Types" begin
             for T in (
                 OptimalControl.AbstractDiscretizer,
                 OptimalControl.Collocation,
             )
-                @test isdefined(OptimalControl, nameof(T))
-                @test !isdefined(CurrentModule, nameof(T))
-                @test T isa DataType || T isa UnionAll
+                Test.@test isdefined(OptimalControl, nameof(T))
+                Test.@test !isdefined(CurrentModule, nameof(T))
+                Test.@test T isa DataType || T isa UnionAll
             end
         end
-        @testset "Functions" begin
-            @test isdefined(OptimalControl, :discretize)
-            @test isdefined(CurrentModule, :discretize)
-            @test discretize isa Function
+        Test.@testset "Functions" begin
+            Test.@test isdefined(OptimalControl, :discretize)
+            Test.@test isdefined(CurrentModule, :discretize)
+            Test.@test discretize isa Function
         end
     end
 end

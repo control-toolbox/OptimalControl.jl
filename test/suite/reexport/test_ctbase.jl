@@ -1,22 +1,23 @@
 module TestCtbase
 
-using Test
-using OptimalControl
+import Test
+using OptimalControl # using is mandatory since we test exported symbols
+
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 const CurrentModule = TestCtbase
 
 function test_ctbase()
-    @testset "CTBase reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
+    Test.@testset "CTBase reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
         
-        @testset "Generated Code Prefix" begin
-            @test isdefined(OptimalControl, :CTBase)
-            @test isdefined(CurrentModule, :CTBase)
-            @test CTBase isa Module
+        Test.@testset "Generated Code Prefix" begin
+            Test.@test isdefined(OptimalControl, :CTBase)
+            Test.@test isdefined(CurrentModule, :CTBase)
+            Test.@test CTBase isa Module
         end
 
-        @testset "Exceptions" begin
+        Test.@testset "Exceptions" begin
             for T in (
                 OptimalControl.CTException,
                 OptimalControl.IncorrectArgument,
@@ -26,9 +27,9 @@ function test_ctbase()
                 OptimalControl.AmbiguousDescription,
                 OptimalControl.ExtensionError,
             )
-                @test isdefined(OptimalControl, nameof(T)) # check if defined in OptimalControl
-                @test !isdefined(CurrentModule, nameof(T)) # check if exported
-                @test T isa DataType
+                Test.@test isdefined(OptimalControl, nameof(T)) # check if defined in OptimalControl
+                Test.@test !isdefined(CurrentModule, nameof(T)) # check if exported
+                Test.@test T isa DataType
             end
         end
 

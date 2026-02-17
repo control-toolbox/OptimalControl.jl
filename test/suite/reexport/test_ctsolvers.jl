@@ -1,48 +1,49 @@
 module TestCtsolvers
 
-using Test
-using OptimalControl
+import Test
+using OptimalControl # using is mandatory since we test exported symbols
+
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 const CurrentModule = TestCtsolvers
 
 function test_ctsolvers()
-    @testset "CTSolvers reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
-        @testset "DOCP Types" begin
+    Test.@testset "CTSolvers reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
+        Test.@testset "DOCP Types" begin
             for T in (
                 OptimalControl.DiscretizedModel,
             )
-                @test isdefined(OptimalControl, nameof(T))
-                @test !isdefined(CurrentModule, nameof(T))
-                @test T isa DataType || T isa UnionAll
+                Test.@test isdefined(OptimalControl, nameof(T))
+                Test.@test !isdefined(CurrentModule, nameof(T))
+                Test.@test T isa DataType || T isa UnionAll
             end
         end
-        @testset "DOCP Functions" begin
+        Test.@testset "DOCP Functions" begin
             for f in (
                 :ocp_model,
                 :nlp_model,
                 :ocp_solution,
             )
-                @testset "$f" begin
-                    @test isdefined(OptimalControl, f)
-                    @test isdefined(CurrentModule, f)
-                    @test getfield(OptimalControl, f) isa Function
+                Test.@testset "$f" begin
+                    Test.@test isdefined(OptimalControl, f)
+                    Test.@test isdefined(CurrentModule, f)
+                    Test.@test getfield(OptimalControl, f) isa Function
                 end
             end
         end
-        @testset "Modeler Types" begin
+        Test.@testset "Modeler Types" begin
             for T in (
                 OptimalControl.AbstractNLPModeler,
                 OptimalControl.ADNLP,
                 OptimalControl.Exa,
             )
-                @test isdefined(OptimalControl, nameof(T))
-                @test !isdefined(CurrentModule, nameof(T))
-                @test T isa DataType || T isa UnionAll
+                Test.@test isdefined(OptimalControl, nameof(T))
+                Test.@test !isdefined(CurrentModule, nameof(T))
+                Test.@test T isa DataType || T isa UnionAll
             end
         end
-        @testset "Solver Types" begin
+        Test.@testset "Solver Types" begin
             for T in (
                 OptimalControl.AbstractNLPSolver,
                 OptimalControl.Ipopt,
@@ -50,12 +51,12 @@ function test_ctsolvers()
                 OptimalControl.MadNCL,
                 OptimalControl.Knitro,
             )
-                @test isdefined(OptimalControl, nameof(T))
-                @test !isdefined(CurrentModule, nameof(T))
-                @test T isa DataType || T isa UnionAll
+                Test.@test isdefined(OptimalControl, nameof(T))
+                Test.@test !isdefined(CurrentModule, nameof(T))
+                Test.@test T isa DataType || T isa UnionAll
             end
         end
-        @testset "Strategy Types" begin
+        Test.@testset "Strategy Types" begin
             for T in (
                 OptimalControl.AbstractStrategy,
                 OptimalControl.StrategyRegistry,
@@ -64,24 +65,24 @@ function test_ctsolvers()
                 OptimalControl.OptionDefinition,
                 OptimalControl.RoutedOption,
             )
-                @test isdefined(OptimalControl, nameof(T))
-                @test !isdefined(CurrentModule, nameof(T))
-                @test T isa DataType || T isa UnionAll
+                Test.@test isdefined(OptimalControl, nameof(T))
+                Test.@test !isdefined(CurrentModule, nameof(T))
+                Test.@test T isa DataType || T isa UnionAll
             end
         end
-        @testset "Strategy Metadata Functions" begin
+        Test.@testset "Strategy Metadata Functions" begin
             for f in (
                 :id,
                 :metadata,
             )
-                @testset "$f" begin
-                    @test isdefined(OptimalControl, f)
-                    @test isdefined(CurrentModule, f)
-                    @test getfield(OptimalControl, f) isa Function
+                Test.@testset "$f" begin
+                    Test.@test isdefined(OptimalControl, f)
+                    Test.@test isdefined(CurrentModule, f)
+                    Test.@test getfield(OptimalControl, f) isa Function
                 end
             end
         end
-        @testset "Strategy Introspection Functions" begin
+        Test.@testset "Strategy Introspection Functions" begin
             for f in (
                 :option_names,
                 :option_type,
@@ -95,21 +96,21 @@ function test_ctsolvers()
                 :is_default,
                 :is_computed,
             )
-                @testset "$f" begin
-                    @test isdefined(OptimalControl, f)
-                    @test isdefined(CurrentModule, f)
-                    @test getfield(OptimalControl, f) isa Function
+                Test.@testset "$f" begin
+                    Test.@test isdefined(OptimalControl, f)
+                    Test.@test isdefined(CurrentModule, f)
+                    Test.@test getfield(OptimalControl, f) isa Function
                 end
             end
         end
-        @testset "Strategy Utility Functions" begin
+        Test.@testset "Strategy Utility Functions" begin
             for f in (
                 :route_to,
             )
-                @testset "$f" begin
-                    @test isdefined(OptimalControl, f)
-                    @test isdefined(CurrentModule, f)
-                    @test getfield(OptimalControl, f) isa Function
+                Test.@testset "$f" begin
+                    Test.@test isdefined(OptimalControl, f)
+                    Test.@test isdefined(CurrentModule, f)
+                    Test.@test getfield(OptimalControl, f) isa Function
                 end
             end
         end

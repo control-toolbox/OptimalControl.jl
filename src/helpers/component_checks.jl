@@ -19,13 +19,13 @@ all three components (discretizer, modeler, solver) are concrete instances (not 
 julia> disc = CTDirect.Collocation()
 julia> mod = CTSolvers.ADNLP()
 julia> sol = CTSolvers.Ipopt()
-julia> _has_complete_components(disc, mod, sol)
+julia> OptimalControl._has_complete_components(disc, mod, sol)
 true
 
-julia> _has_complete_components(nothing, mod, sol)
+julia> OptimalControl._has_complete_components(nothing, mod, sol)
 false
 
-julia> _has_complete_components(disc, nothing, sol)
+julia> OptimalControl._has_complete_components(disc, nothing, sol)
 false
 ```
 

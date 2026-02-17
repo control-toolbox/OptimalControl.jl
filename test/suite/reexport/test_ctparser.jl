@@ -1,19 +1,20 @@
 module TestCtparser
 
-using Test
-using OptimalControl
+import Test
+using OptimalControl # using is mandatory since we test exported symbols
+
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 const CurrentModule = TestCtparser
 
 function test_ctparser()
-    @testset "CTParser reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
-        @testset "Macros" begin
-            @test isdefined(OptimalControl, Symbol("@def"))
-            @test isdefined(CurrentModule, Symbol("@def"))
-            @test isdefined(OptimalControl, Symbol("@init"))
-            @test isdefined(CurrentModule, Symbol("@init"))
+    Test.@testset "CTParser reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
+        Test.@testset "Macros" begin
+            Test.@test isdefined(OptimalControl, Symbol("@def"))
+            Test.@test isdefined(CurrentModule, Symbol("@def"))
+            Test.@test isdefined(OptimalControl, Symbol("@init"))
+            Test.@test isdefined(CurrentModule, Symbol("@init"))
         end
     end
 end

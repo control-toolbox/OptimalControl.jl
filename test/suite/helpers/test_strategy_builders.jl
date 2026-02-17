@@ -1,9 +1,10 @@
 module TestStrategyBuilders
 
-using Test
+import Test
 import OptimalControl
 import CTDirect
 import CTSolvers
+
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
@@ -12,129 +13,129 @@ const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING :
 # ====================================================================
 
 struct MockDiscretizer <: CTDirect.AbstractDiscretizer
-    options::CTSolvers.Strategies.StrategyOptions
+    options::CTSolvers.StrategyOptions
 end
 
 struct MockModeler <: CTSolvers.AbstractNLPModeler
-    options::CTSolvers.Strategies.StrategyOptions
+    options::CTSolvers.StrategyOptions
 end
 
 struct MockSolver <: CTSolvers.AbstractNLPSolver
-    options::CTSolvers.Strategies.StrategyOptions
+    options::CTSolvers.StrategyOptions
 end
 
-CTSolvers.Strategies.id(::Type{MockDiscretizer}) = :mock_disc
-CTSolvers.Strategies.id(::Type{MockModeler}) = :mock_mod
-CTSolvers.Strategies.id(::Type{MockSolver}) = :mock_sol
+CTSolvers.id(::Type{MockDiscretizer}) = :mock_disc
+CTSolvers.id(::Type{MockModeler}) = :mock_mod
+CTSolvers.id(::Type{MockSolver}) = :mock_sol
 
 function test_strategy_builders()
-    @testset "Strategy Builders Tests" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "Strategy Builders Tests" verbose=VERBOSE showtiming=SHOWTIMING begin
 
         # Create mock instances
-        disc = MockDiscretizer(CTSolvers.Strategies.StrategyOptions())
-        mod = MockModeler(CTSolvers.Strategies.StrategyOptions())
-        sol = MockSolver(CTSolvers.Strategies.StrategyOptions())
+        disc = MockDiscretizer(CTSolvers.StrategyOptions())
+        mod = MockModeler(CTSolvers.StrategyOptions())
+        sol = MockSolver(CTSolvers.StrategyOptions())
 
         # ================================================================
         # UNIT TESTS - _build_partial_description
         # ================================================================
 
-        @testset "All Components Provided" begin
+        Test.@testset "All Components Provided" begin
             result = OptimalControl._build_partial_description(disc, mod, sol)
-            @test result == (:mock_disc, :mock_mod, :mock_sol)
-            @test length(result) == 3
+            Test.@test result == (:mock_disc, :mock_mod, :mock_sol)
+            Test.@test length(result) == 3
         end
 
-        @testset "Only Discretizer" begin
+        Test.@testset "Only Discretizer" begin
             result = OptimalControl._build_partial_description(disc, nothing, nothing)
-            @test result == (:mock_disc,)
-            @test length(result) == 1
+            Test.@test result == (:mock_disc,)
+            Test.@test length(result) == 1
         end
 
-        @testset "Only Modeler" begin
+        Test.@testset "Only Modeler" begin
             result = OptimalControl._build_partial_description(nothing, mod, nothing)
-            @test result == (:mock_mod,)
-            @test length(result) == 1
+            Test.@test result == (:mock_mod,)
+            Test.@test length(result) == 1
         end
 
-        @testset "Only Solver" begin
+        Test.@testset "Only Solver" begin
             result = OptimalControl._build_partial_description(nothing, nothing, sol)
-            @test result == (:mock_sol,)
-            @test length(result) == 1
+            Test.@test result == (:mock_sol,)
+            Test.@test length(result) == 1
         end
 
-        @testset "Discretizer and Modeler" begin
+        Test.@testset "Discretizer and Modeler" begin
             result = OptimalControl._build_partial_description(disc, mod, nothing)
-            @test result == (:mock_disc, :mock_mod)
-            @test length(result) == 2
+            Test.@test result == (:mock_disc, :mock_mod)
+            Test.@test length(result) == 2
         end
 
-        @testset "Modeler and Solver" begin
+        Test.@testset "Modeler and Solver" begin
             result = OptimalControl._build_partial_description(nothing, mod, sol)
-            @test result == (:mock_mod, :mock_sol)
-            @test length(result) == 2
+            Test.@test result == (:mock_mod, :mock_sol)
+            Test.@test length(result) == 2
         end
 
-        @testset "Discretizer and Solver" begin
+        Test.@testset "Discretizer and Solver" begin
             result = OptimalControl._build_partial_description(disc, nothing, sol)
-            @test result == (:mock_disc, :mock_sol)
-            @test length(result) == 2
+            Test.@test result == (:mock_disc, :mock_sol)
+            Test.@test length(result) == 2
         end
 
-        @testset "All Nothing" begin
+        Test.@testset "All Nothing" begin
             result = OptimalControl._build_partial_description(nothing, nothing, nothing)
-            @test result == ()
-            @test length(result) == 0
+            Test.@test result == ()
+            Test.@test length(result) == 0
         end
 
-        @testset "Determinism" begin
+        Test.@testset "Determinism" begin
             # Same inputs should always give same output
             result1 = OptimalControl._build_partial_description(disc, mod, sol)
             result2 = OptimalControl._build_partial_description(disc, mod, sol)
-            @test result1 === result2
+            Test.@test result1 === result2
         end
 
-        @testset "Type Stability" begin
-            @test_nowarn @inferred OptimalControl._build_partial_description(disc, mod, sol)
-            @test_nowarn @inferred OptimalControl._build_partial_description(nothing, nothing, nothing)
+        Test.@testset "Type Stability" begin
+            Test.@test_nowarn Test.@inferred OptimalControl._build_partial_description(disc, mod, sol)
+            Test.@test_nowarn Test.@inferred OptimalControl._build_partial_description(nothing, nothing, nothing)
         end
 
-        @testset "No Allocations" begin
+        Test.@testset "No Allocations" begin
             # Pure function should not allocate
             allocs = @allocated OptimalControl._build_partial_description(disc, mod, sol)
-            @test allocs == 0
+            Test.@test allocs == 0
         end
 
         # ================================================================
         # UNIT TESTS - _complete_description
         # ================================================================
 
-        @testset "Complete Description - Empty" begin
+        Test.@testset "Complete Description - Empty" begin
             result = OptimalControl._complete_description(())
-            @test result isa Tuple{Symbol, Symbol, Symbol}
-            @test length(result) == 3
-            @test result in OptimalControl.methods()
+            Test.@test result isa Tuple{Symbol, Symbol, Symbol}
+            Test.@test length(result) == 3
+            Test.@test result in OptimalControl.methods()
         end
 
-        @testset "Complete Description - Partial" begin
+        Test.@testset "Complete Description - Partial" begin
             result = OptimalControl._complete_description((:collocation,))
-            @test result == (:collocation, :adnlp, :ipopt)
-            @test result in OptimalControl.methods()
+            Test.@test result == (:collocation, :adnlp, :ipopt)
+            Test.@test result in OptimalControl.methods()
         end
 
-        @testset "Complete Description - Two Symbols" begin
+        Test.@testset "Complete Description - Two Symbols" begin
             result = OptimalControl._complete_description((:collocation, :exa))
-            @test result == (:collocation, :exa, :ipopt)
-            @test result in OptimalControl.methods()
+            Test.@test result == (:collocation, :exa, :ipopt)
+            Test.@test result in OptimalControl.methods()
         end
 
-        @testset "Complete Description - Already Complete" begin
+        Test.@testset "Complete Description - Already Complete" begin
             result = OptimalControl._complete_description((:collocation, :adnlp, :ipopt))
-            @test result == (:collocation, :adnlp, :ipopt)
-            @test result in OptimalControl.methods()
+            Test.@test result == (:collocation, :adnlp, :ipopt)
+            Test.@test result in OptimalControl.methods()
         end
 
-        @testset "Complete Description - Different Combinations" begin
+        Test.@testset "Complete Description - Different Combinations" begin
             # Test various partial combinations
             combos = [
                 (:collocation,), (:collocation, :adnlp), (:collocation, :exa),
@@ -142,19 +143,19 @@ function test_strategy_builders()
             ]
             for combo in combos
                 result = OptimalControl._complete_description(combo)
-                @test result isa Tuple{Symbol, Symbol, Symbol}
-                @test result in OptimalControl.methods()
+                Test.@test result isa Tuple{Symbol, Symbol, Symbol}
+                Test.@test result in OptimalControl.methods()
                 # Check that the provided symbols are preserved
                 for (i, sym) in enumerate(combo)
-                    @test result[i] == sym
+                    Test.@test result[i] == sym
                 end
             end
         end
 
-        @testset "Complete Description - Type Stability" begin
-            @test_nowarn @inferred OptimalControl._complete_description(())
-            @test_nowarn @inferred OptimalControl._complete_description((:collocation,))
-            @test_nowarn @inferred OptimalControl._complete_description((:collocation, :adnlp, :ipopt))
+        Test.@testset "Complete Description - Type Stability" begin
+            Test.@test_nowarn Test.@inferred OptimalControl._complete_description(())
+            Test.@test_nowarn Test.@inferred OptimalControl._complete_description((:collocation,))
+            Test.@test_nowarn Test.@inferred OptimalControl._complete_description((:collocation, :adnlp, :ipopt))
         end
 
         # ================================================================
@@ -164,35 +165,35 @@ function test_strategy_builders()
         # Create registry for _build_or_use_strategy tests
         registry = OptimalControl.get_strategy_registry()
 
-        @testset "Build or Use Strategy - Provided Path" begin
+        Test.@testset "Build or Use Strategy - Provided Path" begin
             # Test discretizer
-            disc = MockDiscretizer(CTSolvers.Strategies.StrategyOptions())
+            disc = MockDiscretizer(CTSolvers.StrategyOptions())
             result = OptimalControl._build_or_use_strategy(
                 (:mock_disc, :mock_mod, :mock_sol), disc, CTDirect.AbstractDiscretizer, registry
             )
-            @test result === disc
-            @test result isa MockDiscretizer
+            Test.@test result === disc
+            Test.@test result isa MockDiscretizer
             
             # Test modeler
-            mod = MockModeler(CTSolvers.Strategies.StrategyOptions())
+            mod = MockModeler(CTSolvers.StrategyOptions())
             result = OptimalControl._build_or_use_strategy(
                 (:mock_disc, :mock_mod, :mock_sol), mod, CTSolvers.AbstractNLPModeler, registry
             )
-            @test result === mod
-            @test result isa MockModeler
+            Test.@test result === mod
+            Test.@test result isa MockModeler
             
             # Test solver
-            sol = MockSolver(CTSolvers.Strategies.StrategyOptions())
+            sol = MockSolver(CTSolvers.StrategyOptions())
             result = OptimalControl._build_or_use_strategy(
                 (:mock_disc, :mock_mod, :mock_sol), sol, CTSolvers.AbstractNLPSolver, registry
             )
-            @test result === sol
-            @test result isa MockSolver
+            Test.@test result === sol
+            Test.@test result isa MockSolver
         end
 
-        @testset "Build or Use Strategy - Type Stability" begin
-            disc = MockDiscretizer(CTSolvers.Strategies.StrategyOptions())
-            @test_nowarn @inferred OptimalControl._build_or_use_strategy(
+        Test.@testset "Build or Use Strategy - Type Stability" begin
+            disc = MockDiscretizer(CTSolvers.StrategyOptions())
+            Test.@test_nowarn Test.@inferred OptimalControl._build_or_use_strategy(
                 (:mock_disc, :mock_mod, :mock_sol), disc, CTDirect.AbstractDiscretizer, registry
             )
         end

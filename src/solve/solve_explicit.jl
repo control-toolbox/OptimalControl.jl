@@ -27,8 +27,8 @@ This function handles two cases:
 disc = CTDirect.Collocation()
 mod = CTSolvers.ADNLP()
 sol = CTSolvers.Ipopt()
-registry = get_strategy_registry()
-solution = solve_explicit(ocp, init;
+registry = OptimalControl.get_strategy_registry()
+solution = OptimalControl.solve_explicit(ocp, init;
     discretizer=disc, modeler=mod, solver=sol,
     display=false, registry=registry)
 ```

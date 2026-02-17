@@ -1,18 +1,19 @@
 module TestExamodels
 
-using Test
-using OptimalControl
+import Test
+using OptimalControl # using is mandatory since we test exported symbols
+
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 const CurrentModule = TestExamodels
 
 function test_examodels()
-    @testset "ExaModels reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
-        @testset "Generated Code Prefix" begin
-            @test isdefined(OptimalControl, :ExaModels)
-            @test isdefined(CurrentModule, :ExaModels)
-            @test ExaModels isa Module
+    Test.@testset "ExaModels reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
+        Test.@testset "Generated Code Prefix" begin
+            Test.@test isdefined(OptimalControl, :ExaModels)
+            Test.@test isdefined(CurrentModule, :ExaModels)
+            Test.@test ExaModels isa Module
         end
     end
 end

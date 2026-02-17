@@ -1,6 +1,6 @@
 module TestRegistry
 
-using Test
+import Test
 import OptimalControl
 import CTSolvers
 import CTDirect
@@ -9,48 +9,48 @@ const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 function test_registry()
-    @testset "Strategy Registry Tests" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "Strategy Registry Tests" verbose=VERBOSE showtiming=SHOWTIMING begin
 
         # ====================================================================
         # UNIT TESTS
         # ====================================================================
 
-        @testset "Registry Creation" begin
+        Test.@testset "Registry Creation" begin
             registry = OptimalControl.get_strategy_registry()
-            @test registry isa CTSolvers.StrategyRegistry
+            Test.@test registry isa CTSolvers.StrategyRegistry
         end
 
-        @testset "Discretizer Family" begin
+        Test.@testset "Discretizer Family" begin
             registry = OptimalControl.get_strategy_registry()
             ids = CTSolvers.strategy_ids(CTDirect.AbstractDiscretizer, registry)
-            @test :collocation in ids
-            @test length(ids) >= 1
+            Test.@test :collocation in ids
+            Test.@test length(ids) >= 1
         end
 
-        @testset "Modeler Family" begin
+        Test.@testset "Modeler Family" begin
             registry = OptimalControl.get_strategy_registry()
             ids = CTSolvers.strategy_ids(CTSolvers.AbstractNLPModeler, registry)
-            @test :adnlp in ids
-            @test :exa in ids
-            @test length(ids) == 2
+            Test.@test :adnlp in ids
+            Test.@test :exa in ids
+            Test.@test length(ids) == 2
         end
 
-        @testset "Solver Family" begin
+        Test.@testset "Solver Family" begin
             registry = OptimalControl.get_strategy_registry()
             ids = CTSolvers.strategy_ids(CTSolvers.AbstractNLPSolver, registry)
-            @test :ipopt in ids
-            @test :madnlp in ids
-            @test :madncl in ids
-            @test :knitro in ids
-            @test length(ids) == 4
+            Test.@test :ipopt in ids
+            Test.@test :madnlp in ids
+            Test.@test :madncl in ids
+            Test.@test :knitro in ids
+            Test.@test length(ids) == 4
         end
 
-        @testset "Determinism" begin
+        Test.@testset "Determinism" begin
             r1 = OptimalControl.get_strategy_registry()
             r2 = OptimalControl.get_strategy_registry()
             ids1 = CTSolvers.strategy_ids(CTSolvers.AbstractNLPSolver, r1)
             ids2 = CTSolvers.strategy_ids(CTSolvers.AbstractNLPSolver, r2)
-            @test ids1 == ids2
+            Test.@test ids1 == ids2
         end
     end
 end

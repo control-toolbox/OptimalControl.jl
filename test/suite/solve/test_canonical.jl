@@ -1,6 +1,6 @@
 module TestCanonical
 
-using Test
+import Test
 import OptimalControl
 
 # Import du module d'affichage (DIP - dépend de l'abstraction)
@@ -28,7 +28,7 @@ const OBJ_RTOL = 1e-2
 is_cuda_on() = CUDA.functional()
 
 function test_canonical()
-    @testset "Canonical solve" verbose = VERBOSE showtiming = SHOWTIMING begin
+    Test.@testset "Canonical solve" verbose = VERBOSE showtiming = SHOWTIMING begin
 
         # Initialize statistics
         total_tests = 0
@@ -67,7 +67,7 @@ function test_canonical()
         # Test all combinations
         # ----------------------------------------------------------------
         for (pname, pb) in problems
-            @testset "$pname" begin
+            Test.@testset "$pname" begin
                 for (dname, disc) in discretizers
                     for (mname, mod) in modelers
                         for (sname, sol) in solvers
@@ -116,11 +116,11 @@ function test_canonical()
                             end
                             
                             # Run the actual test assertions
-                            @testset "$dname / $mname / $sname" begin
-                                @test success
+                            Test.@testset "$dname / $mname / $sname" begin
+                                Test.@test success
                                 if success
-                                    @test solve_result isa OptimalControl.AbstractSolution
-                                    @test OptimalControl.objective(solve_result) ≈ pb.obj rtol = OBJ_RTOL
+                                    Test.@test solve_result isa OptimalControl.AbstractSolution
+                                    Test.@test OptimalControl.objective(solve_result) ≈ pb.obj rtol = OBJ_RTOL
                                 end
                             end
                         end
@@ -137,7 +137,7 @@ function test_canonical()
             gpu_solver   = ("MadNLP/GPU",    OptimalControl.MadNLP(print_level=MadNLP.ERROR, linear_solver=MadNLPGPU.CUDSSSolver))
 
             for (pname, pb) in problems
-                @testset "GPU / $pname" begin
+                Test.@testset "GPU / $pname" begin
                     for (dname, disc) in discretizers
                         # Extract short names for display
                         d_short = String(split(dname, "/")[2])  # Get "midpoint" or "trapeze"
@@ -184,11 +184,11 @@ function test_canonical()
                         end
                         
                         # Run the actual test assertions
-                        @testset "$dname / $(gpu_modeler[1]) / $(gpu_solver[1])" begin
-                            @test success
+                        Test.@testset "$dname / $(gpu_modeler[1]) / $(gpu_solver[1])" begin
+                            Test.@test success
                             if success
-                                @test solve_result isa OptimalControl.AbstractSolution
-                                @test OptimalControl.objective(solve_result) ≈ pb.obj rtol = OBJ_RTOL
+                                Test.@test solve_result isa OptimalControl.AbstractSolution
+                                Test.@test OptimalControl.objective(solve_result) ≈ pb.obj rtol = OBJ_RTOL
                             end
                         end
                     end

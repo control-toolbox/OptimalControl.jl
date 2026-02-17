@@ -1,49 +1,50 @@
 module TestCtflows
 
-using Test
-using OptimalControl
+import Test
+using OptimalControl # using is mandatory since we test exported symbols
+
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 const CurrentModule = TestCtflows
 
 function test_ctflows()
-    @testset "CTFlows reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
-        @testset "Types" begin
+    Test.@testset "CTFlows reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
+        Test.@testset "Types" begin
             for T in (
                 OptimalControl.Hamiltonian,
                 OptimalControl.HamiltonianLift,
                 OptimalControl.HamiltonianVectorField,
             )
-                @test isdefined(OptimalControl, nameof(T))
-                @test !isdefined(CurrentModule, nameof(T))
-                @test T isa DataType || T isa UnionAll
+                Test.@test isdefined(OptimalControl, nameof(T))
+                Test.@test !isdefined(CurrentModule, nameof(T))
+                Test.@test T isa DataType || T isa UnionAll
             end
         end
-        @testset "Functions" begin
+        Test.@testset "Functions" begin
             for f in (
                 :Lift,
                 :Flow,
             )
-                @test isdefined(OptimalControl, f)
-                @test isdefined(CurrentModule, f)
-                @test getfield(OptimalControl, f) isa Function
+                Test.@test isdefined(OptimalControl, f)
+                Test.@test isdefined(CurrentModule, f)
+                Test.@test getfield(OptimalControl, f) isa Function
             end
         end
-        @testset "Operators" begin
+        Test.@testset "Operators" begin
             for op in (
                 :⋅,
                 :Lie,
                 :Poisson,
                 :*,
             )
-                @test isdefined(OptimalControl, op)
-                @test isdefined(CurrentModule, op)
+                Test.@test isdefined(OptimalControl, op)
+                Test.@test isdefined(CurrentModule, op)
             end
         end
-        @testset "Macros" begin
-            @test isdefined(OptimalControl, Symbol("@Lie"))
-            @test isdefined(CurrentModule, Symbol("@Lie"))
+        Test.@testset "Macros" begin
+            Test.@test isdefined(OptimalControl, Symbol("@Lie"))
+            Test.@test isdefined(CurrentModule, Symbol("@Lie"))
         end
     end
 end

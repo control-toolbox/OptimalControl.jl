@@ -1,9 +1,10 @@
 module TestComponentChecks
 
-using Test
+import Test
 import OptimalControl
 import CTDirect
 import CTSolvers
+
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
@@ -12,69 +13,69 @@ const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING :
 # ====================================================================
 
 struct MockDiscretizer <: CTDirect.AbstractDiscretizer
-    options::CTSolvers.Strategies.StrategyOptions
+    options::CTSolvers.StrategyOptions
 end
 
 struct MockModeler <: CTSolvers.AbstractNLPModeler
-    options::CTSolvers.Strategies.StrategyOptions
+    options::CTSolvers.StrategyOptions
 end
 
 struct MockSolver <: CTSolvers.AbstractNLPSolver
-    options::CTSolvers.Strategies.StrategyOptions
+    options::CTSolvers.StrategyOptions
 end
 
 function test_component_checks()
-    @testset "Component Checks Tests" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "Component Checks Tests" verbose=VERBOSE showtiming=SHOWTIMING begin
 
         # Create mock instances
-        disc = MockDiscretizer(CTSolvers.Strategies.StrategyOptions())
-        mod = MockModeler(CTSolvers.Strategies.StrategyOptions())
-        sol = MockSolver(CTSolvers.Strategies.StrategyOptions())
+        disc = MockDiscretizer(CTSolvers.StrategyOptions())
+        mod = MockModeler(CTSolvers.StrategyOptions())
+        sol = MockSolver(CTSolvers.StrategyOptions())
 
         # ================================================================
         # UNIT TESTS - _has_complete_components
         # ================================================================
 
-        @testset "All Components Provided" begin
-            @test OptimalControl._has_complete_components(disc, mod, sol) == true
+        Test.@testset "All Components Provided" begin
+            Test.@test OptimalControl._has_complete_components(disc, mod, sol) == true
         end
 
-        @testset "Missing Discretizer" begin
-            @test OptimalControl._has_complete_components(nothing, mod, sol) == false
+        Test.@testset "Missing Discretizer" begin
+            Test.@test OptimalControl._has_complete_components(nothing, mod, sol) == false
         end
 
-        @testset "Missing Modeler" begin
-            @test OptimalControl._has_complete_components(disc, nothing, sol) == false
+        Test.@testset "Missing Modeler" begin
+            Test.@test OptimalControl._has_complete_components(disc, nothing, sol) == false
         end
 
-        @testset "Missing Solver" begin
-            @test OptimalControl._has_complete_components(disc, mod, nothing) == false
+        Test.@testset "Missing Solver" begin
+            Test.@test OptimalControl._has_complete_components(disc, mod, nothing) == false
         end
 
-        @testset "All Missing" begin
-            @test OptimalControl._has_complete_components(nothing, nothing, nothing) == false
+        Test.@testset "All Missing" begin
+            Test.@test OptimalControl._has_complete_components(nothing, nothing, nothing) == false
         end
 
-        @testset "Two Missing" begin
-            @test OptimalControl._has_complete_components(disc, nothing, nothing) == false
-            @test OptimalControl._has_complete_components(nothing, mod, nothing) == false
-            @test OptimalControl._has_complete_components(nothing, nothing, sol) == false
+        Test.@testset "Two Missing" begin
+            Test.@test OptimalControl._has_complete_components(disc, nothing, nothing) == false
+            Test.@test OptimalControl._has_complete_components(nothing, mod, nothing) == false
+            Test.@test OptimalControl._has_complete_components(nothing, nothing, sol) == false
         end
 
-        @testset "Determinism" begin
+        Test.@testset "Determinism" begin
             result1 = OptimalControl._has_complete_components(disc, mod, sol)
             result2 = OptimalControl._has_complete_components(disc, mod, sol)
-            @test result1 === result2
+            Test.@test result1 === result2
         end
 
-        @testset "Type Stability" begin
-            @test_nowarn @inferred OptimalControl._has_complete_components(disc, mod, sol)
-            @test_nowarn @inferred OptimalControl._has_complete_components(nothing, mod, sol)
+        Test.@testset "Type Stability" begin
+            Test.@test_nowarn Test.@inferred OptimalControl._has_complete_components(disc, mod, sol)
+            Test.@test_nowarn Test.@inferred OptimalControl._has_complete_components(nothing, mod, sol)
         end
 
-        @testset "No Allocations" begin
+        Test.@testset "No Allocations" begin
             allocs = @allocated OptimalControl._has_complete_components(disc, mod, sol)
-            @test allocs == 0
+            Test.@test allocs == 0
         end
     end
 end
