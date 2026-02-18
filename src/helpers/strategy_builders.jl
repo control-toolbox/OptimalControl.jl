@@ -39,53 +39,188 @@ function _build_partial_description(
     modeler::Union{CTSolvers.AbstractNLPModeler, Nothing},
     solver::Union{CTSolvers.AbstractNLPSolver, Nothing}
 )::Tuple{Vararg{Symbol}}
-    # Count non-nothing components
-    count = 0
-    if !isnothing(discretizer)
-        count += 1
-    end
-    if !isnothing(modeler)
-        count += 1
-    end
-    if !isnothing(solver)
-        count += 1
-    end
-    
-    # Build tuple directly to avoid allocations
-    if count == 0
-        return ()
-    elseif count == 1
-        if !isnothing(discretizer)
-            return (CTSolvers.Strategies.id(typeof(discretizer)),)
-        elseif !isnothing(modeler)
-            return (CTSolvers.Strategies.id(typeof(modeler)),)
-        else
-            return (CTSolvers.Strategies.id(typeof(solver)),)
-        end
-    elseif count == 2
-        if !isnothing(discretizer) && !isnothing(modeler)
-            return (
-                CTSolvers.Strategies.id(typeof(discretizer)),
-                CTSolvers.Strategies.id(typeof(modeler))
-            )
-        elseif !isnothing(discretizer) && !isnothing(solver)
-            return (
-                CTSolvers.Strategies.id(typeof(discretizer)),
-                CTSolvers.Strategies.id(typeof(solver))
-            )
-        else
-            return (
-                CTSolvers.Strategies.id(typeof(modeler)),
-                CTSolvers.Strategies.id(typeof(solver))
-            )
-        end
-    else  # count == 3
-        return (
-            CTSolvers.Strategies.id(typeof(discretizer)),
-            CTSolvers.Strategies.id(typeof(modeler)),
-            CTSolvers.Strategies.id(typeof(solver))
-        )
-    end
+    return _build_partial_tuple(discretizer, modeler, solver)
+end
+
+# Recursive tuple building with multiple dispatch
+
+"""
+$(TYPEDSIGNATURES)
+
+Base case for recursive tuple building.
+
+Returns an empty tuple when no components are provided.
+This function serves as the terminal case for the recursive
+tuple building algorithm.
+
+# Returns
+- `()`: Empty tuple
+
+# Notes
+- This is the base case for the recursive tuple building algorithm
+- Used internally by `_build_partial_description`
+- Allocation-free implementation
+"""
+_build_partial_tuple() = ()
+
+"""
+$(TYPEDSIGNATURES)
+
+Build partial tuple starting with a discretizer component.
+
+This method handles the case where a discretizer is provided,
+extracts its symbolic ID, and recursively processes the remaining
+modeler and solver components.
+
+# Arguments
+- `discretizer`: Concrete discretization strategy
+- `modeler`: NLP modeling strategy or `nothing`
+- `solver`: NLP solver strategy or `nothing`
+
+# Returns
+- `Tuple{Vararg{Symbol}}`: Tuple containing discretizer symbol followed by remaining symbols
+
+# Notes
+- Uses `CTSolvers.Strategies.id` to extract symbolic ID
+- Recursive call to process remaining components
+- Allocation-free implementation through tuple concatenation
+"""
+function _build_partial_tuple(
+    discretizer::CTDirect.AbstractDiscretizer,
+    modeler::Union{CTSolvers.AbstractNLPModeler, Nothing},
+    solver::Union{CTSolvers.AbstractNLPSolver, Nothing}
+)
+    disc_symbol = (CTSolvers.Strategies.id(typeof(discretizer)),)
+    rest_symbols = _build_partial_tuple(modeler, solver)
+    return (disc_symbol..., rest_symbols...)
+end
+
+"""
+$(TYPEDSIGNATURES)
+
+Skip discretizer and continue with remaining components.
+
+This method handles the case where no discretizer is provided,
+skipping directly to processing the modeler and solver components.
+
+# Arguments
+- `::Nothing`: Indicates no discretizer provided
+- `modeler`: NLP modeling strategy or `nothing`
+- `solver`: NLP solver strategy or `nothing`
+
+# Returns
+- `Tuple{Vararg{Symbol}}`: Tuple containing symbols from modeler and/or solver
+
+# Notes
+- Delegates to recursive processing of remaining components
+- Maintains order: modeler then solver
+"""
+function _build_partial_tuple(
+    ::Nothing,
+    modeler::Union{CTSolvers.AbstractNLPModeler, Nothing},
+    solver::Union{CTSolvers.AbstractNLPSolver, Nothing}
+)
+    return _build_partial_tuple(modeler, solver)
+end
+
+"""
+$(TYPEDSIGNATURES)
+
+Build partial tuple starting with a modeler component.
+
+This method handles the case where a modeler is provided,
+extracts its symbolic ID, and recursively processes the solver.
+
+# Arguments
+- `modeler`: Concrete NLP modeling strategy
+- `solver`: NLP solver strategy or `nothing`
+
+# Returns
+- `Tuple{Vararg{Symbol}}`: Tuple containing modeler symbol followed by solver symbol (if any)
+
+# Notes
+- Uses `CTSolvers.Strategies.id` to extract symbolic ID
+- Recursive call to process solver component
+- Allocation-free implementation
+"""
+function _build_partial_tuple(
+    modeler::CTSolvers.AbstractNLPModeler,
+    solver::Union{CTSolvers.AbstractNLPSolver, Nothing}
+)
+    mod_symbol = (CTSolvers.Strategies.id(typeof(modeler)),)
+    rest_symbols = _build_partial_tuple(solver)
+    return (mod_symbol..., rest_symbols...)
+end
+
+"""
+$(TYPEDSIGNATURES)
+
+Skip modeler and continue with solver component.
+
+This method handles the case where no modeler is provided,
+skipping directly to processing the solver component.
+
+# Arguments
+- `::Nothing`: Indicates no modeler provided
+- `solver`: NLP solver strategy or `nothing`
+
+# Returns
+- `Tuple{Vararg{Symbol}}`: Tuple containing solver symbol (if any)
+
+# Notes
+- Delegates to solver processing
+- Terminal case in the recursion chain
+"""
+function _build_partial_tuple(
+    ::Nothing,
+    solver::Union{CTSolvers.AbstractNLPSolver, Nothing}
+)
+    return _build_partial_tuple(solver)
+end
+
+"""
+$(TYPEDSIGNATURES)
+
+Terminal case: extract solver symbol.
+
+This method handles the case where a solver is provided,
+extracts its symbolic ID, and returns it as a single-element tuple.
+
+# Arguments
+- `solver`: Concrete NLP solver strategy
+
+# Returns
+- `Tuple{Symbol}`: Single-element tuple containing solver symbol
+
+# Notes
+- Uses `CTSolvers.Strategies.id` to extract symbolic ID
+- Terminal case in the recursion
+- Allocation-free implementation
+"""
+function _build_partial_tuple(solver::CTSolvers.AbstractNLPSolver)
+    return (CTSolvers.Strategies.id(typeof(solver)),)
+end
+
+"""
+$(TYPEDSIGNATURES)
+
+Terminal case: no solver provided.
+
+This method handles the case where no solver is provided,
+returning an empty tuple to complete the recursion.
+
+# Arguments
+- `::Nothing`: Indicates no solver provided
+
+# Returns
+- `()`: Empty tuple
+
+# Notes
+- Terminal case in the recursion
+- Represents the case where all components are `nothing`
+"""
+function _build_partial_tuple(::Nothing)
+    return ()
 end
 
 """
@@ -129,11 +264,10 @@ end
 """
 $(TYPEDSIGNATURES)
 
-Generic strategy builder that either returns a provided strategy or builds one from a method description.
+Generic strategy builder that returns a provided strategy or builds one from a method description.
 
-This function works for any strategy family (discretizer, modeler, or solver).
-If a strategy is provided, it is returned directly. If `nothing` is provided,
-a strategy is built from the complete description using the registry.
+This function works for any strategy family (discretizer, modeler, or solver) using
+multiple dispatch to handle the two cases: provided strategy vs. building from registry.
 
 # Arguments
 - `complete_description`: Complete method triplet (discretizer, modeler, solver)
@@ -156,21 +290,56 @@ result = _build_or_use_strategy((:collocation, :adnlp, :ipopt), nothing, CTDirec
 @test result isa CTDirect.AbstractDiscretizer
 ```
 
-# See Also
-- [`CTSolvers.Strategies.build_strategy_from_method`](@ref): Builds strategy from method description
-- [`get_strategy_registry`](@ref): Creates the strategy registry
-- [`_complete_description`](@ref): Completes partial method descriptions
+# Notes
+- Fast path: when strategy is provided, returns it directly without registry lookup
+- Build path: when strategy is `nothing`, constructs from method description using registry
+- Type-safe through Julia's multiple dispatch system
+- Allocation-free implementation
+
+See also: [`CTSolvers.Strategies.build_strategy_from_method`](@ref), [`get_strategy_registry`](@ref), [`_complete_description`](@ref)
 """
 function _build_or_use_strategy(
     complete_description::Tuple{Symbol, Symbol, Symbol},
-    provided::Union{T, Nothing},
+    provided::T,
     family_type::Type{T},
     registry::CTSolvers.Strategies.StrategyRegistry
 )::T where {T <: CTSolvers.Strategies.AbstractStrategy}
-    if !isnothing(provided)
-        return provided::T
-    end
+    # Fast path: strategy already provided
+    return provided
+end
 
+"""
+$(TYPEDSIGNATURES)
+
+Build strategy from registry when no strategy is provided.
+
+This method handles the case where no strategy is provided (`nothing`),
+building a new strategy from the complete method description using the registry.
+
+# Arguments
+- `complete_description`: Complete method triplet for strategy building
+- `::Nothing`: Indicates no strategy provided
+- `family_type`: Strategy family type to build
+- `registry`: Strategy registry for building new strategies
+
+# Returns
+- `T`: Newly built strategy instance
+
+# Notes
+- Uses `CTSolvers.Strategies.build_strategy_from_method` for construction
+- Registry lookup determines the concrete strategy type
+- Type-safe through Julia's dispatch system
+- Allocation-free when possible (depends on registry implementation)
+
+See also: [`CTSolvers.Strategies.build_strategy_from_method`](@ref), [`get_strategy_registry`](@ref)
+"""
+function _build_or_use_strategy(
+    complete_description::Tuple{Symbol, Symbol, Symbol},
+    ::Nothing,
+    family_type::Type{T},
+    registry::CTSolvers.Strategies.StrategyRegistry
+)::T where {T <: CTSolvers.Strategies.AbstractStrategy}
+    # Build path: construct from registry
     return CTSolvers.Strategies.build_strategy_from_method(
         complete_description, family_type, registry
     )
