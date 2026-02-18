@@ -1,4 +1,4 @@
-module TestDisplayHelper
+module TestPrint
 
 import Test
 import OptimalControl
@@ -8,7 +8,7 @@ const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 # Entry point
-function test_display_helper()
+function test_print()
     Test.@testset "Display helper - compact default" begin
         disc = OptimalControl.Collocation(grid_size=5, scheme=:midpoint)
         mod = OptimalControl.ADNLP()
@@ -59,4 +59,4 @@ end
 end # module
 
 # Expose entry point
-test_display_helper() = TestDisplayHelper.test_display_helper()
+test_print() = TestPrint.test_print()

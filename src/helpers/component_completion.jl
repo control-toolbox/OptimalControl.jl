@@ -47,6 +47,7 @@ function _complete_components(
     solver::Union{CTSolvers.AbstractNLPSolver, Nothing},
     registry::CTSolvers.Strategies.StrategyRegistry
 )::NamedTuple{(:discretizer, :modeler, :solver)}
+
     # Step 1: Extract symbols from provided components
     partial_description = _build_partial_description(discretizer, modeler, solver)
     

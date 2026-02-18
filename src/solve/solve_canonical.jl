@@ -17,8 +17,8 @@ import CTSolvers
 # All inputs are concrete types, no defaults, no normalization
 function CommonSolve.solve(
     ocp::CTModels.AbstractModel,
-    initial_guess::CTModels.AbstractInitialGuess,  # Already normalized by Layer 1
-    discretizer::CTDirect.AbstractDiscretizer,     # Concrete type (no Nothing)
+    initial_guess::CTModels.AbstractInitialGuess,   # Already normalized by Layer 1
+    discretizer::CTDirect.AbstractDiscretizer,      # Concrete type (no Nothing)
     modeler::CTSolvers.AbstractNLPModeler,          # Concrete type (no Nothing)
     solver::CTSolvers.AbstractNLPSolver;            # Concrete type (no Nothing)
     display::Bool                                   # Explicit value (no default)
