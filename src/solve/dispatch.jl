@@ -51,7 +51,10 @@ function CommonSolve.solve(
     normalized_init = CTModels.build_initial_guess(ocp, initial_guess)
 
     # 3. Get registry for component completion
-    registry = get_strategy_registry()
+    registry = _extract_kwarg(kwargs, CTSolvers.StrategyRegistry)
+    if isnothing(registry)
+        registry = get_strategy_registry()
+    end
 
     # 4. Dispatch — asymmetric signatures:
     #    ExplicitMode: extract typed components by type from kwargs (default nothing)
