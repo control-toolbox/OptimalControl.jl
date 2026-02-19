@@ -31,10 +31,19 @@ struct MockSolver <: CTSolvers.AbstractNLPSolver
     options::CTSolvers.StrategyOptions
 end
 
-# Short-circuit Layer 3 for mocks
+# Short-circuit Layer 3 for mocks (explicit mode: typed mock components)
 CommonSolve.solve(
     ::MockOCP, ::MockInit,
     ::MockDiscretizer, ::MockModeler, ::MockSolver;
+    display::Bool
+)::MockSolution = MockSolution()
+
+# Short-circuit Layer 3 for mocks (descriptive mode: real abstract component types)
+# solve_descriptive builds real CTDirect.Collocation, CTSolvers.ADNLP, etc.
+# This override catches those calls for MockOCP without running a real solver.
+CommonSolve.solve(
+    ::MockOCP, ::CTModels.AbstractInitialGuess,
+    ::CTDirect.AbstractDiscretizer, ::CTSolvers.AbstractNLPModeler, ::CTSolvers.AbstractNLPSolver;
     display::Bool
 )::MockSolution = MockSolution()
 
@@ -91,14 +100,36 @@ function test_orchestration()
         end
 
         # ====================================================================
-        # CONTRACT TESTS - solve_descriptive path (stub raises NotImplemented)
+        # CONTRACT TESTS - solve_descriptive path (mock Layer 3 short-circuit)
         # ====================================================================
 
-        Test.@testset "solve_descriptive raises NotImplemented" begin
+        Test.@testset "solve_descriptive - complete description dispatches correctly" begin
             ocp = MockOCP()
-            Test.@test_throws CTBase.NotImplemented begin
+            result = CommonSolve.solve(ocp, :collocation, :adnlp, :ipopt;
+                initial_guess=MockInit(), display=false)
+            Test.@test result isa MockSolution
+        end
+
+        Test.@testset "solve_descriptive - partial description (:collocation only)" begin
+            ocp = MockOCP()
+            result = CommonSolve.solve(ocp, :collocation;
+                initial_guess=MockInit(), display=false)
+            Test.@test result isa MockSolution
+        end
+
+        Test.@testset "solve_descriptive - empty description (full defaults)" begin
+            ocp = MockOCP()
+            result = CommonSolve.solve(ocp;
+                initial_guess=MockInit(), display=false)
+            Test.@test result isa MockSolution
+        end
+
+        Test.@testset "solve_descriptive - error on unknown option" begin
+            ocp = MockOCP()
+            Test.@test_throws CTBase.IncorrectArgument begin
                 CommonSolve.solve(ocp, :collocation, :adnlp, :ipopt;
-                    initial_guess=MockInit(), display=false)
+                    initial_guess=MockInit(), display=false,
+                    totally_unknown_option=42)
             end
         end
 
@@ -167,6 +198,30 @@ function test_orchestration()
             result = CommonSolve.solve(pb.ocp;
                 initial_guess=pb.init, discretizer=disc, display=false
             )
+            Test.@test result isa CTModels.AbstractSolution
+        end
+
+        Test.@testset "Integration - DescriptiveMode complete description" begin
+            pb = TestProblems.Beam()
+            result = CommonSolve.solve(pb.ocp, :collocation, :adnlp, :ipopt;
+                initial_guess=pb.init, display=false,
+                grid_size=10, print_level=0, max_iter=0)
+            Test.@test result isa CTModels.AbstractSolution
+        end
+
+        Test.@testset "Integration - DescriptiveMode partial description" begin
+            pb = TestProblems.Beam()
+            result = CommonSolve.solve(pb.ocp, :collocation;
+                initial_guess=pb.init, display=false,
+                grid_size=10, print_level=0, max_iter=0)
+            Test.@test result isa CTModels.AbstractSolution
+        end
+
+        Test.@testset "Integration - DescriptiveMode empty description (full defaults)" begin
+            pb = TestProblems.Beam()
+            result = CommonSolve.solve(pb.ocp;
+                initial_guess=pb.init, display=false,
+                grid_size=10, print_level=0, max_iter=0)
             Test.@test result isa CTModels.AbstractSolution
         end
     end

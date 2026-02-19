@@ -29,6 +29,7 @@ include(joinpath(@__DIR__, "helpers", "registry.jl"))
 include(joinpath(@__DIR__, "helpers", "component_checks.jl"))
 include(joinpath(@__DIR__, "helpers", "strategy_builders.jl"))
 include(joinpath(@__DIR__, "helpers", "component_completion.jl"))
+include(joinpath(@__DIR__, "helpers", "descriptive_routing.jl"))
 
 # solve
 include(joinpath(@__DIR__, "solve", "mode.jl"))

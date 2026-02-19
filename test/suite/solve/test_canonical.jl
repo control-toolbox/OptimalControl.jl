@@ -189,6 +189,7 @@ function test_canonical()
                 end
             end
         else
+            println("")
             @info "CUDA not functional, skipping GPU tests."
         end
         

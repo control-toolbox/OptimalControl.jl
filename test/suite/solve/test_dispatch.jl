@@ -61,12 +61,22 @@ function mock_strategy_registry()::CTSolvers.StrategyRegistry
     )
 end
 
-# Override Layer 3 solve for mocks — returns MockSolution immediately
+# Override Layer 3 solve for mocks — returns MockSolution immediately (explicit mode)
 function CommonSolve.solve(
     ::MockOCP, ::MockInit,
     ::MockDiscretizer, ::MockModeler, ::MockSolver;
     display::Bool
 )::MockSolution 
+    return MockSolution()
+end
+
+# Override Layer 3 for descriptive mode: solve_descriptive builds real mock types via registry
+# MockDiscretizer <: AbstractDiscretizer, so this catches those calls too
+function CommonSolve.solve(
+    ::MockOCP, ::CTModels.AbstractInitialGuess,
+    ::CTDirect.AbstractDiscretizer, ::CTSolvers.AbstractNLPModeler, ::CTSolvers.AbstractNLPSolver;
+    display::Bool
+)::MockSolution
     return MockSolution()
 end
 
@@ -107,29 +117,27 @@ function test_solve_dispatch()
         end
 
         # ====================================================================
-        # CONTRACT TESTS - solve_descriptive: stub raises NotImplemented
+        # CONTRACT TESTS - solve_descriptive: dispatches correctly
         # ====================================================================
 
-        Test.@testset "solve_descriptive - raises NotImplemented" begin
-            Test.@test_throws CTBase.NotImplemented begin
-                OptimalControl.solve_descriptive(
-                    ocp, :collocation, :adnlp, :ipopt;
-                    initial_guess=init,
-                    display=false,
-                    registry=registry
-                )
-            end
+        Test.@testset "solve_descriptive - complete description dispatches" begin
+            result = OptimalControl.solve_descriptive(
+                ocp, :collocation, :adnlp, :ipopt;
+                initial_guess=init,
+                display=false,
+                registry=registry
+            )
+            Test.@test result isa MockSolution
         end
 
-        Test.@testset "solve_descriptive - empty description raises NotImplemented" begin
-            Test.@test_throws CTBase.NotImplemented begin
-                OptimalControl.solve_descriptive(
-                    ocp;
-                    initial_guess=init,
-                    display=false,
-                    registry=registry
-                )
-            end
+        Test.@testset "solve_descriptive - empty description dispatches" begin
+            result = OptimalControl.solve_descriptive(
+                ocp;
+                initial_guess=init,
+                display=false,
+                registry=registry
+            )
+            Test.@test result isa MockSolution
         end
     end
 end
