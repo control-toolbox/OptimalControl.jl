@@ -9,6 +9,7 @@ module OptimalControl
 
 using DocStringExtensions
 using Reexport
+using CTBase
 
 # Imports
 include(joinpath(@__DIR__, "imports", "ctbase.jl"))
@@ -29,11 +30,11 @@ include(joinpath(@__DIR__, "helpers", "strategy_builders.jl"))
 include(joinpath(@__DIR__, "helpers", "component_completion.jl"))
 
 # solve
-include(joinpath(@__DIR__, "solve", "solve_mode.jl"))
+include(joinpath(@__DIR__, "solve", "mode.jl"))
 include(joinpath(@__DIR__, "solve", "mode_detection.jl"))
-include(joinpath(@__DIR__, "solve", "solve_dispatch.jl"))
-include(joinpath(@__DIR__, "solve", "solve_canonical.jl"))
-include(joinpath(@__DIR__, "solve", "solve_explicit.jl"))
+include(joinpath(@__DIR__, "solve", "canonical.jl"))
+include(joinpath(@__DIR__, "solve", "explicit.jl"))
+include(joinpath(@__DIR__, "solve", "descriptive.jl"))
 
 export methods # non useful since it is already in Base
 export get_strategy_registry
