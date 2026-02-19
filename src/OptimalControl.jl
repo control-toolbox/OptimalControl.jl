@@ -20,15 +20,17 @@ include(joinpath(@__DIR__, "imports", "ctsolvers.jl"))
 include(joinpath(@__DIR__, "imports", "examodels.jl"))
 
 # helpers
+include(joinpath(@__DIR__, "helpers", "kwarg_extraction.jl"))
 include(joinpath(@__DIR__, "helpers", "print.jl"))
-
-# solve
-include(joinpath(@__DIR__, "solve", "solve_canonical.jl"))
 include(joinpath(@__DIR__, "helpers", "methods.jl"))
 include(joinpath(@__DIR__, "helpers", "registry.jl"))
 include(joinpath(@__DIR__, "helpers", "component_checks.jl"))
 include(joinpath(@__DIR__, "helpers", "strategy_builders.jl"))
 include(joinpath(@__DIR__, "helpers", "component_completion.jl"))
+
+# solve
+include(joinpath(@__DIR__, "solve", "solve_mode.jl"))
+include(joinpath(@__DIR__, "solve", "solve_canonical.jl"))
 include(joinpath(@__DIR__, "solve", "solve_explicit.jl"))
 
 export methods # non useful since it is already in Base

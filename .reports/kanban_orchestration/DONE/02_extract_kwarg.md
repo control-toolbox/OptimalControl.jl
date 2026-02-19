@@ -31,7 +31,7 @@ Reference: `.reports/solve_orchestration.md` — R2.3: Type-based kwarg extracti
 
 **File**: `src/helpers/kwarg_extraction.jl`
 
-```julia
+````julia
 """
 $(TYPEDSIGNATURES)
 
@@ -74,7 +74,7 @@ function _extract_kwarg(
     end
     return nothing
 end
-```
+````
 
 ### Tests Required
 
@@ -208,5 +208,7 @@ test_kwarg_extraction() = TestKwargExtraction.test_kwarg_extraction()
 
 ## Status Tracking
 
-**Current Status**: TODO
-**Created**: 2026-02-18
+**Current Status**: DONE
+**Started**: 2026-02-19
+**Completed**: 2026-02-19
+**Developer**: Cascade

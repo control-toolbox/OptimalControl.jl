@@ -31,7 +31,7 @@ Reference: `.reports/solve_orchestration.md` — R2.2: Mode detection and valida
 
 **File**: `src/solve/mode_detection.jl`
 
-```julia
+````julia
 """
 $(TYPEDSIGNATURES)
 
@@ -101,7 +101,7 @@ function _explicit_or_descriptive(
 
     return has_explicit ? ExplicitMode() : DescriptiveMode()
 end
-```
+````
 
 ### Tests Required
 
