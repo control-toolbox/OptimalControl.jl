@@ -114,7 +114,7 @@ function print_test_header(show_memory::Bool = false)
     print(" │ ")
     printstyled(rpad("Disc", 8); bold=true)
     print(" │ ")
-    printstyled(rpad("Modeler", 12); bold=true)
+    printstyled(rpad("Modeler", 8); bold=true)
     print(" │ ")
     printstyled(rpad("Solver", 6); bold=true)
     print(" │ ")
@@ -144,7 +144,7 @@ function print_test_header(show_memory::Bool = false)
     print("─┼─")
     print("────────")
     print("─┼─")
-    print("────────────")
+    print("────────")
     print("─┼─")
     print("──────")
     print("─┼─")
@@ -255,8 +255,8 @@ function print_test_line(
     printstyled(rpad(discretizer, 8); color=:blue)
     print(" │ ")
     
-    # Modeler: 12 characters
-    printstyled(rpad(modeler, 12); color=:magenta)
+    # Modeler: 8 characters
+    printstyled(rpad(modeler, 8); color=:magenta)
     print(" │ ")
     
     # Solver: 6 characters
