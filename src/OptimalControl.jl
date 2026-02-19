@@ -30,6 +30,7 @@ include(joinpath(@__DIR__, "helpers", "component_completion.jl"))
 
 # solve
 include(joinpath(@__DIR__, "solve", "solve_mode.jl"))
+include(joinpath(@__DIR__, "solve", "mode_detection.jl"))
 include(joinpath(@__DIR__, "solve", "solve_canonical.jl"))
 include(joinpath(@__DIR__, "solve", "solve_explicit.jl"))
 

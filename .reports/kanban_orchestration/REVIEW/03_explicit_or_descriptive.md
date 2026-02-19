@@ -278,5 +278,75 @@ test_mode_detection() = TestModeDetection.test_mode_detection()
 
 ## Status Tracking
 
-**Current Status**: TODO
-**Created**: 2026-02-18
+**Current Status**: REVIEW
+**Started**: 2026-02-19
+**Completed**: 2026-02-19
+**Developer**: Cascade
+
+---
+
+## 📋 Completion Report
+
+### ✅ Implementation Summary
+
+**Files Created**:
+- `src/solve/mode_detection.jl` - `_explicit_or_descriptive` function for mode detection and validation
+- `test/suite/solve/test_mode_detection.jl` - Comprehensive tests with conflict detection
+
+**Integration**:
+- Added `include("solve/mode_detection.jl")` in `src/OptimalControl.jl`
+- Test file automatically discovered by test runner
+
+### ✅ Testing Results
+
+**New Tests**: 17/17 passed
+- ExplicitMode detection (discretizer, modeler, solver, all three, with strategy kwargs)
+- DescriptiveMode detection (empty, with description, with strategy kwargs)
+- Name-independent detection (component under custom key)
+- Type safety validation (wrong type ignored)
+- Conflict detection (all combinations + description)
+- Edge cases (empty kwargs, non-component values only)
+
+**Regression Tests**: All existing tests pass (708/708)
+
+### ✅ Quality Checks
+
+**Architecture**:
+- ✅ Pure function using `_extract_kwarg` helper
+- ✅ Proper mode detection logic
+- ✅ Conflict validation with enriched error messages
+- ✅ Type-safe implementation
+
+**Documentation**:
+- ✅ Complete docstring with DocStringExtensions
+- ✅ Usage examples
+- ✅ Cross-references to related functions
+- ✅ Error handling documentation
+
+**Code Quality**:
+- ✅ No warnings or errors
+- ✅ Mock-based tests avoid external dependencies
+- ✅ Consistent import pattern with other test files
+- ✅ Proper exception handling with CTBase.IncorrectArgument
+
+### ✅ Acceptance Criteria Verification
+
+- [x] File `src/solve/mode_detection.jl` created
+- [x] Function `_explicit_or_descriptive` implemented with correct signature
+- [x] Docstring complete with DocStringExtensions format and examples
+- [x] File included in `src/OptimalControl.jl`
+- [x] Test file `test/suite/solve/test_mode_detection.jl` created
+- [x] Test file wired into test runner
+- [x] All unit tests pass (17/17)
+- [x] Name-independent detection test passes (critical design property)
+- [x] Type safety test passes (wrong type ignored)
+- [x] Conflict detection tests pass (all combinations)
+- [x] All existing project tests still pass (708/708)
+- [x] No warnings or errors
+
+### 🎯 Ready for Review
+
+This task implements the core mode detection and validation logic for the solve
+orchestration layer. The critical "name-independent detection" and "type safety" tests
+validate the fundamental design principles. All tests pass and the implementation
+matches the specification in `.reports/solve_orchestration.md`. Ready for reviewer validation.
