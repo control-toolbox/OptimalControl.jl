@@ -58,7 +58,7 @@ CommonSolve.solve(
 )::MockSolution = MockSolution()
 
 function test_explicit()
-    Test.@testset "solve_explicit (contract tests with mocks)" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "_solve ExplicitMode (contract tests with mocks)" verbose=VERBOSE showtiming=SHOWTIMING begin
         ocp = MockOCP()
         init = MockInit()
         disc = MockDiscretizer(CTSolvers.StrategyOptions())
@@ -70,8 +70,10 @@ function test_explicit()
         # COMPLETE COMPONENTS PATH
         # ================================================================
         Test.@testset "Complete components -> direct path" begin
-            result = OptimalControl.solve_explicit(
-                ocp, init;
+            result = OptimalControl._solve(
+                OptimalControl.ExplicitMode(),
+                ocp;
+                initial_guess=init,
                 discretizer=disc,
                 modeler=mod,
                 solver=sol,
@@ -99,8 +101,10 @@ function test_explicit()
                     init = OptimalControl.build_initial_guess(pb.ocp, pb.init)
                     
                     Test.@testset "Complete components - real strategies" begin
-                        result = OptimalControl.solve_explicit(
-                            pb.ocp, init;
+                        result = OptimalControl._solve(
+                            OptimalControl.ExplicitMode(),
+                            pb.ocp;
+                            initial_guess=init,
                             discretizer=CTDirect.Collocation(),
                             modeler=CTSolvers.ADNLP(),
                             solver=CTSolvers.Ipopt(),
@@ -114,8 +118,10 @@ function test_explicit()
                     
                     Test.@testset "Partial components - completion" begin
                         # Test with only discretizer provided
-                        result = OptimalControl.solve_explicit(
-                            pb.ocp, init;
+                        result = OptimalControl._solve(
+                            OptimalControl.ExplicitMode(),
+                            pb.ocp;
+                            initial_guess=init,
                             discretizer=CTDirect.Collocation(),
                             modeler=nothing,
                             solver=nothing,
@@ -170,8 +176,10 @@ function test_explicit()
                             push!(tested, complete)
                             
                             # Test the actual solve - just verify it returns a solution
-                            result = OptimalControl.solve_explicit(
-                                pb.ocp, init;
+                            result = OptimalControl._solve(
+                                OptimalControl.ExplicitMode(),
+                                pb.ocp;
+                                initial_guess=init,
                                 discretizer=disc,
                                 modeler=mod,
                                 solver=sol,

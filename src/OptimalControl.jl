@@ -31,11 +31,11 @@ include(joinpath(@__DIR__, "helpers", "component_completion.jl"))
 # solve
 include(joinpath(@__DIR__, "solve", "solve_mode.jl"))
 include(joinpath(@__DIR__, "solve", "mode_detection.jl"))
+include(joinpath(@__DIR__, "solve", "solve_dispatch.jl"))
 include(joinpath(@__DIR__, "solve", "solve_canonical.jl"))
 include(joinpath(@__DIR__, "solve", "solve_explicit.jl"))
 
 export methods # non useful since it is already in Base
 export get_strategy_registry
-export solve_explicit
 
 end

@@ -43,7 +43,7 @@ Reference: `.reports/solve_orchestration.md` — R1: Signature and Delegation
 
 **File**: `src/solve/solve.jl` (check if it exists; modify or create as needed)
 
-```julia
+````julia
 """
 $(TYPEDSIGNATURES)
 
@@ -126,7 +126,7 @@ function CommonSolve.solve(
         kwargs...
     )
 end
-```
+````
 
 ### Tests Required
 
