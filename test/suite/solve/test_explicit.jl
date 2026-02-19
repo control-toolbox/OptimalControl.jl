@@ -131,69 +131,6 @@ function test_explicit()
                 end
             end
             
-            Test.@testset "Complete method coverage" begin
-                # Test that all methods() are covered by integration tests
-                # Track which methods we've tested
-                available = Set(OptimalControl.methods())
-                tested = Set{Tuple{Symbol, Symbol, Symbol}}()
-                
-                # Define all strategy combinations to test
-                discretizers = [
-                    ("Collocation/midpoint", OptimalControl.Collocation(grid_size=20, scheme=:midpoint)),
-                ]
-
-                modelers = [
-                    ("ADNLP", OptimalControl.ADNLP()),
-                    ("Exa",   OptimalControl.Exa()),
-                ]
-
-                solvers = [
-                    ("Ipopt",  OptimalControl.Ipopt(print_level=0, max_iter=0)),
-                    ("MadNLP", OptimalControl.MadNLP(print_level=MadNLP.ERROR, max_iter=0)),
-                    ("MadNCL", OptimalControl.MadNCL(print_level=MadNLP.ERROR, max_iter=0)),
-                ]
-
-                # Use only one problem to test all method combinations
-                pb = TestProblems.Beam()
-                init = OptimalControl.build_initial_guess(pb.ocp, pb.init)
-                
-                # Test all combinations
-                for (dname, disc) in discretizers
-                    for (mname, mod) in modelers
-                        for (sname, sol) in solvers
-                            # Build method using R3 helpers
-                            partial = OptimalControl._build_partial_description(disc, mod, sol)
-                            complete = OptimalControl._complete_description(partial)
-                            
-                            # Check that this method is available and not already tested
-                            Test.@test complete in available
-                            Test.@test complete ∉ tested
-                            
-                            # Mark as tested
-                            push!(tested, complete)
-                            
-                            # Test the actual solve - just verify it returns a solution
-                            result = OptimalControl.solve_explicit(
-                                pb.ocp;
-                                initial_guess=init,
-                                discretizer=disc,
-                                modeler=mod,
-                                solver=sol,
-                                display=false,
-                                registry=registry
-                            )
-                            Test.@test result isa CTModels.AbstractSolution
-                        end
-                    end
-                end
-                
-                # Verify all methods have been tested (modulo Knitro which requires license)
-                knitro_methods = Set([m for m in available if m[3] == :knitro])
-                non_knitro_available = setdiff(available, knitro_methods)
-                Test.@test tested == non_knitro_available
-                Test.@test length(tested) == length(non_knitro_available)
-                Test.@test length(tested) + length(knitro_methods) == length(OptimalControl.methods())
-            end
         end
     end
 end

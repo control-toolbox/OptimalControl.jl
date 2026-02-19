@@ -94,11 +94,7 @@ function test_canonical()
                             obj = success ? OptimalControl.objective(solve_result) : 0.0
                             
                             # Extract iterations using CTModels function
-                            iters::Union{Nothing, Int} = try
-                                OptimalControl.iterations(solve_result)
-                            catch
-                                nothing
-                            end
+                            iters = OptimalControl.iterations(solve_result)
                             
                             # Display table line (SRP - responsibility delegated)
                             if VERBOSE
@@ -162,11 +158,7 @@ function test_canonical()
                         obj = success ? OptimalControl.objective(solve_result) : 0.0
                         
                         # Extract iterations using CTModels function
-                        iters::Union{Nothing, Int} = try
-                            OptimalControl.iterations(solve_result)
-                        catch
-                            nothing
-                        end
+                        iters = OptimalControl.iterations(solve_result)
                         
                         # Display table line (SRP - responsibility delegated)
                         if VERBOSE

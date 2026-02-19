@@ -107,30 +107,62 @@ function print_test_header(show_memory::Bool = false)
     
     # Table header (aligned with data columns)
     print("   ")  # Space for the ✓/✗ symbol (2 characters)
-    print(" | ")
-    print(rpad("Type", 4))
-    print(" | ")
-    print(rpad("Problem", 8))
-    print(" | ")
-    print(rpad("Disc", 8))
-    print(" | ")
-    print(rpad("Modeler", 12))
-    print(" | ")
-    print(rpad("Solver", 6))
-    print(" | ")
-    print(lpad("Time", 12))
-    print(" | ")
-    print(lpad("Iters", 5))
-    print(" | ")
-    print(lpad("Objective", 14))
-    print(" | ")
-    print(lpad("Reference", 14))
-    print(" | ")
-    print(lpad("Error", 7))
+    print(" │ ")
+    printstyled(rpad("Type", 4); bold=true)
+    print(" │ ")
+    printstyled(rpad("Problem", 8); bold=true)
+    print(" │ ")
+    printstyled(rpad("Disc", 8); bold=true)
+    print(" │ ")
+    printstyled(rpad("Modeler", 12); bold=true)
+    print(" │ ")
+    printstyled(rpad("Solver", 6); bold=true)
+    print(" │ ")
+    printstyled(lpad("Time", 12); bold=true)
+    print(" │ ")
+    printstyled(lpad("Iters", 5); bold=true)
+    print(" │ ")
+    printstyled(lpad("Objective", 14); bold=true)
+    print(" │ ")
+    printstyled(lpad("Reference", 14); bold=true)
+    print(" │ ")
+    printstyled(lpad("Error", 7); bold=true)
     
     if show_memory
-        print(" | ")
-        print(lpad("Memory", 10))
+        print(" │ ")
+        printstyled(lpad("Memory", 10); bold=true)
+    end
+    
+    println()
+    
+    # Separator line
+    print("───")
+    print("─┼─")
+    print("────")
+    print("─┼─")
+    print("────────")
+    print("─┼─")
+    print("────────")
+    print("─┼─")
+    print("────────────")
+    print("─┼─")
+    print("──────")
+    print("─┼─")
+    print("────────────")
+    print("─┼─")
+    print("─────")
+    print("─┼─")
+    print("──────────────")
+    print("─┼─")
+    print("──────────────")
+    print("─┼─")
+    
+    if show_memory
+        print("───────")
+        print("─┼─")
+        print("──────────")
+    else
+        print("────────")
     end
     
     println()
@@ -208,37 +240,37 @@ function print_test_line(
         printstyled("  ✗"; color=:red, bold=true)
     end
     
-    print(" | ")
+    print(" │ ")
     
     # Type column: CPU or GPU
     printstyled(rpad(test_type, 4); color=:magenta)
-    print(" | ")
+    print(" │ ")
     
     # Fixed columns with rpad/lpad (like CTBenchmarks)
     # Problem: 8 characters
     printstyled(rpad(problem, 8); color=:cyan, bold=true)
-    print(" | ")
+    print(" │ ")
     
     # Discretizer: 8 characters
     printstyled(rpad(discretizer, 8); color=:blue)
-    print(" | ")
+    print(" │ ")
     
     # Modeler: 12 characters
     printstyled(rpad(modeler, 12); color=:magenta)
-    print(" | ")
+    print(" │ ")
     
     # Solver: 6 characters
     printstyled(rpad(solver, 6); color=:yellow)
-    print(" | ")
+    print(" │ ")
     
     # Time: right-aligned, 12 characters
     print(lpad(prettytime(time), 12))
-    print(" | ")
+    print(" │ ")
     
     # Iterations: right-aligned, 5 characters
     iter_str = iterations === nothing ? "N/A" : string(iterations)
     print(lpad(iter_str, 5))
-    print(" | ")
+    print(" │ ")
     
     # Objective: scientific format with phantom sign for alignment
     # Add space instead of '-' for positive values
@@ -247,7 +279,7 @@ function print_test_line(
         obj_str = " " * obj_str  # Phantom sign
     end
     print(lpad(obj_str, 14))
-    print(" | ")
+    print(" │ ")
     
     # Reference: scientific format with phantom sign
     ref_str = @sprintf("%.6e", ref_obj)
@@ -255,7 +287,7 @@ function print_test_line(
         ref_str = " " * ref_str  # Phantom sign
     end
     print(lpad(ref_str, 14))
-    print(" | ")
+    print(" │ ")
     
     # Error: scientific notation with 2 decimal places
     err_str = @sprintf("%.2e", rel_error / 100)  # Convert to fraction then scientific format
@@ -264,7 +296,7 @@ function print_test_line(
     
     # Memory: optional, right-aligned, 10 characters
     if show_memory
-        print(" | ")
+        print(" │ ")
         if memory_bytes !== nothing
             mem_str = prettymemory(memory_bytes)
         else
