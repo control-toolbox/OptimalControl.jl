@@ -1,11 +1,10 @@
 """
 $(TYPEDSIGNATURES)
 
-Resolve an OCP in explicit mode.
+Resolve an OCP in explicit mode (Layer 2).
 
-Receives typed components (`discretizer`, `modeler`, `solver`) as named keyword arguments
-(pre-validated by [`_explicit_or_descriptive`](@ref)), then completes missing components
-via the registry before calling Layer 3.
+Receives typed components (`discretizer`, `modeler`, `solver`) as named keyword arguments,
+then completes missing components via the registry before calling Layer 3.
 
 # Arguments
 - `ocp`: The optimal control problem to solve
@@ -22,18 +21,16 @@ via the registry before calling Layer 3.
 # See Also
 - [`_has_complete_components`](@ref): Checks if all three components are provided
 - [`_complete_components`](@ref): Completes missing components via registry
-- [`ExplicitMode`](@ref): The dispatch sentinel type
-- [`_explicit_or_descriptive`](@ref): Validates and routes to this method
+- [`_explicit_or_descriptive`](@ref): Mode detection that routes here
 """
-function _solve(
-    ::ExplicitMode,
+function solve_explicit(
     ocp::CTModels.AbstractModel;
     initial_guess::CTModels.AbstractInitialGuess,
     discretizer::Union{CTDirect.AbstractDiscretizer, Nothing},
     modeler::Union{CTSolvers.AbstractNLPModeler, Nothing},
     solver::Union{CTSolvers.AbstractNLPSolver, Nothing},
     display::Bool,
-    registry::CTSolvers.Strategies.StrategyRegistry
+    registry::CTSolvers.StrategyRegistry
 )::CTModels.AbstractSolution
 
     # Resolve components: use provided ones or complete via registry

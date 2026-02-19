@@ -24,10 +24,7 @@ function CommonSolve.solve(
     display::Bool                                   # Explicit value (no default)
 )::CTModels.AbstractSolution
     
-    # 1. Discretize the optimal control problem
-    discrete_problem = CTDirect.discretize(ocp, discretizer)
-    
-    # 2. Display configuration (compact, user options only)
+    # 1. Display configuration (compact, user options only)
     if display
         OptimalControl.display_ocp_configuration(
             discretizer, modeler, solver;
@@ -35,6 +32,9 @@ function CommonSolve.solve(
         )
     end
     
+    # 2. Discretize the optimal control problem
+    discrete_problem = CTDirect.discretize(ocp, discretizer)
+
     # 3. Solve the discretized optimal control problem
     return CommonSolve.solve(
         discrete_problem, initial_guess, modeler, solver; display=display

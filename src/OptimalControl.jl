@@ -10,6 +10,7 @@ module OptimalControl
 using DocStringExtensions
 using Reexport
 using CTBase
+using CommonSolve
 
 # Imports
 include(joinpath(@__DIR__, "imports", "ctbase.jl"))
@@ -32,6 +33,7 @@ include(joinpath(@__DIR__, "helpers", "component_completion.jl"))
 # solve
 include(joinpath(@__DIR__, "solve", "mode.jl"))
 include(joinpath(@__DIR__, "solve", "mode_detection.jl"))
+include(joinpath(@__DIR__, "solve", "dispatch.jl"))
 include(joinpath(@__DIR__, "solve", "canonical.jl"))
 include(joinpath(@__DIR__, "solve", "explicit.jl"))
 include(joinpath(@__DIR__, "solve", "descriptive.jl"))

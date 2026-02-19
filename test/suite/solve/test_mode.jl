@@ -67,4 +67,4 @@ end
 end # module
 
 # CRITICAL: Redefine in outer scope for TestRunner
-test_solve_mode() = TestSolveMode.test_solve_mode()
+test_mode() = TestSolveMode.test_solve_mode()

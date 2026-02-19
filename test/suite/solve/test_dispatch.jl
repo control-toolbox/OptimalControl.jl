@@ -49,12 +49,11 @@ function test_solve_dispatch()
         registry = OptimalControl.get_strategy_registry()
 
         # ====================================================================
-        # CONTRACT TESTS - ExplicitMode: complete components (mock Layer 3)
+        # CONTRACT TESTS - solve_explicit: complete components (mock Layer 3)
         # ====================================================================
 
-        Test.@testset "ExplicitMode - all three components" begin
-            result = OptimalControl._solve(
-                OptimalControl.ExplicitMode(),
+        Test.@testset "solve_explicit - all three components" begin
+            result = OptimalControl.solve_explicit(
                 ocp;
                 initial_guess=init,
                 display=false,
@@ -65,13 +64,12 @@ function test_solve_dispatch()
         end
 
         # ====================================================================
-        # CONTRACT TESTS - DescriptiveMode: stub raises NotImplemented
+        # CONTRACT TESTS - solve_descriptive: stub raises NotImplemented
         # ====================================================================
 
-        Test.@testset "DescriptiveMode - raises NotImplemented" begin
+        Test.@testset "solve_descriptive - raises NotImplemented" begin
             Test.@test_throws CTBase.NotImplemented begin
-                OptimalControl._solve(
-                    OptimalControl.DescriptiveMode(),
+                OptimalControl.solve_descriptive(
                     ocp, :collocation, :adnlp, :ipopt;
                     initial_guess=init,
                     display=false,
@@ -80,10 +78,9 @@ function test_solve_dispatch()
             end
         end
 
-        Test.@testset "DescriptiveMode - empty description raises NotImplemented" begin
+        Test.@testset "solve_descriptive - empty description raises NotImplemented" begin
             Test.@test_throws CTBase.NotImplemented begin
-                OptimalControl._solve(
-                    OptimalControl.DescriptiveMode(),
+                OptimalControl.solve_descriptive(
                     ocp;
                     initial_guess=init,
                     display=false,
@@ -91,54 +88,10 @@ function test_solve_dispatch()
                 )
             end
         end
-
-        # ====================================================================
-        # CONTRACT TESTS - Dispatch correctness
-        # ====================================================================
-
-        Test.@testset "Dispatch correctness - ExplicitMode route" begin
-            # Verify that ExplicitMode actually routes to the ExplicitMode method
-            function _dispatch_route(mode::OptimalControl.ExplicitMode)
-                return :explicit
-            end
-            function _dispatch_route(mode::OptimalControl.DescriptiveMode)
-                return :descriptive
-            end
-
-            Test.@test _dispatch_route(OptimalControl.ExplicitMode()) == :explicit
-        end
-
-        Test.@testset "Dispatch correctness - DescriptiveMode route" begin
-            # Verify that DescriptiveMode actually routes to the DescriptiveMode method
-            function _dispatch_route(mode::OptimalControl.ExplicitMode)
-                return :explicit
-            end
-            function _dispatch_route(mode::OptimalControl.DescriptiveMode)
-                return :descriptive
-            end
-
-            Test.@test _dispatch_route(OptimalControl.DescriptiveMode()) == :descriptive
-        end
-
-        # ====================================================================
-        # INTEGRATION TESTS - End-to-end dispatch
-        # ====================================================================
-
-        Test.@testset "Integration - complete explicit workflow" begin
-            result = OptimalControl._solve(
-                OptimalControl.ExplicitMode(),
-                ocp;
-                initial_guess=init,
-                display=false,
-                registry=registry,
-                discretizer=disc, modeler=mod, solver=sol
-            )
-            Test.@test result isa MockSolution
-        end
     end
 end
 
 end # module
 
 # CRITICAL: Redefine in outer scope for TestRunner
-test_solve_dispatch() = TestSolveDispatch.test_solve_dispatch()
+test_dispatch() = TestSolveDispatch.test_solve_dispatch()

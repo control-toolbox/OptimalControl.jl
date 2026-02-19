@@ -1,13 +1,11 @@
 """
 $(TYPEDSIGNATURES)
 
-Stub for descriptive mode resolution.
+Stub for descriptive mode resolution (Layer 2).
 
-Raises [`CTBase.NotImplemented`](@ref) until `solve_descriptive` is implemented.
+Raises [`CTBase.NotImplemented`](@ref) until descriptive mode is implemented.
 This stub allows testing the orchestration layer (mode detection, dispatch routing)
 before the descriptive mode handler exists.
-
-The `description` vararg will be forwarded to `solve_descriptive` when implemented.
 
 # Arguments
 - `ocp`: The optimal control problem to solve
@@ -21,16 +19,14 @@ The `description` vararg will be forwarded to `solve_descriptive` when implement
 - `CTBase.NotImplemented`: Always — descriptive mode is not yet implemented
 
 # See Also
-- [`DescriptiveMode`](@ref): The dispatch sentinel type
 - [`CommonSolve.solve`](@ref): The entry point that dispatches here
 """
-function _solve(
-    ::DescriptiveMode,
+function solve_descriptive(
     ocp::CTModels.AbstractModel,
     description::Symbol...;
     initial_guess::CTModels.AbstractInitialGuess,
     display::Bool,
-    registry::CTSolvers.Strategies.StrategyRegistry,
+    registry::CTSolvers.StrategyRegistry,
     kwargs...
 )::CTModels.AbstractSolution
 
