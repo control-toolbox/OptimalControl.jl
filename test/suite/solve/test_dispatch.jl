@@ -26,6 +26,8 @@ const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING :
 struct MockOCP <: CTModels.AbstractModel end
 struct MockInit <: CTModels.AbstractInitialGuess end
 struct MockSolution <: CTModels.AbstractSolution end
+CTModels.build_initial_guess(::MockOCP, ::Nothing)   = MockInit()
+CTModels.build_initial_guess(::MockOCP, i::MockInit) = i
 
 struct MockDiscretizer <: CTDirect.AbstractDiscretizer
     options::CTSolvers.StrategyOptions
@@ -113,6 +115,28 @@ function test_solve_dispatch()
             Test.@test result isa MockSolution
         end
 
+        Test.@testset "solve_explicit - alias 'init'" begin
+            result = OptimalControl.solve_explicit(
+                ocp;
+                init=init,
+                display=false,
+                registry=registry,
+                discretizer=disc, modeler=mod, solver=sol
+            )
+            Test.@test result isa MockSolution
+        end
+
+        Test.@testset "solve_explicit - alias 'i'" begin
+            result = OptimalControl.solve_explicit(
+                ocp;
+                i=init,
+                display=false,
+                registry=registry,
+                discretizer=disc, modeler=mod, solver=sol
+            )
+            Test.@test result isa MockSolution
+        end
+
         Test.@testset "solve_explicit - partial components (mock registry completes)" begin
             result = OptimalControl.solve_explicit(
                 ocp;
@@ -132,6 +156,26 @@ function test_solve_dispatch()
             result = OptimalControl.solve_descriptive(
                 ocp, :collocation, :adnlp, :ipopt;
                 initial_guess=init,
+                display=false,
+                registry=registry
+            )
+            Test.@test result isa MockSolution
+        end
+
+        Test.@testset "solve_descriptive - alias 'init'" begin
+            result = OptimalControl.solve_descriptive(
+                ocp, :collocation, :adnlp, :ipopt;
+                init=init,
+                display=false,
+                registry=registry
+            )
+            Test.@test result isa MockSolution
+        end
+
+        Test.@testset "solve_descriptive - alias 'i'" begin
+            result = OptimalControl.solve_descriptive(
+                ocp, :collocation, :adnlp, :ipopt;
+                i=init,
                 display=false,
                 registry=registry
             )

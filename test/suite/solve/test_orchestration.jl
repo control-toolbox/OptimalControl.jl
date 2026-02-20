@@ -28,6 +28,8 @@ const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING :
 struct MockOCP <: CTModels.AbstractModel end
 struct MockInit <: CTModels.AbstractInitialGuess end
 struct MockSolution <: CTModels.AbstractSolution end
+CTModels.build_initial_guess(::MockOCP, ::Nothing)   = MockInit()
+CTModels.build_initial_guess(::MockOCP, i::MockInit) = i
 
 struct MockDiscretizer <: CTDirect.AbstractDiscretizer
     options::CTSolvers.StrategyOptions
@@ -132,6 +134,20 @@ function test_orchestration()
             Test.@test result isa MockSolution
         end
 
+        Test.@testset "solve_descriptive - alias 'init'" begin
+            ocp = MockOCP()
+            result = CommonSolve.solve(ocp, :collocation, :adnlp, :ipopt;
+                init=MockInit(), display=false)
+            Test.@test result isa MockSolution
+        end
+
+        Test.@testset "solve_descriptive - alias 'i'" begin
+            ocp = MockOCP()
+            result = CommonSolve.solve(ocp, :collocation, :adnlp, :ipopt;
+                i=MockInit(), display=false)
+            Test.@test result isa MockSolution
+        end
+
         Test.@testset "solve_descriptive - error on unknown option" begin
             ocp = MockOCP()
             Test.@test_throws CTBase.IncorrectArgument begin
@@ -145,13 +161,12 @@ function test_orchestration()
         # UNIT TESTS - initial_guess normalization (mocks, no real solver)
         # ====================================================================
 
-        Test.@testset "initial_guess=nothing uses MockInit fallback" begin
+        Test.@testset "initial_guess=nothing → default MockInit" begin
             ocp  = MockOCP()
             disc = MockDiscretizer(CTSolvers.StrategyOptions())
             mod  = MockModeler(CTSolvers.StrategyOptions())
             sol  = MockSolver(CTSolvers.StrategyOptions())
             result = CommonSolve.solve(ocp;
-                initial_guess=MockInit(),
                 discretizer=disc, modeler=mod, solver=sol,
                 display=false
             )
