@@ -1,3 +1,11 @@
+# ============================================================================
+# Keyword Argument Extraction Helpers Tests
+# ============================================================================
+# This file contains unit tests for helpers that extract specific types from
+# keyword arguments (e.g., `_extract_kwarg`) and check for the presence of
+# explicit components (`_has_explicit_components`). It ensures reliable
+# argument parsing for the main solve dispatch logic.
+
 module TestKwargExtraction
 
 import Test

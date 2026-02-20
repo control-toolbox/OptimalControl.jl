@@ -1,3 +1,10 @@
+# ============================================================================
+# Available Methods Tests
+# ============================================================================
+# This file tests the `methods()` function, verifying that it correctly
+# returns the list of all supported solving methods (valid combinations
+# of discretizer, modeler, and solver).
+
 module TestAvailableMethods
 
 import Test

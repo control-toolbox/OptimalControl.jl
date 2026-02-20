@@ -1,3 +1,11 @@
+# ============================================================================
+# Solve Orchestration Integration Tests
+# ============================================================================
+# This file provides integration tests for the full solve orchestration pipeline.
+# It verifies the interaction between Layer 1 (dispatch), Layer 2 (explicit/descriptive
+# component completion and option routing), and a mocked Layer 3 to ensure the
+# entire component assembly chain works correctly before execution.
+
 module TestOrchestration
 
 import Test

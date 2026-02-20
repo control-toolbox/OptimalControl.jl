@@ -1,3 +1,10 @@
+# ============================================================================
+# CTFlows Reexports Tests
+# ============================================================================
+# This file tests the reexport of symbols from `CTFlows`. It verifies that
+# the expected types and functions for Hamiltonian flows and dynamics
+# are properly exported by `OptimalControl`.
+
 module TestCtflows
 
 import Test

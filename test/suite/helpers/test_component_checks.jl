@@ -1,3 +1,10 @@
+# ============================================================================
+# Component Checks Helpers Tests
+# ============================================================================
+# This file contains unit tests for the `_has_complete_components` helper.
+# It verifies the logic that checks whether all required explicit strategy
+# components (discretizer, modeler, solver) have been provided by the user.
+
 module TestComponentChecks
 
 import Test

@@ -1,3 +1,10 @@
+# ============================================================================
+# CTParser Reexports Tests
+# ============================================================================
+# This file tests the reexport of symbols from `CTParser`. It verifies that
+# the `@def` macro and related parsing utilities are properly exported by
+# `OptimalControl` for user-friendly problem definition.
+
 module TestCtparser
 
 import Test

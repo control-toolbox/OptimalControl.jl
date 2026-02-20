@@ -1,3 +1,10 @@
+# ============================================================================
+# CTModels Reexports Tests
+# ============================================================================
+# This file tests the reexport of symbols from `CTModels`. It verifies that
+# all the core types and functions required to define and manipulate optimal
+# control problems (OCPs) are properly exported by `OptimalControl`.
+
 module TestCtmodels
 
 import Test

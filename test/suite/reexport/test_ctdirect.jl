@@ -1,3 +1,10 @@
+# ============================================================================
+# CTDirect Reexports Tests
+# ============================================================================
+# This file tests the reexport of symbols from `CTDirect`. It verifies that
+# the expected types and functions related to direct discretization methods
+# are properly exported by `OptimalControl`.
+
 module TestCtdirect
 
 import Test

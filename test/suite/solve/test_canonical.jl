@@ -1,3 +1,11 @@
+# ============================================================================
+# Canonical Solve Tests (Layer 3)
+# ============================================================================
+# This file tests the lowest level of the solve pipeline (Layer 3). It verifies
+# that the canonical `solve` function correctly executes the resolution when
+# provided with fully concrete, instantiated strategy components (discretizer,
+# modeler, solver) and real optimal control problems.
+
 module TestCanonical
 
 import Test

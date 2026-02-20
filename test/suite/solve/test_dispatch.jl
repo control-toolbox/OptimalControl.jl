@@ -1,3 +1,11 @@
+# ============================================================================
+# Solve Dispatch Integration Tests
+# ============================================================================
+# This file tests the main `solve` entry point (Layer 1) integration. It verifies
+# that the initial guess is properly normalized at the top level and that the
+# execution successfully flows through the correct sub-method (explicit or
+# descriptive) based on the user's input arguments.
+
 module TestSolveDispatch
 
 import Test

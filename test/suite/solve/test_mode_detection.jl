@@ -1,3 +1,11 @@
+# ============================================================================
+# Mode Detection Tests
+# ============================================================================
+# This file contains unit tests for the `_explicit_or_descriptive` helper
+# function. It strictly verifies the logic used to determine whether the user's
+# `solve` call is in explicit or descriptive mode based on the provided arguments,
+# and ensures that conflicting or mixed arguments throw the appropriate errors.
+
 module TestModeDetection
 
 import Test

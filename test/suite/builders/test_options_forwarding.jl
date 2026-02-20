@@ -1,3 +1,11 @@
+# ============================================================================
+# Strategy Options Forwarding Tests
+# ============================================================================
+# This file tests that strategy options (e.g., `display`, `print_level`, `max_iter`)
+# are correctly forwarded and processed from the high-level `OptimalControl`
+# API down to the underlying `CTSolvers` constructors, preserving their default
+# values or correctly overriding them with user inputs.
+
 module TestOptionsForwarding
 
 import Test

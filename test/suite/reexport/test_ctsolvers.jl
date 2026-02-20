@@ -1,3 +1,10 @@
+# ============================================================================
+# CTSolvers Reexports Tests
+# ============================================================================
+# This file tests the reexport of symbols from `CTSolvers`. It verifies that
+# the strategy builders, solver types, options, and utilities like `route_to`
+# and `bypass` are properly exported by `OptimalControl`.
+
 module TestCtsolvers
 
 import Test
@@ -64,6 +71,7 @@ function test_ctsolvers()
                 OptimalControl.StrategyOptions,
                 OptimalControl.OptionDefinition,
                 OptimalControl.RoutedOption,
+                OptimalControl.BypassValue,
             )
                 Test.@test isdefined(OptimalControl, nameof(T))
                 Test.@test !isdefined(CurrentModule, nameof(T))
@@ -106,6 +114,7 @@ function test_ctsolvers()
         Test.@testset "Strategy Utility Functions" begin
             for f in (
                 :route_to,
+                :bypass,
             )
                 Test.@testset "$f" begin
                     Test.@test isdefined(OptimalControl, f)

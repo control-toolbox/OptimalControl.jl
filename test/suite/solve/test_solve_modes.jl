@@ -1,3 +1,11 @@
+# ============================================================================
+# End-to-End Solve Modes Tests
+# ============================================================================
+# This file contains end-to-end integration tests using real optimal control
+# problems. It verifies that both explicit and descriptive solve modes function
+# correctly through the entire pipeline down to the actual solver backends.
+# Solvers are typically run with 0 iterations to ensure fast routing validation.
+
 module TestSolveModes
 
 import Test

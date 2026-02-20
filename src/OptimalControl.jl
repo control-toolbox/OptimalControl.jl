@@ -9,8 +9,13 @@ module OptimalControl
 
 using DocStringExtensions
 using Reexport
-using CTBase
-using CommonSolve
+
+import CommonSolve
+@reexport import CommonSolve: solve
+import CTBase
+import CTModels
+import CTDirect
+import CTSolvers
 
 # Imports
 include(joinpath(@__DIR__, "imports", "ctbase.jl"))
@@ -40,6 +45,5 @@ include(joinpath(@__DIR__, "solve", "explicit.jl"))
 include(joinpath(@__DIR__, "solve", "descriptive.jl"))
 
 export methods # non useful since it is already in Base
-export get_strategy_registry
 
 end

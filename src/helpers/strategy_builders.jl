@@ -4,7 +4,7 @@ $(TYPEDSIGNATURES)
 Extract strategy symbols from provided components to build a partial method description.
 
 This function extracts the symbolic IDs from concrete strategy instances using
-`CTSolvers.Strategies.id(typeof(component))`. It returns a tuple containing
+`CTSolvers.id(typeof(component))`. It returns a tuple containing
 the symbols of all non-`nothing` components in the order: discretizer, modeler, solver.
 
 # Arguments
@@ -31,7 +31,7 @@ julia> _build_partial_description(nothing, nothing, nothing)
 ```
 
 # See Also
-- [`CTSolvers.Strategies.id`](@ref): Extracts symbolic ID from strategy types
+- [`CTSolvers.id`](@ref): Extracts symbolic ID from strategy types
 - [`_complete_description`](@ref): Completes partial description via registry
 """
 function _build_partial_description(
@@ -81,7 +81,7 @@ modeler and solver components.
 - `Tuple{Vararg{Symbol}}`: Tuple containing discretizer symbol followed by remaining symbols
 
 # Notes
-- Uses `CTSolvers.Strategies.id` to extract symbolic ID
+- Uses `CTSolvers.id` to extract symbolic ID
 - Recursive call to process remaining components
 - Allocation-free implementation through tuple concatenation
 """
@@ -90,7 +90,7 @@ function _build_partial_tuple(
     modeler::Union{CTSolvers.AbstractNLPModeler, Nothing},
     solver::Union{CTSolvers.AbstractNLPSolver, Nothing}
 )
-    disc_symbol = (CTSolvers.Strategies.id(typeof(discretizer)),)
+    disc_symbol = (CTSolvers.id(typeof(discretizer)),)
     rest_symbols = _build_partial_tuple(modeler, solver)
     return (disc_symbol..., rest_symbols...)
 end
@@ -139,7 +139,7 @@ extracts its symbolic ID, and recursively processes the solver.
 - `Tuple{Vararg{Symbol}}`: Tuple containing modeler symbol followed by solver symbol (if any)
 
 # Notes
-- Uses `CTSolvers.Strategies.id` to extract symbolic ID
+- Uses `CTSolvers.id` to extract symbolic ID
 - Recursive call to process solver component
 - Allocation-free implementation
 """
@@ -147,7 +147,7 @@ function _build_partial_tuple(
     modeler::CTSolvers.AbstractNLPModeler,
     solver::Union{CTSolvers.AbstractNLPSolver, Nothing}
 )
-    mod_symbol = (CTSolvers.Strategies.id(typeof(modeler)),)
+    mod_symbol = (CTSolvers.id(typeof(modeler)),)
     rest_symbols = _build_partial_tuple(solver)
     return (mod_symbol..., rest_symbols...)
 end
@@ -193,12 +193,12 @@ extracts its symbolic ID, and returns it as a single-element tuple.
 - `Tuple{Symbol}`: Single-element tuple containing solver symbol
 
 # Notes
-- Uses `CTSolvers.Strategies.id` to extract symbolic ID
+- Uses `CTSolvers.id` to extract symbolic ID
 - Terminal case in the recursion
 - Allocation-free implementation
 """
 function _build_partial_tuple(solver::CTSolvers.AbstractNLPSolver)
-    return (CTSolvers.Strategies.id(typeof(solver)),)
+    return (CTSolvers.id(typeof(solver)),)
 end
 
 """
@@ -296,14 +296,14 @@ result = _build_or_use_strategy((:collocation, :adnlp, :ipopt), nothing, CTDirec
 - Type-safe through Julia's multiple dispatch system
 - Allocation-free implementation
 
-See also: [`CTSolvers.Strategies.build_strategy_from_method`](@ref), [`get_strategy_registry`](@ref), [`_complete_description`](@ref)
+See also: [`CTSolvers.build_strategy_from_method`](@ref), [`get_strategy_registry`](@ref), [`_complete_description`](@ref)
 """
 function _build_or_use_strategy(
     complete_description::Tuple{Symbol, Symbol, Symbol},
     provided::T,
     family_type::Type{T},
-    registry::CTSolvers.Strategies.StrategyRegistry
-)::T where {T <: CTSolvers.Strategies.AbstractStrategy}
+    registry::CTSolvers.StrategyRegistry
+)::T where {T <: CTSolvers.AbstractStrategy}
     # Fast path: strategy already provided
     return provided
 end
@@ -326,21 +326,21 @@ building a new strategy from the complete method description using the registry.
 - `T`: Newly built strategy instance
 
 # Notes
-- Uses `CTSolvers.Strategies.build_strategy_from_method` for construction
+- Uses `CTSolvers.build_strategy_from_method` for construction
 - Registry lookup determines the concrete strategy type
 - Type-safe through Julia's dispatch system
 - Allocation-free when possible (depends on registry implementation)
 
-See also: [`CTSolvers.Strategies.build_strategy_from_method`](@ref), [`get_strategy_registry`](@ref)
+See also: [`CTSolvers.build_strategy_from_method`](@ref), [`get_strategy_registry`](@ref)
 """
 function _build_or_use_strategy(
     complete_description::Tuple{Symbol, Symbol, Symbol},
     ::Nothing,
     family_type::Type{T},
-    registry::CTSolvers.Strategies.StrategyRegistry
-)::T where {T <: CTSolvers.Strategies.AbstractStrategy}
+    registry::CTSolvers.StrategyRegistry
+)::T where {T <: CTSolvers.AbstractStrategy}
     # Build path: construct from registry
-    return CTSolvers.Strategies.build_strategy_from_method(
+    return CTSolvers.build_strategy_from_method(
         complete_description, family_type, registry
     )
 end

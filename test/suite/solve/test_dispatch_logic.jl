@@ -1,3 +1,11 @@
+# ============================================================================
+# Solve Dispatch Logic Tests
+# ============================================================================
+# This file contains unit tests for the top-level `solve` dispatch mechanism.
+# It uses a dynamically generated mock registry to verify that the entry point
+# correctly analyzes arguments and routes the call to either `solve_explicit`
+# or `solve_descriptive`, ensuring the dispatch logic is robust and isolated.
+
 module TestDispatchLogic
 
 import Test

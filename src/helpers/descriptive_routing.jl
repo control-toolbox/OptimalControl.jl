@@ -25,7 +25,7 @@ $(TYPEDSIGNATURES)
 Return the strategy families used for option routing in descriptive mode.
 
 The returned `NamedTuple` maps family names to their abstract types, as expected
-by [`CTSolvers.Orchestration.route_all_options`](@ref).
+by [`CTSolvers.route_all_options`](@ref).
 
 # Returns
 - `NamedTuple`: `(discretizer, modeler, solver)` mapped to their abstract types
@@ -63,18 +63,18 @@ This helper exists for extensibility: future solve-level options that should be
 separated from strategy options can be declared here.
 
 # Returns
-- `Vector{CTSolvers.Options.OptionDefinition}`: Empty vector (no action options at Layer 2)
+- `Vector{CTSolvers.OptionDefinition}`: Empty vector (no action options at Layer 2)
 
 # Example
 ```julia
 julia> OptimalControl._descriptive_action_defs()
-CTSolvers.Options.OptionDefinition[]
+CTSolvers.OptionDefinition[]
 ```
 
 See also: [`_route_descriptive_options`](@ref)
 """
-function _descriptive_action_defs()::Vector{CTSolvers.Options.OptionDefinition}
-    return CTSolvers.Options.OptionDefinition[]
+function _descriptive_action_defs()::Vector{CTSolvers.OptionDefinition}
+    return CTSolvers.OptionDefinition[]
 end
 
 # ----------------------------------------------------------------------------
@@ -86,7 +86,7 @@ $(TYPEDSIGNATURES)
 
 Route all keyword options to the appropriate strategy families for descriptive mode.
 
-This function wraps [`CTSolvers.Orchestration.route_all_options`](@ref) with the
+This function wraps [`CTSolvers.route_all_options`](@ref) with the
 families and action definitions specific to OptimalControl's descriptive mode.
 
 Options are routed in `:strict` mode: any unknown option raises an
@@ -123,19 +123,18 @@ See also: [`_descriptive_families`](@ref), [`_descriptive_action_defs`](@ref),
 """
 function _route_descriptive_options(
     complete_description::Tuple{Symbol, Symbol, Symbol},
-    registry::CTSolvers.Strategies.StrategyRegistry,
+    registry::CTSolvers.StrategyRegistry,
     kwargs,
 )
     families    = _descriptive_families()
     action_defs = _descriptive_action_defs()
-    return CTSolvers.Orchestration.route_all_options(
+    return CTSolvers.route_all_options(
         complete_description,
         families,
         action_defs,
         (; kwargs...),
         registry;
         source_mode = :description,
-        mode        = :strict,
     )
 end
 
@@ -149,7 +148,7 @@ $(TYPEDSIGNATURES)
 Build the three concrete strategy instances from a routed options result.
 
 Each strategy is constructed via
-[`CTSolvers.Strategies.build_strategy_from_method`](@ref) using the options
+[`CTSolvers.build_strategy_from_method`](@ref) using the options
 that were routed to its family by [`_route_descriptive_options`](@ref).
 
 # Arguments
@@ -174,26 +173,26 @@ true
 ```
 
 See also: [`_route_descriptive_options`](@ref),
-[`CTSolvers.Strategies.build_strategy_from_method`](@ref)
+[`CTSolvers.build_strategy_from_method`](@ref)
 """
 function _build_components_from_routed(
     complete_description::Tuple{Symbol, Symbol, Symbol},
-    registry::CTSolvers.Strategies.StrategyRegistry,
+    registry::CTSolvers.StrategyRegistry,
     routed::NamedTuple,
 )
-    discretizer = CTSolvers.Strategies.build_strategy_from_method(
+    discretizer = CTSolvers.build_strategy_from_method(
         complete_description,
         CTDirect.AbstractDiscretizer,
         registry;
         routed.strategies.discretizer...,
     )
-    modeler = CTSolvers.Strategies.build_strategy_from_method(
+    modeler = CTSolvers.build_strategy_from_method(
         complete_description,
         CTSolvers.AbstractNLPModeler,
         registry;
         routed.strategies.modeler...,
     )
-    solver = CTSolvers.Strategies.build_strategy_from_method(
+    solver = CTSolvers.build_strategy_from_method(
         complete_description,
         CTSolvers.AbstractNLPSolver,
         registry;

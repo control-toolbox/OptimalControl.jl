@@ -35,7 +35,8 @@ import CTSolvers:
     StrategyMetadata, 
     StrategyOptions, 
     OptionDefinition,
-    RoutedOption
+    RoutedOption,
+    BypassValue
 
 @reexport import CTSolvers:
 
@@ -59,4 +60,5 @@ import CTSolvers:
     is_computed,
 
     # Utility functions
-    route_to
+    route_to,
+    bypass

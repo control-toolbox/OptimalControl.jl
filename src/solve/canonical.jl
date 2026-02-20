@@ -5,12 +5,6 @@
 # This file implements the lowest-level solve function that performs actual
 # resolution with fully specified, concrete components.
 
-import CommonSolve
-@reexport import CommonSolve: solve
-import CTModels
-import CTDirect
-import CTSolvers
-
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
 # Canonical solve function - Layer 3 (Pure Execution)

@@ -1,3 +1,10 @@
+# ============================================================================
+# ExaModels Reexports Tests
+# ============================================================================
+# This file tests the reexport of symbols from `ExaModels`. It verifies that
+# the expected types and functions related to the ExaModels backend are
+# properly exported by `OptimalControl`.
+
 module TestExamodels
 
 import Test

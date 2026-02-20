@@ -1,3 +1,10 @@
+# ============================================================================
+# Mode Types and Extraction Tests
+# ============================================================================
+# This file tests the basic mode sentinel types (`ExplicitMode`, `DescriptiveMode`)
+# and the low-level keyword argument extraction helpers (`_extract_kwarg`,
+# `_has_explicit_components`) used by the top-level dispatch system.
+
 module TestSolveMode
 
 import Test

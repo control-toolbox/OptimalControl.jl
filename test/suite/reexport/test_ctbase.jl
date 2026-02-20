@@ -1,3 +1,10 @@
+# ============================================================================
+# CTBase Reexports Tests
+# ============================================================================
+# This file tests the reexport of symbols from `CTBase`. It verifies that
+# the expected types, functions, and constants are properly exported by
+# `OptimalControl` and readily accessible to the end user.
+
 module TestCtbase
 
 import Test

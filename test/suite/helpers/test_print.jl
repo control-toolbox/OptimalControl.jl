@@ -1,3 +1,10 @@
+# ============================================================================
+# Display and Printing Helpers Tests
+# ============================================================================
+# This file tests the `display_ocp_configuration` function and other printing
+# utilities. It ensures that the current strategy configuration (components
+# and their options) is formatted and displayed correctly to the user.
+
 module TestPrint
 
 import Test

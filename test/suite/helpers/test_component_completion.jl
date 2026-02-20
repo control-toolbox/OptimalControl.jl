@@ -1,3 +1,11 @@
+# ============================================================================
+# Component Completion Helpers Tests
+# ============================================================================
+# This file contains unit tests for the `_complete_components` helper.
+# It verifies that partially provided strategy components are correctly
+# completed (instantiated) using the strategy registry to form a full
+# `(discretizer, modeler, solver)` triplet.
+
 module TestComponentCompletion
 
 import Test

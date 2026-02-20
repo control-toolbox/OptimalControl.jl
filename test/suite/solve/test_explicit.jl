@@ -1,3 +1,11 @@
+# ============================================================================
+# Explicit Mode Tests (Layer 2)
+# ============================================================================
+# This file tests the `solve_explicit` function. It verifies that when the user
+# provides instantiated strategy components (discretizer, modeler, solver) as
+# keyword arguments, any missing components are correctly completed via the
+# strategy registry before delegating to the canonical Layer 3 solve.
+
 module TestExplicit
 
 import Test

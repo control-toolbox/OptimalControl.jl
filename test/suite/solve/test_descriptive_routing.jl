@@ -1,3 +1,11 @@
+# ============================================================================
+# Descriptive Routing Helper Tests
+# ============================================================================
+# This file contains unit tests for the descriptive mode routing helpers 
+# (e.g., `_route_descriptive_options`, `_build_components_from_routed`).
+# It uses parametric mock strategies to isolate and verify the routing and
+# instantiation logic without relying on heavy solver backends.
+
 module TestDescriptiveRouting
 
 import Test

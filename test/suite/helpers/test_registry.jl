@@ -1,3 +1,11 @@
+# ============================================================================
+# Strategy Registry Setup Tests
+# ============================================================================
+# This file tests the `get_strategy_registry` function. It verifies that
+# the global strategy registry is correctly populated with all available
+# abstract families and their concrete implementations provided by the solver
+# ecosystem (CTDirect, CTSolvers).
+
 module TestRegistry
 
 import Test

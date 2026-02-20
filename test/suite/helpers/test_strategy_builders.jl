@@ -1,3 +1,11 @@
+# ============================================================================
+# Strategy Builders Helpers Tests
+# ============================================================================
+# This file contains unit tests for the core strategy building helpers:
+# `_build_partial_description`, `_complete_description`, and `_build_or_use_strategy`.
+# It verifies the logic used to analyze provided components, resolve missing
+# parts via the registry, and instantiate the required strategies.
+
 module TestStrategyBuilders
 
 import Test

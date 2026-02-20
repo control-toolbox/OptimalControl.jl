@@ -45,7 +45,7 @@ function _complete_components(
     discretizer::Union{CTDirect.AbstractDiscretizer, Nothing},
     modeler::Union{CTSolvers.AbstractNLPModeler, Nothing},
     solver::Union{CTSolvers.AbstractNLPSolver, Nothing},
-    registry::CTSolvers.Strategies.StrategyRegistry
+    registry::CTSolvers.StrategyRegistry
 )::NamedTuple{(:discretizer, :modeler, :solver)}
 
     # Step 1: Extract symbols from provided components

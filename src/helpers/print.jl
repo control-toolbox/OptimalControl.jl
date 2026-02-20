@@ -111,8 +111,8 @@ function display_ocp_configuration(
                 print(io, " (")
                 for (i, (key, opt)) in enumerate(user_items)
                     sep = i == n ? "" : ", "
-                    src = show_sources ? " [" * string(CTSolvers.Options.source(opt)) * "]" : ""
-                    print(io, string(key), " = ", CTSolvers.Options.value(opt), src, sep)
+                    src = show_sources ? " [" * string(CTSolvers.source(opt)) * "]" : ""
+                    print(io, string(key), " = ", CTSolvers.value(opt), src, sep)
                 end
                 print(io, ")")
             else
@@ -121,8 +121,8 @@ function display_ocp_configuration(
                 shown = first(user_items, 3)
                 for (i, (key, opt)) in enumerate(shown)
                     sep = i == length(shown) ? "" : ", "
-                    src = show_sources ? " [" * string(CTSolvers.Options.source(opt)) * "]" : ""
-                    print(io, string(key), " = ", CTSolvers.Options.value(opt), src, sep)
+                    src = show_sources ? " [" * string(CTSolvers.source(opt)) * "]" : ""
+                    print(io, string(key), " = ", CTSolvers.value(opt), src, sep)
                 end
                 remaining = n - length(shown)
                 if remaining > 0

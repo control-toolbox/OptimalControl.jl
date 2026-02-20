@@ -1,0 +1,246 @@
+     Testing CTSolvers
+      Status `/private/var/folders/xh/6cj27y_n2_v3l0h35s5p5pkh0000gp/T/jl_EGdKCv/Project.toml`
+  [54578032] ADNLPModels v0.8.13
+  [4c88cf16] Aqua v0.8.14
+  [6e4b80f9] BenchmarkTools v1.6.3
+  [54762871] CTBase v0.18.3-beta
+  [34c4fa32] CTModels v0.9.0-beta
+  [d3e8d392] CTSolvers v0.3.5-beta `~/Research/logiciels/dev/control-toolbox/CTSolvers`
+  [052768ef] CUDA v5.9.6
+  [38540f10] CommonSolve v0.2.6
+  [ffbed154] DocStringExtensions v0.9.5
+  [1037b233] ExaModels v0.9.3
+  [63c18a36] KernelAbstractions v0.9.40
+  [434a0bcb] MadNCL v0.1.2
+  [2621e9c9] MadNLP v0.8.12
+  [d72a61cc] MadNLPGPU v0.7.18
+  [3b83494e] MadNLPMumps v0.5.1
+  [a4795742] NLPModels v0.21.9
+  [f4238b75] NLPModelsIpopt v0.11.1
+  [bac558e1] OrderedCollections v1.8.1
+  [ff4d7338] SolverCore v0.3.9
+  [9a3f8284] Random v1.11.0
+  [8dfed614] Test v1.11.0
+      Status `/private/var/folders/xh/6cj27y_n2_v3l0h35s5p5pkh0000gp/T/jl_EGdKCv/Manifest.toml`
+  [54578032] ADNLPModels v0.8.13
+  [47edcb42] ADTypes v1.21.0
+  [14f7f29c] AMD v0.5.3
+  [621f4979] AbstractFFTs v1.5.0
+  [79e6a3ab] Adapt v4.4.0
+  [4c88cf16] Aqua v0.8.14
+  [a9b6321e] Atomix v1.1.2
+  [13072b0f] AxisAlgorithms v1.1.0
+  [ab4f0b2a] BFloat16s v0.6.1
+  [6e4b80f9] BenchmarkTools v1.6.3
+  [fa961155] CEnum v0.5.0
+  [54762871] CTBase v0.18.3-beta
+  [34c4fa32] CTModels v0.9.0-beta
+  [d3e8d392] CTSolvers v0.3.5-beta `~/Research/logiciels/dev/control-toolbox/CTSolvers`
+  [052768ef] CUDA v5.9.6
+  [1af6417a] CUDA_Runtime_Discovery v1.0.0
+  [45b445bb] CUDSS v0.6.6
+  [d360d2e6] ChainRulesCore v1.26.0
+  [38540f10] CommonSolve v0.2.6
+  [bbf7d656] CommonSubexpressions v0.3.1
+  [34da2185] Compat v4.18.1
+  [a8cc5b0e] Crayons v4.1.1
+  [9a962f9c] DataAPI v1.16.0
+  [a93c6f00] DataFrames v1.8.1
+  [864edb3b] DataStructures v0.19.3
+  [e2d170a0] DataValueInterfaces v1.0.0
+  [163ba53b] DiffResults v1.1.0
+  [b552c78f] DiffRules v1.15.1
+  [ffbed154] DocStringExtensions v0.9.5
+  [1037b233] ExaModels v0.9.3
+  [e2ba6199] ExprTools v0.1.10
+  [9aa1b823] FastClosures v0.3.2
+  [1a297f60] FillArrays v1.16.0
+  [f6369f11] ForwardDiff v1.3.2
+  [069b7b12] FunctionWrappers v1.1.3
+  [0c68f7d7] GPUArrays v11.4.1
+  [46192b85] GPUArraysCore v0.2.0
+  [61eb1bfa] GPUCompiler v1.8.2
+  [096a3bc2] GPUToolbox v1.0.0
+  [076d061b] HashArrayMappedTries v0.2.0
+  [842dd82b] InlineStrings v1.4.5
+  [a98d9a8b] Interpolations v0.16.2
+  [41ab1584] InvertedIndices v1.3.1
+  [b6b21f68] Ipopt v1.14.1
+  [92d709cd] IrrationalConstants v0.2.6
+  [82899510] IteratorInterfaceExtensions v1.0.0
+  [692b3bcd] JLLWrappers v1.7.1
+  [682c06a0] JSON v1.4.0
+  [63c18a36] KernelAbstractions v0.9.40
+  [40e66cde] LDLFactorizations v0.10.1
+  [929cbde3] LLVM v9.4.6
+  [8b046642] LLVMLoopInfo v1.0.0
+  [b964fa9f] LaTeXStrings v1.4.0
+  [5c8ed15e] LinearOperators v2.12.0
+  [2ab3a3ac] LogExpFunctions v0.3.29
+  [d8e11817] MLStyle v0.4.17
+  [1914dd2f] MacroTools v0.5.16
+  [434a0bcb] MadNCL v0.1.2
+  [2621e9c9] MadNLP v0.8.12
+  [d72a61cc] MadNLPGPU v0.7.18
+  [3b83494e] MadNLPMumps v0.5.1
+  [2679e427] Metis v1.5.0
+  [e1d29d7a] Missings v1.2.0
+  [a4795742] NLPModels v0.21.9
+  [f4238b75] NLPModelsIpopt v0.11.1
+  [e01155f1] NLPModelsModifiers v0.7.3
+  [5da4648a] NVTX v1.0.3
+  [77ba4419] NaNMath v1.1.3
+  [6fe1bfb0] OffsetArrays v1.17.0
+  [bac558e1] OrderedCollections v1.8.1
+  [d96e819e] Parameters v0.12.3
+  [69de0a69] Parsers v2.8.3
+  [2dfb63ee] PooledArrays v1.4.3
+  [aea7be01] PrecompileTools v1.3.3
+  [21216c6a] Preferences v1.5.1
+  [08abe8d2] PrettyTables v3.2.3
+  [74087812] Random123 v1.7.1
+  [e6cf234a] RandomNumbers v1.6.0
+  [c84ed2f1] Ratios v0.4.5
+  [3cdcf5f2] RecipesBase v1.3.4
+  [189a3867] Reexport v1.2.2
+  [ae029012] Requires v1.3.1
+  [37e2e3b7] ReverseDiff v1.16.2
+  [7e506255] ScopedValues v1.5.0
+  [6c6a2e73] Scratch v1.3.0
+  [91c51154] SentinelArrays v1.4.9
+  [ff4d7338] SolverCore v0.3.9
+  [a2af1166] SortingAlgorithms v1.2.2
+  [9f842d2f] SparseConnectivityTracer v1.2.1
+  [0a514795] SparseMatrixColorings v0.4.23
+  [276daf66] SpecialFunctions v2.7.1
+  [90137ffa] StaticArrays v1.9.16
+  [1e83bf80] StaticArraysCore v1.4.4
+  [10745b16] Statistics v1.11.1
+  [892a3eda] StringManipulation v0.4.2
+  [ec057cc2] StructUtils v2.6.3
+  [3783bdb8] TableTraits v1.0.1
+  [bd369af6] Tables v1.12.1
+  [a759f4b9] TimerOutputs v0.5.29
+  [e689c965] Tracy v0.1.6
+  [3a884ed6] UnPack v1.0.2
+  [013be700] UnsafeAtomics v0.3.0
+  [efce3f68] WoodburyMatrices v1.1.0
+  [ae81ac8f] ASL_jll v0.1.3+0
+  [d1e2174e] CUDA_Compiler_jll v0.4.1+1
+  [4ee394cb] CUDA_Driver_jll v13.1.0+2
+⌅ [76a88914] CUDA_Runtime_jll v0.19.2+0
+  [4889d778] CUDSS_jll v0.7.1+0
+  [e33a78d0] Hwloc_jll v2.13.0+0
+  [9cc047cb] Ipopt_jll v300.1400.1901+0
+  [9c1d0b0a] JuliaNVTXCallbacks_jll v0.2.1+0
+  [dad2f222] LLVMExtra_jll v0.0.38+0
+  [ad6e5548] LibTracyClient_jll v0.13.1+0
+  [94ce4f54] Libiconv_jll v1.18.0+0
+  [d00139f3] METIS_jll v5.1.3+0
+  [d7ed1dd3] MUMPS_seq_jll v500.800.200+0
+  [e98f9f5b] NVTX_jll v3.2.2+0
+  [656ef2d0] OpenBLAS32_jll v0.3.30+0
+  [efe28fd5] OpenSpecFun_jll v0.5.6+0
+  [319450e9] SPRAL_jll v2025.9.18+0
+⌅ [02c8fc9c] XML2_jll v2.13.9+0
+  [a65dc6b1] Xorg_libpciaccess_jll v0.18.1+0
+  [1e29f10c] demumble_jll v1.3.0+0
+  [0dad84c5] ArgTools v1.1.2
+  [56f22d72] Artifacts v1.11.0
+  [2a0f44e3] Base64 v1.11.0
+  [ade2ca70] Dates v1.11.0
+  [8ba89e20] Distributed v1.11.0
+  [f43a241f] Downloads v1.6.0
+  [7b1f6079] FileWatching v1.11.0
+  [9fa8497b] Future v1.11.0
+  [b77e0a4c] InteractiveUtils v1.11.0
+  [ac6e5ff7] JuliaSyntaxHighlighting v1.12.0
+  [4af54fe1] LazyArtifacts v1.11.0
+  [b27032c2] LibCURL v0.6.4
+  [76f85450] LibGit2 v1.11.0
+  [8f399da3] Libdl v1.11.0
+  [37e2e46d] LinearAlgebra v1.12.0
+  [56ddb016] Logging v1.11.0
+  [d6f4376e] Markdown v1.11.0
+  [a63ad114] Mmap v1.11.0
+  [ca575930] NetworkOptions v1.3.0
+  [44cfe95a] Pkg v1.12.0
+  [de0858da] Printf v1.11.0
+  [9abbd945] Profile v1.11.0
+  [3fa0cd96] REPL v1.11.0
+  [9a3f8284] Random v1.11.0
+  [ea8e919c] SHA v0.7.0
+  [9e88b42a] Serialization v1.11.0
+  [1a1011a3] SharedArrays v1.11.0
+  [6462fe0b] Sockets v1.11.0
+  [2f01184e] SparseArrays v1.12.0
+  [f489334b] StyledStrings v1.11.0
+  [4607b0f0] SuiteSparse
+  [fa267f1f] TOML v1.0.3
+  [a4e569a6] Tar v1.10.0
+  [8dfed614] Test v1.11.0
+  [cf7118a7] UUIDs v1.11.0
+  [4ec0a83e] Unicode v1.11.0
+  [e66e0078] CompilerSupportLibraries_jll v1.3.0+1
+  [deac9b47] LibCURL_jll v8.11.1+1
+  [e37daf67] LibGit2_jll v1.9.0+0
+  [29816b5a] LibSSH2_jll v1.11.3+1
+  [14a3606d] MozillaCACerts_jll v2025.5.20
+  [4536629a] OpenBLAS_jll v0.3.29+0
+  [05823500] OpenLibm_jll v0.8.7+0
+  [458c3c95] OpenSSL_jll v3.5.1+0
+  [bea87d4a] SuiteSparse_jll v7.8.3+2
+  [83775a58] Zlib_jll v1.3.1+2
+  [8e850b90] libblastrampoline_jll v5.15.0+0
+  [8e850ede] nghttp2_jll v1.64.0+1
+  [3f19e933] p7zip_jll v17.5.0+2
+        Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading.
+     Testing Running tests...
+fatal: error thrown and no exception handler available.
+InterruptException()
+_jl_mutex_unlock at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/default-honeycrisp-XG3Q6T6R70.0/build/default-honeycrisp-XG3Q6T6R70-0/julialang/julia-release-1-dot-12/src/threading.c:1054
+jl_mutex_unlock at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/default-honeycrisp-XG3Q6T6R70.0/build/default-honeycrisp-XG3Q6T6R70-0/julialang/julia-release-1-dot-12/src/./julia_locks.h:80 [inlined]
+ijl_task_get_next at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/default-honeycrisp-XG3Q6T6R70.0/build/default-honeycrisp-XG3Q6T6R70-0/julialang/julia-release-1-dot-12/src/scheduler.c:461
+poptask at ./task.jl:1187
+wait at ./task.jl:1199
+task_done_hook at ./task.jl:839
+jfptr_task_done_hook_59837.1 at /Users/ocots/.julia/juliaup/julia-1.12.1+0.aarch64.apple.darwin14/lib/julia/sys.dylib (unknown line)
+jl_apply at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/default-honeycrisp-XG3Q6T6R70.0/build/default-honeycrisp-XG3Q6T6R70-0/julialang/julia-release-1-dot-12/src/./julia.h:2391 [inlined]
+jl_finish_task at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/default-honeycrisp-XG3Q6T6R70.0/build/default-honeycrisp-XG3Q6T6R70-0/julialang/julia-release-1-dot-12/src/task.c:345
+start_task at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/default-honeycrisp-XG3Q6T6R70.0/build/default-honeycrisp-XG3Q6T6R70-0/julialang/julia-release-1-dot-12/src/task.c:1260
+ERROR: LoadError: InterruptException:
+Stacktrace:
+  [1] eval(m::Module, e::Any)
+    @ Core ./boot.jl:489
+  [2] EvalInto
+    @ ./boot.jl:494 [inlined]
+  [3] _run_single_test(spec::String; available_tests::Vector{Union{String, Symbol}}, filename_builder::Function, funcname_builder::Function, eval_mode::Bool, test_dir::String, index::Int64, total::Int64, on_test_start::Nothing, on_test_done::TestRunner.var"#update#_make_default_on_test_done##0"{IOStream, Base.RefValue{Int64}, Vector{Int64}})
+    @ TestRunner ~/.julia/packages/CTBase/W7y8e/ext/TestRunner.jl:833
+  [4] macro expansion
+    @ ~/.julia/packages/CTBase/W7y8e/ext/TestRunner.jl:190 [inlined]
+  [5] macro expansion
+    @ ~/.julia/juliaup/julia-1.12.1+0.aarch64.apple.darwin14/share/julia/stdlib/v1.12/Test/src/Test.jl:1776 [inlined]
+  [6] macro expansion
+    @ ~/.julia/packages/CTBase/W7y8e/ext/TestRunner.jl:190 [inlined]
+  [7] macro expansion
+    @ ~/.julia/juliaup/julia-1.12.1+0.aarch64.apple.darwin14/share/julia/stdlib/v1.12/Test/src/Test.jl:1776 [inlined]
+  [8] run_tests(::CTBase.Extensions.TestRunnerTag; args::Vector{String}, testset_name::String, available_tests::Tuple{String}, filename_builder::Function, funcname_builder::Function, eval_mode::Bool, verbose::Bool, showtiming::Bool, test_dir::String, on_test_start::Nothing, on_test_done::Nothing, progress::Bool)
+    @ TestRunner ~/.julia/packages/CTBase/W7y8e/ext/TestRunner.jl:188
+  [9] run_tests
+    @ ~/.julia/packages/CTBase/W7y8e/ext/TestRunner.jl:134 [inlined]
+ [10] #run_tests#6
+    @ ~/.julia/packages/CTBase/W7y8e/src/Extensions/Extensions.jl:286 [inlined]
+ [11] include(mapexpr::Function, mod::Module, _path::String)
+    @ Base ./Base.jl:307
+ [12] eval(m::Module, e::Any)
+    @ Core ./boot.jl:489
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:283
+ [14] _start()
+    @ Base ./client.jl:550
+in expression starting at /Users/ocots/Research/logiciels/dev/control-toolbox/CTSolvers/test/runtests.jl:34
+⚠️  CUDA not functional, GPU tests will be skipped
+[31m[[31m▚[0m[31m][0m [1m[31m✗[0m [36m[1/1][0m [1msuite/integration/test_route_to_comprehensive.jl[0m [1m[31mFAILED[0m[2m, [2m(3.7s)[0m
+Test Summary:                                      | Total  Time
+CTSolvers tests                                    |     0  4.8s
+  suite/integration/test_route_to_comprehensive.jl |     0  4.8s
