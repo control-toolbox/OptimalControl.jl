@@ -417,11 +417,36 @@ solve(ocp; init=x, i=y)
 
 # Conflit action/stratégie : si Ipopt déclare aussi `display`
 solve(ocp; display=false)
-# → action gagne : display=false pour l'orchestrateur
+# → action gagne : display=false pour l'orchestrateur uniquement
 
 solve(ocp; display=route_to(ipopt=false))
 # → stratégie gagne : display=false pour Ipopt uniquement
+# (mais si Ipopt ne déclare pas `display`, erreur "option inconnue")
 ```
+
+## Limitation : impossible de passer une option à la fois à l'action ET à une stratégie
+
+En mode descriptif, `extract_options` **retire** l'option d'action de `kwargs` avant que
+le routeur de stratégies ne la voie. Une option ne peut donc avoir qu'un seul propriétaire
+dans un appel donné.
+
+**Si l'utilisateur veut passer `display=false` à la fois à l'orchestrateur et à Ipopt**,
+il doit utiliser le **mode explicite** :
+
+```julia
+# Mode explicite : contrôle total
+solver = CTSolvers.Ipopt(display=false)    # display=false pour Ipopt
+solve(ocp; solver=solver, display=false)   # display=false aussi pour l'orchestrateur
+```
+
+C'est cohérent avec la philosophie des deux modes :
+
+- **Mode descriptif** — simplicité : l'orchestrateur gère tout, les options sont routées
+  automatiquement. Les options d'action ont la priorité.
+- **Mode explicite** — contrôle total : l'utilisateur construit les composants lui-même
+  et peut passer n'importe quelle option à n'importe quel composant.
+
+> Cette limitation doit être documentée dans la docstring de `CommonSolve.solve`.
 
 ---
 
