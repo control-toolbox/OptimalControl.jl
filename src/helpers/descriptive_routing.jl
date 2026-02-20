@@ -97,7 +97,7 @@ julia> length(defs)
 julia> defs[1].name
 :initial_guess
 julia> defs[1].aliases
-(:init, :i)
+(:init,)
 ```
 
 See also: [`_route_descriptive_options`](@ref)

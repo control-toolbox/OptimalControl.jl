@@ -63,7 +63,7 @@ Raises an error if more than one alias is present simultaneously.
 # Examples
 ```julia
 julia> kw = pairs((; init=x0, display=false))
-julia> val, rest = OptimalControl._extract_action_kwarg(kw, (:initial_guess, :init, :i), nothing)
+julia> val, rest = OptimalControl._extract_action_kwarg(kw, (:initial_guess, :init), nothing)
 julia> val === x0
 true
 ```
