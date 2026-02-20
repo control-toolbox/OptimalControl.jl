@@ -76,7 +76,7 @@ strategy-specific options are routed. They are extracted from `kwargs` **first**
 by [`CTSolvers.route_all_options`](@ref), so they never reach the strategy router.
 
 Currently defined action options:
-- `initial_guess` (aliases: `init`, `i`): Initial guess for the OCP solution.
+- `initial_guess` (aliases: `init`): Initial guess for the OCP solution.
   Defaults to `nothing` (automatic generation via [`CTModels.build_initial_guess`](@ref)).
 - `display`: Whether to display solve configuration. Defaults to `true`.
 

@@ -1,8 +1,0 @@
-blank_issues_enabled: false
-contact_links:
-  - name: CTSolvers.jl package support
-    url: https://github.com/control-toolbox/CTSolvers.jl/discussions
-    about: Please ask and answer questions about CTSolvers.jl here.
-  - name: Control-toolbox organisation support
-    url: https://github.com/orgs/control-toolbox/discussions
-    about: For more general questions about control-toolbox ecosystem it's here.

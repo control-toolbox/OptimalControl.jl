@@ -28,7 +28,6 @@ solve(ocp, :collocation, :adnlp, :ipopt; grid_size=100, display=false)
 
 # Aliases for initial_guess
 solve(ocp, :collocation; init=x0, display=false)
-solve(ocp, :collocation; i=x0)
 
 # Disambiguation for ambiguous options
 solve(ocp, :collocation, :adnlp, :ipopt;
