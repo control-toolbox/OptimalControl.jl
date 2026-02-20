@@ -141,13 +141,6 @@ function test_orchestration()
             Test.@test result isa MockSolution
         end
 
-        Test.@testset "solve_descriptive - alias 'i'" begin
-            ocp = MockOCP()
-            result = CommonSolve.solve(ocp, :collocation, :adnlp, :ipopt;
-                i=MockInit(), display=false)
-            Test.@test result isa MockSolution
-        end
-
         Test.@testset "solve_descriptive - error on unknown option" begin
             ocp = MockOCP()
             Test.@test_throws CTBase.IncorrectArgument begin

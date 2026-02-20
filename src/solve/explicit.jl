@@ -10,7 +10,7 @@ then completes missing components via the registry before calling Layer 3.
 - `ocp`: The optimal control problem to solve
 - `registry`: Strategy registry for completing partial components
 - `kwargs...`: All keyword arguments. Action options extracted here:
-  - `initial_guess` (aliases: `init`, `i`): Initial guess, default `nothing`
+  - `initial_guess` (aliases: `init`): Initial guess, default `nothing`
   - `display`: Whether to display configuration information, default `true`
   - Typed components: `discretizer`, `modeler`, `solver` (identified by abstract type)
 
@@ -30,7 +30,7 @@ function solve_explicit(
 
     # Extract action options with alias support
     init_raw, kwargs1 = _extract_action_kwarg(
-        kwargs, (:initial_guess, :init, :i), _DEFAULT_INITIAL_GUESS
+        kwargs, _INITIAL_GUESS_ALIASES, _DEFAULT_INITIAL_GUESS
     )
     display_val, _ = _extract_action_kwarg(
         kwargs1, (:display,), _DEFAULT_DISPLAY

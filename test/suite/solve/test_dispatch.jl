@@ -126,17 +126,6 @@ function test_solve_dispatch()
             Test.@test result isa MockSolution
         end
 
-        Test.@testset "solve_explicit - alias 'i'" begin
-            result = OptimalControl.solve_explicit(
-                ocp;
-                i=init,
-                display=false,
-                registry=registry,
-                discretizer=disc, modeler=mod, solver=sol
-            )
-            Test.@test result isa MockSolution
-        end
-
         Test.@testset "solve_explicit - partial components (mock registry completes)" begin
             result = OptimalControl.solve_explicit(
                 ocp;
@@ -172,14 +161,16 @@ function test_solve_dispatch()
             Test.@test result isa MockSolution
         end
 
-        Test.@testset "solve_descriptive - alias 'i'" begin
-            result = OptimalControl.solve_descriptive(
-                ocp, :collocation, :adnlp, :ipopt;
-                i=init,
-                display=false,
-                registry=registry
-            )
-            Test.@test result isa MockSolution
+        Test.@testset "solve_descriptive - alias 'i' (removed)" begin
+            # :i is no longer recognized as an alias for initial_guess
+            Test.@test_throws CTBase.IncorrectArgument begin
+                OptimalControl.solve_descriptive(
+                    ocp, :collocation, :adnlp, :ipopt;
+                    i=init,
+                    display=false,
+                    registry=registry
+                )
+            end
         end
 
         Test.@testset "solve_descriptive - empty description dispatches" begin

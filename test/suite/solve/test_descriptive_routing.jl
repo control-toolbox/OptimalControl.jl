@@ -169,7 +169,7 @@ function test_descriptive_routing()
             Test.@test defs isa Vector{CTSolvers.Options.OptionDefinition}
             Test.@test length(defs) == 2
             Test.@test defs[1].name == :initial_guess
-            Test.@test defs[1].aliases == (:init, :i)
+            Test.@test defs[1].aliases == (:init,)
             Test.@test defs[2].name == :display
         end
 
@@ -392,20 +392,6 @@ function test_descriptive_routing()
             )
             Test.@test sol isa MockSolution2
         end
-
-        Test.@testset "solve_descriptive - initial_guess alias 'i'" begin
-            ocp  = MockOCP2()
-            init = MockInit2()
-
-            sol = OptimalControl.solve_descriptive(
-                ocp, :collocation, :adnlp, :ipopt;
-                i        = init,
-                display  = false,
-                registry = MOCK_REGISTRY,
-            )
-            Test.@test sol isa MockSolution2
-        end
-
     end
 end
 

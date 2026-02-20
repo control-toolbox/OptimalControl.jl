@@ -1,5 +1,3 @@
-using DocStringExtensions
-
 # ============================================================================
 # Descriptive mode routing helpers
 # ============================================================================
@@ -21,6 +19,12 @@ using DocStringExtensions
 
 const _DEFAULT_DISPLAY::Bool        = true
 const _DEFAULT_INITIAL_GUESS::Nothing = nothing
+
+# Aliases for initial_guess (single source of truth)
+# _INITIAL_GUESS_ALIASES_ONLY : used in OptionDefinition (name is separate)
+# _INITIAL_GUESS_ALIASES      : used in _extract_action_kwarg (includes primary name)
+const _INITIAL_GUESS_ALIASES_ONLY::Tuple{Symbol}         = (:init,)
+const _INITIAL_GUESS_ALIASES::Tuple{Symbol, Symbol}      = (:initial_guess, :init)
 
 # Unwrap an OptionValue (from route_all_options) to its raw value.
 # Falls back to `fallback` if `opt` is not an OptionValue.
@@ -102,7 +106,7 @@ function _descriptive_action_defs()::Vector{CTSolvers.OptionDefinition}
     return [
         CTSolvers.OptionDefinition(
             name        = :initial_guess,
-            aliases     = (:init, :i),
+            aliases     = _INITIAL_GUESS_ALIASES_ONLY,
             type        = Any,
             default     = _DEFAULT_INITIAL_GUESS,
             description = "Initial guess for the OCP solution",

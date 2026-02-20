@@ -102,19 +102,6 @@ function test_solve_modes()
                 )
                 Test.@test sol_init isa OptimalControl.AbstractSolution
             end
-
-            Test.@testset "Alias 'i'" begin
-                sol_i = OptimalControl.solve(
-                    pb.ocp,
-                    :collocation;
-                    i=pb.init,
-                    grid_size=20,
-                    max_iter=0,
-                    print_level=0,
-                    display=false
-                )
-                Test.@test sol_i isa OptimalControl.AbstractSolution
-            end
         end
     end
 end
