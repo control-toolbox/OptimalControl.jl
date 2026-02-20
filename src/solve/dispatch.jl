@@ -12,9 +12,9 @@ This function orchestrates the complete solve workflow by:
 # Arguments
 - `ocp`: The optimal control problem to solve
 - `description`: Symbolic description tokens (e.g., `:collocation`, `:adnlp`, `:ipopt`)
-- `initial_guess`: Initial guess or `nothing` for automatic generation
-- `display`: Whether to display configuration information
-- `kwargs...`: Additional keyword arguments (explicit components or strategy options)
+- `kwargs...`: All keyword arguments. Action options (`initial_guess`/`init`/`i`, `display`)
+  are extracted by the appropriate Layer 2 function. Explicit components (`discretizer`,
+  `modeler`, `solver`) are identified by abstract type.
 
 # Returns
 - `CTModels.AbstractSolution`: Solution to the optimal control problem
@@ -22,11 +22,15 @@ This function orchestrates the complete solve workflow by:
 # Examples
 ```julia
 # Descriptive mode (symbolic description)
-solution = solve(ocp, :collocation, :adnlp, :ipopt)
+solve(ocp, :collocation, :adnlp, :ipopt)
+
+# With initial guess aliases
+solve(ocp, :collocation; init=x0, display=false)
+solve(ocp, :collocation; i=x0)
 
 # Explicit mode (typed components)
-solution = solve(ocp; discretizer=CTDirect.Collocation(), 
-                     modeler=CTSolvers.ADNLP(), solver=CTSolvers.Ipopt())
+solve(ocp; discretizer=CTDirect.Collocation(),
+           modeler=CTSolvers.ADNLP(), solver=CTSolvers.Ipopt())
 ```
 
 # See Also
@@ -37,46 +41,23 @@ solution = solve(ocp; discretizer=CTDirect.Collocation(),
 function CommonSolve.solve(
     ocp::CTModels.AbstractModel,
     description::Symbol...;
-    initial_guess=nothing,
-    display::Bool=__display(),
     kwargs...
 )::CTModels.AbstractSolution
 
     # 1. Detect mode and validate (raises on conflict)
     mode = _explicit_or_descriptive(description, kwargs)
 
-    # 2. Normalize initial guess ONCE at the top level
-    normalized_init = CTModels.build_initial_guess(ocp, initial_guess)
-
-    # 3. Get registry for component completion
+    # 2. Get registry for component completion
     registry = _extract_kwarg(kwargs, CTSolvers.StrategyRegistry)
     if isnothing(registry)
         registry = get_strategy_registry()
     end
 
-    # 4. Dispatch — asymmetric signatures:
-    #    ExplicitMode: extract typed components by type from kwargs (default nothing)
-    #    DescriptiveMode: description forwarded as vararg positional arguments
+    # 3. Dispatch — action options (initial_guess, display) are extracted
+    #    by the Layer 2 functions (solve_explicit / solve_descriptive)
     if mode isa ExplicitMode
-        discretizer = _extract_kwarg(kwargs, CTDirect.AbstractDiscretizer)
-        modeler     = _extract_kwarg(kwargs, CTSolvers.AbstractNLPModeler)
-        solver      = _extract_kwarg(kwargs, CTSolvers.AbstractNLPSolver)
-        return solve_explicit(
-            ocp;
-            initial_guess=normalized_init,
-            display=display,
-            registry=registry,
-            discretizer=discretizer,
-            modeler=modeler,
-            solver=solver
-        )
+        return solve_explicit(ocp; registry=registry, kwargs...)
     else
-        return solve_descriptive(
-            ocp, description...;
-            initial_guess=normalized_init,
-            display=display,
-            registry=registry,
-            kwargs...
-        )
+        return solve_descriptive(ocp, description...; registry=registry, kwargs...)
     end
 end

@@ -122,6 +122,8 @@ const MOCK_METHOD = (:collocation, :adnlp, :ipopt)
 
 struct MockOCP2 <: CTModels.AbstractModel end
 struct MockInit2 <: CTModels.AbstractInitialGuess end
+CTModels.build_initial_guess(::MockOCP2, ::Nothing) = MockInit2()
+CTModels.build_initial_guess(::MockOCP2, init::MockInit2) = init
 struct MockSolution2 <: CTModels.AbstractSolution
     discretizer
     modeler
@@ -165,7 +167,10 @@ function test_descriptive_routing()
             defs = OptimalControl._descriptive_action_defs()
 
             Test.@test defs isa Vector{CTSolvers.Options.OptionDefinition}
-            Test.@test isempty(defs)
+            Test.@test length(defs) == 2
+            Test.@test defs[1].name == :initial_guess
+            Test.@test defs[1].aliases == (:init, :i)
+            Test.@test defs[2].name == :display
         end
 
         # ====================================================================
@@ -244,11 +249,12 @@ function test_descriptive_routing()
         # ====================================================================
 
         Test.@testset "_build_components_from_routed - default options" begin
+            ocp = MockOCP2()
             routed = OptimalControl._route_descriptive_options(
                 MOCK_METHOD, MOCK_REGISTRY, pairs(NamedTuple())
             )
             components = OptimalControl._build_components_from_routed(
-                MOCK_METHOD, MOCK_REGISTRY, routed
+                ocp, MOCK_METHOD, MOCK_REGISTRY, routed
             )
 
             Test.@test components.discretizer isa RoutingMockDiscretizer
@@ -257,15 +263,18 @@ function test_descriptive_routing()
             Test.@test components.discretizer isa MockCollocation
             Test.@test components.modeler     isa MockADNLP
             Test.@test components.solver      isa MockIpopt
+            Test.@test components.initial_guess isa MockInit2
+            Test.@test components.display == true
         end
 
         Test.@testset "_build_components_from_routed - options passed through" begin
+            ocp = MockOCP2()
             routed = OptimalControl._route_descriptive_options(
                 MOCK_METHOD, MOCK_REGISTRY,
                 pairs((; grid_size=42, max_iter=7))
             )
             components = OptimalControl._build_components_from_routed(
-                MOCK_METHOD, MOCK_REGISTRY, routed
+                ocp, MOCK_METHOD, MOCK_REGISTRY, routed
             )
 
             Test.@test CTSolvers.option_value(components.discretizer, :grid_size) == 42
@@ -273,12 +282,13 @@ function test_descriptive_routing()
         end
 
         Test.@testset "_build_components_from_routed - disambiguation passed through" begin
+            ocp = MockOCP2()
             routed = OptimalControl._route_descriptive_options(
                 MOCK_METHOD, MOCK_REGISTRY,
                 pairs((; backend=CTSolvers.route_to(adnlp=:sparse, ipopt=:gpu)))
             )
             components = OptimalControl._build_components_from_routed(
-                MOCK_METHOD, MOCK_REGISTRY, routed
+                ocp, MOCK_METHOD, MOCK_REGISTRY, routed
             )
 
             Test.@test CTSolvers.option_value(components.modeler, :backend) === :sparse
@@ -291,13 +301,11 @@ function test_descriptive_routing()
 
         Test.@testset "solve_descriptive - complete description, no options" begin
             ocp  = MockOCP2()
-            init = CTModels.build_initial_guess(ocp, MockInit2())
 
             sol = OptimalControl.solve_descriptive(
                 ocp, :collocation, :adnlp, :ipopt;
-                initial_guess = init,
-                display       = false,
-                registry      = MOCK_REGISTRY,
+                display  = false,
+                registry = MOCK_REGISTRY,
             )
 
             Test.@test sol isa MockSolution2
@@ -308,13 +316,11 @@ function test_descriptive_routing()
 
         Test.@testset "solve_descriptive - partial description completed" begin
             ocp  = MockOCP2()
-            init = CTModels.build_initial_guess(ocp, MockInit2())
 
             sol = OptimalControl.solve_descriptive(
                 ocp, :collocation;
-                initial_guess = init,
-                display       = false,
-                registry      = MOCK_REGISTRY,
+                display  = false,
+                registry = MOCK_REGISTRY,
             )
 
             Test.@test sol isa MockSolution2
@@ -325,15 +331,13 @@ function test_descriptive_routing()
 
         Test.@testset "solve_descriptive - options routed correctly" begin
             ocp  = MockOCP2()
-            init = CTModels.build_initial_guess(ocp, MockInit2())
 
             sol = OptimalControl.solve_descriptive(
                 ocp, :collocation, :adnlp, :ipopt;
-                initial_guess = init,
-                display       = false,
-                registry      = MOCK_REGISTRY,
-                grid_size     = 42,
-                max_iter      = 7,
+                display  = false,
+                registry = MOCK_REGISTRY,
+                grid_size = 42,
+                max_iter  = 7,
             )
 
             Test.@test CTSolvers.option_value(sol.discretizer, :grid_size) == 42
@@ -342,14 +346,12 @@ function test_descriptive_routing()
 
         Test.@testset "solve_descriptive - disambiguation via route_to" begin
             ocp  = MockOCP2()
-            init = CTModels.build_initial_guess(ocp, MockInit2())
 
             sol = OptimalControl.solve_descriptive(
                 ocp, :collocation, :adnlp, :ipopt;
-                initial_guess = init,
-                display       = false,
-                registry      = MOCK_REGISTRY,
-                backend       = CTSolvers.route_to(adnlp=:sparse, ipopt=:gpu),
+                display  = false,
+                registry = MOCK_REGISTRY,
+                backend  = CTSolvers.route_to(adnlp=:sparse, ipopt=:gpu),
             )
 
             Test.@test CTSolvers.option_value(sol.modeler, :backend) === :sparse
@@ -357,29 +359,51 @@ function test_descriptive_routing()
         end
 
         Test.@testset "solve_descriptive - error on unknown option" begin
-            ocp  = MockOCP2()
-            init = CTModels.build_initial_guess(ocp, MockInit2())
+            ocp = MockOCP2()
 
             Test.@test_throws CTBase.IncorrectArgument OptimalControl.solve_descriptive(
                 ocp, :collocation, :adnlp, :ipopt;
-                initial_guess = init,
-                display       = false,
-                registry      = MOCK_REGISTRY,
-                bad_option    = 99,
+                display    = false,
+                registry   = MOCK_REGISTRY,
+                bad_option = 99,
             )
         end
 
         Test.@testset "solve_descriptive - error on ambiguous option" begin
-            ocp  = MockOCP2()
-            init = CTModels.build_initial_guess(ocp, MockInit2())
+            ocp = MockOCP2()
 
             Test.@test_throws CTBase.IncorrectArgument OptimalControl.solve_descriptive(
                 ocp, :collocation, :adnlp, :ipopt;
-                initial_guess = init,
-                display       = false,
-                registry      = MOCK_REGISTRY,
-                backend       = :sparse,
+                display  = false,
+                registry = MOCK_REGISTRY,
+                backend  = :sparse,
             )
+        end
+
+        Test.@testset "solve_descriptive - initial_guess alias 'init'" begin
+            ocp  = MockOCP2()
+            init = MockInit2()
+
+            sol = OptimalControl.solve_descriptive(
+                ocp, :collocation, :adnlp, :ipopt;
+                init     = init,
+                display  = false,
+                registry = MOCK_REGISTRY,
+            )
+            Test.@test sol isa MockSolution2
+        end
+
+        Test.@testset "solve_descriptive - initial_guess alias 'i'" begin
+            ocp  = MockOCP2()
+            init = MockInit2()
+
+            sol = OptimalControl.solve_descriptive(
+                ocp, :collocation, :adnlp, :ipopt;
+                i        = init,
+                display  = false,
+                registry = MOCK_REGISTRY,
+            )
+            Test.@test sol isa MockSolution2
         end
 
     end

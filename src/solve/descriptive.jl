@@ -11,10 +11,9 @@ builds concrete components, and calls the canonical Layer 3 solver.
 - `ocp`: The optimal control problem to solve
 - `description`: Symbolic description tokens (e.g., `:collocation`, `:adnlp`, `:ipopt`).
   May be empty, partial, or complete — completed via [`_complete_description`](@ref).
-- `initial_guess`: Normalized initial guess (processed by Layer 1)
-- `display`: Whether to display configuration information
 - `registry`: Strategy registry for building strategies
-- `kwargs...`: Strategy-specific options, optionally disambiguated with [`route_to`](@ref)
+- `kwargs...`: All keyword arguments, including action options (`initial_guess`/`init`/`i`,
+  `display`) and strategy-specific options, optionally disambiguated with [`route_to`](@ref)
 
 # Returns
 - `CTModels.AbstractSolution`: Solution to the optimal control problem
@@ -27,8 +26,9 @@ builds concrete components, and calls the canonical Layer 3 solver.
 # Complete description with options
 solve(ocp, :collocation, :adnlp, :ipopt; grid_size=100, display=false)
 
-# Partial description (completed via registry)
-solve(ocp, :collocation; display=false)
+# Aliases for initial_guess
+solve(ocp, :collocation; init=x0, display=false)
+solve(ocp, :collocation; i=x0)
 
 # Disambiguation for ambiguous options
 solve(ocp, :collocation, :adnlp, :ipopt;
@@ -44,8 +44,6 @@ solve(ocp, :collocation, :adnlp, :ipopt;
 function solve_descriptive(
     ocp::CTModels.AbstractModel,
     description::Symbol...;
-    initial_guess::CTModels.AbstractInitialGuess,
-    display::Bool,
     registry::CTSolvers.StrategyRegistry,
     kwargs...
 )::CTModels.AbstractSolution
@@ -54,17 +52,18 @@ function solve_descriptive(
     complete_description = _complete_description(description)
 
     # 2. Route all kwargs to the appropriate strategy families
+    #    Action options (initial_guess/init/i, display) are extracted first
     routed = _route_descriptive_options(complete_description, registry, kwargs)
 
-    # 3. Build concrete strategy instances with their routed options
-    components = _build_components_from_routed(complete_description, registry, routed)
+    # 3. Build concrete strategy instances + extract action options
+    components = _build_components_from_routed(ocp, complete_description, registry, routed)
 
     # 4. Canonical solve (Layer 3)
     return CommonSolve.solve(
-        ocp, initial_guess,
+        ocp, components.initial_guess,
         components.discretizer,
         components.modeler,
         components.solver;
-        display=display,
+        display=components.display,
     )
 end

@@ -40,3 +40,52 @@ function _extract_kwarg(
     end
     return nothing
 end
+
+"""
+$(TYPEDSIGNATURES)
+
+Extract an action-level option from `kwargs` by trying multiple alias names.
+
+Returns the value and the remaining kwargs with the matched key removed.
+Raises an error if more than one alias is present simultaneously.
+
+# Arguments
+- `kwargs`: Keyword arguments from a `solve` call (`Base.Pairs`)
+- `names`: Tuple of accepted names/aliases, in priority order
+- `default`: Default value if none of the names is found
+
+# Returns
+- `(value, remaining_kwargs)`: Extracted value and kwargs with the key removed
+
+# Throws
+- `CTBase.IncorrectArgument`: If more than one alias is provided at the same time
+
+# Examples
+```julia
+julia> kw = pairs((; init=x0, display=false))
+julia> val, rest = OptimalControl._extract_action_kwarg(kw, (:initial_guess, :init, :i), nothing)
+julia> val === x0
+true
+```
+
+See Also: [`_extract_kwarg`](@ref)
+"""
+function _extract_action_kwarg(kwargs::Base.Pairs, names::Tuple{Vararg{Symbol}}, default)
+    present = [n for n in names if haskey(kwargs, n)]
+    if isempty(present)
+        return default, kwargs
+    elseif length(present) == 1
+        name = present[1]
+        value = kwargs[name]
+        remaining = Base.pairs(NamedTuple(k => v for (k, v) in kwargs if k != name))
+        return value, remaining
+    else
+        throw(CTBase.IncorrectArgument(
+            "Conflicting aliases for the same option",
+            got="multiple aliases $(present) provided simultaneously",
+            expected="at most one of $(names)",
+            suggestion="Use only one alias at a time, e.g. `init=x0` or `initial_guess=x0`",
+            context="solve - action option extraction"
+        ))
+    end
+end

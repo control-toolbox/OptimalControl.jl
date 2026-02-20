@@ -35,6 +35,7 @@ import CTSolvers:
     StrategyMetadata, 
     StrategyOptions, 
     OptionDefinition,
+    OptionValue,
     RoutedOption,
     BypassValue
 

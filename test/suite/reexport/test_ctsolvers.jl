@@ -70,6 +70,7 @@ function test_ctsolvers()
                 OptimalControl.StrategyMetadata,
                 OptimalControl.StrategyOptions,
                 OptimalControl.OptionDefinition,
+                OptimalControl.OptionValue,
                 OptimalControl.RoutedOption,
                 OptimalControl.BypassValue,
             )
