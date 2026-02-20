@@ -169,7 +169,7 @@ function test_descriptive_routing()
             Test.@test defs isa Vector{CTSolvers.Options.OptionDefinition}
             Test.@test length(defs) == 2
             Test.@test defs[1].name == :initial_guess
-            Test.@test defs[1].aliases == (:init,)
+            Test.@test defs[1].aliases == OptimalControl._INITIAL_GUESS_ALIASES_ONLY
             Test.@test defs[2].name == :display
         end
 
