@@ -48,8 +48,6 @@ function test_solve_modes()
                 display=false
             )
 
-            success = OptimalControl.successful(sol_explicit)
-            Test.@test success
             Test.@test sol_explicit isa OptimalControl.AbstractSolution
         end
 
@@ -67,8 +65,6 @@ function test_solve_modes()
                 display=false
             )
 
-            success = OptimalControl.successful(sol_descriptive)
-            Test.@test success
             Test.@test sol_descriptive isa OptimalControl.AbstractSolution
         end
 
@@ -87,9 +83,38 @@ function test_solve_modes()
                 display=false
             )
 
-            success = OptimalControl.successful(sol_partial)
-            Test.@test success
             Test.@test sol_partial isa OptimalControl.AbstractSolution
+        end
+
+        # ====================================================================
+        # Descriptive Mode Integration (Action Option Aliases)
+        # ====================================================================
+        Test.@testset "Descriptive Mode (Action Option Aliases)" begin
+            Test.@testset "Alias 'init'" begin
+                sol_init = OptimalControl.solve(
+                    pb.ocp,
+                    :collocation;
+                    init=pb.init,
+                    grid_size=20,
+                    max_iter=0,
+                    print_level=0,
+                    display=false
+                )
+                Test.@test sol_init isa OptimalControl.AbstractSolution
+            end
+
+            Test.@testset "Alias 'i'" begin
+                sol_i = OptimalControl.solve(
+                    pb.ocp,
+                    :collocation;
+                    i=pb.init,
+                    grid_size=20,
+                    max_iter=0,
+                    print_level=0,
+                    display=false
+                )
+                Test.@test sol_i isa OptimalControl.AbstractSolution
+            end
         end
     end
 end

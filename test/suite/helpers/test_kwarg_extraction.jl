@@ -12,6 +12,7 @@ import Test
 import OptimalControl
 import CTDirect
 import CTSolvers
+import CTBase
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
@@ -93,6 +94,50 @@ function test_kwarg_extraction()
             kw = pairs(NamedTuple())
             result = OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
             Test.@test result isa Nothing
+        end
+        # ====================================================================
+        # UNIT TESTS - Action Kwarg Extraction (aliases)
+        # ====================================================================
+
+        Test.@testset "Action Kwarg Extraction" begin
+            Test.@testset "Extracts primary name" begin
+                kw = pairs((; initial_guess=42, display=false))
+                val, rest = OptimalControl._extract_action_kwarg(kw, (:initial_guess, :init, :i), nothing)
+                Test.@test val == 42
+                Test.@test haskey(rest, :display)
+                Test.@test !haskey(rest, :initial_guess)
+            end
+
+            Test.@testset "Extracts alias 1" begin
+                kw = pairs((; init=42, display=false))
+                val, rest = OptimalControl._extract_action_kwarg(kw, (:initial_guess, :init, :i), nothing)
+                Test.@test val == 42
+                Test.@test haskey(rest, :display)
+                Test.@test !haskey(rest, :init)
+            end
+
+            Test.@testset "Extracts alias 2" begin
+                kw = pairs((; i=42, display=false))
+                val, rest = OptimalControl._extract_action_kwarg(kw, (:initial_guess, :init, :i), nothing)
+                Test.@test val == 42
+                Test.@test haskey(rest, :display)
+                Test.@test !haskey(rest, :i)
+            end
+
+            Test.@testset "Returns default when not found" begin
+                kw = pairs((; display=false))
+                val, rest = OptimalControl._extract_action_kwarg(kw, (:initial_guess, :init, :i), :my_default)
+                Test.@test val === :my_default
+                Test.@test haskey(rest, :display)
+            end
+
+            Test.@testset "Throws on multiple aliases present" begin
+                kw = pairs((; init=42, i=43))
+                Test.@test_throws CTBase.IncorrectArgument OptimalControl._extract_action_kwarg(kw, (:initial_guess, :init, :i), nothing)
+                
+                kw2 = pairs((; initial_guess=42, init=43, i=44))
+                Test.@test_throws CTBase.IncorrectArgument OptimalControl._extract_action_kwarg(kw2, (:initial_guess, :init, :i), nothing)
+            end
         end
     end
 end
