@@ -30,7 +30,7 @@ function solve_explicit(
 
     # Extract action options with alias support
     init_raw, kwargs1 = _extract_action_kwarg(
-        kwargs, (:initial_guess, :init, :i), nothing
+        kwargs, (:initial_guess, :init, :i), _DEFAULT_INITIAL_GUESS
     )
     display_val, _ = _extract_action_kwarg(
         kwargs1, (:display,), _DEFAULT_DISPLAY
