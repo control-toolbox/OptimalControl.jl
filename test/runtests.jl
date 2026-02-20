@@ -25,9 +25,9 @@ using .TestOptions: VERBOSE, SHOWTIMING
 using CUDA
 is_cuda_on() = CUDA.functional()
 if is_cuda_on()
-    println("✓ CUDA functional, GPU tests enabled")
+    @info "✅ CUDA functional, GPU tests enabled"
 else
-    println("⚠️  CUDA not functional, GPU tests will be skipped")
+    @info "⚠️  CUDA not functional, GPU tests will be skipped"
 end
 
 # Run tests using the TestRunner extension
