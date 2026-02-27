@@ -2,5 +2,4 @@
 
 @reexport import CTParser:
     @def,
-    @init,
-    ExaLinAlg
+    @init
