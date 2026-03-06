@@ -19,7 +19,6 @@ import CommonSolve
 #
 import NLPModelsIpopt
 import MadNLP
-import MadNLPMumps
 import MadNLPGPU
 import MadNCL
 import CUDA

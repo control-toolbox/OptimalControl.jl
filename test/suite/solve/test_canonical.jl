@@ -18,7 +18,6 @@ using .TestPrintUtils
 # Load solver extensions (import only to trigger extensions, avoid name conflicts)
 import NLPModelsIpopt
 import MadNLP
-import MadNLPMumps
 import MadNLPGPU
 import MadNCL
 import CUDA
