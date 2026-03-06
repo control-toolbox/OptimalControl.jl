@@ -8,6 +8,7 @@
 module TestCtsolvers
 
 import Test
+import CTSolvers
 using OptimalControl # using is mandatory since we test exported symbols
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
@@ -26,11 +27,25 @@ function test_ctsolvers()
                 Test.@test T isa DataType || T isa UnionAll
             end
         end
+        
         Test.@testset "DOCP Functions" begin
             for f in (
                 :ocp_model,
                 :nlp_model,
                 :ocp_solution,
+            )
+                Test.@testset "$f" begin
+                    Test.@test isdefined(OptimalControl, f)
+                    Test.@test isdefined(CurrentModule, f)
+                    Test.@test getfield(OptimalControl, f) isa Function
+                end
+            end
+        end
+        
+        Test.@testset "Display and Introspection Functions" begin
+            for f in (
+                :describe,
+                :options,
             )
                 Test.@testset "$f" begin
                     Test.@test isdefined(OptimalControl, f)
@@ -123,6 +138,34 @@ function test_ctsolvers()
                     Test.@test getfield(OptimalControl, f) isa Function
                 end
             end
+        end
+        
+        Test.@testset "Strategy Parameter Types" begin
+            # Test that parameter types are available but NOT reexported
+            # They should be accessible via isdefined but not in exports
+            Test.@test isdefined(OptimalControl, :AbstractStrategyParameter)
+            Test.@test isdefined(OptimalControl, :CPU)
+            Test.@test isdefined(OptimalControl, :GPU)
+            
+            # They should NOT be in the public exports (names with all=false)
+            Test.@test :AbstractStrategyParameter ∉ names(OptimalControl; all=false)
+            Test.@test :CPU ∉ names(OptimalControl; all=false)
+            Test.@test :GPU ∉ names(OptimalControl; all=false)
+            
+            # They should also be accessible via CTSolvers
+            Test.@test isdefined(CTSolvers, :AbstractStrategyParameter)
+            Test.@test isdefined(CTSolvers, :CPU)
+            Test.@test isdefined(CTSolvers, :GPU)
+            
+            # Test parameter type validation functions are accessible via CTSolvers
+            Test.@test isdefined(CTSolvers.Strategies, :is_parameter_type)
+            Test.@test isdefined(CTSolvers.Strategies, :get_parameter_type)
+            Test.@test isdefined(CTSolvers.Strategies, :available_parameters)
+            
+            # These should NOT be reexported by OptimalControl (internal functions)
+            Test.@test !isdefined(OptimalControl, :is_parameter_type)
+            Test.@test !isdefined(OptimalControl, :get_parameter_type)
+            Test.@test !isdefined(OptimalControl, :available_parameters)
         end
     end
 end

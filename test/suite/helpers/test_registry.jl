@@ -56,23 +56,56 @@ function test_registry()
         Test.@testset "Parameter Support - Modelers" begin
             registry = OptimalControl.get_strategy_registry()
             
-            # The registry structure tells us which parameters are supported
-            # ADNLP should only support CPU (checked via registry structure)
-            # Exa should support both CPU and GPU (checked via registry structure)
+            # Test parameter availability using CTSolvers functions
+            adnlp_params = CTSolvers.Strategies.available_parameters(:modeler, CTSolvers.AbstractNLPModeler, registry)
+            exa_params = CTSolvers.Strategies.available_parameters(:modeler, CTSolvers.AbstractNLPModeler, registry)
             
-            # Test that registry contains parameter information
-            # This is verified through the registry structure itself
-            Test.@test registry isa CTSolvers.StrategyRegistry
+            # Filter parameters for specific strategies
+            adnlp_filtered = CTSolvers.Strategies.available_parameters(:adnlp, CTSolvers.AbstractNLPModeler, registry)
+            exa_filtered = CTSolvers.Strategies.available_parameters(:exa, CTSolvers.AbstractNLPModeler, registry)
+            
+            # ADNLP should only support CPU
+            Test.@test CTSolvers.CPU in adnlp_filtered
+            Test.@test CTSolvers.GPU ∉ adnlp_filtered
+            
+            # Exa should support both CPU and GPU
+            Test.@test CTSolvers.CPU in exa_filtered
+            Test.@test CTSolvers.GPU in exa_filtered
+            
+            # Test parameter type extraction
+            Test.@test CTSolvers.Strategies.get_parameter_type(CTSolvers.ADNLP) === nothing
+            Test.@test CTSolvers.Strategies.get_parameter_type(CTSolvers.Exa) === nothing
         end
 
         Test.@testset "Parameter Support - Solvers" begin
             registry = OptimalControl.get_strategy_registry()
             
-            # CPU-only solvers (Ipopt, Knitro) and GPU-capable solvers (MadNLP, MadNCL)
-            # are distinguished by their parameter lists in the registry
+            # Test parameter availability using CTSolvers functions with abstract types
+            # Filter parameters for specific strategies
+            ipopt_filtered = CTSolvers.Strategies.available_parameters(:ipopt, CTSolvers.AbstractNLPSolver, registry)
+            madnlp_filtered = CTSolvers.Strategies.available_parameters(:madnlp, CTSolvers.AbstractNLPSolver, registry)
+            madncl_filtered = CTSolvers.Strategies.available_parameters(:madncl, CTSolvers.AbstractNLPSolver, registry)
+            knitro_filtered = CTSolvers.Strategies.available_parameters(:knitro, CTSolvers.AbstractNLPSolver, registry)
             
-            # Test that registry contains parameter information
-            Test.@test registry isa CTSolvers.StrategyRegistry
+            # CPU-only solvers
+            Test.@test CTSolvers.CPU in ipopt_filtered
+            Test.@test CTSolvers.GPU ∉ ipopt_filtered
+            
+            Test.@test CTSolvers.CPU in knitro_filtered
+            Test.@test CTSolvers.GPU ∉ knitro_filtered
+            
+            # GPU-capable solvers
+            Test.@test CTSolvers.CPU in madnlp_filtered
+            Test.@test CTSolvers.GPU in madnlp_filtered
+            
+            Test.@test CTSolvers.CPU in madncl_filtered
+            Test.@test CTSolvers.GPU in madncl_filtered
+            
+            # Test parameter type extraction
+            Test.@test CTSolvers.Strategies.get_parameter_type(CTSolvers.Ipopt) === nothing
+            Test.@test CTSolvers.Strategies.get_parameter_type(CTSolvers.MadNLP) === nothing
+            Test.@test CTSolvers.Strategies.get_parameter_type(CTSolvers.MadNCL) === nothing
+            Test.@test CTSolvers.Strategies.get_parameter_type(CTSolvers.Knitro) === nothing
         end
 
         Test.@testset "Parameter Type Validation" begin
@@ -90,6 +123,14 @@ function test_registry()
             # Test that strategies are not parameters
             Test.@test CTSolvers.Exa !== CTSolvers.CPU
             Test.@test CTSolvers.Ipopt !== CTSolvers.GPU
+            
+            # Test parameter type identification using CTSolvers functions
+            Test.@test CTSolvers.Strategies.is_parameter_type(CTSolvers.CPU)
+            Test.@test CTSolvers.Strategies.is_parameter_type(CTSolvers.GPU)
+            Test.@test !CTSolvers.Strategies.is_parameter_type(CTSolvers.Exa)
+            Test.@test !CTSolvers.Strategies.is_parameter_type(CTSolvers.Ipopt)
+            Test.@test !CTSolvers.Strategies.is_parameter_type(Int)
+            Test.@test !CTSolvers.Strategies.is_parameter_type(String)
         end
 
         Test.@testset "Determinism" begin
