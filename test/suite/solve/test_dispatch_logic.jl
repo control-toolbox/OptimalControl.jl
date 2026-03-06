@@ -42,6 +42,15 @@ struct MockSolver{ID} <: CTSolvers.AbstractNLPSolver
     options::CTSolvers.StrategyOptions
 end
 
+# Parametric mocks for parameterized strategies (CPU/GPU)
+struct MockModelerParam{ID, PARAM} <: CTSolvers.AbstractNLPModeler
+    options::CTSolvers.StrategyOptions
+end
+
+struct MockSolverParam{ID, PARAM} <: CTSolvers.AbstractNLPSolver
+    options::CTSolvers.StrategyOptions
+end
+
 # ----------------------------------------------------------------------------
 # Strategies Interface Implementation
 # ----------------------------------------------------------------------------
@@ -50,16 +59,22 @@ end
 CTSolvers.Strategies.id(::Type{MockDiscretizer{ID}}) where {ID} = ID
 CTSolvers.Strategies.id(::Type{MockModeler{ID}})     where {ID} = ID
 CTSolvers.Strategies.id(::Type{MockSolver{ID}})      where {ID} = ID
+CTSolvers.Strategies.id(::Type{MockModelerParam{ID, PARAM}}) where {ID, PARAM} = ID
+CTSolvers.Strategies.id(::Type{MockSolverParam{ID, PARAM}}) where {ID, PARAM} = ID
 
 # Metadata (required by registry)
 CTSolvers.Strategies.metadata(::Type{<:MockDiscretizer}) = CTSolvers.Strategies.StrategyMetadata()
 CTSolvers.Strategies.metadata(::Type{<:MockModeler})     = CTSolvers.Strategies.StrategyMetadata()
 CTSolvers.Strategies.metadata(::Type{<:MockSolver})      = CTSolvers.Strategies.StrategyMetadata()
+CTSolvers.Strategies.metadata(::Type{<:MockModelerParam}) = CTSolvers.Strategies.StrategyMetadata()
+CTSolvers.Strategies.metadata(::Type{<:MockSolverParam})  = CTSolvers.Strategies.StrategyMetadata()
 
 # Options accessors
 CTSolvers.Strategies.options(d::MockDiscretizer) = d.options
 CTSolvers.Strategies.options(m::MockModeler)     = m.options
 CTSolvers.Strategies.options(s::MockSolver)      = s.options
+CTSolvers.Strategies.options(m::MockModelerParam) = m.options
+CTSolvers.Strategies.options(s::MockSolverParam) = s.options
 
 # Constructors (required by _build_or_use_strategy)
 function MockDiscretizer{ID}(; mode::Symbol=:strict, kwargs...) where {ID}
@@ -75,6 +90,16 @@ end
 function MockSolver{ID}(; mode::Symbol=:strict, kwargs...) where {ID}
     opts = CTSolvers.Strategies.build_strategy_options(MockSolver{ID}; mode=mode, kwargs...)
     return MockSolver{ID}(opts)
+end
+
+function MockModelerParam{ID, PARAM}(; mode::Symbol=:strict, kwargs...) where {ID, PARAM}
+    opts = CTSolvers.Strategies.build_strategy_options(MockModelerParam{ID, PARAM}; mode=mode, kwargs...)
+    return MockModelerParam{ID, PARAM}(opts)
+end
+
+function MockSolverParam{ID, PARAM}(; mode::Symbol=:strict, kwargs...) where {ID, PARAM}
+    opts = CTSolvers.Strategies.build_strategy_options(MockSolverParam{ID, PARAM}; mode=mode, kwargs...)
+    return MockSolverParam{ID, PARAM}(opts)
 end
 
 # ----------------------------------------------------------------------------
@@ -232,7 +257,37 @@ function test_dispatch_logic()
         end
 
         # ----------------------------------------------------------------
-        # TEST 4: Default Registry Fallback
+        # TEST 5: Parameter Type Validation
+        # ----------------------------------------------------------------
+        # Test that CTSolvers parameter functions work correctly with our mocks
+        
+        Test.@testset "Parameter Type Validation" begin
+            # Test parameter type identification
+            Test.@test CTSolvers.Strategies.is_parameter_type(CTSolvers.CPU)
+            Test.@test CTSolvers.Strategies.is_parameter_type(CTSolvers.GPU)
+            Test.@test !CTSolvers.Strategies.is_parameter_type(Int)
+            
+            # Test parameter extraction from non-parameterized mocks
+            # Our mocks don't have type parameters in the way CTSolvers expects
+            # so get_parameter_type should return nothing
+            Test.@test CTSolvers.Strategies.get_parameter_type(MockModeler{:adnlp}) === nothing
+            Test.@test CTSolvers.Strategies.get_parameter_type(MockSolver{:ipopt}) === nothing
+            
+            # Test parameter extraction from parameterized mocks
+            # Even with parameters, our mocks don't follow the CTSolvers convention
+            # so get_parameter_type should still return nothing
+            Test.@test CTSolvers.Strategies.get_parameter_type(MockModelerParam{:exa, CTSolvers.CPU}) === nothing
+            Test.@test CTSolvers.Strategies.get_parameter_type(MockSolverParam{:madnlp, CTSolvers.GPU}) === nothing
+            
+            # Test that is_parameter_type works correctly for real CTSolvers types
+            Test.@test CTSolvers.Strategies.is_parameter_type(CTSolvers.CPU)
+            Test.@test CTSolvers.Strategies.is_parameter_type(CTSolvers.GPU)
+            Test.@test !CTSolvers.Strategies.is_parameter_type(CTSolvers.ADNLP)
+            Test.@test !CTSolvers.Strategies.is_parameter_type(CTSolvers.Ipopt)
+        end
+
+        # ----------------------------------------------------------------
+        # TEST 6: Default Registry Fallback
         # ----------------------------------------------------------------
         # Verify that if we don't pass `registry`, it falls back to the real one.
         

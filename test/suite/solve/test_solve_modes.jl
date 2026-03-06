@@ -14,7 +14,6 @@ import OptimalControl
 # Load solver extensions
 import NLPModelsIpopt
 import MadNLP
-import MadNLPMumps
 
 # Include shared test problems
 include(joinpath(@__DIR__, "..", "..", "problems", "TestProblems.jl"))

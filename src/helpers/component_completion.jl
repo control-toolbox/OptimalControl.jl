@@ -52,15 +52,19 @@ function _complete_components(
     # Step 2: Complete the method description
     complete_description = _complete_description(partial_description)
     
+    # Step 2.5: Resolve method with parameter information
+    families = _descriptive_families()
+    resolved = CTSolvers.resolve_method(complete_description, families, registry)
+    
     # Step 3: Build or use strategies for each family
     final_discretizer = _build_or_use_strategy(
-        complete_description, discretizer, CTDirect.AbstractDiscretizer, registry
+        resolved, discretizer, :discretizer, families, registry
     )
     final_modeler = _build_or_use_strategy(
-        complete_description, modeler, CTSolvers.AbstractNLPModeler, registry
+        resolved, modeler, :modeler, families, registry
     )
     final_solver = _build_or_use_strategy(
-        complete_description, solver, CTSolvers.AbstractNLPSolver, registry
+        resolved, solver, :solver, families, registry
     )
     
     return (discretizer=final_discretizer, modeler=final_modeler, solver=final_solver)

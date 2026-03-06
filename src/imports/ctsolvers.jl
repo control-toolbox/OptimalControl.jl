@@ -37,7 +37,12 @@ import CTSolvers:
     OptionDefinition,
     OptionValue,
     RoutedOption,
-    BypassValue
+    BypassValue,
+    
+    # Parameter types (imported only, not reexported)
+    AbstractStrategyParameter,
+    CPU,
+    GPU
 
 @reexport import CTSolvers:
 

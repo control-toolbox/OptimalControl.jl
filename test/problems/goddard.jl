@@ -54,12 +54,11 @@ function Goddard(; vmax=0.1, Tmax=3.5)
         ∂(v)(t) == (T - D - m(t) * g) / m(t)
         ∂(m)(t) == -b * T
 
-        #r(tf) → max
-        -r(tf) → min
+        r(tf) → max
     end
 
     # Components for a reasonable initial guess around a feasible trajectory.
     init = (state=[1.01, 0.05, 0.8], control=0.5, variable=[0.1])
 
-    return (ocp=goddard, obj=-1.01257, name="goddard", init=init)
+    return (ocp=goddard, obj=1.01257, name="goddard", init=init)
 end

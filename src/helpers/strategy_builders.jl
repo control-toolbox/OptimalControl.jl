@@ -236,18 +236,18 @@ available methods as the completion set.
 - `partial_description`: Tuple of strategy symbols (may be empty or partial)
 
 # Returns
-- `Tuple{Symbol, Symbol, Symbol}`: Complete method triplet
+- `Tuple{Symbol, Symbol, Symbol, Symbol}`: Complete method triplet
 
 # Examples
 ```julia
 julia> _complete_description((:collocation,))
-(:collocation, :adnlp, :ipopt)
+(:collocation, :adnlp, :ipopt, :cpu)
 
 julia> _complete_description(())
-(:collocation, :adnlp, :ipopt)  # First available method
+(:collocation, :adnlp, :ipopt, :cpu)  # First available method
 
 julia> _complete_description((:collocation, :exa))
-(:collocation, :exa, :ipopt)
+(:collocation, :exa, :ipopt, :cpu)
 ```
 
 # See Also
@@ -257,51 +257,42 @@ julia> _complete_description((:collocation, :exa))
 """
 function _complete_description(
     partial_description::Tuple{Vararg{Symbol}}
-)::Tuple{Symbol, Symbol, Symbol}
+)::Tuple{Symbol, Symbol, Symbol, Symbol}
     return CTBase.complete(partial_description...; descriptions=OptimalControl.methods())
 end
 
 """
 $(TYPEDSIGNATURES)
 
-Generic strategy builder that returns a provided strategy or builds one from a method description.
+Generic strategy builder that returns a provided strategy or builds one from a resolved method.
 
 This function works for any strategy family (discretizer, modeler, or solver) using
 multiple dispatch to handle the two cases: provided strategy vs. building from registry.
 
 # Arguments
-- `complete_description`: Complete method triplet (discretizer, modeler, solver)
+- `resolved::CTSolvers.ResolvedMethod`: Resolved method information with parameter data
 - `provided`: Strategy instance or `nothing`
-- `family_type`: Abstract strategy type (e.g., `CTDirect.AbstractDiscretizer`)
-- `registry`: Strategy registry for building new strategies
+- `family_name::Symbol`: Family name (e.g., `:discretizer`, `:modeler`, `:solver`)
+- `families::NamedTuple`: NamedTuple mapping family names to abstract types
+- `registry::CTSolvers.StrategyRegistry`: Strategy registry for building new strategies
 
 # Returns
-- `T`: Strategy instance of the specified family type
-
-# Examples
-```julia
-# Use provided strategy
-disc = CTDirect.Collocation()
-result = _build_or_use_strategy((:collocation, :adnlp, :ipopt), disc, CTDirect.AbstractDiscretizer, registry)
-@test result === disc
-
-# Build from registry
-result = _build_or_use_strategy((:collocation, :adnlp, :ipopt), nothing, CTDirect.AbstractDiscretizer, registry)
-@test result isa CTDirect.AbstractDiscretizer
-```
+- `T`: Strategy instance (provided or built)
 
 # Notes
-- Fast path: when strategy is provided, returns it directly without registry lookup
-- Build path: when strategy is `nothing`, constructs from method description using registry
+- Fast path: strategy already provided by user
+- Build path: when strategy is `nothing`, constructs from resolved method using registry
 - Type-safe through Julia's multiple dispatch system
 - Allocation-free implementation
+- Uses ResolvedMethod for parameter-aware validation and construction
 
-See also: [`CTSolvers.build_strategy_from_method`](@ref), [`get_strategy_registry`](@ref), [`_complete_description`](@ref)
+See also: [`CTSolvers.build_strategy_from_resolved`](@ref), [`get_strategy_registry`](@ref), [`_complete_description`](@ref)
 """
 function _build_or_use_strategy(
-    complete_description::Tuple{Symbol, Symbol, Symbol},
+    resolved::CTSolvers.ResolvedMethod,
     provided::T,
-    family_type::Type{T},
+    family_name::Symbol,
+    families::NamedTuple,
     registry::CTSolvers.StrategyRegistry
 )::T where {T <: CTSolvers.AbstractStrategy}
     # Fast path: strategy already provided
@@ -317,30 +308,32 @@ This method handles the case where no strategy is provided (`nothing`),
 building a new strategy from the complete method description using the registry.
 
 # Arguments
-- `complete_description`: Complete method triplet for strategy building
+- `resolved::CTSolvers.ResolvedMethod`: Resolved method information
 - `::Nothing`: Indicates no strategy provided
-- `family_type`: Strategy family type to build
-- `registry`: Strategy registry for building new strategies
+- `family_name::Symbol`: Family name (e.g., `:discretizer`, `:modeler`, `:solver`)
+- `families::NamedTuple`: NamedTuple mapping family names to abstract types
+- `registry::CTSolvers.StrategyRegistry`: Strategy registry for building new strategies
 
 # Returns
 - `T`: Newly built strategy instance
 
 # Notes
-- Uses `CTSolvers.build_strategy_from_method` for construction
+- Uses `CTSolvers.build_strategy_from_resolved` for construction
 - Registry lookup determines the concrete strategy type
 - Type-safe through Julia's dispatch system
 - Allocation-free when possible (depends on registry implementation)
 
-See also: [`CTSolvers.build_strategy_from_method`](@ref), [`get_strategy_registry`](@ref)
+See also: [`CTSolvers.build_strategy_from_resolved`](@ref), [`get_strategy_registry`](@ref)
 """
 function _build_or_use_strategy(
-    complete_description::Tuple{Symbol, Symbol, Symbol},
+    resolved::CTSolvers.ResolvedMethod,
     ::Nothing,
-    family_type::Type{T},
+    family_name::Symbol,
+    families::NamedTuple,
     registry::CTSolvers.StrategyRegistry
-)::T where {T <: CTSolvers.AbstractStrategy}
-    # Build path: construct from registry
-    return CTSolvers.build_strategy_from_method(
-        complete_description, family_type, registry
+)
+    # Build path: construct from resolved method
+    return CTSolvers.build_strategy_from_resolved(
+        resolved, family_name, families, registry
     )
 end

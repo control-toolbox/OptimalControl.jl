@@ -166,7 +166,7 @@ See also: [`_descriptive_families`](@ref), [`_descriptive_action_defs`](@ref),
 [`_build_components_from_routed`](@ref)
 """
 function _route_descriptive_options(
-    complete_description::Tuple{Symbol, Symbol, Symbol},
+    complete_description::Tuple{Symbol, Symbol, Symbol, Symbol},
     registry::CTSolvers.StrategyRegistry,
     kwargs,
 )
@@ -192,7 +192,7 @@ $(TYPEDSIGNATURES)
 Build concrete strategy instances and extract action options from a routed options result.
 
 Each strategy is constructed via
-[`CTSolvers.build_strategy_from_method`](@ref) using the options
+[`CTSolvers.build_strategy_from_resolved`](@ref) using the options
 that were routed to its family by [`_route_descriptive_options`](@ref).
 
 Action options (`initial_guess`, `display`) are extracted from `routed.action`
@@ -220,31 +220,27 @@ true
 ```
 
 See also: [`_route_descriptive_options`](@ref),
-[`CTSolvers.build_strategy_from_method`](@ref)
+[`CTSolvers.build_strategy_from_resolved`](@ref)
 """
 function _build_components_from_routed(
     ocp::CTModels.AbstractModel,
-    complete_description::Tuple{Symbol, Symbol, Symbol},
+    complete_description::Tuple{Symbol, Symbol, Symbol, Symbol},
     registry::CTSolvers.StrategyRegistry,
     routed::NamedTuple,
 )
-    discretizer = CTSolvers.build_strategy_from_method(
-        complete_description,
-        CTDirect.AbstractDiscretizer,
-        registry;
-        routed.strategies.discretizer...,
+    # Resolve method with parameter information as early as possible
+    families = _descriptive_families()
+    resolved = CTSolvers.resolve_method(complete_description, families, registry)
+    
+    # Build strategies using resolved method
+    discretizer = CTSolvers.build_strategy_from_resolved(
+        resolved, :discretizer, families, registry; routed.strategies.discretizer...
     )
-    modeler = CTSolvers.build_strategy_from_method(
-        complete_description,
-        CTSolvers.AbstractNLPModeler,
-        registry;
-        routed.strategies.modeler...,
+    modeler = CTSolvers.build_strategy_from_resolved(
+        resolved, :modeler, families, registry; routed.strategies.modeler...
     )
-    solver = CTSolvers.build_strategy_from_method(
-        complete_description,
-        CTSolvers.AbstractNLPSolver,
-        registry;
-        routed.strategies.solver...,
+    solver = CTSolvers.build_strategy_from_resolved(
+        resolved, :solver, families, registry; routed.strategies.solver...
     )
 
     # Extract and unwrap action options (OptionValue → raw value)

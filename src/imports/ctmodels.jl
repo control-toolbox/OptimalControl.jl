@@ -27,9 +27,7 @@ import CTModels:
     # api types
     Model,
     AbstractModel,
-    AbstractModel,
-    Solution, 
-    AbstractSolution,
+    Solution,
     AbstractSolution
 
 @reexport import CTModels:
