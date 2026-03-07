@@ -46,6 +46,76 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [1.2.3-beta] — 2026-03-07
+
+### Added
+
+- **Comprehensive unit tests** for display helper functions (29 new tests):
+  - Parameter extraction tests
+  - Display strategy determination tests
+  - Source tag building tests
+  - Component formatting tests
+
+- **Helper functions** for improved code architecture:
+  - `_extract_strategy_parameters`: Extract parameters from strategies
+  - `_determine_parameter_display_strategy`: Decide parameter display logic
+  - `_print_component_with_param`: Format components with parameters
+  - `_build_source_tag`: Build option source tags (DRY elimination)
+
+### Changed
+
+- **Refactored `display_ocp_configuration`** to follow SOLID principles:
+  - Extracted focused helper functions (Single Responsibility)
+  - Eliminated code duplication (DRY)
+  - Improved testability and maintainability
+  - Reduced function length from ~180 to ~120 lines
+
+- **Enhanced test coverage**: 75 tests for print helpers (46 existing + 29 new)
+- **Adjust allocation limits** in component completion tests for realistic bounds
+
+### Fixed
+
+- **Parameter extraction** now correctly handles real strategies with default parameters
+- **Source tag building** properly handles empty parameter arrays
+- **All 1215 tests pass** with improved architecture
+
+---
+
+## [1.2.2-beta] — 2026-03-06
+
+### Added
+
+- **Complete GPU/CPU parameter system** with 4-tuple methods returning parameter
+- **Strategy builders** with ResolvedMethod support and parameter-aware mapping
+- **Comprehensive test coverage**: 422 tests total across all helper modules
+- **Registry enhancements** for parameter-based strategy routing
+- **Dependency handling** for both provided and build strategy construction paths
+
+### Changed
+
+- **Methods API**: `Base.methods()` now returns 4-tuples with parameter symbol
+- **Registry**: Parameter-aware strategy mapping and resolution
+- **Strategy builders**: Enhanced with parameter support and ResolvedMethod integration
+- **Test infrastructure**: Comprehensive test suites for all helper functions
+
+---
+
+## [1.2.1-beta] — 2026-03-05
+
+### Added
+
+- **Initial GPU/CPU parameter infrastructure**
+- **Parameter-aware method resolution** system
+- **Basic strategy registry** with parameter support
+- **Foundation for GPU solving** via ExaModels backend
+
+### Changed
+
+- **Internal architecture** preparation for parameter system
+- **Test structure** for parameter-aware components
+
+---
+
 ## [1.1.8-beta] — 2026-01-17
 
 ### Changed
