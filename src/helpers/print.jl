@@ -48,6 +48,18 @@ $(TYPEDSIGNATURES)
 Check if Ipopt will produce output based on `print_level` option.
 
 Ipopt is silent when `print_level = 0`, verbose otherwise.
+
+# Arguments
+- `solver::CTSolvers.Ipopt`: The Ipopt solver instance to check
+
+# Returns
+- `Bool`: `true` if Ipopt will print output, `false` otherwise
+
+# Notes
+- When `print_level` is not specified, Ipopt defaults to verbose output
+- This method allows the display system to conditionally show the `▫` symbol
+
+See also: [`will_solver_print(::CTSolvers.AbstractNLPSolver)`](@ref)
 """
 function will_solver_print(solver::CTSolvers.Ipopt)
     opts = CTSolvers.options(solver)
@@ -61,6 +73,18 @@ $(TYPEDSIGNATURES)
 Check if Knitro will produce output based on `outlev` option.
 
 Knitro is silent when `outlev = 0`, verbose otherwise.
+
+# Arguments
+- `solver::CTSolvers.Knitro`: The Knitro solver instance to check
+
+# Returns
+- `Bool`: `true` if Knitro will print output, `false` otherwise
+
+# Notes
+- When `outlev` is not specified, Knitro defaults to verbose output
+- This method allows the display system to conditionally show the `▫` symbol
+
+See also: [`will_solver_print(::CTSolvers.AbstractNLPSolver)`](@ref)
 """
 function will_solver_print(solver::CTSolvers.Knitro)
     opts = CTSolvers.options(solver)
@@ -75,6 +99,19 @@ Check if MadNLP will produce output based on `print_level` option.
 
 MadNLP is silent when `print_level = MadNLP.ERROR`, verbose otherwise.
 Default is `MadNLP.INFO` which prints output.
+
+# Arguments
+- `solver::CTSolvers.MadNLP`: The MadNLP solver instance to check
+
+# Returns
+- `Bool`: `true` if MadNLP will print output, `false` otherwise
+
+# Notes
+- Uses string comparison to avoid requiring MadNLP to be loaded
+- Default print level is `MadNLP.INFO` which produces output
+- Only `MadNLP.ERROR` level suppresses output
+
+See also: [`will_solver_print(::CTSolvers.AbstractNLPSolver)`](@ref)
 """
 function will_solver_print(solver::CTSolvers.MadNLP)
     opts = CTSolvers.options(solver)
@@ -97,6 +134,19 @@ Check if MadNCL will produce output based on `print_level` and `ncl_options.verb
 MadNCL is silent when either:
 - `print_level = MadNLP.ERROR`, or
 - `ncl_options.verbose = false`
+
+# Arguments
+- `solver::CTSolvers.MadNCL`: The MadNCL solver instance to check
+
+# Returns
+- `Bool`: `true` if MadNCL will print output, `false` otherwise
+
+# Notes
+- Checks both the global print level and NCL-specific verbose option
+- Uses string comparison to avoid requiring MadNLP to be loaded
+- Either condition being false will suppress output
+
+See also: [`will_solver_print(::CTSolvers.AbstractNLPSolver)`](@ref)
 """
 function will_solver_print(solver::CTSolvers.MadNCL)
     opts = CTSolvers.options(solver)
@@ -131,11 +181,28 @@ end
 
 Extract parameter types from strategies and convert to symbols.
 
-Returns a NamedTuple with fields:
-- `disc`: Discretizer parameter symbol or `nothing`
-- `mod`: Modeler parameter symbol or `nothing`
-- `sol`: Solver parameter symbol or `nothing`
-- `params`: Vector of non-nothing parameter symbols
+This function analyzes the three strategy components (discretizer, modeler, solver)
+to determine their parameter types and converts them to symbolic representations
+for display purposes.
+
+# Arguments
+- `discretizer`: The discretization strategy
+- `modeler`: The NLP modeling strategy
+- `solver`: The NLP solving strategy
+
+# Returns
+- `NamedTuple`: Contains fields:
+  - `disc`: Discretizer parameter symbol or `nothing`
+  - `mod`: Modeler parameter symbol or `nothing`
+  - `sol`: Solver parameter symbol or `nothing`
+  - `params`: Vector of non-nothing parameter symbols
+
+# Notes
+- Uses `CTSolvers.Strategies.get_parameter_type()` to extract parameter types
+- Converts parameter types to symbols using `CTSolvers.id()`
+- Filters out `nothing` values from the parameters vector
+
+See also: [`_determine_parameter_display_strategy`](@ref)
 """
 function _extract_strategy_parameters(discretizer, modeler, solver)
     disc_param = CTSolvers.Strategies.get_parameter_type(typeof(discretizer))
@@ -156,9 +223,23 @@ end
 
 Determine how to display parameters based on their values.
 
-Returns a NamedTuple with fields:
-- `show_inline`: Whether to show parameters inline with each component
-- `common`: Common parameter to show at end, or `nothing`
+This function analyzes the parameter symbols to decide whether they should be
+displayed inline with each component or as a common parameter at the end.
+
+# Arguments
+- `params::Vector`: Vector of parameter symbols
+
+# Returns
+- `NamedTuple`: Contains fields:
+  - `show_inline::Bool`: Whether to show parameters inline with each component
+  - `common`: Common parameter to show at end, or `nothing`
+
+# Notes
+- If no parameters, shows nothing inline and no common parameter
+- If all parameters are equal, shows common parameter at end
+- If parameters differ, shows each parameter inline with its component
+
+See also: [`_extract_strategy_parameters`](@ref)
 """
 function _determine_parameter_display_strategy(params)
     if isempty(params)
@@ -178,6 +259,22 @@ end
     _print_component_with_param(io, component_id, show_inline, param_sym)
 
 Print a component ID with optional inline parameter.
+
+This helper function formats and prints a component identifier with an optional
+parameter displayed inline when appropriate.
+
+# Arguments
+- `io::IO`: Output stream for printing
+- `component_id::String`: The component identifier to print
+- `show_inline::Bool`: Whether to show the parameter inline
+- `param_sym`: Parameter symbol to display (can be `nothing`)
+
+# Notes
+- Component ID is printed in cyan with bold formatting
+- Parameter (if shown) is printed in magenta with bold formatting
+- Used by `display_ocp_configuration` for consistent formatting
+
+See also: [`display_ocp_configuration`](@ref)
 """
 function _print_component_with_param(io, component_id, show_inline, param_sym)
     printstyled(io, component_id; color=:cyan, bold=true)
@@ -192,6 +289,26 @@ end
     _build_source_tag(source, common_param, params, show_sources)
 
 Build the source tag for an option based on its source and parameter context.
+
+This helper function creates appropriate tags to indicate where an option
+came from (user-specified or computed) and its parameter dependency.
+
+# Arguments
+- `source::Symbol`: Either `:user` or `:computed`
+- `common_param`: Common parameter for the strategy (can be `nothing`)
+- `params::Vector`: Vector of all parameter symbols
+- `show_sources::Bool`: Whether to include source information in tags
+
+# Returns
+- `String`: The formatted source tag (empty string if no tag needed)
+
+# Notes
+- For `:computed` source, shows parameter dependency (e.g., `[gpu-dependent]`)
+- For `:user` source, shows `[user]` when `show_sources=true`
+- Returns empty string when no tag is appropriate
+- Used by `display_ocp_configuration` for option source indication
+
+See also: [`display_ocp_configuration`](@ref)
 """
 function _build_source_tag(source, common_param, params, show_sources)
     if source == :computed
