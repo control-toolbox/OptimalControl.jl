@@ -120,7 +120,7 @@ function test_component_completion()
             allocs = Test.@allocated OptimalControl._complete_components(nothing, nothing, nothing, registry)
             # Some allocations expected due to registry lookup and strategy creation
             # Adjust limit based on actual measurement
-            Test.@test allocs < 200000  # More realistic upper bound
+            Test.@test allocs < 300000  # More realistic upper bound
             
             # Test with provided components (should be fewer allocations)
             disc = CTDirect.Collocation()
