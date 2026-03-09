@@ -70,6 +70,7 @@ function test_canonical()
         problems = [
             ("Beam",    Beam()),
             ("Goddard", Goddard()),
+            ("Quadrotor", Quadrotor()),
         ]
 
         # ----------------------------------------------------------------

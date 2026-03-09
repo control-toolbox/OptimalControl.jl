@@ -4,7 +4,8 @@ module TestProblems
 
     include("beam.jl")
     include("goddard.jl")
+    include("quadrotor.jl")
 
-    export Beam, Goddard
+    export Beam, Goddard, Quadrotor
 
 end
