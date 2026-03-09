@@ -8,7 +8,7 @@ import CTModels
     CTModels # for generated code (prefix)
 
 # Display
-@reexport import RecipesBase: plot
+@reexport import RecipesBase: plot, plot!
 
 # Initial guess
 import CTModels: 
@@ -33,7 +33,7 @@ import CTModels:
 @reexport import CTModels:
 
     # accessors
-    constraint, 
+    constraint,
     constraints, 
     name,
     dimension, 

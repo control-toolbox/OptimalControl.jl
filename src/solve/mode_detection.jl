@@ -8,19 +8,19 @@ component (of type `CTDirect.AbstractDiscretizer`, `CTSolvers.AbstractNLPModeler
 `CTSolvers.AbstractNLPSolver`) is found in `kwargs`. Returns [`DescriptiveMode`](@ref)
 otherwise.
 
-Raises [`CTBase.IncorrectArgument`](@ref) if both explicit components and a symbolic
+Raises [`CTBase.Exceptions.IncorrectArgument`](@extref) if both explicit components and a symbolic
 description are provided simultaneously.
 
 # Arguments
-- `description`: Tuple of symbolic description tokens (e.g., `(:collocation, :adnlp, :ipopt)`)
-- `kwargs`: Keyword arguments from the `solve` call
+- `description::Tuple{Vararg{Symbol}}`: Tuple of symbolic description tokens (e.g., `(:collocation, :adnlp, :ipopt)`)
+- `kwargs::Base.Pairs`: Keyword arguments from the `solve` call
 
 # Returns
 - `ExplicitMode()` if explicit components are present
 - `DescriptiveMode()` if no explicit components are present
 
 # Throws
-- `CTBase.IncorrectArgument`: If explicit components and symbolic description are mixed
+- [`CTBase.Exceptions.IncorrectArgument`](@extref): If explicit components and symbolic description are mixed
 
 # Examples
 ```julia
@@ -38,10 +38,13 @@ julia> OptimalControl._explicit_or_descriptive((:collocation,), kw)
 # throws CTBase.IncorrectArgument
 ```
 
-# See Also
-- [`_extract_kwarg`](@ref): Used internally to detect component types
-- [`ExplicitMode`](@ref), [`DescriptiveMode`](@ref): Returned mode types
-- [`CommonSolve.solve`](@ref): Calls this function
+# Notes
+- This function is used internally by the main `solve` dispatcher to determine the resolution path
+- Mode detection is based on the presence of typed components in kwargs
+- Validation ensures users don't accidentally mix both modes
+- The function uses type-based detection via `_extract_kwarg` for robustness
+
+See also: [`_extract_kwarg`](@ref), [`ExplicitMode`](@ref), [`DescriptiveMode`](@ref), [`CommonSolve.solve`](@ref)
 """
 function _explicit_or_descriptive(
     description::Tuple{Vararg{Symbol}},

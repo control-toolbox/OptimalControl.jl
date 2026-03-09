@@ -29,7 +29,7 @@ to the user during the solving process.
 - `true`: Display solve configuration (default)
 - `false`: Suppress configuration display
 
-See also: [`_route_descriptive_options`](@ref), [`solve`](@ref)
+See also: [`_route_descriptive_options`](@ref), [`CommonSolve.solve`](@extref)
 """
 const _DEFAULT_DISPLAY::Bool        = true
 
@@ -44,7 +44,7 @@ default initialization strategy.
 # Value
 - `nothing`: No initial guess provided (default)
 
-See also: [`_route_descriptive_options`](@ref), [`solve`](@ref)
+See also: [`_route_descriptive_options`](@ref), [`CommonSolve.solve`](@extref)
 """
 const _DEFAULT_INITIAL_GUESS::Nothing = nothing
 
@@ -57,7 +57,7 @@ const _DEFAULT_INITIAL_GUESS::Nothing = nothing
 
 Aliases for the `initial_guess` parameter, excluding the primary name.
 
-Used in `CTSolvers.OptionDefinition` where the primary name is specified separately.
+Used in [`CTSolvers.Options.OptionDefinition`](@extref) where the primary name is specified separately.
 
 # Value
 - `(:init,)`: Alias for `initial_guess`
@@ -86,13 +86,13 @@ const _INITIAL_GUESS_ALIASES::Tuple{Symbol, Symbol}      = (:initial_guess, :ini
 """
     _unwrap_option(opt, fallback)
 
-Unwrap an `CTSolvers.OptionValue` to its raw value, with fallback support.
+Unwrap an [`CTSolvers.Options.OptionValue`](@extref) to its raw value, with fallback support.
 
 If `opt` is an `OptionValue`, returns `opt.value`. Otherwise, returns `opt` if it's not `nothing`,
 or `fallback` if `opt` is `nothing`.
 
 # Arguments
-- `opt`: Either an `CTSolvers.OptionValue` or a raw value
+- `opt`: Either an [`CTSolvers.Options.OptionValue`](@extref) or a raw value
 - `fallback`: Default value to use when `opt` is `nothing`
 
 # Returns
@@ -100,7 +100,7 @@ or `fallback` if `opt` is `nothing`.
 
 # Example
 ```julia
-julia> opt_val = CTSolvers.OptionValue(42, :user)
+julia> opt_val = CTSolvers.Options.OptionValue(42, :user)
 OptionValue(42, :user)
 
 julia> _unwrap_option(opt_val, 0)
@@ -110,7 +110,7 @@ julia> _unwrap_option(nothing, 0)
 0
 ```
 
-See also: [`_route_descriptive_options`](@ref), [`CTSolvers.OptionValue`](@ref)
+See also: [`_route_descriptive_options`](@ref), [`CTSolvers.Options.OptionValue`](@extref)
 """
 _unwrap_option(opt::CTSolvers.OptionValue, fallback) = opt.value
 _unwrap_option(opt,                        fallback) = opt === nothing ? fallback : opt
@@ -125,7 +125,7 @@ $(TYPEDSIGNATURES)
 Return the strategy families used for option routing in descriptive mode.
 
 The returned `NamedTuple` maps family names to their abstract types, as expected
-by [`CTSolvers.route_all_options`](@ref).
+by [`CTSolvers.Orchestration.route_all_options`](@extref).
 
 # Returns
 - `NamedTuple`: `(discretizer, modeler, solver)` mapped to their abstract types
@@ -157,21 +157,21 @@ Return the action-level option definitions for descriptive mode.
 
 Action options are solve-level options consumed by the orchestrator before
 strategy-specific options are routed. They are extracted from `kwargs` **first**
-by [`CTSolvers.route_all_options`](@ref), so they never reach the strategy router.
+by [`CTSolvers.Orchestration.route_all_options`](@extref), so they never reach the strategy router.
 
 Currently defined action options:
 - `initial_guess` (aliases: `init`): Initial guess for the OCP solution.
-  Defaults to `nothing` (automatic generation via [`CTModels.build_initial_guess`](@ref)).
+  Defaults to `nothing` (automatic generation via [`CTModels.Init.build_initial_guess`](@extref)).
 - `display`: Whether to display solve configuration. Defaults to `true`.
 
 # Priority rule
 
 If a strategy also declares an option with the same name (e.g., `display`), the
-action option takes priority when no [`route_to`](@ref) is used. To explicitly
+action option takes priority when no [`CTSolvers.Strategies.route_to`](@extref) is used. To explicitly
 target a strategy, use `route_to(strategy_id=value)`.
 
 # Returns
-- `Vector{CTSolvers.OptionDefinition}`: Action option definitions
+- `Vector{CTSolvers.Options.OptionDefinition}`(@extref): Action option definitions
 
 # Example
 ```julia
@@ -186,16 +186,16 @@ julia> defs[1].aliases
 
 See also: [`_route_descriptive_options`](@ref)
 """
-function _descriptive_action_defs()::Vector{CTSolvers.OptionDefinition}
+function _descriptive_action_defs()::Vector{CTSolvers.Options.OptionDefinition}
     return [
-        CTSolvers.OptionDefinition(
+        CTSolvers.Options.OptionDefinition(
             name        = :initial_guess,
             aliases     = _INITIAL_GUESS_ALIASES_ONLY,
             type        = Any,
             default     = _DEFAULT_INITIAL_GUESS,
             description = "Initial guess for the OCP solution",
         ),
-        CTSolvers.OptionDefinition(
+        CTSolvers.Options.OptionDefinition(
             name        = :display,
             aliases     = (),
             type        = Bool,
@@ -214,12 +214,12 @@ $(TYPEDSIGNATURES)
 
 Route all keyword options to the appropriate strategy families for descriptive mode.
 
-This function wraps [`CTSolvers.route_all_options`](@ref) with the
+This function wraps [`CTSolvers.Orchestration.route_all_options`](@extref) with the
 families and action definitions specific to OptimalControl's descriptive mode.
 
 Options are routed in `:strict` mode: any unknown option raises an
-[`CTBase.IncorrectArgument`](@ref). Ambiguous options (belonging to multiple
-strategies) must be disambiguated with [`route_to`](@ref).
+[`CTBase.Exceptions.IncorrectArgument`](@extref). Ambiguous options (belonging to multiple
+strategies) must be disambiguated with [`CTSolvers.Strategies.route_to`](@extref).
 
 # Arguments
 - `complete_description`: Complete method triplet `(discretizer_id, modeler_id, solver_id)`
@@ -232,7 +232,7 @@ strategies) must be disambiguated with [`route_to`](@ref).
   - `strategies`: `NamedTuple` with `discretizer`, `modeler`, `solver` sub-tuples
 
 # Throws
-- `CTBase.IncorrectArgument`: If an option is unknown, ambiguous, or routed to the wrong strategy
+- [`CTBase.Exceptions.IncorrectArgument`](@extref): If an option is unknown, ambiguous, or routed to the wrong strategy
 
 # Example
 ```julia
@@ -251,12 +251,12 @@ See also: [`_descriptive_families`](@ref), [`_descriptive_action_defs`](@ref),
 """
 function _route_descriptive_options(
     complete_description::Tuple{Symbol, Symbol, Symbol, Symbol},
-    registry::CTSolvers.StrategyRegistry,
+    registry::CTSolvers.Orchestration.StrategyRegistry,
     kwargs,
 )
     families    = _descriptive_families()
     action_defs = _descriptive_action_defs()
-    return CTSolvers.route_all_options(
+    return CTSolvers.Orchestration.route_all_options(
         complete_description,
         families,
         action_defs,
@@ -276,12 +276,12 @@ $(TYPEDSIGNATURES)
 Build concrete strategy instances and extract action options from a routed options result.
 
 Each strategy is constructed via
-[`CTSolvers.build_strategy_from_resolved`](@ref) using the options
+[`CTSolvers.Orchestration.build_strategy_from_resolved`](@extref) using the options
 that were routed to its family by [`_route_descriptive_options`](@ref).
 
 Action options (`initial_guess`, `display`) are extracted from `routed.action`
 and unwrapped from their `OptionValue` wrappers. The initial guess is normalized
-via [`CTModels.build_initial_guess`](@ref).
+via [`CTModels.Init.build_initial_guess`](@extref).
 
 # Arguments
 - `ocp`: The optimal control problem (needed to normalize the initial guess)
@@ -304,32 +304,32 @@ true
 ```
 
 See also: [`_route_descriptive_options`](@ref),
-[`CTSolvers.build_strategy_from_resolved`](@ref)
+[`CTSolvers.Orchestration.build_strategy_from_resolved`](@extref)
 """
 function _build_components_from_routed(
     ocp::CTModels.AbstractModel,
     complete_description::Tuple{Symbol, Symbol, Symbol, Symbol},
-    registry::CTSolvers.StrategyRegistry,
+    registry::CTSolvers.Orchestration.StrategyRegistry,
     routed::NamedTuple,
 )
     # Resolve method with parameter information as early as possible
     families = _descriptive_families()
-    resolved = CTSolvers.resolve_method(complete_description, families, registry)
+    resolved = CTSolvers.Descriptions.resolve_method(complete_description, families, registry)
     
     # Build strategies using resolved method
-    discretizer = CTSolvers.build_strategy_from_resolved(
+    discretizer = CTSolvers.Orchestration.build_strategy_from_resolved(
         resolved, :discretizer, families, registry; routed.strategies.discretizer...
     )
-    modeler = CTSolvers.build_strategy_from_resolved(
+    modeler = CTSolvers.Orchestration.build_strategy_from_resolved(
         resolved, :modeler, families, registry; routed.strategies.modeler...
     )
-    solver = CTSolvers.build_strategy_from_resolved(
+    solver = CTSolvers.Orchestration.build_strategy_from_resolved(
         resolved, :solver, families, registry; routed.strategies.solver...
     )
 
     # Extract and unwrap action options (OptionValue → raw value)
     init_raw        = _unwrap_option(get(routed.action, :initial_guess, nothing), _DEFAULT_INITIAL_GUESS)
-    normalized_init = CTModels.build_initial_guess(ocp, init_raw)
+    normalized_init = CTModels.Init.build_initial_guess(ocp, init_raw)
 
     display_val = _unwrap_option(get(routed.action, :display, nothing), _DEFAULT_DISPLAY)
 

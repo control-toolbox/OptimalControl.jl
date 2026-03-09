@@ -1,18 +1,19 @@
 """
 $(TYPEDSIGNATURES)
 
-Complete missing resolution components using the registry and R3 helpers.
+Complete missing resolution components using the registry.
 
 This function orchestrates the component completion workflow:
-1. Extract symbols from provided components using `_build_partial_description()`
-2. Complete the method description using `_complete_description()`
-3. Build or use strategies for each family using `_build_or_use_strategy()`
+1. Extract symbols from provided components using `_build_partial_description`
+2. Complete the method description using `_complete_description`
+3. Resolve method with parameter information using `CTSolvers.resolve_method`
+4. Build or use strategies for each family using `_build_or_use_strategy`
 
 # Arguments
-- `discretizer`: Discretization strategy or `nothing`
-- `modeler`: NLP modeling strategy or `nothing`
-- `solver`: NLP solver strategy or `nothing`
-- `registry`: Strategy registry for building missing components
+- `discretizer::Union{CTDirect.AbstractDiscretizer, Nothing}`: Discretization strategy or `nothing`
+- `modeler::Union{CTSolvers.AbstractNLPModeler, Nothing}`: NLP modeling strategy or `nothing`
+- `solver::Union{CTSolvers.AbstractNLPSolver, Nothing}`: NLP solver strategy or `nothing`
+- `registry::CTSolvers.StrategyRegistry`: Strategy registry for building missing components
 
 # Returns
 - `NamedTuple{(:discretizer, :modeler, :solver)}`: Complete component triplet
@@ -33,11 +34,13 @@ result = OptimalControl._complete_components(disc, nothing, nothing, registry)
 @test result.solver isa CTSolvers.AbstractNLPSolver
 ```
 
-# See Also
-- [`_build_partial_description`](@ref): Extracts symbols from provided components
-- [`_complete_description`](@ref): Completes method description via CTBase
-- [`_build_or_use_strategy`](@ref): Builds or uses strategy instances
-- [`get_strategy_registry`](@ref): Creates the strategy registry
+# Notes
+- Provided components are preserved (returned as-is)
+- Missing components are instantiated using the first available strategy from the registry
+- Supports both CPU and GPU parameterized strategies
+- Used by `solve_explicit` when components are partially specified
+
+See also: [`_build_partial_description`](@ref), [`_complete_description`](@ref), [`_build_or_use_strategy`](@ref), [`get_strategy_registry`](@ref), [`solve_explicit`](@ref)
 """
 function _complete_components(
     discretizer::Union{CTDirect.AbstractDiscretizer, Nothing},
@@ -52,11 +55,11 @@ function _complete_components(
     # Step 2: Complete the method description
     complete_description = _complete_description(partial_description)
     
-    # Step 2.5: Resolve method with parameter information
+    # Step 3: Resolve method with parameter information
     families = _descriptive_families()
     resolved = CTSolvers.resolve_method(complete_description, families, registry)
     
-    # Step 3: Build or use strategies for each family
+    # Step 4: Build or use strategies for each family
     final_discretizer = _build_or_use_strategy(
         resolved, discretizer, :discretizer, families, registry
     )

@@ -9,8 +9,8 @@ by their keyword name. This avoids name collisions with strategy-specific option
 that might share the same keyword names.
 
 # Arguments
-- `kwargs`: Keyword arguments from a `solve` call (`Base.Pairs`)
-- `T`: Abstract type to search for
+- `kwargs::Base.Pairs`: Keyword arguments from a `solve` call
+- `T::Type`: Abstract type to search for
 
 # Returns
 - `Union{T, Nothing}`: First matching value, or `nothing` if none found
@@ -27,9 +27,12 @@ julia> OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPModeler)
 nothing
 ```
 
-# See Also
-- [`_explicit_or_descriptive`](@ref): Uses this to detect explicit components
-- [`_solve(::ExplicitMode, ...)`](@ref): Uses this to extract components for `solve_explicit`
+# Notes
+- Type-based extraction allows keyword name independence
+- Returns the first matching value found (order depends on kwargs iteration)
+- Used for mode detection and component extraction in explicit mode
+
+See also: [`_explicit_or_descriptive`](@ref), [`solve_explicit`](@ref)
 """
 function _extract_kwarg(
     kwargs::Base.Pairs,
@@ -50,15 +53,15 @@ Returns the value and the remaining kwargs with the matched key removed.
 Raises an error if more than one alias is present simultaneously.
 
 # Arguments
-- `kwargs`: Keyword arguments from a `solve` call (`Base.Pairs`)
-- `names`: Tuple of accepted names/aliases, in priority order
+- `kwargs::Base.Pairs`: Keyword arguments from a `solve` call
+- `names::Tuple{Vararg{Symbol}}`: Tuple of accepted names/aliases, in priority order
 - `default`: Default value if none of the names is found
 
 # Returns
 - `(value, remaining_kwargs)`: Extracted value and kwargs with the key removed
 
 # Throws
-- `CTBase.IncorrectArgument`: If more than one alias is provided at the same time
+- [`CTBase.Exceptions.IncorrectArgument`](@extref): If more than one alias is provided at the same time
 
 # Examples
 ```julia
@@ -68,7 +71,12 @@ julia> val === x0
 true
 ```
 
-See Also: [`_extract_kwarg`](@ref)
+# Notes
+- Supports alias resolution with conflict detection
+- Used for extracting `initial_guess`/`init` and `display` options
+- Returns default value if none of the aliases are present
+
+See also: [`_extract_kwarg`](@ref), [`solve_explicit`](@ref), [`solve_descriptive`](@ref)
 """
 function _extract_action_kwarg(kwargs::Base.Pairs, names::Tuple{Vararg{Symbol}}, default)
     present = [n for n in names if haskey(kwargs, n)]

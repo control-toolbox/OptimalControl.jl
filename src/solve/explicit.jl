@@ -7,20 +7,24 @@ Receives typed components (`discretizer`, `modeler`, `solver`) as named keyword 
 then completes missing components via the registry before calling Layer 3.
 
 # Arguments
-- `ocp`: The optimal control problem to solve
-- `registry`: Strategy registry for completing partial components
+- `ocp::CTModels.AbstractModel`: The optimal control problem to solve
+- `registry::CTSolvers.StrategyRegistry`: Strategy registry for completing partial components
 - `kwargs...`: All keyword arguments. Action options extracted here:
-  - `initial_guess` (aliases: `init`): Initial guess, default `nothing`
+  - `initial_guess` (alias: `init`): Initial guess, default `nothing`
   - `display`: Whether to display configuration information, default `true`
   - Typed components: `discretizer`, `modeler`, `solver` (identified by abstract type)
 
 # Returns
 - `CTModels.AbstractSolution`: Solution to the optimal control problem
 
-# See Also
-- [`_has_complete_components`](@ref): Checks if all three components are provided
-- [`_complete_components`](@ref): Completes missing components via registry
-- [`_explicit_or_descriptive`](@ref): Mode detection that routes here
+# Notes
+- This is Layer 2 of the solve architecture - handles explicit component mode
+- The function performs: (1) action option extraction, (2) initial guess normalization, (3) component completion, (4) Layer 3 dispatch
+- Missing components are completed using the first available strategy from the registry
+- All three components must be either provided or completable via the registry
+- This function is typically called by the main `solve` dispatcher in explicit mode
+
+See also: [`CommonSolve.solve`](@extref), [`solve_descriptive`](@ref), [`_has_complete_components`](@ref), [`_complete_components`](@ref), [`_explicit_or_descriptive`](@ref)
 """
 function solve_explicit(
     ocp::CTModels.AbstractModel;
