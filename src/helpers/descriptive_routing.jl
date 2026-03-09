@@ -17,17 +17,101 @@
 # Action option defaults (single source of truth)
 # ----------------------------------------------------------------------------
 
+"""
+    _DEFAULT_DISPLAY::Bool
+
+Default value for the `display` action option in solve functions.
+
+When `true`, the solve configuration and method information will be displayed
+to the user during the solving process.
+
+# Value
+- `true`: Display solve configuration (default)
+- `false`: Suppress configuration display
+
+See also: [`_route_descriptive_options`](@ref), [`solve`](@ref)
+"""
 const _DEFAULT_DISPLAY::Bool        = true
+
+"""
+    _DEFAULT_INITIAL_GUESS::Nothing
+
+Default value for the `initial_guess` action option in solve functions.
+
+When `nothing`, no initial guess is provided and the solver will use its
+default initialization strategy.
+
+# Value
+- `nothing`: No initial guess provided (default)
+
+See also: [`_route_descriptive_options`](@ref), [`solve`](@ref)
+"""
 const _DEFAULT_INITIAL_GUESS::Nothing = nothing
 
 # Aliases for initial_guess (single source of truth)
 # _INITIAL_GUESS_ALIASES_ONLY : used in OptionDefinition (name is separate)
 # _INITIAL_GUESS_ALIASES      : used in _extract_action_kwarg (includes primary name)
+
+"""
+    _INITIAL_GUESS_ALIASES_ONLY::Tuple{Symbol}
+
+Aliases for the `initial_guess` parameter, excluding the primary name.
+
+Used in `CTSolvers.OptionDefinition` where the primary name is specified separately.
+
+# Value
+- `(:init,)`: Alias for `initial_guess`
+
+See also: [`_INITIAL_GUESS_ALIASES`](@ref), [`_route_descriptive_options`](@ref)
+"""
 const _INITIAL_GUESS_ALIASES_ONLY::Tuple{Symbol}         = (:init,)
+
+"""
+    _INITIAL_GUESS_ALIASES::Tuple{Symbol, Symbol}
+
+All valid names for the initial guess parameter, including the primary name and aliases.
+
+Used in `_extract_action_kwarg` to extract the initial guess from keyword arguments.
+
+# Value
+- `(:initial_guess, :init)`: Primary name and alias
+
+See also: [`_INITIAL_GUESS_ALIASES_ONLY`](@ref), [`_extract_action_kwarg`](@ref)
+"""
 const _INITIAL_GUESS_ALIASES::Tuple{Symbol, Symbol}      = (:initial_guess, :init)
 
 # Unwrap an OptionValue (from route_all_options) to its raw value.
 # Falls back to `fallback` if `opt` is not an OptionValue.
+
+"""
+    _unwrap_option(opt, fallback)
+
+Unwrap an `CTSolvers.OptionValue` to its raw value, with fallback support.
+
+If `opt` is an `OptionValue`, returns `opt.value`. Otherwise, returns `opt` if it's not `nothing`,
+or `fallback` if `opt` is `nothing`.
+
+# Arguments
+- `opt`: Either an `CTSolvers.OptionValue` or a raw value
+- `fallback`: Default value to use when `opt` is `nothing`
+
+# Returns
+- The unwrapped value or the fallback
+
+# Example
+```julia
+julia> opt_val = CTSolvers.OptionValue(42, :user)
+OptionValue(42, :user)
+
+julia> _unwrap_option(opt_val, 0)
+42
+
+julia> _unwrap_option(nothing, 0)
+0
+```
+
+See also: [`_route_descriptive_options`](@ref), [`CTSolvers.OptionValue`](@ref)
+"""
 _unwrap_option(opt::CTSolvers.OptionValue, fallback) = opt.value
 _unwrap_option(opt,                        fallback) = opt === nothing ? fallback : opt
 
