@@ -20,16 +20,14 @@ where $x=(q,v)$, $p=(p_q,p_v)$, $p^0 = -1$ since we are in the normal case. From
 u(x, p) = p_v
 ```
 
-since $\partial^2_{uu} H = p^0 = - 1 < 0$. 
+since $\partial^2_{uu} H = p^0 = - 1 < 0$.
 
 ```@example main
 u(x, p) = p[2]
 nothing # hide
 ```
 
-Actually, if $(x, u)$ is a solution of the optimal control problem, 
-then, the Pontryagin maximum principle tells us that there exists a costate $p$ such that $u(t) = u(x(t), p(t))$
-and such that the pair $(x, p)$ satisfies:
+Actually, if $(x, u)$ is a solution of the optimal control problem, then, the Pontryagin maximum principle tells us that there exists a costate $p$ such that $u(t) = u(x(t), p(t))$ and such that the pair $(x, p)$ satisfies:
 
 ```math
 \begin{array}{l}
@@ -68,7 +66,7 @@ The pairs $(x, p)$ solution of the Hamitonian vector field are called *extremals
 H(x, p, u) = p[1] * x[2] + p[2] * u - 0.5 * u^2     # pseudo-Hamiltonian
 H(x, p) = H(x, p, u(x, p))                          # Hamiltonian
 
-z = Flow(Hamiltonian(H))
+z = Flow(OptimalControl.Hamiltonian(H))
 
 t0 = 0
 tf = 1
@@ -84,12 +82,11 @@ You can also provide the Hamiltonian vector field.
 ```@example main
 Hv(x, p) = [x[2], p[2]], [0.0, -p[1]]     # Hamiltonian vector field
 
-z = Flow(HamiltonianVectorField(Hv))
+z = Flow(OptimalControl.HamiltonianVectorField(Hv))
 xf, pf = z(t0, x0, p0, tf)
 ```
 
-Note that if you call the flow on `tspan=(t0, tf)`, then you obtain the output solution 
-from OrdinaryDiffEq.jl.
+Note that if you call the flow on `tspan=(t0, tf)`, then you obtain the output solution from OrdinaryDiffEq.jl.
 
 ```@example main
 sol = z((t0, tf), x0, p0)
@@ -98,8 +95,7 @@ xf, pf = sol(tf)[1:2], sol(tf)[3:4]
 
 ## Trajectories
 
-You can also compute trajectories from the control dynamics $(x, u) \mapsto (v, u)$ and a control law 
-$t \mapsto u(t)$.
+You can also compute trajectories from the control dynamics $(x, u) \mapsto (v, u)$ and a control law $t \mapsto u(t)$.
 
 ```@example main
 u(t) = 6-12t

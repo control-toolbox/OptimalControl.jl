@@ -53,25 +53,6 @@ function generate_api_reference(src_dir::String, ext_dir::String)
             filename="private",
         ),
 
-        # # ───────────────────────────────────────────────────────────────────
-        # # Main Module
-        # # ───────────────────────────────────────────────────────────────────
-        # CTBase.automatic_reference_documentation(;
-        #     subdirectory="api",
-        #     primary_modules=[
-        #         OptimalControl => src(
-        #             "OptimalControl.jl",
-        #         ),
-        #     ],
-        #     external_modules_to_document=[CommonSolve, CTBase, CTDirect, CTFlows, CTModels, CTParser, CTSolvers],
-        #     exclude=EXCLUDE_SYMBOLS,
-        #     public=true,
-        #     private=true,
-        #     title="Main Module",
-        #     title_in_menu="Main Module",
-        #     filename="main_module",
-        # ),
-
     ]
 
     return pages

@@ -1,6 +1,3 @@
-push!(LOAD_PATH, joinpath(@__DIR__, "..", "src"))
-push!(LOAD_PATH, @__DIR__)
-
 # control-toolbox packages
 using OptimalControl
 using CTBase
@@ -122,7 +119,6 @@ Modules = [
     CTFlowsODE,
 ]
 for Module in Modules
-    println("Setting docmeta for ", Module)
     isnothing(DocMeta.getdocmeta(Module, :DocTestSetup)) &&
         DocMeta.setdocmeta!(Module, :DocTestSetup, :(using $Module); recursive=true)
 end
@@ -218,7 +214,6 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "Solution characteristics" => "manual-solution.md",
                 "Plot a solution" => "manual-plot.md",
                 "Compute flows" => [
-                    "Flow API" => "manual-flow-api.md",
                     "From optimal control problems" => "manual-flow-ocp.md",
                     "From Hamiltonians and others" => "manual-flow-others.md",
                 ],

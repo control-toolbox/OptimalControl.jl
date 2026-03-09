@@ -6,10 +6,6 @@ CollapsedDocStrings = false
 
 In this manual, we explain the [`solve`](@ref) function from [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package.
 
-```@docs; canonical=false
-solve(::CTModels.Model, ::Symbol...)
-```
-
 ## Basic usage
 
 Let us define a basic optimal control problem.
@@ -59,19 +55,19 @@ This is because the default method uses a direct approach, which transforms the 
 
 ## [Resolution methods and algorithms](@id manual-solve-methods)
 
-OptimalControl.jl offers a list of methods. To get it, simply call `available_methods`.
+OptimalControl.jl offers a list of methods. To get it, simply call `methods`.
 
 ```@example main
-available_methods()
+methods()
 ```
 
-Each line is a method, with priority going from top to bottom. This means that 
+Each line is a method, with priority going from top to bottom. This means that
 
 ```julia
 solve(ocp)
 ```
 
-is equivalent to 
+is equivalent to
 
 ```julia
 solve(ocp, :direct, :adnlp, :ipopt)
@@ -94,14 +90,10 @@ solve(ocp, :direct, :adnlp, :ipopt)
     - nonlinear constraints (boundary, variable, control, state, mixed ones, see [Constraints](@ref manual-abstract-constraints) must also be scalar expressions (linear constraints *aka.* ranges, on the other hand, can be vectors)
     - all expressions must only involve algebraic operations that are known to ExaModels (check the [documentation](https://exanauts.github.io/ExaModels.jl/stable)), although one can provide additional user defined functions through *registration* (check [ExaModels API](https://exanauts.github.io/ExaModels.jl/stable/core/#ExaModels.@register_univariate-Tuple%7BAny,%2520Any,%2520Any%7D)) 
 
-!!! note
-
-    MadNLP is shipped only with two linear solvers (Umfpack and Lapack), which are not adapted is some cases. We recommend to use [MadNLPMumps](https://madsuite.org/MadNLP.jl/stable/installation/#Installation) to solve your optimal control problem with [MUMPS](https://mumps-solver.org) linear solver.
-
-For instance, let us try MadNLPMumps solver with ExaModel modeller.
+For instance, let us try MadNLP solver with ExaModel modeller.
 
 ```@example main
-using MadNLPMumps
+using MadNLP
 
 ocp = @def begin
     t ∈ [ t0, tf ], time
@@ -114,7 +106,7 @@ ocp = @def begin
     0.5∫( u(t)^2 ) → min
 end
 
-solve(ocp, :exa, :madnlp; disc_method=:trapeze)
+solve(ocp, :exa, :madnlp; scheme=:trapeze)
 nothing # hide
 ```
 
@@ -140,10 +132,11 @@ The main options for the direct method, with their [default] values, are:
   More precisely, if `N = grid_size` and the initial and final times are `t0` and `tf`, then the step length `Δt = (tf - t0) / N`.
 - `time_grid` ([`nothing`]): explicit time grid (can be non-uniform).  
   If `time_grid = nothing`, a uniform grid of length `grid_size` is used.
-- `disc_method` (`:trapeze`, [`:midpoint`], `:euler`, `:euler_implicit`, `:gauss_legendre_2`, `:gauss_legendre_3`): the discretisation scheme to transform the dynamics into nonlinear equations. See the [discretization method tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-discretisation.html) for more details.
+- `scheme` (`:trapeze`, [`:midpoint`], `:euler`, `:euler_implicit`, `:gauss_legendre_2`, `:gauss_legendre_3`): the discretisation scheme to transform the dynamics into nonlinear equations. See the [discretization method tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-discretisation.html) for more details.
 - `adnlp_backend` ([`:optimized`], `:manual`, `:default`): backend used for automatic differentiation to create the [`ADNLPModels.ADNLPModel`](@extref).
 
 For advanced usage, see:
+
 - [discrete continuation tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-continuation.html),
 - [NLP manipulation tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-nlp.html).
 
@@ -158,7 +151,6 @@ In addition to these options, any remaining keyword arguments passed to `solve` 
 !!! warning
 
     The option names and accepted values depend on the chosen solver. For example, in Ipopt, `print_level` expects an integer, whereas in MadNLP it must be a `MadNLP.LogLevels` value (valid options: `MadNLP.{TRACE, DEBUG, INFO, NOTICE, WARN, ERROR}`). Moreover, some options are solver-specific: for instance, `mu_strategy` exists in Ipopt but not in MadNLP.
-
 
 Please refer to the [Ipopt options list](https://coin-or.github.io/Ipopt/OPTIONS.html) and the [NLPModelsIpopt.jl documentation](https://jso.dev/NLPModelsIpopt.jl).  
 

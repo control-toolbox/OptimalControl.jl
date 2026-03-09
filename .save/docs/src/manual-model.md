@@ -106,7 +106,7 @@ Each field can be accessed directly (`ocp.times`, etc) or by a getter:
 - [`control`](@ref)
 - [`variable`](@ref)
 - [`dynamics`](@ref)
-- [`objective`](@ref)
+- `objective`
 - [`constraints`](@ref)
 - [`definition`](@ref)
 - [`get_build_examodel`](@ref)

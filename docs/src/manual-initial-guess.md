@@ -4,11 +4,11 @@
 CurrentModule =  OptimalControl
 ```
 
-We present the different possibilities to provide an initial guess to solve an 
-optimal control problem with the [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package. 
+We present the different possibilities to provide an initial guess to solve an
+optimal control problem with the [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package.
 
-First, we need to import OptimalControl.jl to define the 
-optimal control problem and [NLPModelsIpopt.jl](https://jso.dev/NLPModelsIpopt.jl) to solve it. 
+First, we need to import OptimalControl.jl to define the
+optimal control problem and [NLPModelsIpopt.jl](https://jso.dev/NLPModelsIpopt.jl) to solve it.
 We also need to import [Plots.jl](https://docs.juliaplots.org) to plot solutions.
 
 ```@example main
@@ -65,11 +65,12 @@ sol = solve(ocp; init=(), display=false)
 println("Number of iterations: ", iterations(sol))
 nothing # hide
 ```
+
 !!! tip "Interactions with an optimal control solution"
 
     To get the number of iterations of the solver, check the [`iterations`](@ref) function.
 
-To reduce the number of iterations and improve the convergence, we can give an initial guess to the solver. 
+To reduce the number of iterations and improve the convergence, we can give an initial guess to the solver.
 This initial guess can be built from constant values, interpolated vectors, functions, or existing solutions.
 Except when initializing from a solution, the arguments are to be passed as a named tuple ```init=(state=..., control=..., variable=...)``` whose fields are optional. Missing fields will revert to default initialization (ie constant 0.1).
 
@@ -85,6 +86,7 @@ nothing # hide
 ```
 
 Partial initializations are also valid, as shown below. Note the ending comma when a single argument is passed, since it must be a tuple.
+
 ```@example main
 # initialisation only on the state
 sol = solve(ocp; init=(state=[-0.2, 0.1],), display=false)
@@ -101,6 +103,7 @@ nothing # hide
 ```
 
 ## Functional initial guess
+
 For the state and control, we can also provide functions of time as initial guess.
 
 ```@example main
@@ -114,12 +117,13 @@ nothing # hide
 ```
 
 ## Vector initial guess (interpolated)
-Initialization can also be provided with vectors / matrices to be interpolated along a given time grid. 
+
+Initialization can also be provided with vectors / matrices to be interpolated along a given time grid.
 In this case the time steps must be given through an additional argument ```time```, which can be a vector or line/column matrix.
 For the values to be interpolated both matrices and vectors of vectors are allowed, but the shape should be *number of time steps x variable dimension*.
 Simple vectors are also allowed for variables of dimension 1.
 
-```@example main
+```julia
 # initial guess as vector of points
 t_vec = LinRange(t0,tf,4)
 x_vec = [[0, 0], [-0.1, 0.3], [-0.15,0.4], [-0.3, 0.5]]
@@ -136,7 +140,7 @@ Note: in the free final time case, the given time grid should be consistent with
 
 The constant, functional and vector initializations can be mixed, for instance as
 
-```@example main
+```julia
 # we can mix constant values with functions of time
 sol = solve(ocp; init=(state=[-0.2, 0.1], control=u, variable=0.05), display=false)
 println("Number of iterations: ", iterations(sol))
@@ -149,7 +153,7 @@ nothing # hide
 
 ## Solution as initial guess (warm start)
 
-Finally, we can use an existing solution to provide the initial guess. 
+Finally, we can use an existing solution to provide the initial guess.
 The dimensions of the state, control and optimization variable must coincide.
 This particular feature allows an easy implementation of discrete continuations.
 
@@ -163,7 +167,7 @@ println("Number of iterations: ", iterations(sol))
 nothing # hide
 ```
 
-Note that you can also manually pick and choose which data to reuse from a solution, by recovering the 
+Note that you can also manually pick and choose which data to reuse from a solution, by recovering the
 functions ```state(sol)```, ```control(sol)``` and the values ```variable(sol)```.
 For instance the following formulation is equivalent to the ```init=sol``` one.
 
@@ -178,7 +182,7 @@ sol = solve(ocp;
     display=false)
 println("Number of iterations: ", iterations(sol))
 nothing # hide
-``` 
+```
 
 !!! tip "Interactions with an optimal control solution"
 
@@ -187,4 +191,3 @@ nothing # hide
 ## Costate / multipliers
 
 For the moment there is no option to provide an initial guess for the costate / multipliers.
-
