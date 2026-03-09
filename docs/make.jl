@@ -178,6 +178,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
     # add api/public.md
     api_pages_final = copy(api_pages)
     pushfirst!(api_pages_final, "Public" => joinpath("api", "public.md"))
+    push!(api_pages_final, "Subpackages" => joinpath("api", "subpackages.md"))
     
     # build documentation
     makedocs(;
