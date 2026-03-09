@@ -41,7 +41,7 @@ solve(ocp, :collocation, :adnlp, :ipopt;
 - Strategy-specific options are routed to the appropriate component families
 - This function is typically called by the main `solve` dispatcher in descriptive mode
 
-See also: [`CommonSolve.solve`](@extref), [`solve_explicit`](@ref), [`_complete_description`](@ref), [`_route_descriptive_options`](@ref), [`_build_components_from_routed`](@ref)
+See also: [`solve`](@ref), [`solve_explicit`](@ref), [`_complete_description`](@ref), [`_route_descriptive_options`](@ref), [`_build_components_from_routed`](@ref)
 """
 function solve_descriptive(
     ocp::CTModels.AbstractModel,

@@ -37,7 +37,7 @@ julia> methods()[9]
 - GPU-capable strategies use parameterized types with automatic defaults
 - Used by `CTBase.Descriptions.complete` to complete partial method descriptions
 
-See also: [`CommonSolve.solve`](@extref), [`CTBase.Descriptions.complete`](@extref), [`get_strategy_registry`](@ref)
+See also: [`solve`](@ref), [`CTBase.Descriptions.complete`](@extref), [`get_strategy_registry`](@ref)
 """
 function Base.methods()::Tuple{Vararg{Tuple{Symbol, Symbol, Symbol, Symbol}}}
     return (

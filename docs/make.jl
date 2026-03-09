@@ -1,3 +1,6 @@
+push!(LOAD_PATH, joinpath(@__DIR__, "..", "src"))
+push!(LOAD_PATH, @__DIR__)
+
 # control-toolbox packages
 using OptimalControl
 using CTBase
@@ -142,7 +145,15 @@ cp(
 # ═══════════════════════════════════════════════════════════════════════════════
 # Configuration
 # ═══════════════════════════════════════════════════════════════════════════════
-draft = false  # Draft mode: if true, @example blocks in markdown are not executed
+# if draft is true, then the julia code from .md is not executed
+# to disable the draft mode in a specific markdown file, use the following:
+#=
+```@meta
+Draft = false
+```
+=#
+draft = true  # Draft mode: if true, @example blocks in markdown are not executed
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Load extensions
@@ -184,6 +195,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
             assets=[
                 asset("https://control-toolbox.org/assets/css/documentation.css"),
                 asset("https://control-toolbox.org/assets/js/documentation.js"),
+                "assets/custom.css",
             ],
             size_threshold_ignore=[
                 joinpath("api", "private.md"),
@@ -192,6 +204,25 @@ with_api_reference(src_dir, ext_dir) do api_pages
         ),
         pages=[
             "Introduction" => "index.md",
+            "Basic Examples" => [
+                "Energy minimisation" => "example-double-integrator-energy.md",
+                "Time mininimisation" => "example-double-integrator-time.md",
+            ],
+            "Manual" => [
+                "Define a problem" => "manual-abstract.md",
+                "Use AI" => "manual-ai-llm.md",
+                "Problem characteristics" => "manual-model.md",
+                "Set an initial guess" => "manual-initial-guess.md",
+                "Solve a problem" => "manual-solve.md",
+                "Solve on GPU" => "manual-solve-gpu.md",
+                "Solution characteristics" => "manual-solution.md",
+                "Plot a solution" => "manual-plot.md",
+                "Compute flows" => [
+                    "Flow API" => "manual-flow-api.md",
+                    "From optimal control problems" => "manual-flow-ocp.md",
+                    "From Hamiltonians and others" => "manual-flow-others.md",
+                ],
+            ],
             "API Reference" => api_pages_final,
         ],
         plugins=[links],

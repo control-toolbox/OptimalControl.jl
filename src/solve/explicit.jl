@@ -24,7 +24,7 @@ then completes missing components via the registry before calling Layer 3.
 - All three components must be either provided or completable via the registry
 - This function is typically called by the main `solve` dispatcher in explicit mode
 
-See also: [`CommonSolve.solve`](@extref), [`solve_descriptive`](@ref), [`_has_complete_components`](@ref), [`_complete_components`](@ref), [`_explicit_or_descriptive`](@ref)
+See also: [`solve`](@ref), [`solve_descriptive`](@ref), [`_has_complete_components`](@ref), [`_complete_components`](@ref), [`_explicit_or_descriptive`](@ref)
 """
 function solve_explicit(
     ocp::CTModels.AbstractModel;

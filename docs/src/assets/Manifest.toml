@@ -2,7 +2,7 @@
 
 julia_version = "1.12.1"
 manifest_format = "2.0"
-project_hash = "8a4c4ca2e610a5f7734b7c2a23e34660ca013b15"
+project_hash = "89e55d3e7558f944543703effd0ecaef285c9b7d"
 
 [[deps.ADNLPModels]]
 deps = ["ADTypes", "ForwardDiff", "LinearAlgebra", "NLPModels", "Requires", "ReverseDiff", "SparseArrays", "SparseConnectivityTracer", "SparseMatrixColorings"]
@@ -192,9 +192,9 @@ version = "0.2.7"
 
 [[deps.CTBase]]
 deps = ["DocStringExtensions"]
-git-tree-sha1 = "712257c9cd7247ba4d2b53ba7baa521e5ebc37a9"
+git-tree-sha1 = "839532889c345a2c9384aaf6cb6bf4095d7fc9c4"
 uuid = "54762871-cc72-4466-b8e8-f6c8b58076cd"
-version = "0.18.4"
+version = "0.18.5"
 
     [deps.CTBase.extensions]
     CoveragePostprocessing = ["Coverage"]
@@ -210,9 +210,9 @@ version = "0.18.4"
 
 [[deps.CTDirect]]
 deps = ["ADNLPModels", "CTModels", "CTSolvers", "DocStringExtensions", "ExaModels", "SolverCore", "SparseArrays"]
-git-tree-sha1 = "26438db2f4502f23b8beb99d740c2e9cd152aef7"
+git-tree-sha1 = "9d9c1c5c1d17cc02692378ae49d03e90b0e469e8"
 uuid = "790bbbee-bee9-49ee-8912-a9de031322d5"
-version = "1.0.3-beta"
+version = "1.0.5"
 
 [[deps.CTFlows]]
 deps = ["CTBase", "CTModels", "DocStringExtensions", "ForwardDiff", "LinearAlgebra", "MLStyle", "MacroTools"]
@@ -226,9 +226,9 @@ weakdeps = ["OrdinaryDiffEq"]
 
 [[deps.CTModels]]
 deps = ["CTBase", "DocStringExtensions", "Interpolations", "LinearAlgebra", "MLStyle", "MacroTools", "OrderedCollections", "Parameters", "RecipesBase"]
-git-tree-sha1 = "336bead874d55913328ecaf9d89b4e16f4899d55"
+git-tree-sha1 = "3153e28badddd369e2e98f973ddb1f2d765c1b2b"
 uuid = "34c4fa32-2049-4079-8329-de33c2a22e2d"
-version = "0.9.3"
+version = "0.9.5"
 weakdeps = ["JLD2", "JSON3", "Plots"]
 
     [deps.CTModels.extensions]
@@ -238,15 +238,15 @@ weakdeps = ["JLD2", "JSON3", "Plots"]
 
 [[deps.CTParser]]
 deps = ["CTBase", "DocStringExtensions", "MLStyle", "OrderedCollections", "Parameters", "Unicode"]
-git-tree-sha1 = "fd19ed996fd49cbf292717ee73c031558fa86e44"
+git-tree-sha1 = "133dec3dee907d4a03580811ad5d7c3778728227"
 uuid = "32681960-a1b1-40db-9bff-a1ca817385d1"
-version = "0.8.5-beta"
+version = "0.8.7"
 
 [[deps.CTSolvers]]
 deps = ["ADNLPModels", "CTBase", "CTModels", "CommonSolve", "DocStringExtensions", "ExaModels", "KernelAbstractions", "NLPModels", "SolverCore"]
-git-tree-sha1 = "7627f2b32e54bef1d86bef052127e7d5a3d3d905"
+git-tree-sha1 = "24f64eb8854afbe8f2360cbd6543a839c2b4ebe6"
 uuid = "d3e8d392-8e4b-4d9b-8e92-d7d4e3650ef6"
-version = "0.4.4"
+version = "0.4.5"
 
     [deps.CTSolvers.extensions]
     CTSolversCUDA = "CUDA"
@@ -1684,12 +1684,6 @@ deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl"]
 git-tree-sha1 = "1346c9208249809840c91b26703912dff463d335"
 uuid = "efe28fd5-8261-553b-a9e1-b2916fc3738e"
 version = "0.5.6+0"
-
-[[deps.OptimalControl]]
-deps = ["ADNLPModels", "CTBase", "CTDirect", "CTFlows", "CTModels", "CTParser", "CTSolvers", "CommonSolve", "DocStringExtensions", "ExaModels", "NLPModels", "RecipesBase", "Reexport", "SolverCore"]
-path = "/Users/ocots/Research/logiciels/dev/control-toolbox/OptimalControl"
-uuid = "5f98b655-cc9a-415a-b60e-744165666948"
-version = "1.2.3-beta"
 
 [[deps.Opus_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]

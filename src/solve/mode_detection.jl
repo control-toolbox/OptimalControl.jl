@@ -44,7 +44,7 @@ julia> OptimalControl._explicit_or_descriptive((:collocation,), kw)
 - Validation ensures users don't accidentally mix both modes
 - The function uses type-based detection via `_extract_kwarg` for robustness
 
-See also: [`_extract_kwarg`](@ref), [`ExplicitMode`](@ref), [`DescriptiveMode`](@ref), [`CommonSolve.solve`](@ref)
+See also: [`_extract_kwarg`](@ref), [`ExplicitMode`](@ref), [`DescriptiveMode`](@ref), [`solve`](@ref)
 """
 function _explicit_or_descriptive(
     description::Tuple{Vararg{Symbol}},

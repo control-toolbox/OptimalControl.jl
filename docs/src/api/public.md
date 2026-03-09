@@ -32,9 +32,6 @@ Private = false
 
 ```@docs; canonical=true
 *(::CTFlowsODE.AbstractFlow)
-CTBase
-CTModels
-ExaModels
 Flow
 @Lie
 Lie

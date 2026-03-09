@@ -29,7 +29,7 @@ to the user during the solving process.
 - `true`: Display solve configuration (default)
 - `false`: Suppress configuration display
 
-See also: [`_route_descriptive_options`](@ref), [`CommonSolve.solve`](@extref)
+See also: [`_route_descriptive_options`](@ref), [`solve`](@ref)
 """
 const _DEFAULT_DISPLAY::Bool        = true
 
@@ -44,7 +44,7 @@ default initialization strategy.
 # Value
 - `nothing`: No initial guess provided (default)
 
-See also: [`_route_descriptive_options`](@ref), [`CommonSolve.solve`](@extref)
+See also: [`_route_descriptive_options`](@ref), [`solve`](@ref)
 """
 const _DEFAULT_INITIAL_GUESS::Nothing = nothing
 
@@ -314,7 +314,7 @@ function _build_components_from_routed(
 )
     # Resolve method with parameter information as early as possible
     families = _descriptive_families()
-    resolved = CTSolvers.Descriptions.resolve_method(complete_description, families, registry)
+    resolved = CTSolvers.Orchestration.resolve_method(complete_description, families, registry)
     
     # Build strategies using resolved method
     discretizer = CTSolvers.Orchestration.build_strategy_from_resolved(

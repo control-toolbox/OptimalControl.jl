@@ -43,7 +43,7 @@ julia> CTSolvers.available_parameters(:solver, CTSolvers.Ipopt, registry)
 - GPU strategies automatically get appropriate default configurations when parameterized
 - Used by solve functions for component completion and strategy building
 
-See also: [`methods`](@ref), [`_complete_components`](@ref), [`CommonSolve.solve`](@ref)
+See also: [`methods`](@ref), [`_complete_components`](@ref), [`solve`](@ref)
 """
 function get_strategy_registry()::CTSolvers.StrategyRegistry
     return CTSolvers.create_registry(

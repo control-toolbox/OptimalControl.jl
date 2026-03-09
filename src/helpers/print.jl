@@ -362,10 +362,10 @@ julia> sol = CTSolvers.Ipopt()
 julia> OptimalControl.display_ocp_configuration(stdout, disc, mod, sol)
 ▫ OptimalControl v1.1.8-beta solving with: collocation → adnlp → ipopt
 
-  📦 Configuration:
-   ├─ Discretizer: collocation (no user options)
-   ├─ Modeler: adnlp (no user options)
-   └─ Solver: ipopt (no user options)
+  📦 Configuration: 
+   ├─ Discretizer: collocation
+   ├─ Modeler: adnlp
+   └─ Solver: ipopt
 ```
 
 With parameterized strategies (parameter extracted automatically):
@@ -377,9 +377,9 @@ julia> OptimalControl.display_ocp_configuration(stdout, disc, mod, sol)
 ▫ OptimalControl v1.1.8-beta solving with: collocation → exa (gpu) → madnlp
 
   📦 Configuration:
-   ├─ Discretizer: collocation (no user options)
+   ├─ Discretizer: collocation
    ├─ Modeler: exa (backend = cuda [gpu-dependent])
-   └─ Solver: madnlp (no user options)
+   └─ Solver: madnlp
 ```
 
 # Notes
@@ -460,7 +460,8 @@ function display_ocp_configuration(
             sort!(all_items, by = x -> string(x[1]))
             n = length(all_items)
             if n == 0
-                print(io, " (no user options)")
+                # print(io, " (no user options)")
+                print(io, "")
             elseif n <= 2
                 print(io, " (")
                 for (i, (key, opt, source)) in enumerate(all_items)
@@ -526,9 +527,9 @@ julia> OptimalControl.display_ocp_configuration(disc, mod, sol)
 ▫ OptimalControl v1.1.8-beta solving with: collocation → adnlp → ipopt
 
   📦 Configuration:
-   ├─ Discretizer: collocation (no user options)
-   ├─ Modeler: adnlp (no user options)
-   └─ Solver: ipopt (no user options)
+   ├─ Discretizer: collocation
+   ├─ Modeler: adnlp
+   └─ Solver: ipopt
 ```
 """
 function display_ocp_configuration(
