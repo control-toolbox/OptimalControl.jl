@@ -68,6 +68,7 @@ function test_canonical()
         ]
 
         problems = [
+            #("Transfer", Transfer()), # debug: add later (currently issue with :exa)
             ("Beam",    Beam()),
             ("Goddard", Goddard()),
             ("Quadrotor", Quadrotor()),
