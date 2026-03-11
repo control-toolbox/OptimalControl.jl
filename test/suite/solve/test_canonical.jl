@@ -9,7 +9,7 @@
 module TestCanonical
 
 import Test
-import OptimalControl
+import OptimalControl: OptimalControl, GPU
 
 # Import du module d'affichage (DIP - dépend de l'abstraction)
 include(joinpath(@__DIR__, "..", "..", "helpers", "print_utils.jl"))
@@ -68,8 +68,10 @@ function test_canonical()
         ]
 
         problems = [
+            #("Transfer", Transfer()), # debug: add later (currently issue with :exa)
             ("Beam",    Beam()),
             ("Goddard", Goddard()),
+            ("Quadrotor", Quadrotor()),
         ]
 
         # ----------------------------------------------------------------
@@ -138,8 +140,8 @@ function test_canonical()
         # GPU tests (only if CUDA is available)
         # ----------------------------------------------------------------
         if is_cuda_on()
-            gpu_modeler  = ("Exa/GPU", OptimalControl.Exa(backend=CUDA.CUDABackend()))
-            gpu_solver   = ("MadNLP/GPU",    OptimalControl.MadNLP(print_level=MadNLP.ERROR, linear_solver=MadNLPGPU.CUDSSSolver))
+            gpu_modeler  = ("Exa/GPU", OptimalControl.Exa{GPU}())
+            gpu_solver   = ("MadNLP/GPU", OptimalControl.MadNLP{GPU}(print_level=MadNLP.ERROR))
 
             for (pname, pb) in problems
                 Test.@testset "GPU / $pname" begin

@@ -58,7 +58,11 @@ function Goddard(; vmax=0.1, Tmax=3.5)
     end
 
     # Components for a reasonable initial guess around a feasible trajectory.
-    init = (state=[1.01, 0.05, 0.8], control=0.5, variable=[0.1])
+    init = @init goddard begin
+        x(t) := [1.01, 0.05, 0.8]
+        u(t) := 0.5
+        tf := 0.1
+    end
 
     return (ocp=goddard, obj=1.01257, name="goddard", init=init)
 end
