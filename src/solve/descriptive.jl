@@ -8,25 +8,25 @@ then completes the description, routes options to the appropriate strategies,
 builds concrete components, and calls the canonical Layer 3 solver.
 
 # Arguments
-- `ocp`: The optimal control problem to solve
-- `description`: Symbolic description tokens (e.g., `:collocation`, `:adnlp`, `:ipopt`).
+- `ocp::CTModels.AbstractModel`: The optimal control problem to solve
+- `description::Symbol...`: Symbolic description tokens (e.g., `:collocation`, `:adnlp`, `:ipopt`).
   May be empty, partial, or complete — completed via [`_complete_description`](@ref).
-- `registry`: Strategy registry for building strategies
-- `kwargs...`: All keyword arguments, including action options (`initial_guess`/`init`/`i`,
-  `display`) and strategy-specific options, optionally disambiguated with [`route_to`](@ref)
+- `registry::CTSolvers.StrategyRegistry`: Strategy registry for building strategies
+- `kwargs...`: All keyword arguments, including action options (`initial_guess`/`init`,
+  `display`) and strategy-specific options, optionally disambiguated with [`CTSolvers.Strategies.route_to`](@extref)
 
 # Returns
 - `CTModels.AbstractSolution`: Solution to the optimal control problem
 
 # Throws
-- `CTBase.IncorrectArgument`: If an option is unknown, ambiguous, or routed to the wrong strategy
+- [`CTBase.Exceptions.IncorrectArgument`](@extref): If an option is unknown, ambiguous, or routed to the wrong strategy
 
-# Example
+# Examples
 ```julia
 # Complete description with options
 solve(ocp, :collocation, :adnlp, :ipopt; grid_size=100, display=false)
 
-# Aliases for initial_guess
+# Alias for initial_guess
 solve(ocp, :collocation; init=x0, display=false)
 
 # Disambiguation for ambiguous options
@@ -34,11 +34,14 @@ solve(ocp, :collocation, :adnlp, :ipopt;
     backend=route_to(adnlp=:sparse, ipopt=:cpu), display=false)
 ```
 
-# See Also
-- [`CommonSolve.solve`](@ref): The entry point that dispatches here
-- [`_complete_description`](@ref): Completes partial symbolic descriptions
-- [`_route_descriptive_options`](@ref): Routes kwargs to strategy families
-- [`_build_components_from_routed`](@ref): Builds concrete strategy instances
+# Notes
+- This is Layer 2 of the solve architecture - handles symbolic descriptions and option routing
+- The function performs: (1) description completion, (2) option routing, (3) component building, (4) Layer 3 dispatch
+- Action options (`initial_guess`/`init`, `display`) are extracted and normalized at this layer
+- Strategy-specific options are routed to the appropriate component families
+- This function is typically called by the main `solve` dispatcher in descriptive mode
+
+See also: [`solve`](@ref), [`solve_explicit`](@ref), [`_complete_description`](@ref), [`_route_descriptive_options`](@ref), [`_build_components_from_routed`](@ref)
 """
 function solve_descriptive(
     ocp::CTModels.AbstractModel,
@@ -51,7 +54,7 @@ function solve_descriptive(
     complete_description = _complete_description(description)
 
     # 2. Route all kwargs to the appropriate strategy families
-    #    Action options (initial_guess/init/i, display) are extracted first
+    #    Action options (initial_guess/init, display) are extracted first
     routed = _route_descriptive_options(complete_description, registry, kwargs)
 
     # 3. Build concrete strategy instances + extract action options

@@ -1,9 +1,52 @@
 """
-OptimalControl module.
+    OptimalControl
 
-List of all the exported names:
+High-level interface for solving optimal control problems.
+
+This package provides a unified, user-friendly API for defining and solving optimal control
+problems using various discretization methods, NLP modelers, and solvers. It orchestrates
+the complete workflow from problem definition to solution.
+
+# Main Features
+
+- **Flexible solve interface**: Descriptive (symbolic) or explicit (typed components) modes
+- **Multiple discretization methods**: Collocation and other schemes via CTDirect
+- **Multiple NLP modelers**: ADNLP, ExaModels with CPU/GPU support
+- **Multiple solvers**: Ipopt, MadNLP, MadNCL, Knitro with CPU/GPU support
+- **Automatic component completion**: Partial specifications are completed intelligently
+- **Option routing**: Strategy-specific options are routed to the appropriate components
+
+# Usage
+
+```julia
+using OptimalControl
+
+# Define your optimal control problem
+ocp = Model(...)
+# ... problem definition ...
+
+# Solve using descriptive mode (symbolic description)
+sol = solve(ocp, :collocation, :adnlp, :ipopt)
+
+# Or solve using explicit mode (typed components)
+sol = solve(ocp; 
+    discretizer=CTDirect.Collocation(),
+    modeler=CTSolvers.ADNLP(),
+    solver=CTSolvers.Ipopt()
+)
+```
+
+# Exported Names
 
 $(EXPORTS)
+
+# See Also
+
+- [`solve`](@ref): Main entry point for solving optimal control problems
+- [`methods`](@ref): List available solving methods
+- [CTBase](https://control-toolbox.org/CTBase.jl): Core types and abstractions
+- [CTDirect](https://control-toolbox.org/CTDirect.jl): Direct methods for discretization
+- [CTSolvers](https://control-toolbox.org/CTSolvers.jl): NLP solvers and orchestration
 """
 module OptimalControl
 
@@ -25,6 +68,7 @@ include(joinpath(@__DIR__, "imports", "ctmodels.jl"))
 include(joinpath(@__DIR__, "imports", "ctparser.jl"))
 include(joinpath(@__DIR__, "imports", "ctsolvers.jl"))
 include(joinpath(@__DIR__, "imports", "examodels.jl"))
+# include(joinpath(@__DIR__, "imports", "redefine.jl"))
 
 # helpers
 include(joinpath(@__DIR__, "helpers", "kwarg_extraction.jl"))

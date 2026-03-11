@@ -8,9 +8,9 @@ This function extracts the symbolic IDs from concrete strategy instances using
 the symbols of all non-`nothing` components in the order: discretizer, modeler, solver.
 
 # Arguments
-- `discretizer`: Discretization strategy or `nothing`
-- `modeler`: NLP modeling strategy or `nothing`
-- `solver`: NLP solver strategy or `nothing`
+- `discretizer::Union{CTDirect.AbstractDiscretizer, Nothing}`: Discretization strategy or `nothing`
+- `modeler::Union{CTSolvers.AbstractNLPModeler, Nothing}`: NLP modeling strategy or `nothing`
+- `solver::Union{CTSolvers.AbstractNLPSolver, Nothing}`: NLP solver strategy or `nothing`
 
 # Returns
 - `Tuple{Vararg{Symbol}}`: Tuple of strategy symbols (empty if all `nothing`)
@@ -31,7 +31,7 @@ julia> _build_partial_description(nothing, nothing, nothing)
 ```
 
 # See Also
-- [`CTSolvers.id`](@ref): Extracts symbolic ID from strategy types
+- [`CTSolvers.Strategies.id`](@extref): Extracts symbolic ID from strategy types
 - [`_complete_description`](@ref): Completes partial description via registry
 """
 function _build_partial_description(
@@ -73,9 +73,9 @@ extracts its symbolic ID, and recursively processes the remaining
 modeler and solver components.
 
 # Arguments
-- `discretizer`: Concrete discretization strategy
-- `modeler`: NLP modeling strategy or `nothing`
-- `solver`: NLP solver strategy or `nothing`
+- `discretizer::CTDirect.AbstractDiscretizer`: Concrete discretization strategy
+- `modeler::Union{CTSolvers.AbstractNLPModeler, Nothing}`: NLP modeling strategy or `nothing`
+- `solver::Union{CTSolvers.AbstractNLPSolver, Nothing}`: NLP solver strategy or `nothing`
 
 # Returns
 - `Tuple{Vararg{Symbol}}`: Tuple containing discretizer symbol followed by remaining symbols
@@ -132,8 +132,8 @@ This method handles the case where a modeler is provided,
 extracts its symbolic ID, and recursively processes the solver.
 
 # Arguments
-- `modeler`: Concrete NLP modeling strategy
-- `solver`: NLP solver strategy or `nothing`
+- `modeler::CTSolvers.AbstractNLPModeler`: Concrete NLP modeling strategy
+- `solver::Union{CTSolvers.AbstractNLPSolver, Nothing}`: NLP solver strategy or `nothing`
 
 # Returns
 - `Tuple{Vararg{Symbol}}`: Tuple containing modeler symbol followed by solver symbol (if any)
@@ -187,7 +187,7 @@ This method handles the case where a solver is provided,
 extracts its symbolic ID, and returns it as a single-element tuple.
 
 # Arguments
-- `solver`: Concrete NLP solver strategy
+- `solver::CTSolvers.AbstractNLPSolver`: Concrete NLP solver strategy
 
 # Returns
 - `Tuple{Symbol}`: Single-element tuple containing solver symbol
@@ -233,7 +233,7 @@ completes it to a full (discretizer, modeler, solver) triplet using the
 available methods as the completion set.
 
 # Arguments
-- `partial_description`: Tuple of strategy symbols (may be empty or partial)
+- `partial_description::Tuple{Vararg{Symbol}}`: Tuple of strategy symbols (may be empty or partial)
 
 # Returns
 - `Tuple{Symbol, Symbol, Symbol, Symbol}`: Complete method triplet
@@ -251,7 +251,7 @@ julia> _complete_description((:collocation, :exa))
 ```
 
 # See Also
-- [`CTBase.complete`](@ref): Generic completion function
+- [`CTBase.Descriptions.complete`](@extref): Generic completion function
 - [`methods`](@ref): Available method triplets
 - [`_build_partial_description`](@ref): Builds partial description
 """
@@ -286,7 +286,7 @@ multiple dispatch to handle the two cases: provided strategy vs. building from r
 - Allocation-free implementation
 - Uses ResolvedMethod for parameter-aware validation and construction
 
-See also: [`CTSolvers.build_strategy_from_resolved`](@ref), [`get_strategy_registry`](@ref), [`_complete_description`](@ref)
+See also: [`CTSolvers.Orchestration.build_strategy_from_resolved`](@extref), [`get_strategy_registry`](@ref), [`_complete_description`](@ref)
 """
 function _build_or_use_strategy(
     resolved::CTSolvers.ResolvedMethod,
@@ -323,7 +323,7 @@ building a new strategy from the complete method description using the registry.
 - Type-safe through Julia's dispatch system
 - Allocation-free when possible (depends on registry implementation)
 
-See also: [`CTSolvers.build_strategy_from_resolved`](@ref), [`get_strategy_registry`](@ref)
+See also: [`CTSolvers.Orchestration.build_strategy_from_resolved`](@extref), [`get_strategy_registry`](@ref)
 """
 function _build_or_use_strategy(
     resolved::CTSolvers.ResolvedMethod,

@@ -4,15 +4,10 @@ $(TYPEDSIGNATURES)
 Return the tuple of available method quadruplets for solving optimal control problems.
 
 Each quadruplet consists of `(discretizer_id, modeler_id, solver_id, parameter)` where:
-- `discretizer_id`: Symbol identifying the discretization strategy
-- `modeler_id`: Symbol identifying the NLP modeling strategy  
-- `solver_id`: Symbol identifying the NLP solver
-- `parameter`: Symbol identifying the parameter (`:cpu` or `:gpu`)
-
-GPU-capable methods use parameterized strategies that automatically get appropriate defaults:
-- `Exa{GPU}` gets `CUDA.CUDABackend()` by default
-- `MadNLP{GPU}` gets `MadNLPGPU.CUDSSSolver` by default
-- `MadNCL{GPU}` gets `MadNLPGPU.CUDSSSolver` by default
+- `discretizer_id::Symbol`: Discretization strategy identifier (e.g., `:collocation`)
+- `modeler_id::Symbol`: NLP modeling strategy identifier (e.g., `:adnlp`, `:exa`)
+- `solver_id::Symbol`: NLP solver identifier (e.g., `:ipopt`, `:madnlp`, `:madncl`, `:knitro`)
+- `parameter::Symbol`: Execution parameter (`:cpu` or `:gpu`)
 
 # Returns
 - `Tuple{Vararg{Tuple{Symbol, Symbol, Symbol, Symbol}}}`: Available method combinations
@@ -23,26 +18,26 @@ julia> m = methods()
 ((:collocation, :adnlp, :ipopt, :cpu), (:collocation, :adnlp, :madnlp, :cpu), ...)
 
 julia> length(m)
-10  # CPU methods + GPU methods
+10  # 8 CPU methods + 2 GPU methods
 
-julia> # CPU methods (existing behavior maintained)
+julia> # CPU methods
 julia> methods()[1]
 (:collocation, :adnlp, :ipopt, :cpu)
 
-julia> # GPU methods (new functionality)  
-julia> methods()[9]  # First GPU method
+julia> # GPU methods
+julia> methods()[9]
 (:collocation, :exa, :madnlp, :gpu)
 ```
 
 # Notes
-- All existing methods are now explicitly marked with `:cpu` parameter
-- GPU methods are available when CUDA.jl is loaded
-- Parameterized strategies provide smart defaults automatically
+- Returns a precomputed constant tuple (allocation-free, type-stable)
+- All methods currently use `:collocation` discretization
+- CPU methods (8 total): All combinations of `{adnlp, exa}` × `{ipopt, madnlp, madncl, knitro}`
+- GPU methods (2 total): Only GPU-capable combinations `exa` × `{madnlp, madncl}`
+- GPU-capable strategies use parameterized types with automatic defaults
+- Used by `CTBase.Descriptions.complete` to complete partial method descriptions
 
-# See Also
-- [`solve`](@ref): Main solve function that uses these methods
-- [`CTBase.complete`](@ref): Completes partial method descriptions
-- [`get_strategy_registry`](@ref): Registry with parameterized strategies
+See also: [`solve`](@ref), [`CTBase.Descriptions.complete`](@extref), [`get_strategy_registry`](@ref)
 """
 function Base.methods()::Tuple{Vararg{Tuple{Symbol, Symbol, Symbol, Symbol}}}
     return (

@@ -10,7 +10,7 @@ In this manual, we'll first recall the **main functionalities** you can use when
 * **Computing flows from an OCP**: Understanding the dynamics and trajectories derived from the optimal solution.
 * **Printing an OCP**: How to display a summary of your problem's definition.
 
-After covering these core functionalities, we'll delve into the **structure of an OCP**. Since an OCP is structured as a [`Model`](@ref) struct, we'll first explain how to **access its underlying attributes**, such as the problem's dynamics, costs, and constraints. Following this, we'll shift our focus to the **simple properties** inherent to an OCP, learning how to determine aspects like whether the problem:
+After covering these core functionalities, we'll delve into the **structure of an OCP**. Since an OCP is structured as a [`OptimalControl.Model`](@ref) struct, we'll first explain how to **access its underlying attributes**, such as the problem's dynamics, costs, and constraints. Following this, we'll shift our focus to the **simple properties** inherent to an OCP, learning how to determine aspects like whether the problem:
 
 * **Is autonomous**: Does its dynamics depend explicitly on time?
 * **Has a fixed or free initial/final time**: Is the duration of the control problem predetermined or not?
@@ -93,10 +93,10 @@ xf                          # should be (0, 0)
 
 ## [Model struct](@id manual-model-struct)
 
-The optimal control problem `ocp` is a [`Model`](@ref) struct. 
+The optimal control problem `ocp` is a [`OptimalControl.Model`](@ref) struct.
 
 ```@docs; canonical=false
-Model
+OptimalControl.Model
 ```
 
 Each field can be accessed directly (`ocp.times`, etc) or by a getter:
@@ -106,7 +106,7 @@ Each field can be accessed directly (`ocp.times`, etc) or by a getter:
 - [`control`](@ref)
 - [`variable`](@ref)
 - [`dynamics`](@ref)
-- `objective`
+- [`objective`](@ref)
 - [`constraints`](@ref)
 - [`definition`](@ref)
 - [`get_build_examodel`](@ref)

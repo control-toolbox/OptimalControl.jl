@@ -227,7 +227,7 @@ This function analyzes the parameter symbols to decide whether they should be
 displayed inline with each component or as a common parameter at the end.
 
 # Arguments
-- `params::Vector`: Vector of parameter symbols
+- `params::Vector{Symbol}`: Vector of parameter symbols
 
 # Returns
 - `NamedTuple`: Contains fields:
@@ -267,7 +267,7 @@ parameter displayed inline when appropriate.
 - `io::IO`: Output stream for printing
 - `component_id::String`: The component identifier to print
 - `show_inline::Bool`: Whether to show the parameter inline
-- `param_sym`: Parameter symbol to display (can be `nothing`)
+- `param_sym::Union{Symbol, Nothing}`: Parameter symbol to display (can be `nothing`)
 
 # Notes
 - Component ID is printed in cyan with bold formatting
@@ -295,8 +295,8 @@ came from (user-specified or computed) and its parameter dependency.
 
 # Arguments
 - `source::Symbol`: Either `:user` or `:computed`
-- `common_param`: Common parameter for the strategy (can be `nothing`)
-- `params::Vector`: Vector of all parameter symbols
+- `common_param::Union{Symbol, Nothing}`: Common parameter for the strategy (can be `nothing`)
+- `params::Vector{Symbol}`: Vector of all parameter symbols
 - `show_sources::Bool`: Whether to include source information in tags
 
 # Returns
@@ -362,10 +362,10 @@ julia> sol = CTSolvers.Ipopt()
 julia> OptimalControl.display_ocp_configuration(stdout, disc, mod, sol)
 ▫ OptimalControl v1.1.8-beta solving with: collocation → adnlp → ipopt
 
-  📦 Configuration:
-   ├─ Discretizer: collocation (no user options)
-   ├─ Modeler: adnlp (no user options)
-   └─ Solver: ipopt (no user options)
+  📦 Configuration: 
+   ├─ Discretizer: collocation
+   ├─ Modeler: adnlp
+   └─ Solver: ipopt
 ```
 
 With parameterized strategies (parameter extracted automatically):
@@ -377,9 +377,9 @@ julia> OptimalControl.display_ocp_configuration(stdout, disc, mod, sol)
 ▫ OptimalControl v1.1.8-beta solving with: collocation → exa (gpu) → madnlp
 
   📦 Configuration:
-   ├─ Discretizer: collocation (no user options)
+   ├─ Discretizer: collocation
    ├─ Modeler: exa (backend = cuda [gpu-dependent])
-   └─ Solver: madnlp (no user options)
+   └─ Solver: madnlp
 ```
 
 # Notes
@@ -460,7 +460,8 @@ function display_ocp_configuration(
             sort!(all_items, by = x -> string(x[1]))
             n = length(all_items)
             if n == 0
-                print(io, " (no user options)")
+                # print(io, " (no user options)")
+                print(io, "")
             elseif n <= 2
                 print(io, " (")
                 for (i, (key, opt, source)) in enumerate(all_items)
@@ -526,12 +527,10 @@ julia> OptimalControl.display_ocp_configuration(disc, mod, sol)
 ▫ OptimalControl v1.1.8-beta solving with: collocation → adnlp → ipopt
 
   📦 Configuration:
-   ├─ Discretizer: collocation (no user options)
-   ├─ Modeler: adnlp (no user options)
-   └─ Solver: ipopt (no user options)
+   ├─ Discretizer: collocation
+   ├─ Modeler: adnlp
+   └─ Solver: ipopt
 ```
-
-See also: [`display_ocp_configuration(io::IO, ...)`](@ref)
 """
 function display_ocp_configuration(
     discretizer::CTDirect.AbstractDiscretizer,

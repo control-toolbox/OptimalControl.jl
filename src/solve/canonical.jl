@@ -43,6 +43,12 @@ sol  = CTSolvers.Ipopt()
 solution = solve(ocp, init, disc, mod, sol; display=true)
 ```
 
+# Notes
+- This is Layer 3 of the solve architecture - all inputs must be concrete, fully specified types
+- No defaults, no normalization, no component completion occurs at this level
+- The function performs: (1) optional configuration display, (2) problem discretization, (3) NLP solving
+- This function is typically called by higher-level solvers (`solve_explicit`, `solve_descriptive`)
+
 See also: [`solve_explicit`](@ref), [`solve_descriptive`](@ref)
 """
 function CommonSolve.solve(
