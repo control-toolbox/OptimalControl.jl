@@ -40,4 +40,8 @@ Manifest.toml
 */.ipynb_checkpoints
 
 #
-docs/tmp/
+.tmp/
+.extras/
+#.save/
+.windsurf/
+.reports/

@@ -5,7 +5,7 @@ In this manual, we'll first recall the **main functionalities** you can use when
 * **Plotting a SOL**: How to plot the optimal solution for your defined problem.
 * **Printing a SOL**: How to display a summary of your solution.
 
-After covering these core functionalities, we'll delve into the **structure of a SOL**. Since a SOL is structured as a [`Solution`](@ref) struct, we'll first explain how to **access its underlying attributes**. Following this, we'll shift our focus to the **simple properties** inherent to a SOL.
+After covering these core functionalities, we'll delve into the **structure of a SOL**. Since a SOL is structured as a [`OptimalControl.Solution`](@ref) struct, we'll first explain how to **access its underlying attributes**. Following this, we'll shift our focus to the **simple properties** inherent to a SOL.
 
 ---
 
@@ -76,10 +76,10 @@ plot(sol)
 
 ## [Solution struct](@id manual-solution-struct)
 
-The solution `sol` is a [`Solution`](@ref) struct.
+The solution `sol` is a [`OptimalControl.Solution`](@ref) struct.
 
 ```@docs; canonical=false
-Solution
+OptimalControl.Solution
 ```
 
 Each field can be accessed directly (`ocp.times`, etc) but we recommend to use the sophisticated getters we provide: the `state(sol::Solution)` method does not return `sol.state` but a function of time that can be called at any time, not only on the grid `time_grid`.

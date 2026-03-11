@@ -45,16 +45,14 @@ where $p^0 = -1$ since we are in the normal case. From the Pontryagin maximum pr
 u(x, p) = p_v
 ```
 
-since $\partial^2_{uu} H = p^0 = - 1 < 0$. 
+since $\partial^2_{uu} H = p^0 = - 1 < 0$.
 
 ```@example main
 u(x, p) = p[2]
 nothing # hide
 ```
 
-Actually, if $(x, u)$ is a solution of the optimal control problem, 
-then, the Pontryagin maximum principle tells us that there exists a costate $p$ such that $u(t) = u(x(t), p(t))$
-and such that the pair $(x, p)$ satisfies:
+Actually, if $(x, u)$ is a solution of the optimal control problem, then, the Pontryagin maximum principle tells us that there exists a costate $p$ such that $u(t) = u(x(t), p(t))$ and such that the pair $(x, p)$ satisfies:
 
 ```math
 \begin{array}{l}
@@ -81,9 +79,7 @@ julia> f = Flow(ocp, u)
 ERROR: ExtensionError. Please make: julia> using OrdinaryDiffEq
 ```
 
-As you can see, an error occurred since we need the package [OrdinaryDiffEq.jl](https://docs.sciml.ai/DiffEqDocs).
-This package provides numerical integrators to compute solutions of the ordinary differential equation 
-$\dot{z}(t) = \vec{\mathbf{H}}(z(t))$.
+As you can see, an error occurred since we need the package [OrdinaryDiffEq.jl](https://docs.sciml.ai/DiffEqDocs). This package provides numerical integrators to compute solutions of the ordinary differential equation $\dot{z}(t) = \vec{\mathbf{H}}(z(t))$.
 
 !!! note "OrdinaryDiffEq.jl"
 
@@ -110,9 +106,7 @@ sol = f((t0, tf), x0, p0)
 nothing # hide
 ```
 
-In this case, you obtain a data that you can plot exactly like when solving the optimal control problem 
-with the function [`solve`](@ref). See for instance the [basic example](@ref example-double-integrator-energy-solve-plot) or the 
-[plot tutorial](@ref manual-plot).
+In this case, you obtain a data that you can plot exactly like when solving the optimal control problem with the function [`solve`](@ref). See for instance the [basic example](@ref example-double-integrator-energy-solve-plot) or the [plot tutorial](@ref manual-plot).
 
 ```@example main
 using Plots
@@ -136,11 +130,7 @@ sol = f((t0, tf), x0, p0; saveat=range(t0, tf, 100))
 plot(sol)
 ```
 
-The argument `saveat` is an option from OrdinaryDiffEq.jl. Please check the 
-[list of common options](https://docs.sciml.ai/DiffEqDocs/stable/basics/common_solver_opts/#solver_options).
-For instance, one can change the integrator with the keyword argument `alg` or the absolute tolerance with 
-`abstol`. Note that you can set an option when declaring the flow or set an option in a particular call of the flow. 
-In the following example, the integrator will be `BS5()` and the absolute tolerance will be `abstol=1e-8`.
+The argument `saveat` is an option from OrdinaryDiffEq.jl. Please check the [list of common options](https://docs.sciml.ai/DiffEqDocs/stable/basics/common_solver_opts/#solver_options). For instance, one can change the integrator with the keyword argument `alg` or the absolute tolerance with `abstol`. Note that you can set an option when declaring the flow or set an option in a particular call of the flow. In the following example, the integrator will be `BS5()` and the absolute tolerance will be `abstol=1e-8`.
 
 ```@example main
 f = Flow(ocp, u; alg=BS5(), abstol=1)   # alg=BS5(), abstol=1
@@ -179,7 +169,7 @@ The pseudo-Hamiltonian of this problem is
     H(t, x, p, u) = p\, u\, (1+\tan\, t) + p^0 u^2 /2,
 ```
 
-where $p^0 = -1$ since we are in the normal case. We can notice that the pseudo-Hamiltonian is non-autonomous since it explicitly depends on the time $t$. 
+where $p^0 = -1$ since we are in the normal case. We can notice that the pseudo-Hamiltonian is non-autonomous since it explicitly depends on the time $t$.
 
 ```@example main
 is_autonomous(ocp)
@@ -191,15 +181,14 @@ From the Pontryagin maximum principle, the maximising control is given in feedba
 u(t, x, p) = p\, (1+\tan\, t)
 ```
 
-since $\partial^2_{uu} H = p^0 = - 1 < 0$. 
+since $\partial^2_{uu} H = p^0 = - 1 < 0$.
 
 ```@example main
 u(t, x, p) = p * (1 + tan(t))
 nothing # hide
 ```
 
-As before, the `Flow` function aims to compute $(x, p)$ from the optimal control problem `ocp` and the control in feedback form `u(t, x, p)`. 
-Since the problem is non-autonomous, we must provide a control law that depends on time.
+As before, the `Flow` function aims to compute $(x, p)$ from the optimal control problem `ocp` and the control in feedback form `u(t, x, p)`. Since the problem is non-autonomous, we must provide a control law that depends on time.
 
 ```@example main
 f = Flow(ocp, u)
@@ -239,8 +228,7 @@ end
 nothing # hide
 ```
 
-As you can see, the variable is the final time `tf`. Note that the dynamics depends on `tf`.
-From the Pontryagin maximum principle, the solution is given by:
+As you can see, the variable is the final time `tf`. Note that the dynamics depends on `tf`. From the Pontryagin maximum principle, the solution is given by:
 
 ```@example main
 tf = (3/2)^(1/4)
@@ -262,8 +250,7 @@ f = Flow(ocp, u)
 xf, pf = f(t0, x0, p0, tf, tf)
 ```
 
-The usage of the flow `f` is the following: `f(t0, x0, p0, tf, v)` where `v` is the variable. If one wants
-to compute the state at time `t1 = 0.5`, then, one must write:
+The usage of the flow `f` is the following: `f(t0, x0, p0, tf, v)` where `v` is the variable. If one wants to compute the state at time `t1 = 0.5`, then, one must write:
 
 ```@example main
 t1 = 0.5
@@ -278,8 +265,7 @@ x1, p1 = f(t0, x0, p0, t1, tf)
     xf, pf = f(t0, x0, p0, tf)
     ```
 
-Since the variable is the final time, we can make the time-reparameterisation $t = s\, t_f$ to normalise
-the time $s$ in $[0, 1]$.
+Since the variable is the final time, we can make the time-reparameterisation $t = s\, t_f$ to normalise the time $s$ in $[0, 1]$.
 
 ```@example main
 ocp = @def begin
@@ -334,7 +320,6 @@ yf, pf = f(0, [x0, tf], [p0, 0], 1)
 
     In the [Goddard problem](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html#tutorial-goddard-structure), you may find other constructions of flows, especially for singular and boundary arcs.
 
-
 ## Concatenation of arcs
 
 In this part, we present how to concatenate several flows. Let us consider the following problem.
@@ -362,8 +347,7 @@ end
 nothing # hide
 ```
 
-From the Pontryagin maximum principle, the optimal control is a concatenation of an off arc ($u=0$) followed by a 
-positive bang arc ($u=1$). The initial costate is 
+From the Pontryagin maximum principle, the optimal control is a concatenation of an off arc ($u=0$) followed by a positive bang arc ($u=1$). The initial costate is
 
 ```math
 p_0 = \frac{1}{x_0 - (x_f-1) e^{t_f}}
@@ -420,7 +404,7 @@ plot!(plt, t, t->abs(ψ(t)-x0), label="Classical")
 
 ## State constraints
 
-We consider an optimal control problem with a state constraints of order 1.[^1] 
+We consider an optimal control problem with a state constraints of order 1.[^1]
 
 [^1]: B. Bonnard, L. Faubourg, G. Launay & E. Trélat, Optimal Control With State Constraints And The Space Shuttle Re-entry Problem, J. Dyn. Control Syst., 9 (2003), no. 2, 155–199.
 
@@ -456,7 +440,6 @@ The pseudo-Hamiltonian of this problem is
 ```
 
 where $ p^0 = -1 $ since we are in the normal case, and where $c(x) = x - l_b$. Along a boundary arc, when $c(x(t)) = 0$, we have $x(t) = l_b$, so $ x(\cdot) $ is constant. Differentiating, we obtain $\dot{x}(t) = u(t) = 0$. Hence, along a boundary arc, the control in feedback form is:
-
 
 ```math
 u(x) = 0.
@@ -533,7 +516,6 @@ The pseudo-Hamiltonian of this problem is
 ```
 
 where $ p^0 = -1 $ since we are in the normal case, and where the constraint is $c(x) = l - x_1 \ge 0$. Along a boundary arc, when $c(x(t)) = 0$, we have $x_1(t) = l$, so $\dot{x}_1(t) = x_2(t) = 0$. Differentiating again, we obtain $\dot{x}_2(t) = u(t) = 0$ (the constraint is of order 2). Hence, along a boundary arc, the control in feedback form is:
-
 
 ```math
 u(x, p) = 0.

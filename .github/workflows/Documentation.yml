@@ -10,3 +10,7 @@ on:
 jobs:
   call:
     uses: control-toolbox/CTActions/.github/workflows/documentation.yml@main
+    with:
+      use_ct_registry: true
+    secrets:
+      SSH_KEY: ${{ secrets.SSH_KEY }}

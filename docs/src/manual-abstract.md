@@ -1,6 +1,7 @@
 # [The syntax to define an optimal control problem](@id manual-abstract-syntax)
 
 The full grammar of [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) small *Domain Specific Language* is given below. The idea is to use a syntax that is
+
 - pure Julia (and, as such, effortlessly analysed by the standard Julia parser),
 - as close as possible to the mathematical description of an optimal control problem. 
 
@@ -24,7 +25,6 @@ end
 
 !!! warning
     Note that the full code of the definition above is not provided (hence the `...`) The same is true for most examples below (only those without `...` are indeed complete). Also note that problem definitions must at least include definitions for time, state, control, dynamics and cost.
-
 
 Aliases `v₁`, `v₂` (and `v1`, `v2`) are automatically defined and can be used in subsequent expressions instead of `v[1]` and `v[2]`. The user can also define her own aliases for the components (one alias per dimension):
 
@@ -177,7 +177,7 @@ or
 end
 ```
 
-Any Julia code can be used, so the following is also OK: 
+Any Julia code can be used, so the following is also OK:
 
 ```julia
 ocp = @def begin
@@ -244,13 +244,15 @@ end
 ```
 
 Admissible constraints can be
+
 - of five types: boundary, variable, control, state, mixed (the last three ones are *path* constraints, that is constraints evaluated all times)
 - linear (ranges) or nonlinear (not ranges),
 - equalities or (one or two-sided) inequalities.
 
-Boundary conditions are detected when the expression contains evaluations of the state at initial and / or final time bounds (*e.g.*, `x(0)`), and may not involve the control. Conversely control, state or mixed constraints will involve control, state or both evaluated at the declared time (*e.g.*, `x(t) + u(t)`). 
+Boundary conditions are detected when the expression contains evaluations of the state at initial and / or final time bounds (*e.g.*, `x(0)`), and may not involve the control. Conversely control, state or mixed constraints will involve control, state or both evaluated at the declared time (*e.g.*, `x(t) + u(t)`).
 Other combinations should be detected as incorrect by the parser 🤞🏾. The variable may be involved in any of the four previous constraints. Constraints involving the variable only are variable constraints, either linear or nonlinear.
 In the example below, there are
+
 - two linear boundary constraints,
 - one linear variable constraint,
 - one linear state constraint,
@@ -295,61 +297,64 @@ end
     Write either `u(t)^2` or `(u^2)(t)`, not `u^2(t)` since in Julia the latter means `u^(2t)`. Moreover,
     in the case of equalities or of one-sided inequalities, the control and / or the state must belong to the *left-hand side*. The following will error:
 
-```@setup main-repl
-using OptimalControl
-```
+    ```@setup main-repl
+    using OptimalControl
+    ```
 
-```@repl main-repl
-@def begin
-    t ∈ [0, 2], time
-    x ∈ R², state
-    u ∈ R, control
-    x(0) == [-1, 0]
-    x(2) == [0, 0]
-    ẋ(t) == [x₂(t), u(t)]
-    1 ≤ x₂(t)
-    -1 ≤ u(t) ≤ 1
-end
-```
+    ```@repl main-repl
+    @def begin
+        t ∈ [0, 2], time
+        x ∈ R², state
+        u ∈ R, control
+        x(0) == [-1, 0]
+        x(2) == [0, 0]
+        ẋ(t) == [x₂(t), u(t)]
+        1 ≤ x₂(t)
+        -1 ≤ u(t) ≤ 1
+    end
+    ```
 
 !!! warning
-     Constraint bounds must be *effective*, that is must not depend on a variable. For instance, instead of
-```julia
-o = @def begin
-    v ∈ R, variable
-    t ∈ [0, 1], time
-    x ∈ R², state
-    u ∈ R, control
-    -1 ≤ v ≤ 1
-    x₁(0) == -1
-    x₂(0) == v # wrong: the bound is not effective (as it depends on the variable)
-    x(1) == [0, 0]
-    ẋ(t) == [x₂(t), u(t)]
-    ∫( 0.5u(t)^2 ) → min
-end
-```
-write
-```julia
-o = @def begin
-    v ∈ R, variable
-    t ∈ [0, 1], time
-    x ∈ R², state
-    u ∈ R, control
-    -1 ≤ v ≤ 1
-    x₁(0) == -1
-    x₂(0) - v == 0 # OK: the boundary constraint may involve the variable
-    x(1) == [0, 0]
-    ẋ(t) == [x₂(t), u(t)]
-    ∫( 0.5u(t)^2 ) → min
-end
-```
+    Constraint bounds must be *effective*, that is must not depend on a variable. For instance, instead of
+
+    ```julia
+    o = @def begin
+        v ∈ R, variable
+        t ∈ [0, 1], time
+        x ∈ R², state
+        u ∈ R, control
+        -1 ≤ v ≤ 1
+        x₁(0) == -1
+        x₂(0) == v # wrong: the bound is not effective (as it depends on the variable)
+        x(1) == [0, 0]
+        ẋ(t) == [x₂(t), u(t)]
+        ∫( 0.5u(t)^2 ) → min
+    end
+    ```
+
+    write
+
+    ```julia
+    o = @def begin
+        v ∈ R, variable
+        t ∈ [0, 1], time
+        x ∈ R², state
+        u ∈ R, control
+        -1 ≤ v ≤ 1
+        x₁(0) == -1
+        x₂(0) - v == 0 # OK: the boundary constraint may involve the variable
+        x(1) == [0, 0]
+        ẋ(t) == [x₂(t), u(t)]
+        ∫( 0.5u(t)^2 ) → min
+    end
+    ```
 
 !!! warning
     When solving with the option `:exa` to rely on the ExaModels modeller (check the [solve section](@ref manual-solve)), for instance to [solve on GPU](@ref manual-solve-gpu), it is **compulsory** that *nonlinear* constraints (not ranges) are *scalar*, whatever the type (boundary, variable, control, state, mixed).
 
 ## [Mayer cost](@id manual-abstract-mayer)
 
-```julia                                      
+```julia
 :( $e1 → min ) 
 :( $e1 → max ) 
 ```
@@ -412,6 +417,7 @@ end
 ```
 
 The integration range is implicitly equal to the time range, so the cost above is to be understood as
+
 ```math
 \frac{1}{2} \int_0^1 \left( q(t) + u^2(t) \right) \mathrm{d}t \to \min.
 ```
@@ -455,28 +461,29 @@ end
 !!! warning
     The expression must be the sum of two terms (plus, possibly, a scalar factor before the integral), not *more*, so mind the parentheses. For instance, the following errors:
 
-```julia
-@def begin
-    p = (t0, tf) ∈ R², variable
-    t ∈ [t0, tf], time
-    x = (q, v) ∈ R², state
-    u ∈ R², control
-    (tf - t0) + q(tf) + 0.5∫( c(t) * u(t)^2 ) → min
-    ...
-end
-```
+    ```julia
+    @def begin
+        p = (t0, tf) ∈ R², variable
+        t ∈ [t0, tf], time
+        x = (q, v) ∈ R², state
+        u ∈ R², control
+        (tf - t0) + q(tf) + 0.5∫( c(t) * u(t)^2 ) → min
+        ...
+    end
+    ```
 
-The correct syntax is
-```julia
-@def begin
-    p = (t0, tf) ∈ R², variable
-    t ∈ [t0, tf], time
-    x = (q, v) ∈ R², state
-    u ∈ R², control
-    ((tf - t0) + q(tf)) + 0.5∫( c(t) * u(t)^2 ) → min
-    ...
-end
-```
+    The correct syntax is
+
+    ```julia
+    @def begin
+        p = (t0, tf) ∈ R², variable
+        t ∈ [t0, tf], time
+        x = (q, v) ∈ R², state
+        u ∈ R², control
+        ((tf - t0) + q(tf)) + 0.5∫( c(t) * u(t)^2 ) → min
+        ...
+    end
+    ```
 
 ## [Aliases](@id manual-abstract-aliases)
 
@@ -504,32 +511,32 @@ end
 !!! hint
     You can rely on a trace mode for the macro `@def` to look at your code after expansions of the aliases using the `@def ocp ...` syntax and adding `true` after your `begin ... end` block:
 
-```@repl main-repl
-@def damped_integrator begin
-    tf ∈ R, variable
-    t ∈ [0, tf], time
-    x = (q, v) ∈ R², state
-    u ∈ R, control
-    q̇ = v(t)
-    v̇ = u(t) - c(t)
-    ẋ(t) == [q̇, v̇]
-end true;
-```
+    ```@repl main-repl
+    @def damped_integrator begin
+        tf ∈ R, variable
+        t ∈ [0, tf], time
+        x = (q, v) ∈ R², state
+        u ∈ R, control
+        q̇ = v(t)
+        v̇ = u(t) - c(t)
+        ẋ(t) == [q̇, v̇]
+    end true;
+    ```
 
 !!! warning
     The dynamics of an OCP is indeed a particular constraint, be careful to use `==` and not a single `=` that would try to define an alias:
 
-```@repl main-repl
-double_integrator = @def begin
-    tf ∈ R, variable
-    t ∈ [0, tf], time
-    x = (q, v) ∈ R², state
-    u ∈ R, control
-    q̇ = v
-    v̇ = u
-    ẋ(t) = [q̇, v̇]
-end
-```
+    ```@repl main-repl
+    double_integrator = @def begin
+        tf ∈ R, variable
+        t ∈ [0, tf], time
+        x = (q, v) ∈ R², state
+        u ∈ R, control
+        q̇ = v
+        v̇ = u
+        ẋ(t) = [q̇, v̇]
+    end
+    ```
 
 ## Misc
 

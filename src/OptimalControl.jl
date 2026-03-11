@@ -1,285 +1,93 @@
 """
-OptimalControl module.
+    OptimalControl
 
-List of all the exported names:
+High-level interface for solving optimal control problems.
+
+This package provides a unified, user-friendly API for defining and solving optimal control
+problems using various discretization methods, NLP modelers, and solvers. It orchestrates
+the complete workflow from problem definition to solution.
+
+# Main Features
+
+- **Flexible solve interface**: Descriptive (symbolic) or explicit (typed components) modes
+- **Multiple discretization methods**: Collocation and other schemes via CTDirect
+- **Multiple NLP modelers**: ADNLP, ExaModels with CPU/GPU support
+- **Multiple solvers**: Ipopt, MadNLP, MadNCL, Knitro with CPU/GPU support
+- **Automatic component completion**: Partial specifications are completed intelligently
+- **Option routing**: Strategy-specific options are routed to the appropriate components
+
+# Usage
+
+```julia
+using OptimalControl
+
+# Define your optimal control problem
+ocp = Model(...)
+# ... problem definition ...
+
+# Solve using descriptive mode (symbolic description)
+sol = solve(ocp, :collocation, :adnlp, :ipopt)
+
+# Or solve using explicit mode (typed components)
+sol = solve(ocp; 
+    discretizer=CTDirect.Collocation(),
+    modeler=CTSolvers.ADNLP(),
+    solver=CTSolvers.Ipopt()
+)
+```
+
+# Exported Names
 
 $(EXPORTS)
+
+# See Also
+
+- [`solve`](@ref): Main entry point for solving optimal control problems
+- [`methods`](@ref): List available solving methods
+- [CTBase](https://control-toolbox.org/CTBase.jl): Core types and abstractions
+- [CTDirect](https://control-toolbox.org/CTDirect.jl): Direct methods for discretization
+- [CTSolvers](https://control-toolbox.org/CTSolvers.jl): NLP solvers and orchestration
 """
 module OptimalControl
 
 using DocStringExtensions
+using Reexport
 
-# CTBase
-import CTBase:
-    CTBase,
-    ParsingError,
-    CTException,
-    AmbiguousDescription,
-    IncorrectArgument,
-    IncorrectMethod,
-    IncorrectOutput,
-    NotImplemented,
-    UnauthorizedCall,
-    ExtensionError
-export ParsingError,
-    CTException,
-    AmbiguousDescription,
-    IncorrectArgument,
-    IncorrectMethod,
-    IncorrectOutput,
-    NotImplemented,
-    UnauthorizedCall,
-    ExtensionError
+import CommonSolve
+@reexport import CommonSolve: solve
+import CTBase
+import CTModels
+import CTDirect
+import CTSolvers
 
-# CTParser
-import CTParser: CTParser, @def
-export @def
+# Imports
+include(joinpath(@__DIR__, "imports", "ctbase.jl"))
+include(joinpath(@__DIR__, "imports", "ctdirect.jl"))
+include(joinpath(@__DIR__, "imports", "ctflows.jl"))
+include(joinpath(@__DIR__, "imports", "ctmodels.jl"))
+include(joinpath(@__DIR__, "imports", "ctparser.jl"))
+include(joinpath(@__DIR__, "imports", "ctsolvers.jl"))
+include(joinpath(@__DIR__, "imports", "examodels.jl"))
+# include(joinpath(@__DIR__, "imports", "redefine.jl"))
 
-function __init__()
-    CTParser.prefix_fun!(:OptimalControl)
-    CTParser.prefix_exa!(:OptimalControl)
-    CTParser.e_prefix!(:OptimalControl)
-end
+# helpers
+include(joinpath(@__DIR__, "helpers", "kwarg_extraction.jl"))
+include(joinpath(@__DIR__, "helpers", "print.jl"))
+include(joinpath(@__DIR__, "helpers", "methods.jl"))
+include(joinpath(@__DIR__, "helpers", "registry.jl"))
+include(joinpath(@__DIR__, "helpers", "component_checks.jl"))
+include(joinpath(@__DIR__, "helpers", "strategy_builders.jl"))
+include(joinpath(@__DIR__, "helpers", "component_completion.jl"))
+include(joinpath(@__DIR__, "helpers", "descriptive_routing.jl"))
 
-# RecipesBase.plot
-import RecipesBase: RecipesBase, plot
-export plot
+# solve
+include(joinpath(@__DIR__, "solve", "mode.jl"))
+include(joinpath(@__DIR__, "solve", "mode_detection.jl"))
+include(joinpath(@__DIR__, "solve", "dispatch.jl"))
+include(joinpath(@__DIR__, "solve", "canonical.jl"))
+include(joinpath(@__DIR__, "solve", "explicit.jl"))
+include(joinpath(@__DIR__, "solve", "descriptive.jl"))
 
-# CTModels
-import CTModels:
-    CTModels,
-    # setters
-    variable!,
-    time!,
-    state!,
-    control!,
-    dynamics!,
-    #    constraint!,
-    objective!,
-    definition!,
-    time_dependence!,
-    # model
-    build,
-    Model,
-    PreModel,
-    Solution,
-    # getters
-    constraints,
-    get_build_examodel,
-    times,
-    definition,
-    dual,
-    initial_time,
-    initial_time_name,
-    final_time,
-    final_time_name,
-    time_name,
-    variable_dimension,
-    variable_components,
-    variable_name,
-    state_dimension,
-    state_components,
-    state_name,
-    control_dimension,
-    control_components,
-    control_name,
-    #    constraint,
-    dynamics,
-    mayer,
-    lagrange,
-    criterion,
-    has_fixed_final_time,
-    has_fixed_initial_time,
-    has_free_final_time,
-    has_free_initial_time,
-    has_lagrange_cost,
-    has_mayer_cost,
-    is_autonomous,
-    export_ocp_solution,
-    import_ocp_solution,
-    time_grid,
-    control,
-    state,
-    #    variable,
-    costate,
-    constraints_violation,
-    #    objective,
-    iterations,
-    status,
-    message,
-    infos,
-    successful
-export Model, Solution
-export constraints,
-    get_build_examodel,
-    times,
-    definition,
-    dual,
-    initial_time,
-    initial_time_name,
-    final_time,
-    final_time_name,
-    time_name,
-    variable_dimension,
-    variable_components,
-    variable_name,
-    state_dimension,
-    state_components,
-    state_name,
-    control_dimension,
-    control_components,
-    control_name,
-    #    constraint,
-    dynamics,
-    mayer,
-    lagrange,
-    criterion,
-    has_fixed_final_time,
-    has_fixed_initial_time,
-    has_free_final_time,
-    has_free_initial_time,
-    has_lagrange_cost,
-    has_mayer_cost,
-    is_autonomous,
-    export_ocp_solution,
-    import_ocp_solution,
-    time_grid,
-    control,
-    state,
-    #    variable,
-    costate,
-    constraints_violation,
-    #    objective,
-    iterations,
-    status,
-    message,
-    infos,
-    successful
-
-# CTDirect
-import CTDirect:
-    CTDirect,
-    direct_transcription,
-    set_initial_guess,
-    build_OCP_solution,
-    nlp_model,
-    ocp_model
-export direct_transcription, set_initial_guess, build_OCP_solution, nlp_model, ocp_model
-
-# CTFlows
-import CTFlows:
-    CTFlows,
-    VectorField,
-    Lift,
-    Hamiltonian,
-    HamiltonianLift,
-    HamiltonianVectorField,
-    Flow,
-    ⋅,
-    Lie,
-    Poisson,
-    @Lie,
-    * # debug: complete?
-export VectorField,
-    Lift,
-    Hamiltonian,
-    HamiltonianLift,
-    HamiltonianVectorField,
-    Flow,
-    ⋅,
-    Lie,
-    Poisson,
-    @Lie,
-    *
-
-# To trigger CTDirectExtADNLP and CTDirectExtExa
-using ADNLPModels: ADNLPModels
-import ExaModels:
-    ExaModels,
-    ExaModel,
-    ExaCore,
-    variable,
-    constraint,
-    constraint!,
-    objective,
-    solution,
-    multipliers,
-    multipliers_L,
-    multipliers_U,
-    Constraint
-
-# Conflicts of functions defined in several packages
-# ExaModels.variable, CTModels.variable
-# ExaModels.constraint, CTModels.constraint
-# ExaModels.constraint!, CTModels.constraint!
-# ExaModels.objective, CTModels.objective
-"""
-$(TYPEDSIGNATURES)
-
-See CTModels.variable.
-"""
-variable(ocp::Model) = CTModels.variable(ocp)
-
-"""
-$(TYPEDSIGNATURES)
-
-Return the variable or `nothing`.
-
-```@example
-julia> v = variable(sol)
-```
-"""
-variable(sol::Solution) = CTModels.variable(sol)
-
-"""
-$(TYPEDSIGNATURES)
-
-Get a labelled constraint from the model. Returns a tuple of the form
-`(type, f, lb, ub)` where `type` is the type of the constraint, `f` is the function, 
-`lb` is the lower bound and `ub` is the upper bound. 
-
-The function returns an exception if the label is not found in the model.
-
-## Arguments
-
-- `model`: The model from which to retrieve the constraint.
-- `label`: The label of the constraint to retrieve.
-
-## Returns
-
-- `Tuple`: A tuple containing the type, function, lower bound, and upper bound of the constraint.
-"""
-constraint(ocp::Model, label::Symbol) = CTModels.constraint(ocp, label)
-
-"""
-$(TYPEDSIGNATURES)
-
-See CTModels.constraint!.
-"""
-function constraint!(ocp::PreModel, type::Symbol; kwargs...)
-    CTModels.constraint!(ocp, type; kwargs...)
-end
-
-"""
-$(TYPEDSIGNATURES)
-
-See CTModels.objective.
-"""
-objective(ocp::Model) = CTModels.objective(ocp)
-
-"""
-$(TYPEDSIGNATURES)
-
-Return the objective value.
-"""
-objective(sol::Solution) = CTModels.objective(sol)
-
-export variable, constraint, objective
-
-# CommonSolve
-import CommonSolve: CommonSolve, solve
-include("solve.jl")
-export solve
-export available_methods
+export methods # non useful since it is already in Base
 
 end
