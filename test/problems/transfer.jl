@@ -8,14 +8,15 @@
 
 asqrt(x; ε=1e-9) = sqrt(sqrt(x^2+ε^2))     # Avoid issues with AD
 
+const μ = 5165.8620912                     # Earth gravitation constant
+
 function F0(x)
     P, ex, ey, hx, hy, L = x
     pdm = asqrt(P / μ)
     cl = cos(L)
     sl = sin(L)
     w = 1 + ex * cl + ey * sl
-    F = zeros(eltype(x), 6) # Use eltype to allow overloading for AD
-    F[6] = w^2 / (P * pdm)
+    F = [0, 0, 0, 0, 0, w^2 / (P * pdm)]
     return F
 end
 
@@ -24,9 +25,7 @@ function F1(x)
     pdm = asqrt(P / μ)
     cl = cos(L)
     sl = sin(L)
-    F = zeros(eltype(x), 6)
-    F[2] = pdm *   sl
-    F[3] = pdm * (-cl)
+    F = pdm * [0, sl, -cl, 0, 0, 0]
     return F
 end
 
@@ -36,10 +35,7 @@ function F2(x)
     cl = cos(L)
     sl = sin(L)
     w = 1 + ex * cl + ey * sl
-    F = zeros(eltype(x), 6)
-    F[1] = pdm * 2 * P / w
-    F[2] = pdm * (cl + (ex + cl) / w)
-    F[3] = pdm * (sl + (ey + sl) / w)
+    F = pdm * [2 * P / w, cl + (ex + cl) / w, sl + (ey + sl) / w, 0, 0, 0]
     return F
 end
 
@@ -52,12 +48,7 @@ function F3(x)
     pdmw = pdm / w
     zz = hx * sl - hy * cl
     uh = (1 + hx^2 + hy^2) / 2
-    F = zeros(eltype(x), 6)
-    F[2] = pdmw * (-zz * ey)
-    F[3] = pdmw *   zz * ex
-    F[4] = pdmw *   uh * cl
-    F[5] = pdmw *   uh * sl
-    F[6] = pdmw *   zz
+    F = pdmw * [0, -zz * ey, zz * ex, uh * cl, uh * sl, zz]
     return F
 end
 
@@ -66,7 +57,6 @@ function Transfer(; Tmax=60)
     cTmax = 3600^2 / 1e6; T = Tmax * cTmax     # Conversion from Newtons to kg x Mm / h²
     mass0 = 1500                               # Initial mass of the spacecraft
     β = 1.42e-02                               # Engine specific impulsion
-    μ = 5165.8620912                           # Earth gravitation constant
     P0 = 11.625                                # Initial semilatus rectum
     ex0, ey0 = 0.75, 0                         # Initial eccentricity
     hx0, hy0 = 6.12e-2, 0                      # Initial ascending node and inclination
@@ -74,7 +64,6 @@ function Transfer(; Tmax=60)
     Pf = 42.165                                # Final semilatus rectum
     exf, eyf = 0, 0                            # Final eccentricity
     hxf, hyf = 0, 0                            # Final ascending node and inclination
-    
     Lf = 3π                                    # Estimation of final longitude
     x0 = [P0, ex0, ey0, hx0, hy0, L0]          # Initial state
     xf = [Pf, exf, eyf, hxf, hyf, Lf]          # Final state
