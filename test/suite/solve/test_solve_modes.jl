@@ -8,12 +8,12 @@
 
 module TestSolveModes
 
-import Test
-import OptimalControl
+using Test: Test
+using OptimalControl: OptimalControl
 
 # Load solver extensions
-import NLPModelsIpopt
-import MadNLP
+using NLPModelsIpopt: NLPModelsIpopt
+using MadNLP: MadNLP
 
 # Include shared test problems
 include(joinpath(@__DIR__, "..", "..", "problems", "TestProblems.jl"))
@@ -35,16 +35,12 @@ function test_solve_modes()
             # 1. Instantiate concrete components
             # We use max_iter=0 to just build and evaluate the problem without solving
             disc = OptimalControl.Collocation(grid_size=20, scheme=:midpoint)
-            mod  = OptimalControl.ADNLP()
-            sol  = OptimalControl.Ipopt(print_level=0, max_iter=0)
+            mod = OptimalControl.ADNLP()
+            sol = OptimalControl.Ipopt(print_level=0, max_iter=0)
 
             # 2. Call solve explicitly
             sol_explicit = OptimalControl.solve(
-                pb.ocp;
-                discretizer=disc,
-                modeler=mod,
-                solver=sol,
-                display=false
+                pb.ocp; discretizer=disc, modeler=mod, solver=sol, display=false
             )
 
             Test.@test sol_explicit isa OptimalControl.AbstractSolution
@@ -57,11 +53,13 @@ function test_solve_modes()
             # 1. Call solve with a complete description and options
             sol_descriptive = OptimalControl.solve(
                 pb.ocp,
-                :collocation, :adnlp, :ipopt;
+                :collocation,
+                :adnlp,
+                :ipopt;
                 grid_size=20,
                 max_iter=0,     # Stop immediately
                 print_level=0,
-                display=false
+                display=false,
             )
 
             Test.@test sol_descriptive isa OptimalControl.AbstractSolution
@@ -79,7 +77,7 @@ function test_solve_modes()
                 grid_size=20,
                 max_iter=0,     # Stop immediately
                 print_level=0,
-                display=false
+                display=false,
             )
 
             Test.@test sol_partial isa OptimalControl.AbstractSolution
@@ -97,7 +95,7 @@ function test_solve_modes()
                     grid_size=20,
                     max_iter=0,
                     print_level=0,
-                    display=false
+                    display=false,
                 )
                 Test.@test sol_init isa OptimalControl.AbstractSolution
             end

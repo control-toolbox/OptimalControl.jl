@@ -31,7 +31,7 @@ to the user during the solving process.
 
 See also: [`_route_descriptive_options`](@ref), [`solve`](@ref)
 """
-const _DEFAULT_DISPLAY::Bool        = true
+const _DEFAULT_DISPLAY::Bool = true
 
 """
     _DEFAULT_INITIAL_GUESS::Nothing
@@ -64,7 +64,7 @@ Used in [`CTSolvers.Options.OptionDefinition`](@extref) where the primary name i
 
 See also: [`_INITIAL_GUESS_ALIASES`](@ref), [`_route_descriptive_options`](@ref)
 """
-const _INITIAL_GUESS_ALIASES_ONLY::Tuple{Symbol}         = (:init,)
+const _INITIAL_GUESS_ALIASES_ONLY::Tuple{Symbol} = (:init,)
 
 """
     _INITIAL_GUESS_ALIASES::Tuple{Symbol, Symbol}
@@ -78,7 +78,7 @@ Used in `_extract_action_kwarg` to extract the initial guess from keyword argume
 
 See also: [`_INITIAL_GUESS_ALIASES_ONLY`](@ref), [`_extract_action_kwarg`](@ref)
 """
-const _INITIAL_GUESS_ALIASES::Tuple{Symbol, Symbol}      = (:initial_guess, :init)
+const _INITIAL_GUESS_ALIASES::Tuple{Symbol,Symbol} = (:initial_guess, :init)
 
 # Unwrap an OptionValue (from route_all_options) to its raw value.
 # Falls back to `fallback` if `opt` is not an OptionValue.
@@ -113,7 +113,7 @@ julia> _unwrap_option(nothing, 0)
 See also: [`_route_descriptive_options`](@ref), [`CTSolvers.Options.OptionValue`](@extref)
 """
 _unwrap_option(opt::CTSolvers.OptionValue, fallback) = opt.value
-_unwrap_option(opt,                        fallback) = opt === nothing ? fallback : opt
+_unwrap_option(opt, fallback) = opt === nothing ? fallback : opt
 
 # ----------------------------------------------------------------------------
 # R2.2 — Families
@@ -140,9 +140,9 @@ See also: [`_route_descriptive_options`](@ref)
 """
 function _descriptive_families()
     return (
-        discretizer = CTDirect.AbstractDiscretizer,
-        modeler     = CTSolvers.AbstractNLPModeler,
-        solver      = CTSolvers.AbstractNLPSolver,
+        discretizer=CTDirect.AbstractDiscretizer,
+        modeler=CTSolvers.AbstractNLPModeler,
+        solver=CTSolvers.AbstractNLPSolver,
     )
 end
 
@@ -188,19 +188,19 @@ See also: [`_route_descriptive_options`](@ref)
 """
 function _descriptive_action_defs()::Vector{CTSolvers.Options.OptionDefinition}
     return [
-        CTSolvers.Options.OptionDefinition(
-            name        = :initial_guess,
-            aliases     = _INITIAL_GUESS_ALIASES_ONLY,
-            type        = Any,
-            default     = _DEFAULT_INITIAL_GUESS,
-            description = "Initial guess for the OCP solution",
+        CTSolvers.Options.OptionDefinition(;
+            name=:initial_guess,
+            aliases=_INITIAL_GUESS_ALIASES_ONLY,
+            type=Any,
+            default=_DEFAULT_INITIAL_GUESS,
+            description="Initial guess for the OCP solution",
         ),
-        CTSolvers.Options.OptionDefinition(
-            name        = :display,
-            aliases     = (),
-            type        = Bool,
-            default     = _DEFAULT_DISPLAY,
-            description = "Display solve configuration",
+        CTSolvers.Options.OptionDefinition(;
+            name=:display,
+            aliases=(),
+            type=Bool,
+            default=_DEFAULT_DISPLAY,
+            description="Display solve configuration",
         ),
     ]
 end
@@ -250,11 +250,11 @@ See also: [`_descriptive_families`](@ref), [`_descriptive_action_defs`](@ref),
 [`_build_components_from_routed`](@ref)
 """
 function _route_descriptive_options(
-    complete_description::Tuple{Symbol, Symbol, Symbol, Symbol},
+    complete_description::Tuple{Symbol,Symbol,Symbol,Symbol},
     registry::CTSolvers.Orchestration.StrategyRegistry,
     kwargs,
 )
-    families    = _descriptive_families()
+    families = _descriptive_families()
     action_defs = _descriptive_action_defs()
     return CTSolvers.Orchestration.route_all_options(
         complete_description,
@@ -262,7 +262,7 @@ function _route_descriptive_options(
         action_defs,
         (; kwargs...),
         registry;
-        source_mode = :description,
+        source_mode=:description,
     )
 end
 
@@ -308,14 +308,16 @@ See also: [`_route_descriptive_options`](@ref),
 """
 function _build_components_from_routed(
     ocp::CTModels.AbstractModel,
-    complete_description::Tuple{Symbol, Symbol, Symbol, Symbol},
+    complete_description::Tuple{Symbol,Symbol,Symbol,Symbol},
     registry::CTSolvers.Orchestration.StrategyRegistry,
     routed::NamedTuple,
 )
     # Resolve method with parameter information as early as possible
     families = _descriptive_families()
-    resolved = CTSolvers.Orchestration.resolve_method(complete_description, families, registry)
-    
+    resolved = CTSolvers.Orchestration.resolve_method(
+        complete_description, families, registry
+    )
+
     # Build strategies using resolved method
     discretizer = CTSolvers.Orchestration.build_strategy_from_resolved(
         resolved, :discretizer, families, registry; routed.strategies.discretizer...
@@ -328,16 +330,18 @@ function _build_components_from_routed(
     )
 
     # Extract and unwrap action options (OptionValue → raw value)
-    init_raw        = _unwrap_option(get(routed.action, :initial_guess, nothing), _DEFAULT_INITIAL_GUESS)
+    init_raw = _unwrap_option(
+        get(routed.action, :initial_guess, nothing), _DEFAULT_INITIAL_GUESS
+    )
     normalized_init = CTModels.Init.build_initial_guess(ocp, init_raw)
 
     display_val = _unwrap_option(get(routed.action, :display, nothing), _DEFAULT_DISPLAY)
 
     return (
-        discretizer   = discretizer,
-        modeler       = modeler,
-        solver        = solver,
-        initial_guess = normalized_init,
-        display       = display_val,
+        discretizer=discretizer,
+        modeler=modeler,
+        solver=solver,
+        initial_guess=normalized_init,
+        display=display_val,
     )
 end

@@ -39,20 +39,20 @@ julia> methods()[9]
 
 See also: [`solve`](@ref), [`CTBase.Descriptions.complete`](@extref), [`get_strategy_registry`](@ref)
 """
-function Base.methods()::Tuple{Vararg{Tuple{Symbol, Symbol, Symbol, Symbol}}}
+function Base.methods()::Tuple{Vararg{Tuple{Symbol,Symbol,Symbol,Symbol}}}
     return (
         # CPU methods (all existing methods now with :cpu parameter)
-        (:collocation, :adnlp, :ipopt,  :cpu),
+        (:collocation, :adnlp, :ipopt, :cpu),
         (:collocation, :adnlp, :madnlp, :cpu),
-        (:collocation, :exa,   :ipopt,  :cpu),
-        (:collocation, :exa,   :madnlp, :cpu),
+        (:collocation, :exa, :ipopt, :cpu),
+        (:collocation, :exa, :madnlp, :cpu),
         (:collocation, :adnlp, :madncl, :cpu),
-        (:collocation, :exa,   :madncl, :cpu),
+        (:collocation, :exa, :madncl, :cpu),
         (:collocation, :adnlp, :knitro, :cpu),
-        (:collocation, :exa,   :knitro, :cpu),
-        
+        (:collocation, :exa, :knitro, :cpu),
+
         # GPU methods (only combinations that make sense)
-        (:collocation, :exa,   :madnlp, :gpu),
-        (:collocation, :exa,   :madncl, :gpu),
+        (:collocation, :exa, :madnlp, :gpu),
+        (:collocation, :exa, :madncl, :gpu),
     )
 end

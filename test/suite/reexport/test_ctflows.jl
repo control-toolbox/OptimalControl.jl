@@ -7,7 +7,7 @@
 
 module TestCtflows
 
-import Test
+using Test: Test
 using OptimalControl # using is mandatory since we test exported symbols
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
@@ -29,22 +29,14 @@ function test_ctflows()
             end
         end
         Test.@testset "Functions" begin
-            for f in (
-                :Lift,
-                :Flow,
-            )
+            for f in (:Lift, :Flow)
                 Test.@test isdefined(OptimalControl, f)
                 Test.@test isdefined(CurrentModule, f)
                 Test.@test getfield(OptimalControl, f) isa Function
             end
         end
         Test.@testset "Operators" begin
-            for op in (
-                :⋅,
-                :Lie,
-                :Poisson,
-                :*,
-            )
+            for op in (:⋅, :Lie, :Poisson, :*)
                 Test.@test isdefined(OptimalControl, op)
                 Test.@test isdefined(CurrentModule, op)
             end

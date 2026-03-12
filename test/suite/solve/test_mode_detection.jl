@@ -8,11 +8,11 @@
 
 module TestModeDetection
 
-import Test
-import OptimalControl
-import CTDirect
-import CTSolvers
-import CTBase
+using Test: Test
+using OptimalControl: OptimalControl
+using CTDirect: CTDirect
+using CTSolvers: CTSolvers
+using CTBase: CTBase
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
@@ -23,8 +23,8 @@ struct MockModeler <: CTSolvers.AbstractNLPModeler end
 struct MockSolver <: CTSolvers.AbstractNLPSolver end
 
 const DISC = MockDiscretizer()
-const MOD  = MockModeler()
-const SOL  = MockSolver()
+const MOD = MockModeler()
+const SOL = MockSolver()
 
 function test_mode_detection()
     Test.@testset "Mode Detection" verbose=VERBOSE showtiming=SHOWTIMING begin
@@ -75,7 +75,9 @@ function test_mode_detection()
 
         Test.@testset "DescriptiveMode - with description" begin
             kw = pairs(NamedTuple())
-            result = OptimalControl._explicit_or_descriptive((:collocation, :adnlp, :ipopt), kw)
+            result = OptimalControl._explicit_or_descriptive(
+                (:collocation, :adnlp, :ipopt), kw
+            )
             Test.@test result isa OptimalControl.DescriptiveMode
         end
 

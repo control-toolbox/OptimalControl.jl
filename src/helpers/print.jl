@@ -150,7 +150,7 @@ See also: [`will_solver_print(::CTSolvers.AbstractNLPSolver)`](@ref)
 """
 function will_solver_print(solver::CTSolvers.MadNCL)
     opts = CTSolvers.options(solver)
-    
+
     # Check print_level
     print_level = get(opts.options, :print_level, nothing)
     if print_level !== nothing
@@ -159,7 +159,7 @@ function will_solver_print(solver::CTSolvers.MadNCL)
             return false
         end
     end
-    
+
     # Check ncl_options.verbose
     ncl_options = get(opts.options, :ncl_options, nothing)
     if ncl_options !== nothing
@@ -168,7 +168,7 @@ function will_solver_print(solver::CTSolvers.MadNCL)
             return false
         end
     end
-    
+
     return true
 end
 
@@ -415,9 +415,13 @@ function display_ocp_configuration(
     modeler_id = OptimalControl.id(typeof(modeler))
     solver_id = OptimalControl.id(typeof(solver))
 
-    _print_component_with_param(io, discretizer_id, display_strategy.show_inline, param_info.disc)
+    _print_component_with_param(
+        io, discretizer_id, display_strategy.show_inline, param_info.disc
+    )
     print(io, " → ")
-    _print_component_with_param(io, modeler_id, display_strategy.show_inline, param_info.mod)
+    _print_component_with_param(
+        io, modeler_id, display_strategy.show_inline, param_info.mod
+    )
     print(io, " → ")
     _print_component_with_param(io, solver_id, display_strategy.show_inline, param_info.sol)
 
@@ -449,7 +453,7 @@ function display_ocp_configuration(
         printstyled(io, pkg; color=:cyan, bold=true)
         if show_options && opts !== nothing
             # Collect both user and computed options
-            all_items = Tuple{Symbol, Any, Symbol}[]  # (key, opt, source)
+            all_items = Tuple{Symbol,Any,Symbol}[]  # (key, opt, source)
             for (key, opt) in pairs(opts.options)
                 if OptimalControl.is_user(opts, key)
                     push!(all_items, (key, opt, :user))
@@ -457,7 +461,7 @@ function display_ocp_configuration(
                     push!(all_items, (key, opt, :computed))
                 end
             end
-            sort!(all_items, by = x -> string(x[1]))
+            sort!(all_items; by=x -> string(x[1]))
             n = length(all_items)
             if n == 0
                 # print(io, " (no user options)")
@@ -466,7 +470,9 @@ function display_ocp_configuration(
                 print(io, " (")
                 for (i, (key, opt, source)) in enumerate(all_items)
                     sep = i == n ? "" : ", "
-                    src_tag = _build_source_tag(source, display_strategy.common, param_info.params, show_sources)
+                    src_tag = _build_source_tag(
+                        source, display_strategy.common, param_info.params, show_sources
+                    )
                     print(io, string(key), " = ", CTSolvers.value(opt), src_tag, sep)
                 end
                 print(io, ")")
@@ -476,7 +482,9 @@ function display_ocp_configuration(
                 shown = first(all_items, 3)
                 for (i, (key, opt, source)) in enumerate(shown)
                     sep = i == length(shown) ? "" : ", "
-                    src_tag = _build_source_tag(source, display_strategy.common, param_info.params, show_sources)
+                    src_tag = _build_source_tag(
+                        source, display_strategy.common, param_info.params, show_sources
+                    )
                     print(io, string(key), " = ", CTSolvers.value(opt), src_tag, sep)
                 end
                 remaining = n - length(shown)
@@ -493,12 +501,12 @@ function display_ocp_configuration(
     print_component("   └─ ", "Solver", solver_pkg, sol_opts)
 
     println(io)
-    
+
     # Print ▫ before solver output if solver will print
     if will_solver_print(solver)
         print(io, "▫ ")
     end
-    
+
     return nothing
 end
 
@@ -541,7 +549,12 @@ function display_ocp_configuration(
     show_sources::Bool=false,
 )
     return display_ocp_configuration(
-        stdout, discretizer, modeler, solver;
-        display=display, show_options=show_options, show_sources=show_sources,
+        stdout,
+        discretizer,
+        modeler,
+        solver;
+        display=display,
+        show_options=show_options,
+        show_sources=show_sources,
     )
 end

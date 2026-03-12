@@ -424,11 +424,11 @@ function _ensure_no_ambiguous_description_kwargs(method::Tuple, kwargs::NamedTup
         owners = Symbol[]
 
         if (k in _SOLVE_INITIAL_GUESS_ALIASES) ||
-           (k in _SOLVE_DISCRETIZER_ALIASES) ||
-           (k in _SOLVE_MODELER_ALIASES) ||
-           (k in _SOLVE_SOLVER_ALIASES) ||
-           (k in _SOLVE_DISPLAY_ALIASES) ||
-           (k in _SOLVE_MODELER_OPTIONS_ALIASES)
+            (k in _SOLVE_DISCRETIZER_ALIASES) ||
+            (k in _SOLVE_MODELER_ALIASES) ||
+            (k in _SOLVE_SOLVER_ALIASES) ||
+            (k in _SOLVE_DISPLAY_ALIASES) ||
+            (k in _SOLVE_MODELER_OPTIONS_ALIASES)
             push!(owners, :solve)
         end
 
@@ -511,9 +511,7 @@ function _solve_from_components_and_description(
     )
 end
 
-function _solve_explicit_mode(
-    ocp::CTModels.AbstractModel, parsed::_ParsedTopLevelKwargs
-)
+function _solve_explicit_mode(ocp::CTModels.AbstractModel, parsed::_ParsedTopLevelKwargs)
     # 1. No modeler_options in explicit mode
     if parsed.modeler_options !== nothing
         msg = "modeler_options is not allowed in explicit mode; pass a modeler instance instead."

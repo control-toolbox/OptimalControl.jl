@@ -37,9 +37,9 @@ false
 See also: [`_complete_components`](@ref), [`solve_explicit`](@ref)
 """
 function _has_complete_components(
-    discretizer::Union{CTDirect.AbstractDiscretizer, Nothing},
-    modeler::Union{CTSolvers.AbstractNLPModeler, Nothing},
-    solver::Union{CTSolvers.AbstractNLPSolver, Nothing}
+    discretizer::Union{CTDirect.AbstractDiscretizer,Nothing},
+    modeler::Union{CTSolvers.AbstractNLPModeler,Nothing},
+    solver::Union{CTSolvers.AbstractNLPSolver,Nothing},
 )::Bool
     return !isnothing(discretizer) && !isnothing(modeler) && !isnothing(solver)
 end

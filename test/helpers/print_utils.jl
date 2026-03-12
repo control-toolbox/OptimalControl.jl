@@ -99,12 +99,12 @@ Display table header with column names.
 # Arguments
 - `show_memory`: Show memory column (default: false)
 """
-function print_test_header(show_memory::Bool = false)
+function print_test_header(show_memory::Bool=false)
     println()
     printstyled("OptimalControl Solve Tests\n"; color=:cyan, bold=true)
     printstyled("==========================\n"; color=:cyan)
     println()
-    
+
     # Table header (aligned with data columns)
     print("   ")  # Space for the ✓/✗ symbol (2 characters)
     print(" │ ")
@@ -127,14 +127,14 @@ function print_test_header(show_memory::Bool = false)
     printstyled(lpad("Reference", 14); bold=true)
     print(" │ ")
     printstyled(lpad("Error", 7); bold=true)
-    
+
     if show_memory
         print(" │ ")
         printstyled(lpad("Memory", 10); bold=true)
     end
-    
+
     println()
-    
+
     # Separator line
     print("───")
     print("─┼─")
@@ -156,7 +156,7 @@ function print_test_header(show_memory::Bool = false)
     print("─┼─")
     print("──────────────")
     print("─┼─")
-    
+
     if show_memory
         print("───────")
         print("─┼─")
@@ -164,7 +164,7 @@ function print_test_header(show_memory::Bool = false)
     else
         print("────────")
     end
-    
+
     println()
     flush(stdout)
 end
@@ -226,52 +226,52 @@ function print_test_line(
     time::Real,
     obj::Real,
     ref_obj::Real,
-    iterations::Union{Int, Nothing} = nothing,
-    memory_bytes::Union{Int, Nothing} = nothing,
-    show_memory::Bool = false
+    iterations::Union{Int,Nothing}=nothing,
+    memory_bytes::Union{Int,Nothing}=nothing,
+    show_memory::Bool=false,
 )
     # Relative error calculation
     rel_error = abs(obj - ref_obj) / abs(ref_obj) * 100
-    
+
     # Colored status (✓ green or ✗ red)
     if success
         printstyled("  ✓"; color=:green, bold=true)
     else
         printstyled("  ✗"; color=:red, bold=true)
     end
-    
+
     print(" │ ")
-    
+
     # Type column: CPU or GPU
     printstyled(rpad(test_type, 4); color=:magenta)
     print(" │ ")
-    
+
     # Fixed columns with rpad/lpad (like CTBenchmarks)
     # Problem: 8 characters
     printstyled(rpad(problem, 8); color=:cyan, bold=true)
     print(" │ ")
-    
+
     # Discretizer: 8 characters
     printstyled(rpad(discretizer, 8); color=:blue)
     print(" │ ")
-    
+
     # Modeler: 8 characters
     printstyled(rpad(modeler, 8); color=:magenta)
     print(" │ ")
-    
+
     # Solver: 6 characters
     printstyled(rpad(solver, 6); color=:yellow)
     print(" │ ")
-    
+
     # Time: right-aligned, 12 characters
     print(lpad(prettytime(time), 12))
     print(" │ ")
-    
+
     # Iterations: right-aligned, 5 characters
     iter_str = iterations === nothing ? "N/A" : string(iterations)
     print(lpad(iter_str, 5))
     print(" │ ")
-    
+
     # Objective: scientific format with phantom sign for alignment
     # Add space instead of '-' for positive values
     obj_str = @sprintf("%.6e", obj)
@@ -280,7 +280,7 @@ function print_test_line(
     end
     print(lpad(obj_str, 14))
     print(" │ ")
-    
+
     # Reference: scientific format with phantom sign
     ref_str = @sprintf("%.6e", ref_obj)
     if ref_obj >= 0
@@ -288,12 +288,12 @@ function print_test_line(
     end
     print(lpad(ref_str, 14))
     print(" │ ")
-    
+
     # Error: scientific notation with 2 decimal places
     err_str = @sprintf("%.2e", rel_error / 100)  # Convert to fraction then scientific format
     err_color = rel_error < 1 ? :green : (rel_error < 5 ? :yellow : :red)
     printstyled(lpad(err_str, 7); color=err_color)
-    
+
     # Memory: optional, right-aligned, 10 characters
     if show_memory
         print(" │ ")
@@ -304,7 +304,7 @@ function print_test_line(
         end
         print(lpad(mem_str, 10))
     end
-    
+
     println()
     flush(stdout)  # Real-time display
 end
@@ -329,16 +329,18 @@ Single responsibility: Display global summary.
 function print_summary(total::Int, passed::Int, total_time::Real)
     println()
     success_rate = (passed / total) * 100
-    
+
     # Symbol and color based on result
     if passed == total
         printstyled("✓ Summary: "; color=:green, bold=true)
     else
         printstyled("⚠ Summary: "; color=:yellow, bold=true)
     end
-    
+
     # Statistics
-    println("$passed/$total tests passed ($(round(success_rate, digits=1))% success rate) in $(prettytime(total_time))")
+    println(
+        "$passed/$total tests passed ($(round(success_rate, digits=1))% success rate) in $(prettytime(total_time))",
+    )
     println()
 end
 

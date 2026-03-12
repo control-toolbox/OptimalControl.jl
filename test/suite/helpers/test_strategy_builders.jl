@@ -8,13 +8,13 @@
 
 module TestStrategyBuilders
 
-import Test
-import OptimalControl
-import CTDirect
-import CTSolvers
-import NLPModelsIpopt  # Add for Ipopt strategy building
-import MadNLP          # Add for MadNLP strategy building
-import MadNCL          # Add for MadNLP strategy building
+using Test: Test
+using OptimalControl: OptimalControl
+using CTDirect: CTDirect
+using CTSolvers: CTSolvers
+using NLPModelsIpopt: NLPModelsIpopt  # Add for Ipopt strategy building
+using MadNLP: MadNLP          # Add for MadNLP strategy building
+using MadNCL: MadNCL          # Add for MadNLP strategy building
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
@@ -107,13 +107,19 @@ function test_strategy_builders()
         end
 
         Test.@testset "Type Stability" begin
-            Test.@test_nowarn Test.@inferred OptimalControl._build_partial_description(disc, mod, sol)
-            Test.@test_nowarn Test.@inferred OptimalControl._build_partial_description(nothing, nothing, nothing)
+            Test.@test_nowarn Test.@inferred OptimalControl._build_partial_description(
+                disc, mod, sol
+            )
+            Test.@test_nowarn Test.@inferred OptimalControl._build_partial_description(
+                nothing, nothing, nothing
+            )
         end
 
         Test.@testset "No Allocations" begin
             # Pure function should not allocate (allow small platform differences)
-            allocs = Test.@allocated OptimalControl._build_partial_description(disc, mod, sol)
+            allocs = Test.@allocated OptimalControl._build_partial_description(
+                disc, mod, sol
+            )
             Test.@test allocs <= 32  # Allow small platform-dependent allocations
         end
 
@@ -123,7 +129,7 @@ function test_strategy_builders()
 
         Test.@testset "Complete Description - Empty" begin
             result = OptimalControl._complete_description(())
-            Test.@test result isa Tuple{Symbol, Symbol, Symbol, Symbol}  # Fixed: quadruplet with parameter
+            Test.@test result isa Tuple{Symbol,Symbol,Symbol,Symbol}  # Fixed: quadruplet with parameter
             Test.@test length(result) == 4
             Test.@test result in OptimalControl.methods()
         end
@@ -149,12 +155,15 @@ function test_strategy_builders()
         Test.@testset "Complete Description - Different Combinations" begin
             # Test various partial combinations
             combos = [
-                (:collocation,), (:collocation, :adnlp), (:collocation, :exa),
-                (:collocation, :adnlp, :ipopt), (:collocation, :exa, :madnlp)
+                (:collocation,),
+                (:collocation, :adnlp),
+                (:collocation, :exa),
+                (:collocation, :adnlp, :ipopt),
+                (:collocation, :exa, :madnlp),
             ]
             for combo in combos
                 result = OptimalControl._complete_description(combo)
-                Test.@test result isa Tuple{Symbol, Symbol, Symbol, Symbol}  # Fixed: quadruplet
+                Test.@test result isa Tuple{Symbol,Symbol,Symbol,Symbol}  # Fixed: quadruplet
                 Test.@test length(result) == 4
                 Test.@test result in OptimalControl.methods()
                 # Check that the provided symbols are preserved
@@ -166,8 +175,12 @@ function test_strategy_builders()
 
         Test.@testset "Complete Description - Type Stability" begin
             Test.@test_nowarn Test.@inferred OptimalControl._complete_description(())
-            Test.@test_nowarn Test.@inferred OptimalControl._complete_description((:collocation,))
-            Test.@test_nowarn Test.@inferred OptimalControl._complete_description((:collocation, :adnlp, :ipopt))
+            Test.@test_nowarn Test.@inferred OptimalControl._complete_description((
+                :collocation,
+            ))
+            Test.@test_nowarn Test.@inferred OptimalControl._complete_description((
+                :collocation, :adnlp, :ipopt
+            ))
         end
 
         # ================================================================
@@ -181,30 +194,58 @@ function test_strategy_builders()
             # Create a resolved method using real strategy IDs from registry
             resolved = CTSolvers.Orchestration.resolve_method(
                 (:collocation, :adnlp, :ipopt, :cpu),  # Use real strategy IDs
-                (discretizer=CTDirect.AbstractDiscretizer, modeler=CTSolvers.AbstractNLPModeler, solver=CTSolvers.AbstractNLPSolver),
-                registry
+                (
+                    discretizer=CTDirect.AbstractDiscretizer,
+                    modeler=CTSolvers.AbstractNLPModeler,
+                    solver=CTSolvers.AbstractNLPSolver,
+                ),
+                registry,
             )
-            
+
             # Test discretizer (should return provided mock regardless of resolved method)
             disc = MockDiscretizer(CTSolvers.StrategyOptions())
             result = OptimalControl._build_or_use_strategy(
-                resolved, disc, :discretizer, (discretizer=CTDirect.AbstractDiscretizer, modeler=CTSolvers.AbstractNLPModeler, solver=CTSolvers.AbstractNLPSolver), registry
+                resolved,
+                disc,
+                :discretizer,
+                (
+                    discretizer=CTDirect.AbstractDiscretizer,
+                    modeler=CTSolvers.AbstractNLPModeler,
+                    solver=CTSolvers.AbstractNLPSolver,
+                ),
+                registry,
             )
             Test.@test result === disc
             Test.@test result isa MockDiscretizer
-            
+
             # Test modeler
             mod = MockModeler(CTSolvers.StrategyOptions())
             result = OptimalControl._build_or_use_strategy(
-                resolved, mod, :modeler, (discretizer=CTDirect.AbstractDiscretizer, modeler=CTSolvers.AbstractNLPModeler, solver=CTSolvers.AbstractNLPSolver), registry
+                resolved,
+                mod,
+                :modeler,
+                (
+                    discretizer=CTDirect.AbstractDiscretizer,
+                    modeler=CTSolvers.AbstractNLPModeler,
+                    solver=CTSolvers.AbstractNLPSolver,
+                ),
+                registry,
             )
             Test.@test result === mod
             Test.@test result isa MockModeler
-            
+
             # Test solver
             sol = MockSolver(CTSolvers.StrategyOptions())
             result = OptimalControl._build_or_use_strategy(
-                resolved, sol, :solver, (discretizer=CTDirect.AbstractDiscretizer, modeler=CTSolvers.AbstractNLPModeler, solver=CTSolvers.AbstractNLPSolver), registry
+                resolved,
+                sol,
+                :solver,
+                (
+                    discretizer=CTDirect.AbstractDiscretizer,
+                    modeler=CTSolvers.AbstractNLPModeler,
+                    solver=CTSolvers.AbstractNLPSolver,
+                ),
+                registry,
             )
             Test.@test result === sol
             Test.@test result isa MockSolver
@@ -213,12 +254,24 @@ function test_strategy_builders()
         Test.@testset "Build or Use Strategy - Type Stability" begin
             resolved = CTSolvers.Orchestration.resolve_method(
                 (:collocation, :adnlp, :ipopt, :cpu),  # Use real strategy IDs
-                (discretizer=CTDirect.AbstractDiscretizer, modeler=CTSolvers.AbstractNLPModeler, solver=CTSolvers.AbstractNLPSolver),
-                registry
+                (
+                    discretizer=CTDirect.AbstractDiscretizer,
+                    modeler=CTSolvers.AbstractNLPModeler,
+                    solver=CTSolvers.AbstractNLPSolver,
+                ),
+                registry,
             )
             disc = MockDiscretizer(CTSolvers.StrategyOptions())
             Test.@test_nowarn Test.@inferred OptimalControl._build_or_use_strategy(
-                resolved, disc, :discretizer, (discretizer=CTDirect.AbstractDiscretizer, modeler=CTSolvers.AbstractNLPModeler, solver=CTSolvers.AbstractNLPSolver), registry
+                resolved,
+                disc,
+                :discretizer,
+                (
+                    discretizer=CTDirect.AbstractDiscretizer,
+                    modeler=CTSolvers.AbstractNLPModeler,
+                    solver=CTSolvers.AbstractNLPSolver,
+                ),
+                registry,
             )
         end
 
@@ -226,28 +279,56 @@ function test_strategy_builders()
             # Test building strategies when nothing is provided
             resolved = CTSolvers.Orchestration.resolve_method(
                 (:collocation, :adnlp, :ipopt, :cpu),
-                (discretizer=CTDirect.AbstractDiscretizer, modeler=CTSolvers.AbstractNLPModeler, solver=CTSolvers.AbstractNLPSolver),
-                registry
+                (
+                    discretizer=CTDirect.AbstractDiscretizer,
+                    modeler=CTSolvers.AbstractNLPModeler,
+                    solver=CTSolvers.AbstractNLPSolver,
+                ),
+                registry,
             )
-            
+
             # Test discretizer building (should work without extra deps)
             disc_result = OptimalControl._build_or_use_strategy(
-                resolved, nothing, :discretizer, (discretizer=CTDirect.AbstractDiscretizer, modeler=CTSolvers.AbstractNLPModeler, solver=CTSolvers.AbstractNLPSolver), registry
+                resolved,
+                nothing,
+                :discretizer,
+                (
+                    discretizer=CTDirect.AbstractDiscretizer,
+                    modeler=CTSolvers.AbstractNLPModeler,
+                    solver=CTSolvers.AbstractNLPSolver,
+                ),
+                registry,
             )
             Test.@test disc_result isa CTDirect.AbstractDiscretizer
             Test.@test CTSolvers.id(typeof(disc_result)) == :collocation
-            
+
             # Test modeler building (should work without extra deps)
             mod_result = OptimalControl._build_or_use_strategy(
-                resolved, nothing, :modeler, (discretizer=CTDirect.AbstractDiscretizer, modeler=CTSolvers.AbstractNLPModeler, solver=CTSolvers.AbstractNLPSolver), registry
+                resolved,
+                nothing,
+                :modeler,
+                (
+                    discretizer=CTDirect.AbstractDiscretizer,
+                    modeler=CTSolvers.AbstractNLPModeler,
+                    solver=CTSolvers.AbstractNLPSolver,
+                ),
+                registry,
             )
             Test.@test mod_result isa CTSolvers.AbstractNLPModeler
             Test.@test CTSolvers.id(typeof(mod_result)) == :adnlp
-            
+
             # Test solver building (may fail due to dependencies, so we test the error handling)
             try
                 sol_result = OptimalControl._build_or_use_strategy(
-                    resolved, nothing, :solver, (discretizer=CTDirect.AbstractDiscretizer, modeler=CTSolvers.AbstractNLPModeler, solver=CTSolvers.AbstractNLPSolver), registry
+                    resolved,
+                    nothing,
+                    :solver,
+                    (
+                        discretizer=CTDirect.AbstractDiscretizer,
+                        modeler=CTSolvers.AbstractNLPModeler,
+                        solver=CTSolvers.AbstractNLPSolver,
+                    ),
+                    registry,
                 )
                 Test.@test sol_result isa CTSolvers.AbstractNLPSolver
                 Test.@test CTSolvers.id(typeof(sol_result)) == :ipopt
@@ -260,28 +341,47 @@ function test_strategy_builders()
         Test.@testset "Build or Use Strategy - Different Methods" begin
             # Test building with different method combinations (focus on discretizer which should always work)
             methods_to_test = [
-                (:collocation, :exa, :madnlp, :cpu),
-                (:collocation, :exa, :madncl, :gpu),
+                (:collocation, :exa, :madnlp, :cpu), (:collocation, :exa, :madncl, :gpu)
             ]
-            
+
             for method_tuple in methods_to_test
                 resolved = CTSolvers.Orchestration.resolve_method(
                     method_tuple,
-                    (discretizer=CTDirect.AbstractDiscretizer, modeler=CTSolvers.AbstractNLPModeler, solver=CTSolvers.AbstractNLPSolver),
-                    registry
+                    (
+                        discretizer=CTDirect.AbstractDiscretizer,
+                        modeler=CTSolvers.AbstractNLPModeler,
+                        solver=CTSolvers.AbstractNLPSolver,
+                    ),
+                    registry,
                 )
-                
+
                 # Test discretizer building (should always work)
                 disc = OptimalControl._build_or_use_strategy(
-                    resolved, nothing, :discretizer, (discretizer=CTDirect.AbstractDiscretizer, modeler=CTSolvers.AbstractNLPModeler, solver=CTSolvers.AbstractNLPSolver), registry
+                    resolved,
+                    nothing,
+                    :discretizer,
+                    (
+                        discretizer=CTDirect.AbstractDiscretizer,
+                        modeler=CTSolvers.AbstractNLPModeler,
+                        solver=CTSolvers.AbstractNLPSolver,
+                    ),
+                    registry,
                 )
                 Test.@test disc isa CTDirect.AbstractDiscretizer
                 Test.@test CTSolvers.id(typeof(disc)) == method_tuple[1]
-                
+
                 # Test modeler building (may fail for some dependencies)
                 try
                     mod = OptimalControl._build_or_use_strategy(
-                        resolved, nothing, :modeler, (discretizer=CTDirect.AbstractDiscretizer, modeler=CTSolvers.AbstractNLPModeler, solver=CTSolvers.AbstractNLPSolver), registry
+                        resolved,
+                        nothing,
+                        :modeler,
+                        (
+                            discretizer=CTDirect.AbstractDiscretizer,
+                            modeler=CTSolvers.AbstractNLPModeler,
+                            solver=CTSolvers.AbstractNLPSolver,
+                        ),
+                        registry,
                     )
                     Test.@test mod isa CTSolvers.AbstractNLPModeler
                     Test.@test CTSolvers.id(typeof(mod)) == method_tuple[2]

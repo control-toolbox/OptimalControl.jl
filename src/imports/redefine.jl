@@ -4,14 +4,20 @@ $(TYPEDSIGNATURES)
 
 See CTDirect.discretize.
 """
-discretize(ocp::AbstractModel, discretizer::AbstractDiscretizer) = CTDirect.discretize(ocp, discretizer)
+function discretize(ocp::AbstractModel, discretizer::AbstractDiscretizer)
+    CTDirect.discretize(ocp, discretizer)
+end
 
 """
 $(TYPEDSIGNATURES)
 
 See CTDirect.discretize.
 """
-discretize(ocp::AbstractModel; discretizer::AbstractDiscretizer=CTDirect.__discretizer()) = CTDirect.discretize(ocp, discretizer)
+function discretize(
+    ocp::AbstractModel; discretizer::AbstractDiscretizer=CTDirect.__discretizer()
+)
+    CTDirect.discretize(ocp, discretizer)
+end
 
 """
 $(TYPEDSIGNATURES)

@@ -8,13 +8,13 @@
 
 module TestDescriptiveRouting
 
-import Test
-import OptimalControl
-import CTModels
-import CTDirect
-import CTSolvers
-import CTBase
-import CommonSolve
+using Test: Test
+using OptimalControl: OptimalControl
+using CTModels: CTModels
+using CTDirect: CTDirect
+using CTSolvers: CTSolvers
+using CTBase: CTBase
+using CommonSolve: CommonSolve
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
@@ -29,8 +29,8 @@ const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING :
 # --- Abstract families (isolated from real CTDirect/CTSolvers families) ---
 
 abstract type RoutingMockDiscretizer <: CTDirect.AbstractDiscretizer end
-abstract type RoutingMockModeler     <: CTSolvers.AbstractNLPModeler end
-abstract type RoutingMockSolver      <: CTSolvers.AbstractNLPSolver  end
+abstract type RoutingMockModeler <: CTSolvers.AbstractNLPModeler end
+abstract type RoutingMockSolver <: CTSolvers.AbstractNLPSolver end
 
 # --- Concrete mock: Collocation-like discretizer ---
 
@@ -39,18 +39,19 @@ struct MockCollocation <: RoutingMockDiscretizer
 end
 
 CTSolvers.Strategies.id(::Type{MockCollocation}) = :collocation
-CTSolvers.Strategies.metadata(::Type{MockCollocation}) = CTSolvers.Strategies.StrategyMetadata(
-    CTSolvers.Options.OptionDefinition(
-        name        = :grid_size,
-        type        = Int,
-        default     = 100,
-        description = "Number of grid points",
-    ),
-)
+function CTSolvers.Strategies.metadata(::Type{MockCollocation})
+    CTSolvers.Strategies.StrategyMetadata(
+        CTSolvers.Options.OptionDefinition(
+            name=:grid_size, type=Int, default=100, description="Number of grid points"
+        ),
+    )
+end
 CTSolvers.Strategies.options(s::MockCollocation) = s.options
 
 function MockCollocation(; mode::Symbol=:strict, kwargs...)
-    opts = CTSolvers.Strategies.build_strategy_options(MockCollocation; mode=mode, kwargs...)
+    opts = CTSolvers.Strategies.build_strategy_options(
+        MockCollocation; mode=mode, kwargs...
+    )
     return MockCollocation(opts)
 end
 
@@ -61,15 +62,17 @@ struct MockADNLP <: RoutingMockModeler
 end
 
 CTSolvers.Strategies.id(::Type{MockADNLP}) = :adnlp
-CTSolvers.Strategies.metadata(::Type{MockADNLP}) = CTSolvers.Strategies.StrategyMetadata(
-    CTSolvers.Options.OptionDefinition(
-        name        = :backend,
-        type        = Symbol,
-        default     = :dense,
-        description = "NLP backend",
-        aliases     = (:adnlp_backend,),
-    ),
-)
+function CTSolvers.Strategies.metadata(::Type{MockADNLP})
+    CTSolvers.Strategies.StrategyMetadata(
+        CTSolvers.Options.OptionDefinition(
+            name=:backend,
+            type=Symbol,
+            default=:dense,
+            description="NLP backend",
+            aliases=(:adnlp_backend,),
+        ),
+    )
+end
 CTSolvers.Strategies.options(s::MockADNLP) = s.options
 
 function MockADNLP(; mode::Symbol=:strict, kwargs...)
@@ -84,21 +87,20 @@ struct MockIpopt <: RoutingMockSolver
 end
 
 CTSolvers.Strategies.id(::Type{MockIpopt}) = :ipopt
-CTSolvers.Strategies.metadata(::Type{MockIpopt}) = CTSolvers.Strategies.StrategyMetadata(
-    CTSolvers.Options.OptionDefinition(
-        name        = :max_iter,
-        type        = Int,
-        default     = 1000,
-        description = "Maximum iterations",
-    ),
-    CTSolvers.Options.OptionDefinition(
-        name        = :backend,
-        type        = Symbol,
-        default     = :cpu,
-        description = "Solver backend",
-        aliases     = (:ipopt_backend,),
-    ),
-)
+function CTSolvers.Strategies.metadata(::Type{MockIpopt})
+    CTSolvers.Strategies.StrategyMetadata(
+        CTSolvers.Options.OptionDefinition(
+            name=:max_iter, type=Int, default=1000, description="Maximum iterations"
+        ),
+        CTSolvers.Options.OptionDefinition(
+            name=:backend,
+            type=Symbol,
+            default=:cpu,
+            description="Solver backend",
+            aliases=(:ipopt_backend,),
+        ),
+    )
+end
 CTSolvers.Strategies.options(s::MockIpopt) = s.options
 
 function MockIpopt(; mode::Symbol=:strict, kwargs...)
@@ -111,7 +113,7 @@ end
 const MOCK_REGISTRY = CTSolvers.create_registry(
     CTDirect.AbstractDiscretizer => (MockCollocation,),
     CTSolvers.AbstractNLPModeler => (MockADNLP,),
-    CTSolvers.AbstractNLPSolver  => (MockIpopt,),
+    CTSolvers.AbstractNLPSolver => (MockIpopt,),
 )
 
 const MOCK_METHOD = (:collocation, :adnlp, :ipopt, :cpu)
@@ -130,11 +132,9 @@ struct MockSolution2 <: CTModels.AbstractSolution
     solver
 end
 
-CommonSolve.solve(
-    ::MockOCP2, ::CTModels.AbstractInitialGuess,
-    d::RoutingMockDiscretizer, m::RoutingMockModeler, s::RoutingMockSolver;
-    display::Bool
-)::MockSolution2 = MockSolution2(d, m, s)
+CommonSolve.solve(::MockOCP2, ::CTModels.AbstractInitialGuess, d::RoutingMockDiscretizer, m::RoutingMockModeler, s::RoutingMockSolver; display::Bool)::MockSolution2 = MockSolution2(
+    d, m, s
+)
 
 # ============================================================================
 # Test function
@@ -155,8 +155,8 @@ function test_descriptive_routing()
             Test.@test haskey(fam, :modeler)
             Test.@test haskey(fam, :solver)
             Test.@test fam.discretizer === CTDirect.AbstractDiscretizer
-            Test.@test fam.modeler     === CTSolvers.AbstractNLPModeler
-            Test.@test fam.solver      === CTSolvers.AbstractNLPSolver
+            Test.@test fam.modeler === CTSolvers.AbstractNLPModeler
+            Test.@test fam.solver === CTSolvers.AbstractNLPSolver
         end
 
         # ====================================================================
@@ -191,8 +191,7 @@ function test_descriptive_routing()
 
         Test.@testset "_route_descriptive_options - unambiguous auto-routing" begin
             routed = OptimalControl._route_descriptive_options(
-                MOCK_METHOD, MOCK_REGISTRY,
-                pairs((; grid_size=200, max_iter=500))
+                MOCK_METHOD, MOCK_REGISTRY, pairs((; grid_size=200, max_iter=500))
             )
 
             Test.@test routed.strategies.discretizer[:grid_size] == 200
@@ -202,8 +201,9 @@ function test_descriptive_routing()
 
         Test.@testset "_route_descriptive_options - single strategy disambiguation" begin
             routed = OptimalControl._route_descriptive_options(
-                MOCK_METHOD, MOCK_REGISTRY,
-                pairs((; backend=CTSolvers.route_to(adnlp=:sparse)))
+                MOCK_METHOD,
+                MOCK_REGISTRY,
+                pairs((; backend=CTSolvers.route_to(adnlp=:sparse))),
             )
 
             Test.@test routed.strategies.modeler[:backend] === :sparse
@@ -212,18 +212,18 @@ function test_descriptive_routing()
 
         Test.@testset "_route_descriptive_options - multi-strategy disambiguation" begin
             routed = OptimalControl._route_descriptive_options(
-                MOCK_METHOD, MOCK_REGISTRY,
-                pairs((; backend=CTSolvers.route_to(adnlp=:sparse, ipopt=:gpu)))
+                MOCK_METHOD,
+                MOCK_REGISTRY,
+                pairs((; backend=CTSolvers.route_to(adnlp=:sparse, ipopt=:gpu))),
             )
 
             Test.@test routed.strategies.modeler[:backend] === :sparse
-            Test.@test routed.strategies.solver[:backend]  === :gpu
+            Test.@test routed.strategies.solver[:backend] === :gpu
         end
 
         Test.@testset "_route_descriptive_options - alias auto-routing" begin
             routed = OptimalControl._route_descriptive_options(
-                MOCK_METHOD, MOCK_REGISTRY,
-                pairs((; adnlp_backend=:sparse))
+                MOCK_METHOD, MOCK_REGISTRY, pairs((; adnlp_backend=:sparse))
             )
 
             Test.@test routed.strategies.modeler[:adnlp_backend] === :sparse
@@ -232,15 +232,13 @@ function test_descriptive_routing()
 
         Test.@testset "_route_descriptive_options - error on unknown option" begin
             Test.@test_throws CTBase.IncorrectArgument OptimalControl._route_descriptive_options(
-                MOCK_METHOD, MOCK_REGISTRY,
-                pairs((; totally_unknown=42))
+                MOCK_METHOD, MOCK_REGISTRY, pairs((; totally_unknown=42))
             )
         end
 
         Test.@testset "_route_descriptive_options - error on ambiguous option" begin
             Test.@test_throws CTBase.IncorrectArgument OptimalControl._route_descriptive_options(
-                MOCK_METHOD, MOCK_REGISTRY,
-                pairs((; backend=:sparse))
+                MOCK_METHOD, MOCK_REGISTRY, pairs((; backend=:sparse))
             )
         end
 
@@ -258,11 +256,11 @@ function test_descriptive_routing()
             )
 
             Test.@test components.discretizer isa RoutingMockDiscretizer
-            Test.@test components.modeler     isa RoutingMockModeler
-            Test.@test components.solver      isa RoutingMockSolver
+            Test.@test components.modeler isa RoutingMockModeler
+            Test.@test components.solver isa RoutingMockSolver
             Test.@test components.discretizer isa MockCollocation
-            Test.@test components.modeler     isa MockADNLP
-            Test.@test components.solver      isa MockIpopt
+            Test.@test components.modeler isa MockADNLP
+            Test.@test components.solver isa MockIpopt
             Test.@test components.initial_guess isa MockInit2
             Test.@test components.display == true
         end
@@ -270,8 +268,7 @@ function test_descriptive_routing()
         Test.@testset "_build_components_from_routed - options passed through" begin
             ocp = MockOCP2()
             routed = OptimalControl._route_descriptive_options(
-                MOCK_METHOD, MOCK_REGISTRY,
-                pairs((; grid_size=42, max_iter=7))
+                MOCK_METHOD, MOCK_REGISTRY, pairs((; grid_size=42, max_iter=7))
             )
             components = OptimalControl._build_components_from_routed(
                 ocp, MOCK_METHOD, MOCK_REGISTRY, routed
@@ -284,15 +281,16 @@ function test_descriptive_routing()
         Test.@testset "_build_components_from_routed - disambiguation passed through" begin
             ocp = MockOCP2()
             routed = OptimalControl._route_descriptive_options(
-                MOCK_METHOD, MOCK_REGISTRY,
-                pairs((; backend=CTSolvers.route_to(adnlp=:sparse, ipopt=:gpu)))
+                MOCK_METHOD,
+                MOCK_REGISTRY,
+                pairs((; backend=CTSolvers.route_to(adnlp=:sparse, ipopt=:gpu))),
             )
             components = OptimalControl._build_components_from_routed(
                 ocp, MOCK_METHOD, MOCK_REGISTRY, routed
             )
 
             Test.@test CTSolvers.option_value(components.modeler, :backend) === :sparse
-            Test.@test CTSolvers.option_value(components.solver,  :backend) === :gpu
+            Test.@test CTSolvers.option_value(components.solver, :backend) === :gpu
         end
 
         # ====================================================================
@@ -304,7 +302,7 @@ function test_descriptive_routing()
                 # Should be allocation-free
                 allocs = Test.@allocated OptimalControl._descriptive_families()
                 Test.@test allocs == 0
-                
+
                 # Type stability
                 Test.@test_nowarn Test.@inferred OptimalControl._descriptive_families()
             end
@@ -313,14 +311,14 @@ function test_descriptive_routing()
                 # Small allocation for vector creation
                 allocs = Test.@allocated OptimalControl._descriptive_action_defs()
                 Test.@test allocs < 1000
-                
+
                 # Type stability
                 Test.@test_nowarn Test.@inferred OptimalControl._descriptive_action_defs()
             end
 
             Test.@testset "_route_descriptive_options Performance" begin
                 kwargs = pairs((; grid_size=100, max_iter=500, display=false))
-                
+
                 # Test allocation characteristics - adjust limit based on actual measurement
                 allocs = Test.@allocated OptimalControl._route_descriptive_options(
                     MOCK_METHOD, MOCK_REGISTRY, kwargs
@@ -333,7 +331,7 @@ function test_descriptive_routing()
                 routed = OptimalControl._route_descriptive_options(
                     MOCK_METHOD, MOCK_REGISTRY, pairs((; grid_size=50))
                 )
-                
+
                 # Test allocation characteristics
                 allocs = Test.@allocated OptimalControl._build_components_from_routed(
                     ocp, MOCK_METHOD, MOCK_REGISTRY, routed
@@ -350,7 +348,7 @@ function test_descriptive_routing()
             Test.@testset "Empty Registry Handling" begin
                 # Test with empty registry (should error gracefully)
                 empty_registry = CTSolvers.create_registry()
-                
+
                 Test.@test_throws Exception OptimalControl._route_descriptive_options(
                     MOCK_METHOD, empty_registry, pairs(NamedTuple())
                 )
@@ -374,11 +372,11 @@ function test_descriptive_routing()
                     backend=CTSolvers.route_to(adnlp=:sparse),  # Properly disambiguated
                     # Add more valid options as needed
                 ))
-                
+
                 routed = OptimalControl._route_descriptive_options(
                     MOCK_METHOD, MOCK_REGISTRY, many_kwargs
                 )
-                
+
                 Test.@test haskey(routed, :action)
                 Test.@test haskey(routed, :strategies)
                 Test.@test routed.action.display isa CTSolvers.OptionValue
@@ -398,7 +396,7 @@ function test_descriptive_routing()
                 routed = OptimalControl._route_descriptive_options(
                     cpu_method, MOCK_REGISTRY, pairs((; grid_size=100))
                 )
-                
+
                 Test.@test haskey(routed, :strategies)
                 Test.@test routed.strategies.discretizer[:grid_size] == 100
             end
@@ -407,7 +405,7 @@ function test_descriptive_routing()
                 # Test with GPU-capable methods (if supported by mocks)
                 # For now, test that the parameter is handled correctly
                 gpu_method = (:collocation, :adnlp, :ipopt, :gpu)
-                
+
                 # This might not work with current mocks, but should not crash
                 try
                     routed = OptimalControl._route_descriptive_options(
@@ -424,7 +422,7 @@ function test_descriptive_routing()
                 # Test that parameter information is correctly resolved
                 families = OptimalControl._descriptive_families()
                 resolved = CTSolvers.resolve_method(MOCK_METHOD, families, MOCK_REGISTRY)
-                
+
                 Test.@test resolved isa CTSolvers.ResolvedMethod
                 # Parameter might be nothing if not explicitly supported by mocks
                 Test.@test resolved.parameter === :cpu || resolved.parameter === nothing
@@ -437,44 +435,43 @@ function test_descriptive_routing()
         # ====================================================================
 
         Test.@testset "solve_descriptive - complete description, no options" begin
-            ocp  = MockOCP2()
+            ocp = MockOCP2()
 
             sol = OptimalControl.solve_descriptive(
-                ocp, :collocation, :adnlp, :ipopt;
-                display  = false,
-                registry = MOCK_REGISTRY,
+                ocp, :collocation, :adnlp, :ipopt; display=false, registry=MOCK_REGISTRY
             )
 
             Test.@test sol isa MockSolution2
             Test.@test sol.discretizer isa MockCollocation
-            Test.@test sol.modeler     isa MockADNLP
-            Test.@test sol.solver      isa MockIpopt
+            Test.@test sol.modeler isa MockADNLP
+            Test.@test sol.solver isa MockIpopt
         end
 
         Test.@testset "solve_descriptive - partial description completed" begin
-            ocp  = MockOCP2()
+            ocp = MockOCP2()
 
             sol = OptimalControl.solve_descriptive(
-                ocp, :collocation;
-                display  = false,
-                registry = MOCK_REGISTRY,
+                ocp, :collocation; display=false, registry=MOCK_REGISTRY
             )
 
             Test.@test sol isa MockSolution2
             Test.@test sol.discretizer isa MockCollocation
-            Test.@test sol.modeler     isa MockADNLP
-            Test.@test sol.solver      isa MockIpopt
+            Test.@test sol.modeler isa MockADNLP
+            Test.@test sol.solver isa MockIpopt
         end
 
         Test.@testset "solve_descriptive - options routed correctly" begin
-            ocp  = MockOCP2()
+            ocp = MockOCP2()
 
             sol = OptimalControl.solve_descriptive(
-                ocp, :collocation, :adnlp, :ipopt;
-                display  = false,
-                registry = MOCK_REGISTRY,
-                grid_size = 42,
-                max_iter  = 7,
+                ocp,
+                :collocation,
+                :adnlp,
+                :ipopt;
+                display=false,
+                registry=MOCK_REGISTRY,
+                grid_size=42,
+                max_iter=7,
             )
 
             Test.@test CTSolvers.option_value(sol.discretizer, :grid_size) == 42
@@ -482,27 +479,33 @@ function test_descriptive_routing()
         end
 
         Test.@testset "solve_descriptive - disambiguation via route_to" begin
-            ocp  = MockOCP2()
+            ocp = MockOCP2()
 
             sol = OptimalControl.solve_descriptive(
-                ocp, :collocation, :adnlp, :ipopt;
-                display  = false,
-                registry = MOCK_REGISTRY,
-                backend  = CTSolvers.route_to(adnlp=:sparse, ipopt=:gpu),
+                ocp,
+                :collocation,
+                :adnlp,
+                :ipopt;
+                display=false,
+                registry=MOCK_REGISTRY,
+                backend=CTSolvers.route_to(adnlp=:sparse, ipopt=:gpu),
             )
 
             Test.@test CTSolvers.option_value(sol.modeler, :backend) === :sparse
-            Test.@test CTSolvers.option_value(sol.solver,  :backend) === :gpu
+            Test.@test CTSolvers.option_value(sol.solver, :backend) === :gpu
         end
 
         Test.@testset "solve_descriptive - error on unknown option" begin
             ocp = MockOCP2()
 
             Test.@test_throws CTBase.IncorrectArgument OptimalControl.solve_descriptive(
-                ocp, :collocation, :adnlp, :ipopt;
-                display    = false,
-                registry   = MOCK_REGISTRY,
-                bad_option = 99,
+                ocp,
+                :collocation,
+                :adnlp,
+                :ipopt;
+                display=false,
+                registry=MOCK_REGISTRY,
+                bad_option=99,
             )
         end
 
@@ -510,22 +513,28 @@ function test_descriptive_routing()
             ocp = MockOCP2()
 
             Test.@test_throws CTBase.IncorrectArgument OptimalControl.solve_descriptive(
-                ocp, :collocation, :adnlp, :ipopt;
-                display  = false,
-                registry = MOCK_REGISTRY,
-                backend  = :sparse,
+                ocp,
+                :collocation,
+                :adnlp,
+                :ipopt;
+                display=false,
+                registry=MOCK_REGISTRY,
+                backend=:sparse,
             )
         end
 
         Test.@testset "solve_descriptive - initial_guess alias 'init'" begin
-            ocp  = MockOCP2()
+            ocp = MockOCP2()
             init = MockInit2()
 
             sol = OptimalControl.solve_descriptive(
-                ocp, :collocation, :adnlp, :ipopt;
-                init     = init,
-                display  = false,
-                registry = MOCK_REGISTRY,
+                ocp,
+                :collocation,
+                :adnlp,
+                :ipopt;
+                init=init,
+                display=false,
+                registry=MOCK_REGISTRY,
             )
             Test.@test sol isa MockSolution2
         end

@@ -53,7 +53,7 @@ function get_strategy_registry()::CTSolvers.StrategyRegistry
         ),
         CTSolvers.AbstractNLPModeler => (
             (CTSolvers.ADNLP, [CTSolvers.CPU]),
-            (CTSolvers.Exa, [CTSolvers.CPU, CTSolvers.GPU])
+            (CTSolvers.Exa, [CTSolvers.CPU, CTSolvers.GPU]),
         ),
         CTSolvers.AbstractNLPSolver => (
             (CTSolvers.Ipopt, [CTSolvers.CPU]),

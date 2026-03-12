@@ -1,8 +1,7 @@
 # To trigger CTDirectExtADNLP and CTDirectExtExa
 using ADNLPModels: ADNLPModels
 
-import ExaModels:
-    ExaModels #,
+import ExaModels: ExaModels #,
 #     ExaModel,
 #     ExaCore,
 #     variable,

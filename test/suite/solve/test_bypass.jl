@@ -8,13 +8,13 @@
 
 module TestBypassMechanism
 
-import Test
-import OptimalControl
-import CTModels
-import CTDirect
-import CTSolvers
-import CTBase
-import CommonSolve
+using Test: Test
+using OptimalControl: OptimalControl
+using CTModels: CTModels
+using CTDirect: CTDirect
+using CTSolvers: CTSolvers
+using CTBase: CTBase
+using CommonSolve: CommonSolve
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
@@ -34,9 +34,13 @@ struct MockBypassDiscretizer <: CTDirect.AbstractDiscretizer
 end
 
 CTSolvers.id(::Type{MockBypassDiscretizer}) = :collocation
-CTSolvers.metadata(::Type{MockBypassDiscretizer}) = CTSolvers.StrategyMetadata(
-    CTSolvers.OptionDefinition(name=:grid_size, type=Int, default=100, description="Grid size"),
-)
+function CTSolvers.metadata(::Type{MockBypassDiscretizer})
+    CTSolvers.StrategyMetadata(
+        CTSolvers.OptionDefinition(
+            name=:grid_size, type=Int, default=100, description="Grid size"
+        ),
+    )
+end
 CTSolvers.options(s::MockBypassDiscretizer) = s.options
 
 function MockBypassDiscretizer(; kwargs...)
@@ -49,9 +53,13 @@ struct MockBypassModeler <: CTSolvers.AbstractNLPModeler
 end
 
 CTSolvers.id(::Type{MockBypassModeler}) = :adnlp
-CTSolvers.metadata(::Type{MockBypassModeler}) = CTSolvers.StrategyMetadata(
-    CTSolvers.OptionDefinition(name=:backend, type=Symbol, default=:dense, description="Backend"),
-)
+function CTSolvers.metadata(::Type{MockBypassModeler})
+    CTSolvers.StrategyMetadata(
+        CTSolvers.OptionDefinition(
+            name=:backend, type=Symbol, default=:dense, description="Backend"
+        ),
+    )
+end
 CTSolvers.options(s::MockBypassModeler) = s.options
 
 function MockBypassModeler(; kwargs...)
@@ -64,9 +72,13 @@ struct MockBypassSolver <: CTSolvers.AbstractNLPSolver
 end
 
 CTSolvers.id(::Type{MockBypassSolver}) = :ipopt
-CTSolvers.metadata(::Type{MockBypassSolver}) = CTSolvers.StrategyMetadata(
-    CTSolvers.OptionDefinition(name=:max_iter, type=Int, default=1000, description="Max iterations"),
-)
+function CTSolvers.metadata(::Type{MockBypassSolver})
+    CTSolvers.StrategyMetadata(
+        CTSolvers.OptionDefinition(
+            name=:max_iter, type=Int, default=1000, description="Max iterations"
+        ),
+    )
+end
 CTSolvers.options(s::MockBypassSolver) = s.options
 
 function MockBypassSolver(; kwargs...)
@@ -79,7 +91,7 @@ function build_bypass_mock_registry()
     return CTSolvers.create_registry(
         CTDirect.AbstractDiscretizer => (MockBypassDiscretizer,),
         CTSolvers.AbstractNLPModeler => (MockBypassModeler,),
-        CTSolvers.AbstractNLPSolver  => (MockBypassSolver,)
+        CTSolvers.AbstractNLPSolver => (MockBypassSolver,),
     )
 end
 
@@ -96,7 +108,7 @@ function CommonSolve.solve(
     discretizer::CTDirect.AbstractDiscretizer,
     modeler::CTSolvers.AbstractNLPModeler,
     solver::CTSolvers.AbstractNLPSolver;
-    display::Bool
+    display::Bool,
 )::MockBypassSolution
     return MockBypassSolution(discretizer, modeler, solver)
 end
@@ -117,21 +129,27 @@ function test_bypass()
         Test.@testset "Descriptive Mode" begin
             Test.@testset "Error without bypass" begin
                 Test.@test_throws CTBase.Exceptions.IncorrectArgument OptimalControl.solve_descriptive(
-                    ocp, :collocation, :adnlp, :ipopt;
+                    ocp,
+                    :collocation,
+                    :adnlp,
+                    :ipopt;
                     initial_guess=init,
                     display=false,
                     registry=registry,
-                    unknown_opt=42
+                    unknown_opt=42,
                 )
             end
 
             Test.@testset "Success with route_to(strategy=bypass(val))" begin
                 sol = OptimalControl.solve_descriptive(
-                    ocp, :collocation, :adnlp, :ipopt;
+                    ocp,
+                    :collocation,
+                    :adnlp,
+                    :ipopt;
                     initial_guess=init,
                     display=false,
                     registry=registry,
-                    unknown_opt=CTSolvers.route_to(ipopt=CTSolvers.bypass(42))
+                    unknown_opt=CTSolvers.route_to(ipopt=CTSolvers.bypass(42)),
                 )
                 Test.@test sol isa MockBypassSolution
                 # The bypassed option should be inside the solver's options
@@ -143,11 +161,14 @@ function test_bypass()
 
             Test.@testset "Bypass on discretizer" begin
                 sol = OptimalControl.solve_descriptive(
-                    ocp, :collocation, :adnlp, :ipopt;
+                    ocp,
+                    :collocation,
+                    :adnlp,
+                    :ipopt;
                     initial_guess=init,
                     display=false,
                     registry=registry,
-                    disc_custom=CTSolvers.route_to(collocation=CTSolvers.bypass(:fine))
+                    disc_custom=CTSolvers.route_to(collocation=CTSolvers.bypass(:fine)),
                 )
                 Test.@test sol isa MockBypassSolution
                 Test.@test CTSolvers.has_option(sol.discretizer, :disc_custom)
@@ -156,11 +177,14 @@ function test_bypass()
 
             Test.@testset "Bypass on modeler" begin
                 sol = OptimalControl.solve_descriptive(
-                    ocp, :collocation, :adnlp, :ipopt;
+                    ocp,
+                    :collocation,
+                    :adnlp,
+                    :ipopt;
                     initial_guess=init,
                     display=false,
                     registry=registry,
-                    mod_custom=CTSolvers.route_to(adnlp=CTSolvers.bypass("sparse_mode"))
+                    mod_custom=CTSolvers.route_to(adnlp=CTSolvers.bypass("sparse_mode")),
                 )
                 Test.@test sol isa MockBypassSolution
                 Test.@test CTSolvers.has_option(sol.modeler, :mod_custom)
@@ -169,14 +193,16 @@ function test_bypass()
 
             Test.@testset "Multi-bypass: two strategies simultaneously" begin
                 sol = OptimalControl.solve_descriptive(
-                    ocp, :collocation, :adnlp, :ipopt;
+                    ocp,
+                    :collocation,
+                    :adnlp,
+                    :ipopt;
                     initial_guess=init,
                     display=false,
                     registry=registry,
                     shared_opt=CTSolvers.route_to(
-                        ipopt=CTSolvers.bypass(100),
-                        adnlp=CTSolvers.bypass(:dense)
-                    )
+                        ipopt=CTSolvers.bypass(100), adnlp=CTSolvers.bypass(:dense)
+                    ),
                 )
                 Test.@test sol isa MockBypassSolution
                 Test.@test CTSolvers.has_option(sol.solver, :shared_opt)
@@ -187,11 +213,14 @@ function test_bypass()
 
             Test.@testset "Bypass with nothing value" begin
                 sol = OptimalControl.solve_descriptive(
-                    ocp, :collocation, :adnlp, :ipopt;
+                    ocp,
+                    :collocation,
+                    :adnlp,
+                    :ipopt;
                     initial_guess=init,
                     display=false,
                     registry=registry,
-                    nullable_opt=CTSolvers.route_to(ipopt=CTSolvers.bypass(nothing))
+                    nullable_opt=CTSolvers.route_to(ipopt=CTSolvers.bypass(nothing)),
                 )
                 Test.@test sol isa MockBypassSolution
                 Test.@test CTSolvers.has_option(sol.solver, :nullable_opt)
@@ -212,7 +241,7 @@ function test_bypass()
                     registry=registry,
                     discretizer=MockBypassDiscretizer(),
                     modeler=MockBypassModeler(),
-                    solver=solver
+                    solver=solver,
                 )
                 Test.@test sol isa MockBypassSolution
                 Test.@test CTSolvers.has_option(sol.solver, :unknown_opt)
@@ -226,10 +255,13 @@ function test_bypass()
         Test.@testset "Top-level Dispatch" begin
             Test.@testset "Descriptive via solve" begin
                 sol = OptimalControl.solve(
-                    ocp, :collocation, :adnlp, :ipopt;
+                    ocp,
+                    :collocation,
+                    :adnlp,
+                    :ipopt;
                     display=false,
                     registry=registry,
-                    custom_backend_opt=CTSolvers.route_to(ipopt=CTSolvers.bypass(99))
+                    custom_backend_opt=CTSolvers.route_to(ipopt=CTSolvers.bypass(99)),
                 )
                 Test.@test sol isa MockBypassSolution
                 Test.@test CTSolvers.has_option(sol.solver, :custom_backend_opt)
@@ -244,7 +276,7 @@ function test_bypass()
                     registry=registry,
                     discretizer=MockBypassDiscretizer(),
                     modeler=MockBypassModeler(),
-                    solver=solver
+                    solver=solver,
                 )
                 Test.@test sol isa MockBypassSolution
                 Test.@test CTSolvers.has_option(sol.solver, :custom_backend_opt)
