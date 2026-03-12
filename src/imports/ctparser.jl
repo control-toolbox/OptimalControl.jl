@@ -1,5 +1,3 @@
 # CTParser reexports
 
-@reexport import CTParser:
-    @def,
-    @init
+@reexport import CTParser: @def, @init

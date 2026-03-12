@@ -7,8 +7,8 @@
 
 module TestSolveMode
 
-import Test
-import OptimalControl
+using Test: Test
+using OptimalControl: OptimalControl
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true

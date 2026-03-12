@@ -23,7 +23,6 @@ function generate_api_reference(src_dir::String, ext_dir::String)
     EXCLUDE_SYMBOLS = Symbol[:include, :eval]
 
     pages = [
-
         CTBase.automatic_reference_documentation(;
             subdirectory="api",
             primary_modules=[
@@ -52,7 +51,6 @@ function generate_api_reference(src_dir::String, ext_dir::String)
             title_in_menu="Private",
             filename="private",
         ),
-
     ]
 
     return pages

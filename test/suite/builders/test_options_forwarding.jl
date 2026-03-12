@@ -8,11 +8,11 @@
 
 module TestOptionsForwarding
 
-import Test
-import OptimalControl
-import ADNLPModels
-import ExaModels
-import CUDA
+using Test: Test
+using OptimalControl: OptimalControl
+using ADNLPModels: ADNLPModels
+using ExaModels: ExaModels
+using CUDA: CUDA
 
 # CUDA availability check
 is_cuda_on() = CUDA.functional()
@@ -88,8 +88,12 @@ function test_options_forwarding()
             Test.@testset "backend" begin
                 modeler_default = OptimalControl.ADNLP(backend=:default)
                 modeler_optimized = OptimalControl.ADNLP(backend=:optimized)
-                nlp_default = OptimalControl.nlp_model(docp, normalized_init, modeler_default)
-                nlp_optimized = OptimalControl.nlp_model(docp, normalized_init, modeler_optimized)
+                nlp_default = OptimalControl.nlp_model(
+                    docp, normalized_init, modeler_default
+                )
+                nlp_optimized = OptimalControl.nlp_model(
+                    docp, normalized_init, modeler_optimized
+                )
                 Test.@test typeof(nlp_default.adbackend) != typeof(nlp_optimized.adbackend)
             end
         end
@@ -107,7 +111,7 @@ function test_options_forwarding()
             Test.@testset "gradient_backend" begin
                 Test.@test begin
                     modeler = OptimalControl.ADNLP(
-                        gradient_backend=ADNLPModels.ReverseDiffADGradient,
+                        gradient_backend=ADNLPModels.ReverseDiffADGradient
                     )
                     nlp = OptimalControl.nlp_model(docp, normalized_init, modeler)
                     nlp.adbackend.gradient_backend isa ADNLPModels.ReverseDiffADGradient
@@ -118,7 +122,7 @@ function test_options_forwarding()
             Test.@testset "hessian_backend" begin
                 Test.@test begin
                     modeler = OptimalControl.ADNLP(
-                        hessian_backend=ADNLPModels.EmptyADbackend,
+                        hessian_backend=ADNLPModels.EmptyADbackend
                     )
                     nlp = OptimalControl.nlp_model(docp, normalized_init, modeler)
                     nlp.adbackend.hessian_backend isa ADNLPModels.EmptyADbackend
@@ -129,7 +133,7 @@ function test_options_forwarding()
             Test.@testset "jacobian_backend" begin
                 Test.@test begin
                     modeler = OptimalControl.ADNLP(
-                        jacobian_backend=ADNLPModels.EmptyADbackend,
+                        jacobian_backend=ADNLPModels.EmptyADbackend
                     )
                     nlp = OptimalControl.nlp_model(docp, normalized_init, modeler)
                     nlp.adbackend.jacobian_backend isa ADNLPModels.EmptyADbackend
@@ -140,7 +144,7 @@ function test_options_forwarding()
             Test.@testset "hprod_backend" begin
                 Test.@test begin
                     modeler = OptimalControl.ADNLP(
-                        hprod_backend=ADNLPModels.ReverseDiffADHvprod,
+                        hprod_backend=ADNLPModels.ReverseDiffADHvprod
                     )
                     nlp = OptimalControl.nlp_model(docp, normalized_init, modeler)
                     nlp.adbackend.hprod_backend isa ADNLPModels.ReverseDiffADHvprod
@@ -151,7 +155,7 @@ function test_options_forwarding()
             Test.@testset "jprod_backend" begin
                 Test.@test begin
                     modeler = OptimalControl.ADNLP(
-                        jprod_backend=ADNLPModels.ReverseDiffADJprod,
+                        jprod_backend=ADNLPModels.ReverseDiffADJprod
                     )
                     nlp = OptimalControl.nlp_model(docp, normalized_init, modeler)
                     nlp.adbackend.jprod_backend isa ADNLPModels.ReverseDiffADJprod
@@ -162,7 +166,7 @@ function test_options_forwarding()
             Test.@testset "jtprod_backend" begin
                 Test.@test begin
                     modeler = OptimalControl.ADNLP(
-                        jtprod_backend=ADNLPModels.ReverseDiffADJtprod,
+                        jtprod_backend=ADNLPModels.ReverseDiffADJtprod
                     )
                     nlp = OptimalControl.nlp_model(docp, normalized_init, modeler)
                     nlp.adbackend.jtprod_backend isa ADNLPModels.ReverseDiffADJtprod
@@ -173,14 +177,13 @@ function test_options_forwarding()
             Test.@testset "ghjvprod_backend" begin
                 Test.@test begin
                     modeler = OptimalControl.ADNLP(
-                        ghjvprod_backend=ADNLPModels.EmptyADbackend,
+                        ghjvprod_backend=ADNLPModels.EmptyADbackend
                     )
                     nlp = OptimalControl.nlp_model(docp, normalized_init, modeler)
                     nlp.adbackend.ghjvprod_backend isa ADNLPModels.EmptyADbackend
                 end
             end
         end
-
     end
 end
 

@@ -150,7 +150,6 @@ Draft = false
 =#
 draft = true  # Draft mode: if true, @example blocks in markdown are not executed
 
-
 # ═══════════════════════════════════════════════════════════════════════════════
 # Load extensions
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -179,7 +178,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
     api_pages_final = copy(api_pages)
     pushfirst!(api_pages_final, "Public" => joinpath("api", "public.md"))
     push!(api_pages_final, "Subpackages" => joinpath("api", "subpackages.md"))
-    
+
     # build documentation
     makedocs(;
         draft=draft,
@@ -195,8 +194,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "assets/custom.css",
             ],
             size_threshold_ignore=[
-                joinpath("api", "private.md"),
-                joinpath("api", "public.md"),
+                joinpath("api", "private.md"), joinpath("api", "public.md")
             ],
         ),
         pages=[

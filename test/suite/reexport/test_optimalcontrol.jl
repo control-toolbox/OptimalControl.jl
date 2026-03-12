@@ -7,7 +7,7 @@
 
 module TestOptimalControl
 
-import Test
+using Test: Test
 using OptimalControl # using is mandatory since we test exported symbols
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
@@ -18,9 +18,7 @@ const CurrentModule = TestOptimalControl
 function test_optimalcontrol()
     Test.@testset "OptimalControl exports" verbose = VERBOSE showtiming = SHOWTIMING begin
         Test.@testset "Functions" begin
-            for f in (
-                :methods,
-            )
+            for f in (:methods,)
                 Test.@testset "$f" begin
                     Test.@test isdefined(OptimalControl, f)
                     Test.@test isdefined(CurrentModule, f)

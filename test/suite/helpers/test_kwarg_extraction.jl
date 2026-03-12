@@ -8,11 +8,11 @@
 
 module TestKwargExtraction
 
-import Test
-import OptimalControl
-import CTDirect
-import CTSolvers
-import CTBase
+using Test: Test
+using OptimalControl: OptimalControl
+using CTDirect: CTDirect
+using CTSolvers: CTSolvers
+using CTBase: CTBase
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
@@ -23,8 +23,8 @@ struct MockModeler <: CTSolvers.AbstractNLPModeler end
 struct MockSolver <: CTSolvers.AbstractNLPSolver end
 
 const DISC = MockDiscretizer()
-const MOD  = MockModeler()
-const SOL  = MockSolver()
+const MOD = MockModeler()
+const SOL = MockSolver()
 
 function test_kwarg_extraction()
     Test.@testset "KwargExtraction" verbose=VERBOSE showtiming=SHOWTIMING begin
@@ -47,9 +47,15 @@ function test_kwarg_extraction()
 
         Test.@testset "Returns nothing for empty kwargs" begin
             kw = pairs(NamedTuple())
-            Test.@test isnothing(OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer))
-            Test.@test isnothing(OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPModeler))
-            Test.@test isnothing(OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPSolver))
+            Test.@test isnothing(
+                OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
+            )
+            Test.@test isnothing(
+                OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPModeler)
+            )
+            Test.@test isnothing(
+                OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPSolver)
+            )
         end
 
         # ====================================================================
@@ -58,9 +64,12 @@ function test_kwarg_extraction()
 
         Test.@testset "Extracts all three component types" begin
             kw = pairs((; discretizer=DISC, modeler=MOD, solver=SOL, print_level=0))
-            Test.@test OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer) === DISC
-            Test.@test OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPModeler) === MOD
-            Test.@test OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPSolver) === SOL
+            Test.@test OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer) ===
+                DISC
+            Test.@test OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPModeler) ===
+                MOD
+            Test.@test OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPSolver) ===
+                SOL
         end
 
         # ====================================================================
@@ -76,8 +85,12 @@ function test_kwarg_extraction()
 
         Test.@testset "Non-matching types ignored" begin
             kw = pairs((; x=42, y="hello", z=3.14))
-            Test.@test isnothing(OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer))
-            Test.@test isnothing(OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPModeler))
+            Test.@test isnothing(
+                OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
+            )
+            Test.@test isnothing(
+                OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPModeler)
+            )
         end
 
         # ====================================================================
@@ -87,7 +100,7 @@ function test_kwarg_extraction()
         Test.@testset "Return type correctness" begin
             kw = pairs((; discretizer=DISC))
             result = OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
-            Test.@test result isa Union{CTDirect.AbstractDiscretizer, Nothing}
+            Test.@test result isa Union{CTDirect.AbstractDiscretizer,Nothing}
         end
 
         Test.@testset "Nothing return type" begin
@@ -102,7 +115,9 @@ function test_kwarg_extraction()
         Test.@testset "Action Kwarg Extraction" begin
             Test.@testset "Extracts primary name" begin
                 kw = pairs((; initial_guess=42, display=false))
-                val, rest = OptimalControl._extract_action_kwarg(kw, OptimalControl._INITIAL_GUESS_ALIASES, nothing)
+                val, rest = OptimalControl._extract_action_kwarg(
+                    kw, OptimalControl._INITIAL_GUESS_ALIASES, nothing
+                )
                 Test.@test val == 42
                 Test.@test haskey(rest, :display)
                 Test.@test !haskey(rest, :initial_guess)
@@ -110,7 +125,9 @@ function test_kwarg_extraction()
 
             Test.@testset "Extracts alias 1" begin
                 kw = pairs((; init=42, display=false))
-                val, rest = OptimalControl._extract_action_kwarg(kw, OptimalControl._INITIAL_GUESS_ALIASES, nothing)
+                val, rest = OptimalControl._extract_action_kwarg(
+                    kw, OptimalControl._INITIAL_GUESS_ALIASES, nothing
+                )
                 Test.@test val == 42
                 Test.@test haskey(rest, :display)
                 Test.@test !haskey(rest, :init)
@@ -118,7 +135,9 @@ function test_kwarg_extraction()
 
             Test.@testset "No alias 'i' (removed)" begin
                 kw = pairs((; i=42, display=false))
-                val, rest = OptimalControl._extract_action_kwarg(kw, OptimalControl._INITIAL_GUESS_ALIASES, nothing)
+                val, rest = OptimalControl._extract_action_kwarg(
+                    kw, OptimalControl._INITIAL_GUESS_ALIASES, nothing
+                )
                 Test.@test val === nothing  # default, since :i is not recognized
                 Test.@test haskey(rest, :display)
                 Test.@test haskey(rest, :i)  # :i remains in remaining kwargs
@@ -126,14 +145,18 @@ function test_kwarg_extraction()
 
             Test.@testset "Returns default when not found" begin
                 kw = pairs((; display=false))
-                val, rest = OptimalControl._extract_action_kwarg(kw, OptimalControl._INITIAL_GUESS_ALIASES, :my_default)
+                val, rest = OptimalControl._extract_action_kwarg(
+                    kw, OptimalControl._INITIAL_GUESS_ALIASES, :my_default
+                )
                 Test.@test val === :my_default
                 Test.@test haskey(rest, :display)
             end
 
             Test.@testset "Throws on multiple aliases present" begin
                 kw = pairs((; initial_guess=42, init=43))
-                Test.@test_throws CTBase.IncorrectArgument OptimalControl._extract_action_kwarg(kw, OptimalControl._INITIAL_GUESS_ALIASES, nothing)
+                Test.@test_throws CTBase.IncorrectArgument OptimalControl._extract_action_kwarg(
+                    kw, OptimalControl._INITIAL_GUESS_ALIASES, nothing
+                )
             end
         end
 
@@ -145,25 +168,33 @@ function test_kwarg_extraction()
             Test.@testset "_extract_kwarg Performance" begin
                 # Test with matching type
                 kw = pairs((; discretizer=DISC, print_level=0))
-                
+
                 # Should be allocation-free for simple cases
-                allocs = Test.@allocated OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
+                allocs = Test.@allocated OptimalControl._extract_kwarg(
+                    kw, CTDirect.AbstractDiscretizer
+                )
                 Test.@test allocs == 0
-                
+
                 # Type stability
-                Test.@test_nowarn Test.@inferred OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
+                Test.@test_nowarn Test.@inferred OptimalControl._extract_kwarg(
+                    kw, CTDirect.AbstractDiscretizer
+                )
             end
 
             Test.@testset "_extract_kwarg Performance - No Match" begin
                 # Test with no matching type
                 kw = pairs((; print_level=0, max_iter=100))
-                
+
                 # Should be allocation-free
-                allocs = Test.@allocated OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
+                allocs = Test.@allocated OptimalControl._extract_kwarg(
+                    kw, CTDirect.AbstractDiscretizer
+                )
                 Test.@test allocs == 0
-                
+
                 # Type stability
-                Test.@test_nowarn Test.@inferred OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
+                Test.@test_nowarn Test.@inferred OptimalControl._extract_kwarg(
+                    kw, CTDirect.AbstractDiscretizer
+                )
             end
 
             Test.@testset "_extract_kwarg Performance - Large kwargs" begin
@@ -183,25 +214,33 @@ function test_kwarg_extraction()
                     option9=9,
                     option10=10,
                 ))
-                
+
                 # Should still be efficient
-                allocs = Test.@allocated OptimalControl._extract_kwarg(large_kw, CTDirect.AbstractDiscretizer)
+                allocs = Test.@allocated OptimalControl._extract_kwarg(
+                    large_kw, CTDirect.AbstractDiscretizer
+                )
                 Test.@test allocs < 1000  # Small allocation acceptable for large kwargs
-                
+
                 # Type stability
-                Test.@test_nowarn Test.@inferred OptimalControl._extract_kwarg(large_kw, CTDirect.AbstractDiscretizer)
+                Test.@test_nowarn Test.@inferred OptimalControl._extract_kwarg(
+                    large_kw, CTDirect.AbstractDiscretizer
+                )
             end
 
             Test.@testset "_extract_action_kwarg Performance" begin
                 # Test with primary name
                 kw = pairs((; initial_guess=42, display=false))
-                
+
                 # Small allocation expected for tuple reconstruction
-                allocs = Test.@allocated OptimalControl._extract_action_kwarg(kw, OptimalControl._INITIAL_GUESS_ALIASES, nothing)
+                allocs = Test.@allocated OptimalControl._extract_action_kwarg(
+                    kw, OptimalControl._INITIAL_GUESS_ALIASES, nothing
+                )
                 Test.@test allocs < 5000  # Adjusted from 1000
-                
+
                 # Type stability (complex return types make @inferred difficult)
-                val, rest = OptimalControl._extract_action_kwarg(kw, OptimalControl._INITIAL_GUESS_ALIASES, nothing)
+                val, rest = OptimalControl._extract_action_kwarg(
+                    kw, OptimalControl._INITIAL_GUESS_ALIASES, nothing
+                )
                 Test.@test val == 42
                 Test.@test !haskey(rest, :initial_guess)
             end
@@ -209,8 +248,10 @@ function test_kwarg_extraction()
             Test.@testset "_extract_action_kwarg Performance - Default" begin
                 # Test with default value
                 kw = pairs((; display=false))
-                
-                allocs = Test.@allocated OptimalControl._extract_action_kwarg(kw, OptimalControl._INITIAL_GUESS_ALIASES, :default)
+
+                allocs = Test.@allocated OptimalControl._extract_action_kwarg(
+                    kw, OptimalControl._INITIAL_GUESS_ALIASES, :default
+                )
                 Test.@test allocs < 5000  # Adjusted from 1000
             end
         end
@@ -230,7 +271,9 @@ function test_kwarg_extraction()
 
             Test.@testset "Single alias tuple" begin
                 kw = pairs((; initial_guess=42))
-                val, rest = OptimalControl._extract_action_kwarg(kw, (:initial_guess,), nothing)
+                val, rest = OptimalControl._extract_action_kwarg(
+                    kw, (:initial_guess,), nothing
+                )
                 Test.@test val == 42
                 Test.@test length(rest) == 0
             end
@@ -245,11 +288,11 @@ function test_kwarg_extraction()
             Test.@testset "Complex nested types" begin
                 # Test with more complex types
                 kw = pairs((; discretizer=DISC, some_string="hello", some_number=42))
-                
+
                 result1 = OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
                 result2 = OptimalControl._extract_kwarg(kw, String)
                 result3 = OptimalControl._extract_kwarg(kw, Int)
-                
+
                 Test.@test result1 === DISC
                 Test.@test result2 == "hello"
                 Test.@test result3 == 42
@@ -257,20 +300,24 @@ function test_kwarg_extraction()
 
             Test.@testset "Very large kwargs tuple" begin
                 # Test performance with very large number of kwargs
-                large_kwargs_dict = Dict{Symbol, Any}()
+                large_kwargs_dict = Dict{Symbol,Any}()
                 for i in 1:100
                     large_kwargs_dict[Symbol("option_$i")] = i
                 end
                 large_kwargs_dict[:discretizer] = DISC
-                
+
                 large_kw = pairs(NamedTuple(large_kwargs_dict))
-                
+
                 # Should still find the type efficiently
-                result = OptimalControl._extract_kwarg(large_kw, CTDirect.AbstractDiscretizer)
+                result = OptimalControl._extract_kwarg(
+                    large_kw, CTDirect.AbstractDiscretizer
+                )
                 Test.@test result === DISC
-                
+
                 # Reasonable allocation limit
-                allocs = Test.@allocated OptimalControl._extract_kwarg(large_kw, CTDirect.AbstractDiscretizer)
+                allocs = Test.@allocated OptimalControl._extract_kwarg(
+                    large_kw, CTDirect.AbstractDiscretizer
+                )
                 Test.@test allocs < 50000  # Adjusted from 10000 (38352 observed)
             end
         end
@@ -292,20 +339,24 @@ function test_kwarg_extraction()
                     tolerance=1e-6,
                     verbose=true,
                 ))
-                
+
                 # Extract components
                 disc = OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
                 mod = OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPModeler)
                 sol = OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPSolver)
-                
+
                 Test.@test disc === DISC
                 Test.@test mod === MOD
                 Test.@test sol === SOL
-                
+
                 # Extract action options
-                init_val, kw_without_init = OptimalControl._extract_action_kwarg(kw, OptimalControl._INITIAL_GUESS_ALIASES, nothing)
-                display_val, kw_final = OptimalControl._extract_action_kwarg(kw_without_init, (:display,), true)
-                
+                init_val, kw_without_init = OptimalControl._extract_action_kwarg(
+                    kw, OptimalControl._INITIAL_GUESS_ALIASES, nothing
+                )
+                display_val, kw_final = OptimalControl._extract_action_kwarg(
+                    kw_without_init, (:display,), true
+                )
+
                 Test.@test init_val === :zeros
                 Test.@test display_val == false
                 Test.@test !haskey(kw_final, :initial_guess)
@@ -316,21 +367,20 @@ function test_kwarg_extraction()
             Test.@testset "No explicit components scenario" begin
                 # Test when no components are provided (descriptive mode)
                 kw = pairs((
-                    initial_guess=:random,
-                    display=true,
-                    grid_size=50,
-                    max_iter=500,
+                    initial_guess=:random, display=true, grid_size=50, max_iter=500
                 ))
-                
+
                 disc = OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
                 mod = OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPModeler)
                 sol = OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPSolver)
-                
+
                 Test.@test isnothing(disc)
                 Test.@test isnothing(mod)
                 Test.@test isnothing(sol)
-                
-                init_val, kw_final = OptimalControl._extract_action_kwarg(kw, OptimalControl._INITIAL_GUESS_ALIASES, nothing)
+
+                init_val, kw_final = OptimalControl._extract_action_kwarg(
+                    kw, OptimalControl._INITIAL_GUESS_ALIASES, nothing
+                )
                 Test.@test init_val === :random
                 Test.@test !haskey(kw_final, :initial_guess)
             end

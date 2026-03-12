@@ -47,7 +47,7 @@ function solve_descriptive(
     ocp::CTModels.AbstractModel,
     description::Symbol...;
     registry::CTSolvers.StrategyRegistry,
-    kwargs...
+    kwargs...,
 )::CTModels.AbstractSolution
 
     # 1. Complete partial description → full (discretizer_id, modeler_id, solver_id) triplet
@@ -62,7 +62,8 @@ function solve_descriptive(
 
     # 4. Canonical solve (Layer 3)
     return CommonSolve.solve(
-        ocp, components.initial_guess,
+        ocp,
+        components.initial_guess,
         components.discretizer,
         components.modeler,
         components.solver;

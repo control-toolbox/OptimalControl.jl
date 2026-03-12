@@ -8,20 +8,20 @@
 
 module TestExplicit
 
-import Test
-import OptimalControl
-import CTModels
-import CTDirect
-import CTSolvers
-import CTBase
-import CommonSolve
+using Test: Test
+using OptimalControl: OptimalControl
+using CTModels: CTModels
+using CTDirect: CTDirect
+using CTSolvers: CTSolvers
+using CTBase: CTBase
+using CommonSolve: CommonSolve
 
 #
-import NLPModelsIpopt
-import MadNLP
-import MadNLPGPU
-import MadNCL
-import CUDA
+using NLPModelsIpopt: NLPModelsIpopt
+using MadNLP: MadNLP
+using MadNLPGPU: MadNLPGPU
+using MadNCL: MadNCL
+using CUDA: CUDA
 
 #
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
@@ -55,14 +55,7 @@ struct MockSolver <: CTSolvers.AbstractNLPSolver
     options::CTSolvers.StrategyOptions
 end
 
-CommonSolve.solve(
-    ::MockOCP,
-    ::MockInit,
-    ::MockDiscretizer,
-    ::MockModeler,
-    ::MockSolver;
-    display::Bool
-)::MockSolution = MockSolution()
+CommonSolve.solve(::MockOCP, ::MockInit, ::MockDiscretizer, ::MockModeler, ::MockSolver; display::Bool)::MockSolution = MockSolution()
 
 function test_explicit()
     Test.@testset "solve_explicit (contract tests with mocks)" verbose=VERBOSE showtiming=SHOWTIMING begin
@@ -84,7 +77,7 @@ function test_explicit()
                 modeler=mod,
                 solver=sol,
                 display=false,
-                registry=registry
+                registry=registry,
             )
             Test.@test result isa MockSolution
         end
@@ -94,18 +87,15 @@ function test_explicit()
         # ================================================================
         Test.@testset "Integration with real strategies" begin
             registry = OptimalControl.get_strategy_registry()
-            
+
             # Test with real test problems
-            problems = [
-                ("Beam", TestProblems.Beam()),
-                ("Goddard", TestProblems.Goddard()),
-            ]
-            
+            problems = [("Beam", TestProblems.Beam()), ("Goddard", TestProblems.Goddard())]
+
             for (pname, pb) in problems
                 Test.@testset "$pname" begin
                     # Build initial guess
                     init = OptimalControl.build_initial_guess(pb.ocp, pb.init)
-                    
+
                     Test.@testset "Complete components - real strategies" begin
                         result = OptimalControl.solve_explicit(
                             pb.ocp;
@@ -114,13 +104,13 @@ function test_explicit()
                             modeler=CTSolvers.ADNLP(),
                             solver=CTSolvers.Ipopt(),
                             display=false,
-                            registry=registry
+                            registry=registry,
                         )
                         Test.@test result isa CTModels.AbstractSolution
                         Test.@test OptimalControl.successful(result)
                         Test.@test OptimalControl.objective(result) ≈ pb.obj rtol=1e-2
                     end
-                    
+
                     Test.@testset "Partial components - completion" begin
                         # Test with only discretizer provided
                         result = OptimalControl.solve_explicit(
@@ -130,14 +120,13 @@ function test_explicit()
                             modeler=nothing,
                             solver=nothing,
                             display=false,
-                            registry=registry
+                            registry=registry,
                         )
                         Test.@test result isa CTModels.AbstractSolution
                         Test.@test OptimalControl.successful(result)
                     end
                 end
             end
-            
         end
     end
 end

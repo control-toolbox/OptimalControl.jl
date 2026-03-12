@@ -7,11 +7,11 @@
 
 module TestComponentChecks
 
-import Test
-import OptimalControl
-import CTDirect
-import CTSolvers
-import BenchmarkTools
+using Test: Test
+using OptimalControl: OptimalControl
+using CTDirect: CTDirect
+using CTSolvers: CTSolvers
+using BenchmarkTools: BenchmarkTools
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
@@ -61,13 +61,17 @@ function test_component_checks()
         end
 
         Test.@testset "All Missing" begin
-            Test.@test OptimalControl._has_complete_components(nothing, nothing, nothing) == false
+            Test.@test OptimalControl._has_complete_components(nothing, nothing, nothing) ==
+                false
         end
 
         Test.@testset "Two Missing" begin
-            Test.@test OptimalControl._has_complete_components(disc, nothing, nothing) == false
-            Test.@test OptimalControl._has_complete_components(nothing, mod, nothing) == false
-            Test.@test OptimalControl._has_complete_components(nothing, nothing, sol) == false
+            Test.@test OptimalControl._has_complete_components(disc, nothing, nothing) ==
+                false
+            Test.@test OptimalControl._has_complete_components(nothing, mod, nothing) ==
+                false
+            Test.@test OptimalControl._has_complete_components(nothing, nothing, sol) ==
+                false
         end
 
         Test.@testset "Determinism" begin
@@ -77,8 +81,12 @@ function test_component_checks()
         end
 
         Test.@testset "Type Stability" begin
-            Test.@test_nowarn Test.@inferred OptimalControl._has_complete_components(disc, mod, sol)
-            Test.@test_nowarn Test.@inferred OptimalControl._has_complete_components(nothing, mod, sol)
+            Test.@test_nowarn Test.@inferred OptimalControl._has_complete_components(
+                disc, mod, sol
+            )
+            Test.@test_nowarn Test.@inferred OptimalControl._has_complete_components(
+                nothing, mod, sol
+            )
         end
 
         Test.@testset "Edge Cases" begin
@@ -86,10 +94,10 @@ function test_component_checks()
             disc2 = MockDiscretizer(CTSolvers.StrategyOptions())
             mod2 = MockModeler(CTSolvers.StrategyOptions())
             sol2 = MockSolver(CTSolvers.StrategyOptions())
-            
+
             # Should still return true with different instances
             Test.@test OptimalControl._has_complete_components(disc2, mod2, sol2) == true
-            
+
             # Test mixed instances
             Test.@test OptimalControl._has_complete_components(disc, mod2, sol) == true
             Test.@test OptimalControl._has_complete_components(disc2, mod, sol2) == true
@@ -97,10 +105,14 @@ function test_component_checks()
 
         Test.@testset "Boolean Logic" begin
             # Test that the function correctly implements AND logic
-            Test.@test OptimalControl._has_complete_components(nothing, nothing, nothing) == false
-            Test.@test OptimalControl._has_complete_components(disc, nothing, nothing) == false
-            Test.@test OptimalControl._has_complete_components(nothing, mod, nothing) == false
-            Test.@test OptimalControl._has_complete_components(nothing, nothing, sol) == false
+            Test.@test OptimalControl._has_complete_components(nothing, nothing, nothing) ==
+                false
+            Test.@test OptimalControl._has_complete_components(disc, nothing, nothing) ==
+                false
+            Test.@test OptimalControl._has_complete_components(nothing, mod, nothing) ==
+                false
+            Test.@test OptimalControl._has_complete_components(nothing, nothing, sol) ==
+                false
             Test.@test OptimalControl._has_complete_components(disc, mod, nothing) == false
             Test.@test OptimalControl._has_complete_components(disc, nothing, sol) == false
             Test.@test OptimalControl._has_complete_components(nothing, mod, sol) == false
@@ -109,19 +121,31 @@ function test_component_checks()
 
         Test.@testset "Performance Characteristics" begin
             # Test that the function is indeed allocation-free
-            allocs1 = Test.@allocated OptimalControl._has_complete_components(disc, mod, sol)
-            allocs2 = Test.@allocated OptimalControl._has_complete_components(nothing, mod, sol)
-            allocs3 = Test.@allocated OptimalControl._has_complete_components(disc, nothing, sol)
-            allocs4 = Test.@allocated OptimalControl._has_complete_components(nothing, nothing, nothing)
-            
+            allocs1 = Test.@allocated OptimalControl._has_complete_components(
+                disc, mod, sol
+            )
+            allocs2 = Test.@allocated OptimalControl._has_complete_components(
+                nothing, mod, sol
+            )
+            allocs3 = Test.@allocated OptimalControl._has_complete_components(
+                disc, nothing, sol
+            )
+            allocs4 = Test.@allocated OptimalControl._has_complete_components(
+                nothing, nothing, nothing
+            )
+
             Test.@test allocs1 == 0
             Test.@test allocs2 == 0
             Test.@test allocs3 == 0
             Test.@test allocs4 == 0
-            
+
             # Test performance consistency across different inputs
-            BenchmarkTools.@benchmark OptimalControl._has_complete_components($disc, $mod, $sol)
-            BenchmarkTools.@benchmark OptimalControl._has_complete_components(nothing, $mod, $sol)
+            BenchmarkTools.@benchmark OptimalControl._has_complete_components(
+                $disc, $mod, $sol
+            )
+            BenchmarkTools.@benchmark OptimalControl._has_complete_components(
+                nothing, $mod, $sol
+            )
         end
     end
 end

@@ -1,13 +1,10 @@
 # CTDirect reexports
 
 # For internal use
-import CTDirect
+using CTDirect: CTDirect
 
 # Types
-import CTDirect:
-    AbstractDiscretizer,
-    Collocation
+import CTDirect: AbstractDiscretizer, Collocation
 
 # Methods
-@reexport import CTDirect: 
-    discretize
+@reexport import CTDirect: discretize

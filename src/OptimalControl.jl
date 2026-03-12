@@ -53,12 +53,12 @@ module OptimalControl
 using DocStringExtensions
 using Reexport
 
-import CommonSolve
+using CommonSolve: CommonSolve
 @reexport import CommonSolve: solve
-import CTBase
-import CTModels
-import CTDirect
-import CTSolvers
+using CTBase: CTBase
+using CTModels: CTModels
+using CTDirect: CTDirect
+using CTSolvers: CTSolvers
 
 # Imports
 include(joinpath(@__DIR__, "imports", "ctbase.jl"))

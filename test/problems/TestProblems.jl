@@ -1,10 +1,10 @@
 module TestProblems
 
-    using OptimalControl
+using OptimalControl
 
-    include("beam.jl")
-    include("goddard.jl")
+include("beam.jl")
+include("goddard.jl")
 
-    export Beam, Goddard
+export Beam, Goddard
 
 end

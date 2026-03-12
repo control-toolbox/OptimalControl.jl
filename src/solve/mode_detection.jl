@@ -47,25 +47,25 @@ julia> OptimalControl._explicit_or_descriptive((:collocation,), kw)
 See also: [`_extract_kwarg`](@ref), [`ExplicitMode`](@ref), [`DescriptiveMode`](@ref), [`solve`](@ref)
 """
 function _explicit_or_descriptive(
-    description::Tuple{Vararg{Symbol}},
-    kwargs::Base.Pairs
+    description::Tuple{Vararg{Symbol}}, kwargs::Base.Pairs
 )::SolveMode
-
     discretizer = _extract_kwarg(kwargs, CTDirect.AbstractDiscretizer)
-    modeler     = _extract_kwarg(kwargs, CTSolvers.AbstractNLPModeler)
-    solver      = _extract_kwarg(kwargs, CTSolvers.AbstractNLPSolver)
+    modeler = _extract_kwarg(kwargs, CTSolvers.AbstractNLPModeler)
+    solver = _extract_kwarg(kwargs, CTSolvers.AbstractNLPSolver)
 
-    has_explicit    = !isnothing(discretizer) || !isnothing(modeler) || !isnothing(solver)
+    has_explicit = !isnothing(discretizer) || !isnothing(modeler) || !isnothing(solver)
     has_description = !isempty(description)
 
     if has_explicit && has_description
-        throw(CTBase.IncorrectArgument(
-            "Cannot mix explicit components with symbolic description",
-            got="explicit components + symbolic description $(description)",
-            expected="either explicit components OR symbolic description",
-            suggestion="Use either solve(ocp; discretizer=..., modeler=..., solver=...) OR solve(ocp, :collocation, :adnlp, :ipopt)",
-            context="solve function call"
-        ))
+        throw(
+            CTBase.IncorrectArgument(
+                "Cannot mix explicit components with symbolic description";
+                got="explicit components + symbolic description $(description)",
+                expected="either explicit components OR symbolic description",
+                suggestion="Use either solve(ocp; discretizer=..., modeler=..., solver=...) OR solve(ocp, :collocation, :adnlp, :ipopt)",
+                context="solve function call",
+            ),
+        )
     end
 
     return has_explicit ? ExplicitMode() : DescriptiveMode()

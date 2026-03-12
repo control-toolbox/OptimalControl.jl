@@ -43,32 +43,28 @@ result = OptimalControl._complete_components(disc, nothing, nothing, registry)
 See also: [`_build_partial_description`](@ref), [`_complete_description`](@ref), [`_build_or_use_strategy`](@ref), [`get_strategy_registry`](@ref), [`solve_explicit`](@ref)
 """
 function _complete_components(
-    discretizer::Union{CTDirect.AbstractDiscretizer, Nothing},
-    modeler::Union{CTSolvers.AbstractNLPModeler, Nothing},
-    solver::Union{CTSolvers.AbstractNLPSolver, Nothing},
-    registry::CTSolvers.StrategyRegistry
+    discretizer::Union{CTDirect.AbstractDiscretizer,Nothing},
+    modeler::Union{CTSolvers.AbstractNLPModeler,Nothing},
+    solver::Union{CTSolvers.AbstractNLPSolver,Nothing},
+    registry::CTSolvers.StrategyRegistry,
 )::NamedTuple{(:discretizer, :modeler, :solver)}
 
     # Step 1: Extract symbols from provided components
     partial_description = _build_partial_description(discretizer, modeler, solver)
-    
+
     # Step 2: Complete the method description
     complete_description = _complete_description(partial_description)
-    
+
     # Step 3: Resolve method with parameter information
     families = _descriptive_families()
     resolved = CTSolvers.resolve_method(complete_description, families, registry)
-    
+
     # Step 4: Build or use strategies for each family
     final_discretizer = _build_or_use_strategy(
         resolved, discretizer, :discretizer, families, registry
     )
-    final_modeler = _build_or_use_strategy(
-        resolved, modeler, :modeler, families, registry
-    )
-    final_solver = _build_or_use_strategy(
-        resolved, solver, :solver, families, registry
-    )
-    
+    final_modeler = _build_or_use_strategy(resolved, modeler, :modeler, families, registry)
+    final_solver = _build_or_use_strategy(resolved, solver, :solver, families, registry)
+
     return (discretizer=final_discretizer, modeler=final_modeler, solver=final_solver)
 end

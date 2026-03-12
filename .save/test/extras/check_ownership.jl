@@ -17,7 +17,7 @@ modules = [
     (:CTFlows, CTFlows),
     (:CTModels, CTModels),
     (:CTParser, CTParser),
-    (:OptimalControl, OptimalControl)
+    (:OptimalControl, OptimalControl),
 ]
 
 println("Checking symbol: :$(sym_to_check)")

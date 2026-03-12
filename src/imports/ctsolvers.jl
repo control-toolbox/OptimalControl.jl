@@ -1,44 +1,32 @@
 # CTSolvers reexports
 
 # For internal use
-import CTSolvers
+using CTSolvers: CTSolvers
 
 # DOCP
-import CTSolvers:
-    DiscretizedModel
+import CTSolvers: DiscretizedModel
 
-@reexport import CTSolvers:
-    ocp_model,
-    nlp_model,
-    ocp_solution
+@reexport import CTSolvers: ocp_model, nlp_model, ocp_solution
 
 # Modelers
-import CTSolvers:
-    AbstractNLPModeler,
-    ADNLP,
-    Exa
+import CTSolvers: AbstractNLPModeler, ADNLP, Exa
 
 # Solvers
-import CTSolvers:
-    AbstractNLPSolver,
-    Ipopt,
-    MadNLP,
-    MadNCL,
-    Knitro
+import CTSolvers: AbstractNLPSolver, Ipopt, MadNLP, MadNCL, Knitro
 
 # Strategies
 import CTSolvers:
 
     # Types
-    AbstractStrategy, 
-    StrategyRegistry, 
-    StrategyMetadata, 
-    StrategyOptions, 
+    AbstractStrategy,
+    StrategyRegistry,
+    StrategyMetadata,
+    StrategyOptions,
     OptionDefinition,
     OptionValue,
     RoutedOption,
     BypassValue,
-    
+
     # Parameter types (imported only, not reexported)
     AbstractStrategyParameter,
     CPU,
@@ -53,13 +41,13 @@ import CTSolvers:
     # Display and introspection functions
     describe,
     options,
-    option_names, 
-    option_type, 
-    option_description, 
-    option_default, 
+    option_names,
+    option_type,
+    option_description,
+    option_default,
     option_defaults,
-    option_value, 
-    option_source, 
+    option_value,
+    option_source,
     has_option,
     is_user,
     is_default,

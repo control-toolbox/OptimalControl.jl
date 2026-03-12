@@ -34,10 +34,7 @@ nothing
 
 See also: [`_explicit_or_descriptive`](@ref), [`solve_explicit`](@ref)
 """
-function _extract_kwarg(
-    kwargs::Base.Pairs,
-    ::Type{T}
-)::Union{T, Nothing} where {T}
+function _extract_kwarg(kwargs::Base.Pairs, ::Type{T})::Union{T,Nothing} where {T}
     for (_, v) in kwargs
         v isa T && return v
     end
@@ -88,12 +85,14 @@ function _extract_action_kwarg(kwargs::Base.Pairs, names::Tuple{Vararg{Symbol}},
         remaining = Base.pairs(NamedTuple(k => v for (k, v) in kwargs if k != name))
         return value, remaining
     else
-        throw(CTBase.IncorrectArgument(
-            "Conflicting aliases for the same option",
-            got="multiple aliases $(present) provided simultaneously",
-            expected="at most one of $(names)",
-            suggestion="Use only one alias at a time, e.g. `init=x0` or `initial_guess=x0`",
-            context="solve - action option extraction"
-        ))
+        throw(
+            CTBase.IncorrectArgument(
+                "Conflicting aliases for the same option";
+                got="multiple aliases $(present) provided simultaneously",
+                expected="at most one of $(names)",
+                suggestion="Use only one alias at a time, e.g. `init=x0` or `initial_guess=x0`",
+                context="solve - action option extraction",
+            ),
+        )
     end
 end

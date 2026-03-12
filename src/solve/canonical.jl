@@ -57,17 +57,21 @@ function CommonSolve.solve(
     discretizer::CTDirect.AbstractDiscretizer,      # Concrete type (no Nothing)
     modeler::CTSolvers.AbstractNLPModeler,          # Concrete type (no Nothing)
     solver::CTSolvers.AbstractNLPSolver;            # Concrete type (no Nothing)
-    display::Bool                                   # Explicit value (no default)
+    display::Bool,                                   # Explicit value (no default)
 )::CTModels.AbstractSolution
-    
+
     # 1. Display configuration (compact, user options only)
     if display
         OptimalControl.display_ocp_configuration(
-            discretizer, modeler, solver;
-            display=true, show_options=true, show_sources=false
+            discretizer,
+            modeler,
+            solver;
+            display=true,
+            show_options=true,
+            show_sources=false,
         )
     end
-    
+
     # 2. Discretize the optimal control problem
     discrete_problem = CTDirect.discretize(ocp, discretizer)
 

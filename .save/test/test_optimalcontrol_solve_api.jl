@@ -104,15 +104,15 @@ function test_optimalcontrol_solve_api()
         # _modeler_options_keys / _solver_options_keys should match options_keys
         method_ad_ip = (:collocation, :adnlp, :ipopt)
         Test.@test Set(OptimalControl._modeler_options_keys(method_ad_ip)) ==
-                   Set(CTModels.options_keys(OptimalControl.ADNLP))
+            Set(CTModels.options_keys(OptimalControl.ADNLP))
         Test.@test Set(OptimalControl._solver_options_keys(method_ad_ip)) ==
-                   Set(CTModels.options_keys(OptimalControl.Ipopt))
+            Set(CTModels.options_keys(OptimalControl.Ipopt))
 
         method_exa_mad = (:collocation, :exa, :madnlp)
         Test.@test Set(OptimalControl._modeler_options_keys(method_exa_mad)) ==
-                   Set(CTModels.options_keys(OptimalControl.Exa))
+            Set(CTModels.options_keys(OptimalControl.Exa))
         Test.@test Set(OptimalControl._solver_options_keys(method_exa_mad)) ==
-                   Set(CTModels.options_keys(OptimalControl.MadNLP))
+            Set(CTModels.options_keys(OptimalControl.MadNLP))
 
         # Multiple symbols of the same family in a method should raise an error
         Test.@test_throws OptimalControl.IncorrectArgument OptimalControl._get_modeler_symbol((
@@ -147,11 +147,12 @@ function test_optimalcontrol_solve_api()
         # Modeler options normalization helper
         Test.@test OptimalControl._normalize_modeler_options(nothing) === NamedTuple()
         Test.@test OptimalControl._normalize_modeler_options((backend=:manual,)) ==
-                   (backend=:manual,)
+            (backend=:manual,)
         Test.@test OptimalControl._normalize_modeler_options((; backend=:manual)) ==
-                   (backend=:manual,)
+            (backend=:manual,)
 
-        Test.@testset "description ambiguity pre-check (ownerless key)" verbose = VERBOSE showtiming = SHOWTIMING begin
+        Test.@testset "description ambiguity pre-check (ownerless key)" verbose = VERBOSE showtiming =
+            SHOWTIMING begin
             method = (:collocation, :adnlp, :ipopt)
 
             # foo does not correspond to any tool nor to solve -> error
@@ -189,7 +190,9 @@ function test_optimalcontrol_solve_api()
         owners_amb = Symbol[:discretizer, :solver]
         err = nothing
         try
-            OptimalControl._route_option_for_description(:foo, 1.0, owners_amb, :description)
+            OptimalControl._route_option_for_description(
+                :foo, 1.0, owners_amb, :description
+            )
         catch e
             err = e
         end
@@ -255,7 +258,8 @@ function test_optimalcontrol_solve_api()
             ))
         end
 
-        Test.@testset "description-mode solve/tool disambiguation" verbose = VERBOSE showtiming = SHOWTIMING begin
+        Test.@testset "description-mode solve/tool disambiguation" verbose = VERBOSE showtiming =
+            SHOWTIMING begin
             init = OCDummyInit([1.0, 2.0])
 
             # 1) Alias i tagged :solve -> used as initial_guess, not kept in other_kwargs
@@ -298,7 +302,8 @@ function test_optimalcontrol_solve_api()
         end
     end
 
-    Test.@testset "explicit-mode solve kwarg aliases" verbose = VERBOSE showtiming = SHOWTIMING begin
+    Test.@testset "explicit-mode solve kwarg aliases" verbose = VERBOSE showtiming =
+        SHOWTIMING begin
         prob = OCDummyOCP()
         init = OCDummyInit([1.0, 2.0])
 
@@ -390,7 +395,8 @@ function test_optimalcontrol_solve_api()
     # Unit test: solve(ocp, init, discretizer, modeler, solver)
     # ========================================================================
 
-    Test.@testset "solve(ocp, init, discretizer, modeler, solver)" verbose = VERBOSE showtiming = SHOWTIMING begin
+    Test.@testset "solve(ocp, init, discretizer, modeler, solver)" verbose = VERBOSE showtiming =
+        SHOWTIMING begin
         prob = OCDummyOCP()
         init = OCDummyInit([1.0, 2.0])
 
@@ -558,7 +564,8 @@ function test_optimalcontrol_solve_api()
         # OCP level with @init (Ipopt, ADNLP)
         # ------------------------------------------------------------------
 
-        Test.@testset "OCP level with @init (Ipopt, ADNLP)" verbose = VERBOSE showtiming = SHOWTIMING begin
+        Test.@testset "OCP level with @init (Ipopt, ADNLP)" verbose = VERBOSE showtiming =
+            SHOWTIMING begin
             init_macro = OptimalControl.@init ocp begin
                 x := [0.05, 0.1]
                 u := 0.1
@@ -577,7 +584,8 @@ function test_optimalcontrol_solve_api()
         # OCP level: keyword-based API solve(ocp; ...)
         # ------------------------------------------------------------------
 
-        Test.@testset "OCP level keyword API (Ipopt, ADNLP)" verbose = VERBOSE showtiming = SHOWTIMING begin
+        Test.@testset "OCP level keyword API (Ipopt, ADNLP)" verbose = VERBOSE showtiming =
+            SHOWTIMING begin
             modeler = OptimalControl.ADNLP(; backend=:manual)
             solver = OptimalControl.Ipopt(; ipopt_options...)
             sol = solve(
@@ -608,7 +616,8 @@ function test_optimalcontrol_solve_api()
             ]
 
             for (method_syms, options) in desc_cases
-                Test.@testset "description = $(method_syms)" verbose = VERBOSE showtiming = SHOWTIMING begin
+                Test.@testset "description = $(method_syms)" verbose = VERBOSE showtiming =
+                    SHOWTIMING begin
                     sol = solve(
                         ocp, method_syms...; initial_guess=init, display=false, options...
                     )
@@ -628,7 +637,8 @@ function test_optimalcontrol_solve_api()
 
             # modeler_options is allowed in description mode and forwarded to the
             # modeler constructor.
-            Test.@testset "description API with modeler_options" verbose = VERBOSE showtiming = SHOWTIMING begin
+            Test.@testset "description API with modeler_options" verbose = VERBOSE showtiming =
+                SHOWTIMING begin
                 sol = solve(
                     ocp,
                     :collocation,
@@ -645,7 +655,8 @@ function test_optimalcontrol_solve_api()
 
             # Tagged options using the (value, tool) convention: discretizer options
             # are explicitly routed to the discretizer, and Ipopt options to the solver.
-            Test.@testset "description API with explicit tool tags" verbose = VERBOSE showtiming = SHOWTIMING begin
+            Test.@testset "description API with explicit tool tags" verbose = VERBOSE showtiming =
+                SHOWTIMING begin
                 sol = solve(
                     ocp,
                     :collocation,
@@ -739,7 +750,8 @@ function test_optimalcontrol_solve_api()
         # OCP level keyword API (Ipopt, ADNLP)
         # ------------------------------------------------------------------
 
-        Test.@testset "OCP level keyword API (Ipopt, ADNLP)" verbose = VERBOSE showtiming = SHOWTIMING begin
+        Test.@testset "OCP level keyword API (Ipopt, ADNLP)" verbose = VERBOSE showtiming =
+            SHOWTIMING begin
             modeler = OptimalControl.ADNLP(; backend=:manual)
             solver = OptimalControl.Ipopt(; ipopt_options...)
             sol = solve(
@@ -770,7 +782,8 @@ function test_optimalcontrol_solve_api()
             ]
 
             for (method_syms, options) in desc_cases
-                Test.@testset "description = $(method_syms)" verbose = VERBOSE showtiming = SHOWTIMING begin
+                Test.@testset "description = $(method_syms)" verbose = VERBOSE showtiming =
+                    SHOWTIMING begin
                     sol = solve(
                         ocp_g,
                         method_syms...;

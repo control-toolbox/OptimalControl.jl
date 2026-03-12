@@ -44,9 +44,7 @@ solve(ocp; discretizer=CTDirect.Collocation(),
 See also: [`_explicit_or_descriptive`](@ref), [`solve_explicit`](@ref), [`solve_descriptive`](@ref), [`get_strategy_registry`](@ref)
 """
 function CommonSolve.solve(
-    ocp::CTModels.AbstractModel,
-    description::Symbol...;
-    kwargs...
+    ocp::CTModels.AbstractModel, description::Symbol...; kwargs...
 )::CTModels.AbstractSolution
 
     # 1. Detect mode and validate (raises on conflict)

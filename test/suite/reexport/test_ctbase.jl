@@ -7,7 +7,7 @@
 
 module TestCtbase
 
-import Test
+using Test: Test
 using OptimalControl # using is mandatory since we test exported symbols
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
@@ -17,7 +17,6 @@ const CurrentModule = TestCtbase
 
 function test_ctbase()
     Test.@testset "CTBase reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
-        
         Test.@testset "Generated Code Prefix" begin
             Test.@test isdefined(OptimalControl, :CTBase)
             Test.@test isdefined(CurrentModule, :CTBase)
@@ -39,7 +38,6 @@ function test_ctbase()
                 Test.@test T isa DataType
             end
         end
-
     end
 end
 

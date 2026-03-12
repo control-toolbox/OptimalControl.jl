@@ -35,9 +35,9 @@ julia> _build_partial_description(nothing, nothing, nothing)
 - [`_complete_description`](@ref): Completes partial description via registry
 """
 function _build_partial_description(
-    discretizer::Union{CTDirect.AbstractDiscretizer, Nothing},
-    modeler::Union{CTSolvers.AbstractNLPModeler, Nothing},
-    solver::Union{CTSolvers.AbstractNLPSolver, Nothing}
+    discretizer::Union{CTDirect.AbstractDiscretizer,Nothing},
+    modeler::Union{CTSolvers.AbstractNLPModeler,Nothing},
+    solver::Union{CTSolvers.AbstractNLPSolver,Nothing},
 )::Tuple{Vararg{Symbol}}
     return _build_partial_tuple(discretizer, modeler, solver)
 end
@@ -87,8 +87,8 @@ modeler and solver components.
 """
 function _build_partial_tuple(
     discretizer::CTDirect.AbstractDiscretizer,
-    modeler::Union{CTSolvers.AbstractNLPModeler, Nothing},
-    solver::Union{CTSolvers.AbstractNLPSolver, Nothing}
+    modeler::Union{CTSolvers.AbstractNLPModeler,Nothing},
+    solver::Union{CTSolvers.AbstractNLPSolver,Nothing},
 )
     disc_symbol = (CTSolvers.id(typeof(discretizer)),)
     rest_symbols = _build_partial_tuple(modeler, solver)
@@ -117,8 +117,8 @@ skipping directly to processing the modeler and solver components.
 """
 function _build_partial_tuple(
     ::Nothing,
-    modeler::Union{CTSolvers.AbstractNLPModeler, Nothing},
-    solver::Union{CTSolvers.AbstractNLPSolver, Nothing}
+    modeler::Union{CTSolvers.AbstractNLPModeler,Nothing},
+    solver::Union{CTSolvers.AbstractNLPSolver,Nothing},
 )
     return _build_partial_tuple(modeler, solver)
 end
@@ -145,7 +145,7 @@ extracts its symbolic ID, and recursively processes the solver.
 """
 function _build_partial_tuple(
     modeler::CTSolvers.AbstractNLPModeler,
-    solver::Union{CTSolvers.AbstractNLPSolver, Nothing}
+    solver::Union{CTSolvers.AbstractNLPSolver,Nothing},
 )
     mod_symbol = (CTSolvers.id(typeof(modeler)),)
     rest_symbols = _build_partial_tuple(solver)
@@ -171,10 +171,7 @@ skipping directly to processing the solver component.
 - Delegates to solver processing
 - Terminal case in the recursion chain
 """
-function _build_partial_tuple(
-    ::Nothing,
-    solver::Union{CTSolvers.AbstractNLPSolver, Nothing}
-)
+function _build_partial_tuple(::Nothing, solver::Union{CTSolvers.AbstractNLPSolver,Nothing})
     return _build_partial_tuple(solver)
 end
 
@@ -257,7 +254,7 @@ julia> _complete_description((:collocation, :exa))
 """
 function _complete_description(
     partial_description::Tuple{Vararg{Symbol}}
-)::Tuple{Symbol, Symbol, Symbol, Symbol}
+)::Tuple{Symbol,Symbol,Symbol,Symbol}
     return CTBase.complete(partial_description...; descriptions=OptimalControl.methods())
 end
 
@@ -293,8 +290,8 @@ function _build_or_use_strategy(
     provided::T,
     family_name::Symbol,
     families::NamedTuple,
-    registry::CTSolvers.StrategyRegistry
-)::T where {T <: CTSolvers.AbstractStrategy}
+    registry::CTSolvers.StrategyRegistry,
+)::T where {T<:CTSolvers.AbstractStrategy}
     # Fast path: strategy already provided
     return provided
 end
@@ -330,10 +327,8 @@ function _build_or_use_strategy(
     ::Nothing,
     family_name::Symbol,
     families::NamedTuple,
-    registry::CTSolvers.StrategyRegistry
+    registry::CTSolvers.StrategyRegistry,
 )
     # Build path: construct from resolved method
-    return CTSolvers.build_strategy_from_resolved(
-        resolved, family_name, families, registry
-    )
+    return CTSolvers.build_strategy_from_resolved(resolved, family_name, families, registry)
 end

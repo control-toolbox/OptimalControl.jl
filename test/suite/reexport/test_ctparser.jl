@@ -7,7 +7,7 @@
 
 module TestCtparser
 
-import Test
+using Test: Test
 using OptimalControl # using is mandatory since we test exported symbols
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
