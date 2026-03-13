@@ -36,7 +36,7 @@ end
 CTSolvers.id(::Type{MockBypassDiscretizer}) = :collocation
 function CTSolvers.metadata(::Type{MockBypassDiscretizer})
     CTSolvers.StrategyMetadata(
-        CTSolvers.OptionDefinition(
+        CTSolvers.OptionDefinition(;
             name=:grid_size, type=Int, default=100, description="Grid size"
         ),
     )
@@ -55,7 +55,7 @@ end
 CTSolvers.id(::Type{MockBypassModeler}) = :adnlp
 function CTSolvers.metadata(::Type{MockBypassModeler})
     CTSolvers.StrategyMetadata(
-        CTSolvers.OptionDefinition(
+        CTSolvers.OptionDefinition(;
             name=:backend, type=Symbol, default=:dense, description="Backend"
         ),
     )
@@ -74,7 +74,7 @@ end
 CTSolvers.id(::Type{MockBypassSolver}) = :ipopt
 function CTSolvers.metadata(::Type{MockBypassSolver})
     CTSolvers.StrategyMetadata(
-        CTSolvers.OptionDefinition(
+        CTSolvers.OptionDefinition(;
             name=:max_iter, type=Int, default=1000, description="Max iterations"
         ),
     )

@@ -41,7 +41,7 @@ end
 CTSolvers.Strategies.id(::Type{MockCollocation}) = :collocation
 function CTSolvers.Strategies.metadata(::Type{MockCollocation})
     CTSolvers.Strategies.StrategyMetadata(
-        CTSolvers.Options.OptionDefinition(
+        CTSolvers.Options.OptionDefinition(;
             name=:grid_size, type=Int, default=100, description="Number of grid points"
         ),
     )
@@ -64,7 +64,7 @@ end
 CTSolvers.Strategies.id(::Type{MockADNLP}) = :adnlp
 function CTSolvers.Strategies.metadata(::Type{MockADNLP})
     CTSolvers.Strategies.StrategyMetadata(
-        CTSolvers.Options.OptionDefinition(
+        CTSolvers.Options.OptionDefinition(;
             name=:backend,
             type=Symbol,
             default=:dense,
@@ -89,10 +89,10 @@ end
 CTSolvers.Strategies.id(::Type{MockIpopt}) = :ipopt
 function CTSolvers.Strategies.metadata(::Type{MockIpopt})
     CTSolvers.Strategies.StrategyMetadata(
-        CTSolvers.Options.OptionDefinition(
+        CTSolvers.Options.OptionDefinition(;
             name=:max_iter, type=Int, default=1000, description="Maximum iterations"
         ),
-        CTSolvers.Options.OptionDefinition(
+        CTSolvers.Options.OptionDefinition(;
             name=:backend,
             type=Symbol,
             default=:cpu,
