@@ -115,6 +115,7 @@ For optimization variables (like `tf`), use `label := value` since they are not 
 | Alias | ❌ No | ❌ No (use `=`) | `a = 0.5` |
 
 **Dimensions:**
+
 - **1D** → scalar: `u(t) := 2`
 - **2D** → vector: `u(t) := [1, 2]`
 
@@ -247,7 +248,7 @@ println("Number of iterations: ", iterations(sol))
 nothing # hide
 ```
 
-## Vector initial guess (interpolated) with `@init`
+## Vector initial guess (interpolated)
 
 You can provide initial values on a time grid using the syntax `label(T) := data`, where `T` is a time vector and `data` contains the corresponding values.
 
@@ -318,7 +319,7 @@ println("Number of iterations: ", iterations(sol))
 nothing # hide
 ```
 
-## Mixed initial guess with `@init`
+## Mixed initial guess
 
 You can freely mix constant functions, time-dependent functions, and grid-based initializations in a single `@init` block:
 
@@ -393,7 +394,7 @@ nothing # hide
 
 For the moment there is no option to provide an initial guess for the costate / multipliers.
 
-## Legacy: Direct NamedTuple construction
+## Legacy: NamedTuple construction
 
 While the `@init` macro is the recommended approach, you can still construct initial guesses using direct `NamedTuple` syntax for backward compatibility.
 
