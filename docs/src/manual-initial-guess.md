@@ -105,7 +105,7 @@ For optimization variables (like `tf`), use `label := value` since they are not 
 **Core syntax:** `label(time_var) := expression`
 
 | Component | Has `(t)`? | Uses `:=`? | Example |
-|-----------|-----------|-----------|---------|
+| ----------- | ----------- | ----------- | --------- |
 | State/Control | ✅ Yes | ✅ Yes | `u(t) := 2` |
 | Variable | ❌ No | ✅ Yes | `tf := 2.0` |
 | Alias | ❌ No | ❌ No (use `=`) | `a = 0.5` |
@@ -118,8 +118,8 @@ For optimization variables (like `tf`), use `label := value` since they are not 
 **Initialization types:**
 
 | Type | 1D Example | 2D Example |
-|------|-----------|-----------|
-| **Constant** | `u(t) := 2` | `x(t) := [1, 2]` |
+| ------ | ------------ | ------------ |
+| **Constant** | `u(t) := 2` or `u := 2` | `x(t) := [1, 2]` or `x := [1, 2]` |
 | **Function** | `u(t) := sin(t)` | `x(t) := [sin(t), cos(t)]` |
 | **Grid** | `u(T) := [0, 1, 2]` | `x(T) := [[0,0], [1,1], [2,2]]` |
 | **Grid (matrix)** | — | `x(T) := [0 0; 1 1; 2 2]` |
@@ -136,6 +136,13 @@ where `T = [0.0, 0.5, 1.0]` is the time grid.
 ### Constant initial guess
 
 To initialize with constant values, use constant expressions in the function syntax:
+
+!!! note "Alternative syntax for constant functions"
+    For constant functions, you can also use the simplified syntax without the time argument:
+    - `u(t) := 2` is equivalent to `u := 2`
+    - `x(t) := [1, 2]` is equivalent to `x := [1, 2]`
+
+    This shorter syntax is only available for constant expressions.
 
 ```@example main
 # initialize with constant functions
