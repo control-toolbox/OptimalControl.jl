@@ -77,6 +77,10 @@ Each method is a **quadruplet** `(discretizer, modeler, solver, parameter)`:
    - `:cpu`: CPU execution (default)
    - `:gpu`: GPU execution (only for `:exa` modeler with `:madnlp` or `:madncl` solvers)
 
+!!! note "Priority order"
+
+    The order of methods in the list above determines the **priority** for auto-completion. When you provide a partial description, the first matching method from top to bottom is selected. This is why the first method `(:collocation, :adnlp, :ipopt, :cpu)` is the default.
+
 The first method in the list is the default, so:
 
 ```julia
@@ -99,13 +103,19 @@ sol = solve(ocp, :collocation, :adnlp, :madnlp, :cpu)
 nothing # hide
 ```
 
-Or provide a **partial description**. Missing tokens are auto-completed using the first matching method from `methods()`:
+Or provide a **partial description**. Missing tokens are auto-completed using the **first matching method** from `methods()` (top-to-bottom priority):
 
 ```@example main
 # Only specify the solver → defaults to :collocation, :adnlp, :cpu
 sol = solve(ocp, :madnlp)
 nothing # hide
 ```
+
+The completion algorithm searches `methods()` from top to bottom and selects the first quadruplet that matches all provided tokens. For example:
+
+- `solve(ocp, :madnlp)` matches `(:collocation, :adnlp, :madnlp, :cpu)` (first match with `:madnlp`)
+- `solve(ocp, :exa)` matches `(:collocation, :exa, :ipopt, :cpu)` (first match with `:exa`)
+- `solve(ocp, :gpu)` matches `(:collocation, :exa, :madnlp, :gpu)` (first GPU method)
 
 All of these are equivalent (they all complete to `:collocation, :adnlp, :ipopt, :cpu`):
 

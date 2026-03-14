@@ -73,7 +73,7 @@ nothing # hide
 
 ## Partial components
 
-You don't need to specify all three components. Missing ones are auto-completed using the default strategy registry:
+You don't need to specify all three components. Missing ones are auto-completed using the default strategy registry, following the **same priority order** as in descriptive mode (see `methods()`):
 
 ```@example explicit
 # Only specify the solver
@@ -84,11 +84,19 @@ result = solve(ocp;
 nothing # hide
 ```
 
-In this case:
+The completion algorithm searches `methods()` from top to bottom to find the first matching quadruplet, then builds the missing components with their default options. In this case:
 
-- `discretizer` defaults to `Collocation()` (with default options)
-- `modeler` defaults to `ADNLP()` (with default options)
+- `discretizer` defaults to `Collocation()` (first discretizer in `methods()`)
+- `modeler` defaults to `ADNLP()` (first modeler compatible with `Ipopt`)
 - `solver` uses your custom `Ipopt` instance
+
+!!! note "Priority order matters"
+
+    Just like in descriptive mode, the order in `methods()` determines which defaults are used. For example:
+    
+    - `solve(ocp; solver=Ipopt())` → uses `ADNLP()` (first modeler compatible with Ipopt)
+    - `solve(ocp; modeler=Exa())` → uses `Ipopt()` (first solver in the list)
+    - `solve(ocp; discretizer=Collocation())` → uses `ADNLP()` and `Ipopt()` (first matching pair)
 
 You can mix and match:
 
