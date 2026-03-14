@@ -208,8 +208,12 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "Use AI" => "manual-ai-llm.md",
                 "Problem characteristics" => "manual-model.md",
                 "Set an initial guess" => "manual-initial-guess.md",
-                "Solve a problem" => "manual-solve.md",
-                "Solve on GPU" => "manual-solve-gpu.md",
+                "Solve a problem" => [
+                    "Basic usage" => "manual-solve.md",
+                    "Advanced options" => "manual-solve-advanced.md",
+                    "Explicit mode" => "manual-solve-explicit.md",
+                    "GPU solving" => "manual-solve-gpu.md",
+                ],
                 "Solution characteristics" => "manual-solution.md",
                 "Plot a solution" => "manual-plot.md",
                 "Compute flows" => [
