@@ -1,5 +1,9 @@
 # [Double integrator: energy minimisation](@id example-double-integrator-energy)
 
+```@meta
+Draft = false
+```
+
 Let us consider a wagon moving along a rail, whose acceleration can be controlled by a force $u$.
 We denote by $x = (x_1, x_2)$ the state of the wagon, where $x_1$ is the position and $x_2$ the velocity.
 

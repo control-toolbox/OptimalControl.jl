@@ -124,16 +124,21 @@ function test_ctsolvers()
         end
 
         Test.@testset "Strategy Parameter Types" begin
-            # Test that parameter types are available but NOT reexported
-            # They should be accessible via isdefined but not in exports
+            # Test that parameter types are available
+            # AbstractStrategyParameter is imported only, CPU and GPU are reexported
             Test.@test isdefined(OptimalControl, :AbstractStrategyParameter)
             Test.@test isdefined(OptimalControl, :CPU)
             Test.@test isdefined(OptimalControl, :GPU)
 
-            # They should NOT be in the public exports (names with all=false)
+            # CPU and GPU should be accessible in current module since they are reexported
+            Test.@test isdefined(CurrentModule, :CPU)
+            Test.@test isdefined(CurrentModule, :GPU)
+
+            # AbstractStrategyParameter should NOT be in the public exports (names with all=false)
+            # CPU and GPU should BE in the public exports since they are reexported
             Test.@test :AbstractStrategyParameter ∉ names(OptimalControl; all=false)
-            Test.@test :CPU ∉ names(OptimalControl; all=false)
-            Test.@test :GPU ∉ names(OptimalControl; all=false)
+            Test.@test :CPU ∈ names(OptimalControl; all=false)
+            Test.@test :GPU ∈ names(OptimalControl; all=false)
 
             # They should also be accessible via CTSolvers
             Test.@test isdefined(CTSolvers, :AbstractStrategyParameter)
