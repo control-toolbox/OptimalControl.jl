@@ -1,5 +1,9 @@
 # [The syntax to define an optimal control problem](@id manual-abstract-syntax)
 
+```@meta
+Draft = false
+```
+
 The full grammar of [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) small *Domain Specific Language* is given below. The idea is to use a syntax that is
 
 - pure Julia (and, as such, effortlessly analysed by the standard Julia parser),

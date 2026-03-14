@@ -1,5 +1,9 @@
 # [Double integrator: time minimisation](@id example-double-integrator-time)
 
+```@meta
+Draft = false
+```
+
 The problem consists in minimising the final time $t_f$ for the double integrator system
 
 ```math

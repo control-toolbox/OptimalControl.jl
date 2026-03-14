@@ -1,5 +1,9 @@
 # [Solve: advanced options](@id manual-solve-advanced)
 
+```@meta
+Draft = false
+```
+
 This manual covers advanced option management for the [`solve`](@ref) function: how option routing works, how to disambiguate shared options with `route_to`, how to pass unknown options with `bypass`, and how to use introspection tools.
 
 For basic usage, see [Solve a problem](@ref manual-solve).

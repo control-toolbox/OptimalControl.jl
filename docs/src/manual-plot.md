@@ -1,6 +1,7 @@
 # [How to plot a solution](@id manual-plot)
 
 ```@meta
+Draft = false
 CollapsedDocStrings = false
 ```
 

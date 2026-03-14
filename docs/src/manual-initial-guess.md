@@ -1,6 +1,7 @@
 # [Initial guess (or iterate) for the resolution](@id manual-initial-guess)
 
 ```@meta
+Draft = false
 CurrentModule =  OptimalControl
 ```
 
