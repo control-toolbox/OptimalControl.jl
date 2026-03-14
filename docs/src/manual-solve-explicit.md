@@ -1,10 +1,5 @@
 # [Solve: explicit mode](@id manual-solve-explicit)
 
-```@meta
-CollapsedDocStrings = false
-Draft = false
-```
-
 This manual explains the **explicit mode** of the [`solve`](@ref) function, where you pass typed strategy instances directly instead of symbolic tokens. This gives you full control over component configuration and validation.
 
 For basic usage with symbolic tokens, see [Solve a problem](@ref manual-solve).

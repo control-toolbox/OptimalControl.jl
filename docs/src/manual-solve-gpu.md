@@ -1,10 +1,5 @@
 # [Solve on GPU](@id manual-solve-gpu)
 
-```@meta
-CollapsedDocStrings = false
-Draft = false
-```
-
 This manual explains how to solve optimal control problems on GPU using the [`solve`](@ref) function. GPU acceleration is available through [ExaModels.jl](https://exanauts.github.io/ExaModels.jl/stable) and [MadNLPGPU.jl](https://github.com/MadNLP/MadNLP.jl), with current support for NVIDIA GPUs via [CUDA.jl](https://github.com/JuliaGPU/CUDA.jl).
 
 For basic CPU solving, see [Solve a problem](@ref manual-solve).
