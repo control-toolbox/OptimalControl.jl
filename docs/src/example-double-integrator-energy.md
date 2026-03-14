@@ -94,14 +94,14 @@ nothing # hide
 We can [`solve`](@ref) it simply with:
 
 ```@example main
-sol = solve(ocp)
+direct_sol = solve(ocp)
 nothing # hide
 ```
 
 And [`plot`](@ref) the solution with:
 
 ```@example main
-plot(sol)
+plot(direct_sol)
 ```
 
 !!! note "Nota bene"
@@ -147,8 +147,8 @@ p0_guess = [1, 1]
 prob = NonlinearProblem(nle!, p0_guess)
 
 # resolution of S(p0) = 0
-sol = solve(prob; show_trace=Val(true))
-p0_sol = sol.u # costate solution
+shooting_sol = solve(prob; show_trace=Val(true))
+p0_sol = shooting_sol.u # costate solution
 
 # print the costate solution and the shooting function evaluation
 println("\ncostate: p0 = ", p0_sol)
@@ -158,8 +158,8 @@ println("shoot: S(p0) = ", S(p0_sol), "\n")
 To plot the solution obtained by the indirect method, we need to build the solution of the optimal control problem. This is done using the costate solution and the flow function.
 
 ```@example main
-sol = f((t0, tf), x0, p0_sol; saveat=range(t0, tf, 100))
-plot(sol)
+indirect_sol = f((t0, tf), x0, p0_sol; saveat=range(t0, tf, 100))
+plot(indirect_sol)
 ```
 
 [^1]: J. T. Betts. Practical methods for optimal control using nonlinear programming. Society for Industrial and Applied Mathematics (SIAM), Philadelphia, PA, 2001.
@@ -202,10 +202,10 @@ ocp = @def begin
 end
 
 # solve with a direct method using default settings
-sol = solve(ocp; grid_size=20)
+direct_sol = solve(ocp; grid_size=20)
 
 # plot the solution
-plt = plot(sol; label="Direct", size=(800, 600))
+plt = plot(direct_sol; label="Direct", size=(800, 600))
 ```
 
 The solution has three phases (unconstrained-constrained-unconstrained arcs), requiring definition of Hamiltonian flows for each phase and a shooting function to enforce boundary and switching conditions.
@@ -287,8 +287,8 @@ nle!(s, ξ, λ) = shoot!(s, ξ[1:2], ξ[3], ξ[4])
 prob = NonlinearProblem(nle!, ξ_guess)
 
 # resolution of the shooting equations
-sol = solve(prob; show_trace=Val(true))
-p0, t1, t2 = sol.u[1:2], sol.u[3], sol.u[4]
+shooting_sol = solve(prob; show_trace=Val(true))
+p0, t1, t2 = shooting_sol.u[1:2], shooting_sol.u[3], shooting_sol.u[4]
 
 # print the costate solution and the entry and exit times
 println("\np0 = ", p0, "\nt1 = ", t1, "\nt2 = ", t2)
@@ -302,8 +302,8 @@ This composition yields the full solution (state, costate, and control), which w
 φ = f_interior * (t1, f_boundary) * (t2, f_interior)
 
 # compute the solution: state, costate, control...
-flow_sol = φ((t0, tf), x0, p0; saveat=range(t0, tf, 100))      
+indirect_sol = φ((t0, tf), x0, p0; saveat=range(t0, tf, 100))      
 
 # plot the solution on the previous plot
-plot!(plt, flow_sol; label="Indirect", color=2, linestyle=:dash)
+plot!(plt, indirect_sol; label="Indirect", color=2, linestyle=:dash)
 ```
