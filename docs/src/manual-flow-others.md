@@ -1,9 +1,5 @@
 # [How to compute Hamiltonian flows and trajectories](@id manual-flow-others)
 
-```@meta
-CollapsedDocStrings = false
-```
-
 In this tutorial, we explain the `Flow` function, in particular to compute flows from a Hamiltonian vector fields, but also from general vector fields.
 
 ## Introduction

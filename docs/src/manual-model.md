@@ -1,9 +1,5 @@
 # [The optimal control problem object: structure and usage](@id manual-model)
 
-```@meta
-CollapsedDocStrings = false
-```
-
 In this manual, we'll first recall the **main functionalities** you can use when working with an optimal control problem (OCP). This includes essential operations like:
 
 * **Solving an OCP**: How to find the optimal solution for your defined problem.
