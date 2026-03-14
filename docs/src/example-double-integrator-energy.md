@@ -1,14 +1,10 @@
 # [Double integrator: energy minimisation](@id example-double-integrator-energy)
 
-```@meta
-Draft = false
-```
-
 Let us consider a wagon moving along a rail, whose acceleration can be controlled by a force $u$.
 We denote by $x = (q, v)$ the state of the wagon, where $q$ is the position and $v$ the velocity.
 
 ```@raw html
-<img src="./assets/chariot.svg" style="display: block; margin: 0 auto 20px auto;" width="400px">
+<img src="./assets/chariot_q.svg" style="display: block; margin: 0 auto 20px auto;" width="400px">
 ```
 
 We assume that the mass is constant and equal to one, and that there is no friction. The dynamics are given by
@@ -43,18 +39,19 @@ Let us define the problem with the [`@def`](@ref) macro:
 ```
 
 ```@example main
-t0 = 0
-tf = 1
-x0 = [-1, 0]
-xf = [0, 0]
+t0 = 0; tf = 1; x0 = [-1, 0]; xf = [0, 0]
+
 ocp = @def begin
     t ∈ [t0, tf], time
     x = (q, v) ∈ R², state
     u ∈ R, control
+
     x(t0) == x0
     x(tf) == xf
+
     ∂(q)(t) == v(t)
     ∂(v)(t) == u(t)
+
     0.5∫( u(t)^2 ) → min
 end
 nothing # hide
@@ -193,16 +190,20 @@ ocp = @def begin
     t ∈ [t0, tf], time
     x = (q, v) ∈ R², state
     u ∈ R, control
-    v(t) ≤ v_max
+
+    v(t) ≤ v_max    # state constraint
+
     x(t0) == x0
     x(tf) == xf
+
     ∂(q)(t) == v(t)
     ∂(v)(t) == u(t)
+
     0.5∫( u(t)^2 ) → min
 end
 
-# solve with a direct method using default settings
-direct_sol = solve(ocp; grid_size=20)
+# solve with a direct method
+direct_sol = solve(ocp; grid_size=10)
 
 # plot the solution
 plt = plot(direct_sol; label="Direct", size=(800, 600))
@@ -272,6 +273,7 @@ t12 = t[ 0 .≤ (g ∘ x).(t) .≤ 1e-3 ]
 # entry and exit times
 t1 = minimum(t12) # entry time
 t2 = maximum(t12) # exit time
+nothing # hide
 ```
 
 We can now solve the shooting equations.
