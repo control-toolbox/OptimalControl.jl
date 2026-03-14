@@ -1,7 +1,6 @@
 # [How to compute flows from optimal control problems](@id manual-flow-ocp)
 
 ```@meta
-Draft = false
 CollapsedDocStrings = false
 ```
 

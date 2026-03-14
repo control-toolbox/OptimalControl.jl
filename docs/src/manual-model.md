@@ -1,7 +1,6 @@
 # [The optimal control problem object: structure and usage](@id manual-model)
 
 ```@meta
-Draft = false
 CollapsedDocStrings = false
 ```
 

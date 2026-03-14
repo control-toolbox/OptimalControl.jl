@@ -1,7 +1,6 @@
 # [How to compute Hamiltonian flows and trajectories](@id manual-flow-others)
 
 ```@meta
-Draft = false
 CollapsedDocStrings = false
 ```
 
