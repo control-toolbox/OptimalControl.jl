@@ -21,14 +21,14 @@ julia> describe(:collocation)
 ```
 
 # Notes
-- For the complete list of options for each strategy, refer to:
-  - **Collocation**: [CTDirect documentation](https://control-toolbox.org/CTDirect.jl/stable/)
-  - **ADNLP**: [CTSolvers documentation](https://control-toolbox.org/CTSolvers.jl/stable/)
-  - **Exa**: [ExaModels documentation](https://exanauts.github.io/ExaModels.jl/stable/)
-  - **Ipopt**: [Ipopt options](https://coin-or.github.io/Ipopt/OPTIONS.html)
-  - **MadNLP**: [MadNLP options](https://madnlp.github.io/MadNLP.jl/stable/options/)
-  - **MadNCL**: [MadNCL documentation](https://github.com/MadNLP/MadNCL.jl)
-  - **Knitro**: [Knitro options](https://www.artelys.com/docs/knitro/3_referenceManual/userOptions.html)
+For complete option lists, see the official documentation:
+
+- **ADNLP**: [ADNLPModels documentation](https://jso.dev/ADNLPModels.jl/stable/)
+- **Exa**: [ExaModels documentation](https://exanauts.github.io/ExaModels.jl/stable/)
+- **Ipopt**: [Ipopt options](https://coin-or.github.io/Ipopt/OPTIONS.html)
+- **MadNLP**: [MadNLP options](https://madnlp.github.io/MadNLP.jl/stable/options/)
+- **MadNCL**: [MadNCL documentation](https://github.com/MadNLP/MadNCL.jl)
+- **Knitro**: [Knitro options](https://www.artelys.com/docs/knitro/3_referenceManual/userOptions.html)
 
 See also: [`methods`](@ref), [`get_strategy_registry`](@ref), [`solve`](@ref)
 """

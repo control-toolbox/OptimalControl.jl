@@ -214,6 +214,7 @@ describe(:adnlp)
 ```
 
 ```@example main
+using CUDA
 describe(:exa)
 ```
 
@@ -224,6 +225,7 @@ describe(:ipopt)
 ```
 
 ```@example main
+using MadNLPGPU
 describe(:madnlp)
 ```
 
