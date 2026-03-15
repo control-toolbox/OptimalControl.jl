@@ -54,6 +54,38 @@ This uses default strategies: collocation discretization, ADNLP modeler, and Ipo
     ERROR: ExtensionError. Please make: julia> using NLPModelsIpopt
     ```
 
+## Display
+
+Control the configuration display with the `display` option:
+
+```@example main
+# Suppress all output
+sol = solve(ocp; display=false)
+nothing # hide
+```
+
+## Initial guess
+
+Provide an initial guess using `initial_guess` (or the alias `init`):
+
+```@example main
+# Using the @init macro
+init = @init ocp begin
+    u = 0.5
+end
+
+sol = solve(ocp; initial_guess=init, grid_size=50, display=false)
+nothing # hide
+```
+
+```@example main
+# Or using the alias
+sol = solve(ocp; init=init, grid_size=50, display=false)
+nothing # hide
+```
+
+For more details on initial guess specification, see [Set an initial guess](@ref manual-initial-guess).
+
 ## Available methods
 
 OptimalControl.jl provides multiple solving strategies. To see all available combinations, call:
@@ -74,7 +106,7 @@ Each method is a **quadruplet** `(discretizer, modeler, solver, parameter)`:
 3. **Solver** — which NLP solver to use:
    - `:ipopt`: [Ipopt](https://coin-or.github.io/Ipopt/) interior point solver
    - `:madnlp`: [MadNLP](https://madnlp.github.io/MadNLP.jl/) pure-Julia solver (GPU-capable)
-   - `:madncl`: [MadNCL](https://madnlp.github.io/MadNLP.jl/) (GPU-capable)
+   - `:madncl`: [MadNCL](https://github.com/MadNLP/MadNCL.jl) (GPU-capable)
    - `:knitro`: [Knitro](https://www.artelys.com/solvers/knitro/) commercial solver (license required)
 
 4. **Parameter** — execution backend:
@@ -111,7 +143,7 @@ Or provide a **partial description**. Missing tokens are auto-completed using th
 
 ```@example main
 # Only specify the solver → defaults to :collocation, :adnlp, :cpu
-sol = solve(ocp, :madnlp)
+sol = solve(ocp, :madnlp; print_level=MadNLP.ERROR)
 nothing # hide
 ```
 
@@ -124,13 +156,13 @@ The completion algorithm searches `methods()` from top to bottom and selects the
 All of these are equivalent (they all complete to `:collocation, :adnlp, :ipopt, :cpu`):
 
 ```julia
-solve(ocp)                              # empty → use first method
-solve(ocp, :collocation)                # specify discretizer
-solve(ocp, :adnlp)                      # specify modeler
-solve(ocp, :ipopt)                      # specify solver
-solve(ocp, :cpu)                        # specify parameter
-solve(ocp, :collocation, :adnlp)        # specify discretizer + modeler
-solve(ocp, :collocation, :ipopt)        # specify discretizer + solver
+solve(ocp)                                      # empty → use first method
+solve(ocp, :collocation)                        # specify discretizer
+solve(ocp, :adnlp)                              # specify modeler
+solve(ocp, :ipopt)                              # specify solver
+solve(ocp, :cpu)                                # specify parameter
+solve(ocp, :collocation, :adnlp)                # specify discretizer + modeler
+solve(ocp, :collocation, :ipopt)                # specify discretizer + solver
 solve(ocp, :collocation, :adnlp, :ipopt, :cpu)  # complete description
 ```
 
@@ -140,9 +172,9 @@ You can pass options as keyword arguments. They are **automatically routed** to 
 
 ```@example main
 sol = solve(ocp, :madnlp; 
-    grid_size=100,           # → discretizer (Collocation)
-    max_iter=500,            # → solver (MadNLP)
-    print_level=MadNLP.ERROR # → solver (MadNLP)
+    grid_size=100,              # → discretizer (Collocation)
+    max_iter=500,               # → solver (MadNLP)
+    print_level=MadNLP.ERROR    # → solver (MadNLP)
 )
 nothing # hide
 ```
@@ -167,82 +199,44 @@ Notice the `📦 Configuration` box showing:
 
 ## Strategy options
 
-Each strategy declares its available options. You can inspect them using `describe`:
+Each strategy declares its available options. You can inspect them using `describe`.
+
+### Discretizer options
 
 ```@example main
-using CTDirect, CTSolvers
-describe(Collocation)
+describe(:collocation)
+```
+
+### Modeler options
+
+```@example main
+describe(:adnlp)
 ```
 
 ```@example main
-describe(ADNLP)
+describe(:exa)
+```
+
+### Solver options
+
+```@example main
+describe(:ipopt)
 ```
 
 ```@example main
-describe(Ipopt)
+describe(:madnlp)
 ```
 
-Common options include:
+### Official documentation
 
-**Discretizer (Collocation)**:
+For complete option lists, see the official documentation:
 
-- `grid_size` (default: `250`): number of time steps
-- `scheme` (default: `:midpoint`): discretization scheme (`:midpoint`, `:trapeze`, `:euler`, `:euler_implicit`, `:gauss_legendre_2`, `:gauss_legendre_3`)
-
-**Modeler (ADNLP)**:
-
-- `backend` (default: `:optimized`): AD backend (`:optimized`, `:manual`, `:default`)
-- `show_time` (default: `false`): display model building time
-
-**Solver (Ipopt)**:
-
-- `max_iter` (default: `3000`): maximum iterations
-- `tol` (default: `1e-8`): convergence tolerance
-- `print_level` (default: `5`): output verbosity (0-12)
-
-For complete option lists, see:
-
-- [Ipopt options](https://coin-or.github.io/Ipopt/OPTIONS.html)
-- [MadNLP options](https://madnlp.github.io/MadNLP.jl/stable/options/)
-
-!!! note "ExaModels syntax limitations"
-
-    When using `:exa` modeler (especially for [GPU solving](@ref manual-solve-gpu)):
-    - Dynamics must be declared coordinate-by-coordinate: `∂(q)(t) == v(t)` instead of `ẋ(t) == [v(t), u(t)]`
-    - Nonlinear constraints must be scalar expressions
-    - Only ExaModels-supported operations are allowed (see [ExaModels documentation](https://exanauts.github.io/ExaModels.jl/stable))
-
-## Initial guess
-
-Provide an initial guess using `initial_guess` (or the alias `init`):
-
-```@example main
-# Using the @init macro (recommended)
-init = @init begin
-    u = 0.5
-end
-
-sol = solve(ocp; initial_guess=init, grid_size=50, print_level=0)
-nothing # hide
-```
-
-```@example main
-# Or using the alias
-sol = solve(ocp; init=init, grid_size=50, print_level=0)
-nothing # hide
-```
-
-For more details on initial guess specification, see [Set an initial guess](@ref manual-initial-guess).
-
-## Display control
-
-Control the configuration display with the `display` option:
-
-```@example main
-# Suppress all output
-sol = solve(ocp; display=false)
-nothing # hide
-```
+- **ADNLP**: [ADNLPModels documentation](https://jso.dev/ADNLPModels.jl/stable/)
+- **Exa**: [ExaModels documentation](https://exanauts.github.io/ExaModels.jl/stable/)
+- **Ipopt**: [Ipopt options](https://coin-or.github.io/Ipopt/OPTIONS.html)
+- **MadNLP**: [MadNLP options](https://madnlp.github.io/MadNLP.jl/stable/options/)
+- **MadNCL**: [MadNCL documentation](https://github.com/MadNLP/MadNCL.jl)
+- **Knitro**: [Knitro options](https://www.artelys.com/docs/knitro/3_referenceManual/userOptions.html)
 
 ## See also
 

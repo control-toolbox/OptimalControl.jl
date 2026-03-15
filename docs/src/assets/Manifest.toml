@@ -244,9 +244,9 @@ version = "0.8.9-beta"
 
 [[deps.CTSolvers]]
 deps = ["ADNLPModels", "CTBase", "CTModels", "CommonSolve", "DocStringExtensions", "ExaModels", "KernelAbstractions", "NLPModels", "SolverCore"]
-git-tree-sha1 = "914e4e30b6335ed64f9d51573a5914bda4dd9f3d"
+git-tree-sha1 = "a815a0e8128bd2d967a0200a08e31decf47fdc71"
 uuid = "d3e8d392-8e4b-4d9b-8e92-d7d4e3650ef6"
-version = "0.4.6"
+version = "0.4.7-beta"
 
     [deps.CTSolvers.extensions]
     CTSolversCUDA = "CUDA"
@@ -1750,9 +1750,9 @@ version = "1.22.0"
 
 [[deps.OrdinaryDiffEqCore]]
 deps = ["ADTypes", "Accessors", "Adapt", "ArrayInterface", "ConcreteStructs", "DataStructures", "DiffEqBase", "DocStringExtensions", "EnumX", "EnzymeCore", "FastBroadcast", "FastClosures", "FastPower", "FillArrays", "FunctionWrappersWrappers", "InteractiveUtils", "LinearAlgebra", "Logging", "MacroTools", "MuladdMacro", "Polyester", "PrecompileTools", "Preferences", "Random", "RecursiveArrayTools", "Reexport", "SciMLBase", "SciMLLogging", "SciMLOperators", "SciMLStructures", "Static", "StaticArrayInterface", "StaticArraysCore", "SymbolicIndexingInterface", "TruncatedStacktraces"]
-git-tree-sha1 = "fa1b29e844d9e118b1c8fbd778de6da0a1d25fa1"
+git-tree-sha1 = "d783e7f540774792c945019ab7774f41cdc6331f"
 uuid = "bbf590c4-e513-4bbe-9b18-05decba2e5d8"
-version = "3.18.0"
+version = "3.19.0"
 
     [deps.OrdinaryDiffEqCore.extensions]
     OrdinaryDiffEqCoreMooncakeExt = "Mooncake"
