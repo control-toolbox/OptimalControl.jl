@@ -135,7 +135,7 @@ We are now ready to solve the shooting equations.
 
 ```@example main
 # auxiliary in-place NLE function
-nle!(s, p0, λ) = s[:] = S(p0)
+nle!(s, p0, _) = s[:] = S(p0)
 
 # initial guess for the Newton solver
 p0_guess = [1, 1]
@@ -169,7 +169,11 @@ plot(indirect_sol)
 
 ## State constraint
 
-The following example illustrates both direct and indirect solution approaches for a constrained energy minimization problem. The workflow demonstrates a practical strategy: a direct method on a coarse grid first identifies the problem structure and provides an initial guess for the indirect method, which then computes a precise solution via shooting based on Pontryagin's Maximum Principle. The direct solution can also be refined using a finer discretization grid for higher accuracy.
+The following example illustrates both direct and indirect solution approaches for the energy minimization problem with a state constraint on the maximal velocity. The workflow demonstrates a practical strategy: a direct method on a coarse grid first identifies the problem structure and provides an initial guess for the indirect method, which then computes a precise solution via shooting based on Pontryagin's Maximum Principle.
+
+!!! note
+
+    The direct solution can be refined using a finer discretization grid for higher accuracy.
 
 ### Direct method: constrained case
 
@@ -280,7 +284,7 @@ We can now solve the shooting equations.
 
 ```@example main
 # auxiliary in-place NLE function
-nle!(s, ξ, λ) = shoot!(s, ξ[1:2], ξ[3], ξ[4])
+nle!(s, ξ, _) = shoot!(s, ξ[1:2], ξ[3], ξ[4])
 
 # initial guess for the Newton solver
 ξ_guess = [p0..., t1, t2]

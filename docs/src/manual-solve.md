@@ -1,5 +1,9 @@
 # [Solve a problem](@id manual-solve)
 
+```@meta
+Draft = false
+```
+
 This manual explains how to use the [`solve`](@ref) function to solve optimal control problems with OptimalControl.jl. The `solve` function provides a **descriptive mode** where you specify strategies using symbolic tokens, with automatic option routing and validation.
 
 For advanced usage, see:
