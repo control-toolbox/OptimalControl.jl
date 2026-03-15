@@ -18,9 +18,7 @@ For the illustrations, we define two optimal control problems to showcase the di
 The first problem uses default component labels (`x₁`, `x₂` for the state):
 
 ```@example main
-t0 = 0
-tf = 10
-α  = 5
+t0 = 0; tf = 10; α = 5
 
 ocp1 = @def begin
     t ∈ [t0, tf], time
@@ -42,6 +40,7 @@ ocp2 = @def begin
     s ∈ [0, tf], time
     x = (q, v) ∈ R², state
     u ∈ R, control
+    -1 ≤ u(s) ≤ 1
     tf ≥ 0
     q(0) == -1
     v(0) == 0
@@ -102,6 +101,16 @@ For optimization variables (like `tf`), use `label := value` since they are not 
 
 ### `@init` at a Glance
 
+**Complete syntax:**
+
+```julia
+ig = @init ocp begin
+    # initial guess specifications
+end
+```
+
+The `ocp` argument is required for label validation and context checking.
+
 **Core syntax:** `label(time_var) := expression`
 
 | Component | Has `(t)`? | Uses `:=`? | Example |
@@ -131,7 +140,7 @@ where `T = [0.0, 0.5, 1.0]` is the time grid.
     - **1D**: scalar values (not `[value]`)
     - **2D**: vectors `[v1, v2]` or vector of vectors `[[v1, v2], ...]` or matrix
     - **Variables** and **aliases**: no time argument
-    - **Constant functions**: just use a constant expression, e.g., `u(t) := 2`
+    - **Constant functions**: use either `u(t) := 2` or the simplified `u := 2`
 
 ### Constant initial guess
 
@@ -162,7 +171,7 @@ Using custom labels makes the initialization more readable:
 # initialize individual components with constant values
 # note: use 's' as the time variable (matching ocp2 definition)
 ig = @init ocp2 begin
-    q(s) := -1.0   # constant function for q
+    q(s) := -0.2   # constant function for q
     v(s) := 0.0    # constant function for v
     u(s) := 0.1    # constant function for u
     tf := 2.0      # variable (not a function)

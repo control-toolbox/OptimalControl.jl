@@ -1,19 +1,19 @@
 # [The optimal control solution object: structure and usage](@id manual-solution)
 
-In this manual, we'll first recall the **main functionalities** you can use when working with a solution of an optimal control problem (SOL). This includes essential operations like:
+In this manual, we'll first recall the **main functionalities** you can use when working with a solution of an optimal control problem. This includes essential operations like:
 
-* **Plotting a SOL**: How to plot the optimal solution for your defined problem.
-* **Printing a SOL**: How to display a summary of your solution.
+* **Plotting a solution**: How to plot the optimal solution for your defined problem.
+* **Printing a solution**: How to display a summary of your solution.
 
-After covering these core functionalities, we'll delve into the **structure of a SOL**. Since a SOL is structured as a [`OptimalControl.Solution`](@ref) struct, we'll first explain how to **access its underlying attributes**. Following this, we'll shift our focus to the **simple properties** inherent to a SOL.
+After covering these core functionalities, we'll delve into the **structure of a solution**. Since a solution is structured as a [`OptimalControl.Solution`](@ref) struct, we'll first explain how to **access its underlying attributes**. Following this, we'll shift our focus to the **simple properties** inherent to a solution.
 
 ---
 
 **Content**
 
-- [Main functionalities](@ref manual-solution-main-functionalities)
-- [Solution struct](@ref manual-solution-struct)
-- [Attributes and properties](@ref manual-solution-attributes)
+* [Main functionalities](@ref manual-solution-main-functionalities)
+* [Solution struct](@ref manual-solution-struct)
+* [Attributes and properties](@ref manual-solution-attributes)
 
 ---
 
@@ -82,7 +82,7 @@ The solution `sol` is a [`OptimalControl.Solution`](@ref) struct.
 OptimalControl.Solution
 ```
 
-Each field can be accessed directly (`ocp.times`, etc) but we recommend to use the sophisticated getters we provide: the `state(sol::Solution)` method does not return `sol.state` but a function of time that can be called at any time, not only on the grid `time_grid`.
+Each field can be accessed directly (`sol.state`, etc) but we recommend to use the sophisticated getters we provide: the `state(sol::Solution)` method does not return `sol.state` but a function of time that can be called at any time, not only on the grid `time_grid`.
 
 ```@example main
 0.25 ∈ time_grid(sol)
@@ -91,6 +91,12 @@ Each field can be accessed directly (`ocp.times`, etc) but we recommend to use t
 ```@example main
 x = state(sol)
 x(0.25)
+```
+
+You can also retrieve the original optimal control problem from the solution:
+
+```@example main
+model(sol)  # returns the original OCP model
 ```
 
 ## [API Reference by Component](@id manual-solution-api)
@@ -143,7 +149,7 @@ u(t)  # returns control value at t
 Get the optimization variable values:
 
 ```@example main
-v = variable(sol)  # returns vector or empty if no variable
+v = variable(sol)  # returns an empty vector if no variable
 ```
 
 #### Costate trajectory
@@ -167,31 +173,42 @@ time_grid(sol)  # returns the discretization time grid
 ```
 
 ```@example main
-times(sol)  # returns the time interval (t0, tf)
+times(sol)  # returns the TimesModel struct containing time information
 ```
 
-The `time` function returns a function that can be used to get time values:
+!!! note "Time grids"
+    **Unified vs. multiple grids:**
 
-```@example main
-time_func = time(sol)
-time_func(0.5)  # returns time at normalized parameter 0.5
-```
+    With a standard collocation method, there is a single time grid that can be retrieved via `time_grid(sol)`. The solution internally uses a `UnifiedTimeGridModel` for memory efficiency.
+
+    For discretization methods that use multiple grids (one per component), the solution uses a `MultipleTimeGridModel`. In this case, you must specify which component's grid you want:
+
+    - `time_grid(sol, :state)` — state trajectory and state box constraint duals
+    - `time_grid(sol, :control)` — control trajectory and control box constraint duals
+    - `time_grid(sol, :costate)` — costate trajectory (maps to `:state` grid)
+    - `time_grid(sol, :path)` — path constraint duals
+
+    Aliases are accepted: `:costate`/`:costates` map to `:state`, `:dual`/`:duals` map to `:path`, and plural forms (`:states`, `:controls`) are also valid.
+
+    All grids must be strictly increasing, finite, and non-empty.
+
+!!! note "Trajectory data formats"
+    Trajectories (`state`, `control`, `costate`, `path_constraints_dual`) can be provided either as matrices (rows = time points, columns = components) or as functions `t -> vector` for interpolated or analytical data.
 
 #### Summary table
 
 | Method | Returns | Description |
-|--------|---------|-------------|
+| -------- | --------- | ------------- |
 | `state(sol)` | `Function` | State trajectory x(t) |
 | `control(sol)` | `Function` | Control trajectory u(t) |
 | `variable(sol)` | `Vector` | Variable values |
 | `costate(sol)` | `Function` | Costate trajectory p(t) |
-| `time(sol)` | `Function` | Time function |
 | `time_grid(sol)` | `Vector{Float64}` | Discretization time grid |
-| `times(sol)` | `(Float64, Float64)` | Time interval (t0, tf) |
+| `times(sol)` | `TimesModel` | TimesModel struct containing time information |
 
 ### Objective
 
-The objective component provides access to the objective value and criterion.
+The objective component provides access to the objective value.
 
 #### Objective value
 
@@ -201,20 +218,11 @@ Get the optimal objective value:
 objective(sol)  # returns the objective value
 ```
 
-#### Criterion
-
-Get the optimization criterion:
-
-```@example main
-criterion(sol)  # returns :min or :max
-```
-
 #### Summary table
 
 | Method | Returns | Description |
-|--------|---------|-------------|
+| -------- | --------- | ------------- |
 | `objective(sol)` | `Float64` | Objective value |
-| `criterion(sol)` | `Symbol` | `:min` or `:max` |
 
 ### Dual variables
 
@@ -308,7 +316,7 @@ boundary_constraints_dual(sol)  # duals for nonlinear boundary constraints
 #### Summary table
 
 | Method | Returns | Description |
-|--------|---------|-------------|
+| -------- | --------- | ------------- |
 | `dual(sol, ocp, label)` | `Real` or `Function` | Dual for labeled constraint |
 | `state_constraints_lb_dual(sol)` | Dual values | State lower bound duals |
 | `state_constraints_ub_dual(sol)` | Dual values | State upper bound duals |
@@ -330,9 +338,6 @@ Check if the solution was successful:
 ```@example main
 successful(sol)  # returns true if solver succeeded
 ```
-
-!!! note "Variant method"
-    The method `success(sol)` is equivalent to `successful(sol)`.
 
 Get the solver status symbol:
 
@@ -373,37 +378,10 @@ infos(sol)  # returns dictionary of solver info
 #### Summary table
 
 | Method | Returns | Description |
-|--------|---------|-------------|
+| -------- | --------- | ------------- |
 | `successful(sol)` | `Bool` | True if solver succeeded |
 | `status(sol)` | `Symbol` | Solver status |
 | `message(sol)` | `String` | Solver message |
 | `iterations(sol)` | `Int` | Number of iterations |
 | `constraints_violation(sol)` | `Float64` | Maximum constraint violation |
 | `infos(sol)` | `Dict` | Additional solver information |
-
-### Other accessors
-
-Additional methods for accessing solution information.
-
-#### Original OCP model
-
-Get the original optimal control problem:
-
-```@example main
-model(sol)  # returns the OCP model
-```
-
-#### Index information
-
-Get index information from the solution:
-
-```@example main
-index(sol)  # returns index information
-```
-
-#### Summary table
-
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `model(sol)` | `Model` | Original OCP model |
-| `index(sol)` | Index info | Index information |

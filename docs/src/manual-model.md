@@ -15,9 +15,9 @@ After covering these core functionalities, we'll delve into the **structure of a
 
 **Content**
 
-- [Main functionalities](@ref manual-model-main-functionalities)
-- [Model struct](@ref manual-model-struct)
-- [Attributes and properties](@ref manual-model-attributes)
+* [Main functionalities](@ref manual-model-main-functionalities)
+* [Model struct](@ref manual-model-struct)
+* [Attributes and properties](@ref manual-model-attributes)
 
 ---
 
@@ -61,7 +61,7 @@ nothing # hide
 You can also compute flows (for more details, see the [flow manual](@ref manual-flow-ocp)) from the optimal control problem, providing a control law in feedback form. The **pseudo-Hamiltonian** of this problem is
 
 ```math
-    H(x, p, u) = p_q\, v + p_v\, u + p^0 u^2 /2,
+    H(x, p, u) = p_q\, v + p_v\, u + p^0 \frac{u^2}{2},
 ```
 
 where $p^0 = -1$ since we are in the normal case. From the Pontryagin maximum principle, the maximising control is given in feedback form by
@@ -97,20 +97,19 @@ OptimalControl.Model
 
 Each field can be accessed directly (`ocp.times`, etc) or by a getter:
 
-- [`times`](@ref)
-- [`state`](@ref)
-- [`control`](@ref)
-- [`variable`](@ref)
-- [`dynamics`](@ref)
-- [`objective`](@ref)
-- [`constraints`](@ref)
-- [`definition`](@ref)
-- [`get_build_examodel`](@ref)
+* [`times`](@ref)
+* [`state`](@ref)
+* [`control`](@ref)
+* [`variable`](@ref)
+* [`dynamics`](@ref)
+* [`objective`](@ref)
+* [`constraints`](@ref)
+* [`definition`](@ref)
 
 For instance, we can retrieve the `times` and `definition` values.
 
 ```@example main
-times(ocp)
+times(ocp)  # returns the TimesModel struct containing time information
 ```
 
 ```@example main
@@ -150,12 +149,12 @@ nothing # hide
 
 The time component defines the temporal domain of the optimal control problem.
 
-#### Time interval and bounds
+#### Times model
 
-Get the time interval as a tuple:
+Get the times model:
 
 ```@example main
-times(ocp)  # returns (t0, tf) or (t0, tf_name) if tf is free
+times(ocp)  # returns the TimesModel struct containing time information
 ```
 
 You can also access initial and final times separately:
@@ -235,7 +234,7 @@ For more details on autonomy, see the [Time dependence](@ref manual-model-time-d
 #### Summary table
 
 | Method | Returns | Description |
-|--------|---------|-------------|
+| -------- | --------- | --------- |
 | `times(ocp)` | `(Float64, Any)` | Time interval (t0, tf) or (t0, tf_name) |
 | `initial_time(ocp)` | `Float64` | Initial time t0 |
 | `final_time(ocp)` | `Float64` | Final time tf (error if free) |
@@ -281,6 +280,13 @@ Get the box constraints on the state (lower and upper bounds):
 state_constraints_box(ocp)  # returns box constraints if any
 ```
 
+!!! note "Tuple structure"
+    The returned tuple has the structure `(lb, indices, ub, labels)` where:
+    - `lb`: vector of lower bounds
+    - `indices`: vector of component indices (1-based)
+    - `ub`: vector of upper bounds
+    - `labels`: vector of constraint labels
+
 Get the dimension of state box constraints:
 
 ```@example main
@@ -290,7 +296,7 @@ dim_state_constraints_box(ocp)  # returns number of box constraints on state
 #### Summary table
 
 | Method | Returns | Description |
-|--------|---------|-------------|
+| -------- | --------- | --------- |
 | `state_name(ocp)` | `String` | State variable name |
 | `state_dimension(ocp)` | `Int` | State dimension |
 | `state_components(ocp)` | `Vector{String}` | State component names |
@@ -325,6 +331,13 @@ Get the box constraints on the control:
 control_constraints_box(ocp)  # returns box constraints if any
 ```
 
+!!! note "Tuple structure"
+    The returned tuple has the structure `(lb, indices, ub, labels)` where:
+    - `lb`: vector of lower bounds
+    - `indices`: vector of component indices (1-based)
+    - `ub`: vector of upper bounds
+    - `labels`: vector of constraint labels
+
 Get the dimension of control box constraints:
 
 ```@example main
@@ -334,7 +347,7 @@ dim_control_constraints_box(ocp)  # returns number of box constraints on control
 #### Summary table
 
 | Method | Returns | Description |
-|--------|---------|-------------|
+| -------- | --------- | --------- |
 | `control_name(ocp)` | `String` | Control variable name |
 | `control_dimension(ocp)` | `Int` | Control dimension |
 | `control_components(ocp)` | `Vector{String}` | Control component names |
@@ -369,6 +382,13 @@ Get the box constraints on the variable:
 variable_constraints_box(ocp)  # returns box constraints if any
 ```
 
+!!! note "Tuple structure"
+    The returned tuple has the structure `(lb, indices, ub, labels)` where:
+    - `lb`: vector of lower bounds
+    - `indices`: vector of component indices (1-based)
+    - `ub`: vector of upper bounds
+    - `labels`: vector of constraint labels
+
 Get the dimension of variable box constraints:
 
 ```@example main
@@ -378,7 +398,7 @@ dim_variable_constraints_box(ocp)  # returns number of box constraints on variab
 #### Summary table
 
 | Method | Returns | Description |
-|--------|---------|-------------|
+| -------- | --------- | --------- |
 | `variable_name(ocp)` | `String` | Variable name |
 | `variable_dimension(ocp)` | `Int` | Variable dimension |
 | `variable_components(ocp)` | `Vector{String}` | Variable component names |
@@ -405,15 +425,16 @@ dq  # returns the derivative q̇
 ```
 
 The first argument `dx` is mutated upon call and contains the state derivative. The other arguments are:
-- `t`: time
-- `x`: state
-- `u`: control
-- `v`: variable
+
+* `t`: time
+* `x`: state
+* `u`: control
+* `v`: variable
 
 #### Summary table
 
 | Method | Returns | Description |
-|--------|---------|-------------|
+| -------- | --------- | --------- |
 | `dynamics(ocp)` | `Function` | In-place dynamics function f!(dx, t, x, u, v) |
 
 ### Objective
@@ -432,9 +453,9 @@ criterion(ocp)  # returns :min or :max
 
 The objective function can be in Mayer form, Lagrange form, or Bolza form (combination of both):
 
-- **Mayer**: $g(x(t_0), x(t_f), v) \to \min$
-- **Lagrange**: $\int_{t_0}^{t_f} f^0(t, x(t), u(t), v)\, \mathrm{d}t \to \min$
-- **Bolza**: $g(x(t_0), x(t_f), v) + \int_{t_0}^{t_f} f^0(t, x(t), u(t), v)\, \mathrm{d}t \to \min$
+* **Mayer**: $g(x(t_0), x(t_f), v) \to \min$
+* **Lagrange**: $\int_{t_0}^{t_f} f^0(t, x(t), u(t), v)\, \mathrm{d}t \to \min$
+* **Bolza**: $g(x(t_0), x(t_f), v) + \int_{t_0}^{t_f} f^0(t, x(t), u(t), v)\, \mathrm{d}t \to \min$
 
 Check which form is present:
 
@@ -475,7 +496,7 @@ f⁰(s, q, u, v)  # returns the integrand value
 #### Summary table
 
 | Method | Returns | Description |
-|--------|---------|-------------|
+| -------- | --------- | --------- |
 | `criterion(ocp)` | `Symbol` | `:min` or `:max` |
 | `has_mayer_cost(ocp)` | `Bool` | True if Mayer cost exists |
 | `has_lagrange_cost(ocp)` | `Bool` | True if Lagrange cost exists |
@@ -502,8 +523,9 @@ println("ub: ", ub)
 ```
 
 The function signature depends on the constraint type:
-- For `:boundary` and `:variable` constraints: `f(x0, xf, v)`
-- For other constraints (`:control`, `:state`, `:mixed`): `f(t, x, u, v)`
+
+* For `:boundary` and `:variable` constraints: `f(x0, xf, v)`
+* For other constraints (`:control`, `:state`, `:mixed`): `f(t, x, u, v)`
 
 Examples of different constraint types:
 
@@ -548,6 +570,17 @@ path_constraints_nl(ocp)  # returns nonlinear path constraints
 boundary_constraints_nl(ocp)  # returns nonlinear boundary constraints
 ```
 
+!!! note "Tuple structure"
+    The returned tuples have the structure `(lb, f!, ub, labels)` where:
+    - `lb`: vector of lower bounds
+    - `f!`: constraint function (in-place)
+    - `ub`: vector of upper bounds
+    - `labels`: vector of constraint labels
+
+    The constraint functions have the following signatures:
+    - Path constraints: `f!(val, t, x, u, v)` where `val` is mutated
+    - Boundary constraints: `f!(val, x0, xf, v)` where `val` is mutated
+
 Get the dimensions of nonlinear constraints:
 
 ```@example main
@@ -565,7 +598,7 @@ dim_boundary_constraints_nl(ocp)  # number of nonlinear boundary constraints
 #### Summary table
 
 | Method | Returns | Description |
-|--------|---------|-------------|
+| -------- | --------- | --------- |
 | `constraint(ocp, label)` | `(Symbol, Function, Real, Real)` | Get constraint by label |
 | `constraints(ocp)` | Collection | All constraints |
 | `path_constraints_nl(ocp)` | Constraints | Nonlinear path constraints |
@@ -573,25 +606,7 @@ dim_boundary_constraints_nl(ocp)  # number of nonlinear boundary constraints
 | `dim_path_constraints_nl(ocp)` | `Int` | Number of nonlinear path constraints |
 | `dim_boundary_constraints_nl(ocp)` | `Int` | Number of nonlinear boundary constraints |
 
-### Generic accessors
-
-These generic methods work with different components of the OCP.
-
-#### Component name, dimension, and components
-
-The methods `name`, `dimension`, and `components` can be applied to various OCP components:
-
-```@example main
-name(ocp)  # get the name of the OCP or a component
-```
-
-```@example main
-dimension(ocp)  # get the dimension of a component
-```
-
-```@example main
-components(ocp)  # get the component names
-```
+### Other accessors
 
 #### Problem definition
 
@@ -600,24 +615,6 @@ Get the problem definition as a string:
 ```@example main
 definition(ocp)  # returns the OCP definition
 ```
-
-#### ExaModels builder
-
-Get the ExaModels builder function if available:
-
-```@example main
-get_build_examodel(ocp)  # returns the ExaModels builder or nothing
-```
-
-#### Summary table
-
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `name(ocp)` | `String` | Name of OCP or component |
-| `dimension(ocp)` | `Int` | Dimension of component |
-| `components(ocp)` | `Vector{String}` | Component names |
-| `definition(ocp)` | `String` | Problem definition |
-| `get_build_examodel(ocp)` | `Function` or `Nothing` | ExaModels builder |
 
 ### [Time dependence](@id manual-model-time-dependence)
 
