@@ -1,9 +1,5 @@
 # [Solve a problem](@id manual-solve)
 
-```@meta
-Draft = false
-```
-
 This manual explains how to use the [`solve`](@ref) function to solve optimal control problems with OptimalControl.jl. The `solve` function provides a **descriptive mode** where you specify strategies using symbolic tokens, with automatic option routing and validation.
 
 For advanced usage, see:
@@ -200,6 +196,14 @@ Notice the `📦 Configuration` box showing:
 ## Strategy options
 
 Each strategy declares its available options. You can inspect them using `describe`.
+
+!!! note "Understanding default values"
+    When `describe` shows `(default: NotProvided)` for an option, it means OptimalControl does not override the strategy's native default value. For example:
+    - For Ipopt options with `(default: NotProvided)`, Ipopt's own default values are used
+    - For MadNLP options with `(default: NotProvided)`, MadNLP's own default values are used
+    - For other strategies, the same principle applies
+
+    Only options with explicit default values (e.g., `(default: 100)`) are overridden by OptimalControl.
 
 ### Discretizer options
 
