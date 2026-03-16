@@ -72,6 +72,16 @@ The `:gpu` parameter automatically selects GPU-optimized defaults:
 - **Exa modeler**: CUDA backend + GPU-optimized automatic differentiation
 - **MadNLP solver**: `CUDSSSolver` linear solver (instead of `MumpsSolver`)
 
+You can inspect which strategies support the GPU parameter:
+
+```@example gpu
+describe(:gpu)
+```
+
+This shows that only `:exa`, `:madnlp`, and `:madncl` strategies have GPU-parameterized versions.
+
+The GPU parameter changes default options:
+
 ```@example gpu
 # GPU defaults
 modeler = OptimalControl.Exa{GPU}()

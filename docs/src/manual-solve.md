@@ -109,6 +109,17 @@ Each method is a **quadruplet** `(discretizer, modeler, solver, parameter)`:
    - `:cpu`: CPU execution (default)
    - `:gpu`: GPU execution (only for `:exa` modeler with `:madnlp` or `:madncl` solvers)
 
+You can inspect which strategies use a given parameter:
+
+```@example main
+describe(:cpu)
+```
+
+```@example main
+using CUDA, MadNLPGPU
+describe(:gpu)
+```
+
 !!! note "Priority order"
 
     The order of methods in the list above determines the **priority** for auto-completion. When you provide a partial description, the first matching method from top to bottom is selected. This is why the first method `(:collocation, :adnlp, :ipopt, :cpu)` is the default.

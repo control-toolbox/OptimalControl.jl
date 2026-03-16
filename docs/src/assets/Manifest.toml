@@ -266,9 +266,9 @@ version = "0.8.9-beta"
 
 [[deps.CTSolvers]]
 deps = ["ADNLPModels", "CTBase", "CTModels", "CommonSolve", "DocStringExtensions", "ExaModels", "KernelAbstractions", "NLPModels", "SolverCore"]
-git-tree-sha1 = "a815a0e8128bd2d967a0200a08e31decf47fdc71"
+git-tree-sha1 = "384ecf74a31d4401e22d422d49270c10fb81bc00"
 uuid = "d3e8d392-8e4b-4d9b-8e92-d7d4e3650ef6"
-version = "0.4.7-beta"
+version = "0.4.8-beta"
 
     [deps.CTSolvers.extensions]
     CTSolversCUDA = "CUDA"
@@ -1218,9 +1218,9 @@ version = "1.12.0"
 
 [[deps.KNITRO]]
 deps = ["KNITRO_jll", "Libdl"]
-git-tree-sha1 = "ac4beadd940eddb4de585f53eb97a7bd528f1c41"
+git-tree-sha1 = "5e38b3c29bb35b04aac3eef0b7357a47a566346a"
 uuid = "67920dd8-b58e-52a8-8622-53c4cffbe346"
-version = "1.2.0"
+version = "1.2.1"
 
     [deps.KNITRO.extensions]
     KNITROMathOptInterfaceExt = ["MathOptInterface"]
@@ -1458,9 +1458,9 @@ version = "2.13.0"
 
 [[deps.LinearSolve]]
 deps = ["ArrayInterface", "ChainRulesCore", "ConcreteStructs", "DocStringExtensions", "EnumX", "GPUArraysCore", "InteractiveUtils", "Krylov", "Libdl", "LinearAlgebra", "MKL_jll", "Markdown", "OpenBLAS_jll", "PrecompileTools", "Preferences", "RecursiveArrayTools", "Reexport", "SciMLBase", "SciMLLogging", "SciMLOperators", "Setfield", "StaticArraysCore"]
-git-tree-sha1 = "86b5b25ca3b97d248133d055463c31ebc4de2bbb"
+git-tree-sha1 = "57a7bea58da7de6906f2621294ea35656cb40c5f"
 uuid = "7ed4a6bd-45f5-4d41-b270-4a48e9bafcae"
-version = "3.65.0"
+version = "3.66.0"
 
     [deps.LinearSolve.extensions]
     LinearSolveAMDGPUExt = "AMDGPU"
@@ -1923,9 +1923,9 @@ version = "1.22.0"
 
 [[deps.OrdinaryDiffEqCore]]
 deps = ["ADTypes", "Accessors", "Adapt", "ArrayInterface", "ConcreteStructs", "DataStructures", "DiffEqBase", "DocStringExtensions", "EnumX", "EnzymeCore", "FastBroadcast", "FastClosures", "FastPower", "FillArrays", "FunctionWrappersWrappers", "InteractiveUtils", "LinearAlgebra", "Logging", "MacroTools", "MuladdMacro", "Polyester", "PrecompileTools", "Preferences", "Random", "RecursiveArrayTools", "Reexport", "SciMLBase", "SciMLLogging", "SciMLOperators", "SciMLStructures", "Static", "StaticArrayInterface", "StaticArraysCore", "SymbolicIndexingInterface", "TruncatedStacktraces"]
-git-tree-sha1 = "9b8819db9b1ce0633a990fb2384a0fdcbb27fa14"
+git-tree-sha1 = "b0b386226690c23ebc771cd68a37d08c55b60924"
 uuid = "bbf590c4-e513-4bbe-9b18-05decba2e5d8"
-version = "3.20.0"
+version = "3.21.0"
 
     [deps.OrdinaryDiffEqCore.extensions]
     OrdinaryDiffEqCoreMooncakeExt = "Mooncake"
