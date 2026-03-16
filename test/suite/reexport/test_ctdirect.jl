@@ -29,6 +29,19 @@ function test_ctdirect()
             Test.@test isdefined(CurrentModule, :discretize)
             Test.@test discretize isa Function
         end
+
+        Test.@testset "Type Hierarchy" begin
+            Test.@test OptimalControl.Collocation <: OptimalControl.AbstractDiscretizer
+        end
+
+        Test.@testset "Method Signatures" begin
+            Test.@testset "discretize" begin
+                Test.@test hasmethod(
+                    discretize,
+                    Tuple{OptimalControl.AbstractModel,OptimalControl.AbstractDiscretizer},
+                )
+            end
+        end
     end
 end
 

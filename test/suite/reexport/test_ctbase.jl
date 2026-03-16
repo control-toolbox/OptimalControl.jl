@@ -38,6 +38,21 @@ function test_ctbase()
                 Test.@test T isa DataType
             end
         end
+
+        Test.@testset "Type Hierarchy" begin
+            Test.@testset "Exception inheritance" begin
+                for T in (
+                    OptimalControl.IncorrectArgument,
+                    OptimalControl.PreconditionError,
+                    OptimalControl.NotImplemented,
+                    OptimalControl.ParsingError,
+                    OptimalControl.AmbiguousDescription,
+                    OptimalControl.ExtensionError,
+                )
+                    Test.@test T <: OptimalControl.CTException
+                end
+            end
+        end
     end
 end
 

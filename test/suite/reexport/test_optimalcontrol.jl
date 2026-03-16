@@ -18,12 +18,35 @@ const CurrentModule = TestOptimalControl
 function test_optimalcontrol()
     Test.@testset "OptimalControl exports" verbose = VERBOSE showtiming = SHOWTIMING begin
         Test.@testset "Functions" begin
-            for f in (:methods,)
+            for f in (:methods, :solve)
                 Test.@testset "$f" begin
                     Test.@test isdefined(OptimalControl, f)
                     Test.@test isdefined(CurrentModule, f)
                     Test.@test getfield(OptimalControl, f) isa Function
                 end
+            end
+        end
+
+        Test.@testset "Method Signatures" begin
+            Test.@testset "solve - Layer 1 (dispatch)" begin
+                Test.@test hasmethod(
+                    solve, Tuple{OptimalControl.AbstractModel,Vararg{Symbol}}
+                )
+            end
+            Test.@testset "solve - Layer 3 (canonical)" begin
+                Test.@test hasmethod(
+                    solve,
+                    Tuple{
+                        OptimalControl.AbstractModel,
+                        OptimalControl.AbstractInitialGuess,
+                        OptimalControl.AbstractDiscretizer,
+                        OptimalControl.AbstractNLPModeler,
+                        OptimalControl.AbstractNLPSolver,
+                    },
+                )
+            end
+            Test.@testset "methods" begin
+                Test.@test hasmethod(methods, Tuple{})
             end
         end
     end
