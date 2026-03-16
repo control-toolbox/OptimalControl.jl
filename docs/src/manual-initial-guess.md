@@ -249,8 +249,9 @@ You can define Julia aliases within the `@init` block using `=` (single equals, 
 ig = @init ocp2 begin
     amplitude = 0.5
     phase = sin(amplitude)
-    q(s) := amplitude * sin(s)
-    v(s) := amplitude * cos(s)
+    φ = 2π * t
+    q(s) := amplitude * sin(φ)
+    v(s) := amplitude * cos(φ)
     u(s) := phase      # constant function using alias
     tf := 2.0          # variable
 end

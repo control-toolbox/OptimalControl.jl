@@ -260,9 +260,9 @@ weakdeps = ["JLD2", "JSON3", "Plots"]
 
 [[deps.CTParser]]
 deps = ["CTBase", "DocStringExtensions", "MLStyle", "OrderedCollections", "Parameters", "Unicode"]
-git-tree-sha1 = "fccc2d0807b6533cd0958451d39921d9c3885636"
+git-tree-sha1 = "311bad1284ba1ccb23a6efe1d0cf531bdb7c46b9"
 uuid = "32681960-a1b1-40db-9bff-a1ca817385d1"
-version = "0.8.9-beta"
+version = "0.8.10-beta"
 
 [[deps.CTSolvers]]
 deps = ["ADNLPModels", "CTBase", "CTModels", "CommonSolve", "DocStringExtensions", "ExaModels", "KernelAbstractions", "NLPModels", "SolverCore"]

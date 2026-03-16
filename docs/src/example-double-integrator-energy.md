@@ -207,7 +207,7 @@ ocp = @def begin
 end
 
 # solve with a direct method
-direct_sol = solve(ocp; grid_size=10)
+direct_sol = solve(ocp; grid_size=50)
 
 # plot the solution
 plt = plot(direct_sol; label="Direct", size=(800, 600))
