@@ -1,10 +1,5 @@
 # [Solve on GPU](@id manual-solve-gpu)
 
-
-```@meta
-Draft = false
-```
-
 This manual explains how to solve optimal control problems on GPU using the [`solve`](@ref) function. GPU acceleration is available through [ExaModels.jl](https://exanauts.github.io/ExaModels.jl/stable) and [MadNLPGPU.jl](https://github.com/MadNLP/MadNLP.jl), with current support for NVIDIA GPUs via [CUDA.jl](https://github.com/JuliaGPU/CUDA.jl).
 
 For basic CPU solving, see [Solve a problem](@ref manual-solve).
@@ -72,44 +67,25 @@ sol = solve(ocp, :gpu; grid_size=100, print_level=MadNLP.ERROR)
 
 ### What the `:gpu` token does
 
-The `:gpu` parameter token automatically selects GPU-optimized defaults:
+The `:gpu` parameter automatically selects GPU-optimized defaults:
 
-**For `Exa` modeler:**
-
-- Sets `backend` to CUDA backend
-- Enables GPU-optimized automatic differentiation
-
-**For `MadNLP` solver:**
-
-- Sets `linear_solver` to `MadNLPGPU.CUDSSSolver` (instead of `MadNLP.MumpsSolver`)
-- Configures GPU-specific solver options
-
-You can inspect these defaults:
+- **Exa modeler**: CUDA backend + GPU-optimized automatic differentiation
+- **MadNLP solver**: `CUDSSSolver` linear solver (instead of `MumpsSolver`)
 
 ```@example gpu
+# GPU defaults
 modeler = OptimalControl.Exa{GPU}()
-opts = options(modeler)
-opts[:backend]
-```
-
-```@example gpu
 solver = OptimalControl.MadNLP{GPU}()
-opts = options(solver)
-opts[:linear_solver]
-```
-
-Compare with CPU defaults:
-
-```@example gpu
-modeler = OptimalControl.Exa{CPU}()
-opts = options(modeler)
-opts[:backend]
+println("Exa{GPU} backend: ", options(modeler)[:backend])
+println("MadNLP{GPU} linear_solver: ", options(solver)[:linear_solver])
 ```
 
 ```@example gpu
-solver = OptimalControl.MadNLP{CPU}()
-opts = options(solver)
-opts[:linear_solver]
+# CPU defaults (default parameter)
+modeler = OptimalControl.Exa() # equivalent to OptimalControl.Exa{CPU}()
+solver = OptimalControl.MadNLP() # equivalent to OptimalControl.MadNLP{CPU}()
+println("Exa{CPU} backend: ", options(modeler)[:backend])
+println("MadNLP{CPU} linear_solver: ", options(solver)[:linear_solver])
 ```
 
 ## Explicit mode with parameterized types
@@ -122,7 +98,6 @@ mod  = OptimalControl.Exa{GPU}()
 sol  = OptimalControl.MadNLP{GPU}(print_level=MadNLP.ERROR)
 
 result = solve(ocp; discretizer=disc, modeler=mod, solver=sol)
-nothing # hide
 ```
 
 This gives you:
