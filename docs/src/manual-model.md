@@ -17,7 +17,7 @@ After covering these core functionalities, we'll delve into the **structure of a
 
 * [Main functionalities](@ref manual-model-main-functionalities)
 * [Model struct](@ref manual-model-struct)
-* [Attributes and properties](@ref manual-model-attributes)
+* [API Reference by Component](@ref manual-model-api)
 
 ---
 

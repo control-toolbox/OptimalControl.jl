@@ -13,7 +13,7 @@ After covering these core functionalities, we'll delve into the **structure of a
 
 * [Main functionalities](@ref manual-solution-main-functionalities)
 * [Solution struct](@ref manual-solution-struct)
-* [Attributes and properties](@ref manual-solution-attributes)
+* [API Reference by Component](@ref manual-solution-api)
 
 ---
 
