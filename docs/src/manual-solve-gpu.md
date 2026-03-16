@@ -21,7 +21,7 @@ nothing # hide
 
 ## Problem definition
 
-Consider the following optimal control problem. Note the **coordinate-by-coordinate** dynamics declaration required by ExaModels:
+Consider the following optimal control problem.
 
 ```@example gpu
 ocp = @def begin
@@ -40,16 +40,6 @@ ocp = @def begin
 end
 nothing # hide
 ```
-
-!!! note "ExaModels syntax requirements"
-
-    When using the `:exa` modeler (required for GPU):
-    
-    - Dynamics **must** be declared coordinate-by-coordinate: `∂(x₁)(t) == ...` instead of `ẋ(t) == [...]`
-    - Nonlinear constraints must be scalar expressions
-    - Only ExaModels-supported operations are allowed
-    
-    See the [ExaModels documentation](https://exanauts.github.io/ExaModels.jl/stable) for details.
 
 ## Descriptive mode with `:gpu` token
 
