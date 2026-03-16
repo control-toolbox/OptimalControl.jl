@@ -1,5 +1,10 @@
 # [Solve on GPU](@id manual-solve-gpu)
 
+
+```@meta
+Draft = false
+```
+
 This manual explains how to solve optimal control problems on GPU using the [`solve`](@ref) function. GPU acceleration is available through [ExaModels.jl](https://exanauts.github.io/ExaModels.jl/stable) and [MadNLPGPU.jl](https://github.com/MadNLP/MadNLP.jl), with current support for NVIDIA GPUs via [CUDA.jl](https://github.com/JuliaGPU/CUDA.jl).
 
 For basic CPU solving, see [Solve a problem](@ref manual-solve).
@@ -55,16 +60,14 @@ nothing # hide
 
 The simplest way to solve on GPU is using the `:gpu` parameter token:
 
-```@example gpu
+```julia
 sol = solve(ocp, :exa, :madnlp, :gpu; grid_size=100, print_level=MadNLP.ERROR)
-nothing # hide
 ```
 
 Or with partial description (auto-completes to `:collocation, :exa, :madnlp, :gpu`):
 
-```@example gpu
+```julia
 sol = solve(ocp, :gpu; grid_size=100, print_level=MadNLP.ERROR)
-nothing # hide
 ```
 
 ### What the `:gpu` token does
@@ -73,7 +76,7 @@ The `:gpu` parameter token automatically selects GPU-optimized defaults:
 
 **For `Exa` modeler:**
 
-- Sets `backend` to CUDA backend (instead of CPU)
+- Sets `backend` to CUDA backend
 - Enables GPU-optimized automatic differentiation
 
 **For `MadNLP` solver:**
@@ -84,34 +87,39 @@ The `:gpu` parameter token automatically selects GPU-optimized defaults:
 You can inspect these defaults:
 
 ```@example gpu
-using CTSolvers, ExaModels
-describe(Exa{GPU})
+modeler = OptimalControl.Exa{GPU}()
+opts = options(modeler)
+opts[:backend]
 ```
 
 ```@example gpu
-describe(MadNLP{GPU})
+solver = OptimalControl.MadNLP{GPU}()
+opts = options(solver)
+opts[:linear_solver]
 ```
 
 Compare with CPU defaults:
 
 ```@example gpu
-describe(Exa{CPU})
+modeler = OptimalControl.Exa{CPU}()
+opts = options(modeler)
+opts[:backend]
 ```
 
 ```@example gpu
-describe(MadNLP{CPU})
+solver = OptimalControl.MadNLP{CPU}()
+opts = options(solver)
+opts[:linear_solver]
 ```
 
 ## Explicit mode with parameterized types
 
 For full control, use explicit mode with GPU-parameterized types:
 
-```@example gpu
-using CTDirect
-
-disc = Collocation(grid_size=100, scheme=:midpoint)
-mod  = Exa{GPU}()
-sol  = MadNLP{GPU}(print_level=MadNLP.ERROR)
+```julia
+disc = OptimalControl.Collocation(grid_size=100, scheme=:midpoint)
+mod  = OptimalControl.Exa{GPU}()
+sol  = OptimalControl.MadNLP{GPU}(print_level=MadNLP.ERROR)
 
 result = solve(ocp; discretizer=disc, modeler=mod, solver=sol)
 nothing # hide
@@ -122,29 +130,6 @@ This gives you:
 - Explicit type annotations (`Exa{GPU}`, `MadNLP{GPU}`)
 - Full control over each component's options
 - Type safety at compile time
-
-### Custom GPU options
-
-You can override GPU defaults:
-
-```@example gpu
-# Custom GPU modeler configuration
-mod_custom = Exa{GPU}(base_type=Float32)  # Use single precision
-
-# Custom GPU solver configuration  
-sol_custom = MadNLP{GPU}(
-    print_level=MadNLP.ERROR,
-    max_iter=500,
-    tol=1e-6
-)
-
-result = solve(ocp; 
-    discretizer=Collocation(grid_size=50),
-    modeler=mod_custom, 
-    solver=sol_custom
-)
-nothing # hide
-```
 
 ## Supported GPU combinations
 
@@ -169,10 +154,10 @@ In explicit mode:
 
 ```julia
 # ERROR: ADNLP{GPU} is not defined
-mod = ADNLP{GPU}()
+mod = OptimalControl.ADNLP{GPU}()
 
 # ERROR: Ipopt{GPU} is not defined
-sol = Ipopt{GPU}()
+sol = OptimalControl.Ipopt{GPU}()
 ```
 
 ## Performance considerations

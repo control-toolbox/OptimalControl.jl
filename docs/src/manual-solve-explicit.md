@@ -1,9 +1,5 @@
 # [Solve: explicit mode](@id manual-solve-explicit)
 
-```@meta
-Draft = false
-```
-
 This manual explains the **explicit mode** of the [`solve`](@ref) function, where you pass typed strategy instances directly instead of symbolic tokens. This gives you full control over component configuration and validation.
 
 For basic usage with symbolic tokens, see [Solve a problem](@ref manual-solve).
@@ -15,7 +11,6 @@ In explicit mode, you create strategy instances with their options, then pass th
 ```@example explicit
 using OptimalControl
 using NLPModelsIpopt
-using CTDirect, CTSolvers
 
 t0 = 0
 tf = 1
@@ -32,9 +27,9 @@ ocp = @def begin
 end
 
 # Create strategy instances
-disc = Collocation(grid_size=100, scheme=:trapeze)
-mod  = ADNLP(backend=:optimized)
-sol  = Ipopt(max_iter=1000, print_level=0)
+disc = OptimalControl.Collocation(grid_size=100, scheme=:trapeze)
+mod  = OptimalControl.ADNLP(backend=:optimized)
+sol  = OptimalControl.Ipopt(max_iter=1000, print_level=0)
 
 # Solve with explicit components
 result = solve(ocp; discretizer=disc, modeler=mod, solver=sol)
@@ -51,13 +46,13 @@ Each strategy is constructed with its options as keyword arguments:
 
 ```@example explicit
 # Discretizer with custom grid and scheme
-disc = Collocation(grid_size=50, scheme=:midpoint)
+disc = OptimalControl.Collocation(grid_size=50, scheme=:midpoint)
 
 # Modeler with specific backend
-mod = ADNLP(backend=:optimized, show_time=false)
+mod = OptimalControl.ADNLP(backend=:optimized, show_time=false)
 
 # Solver with iteration limit and tolerance
-sol = Ipopt(max_iter=500, tol=1e-6, print_level=0)
+sol = OptimalControl.Ipopt(max_iter=500, tol=1e-6, print_level=0)
 nothing # hide
 ```
 
@@ -82,7 +77,7 @@ You don't need to specify all three components. Missing ones are auto-completed 
 ```@example explicit
 # Only specify the solver
 result = solve(ocp; 
-    solver=Ipopt(max_iter=2000, print_level=0),
+    solver=OptimalControl.Ipopt(max_iter=2000, print_level=0),
     display=false
 )
 nothing # hide
@@ -107,8 +102,8 @@ You can mix and match:
 ```@example explicit
 # Custom discretizer and solver, default modeler
 result = solve(ocp;
-    discretizer=Collocation(grid_size=200, scheme=:trapeze),
-    solver=Ipopt(max_iter=100, print_level=0),
+    discretizer=OptimalControl.Collocation(grid_size=200, scheme=:trapeze),
+    solver=OptimalControl.Ipopt(max_iter=100, print_level=0),
     display=false
 )
 nothing # hide
@@ -122,19 +117,19 @@ All options are passed when creating the strategy instance:
 
 ```@example explicit
 # Configure Collocation
-disc = Collocation(
+disc = OptimalControl.Collocation(
     grid_size=150,
     scheme=:gauss_legendre_2
 )
 
 # Configure ADNLP
-mod = ADNLP(
+mod = OptimalControl.ADNLP(
     backend=:optimized,
     show_time=true
 )
 
 # Configure Ipopt
-sol = Ipopt(
+sol = OptimalControl.Ipopt(
     max_iter=1000,
     tol=1e-8,
     print_level=5,
@@ -143,30 +138,39 @@ sol = Ipopt(
 nothing # hide
 ```
 
-### Validation modes
+### Passing undeclared options
 
-Strategies support two validation modes:
+By default, strategies use **strict validation**: any option not declared in the strategy metadata raises an error. This prevents typos and ensures you're using valid options.
 
-- **`:strict`** (default): Rejects unknown options with a detailed error message
-- **`:permissive`**: Accepts unknown options with a warning, stores them with `:user` source
+However, NLP solvers have many options, and not all of them are declared in OptimalControl's strategy metadata. For example, Ipopt has an option `mumps_print_level` for controlling MUMPS debug output, which is not in the Ipopt strategy metadata.
+
+To pass undeclared options, use `bypass()` (or its alias `force()`):
 
 ```@example explicit
-# Strict mode (default) - will error on unknown options
-solver_strict = Ipopt(max_iter=500, print_level=0)
-
-# Permissive mode - accepts unknown options
-solver_permissive = Ipopt(
+# Bypass validation for mumps_print_level
+solver = OptimalControl.Ipopt(
     max_iter=500, 
     print_level=0,
-    custom_option=42;  # Unknown option
-    mode=:permissive
+    mumps_print_level=bypass(1)  # Undeclared option
 )
 nothing # hide
 ```
 
-!!! warning "Permissive mode"
+!!! note "Alias: force = bypass"
+    You can use `force` as an alias for `bypass`: `mumps_print_level=force(1)`
 
-    Use `:permissive` mode only when you need to pass options that aren't declared in the strategy metadata (e.g., experimental solver options). The option will be passed to the underlying solver without validation.
+!!! warning "Use bypass sparingly"
+
+    The `bypass` mechanism skips validation for the wrapped option. Use it only when:
+    
+    - You need to pass an option to the underlying solver that isn't declared in the strategy metadata
+    - You're certain the option name and value are correct
+    
+    Bypassed options are passed directly to the solver without type checking or validation.
+
+!!! info "Alternative: permissive mode"
+
+    If you have many undeclared options, you can use `mode=:permissive` to disable validation globally. However, this is not recommended as it will also ignore typos in valid option names.
 
 ### No routing needed
 
@@ -178,73 +182,11 @@ In explicit mode, there's no option routing or ambiguity:
 
 ```@example explicit
 # Each component gets its own options directly
-disc = Collocation(grid_size=100)
-sol = Ipopt(max_iter=500, tol=1e-6, print_level=0)
+disc = OptimalControl.Collocation(grid_size=100)
+sol = OptimalControl.Ipopt(max_iter=500, tol=1e-6, print_level=0)
 
 result = solve(ocp; discretizer=disc, solver=sol, display=false)
 nothing # hide
-```
-
-## When to use explicit mode
-
-Explicit mode is useful when you:
-
-1. **Pre-configure and reuse components** across multiple solves:
-
-```@example explicit
-# Configure once
-my_solver = Ipopt(max_iter=2000, tol=1e-8, print_level=0)
-
-# Reuse for multiple problems
-sol1 = solve(ocp; solver=my_solver, display=false)
-
-# Create a variant
-ocp2 = @def begin
-    t ∈ [ 0, 2 ], time
-    x ∈ R, state
-    u ∈ R, control
-    x(0) == 1
-    x(2) == 0
-    ẋ(t) == u(t)
-    ∫( u(t)^2 ) → min
-end
-
-sol2 = solve(ocp2; solver=my_solver, display=false)
-nothing # hide
-```
-
-2. **Need permissive mode** for exotic/undeclared options:
-
-```julia
-solver = Ipopt(
-    max_iter=1000,
-    experimental_option=123;
-    mode=:permissive
-)
-solve(ocp; solver=solver)
-```
-
-3. **Want full type safety** and explicit control:
-
-```julia
-# Types are explicit, no symbol-to-type resolution
-disc :: Collocation = Collocation(grid_size=100)
-mod  :: ADNLP       = ADNLP()
-sol  :: Ipopt       = Ipopt(max_iter=500)
-
-solve(ocp; discretizer=disc, modeler=mod, solver=sol)
-```
-
-4. **Use GPU-parameterized types** (see [GPU manual](@ref manual-solve-gpu)):
-
-```julia
-using CUDA, MadNLPGPU, ExaModels
-
-disc = Collocation(grid_size=100)
-mod  = Exa{GPU}()
-sol  = MadNLP{GPU}()
-
-solve(ocp; discretizer=disc, modeler=mod, solver=sol)
 ```
 
 ## Mixing modes is forbidden
@@ -253,10 +195,10 @@ You **cannot** mix symbolic tokens and typed components in the same `solve` call
 
 ```julia
 # ERROR: Cannot mix descriptive and explicit modes
-solve(ocp, :adnlp, :ipopt; discretizer=Collocation())
+solve(ocp, :adnlp, :ipopt; discretizer=OptimalControl.Collocation())
 
 # ERROR: Cannot mix modes
-solve(ocp, :collocation; solver=Ipopt())
+solve(ocp, :collocation; solver=OptimalControl.Ipopt())
 ```
 
 Choose one mode:
@@ -270,7 +212,7 @@ Use the introspection tools to examine configured components:
 
 ```@example explicit
 # Create a configured solver
-solver = Ipopt(max_iter=1000, tol=1e-6, print_level=0)
+solver = OptimalControl.Ipopt(max_iter=1000, tol=1e-6, print_level=0)
 
 # Get its options
 opts = options(solver)
@@ -280,24 +222,21 @@ is_user(opts, :max_iter)     # true
 ```
 
 ```@example explicit
-is_default(opts, :acceptable_tol)  # true (not set by user)
+is_default(opts, :mu_strategy)  # true (not set by user)
 ```
 
 ```@example explicit
 # Get option values
-option_value(opts, :max_iter)
+opts[:max_iter]
 ```
 
 ```@example explicit
 # See all option names
-option_names(opts)
+keys(opts)
 ```
-
-For more on introspection, see [Advanced options](@ref manual-solve-advanced).
 
 ## See also
 
 - **[Basic solve (descriptive)](@ref manual-solve)**: symbolic token mode
 - **[Advanced options](@ref manual-solve-advanced)**: `route_to`, `bypass`, introspection
 - **[GPU solving](@ref manual-solve-gpu)**: `Exa{GPU}()` and `MadNLP{GPU}()` types
-- **[CTSolvers Strategies](https://control-toolbox.org/CTSolvers.jl/stable/guides/implementing_a_strategy.html)**: strategy implementation guide
