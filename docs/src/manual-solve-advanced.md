@@ -1,9 +1,5 @@
 # [Solve: advanced options](@id manual-solve-advanced)
 
-```@meta
-Draft = false
-```
-
 This manual covers advanced option management for the [`solve`](@ref) function: how option routing works, how to disambiguate shared options with `route_to`, how to pass unknown options with `bypass`, and how to use introspection tools.
 
 For basic usage, see [Solve a problem](@ref manual-solve).
@@ -33,6 +29,7 @@ end
 # Options are automatically routed
 sol = solve(ocp; 
     grid_size=100,    # → Collocation (discretizer)
+    show_time=true,   # → ADNLP (modeler)
     max_iter=500,     # → Ipopt (solver)
     print_level=0     # → Ipopt (solver)
 )
@@ -51,55 +48,67 @@ Each strategy declares its available options via metadata. When you pass an opti
 You can inspect a strategy's declared options using `describe`:
 
 ```@example advanced
-using CTDirect, CTSolvers, MadNLP
-describe(Collocation)
+using CUDA
+describe(:exa)
 ```
 
-```@example advanced
-describe(Ipopt)
-```
+The output shows:
 
-```@example advanced
-describe(MadNLP)
-```
+- **Strategy ID**: The symbol used to reference this strategy (`:exa`)
+- **Family**: The abstract type family (`AbstractNLPModeler`)
+- **Default parameter**: Default execution backend (`CPU`)
+- **Parameters**: Available execution backends (`CPU`, `GPU`)
+- **Common options**: Options shared across all parameters
+  - Option name and type
+  - Default value
+  - Description
+- **Computed options**: Options that vary by parameter
+  - Parameter-specific defaults
+  - Whether the value is computed automatically
 
 ## Ambiguous options and `route_to`
 
-Some options exist in multiple strategies. For example, `tol` is recognized by both Ipopt and MadNLP solvers. If you try to use such an option without disambiguation, you'll get an error:
+Ambiguity occurs when an option name exists in multiple strategies **within the same method**. Since a method always has exactly one discretizer, one modeler, and one solver, ambiguity only happens when strategies from different families share an option name.
+
+For example, suppose `:exa` (modeler) and `:madnlp` (solver) both have an option called `common_option_name`. If you try to use it without disambiguation, you'll get an error:
 
 ```julia
 # This will raise an error
-solve(ocp, :madnlp; tol=1e-6)
-# ERROR: IncorrectArgument: Option 'tol' is ambiguous...
+solve(ocp, :exa, :madnlp; common_option_name=12)
+# ERROR: IncorrectArgument: Option 'common_option_name' is ambiguous...
 ```
 
 ### Using `route_to` for disambiguation
 
-Use `route_to` to explicitly specify which strategy family should receive the option:
+Use `route_to` to explicitly specify which **strategy** should receive the option:
 
-```@example advanced
-# Explicitly route 'tol' to the solver
-sol = solve(ocp, :madnlp; 
-    tol=route_to(solver=1e-6),
+```julia
+# Explicitly route to the :exa strategy
+sol = solve(ocp, :exa, :madnlp; 
+    common_option_name=route_to(exa=12),
     max_iter=500,
     print_level=MadNLP.ERROR
 )
-nothing # hide
 ```
 
-The `route_to` function accepts keyword arguments for each strategy family:
+The `route_to` function accepts keyword arguments with **strategy names**:
 
-- `route_to(discretizer=value)` — route to the discretizer
-- `route_to(modeler=value)` — route to the modeler  
-- `route_to(solver=value)` — route to the solver
+- `route_to(collocation=value)` — route to the Collocation discretizer
+- `route_to(adnlp=value)` — route to the ADNLP modeler
+- `route_to(exa=value)` — route to the Exa modeler
+- `route_to(ipopt=value)` — route to the Ipopt solver
+- `route_to(madnlp=value)` — route to the MadNLP solver
+- `route_to(madncl=value)` — route to the MadNCL solver
+- `route_to(knitro=value)` — route to the Knitro solver
 
-You can combine routed and non-routed options:
+You can use `route_to` even for non-ambiguous options, and combine routed and non-routed options:
 
 ```@example advanced
+using MadNLP
 sol = solve(ocp, :madnlp;
-    grid_size=50,                    # auto-routed to discretizer
-    max_iter=route_to(solver=1000),  # explicitly routed to solver
-    print_level=MadNLP.ERROR         # auto-routed to solver
+    grid_size=50,                      # auto-routed to discretizer
+    max_iter=route_to(madnlp=1000),    # explicitly routed to solver
+    print_level=MadNLP.ERROR           # auto-routed to solver
 )
 nothing # hide
 ```
@@ -108,39 +117,44 @@ nothing # hide
 
 By default, `solve` uses **strict validation**: any option not recognized by a registered strategy raises an error. This prevents typos and ensures you're using valid options.
 
-However, some NLP solvers accept options that aren't declared in their strategy metadata. To pass such options, wrap them with `bypass`:
+However, NLP solvers have many options, and not all of them are declared in OptimalControl's strategy metadata. For example, Ipopt has an option `mumps_print_level` for controlling MUMPS debug output:
 
-```@example advanced
-# Pass an undeclared option to the solver
+> `mumps_print_level`: Debug printing level for the linear solver MUMPS  
+>
+> 0: no printing; 1: Error messages only; 2: Error, warning, and main statistic messages; 3: Error and warning messages and terse diagnostics; ≥4: All information.
+
+This option is not in the Ipopt strategy metadata. If you try to use it directly, you'll get an error:
+
+```@repl advanced
 sol = solve(ocp, :ipopt;
     max_iter=100,
-    print_level=0,
-    # 'mu_strategy' might not be in Ipopt's declared metadata
-    mu_strategy=route_to(solver=bypass("adaptive"))
-)
-nothing # hide
+    mumps_print_level=1)
 ```
+
+To pass undeclared options, combine `route_to` with `bypass`:
+
+```@repl advanced
+sol = solve(ocp, :ipopt;
+    max_iter=100,
+    mumps_print_level=route_to(ipopt=bypass(1)))
+```
+
+You **must** combine `bypass` with `route_to` because:
+
+- If the option is unknown, the system needs to know which strategy should receive it
+- `bypass` forces the option through without validation
+
+!!! note "Alias: force = bypass"
+    You can use `force` as an alias for `bypass`: `route_to(ipopt=force(1))`
 
 !!! warning "Use bypass sparingly"
 
     The `bypass` mechanism skips validation entirely. Use it only when:
     
-    - You need to pass an option to the underlying NLP solver that isn't declared in the strategy metadata
+    - You need to pass an option to the underlying solver that isn't declared in the strategy metadata
     - You're certain the option name and value are correct
     
     Bypassed options are passed directly to the solver without type checking or validation.
-
-### Combining `route_to` and `bypass`
-
-You **must** combine `bypass` with `route_to` to specify which strategy should receive the bypassed option:
-
-```julia
-# Correct: route_to + bypass
-solve(ocp; custom_opt=route_to(solver=bypass(42)))
-
-# Wrong: bypass alone (will raise an error)
-solve(ocp; custom_opt=bypass(42))  # ERROR!
-```
 
 ## Parameter token (CPU/GPU)
 
@@ -162,94 +176,8 @@ The parameter token automatically changes default options for GPU-capable strate
 
 For full GPU usage details, see [Solve on GPU](@ref manual-solve-gpu).
 
-## Introspection tools
-
-OptimalControl.jl provides several functions to inspect strategies and their options.
-
-### Strategy metadata
-
-Use `describe` to see all available options for a strategy type:
-
-```@example advanced
-describe(Collocation)
-```
-
-This shows:
-
-- Option names
-- Types
-- Default values
-- Descriptions
-
-### Instance options
-
-Once you've created a strategy instance, use `options` to see its current configuration:
-
-```@example advanced
-solver = Ipopt(max_iter=1000, tol=1e-6, print_level=0)
-opts = options(solver)
-```
-
-### Option queries
-
-Query individual option properties:
-
-```@example advanced
-# Get option names
-option_names(opts)
-```
-
-```@example advanced
-# Get a specific option's value
-option_value(opts, :max_iter)
-```
-
-```@example advanced
-# Get the default value for an option
-option_default(opts, :max_iter)
-```
-
-```@example advanced
-# Check the source (provenance) of an option
-option_source(opts, :max_iter)  # :user (you set it)
-```
-
-```@example advanced
-option_source(opts, :acceptable_tol)  # :default (not set by you)
-```
-
-### Provenance checks
-
-Check where an option value came from:
-
-```@example advanced
-# Was this option set by the user?
-is_user(opts, :max_iter)
-```
-
-```@example advanced
-# Is this option using its default value?
-is_default(opts, :max_iter)
-```
-
-```@example advanced
-is_default(opts, :acceptable_tol)
-```
-
-```@example advanced
-# Was this option computed/inferred?
-is_computed(opts, :max_iter)
-```
-
-These tools are useful for:
-
-- Debugging option routing issues
-- Understanding which options are active
-- Verifying that your custom options were applied
-
 ## See also
 
 - **[Basic solve](@ref manual-solve)**: descriptive mode basics
 - **[Explicit mode](@ref manual-solve-explicit)**: using typed components
 - **[GPU solving](@ref manual-solve-gpu)**: GPU parameter and types
-- **[CTSolvers Options System](https://control-toolbox.org/CTSolvers.jl/stable/guides/options_system.html)**: detailed options system documentation
