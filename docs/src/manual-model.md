@@ -1,9 +1,5 @@
 # [The optimal control problem object: structure and usage](@id manual-model)
 
-```@meta
-CollapsedDocStrings = false
-```
-
 In this manual, we'll first recall the **main functionalities** you can use when working with an optimal control problem (OCP). This includes essential operations like:
 
 * **Solving an OCP**: How to find the optimal solution for your defined problem.
@@ -19,9 +15,9 @@ After covering these core functionalities, we'll delve into the **structure of a
 
 **Content**
 
-- [Main functionalities](@ref manual-model-main-functionalities)
-- [Model struct](@ref manual-model-struct)
-- [Attributes and properties](@ref manual-model-attributes)
+* [Main functionalities](@ref manual-model-main-functionalities)
+* [Model struct](@ref manual-model-struct)
+* [API Reference by Component](@ref manual-model-api)
 
 ---
 
@@ -65,7 +61,7 @@ nothing # hide
 You can also compute flows (for more details, see the [flow manual](@ref manual-flow-ocp)) from the optimal control problem, providing a control law in feedback form. The **pseudo-Hamiltonian** of this problem is
 
 ```math
-    H(x, p, u) = p_q\, v + p_v\, u + p^0 u^2 /2,
+    H(x, p, u) = p_q\, v + p_v\, u + p^0 \frac{u^2}{2},
 ```
 
 where $p^0 = -1$ since we are in the normal case. From the Pontryagin maximum principle, the maximising control is given in feedback form by
@@ -101,20 +97,19 @@ OptimalControl.Model
 
 Each field can be accessed directly (`ocp.times`, etc) or by a getter:
 
-- [`times`](@ref)
-- [`state`](@ref)
-- [`control`](@ref)
-- [`variable`](@ref)
-- [`dynamics`](@ref)
-- [`objective`](@ref)
-- [`constraints`](@ref)
-- [`definition`](@ref)
-- [`get_build_examodel`](@ref)
+* [`times`](@ref)
+* [`state`](@ref)
+* [`control`](@ref)
+* [`variable`](@ref)
+* [`dynamics`](@ref)
+* [`objective`](@ref)
+* [`constraints`](@ref)
+* [`definition`](@ref)
 
 For instance, we can retrieve the `times` and `definition` values.
 
 ```@example main
-times(ocp)
+times(ocp)  # returns the TimesModel struct containing time information
 ```
 
 ```@example main
@@ -125,9 +120,11 @@ definition(ocp)
 
     We refer to the CTModels documentation for more details about this struct and its fields.
 
-## [Attributes and properties](@id manual-model-attributes)
+## [API Reference by Component](@id manual-model-api)
 
-Numerous attributes can be retrieved. To illustrate this, a more complex optimal control problem is defined.
+This section provides a comprehensive reference of all methods available for inspecting and querying optimal control problems. Methods are organized by component for easy navigation.
+
+To illustrate the various methods, we define a more complex optimal control problem with free final time, variables, and various types of constraints:
 
 ```@example main
 ocp = @def begin
@@ -148,52 +145,371 @@ end
 nothing # hide
 ```
 
-### Control, state and variable
+### Times
 
-You can access the name of the control, state, and variable, along with the names of their components and their dimensions.
+The time component defines the temporal domain of the optimal control problem.
+
+#### Times model
+
+Get the times model:
 
 ```@example main
-using DataFrames
-data = DataFrame(
-    Data=Vector{Symbol}(),
-    Name=Vector{String}(),
-    Components=Vector{Vector{String}}(), 
-    Dimension=Vector{Int}(),
-)
+times(ocp)  # returns the TimesModel struct containing time information
+```
 
-# control
-push!(data,(
-    :control,
-    control_name(ocp),
-    control_components(ocp),
-    control_dimension(ocp),
-))
+You can also access initial and final times separately:
 
-# state
-push!(data,(
-    :state,
-    state_name(ocp),
-    state_components(ocp),
-    state_dimension(ocp),
-))
+```@example main
+initial_time(ocp)  # returns the initial time value
+```
 
-# variable
-push!(data,(
-    :variable,
-    variable_name(ocp),
-    variable_components(ocp),
-    variable_dimension(ocp),
-))
+For the final time, if it is free (part of the variable), you need to provide the variable value:
+
+```@example main
+v = [1, 2]  # example variable values: w=1, tf=2
+final_time(ocp, v)  # returns tf value from variable
+```
+
+If you try to get the final time without providing the variable when it's free, an error occurs:
+
+```@repl main
+final_time(ocp)  # error: tf is free, need variable
+```
+
+#### Time variable names
+
+Get the names of the time variable and time bounds:
+
+```@example main
+time_name(ocp)  # returns "s" (the time variable name in this OCP)
+```
+
+```@example main
+initial_time_name(ocp)  # returns "0" (initial time is fixed at 0)
+```
+
+```@example main
+final_time_name(ocp)  # returns "tf" (final time is a variable)
+```
+
+#### Time fixedness predicates
+
+Check whether initial or final times are fixed or free:
+
+```@example main
+has_fixed_initial_time(ocp)  # true if t0 is fixed
+```
+
+```@example main
+has_free_initial_time(ocp)  # true if t0 is free (part of variable)
+```
+
+!!! note "Variant methods"
+    Alternative methods with `is_*` prefix are also available and equivalent:
+    - `is_initial_time_fixed(ocp)` ≡ `has_fixed_initial_time(ocp)`
+    - `is_initial_time_free(ocp)` ≡ `has_free_initial_time(ocp)`
+    - `is_final_time_fixed(ocp)` ≡ `has_fixed_final_time(ocp)`
+    - `is_final_time_free(ocp)` ≡ `has_free_final_time(ocp)`
+
+Similarly for final time:
+
+```@example main
+has_fixed_final_time(ocp)  # false (tf is free in this OCP)
+```
+
+```@example main
+has_free_final_time(ocp)  # true (tf is part of variable v)
+```
+
+#### Autonomy
+
+Check if the dynamics and Lagrange cost are autonomous (time-independent):
+
+```@example main
+is_autonomous(ocp)  # false if dynamics or cost depend on time
+```
+
+For more details on autonomy, see the [Time dependence](@ref manual-model-time-dependence) section below.
+
+#### Summary table
+
+| Method | Returns | Description |
+| -------- | --------- | --------- |
+| `times(ocp)` | `(Float64, Any)` | Time interval (t0, tf) or (t0, tf_name) |
+| `initial_time(ocp)` | `Float64` | Initial time t0 |
+| `final_time(ocp)` | `Float64` | Final time tf (error if free) |
+| `final_time(ocp, v)` | `Float64` | Final time tf from variable v |
+| `time_name(ocp)` | `String` | Time variable name |
+| `initial_time_name(ocp)` | `String` | Initial time name or value |
+| `final_time_name(ocp)` | `String` | Final time name or value |
+| `has_fixed_initial_time(ocp)` | `Bool` | True if t0 is fixed |
+| `has_free_initial_time(ocp)` | `Bool` | True if t0 is free |
+| `has_fixed_final_time(ocp)` | `Bool` | True if tf is fixed |
+| `has_free_final_time(ocp)` | `Bool` | True if tf is free |
+| `is_autonomous(ocp)` | `Bool` | True if time-independent |
+
+### State
+
+The state component represents the state variables of the optimal control problem.
+
+#### State component information
+
+Get the name, dimension, and component names of the state:
+
+```@example main
+state_name(ocp)  # returns "q" (the state variable name)
+```
+
+```@example main
+state_dimension(ocp)  # returns 2 (dimension of state)
+```
+
+```@example main
+state_components(ocp)  # returns ["x", "y"] (component names)
 ```
 
 !!! note
 
-    The names of the components are used for instance when plotting the solution. See the [plot manual](@ref manual-plot).
+    The component names are used when plotting the solution. See the [plot manual](@ref manual-plot).
+
+#### State box constraints
+
+Get the box constraints on the state (lower and upper bounds):
+
+```@example main
+state_constraints_box(ocp)  # returns box constraints if any
+```
+
+!!! note "Tuple structure"
+    The returned tuple has the structure `(lb, indices, ub, labels)` where:
+    - `lb`: vector of lower bounds
+    - `indices`: vector of component indices (1-based)
+    - `ub`: vector of upper bounds
+    - `labels`: vector of constraint labels
+
+Get the dimension of state box constraints:
+
+```@example main
+dim_state_constraints_box(ocp)  # returns number of box constraints on state
+```
+
+#### Summary table
+
+| Method | Returns | Description |
+| -------- | --------- | --------- |
+| `state_name(ocp)` | `String` | State variable name |
+| `state_dimension(ocp)` | `Int` | State dimension |
+| `state_components(ocp)` | `Vector{String}` | State component names |
+| `state_constraints_box(ocp)` | Box constraints | State box constraints |
+| `dim_state_constraints_box(ocp)` | `Int` | Number of state box constraints |
+
+### Control
+
+The control component represents the control variables of the optimal control problem.
+
+#### Control component information
+
+Get the name, dimension, and component names of the control:
+
+```@example main
+control_name(ocp)  # returns "u" (the control variable name)
+```
+
+```@example main
+control_dimension(ocp)  # returns 1 (dimension of control)
+```
+
+```@example main
+control_components(ocp)  # returns ["u"] (component names)
+```
+
+#### Control box constraints
+
+Get the box constraints on the control:
+
+```@example main
+control_constraints_box(ocp)  # returns box constraints if any
+```
+
+!!! note "Tuple structure"
+    The returned tuple has the structure `(lb, indices, ub, labels)` where:
+    - `lb`: vector of lower bounds
+    - `indices`: vector of component indices (1-based)
+    - `ub`: vector of upper bounds
+    - `labels`: vector of constraint labels
+
+Get the dimension of control box constraints:
+
+```@example main
+dim_control_constraints_box(ocp)  # returns number of box constraints on control
+```
+
+#### Summary table
+
+| Method | Returns | Description |
+| -------- | --------- | --------- |
+| `control_name(ocp)` | `String` | Control variable name |
+| `control_dimension(ocp)` | `Int` | Control dimension |
+| `control_components(ocp)` | `Vector{String}` | Control component names |
+| `control_constraints_box(ocp)` | Box constraints | Control box constraints |
+| `dim_control_constraints_box(ocp)` | `Int` | Number of control box constraints |
+
+### Variable
+
+The variable component represents the optimization variables (parameters) of the optimal control problem.
+
+#### Variable component information
+
+Get the name, dimension, and component names of the variable:
+
+```@example main
+variable_name(ocp)  # returns "v" (the variable name)
+```
+
+```@example main
+variable_dimension(ocp)  # returns 2 (dimension of variable)
+```
+
+```@example main
+variable_components(ocp)  # returns ["w", "tf"] (component names)
+```
+
+#### Variable box constraints
+
+Get the box constraints on the variable:
+
+```@example main
+variable_constraints_box(ocp)  # returns box constraints if any
+```
+
+!!! note "Tuple structure"
+    The returned tuple has the structure `(lb, indices, ub, labels)` where:
+    - `lb`: vector of lower bounds
+    - `indices`: vector of component indices (1-based)
+    - `ub`: vector of upper bounds
+    - `labels`: vector of constraint labels
+
+Get the dimension of variable box constraints:
+
+```@example main
+dim_variable_constraints_box(ocp)  # returns number of box constraints on variable
+```
+
+#### Summary table
+
+| Method | Returns | Description |
+| -------- | --------- | --------- |
+| `variable_name(ocp)` | `String` | Variable name |
+| `variable_dimension(ocp)` | `Int` | Variable dimension |
+| `variable_components(ocp)` | `Vector{String}` | Variable component names |
+| `variable_constraints_box(ocp)` | Box constraints | Variable box constraints |
+| `dim_variable_constraints_box(ocp)` | `Int` | Number of variable box constraints |
+
+### Dynamics
+
+The dynamics component defines the differential equations governing the state evolution.
+
+#### Dynamics function
+
+The dynamics are stored as an in-place function of the form `f!(dx, t, x, u, v)`:
+
+```@example main
+f! = dynamics(ocp)
+s = 0.5  # time
+q = [0.0, 1.0]  # state
+u = 2.0  # control
+v = [1.0, 2.0]  # variable
+dq = similar(q)
+f!(dq, s, q, u, v)
+dq  # returns the derivative q̇
+```
+
+The first argument `dx` is mutated upon call and contains the state derivative. The other arguments are:
+
+* `t`: time
+* `x`: state
+* `u`: control
+* `v`: variable
+
+#### Summary table
+
+| Method | Returns | Description |
+| -------- | --------- | --------- |
+| `dynamics(ocp)` | `Function` | In-place dynamics function f!(dx, t, x, u, v) |
+
+### Objective
+
+The objective component defines the cost function to minimize or maximize.
+
+#### Criterion
+
+The criterion indicates whether the problem is a minimization or maximization:
+
+```@example main
+criterion(ocp)  # returns :min or :max
+```
+
+#### Objective form
+
+The objective function can be in Mayer form, Lagrange form, or Bolza form (combination of both):
+
+* **Mayer**: $g(x(t_0), x(t_f), v) \to \min$
+* **Lagrange**: $\int_{t_0}^{t_f} f^0(t, x(t), u(t), v)\, \mathrm{d}t \to \min$
+* **Bolza**: $g(x(t_0), x(t_f), v) + \int_{t_0}^{t_f} f^0(t, x(t), u(t), v)\, \mathrm{d}t \to \min$
+
+Check which form is present:
+
+```@example main
+has_mayer_cost(ocp)  # true if Mayer cost exists
+```
+
+```@example main
+has_lagrange_cost(ocp)  # true if Lagrange cost exists
+```
+
+!!! note "Variant methods"
+    Alternative methods are also available:
+    - `is_mayer_cost_defined(ocp)` ≡ `has_mayer_cost(ocp)`
+    - `is_lagrange_cost_defined(ocp)` ≡ `has_lagrange_cost(ocp)`
+
+#### Mayer cost
+
+Get the Mayer cost function with signature `g(x0, xf, v)`:
+
+```@repl main
+g = mayer(ocp)  # error if no Mayer cost
+```
+
+#### Lagrange cost
+
+Get the Lagrange cost function with signature `f⁰(t, x, u, v)`:
+
+```@example main
+f⁰ = lagrange(ocp)
+s = 0.5
+q = [0.0, 1.0]
+u = 2.0
+v = [1.0, 2.0]
+f⁰(s, q, u, v)  # returns the integrand value
+```
+
+#### Summary table
+
+| Method | Returns | Description |
+| -------- | --------- | --------- |
+| `criterion(ocp)` | `Symbol` | `:min` or `:max` |
+| `has_mayer_cost(ocp)` | `Bool` | True if Mayer cost exists |
+| `has_lagrange_cost(ocp)` | `Bool` | True if Lagrange cost exists |
+| `mayer(ocp)` | `Function` | Mayer cost function g(x0, xf, v) |
+| `lagrange(ocp)` | `Function` | Lagrange cost function f⁰(t, x, u, v) |
 
 ### Constraints
 
-You can retrieve labelled constraints with the [`constraint`](@ref) function. The `constraint(ocp, label)` method returns a tuple of the form `(type, f, lb, ub)`.
-The signature of the function `f` depends on the symbol `type`. For `:boundary` and `:variable` constraints, the signature is `f(x0, xf, v)` where `x0` is the initial state, `xf` the final state and `v` the variable. For other constraints, the signature is `f(t, x, u, v)`. Here, `t` represents time, `x` the state, `u` the control, and `v` the variable.
+The constraints component defines the constraints on the optimal control problem.
+
+#### Individual constraints
+
+Retrieve a specific constraint by its label using the `constraint` function. It returns a tuple `(type, f, lb, ub)`:
 
 ```@example main
 (type, f, lb, ub) = constraint(ocp, :eq1)
@@ -206,144 +522,98 @@ println("lb: ", lb)
 println("ub: ", ub)
 ```
 
+The function signature depends on the constraint type:
+
+* For `:boundary` and `:variable` constraints: `f(x0, xf, v)`
+* For other constraints (`:control`, `:state`, `:mixed`): `f(t, x, u, v)`
+
+Examples of different constraint types:
+
 ```@example main
 (type, f, lb, ub) = constraint(ocp, :cons_bound)
 println("type: ", type)
 println("val: ", f(x0, xf, v))
-println("lb: ", lb)
-println("ub: ", ub)
 ```
 
 ```@example main
 (type, f, lb, ub) = constraint(ocp, :cons_u)
 println("type: ", type)
-t = 0
-x = [1, 2]
-u = 3
-println("val: ", f(t, x, u, v))
-println("lb: ", lb)
-println("ub: ", ub)
+s = 0.5
+q = [1.0, 2.0]
+u = 3.0
+println("val: ", f(s, q, u, v))
 ```
- 
+
 ```@example main
 (type, f, lb, ub) = constraint(ocp, :cons_mixed)
 println("type: ", type)
-println("val: ", f(t, x, u, v))
-println("lb: ", lb)
-println("ub: ", ub)
+println("val: ", f(s, q, u, v))
+```
+
+#### All constraints
+
+Get all constraints as a collection:
+
+```@example main
+constraints(ocp)  # returns all constraints
+```
+
+#### Nonlinear constraints
+
+Get nonlinear path and boundary constraints:
+
+```@example main
+path_constraints_nl(ocp)  # returns nonlinear path constraints
+```
+
+```@example main
+boundary_constraints_nl(ocp)  # returns nonlinear boundary constraints
+```
+
+!!! note "Tuple structure"
+    The returned tuples have the structure `(lb, f!, ub, labels)` where:
+    - `lb`: vector of lower bounds
+    - `f!`: constraint function (in-place)
+    - `ub`: vector of upper bounds
+    - `labels`: vector of constraint labels
+
+    The constraint functions have the following signatures:
+    - Path constraints: `f!(val, t, x, u, v)` where `val` is mutated
+    - Boundary constraints: `f!(val, x0, xf, v)` where `val` is mutated
+
+Get the dimensions of nonlinear constraints:
+
+```@example main
+dim_path_constraints_nl(ocp)  # number of nonlinear path constraints
+```
+
+```@example main
+dim_boundary_constraints_nl(ocp)  # number of nonlinear boundary constraints
 ```
 
 !!! note
 
-    To get the dual variable (or Lagrange multiplier) associated to the constraint, use the [`dual`](@ref) method.
+    To get the dual variable (or Lagrange multiplier) associated to a constraint, use the [`dual`](@ref) method on a solution.
 
-### Dynamics
+#### Summary table
 
-The dynamics stored in `ocp` are an [in-place function](https://docs.julialang.org/en/v1/manual/functions/#man-argument-passing) (the first argument is mutated upon call) of the form `f!(dx, t, x, u, v)`. Here, `t` represents time, `x` the state, `u` the control, and `v` the variable, with `dx` being the output value.
+| Method | Returns | Description |
+| -------- | --------- | --------- |
+| `constraint(ocp, label)` | `(Symbol, Function, Real, Real)` | Get constraint by label |
+| `constraints(ocp)` | Collection | All constraints |
+| `path_constraints_nl(ocp)` | Constraints | Nonlinear path constraints |
+| `boundary_constraints_nl(ocp)` | Constraints | Nonlinear boundary constraints |
+| `dim_path_constraints_nl(ocp)` | `Int` | Number of nonlinear path constraints |
+| `dim_boundary_constraints_nl(ocp)` | `Int` | Number of nonlinear boundary constraints |
 
-```@example main
-f! = dynamics(ocp)
-t = 0
-x = [0., 1]
-u = 2
-v = [1, 4]
-dx = similar(x)
-f!(dx, t, x, u, v)
-dx
-```
+### Other accessors
 
-### Criterion and objective
+#### Problem definition
 
-The criterion can be `:min` or `:max`.
+Get the problem definition as a string:
 
 ```@example main
-criterion(ocp)
-```
-
-The objective function is either in Mayer, Lagrange or Bolza form. 
-
-- Mayer:
-```math
-g(x(t_0), x(t_f), v) \to \min
-```
-- Lagrange:
-```math
-\int_{t_0}^{t_f} f^0(t, x(t), u(t), v)\, \mathrm{d}t \to \min
-```
-- Bolza:
-```math
-g(x(t_0), x(t_f), v) + \int_{t_0}^{t_f} f^0(t, x(t), u(t), v)\, \mathrm{d}t \to \min
-```
-
-The objective of problem `ocp` is `0.5∫( u(t)^2 ) → min`, hence, in Lagrange form. The signature of the Mayer part of the objective is `g(x0, xf, v)` but in our case, the method `mayer` will return an error.
-
-```@repl main
-g = mayer(ocp)
-```
-
-The signature of the Lagrange part of the objective is `f⁰(t, x, u, v)`.
-
-```@example main
-f⁰ = lagrange(ocp)
-f⁰(t, x, u, v)
-```
-
-To avoid having to capture exceptions, you can check the form of the objective:
-
-```@example main
-println("Mayer: ", has_mayer_cost(ocp))
-println("Lagrange: ", has_lagrange_cost(ocp))
-```
-
-### Times
-
-The time variable is not named `t` but `s` in `ocp`.
-
-```@example main
-time_name(ocp)
-```
-
-The initial time is `0`.
-
-```@example main
-initial_time(ocp)
-```
-
-Since the initial time has the value `0`, its name is `string(0)`. 
-
-```@example main
-initial_time_name(ocp)
-```
-
-In contrast, the final time is `tf`, since in `ocp` we have `s ∈ [0, tf]`.
-
-```@example main
-final_time_name(ocp)
-```
-
-To get the value of the final time, since it is part of the variable `v = (w, tf)` of `ocp`, we need to provide a variable to the function `final_time`. 
-
-```@example main
-v = [1, 2]
-tf = final_time(ocp, v)
-```
-
-```@repl main
-final_time(ocp)
-```
-
-To check whether the initial or final time is fixed or free (i.e., part of the variable), you can use the following functions:
-
-```@example main
-println("Fixed initial time: ", has_fixed_initial_time(ocp))
-println("Fixed final time: ", has_fixed_final_time(ocp))
-```
-
-Or, similarly:
-
-```@example main
-println("Free initial time: ", has_free_initial_time(ocp))
-println("Free final time: ", has_free_final_time(ocp))
+definition(ocp)  # returns the OCP definition
 ```
 
 ### [Time dependence](@id manual-model-time-dependence)

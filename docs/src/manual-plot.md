@@ -1,9 +1,5 @@
 # [How to plot a solution](@id manual-plot)
 
-```@meta
-CollapsedDocStrings = false
-```
-
 In this tutorial, we explain the different options for plotting the solution of an optimal control problem using the `plot` and `plot!` functions, which are extensions of the [Plots.jl](https://docs.juliaplots.org) package. Use `plot` to create a new plot object, and `plot!` to add to an existing one:
 
 ```julia

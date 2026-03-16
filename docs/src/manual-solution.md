@@ -1,19 +1,19 @@
 # [The optimal control solution object: structure and usage](@id manual-solution)
 
-In this manual, we'll first recall the **main functionalities** you can use when working with a solution of an optimal control problem (SOL). This includes essential operations like:
+In this manual, we'll first recall the **main functionalities** you can use when working with a solution of an optimal control problem. This includes essential operations like:
 
-* **Plotting a SOL**: How to plot the optimal solution for your defined problem.
-* **Printing a SOL**: How to display a summary of your solution.
+* **Plotting a solution**: How to plot the optimal solution for your defined problem.
+* **Printing a solution**: How to display a summary of your solution.
 
-After covering these core functionalities, we'll delve into the **structure of a SOL**. Since a SOL is structured as a [`OptimalControl.Solution`](@ref) struct, we'll first explain how to **access its underlying attributes**. Following this, we'll shift our focus to the **simple properties** inherent to a SOL.
+After covering these core functionalities, we'll delve into the **structure of a solution**. Since a solution is structured as a [`OptimalControl.Solution`](@ref) struct, we'll first explain how to **access its underlying attributes**. Following this, we'll shift our focus to the **simple properties** inherent to a solution.
 
 ---
 
 **Content**
 
-- [Main functionalities](@ref manual-solution-main-functionalities)
-- [Solution struct](@ref manual-solution-struct)
-- [Attributes and properties](@ref manual-solution-attributes)
+* [Main functionalities](@ref manual-solution-main-functionalities)
+* [Solution struct](@ref manual-solution-struct)
+* [API Reference by Component](@ref manual-solution-api)
 
 ---
 
@@ -82,7 +82,7 @@ The solution `sol` is a [`OptimalControl.Solution`](@ref) struct.
 OptimalControl.Solution
 ```
 
-Each field can be accessed directly (`ocp.times`, etc) but we recommend to use the sophisticated getters we provide: the `state(sol::Solution)` method does not return `sol.state` but a function of time that can be called at any time, not only on the grid `time_grid`.
+Each field can be accessed directly (`sol.state`, etc) but we recommend to use the sophisticated getters we provide: the `state(sol::Solution)` method does not return `sol.state` but a function of time that can be called at any time, not only on the grid `time_grid`.
 
 ```@example main
 0.25 ∈ time_grid(sol)
@@ -93,117 +93,175 @@ x = state(sol)
 x(0.25)
 ```
 
-## [Attributes and properties](@id manual-solution-attributes)
+You can also retrieve the original optimal control problem from the solution:
 
-### State, costate, control, variable and objective value
+```@example main
+model(sol)  # returns the original OCP model
+```
 
-You can access the values of the state, costate, control and variable by eponymous functions. The returned values are functions of time for the state, costate and control and a scalar or a vector for the variable.
+## [API Reference by Component](@id manual-solution-api)
+
+This section provides a comprehensive reference of all methods available for inspecting and querying optimal control solutions. Methods are organized by component for easy navigation.
+
+### Trajectories
+
+The trajectory component provides access to the state, control, variable, and costate trajectories.
+
+#### State trajectory
+
+Get the state trajectory as a function of time:
+
+```@example main
+x = state(sol)  # returns a function of time
+```
+
+Evaluate the state at any time (not just grid points):
 
 ```@example main
 t = 0.25
-x = state(sol)
-p = costate(sol)
-u = control(sol)
-nothing # hide
+x(t)  # returns state vector at t=0.25
 ```
 
-Since the state is of dimension 2, evaluating `x(t)` returns a vector:
-```@example main
-x(t)
-```
-
-It is the same for the costate:
-```@example main
-p(t)
-```
-
-But the control is one-dimensional:
-```@example main
-u(t)
-```
-
-There is no variable, hence, an empty vector is returned:
-```@example main
-v = variable(sol)
-```
-
-The objective value is accessed by:
-```@example main
-objective(sol)
-```
-
-### Infos from the solver
-
-The problem `ocp` is solved via a direct method (see [solve manual](@ref manual-solve) for details). The solver stores data in `sol`, including the success of the optimization, the iteration count, the time grid used for **discretisation**, and other specific details within the `solver_infos` field.
+The state function can be evaluated at any time within the problem horizon, even if it's not a discretization grid point:
 
 ```@example main
-time_grid(sol)
+0.25 ∈ time_grid(sol)  # false: not a grid point
 ```
 
 ```@example main
-constraints_violation(sol)
+x(0.25)  # still works: interpolated value
+```
+
+#### Control trajectory
+
+Get the control trajectory as a function of time:
+
+```@example main
+u = control(sol)  # returns a function of time
 ```
 
 ```@example main
-infos(sol)
+u(t)  # returns control value at t
+```
+
+#### Variable values
+
+Get the optimization variable values:
+
+```@example main
+v = variable(sol)  # returns an empty vector if no variable
+```
+
+#### Costate trajectory
+
+Get the costate (adjoint) trajectory as a function of time:
+
+```@example main
+p = costate(sol)  # returns a function of time
 ```
 
 ```@example main
-iterations(sol)
+p(t)  # returns costate vector at t
+```
+
+#### Time information
+
+Get time-related information from the solution:
+
+```@example main
+time_grid(sol)  # returns the discretization time grid
 ```
 
 ```@example main
-message(sol)
+times(sol)  # returns the TimesModel struct containing time information
 ```
 
-```@example main
-status(sol)
-```
+!!! note "Time grids"
+    **Unified vs. multiple grids:**
+
+    With a standard collocation method, there is a single time grid that can be retrieved via `time_grid(sol)`. The solution internally uses a `UnifiedTimeGridModel` for memory efficiency.
+
+    For discretization methods that use multiple grids (one per component), the solution uses a `MultipleTimeGridModel`. In this case, you must specify which component's grid you want:
+
+    - `time_grid(sol, :state)` — state trajectory and state box constraint duals
+    - `time_grid(sol, :control)` — control trajectory and control box constraint duals
+    - `time_grid(sol, :costate)` — costate trajectory (maps to `:state` grid)
+    - `time_grid(sol, :path)` — path constraint duals
+
+    Aliases are accepted: `:costate`/`:costates` map to `:state`, `:dual`/`:duals` map to `:path`, and plural forms (`:states`, `:controls`) are also valid.
+
+    All grids must be strictly increasing, finite, and non-empty.
+
+!!! note "Trajectory data formats"
+    Trajectories (`state`, `control`, `costate`, `path_constraints_dual`) can be provided either as matrices (rows = time points, columns = components) or as functions `t -> vector` for interpolated or analytical data.
+
+#### Summary table
+
+| Method | Returns | Description |
+| -------- | --------- | ------------- |
+| `state(sol)` | `Function` | State trajectory x(t) |
+| `control(sol)` | `Function` | Control trajectory u(t) |
+| `variable(sol)` | `Vector` | Variable values |
+| `costate(sol)` | `Function` | Costate trajectory p(t) |
+| `time_grid(sol)` | `Vector{Float64}` | Discretization time grid |
+| `times(sol)` | `TimesModel` | TimesModel struct containing time information |
+
+### Objective
+
+The objective component provides access to the objective value.
+
+#### Objective value
+
+Get the optimal objective value:
 
 ```@example main
-successful(sol)
+objective(sol)  # returns the objective value
 ```
+
+#### Summary table
+
+| Method | Returns | Description |
+| -------- | --------- | ------------- |
+| `objective(sol)` | `Float64` | Objective value |
 
 ### Dual variables
 
-You can retrieved dual variables (or Lagrange multipliers) associated to labelled constraint. To illustrate this, we define a problem with constraints:
+The dual variables (Lagrange multipliers) provide sensitivity information about constraints.
+
+To illustrate dual variables, we define a problem with various constraints:
 
 ```@example main
 ocp = @def begin
-
     tf ∈ R,             variable
     t ∈ [0, tf],        time
     x = (q, v) ∈ R²,    state
     u ∈ R,              control
-
     tf ≥ 0,             (eq_tf)
     -1 ≤ u(t) ≤ 1,      (eq_u)
     v(t) ≤ 0.75,        (eq_v)
-
     x(0)  == [-1, 0],   (eq_x0)
     q(tf) == 0
     v(tf) == 0
-
-    ẋ(t) == [v(t), u(t)]
-
+    ẋ(t) == [v(t), u(t)]
     tf → min
-
 end
 sol = solve(ocp; display=false)
 nothing # hide
 ```
 
-Dual variables corresponding to variable and boundary constraints are given as scalar or vectors.
+#### Dual of labeled constraints
+
+Get the dual variable for a specific labeled constraint:
 
 ```@example main
-dual(sol, ocp, :eq_tf)
+dual(sol, ocp, :eq_tf)  # dual for variable constraint
 ```
 
 ```@example main
-dual(sol, ocp, :eq_x0)
+dual(sol, ocp, :eq_x0)  # dual for boundary constraint
 ```
 
-The other type of constraints are associated to dual variables given as functions of time.
+For path constraints, the dual is a function of time:
 
 ```@example main
 μ_u = dual(sol, ocp, :eq_u)
@@ -214,3 +272,116 @@ plot(time_grid(sol), μ_u)
 μ_v = dual(sol, ocp, :eq_v)
 plot(time_grid(sol), μ_v)
 ```
+
+#### Box constraint duals
+
+Get dual variables for box constraints on state, control, and variable:
+
+```@example main
+state_constraints_lb_dual(sol)  # lower bound duals for state
+```
+
+```@example main
+state_constraints_ub_dual(sol)  # upper bound duals for state
+```
+
+```@example main
+control_constraints_lb_dual(sol)  # lower bound duals for control
+```
+
+```@example main
+control_constraints_ub_dual(sol)  # upper bound duals for control
+```
+
+```@example main
+variable_constraints_lb_dual(sol)  # lower bound duals for variable
+```
+
+```@example main
+variable_constraints_ub_dual(sol)  # upper bound duals for variable
+```
+
+#### Nonlinear constraint duals
+
+Get dual variables for nonlinear path and boundary constraints:
+
+```@example main
+path_constraints_dual(sol)  # duals for nonlinear path constraints
+```
+
+```@example main
+boundary_constraints_dual(sol)  # duals for nonlinear boundary constraints
+```
+
+#### Summary table
+
+| Method | Returns | Description |
+| -------- | --------- | ------------- |
+| `dual(sol, ocp, label)` | `Real` or `Function` | Dual for labeled constraint |
+| `state_constraints_lb_dual(sol)` | Dual values | State lower bound duals |
+| `state_constraints_ub_dual(sol)` | Dual values | State upper bound duals |
+| `control_constraints_lb_dual(sol)` | Dual values | Control lower bound duals |
+| `control_constraints_ub_dual(sol)` | Dual values | Control upper bound duals |
+| `variable_constraints_lb_dual(sol)` | Dual values | Variable lower bound duals |
+| `variable_constraints_ub_dual(sol)` | Dual values | Variable upper bound duals |
+| `path_constraints_dual(sol)` | Dual values | Nonlinear path constraint duals |
+| `boundary_constraints_dual(sol)` | Dual values | Nonlinear boundary constraint duals |
+
+### Solution metadata
+
+The solution metadata provides information about the solver performance and status.
+
+#### Solver status
+
+Check if the solution was successful:
+
+```@example main
+successful(sol)  # returns true if solver succeeded
+```
+
+Get the solver status symbol:
+
+```@example main
+status(sol)  # returns solver status (e.g., :first_order)
+```
+
+Get the solver message:
+
+```@example main
+message(sol)  # returns solver message string
+```
+
+#### Iteration count
+
+Get the number of solver iterations:
+
+```@example main
+iterations(sol)  # returns iteration count
+```
+
+#### Constraints violation
+
+Get the maximum constraint violation:
+
+```@example main
+constraints_violation(sol)  # returns max violation
+```
+
+#### Additional solver information
+
+Get additional solver-specific information:
+
+```@example main
+infos(sol)  # returns dictionary of solver info
+```
+
+#### Summary table
+
+| Method | Returns | Description |
+| -------- | --------- | ------------- |
+| `successful(sol)` | `Bool` | True if solver succeeded |
+| `status(sol)` | `Symbol` | Solver status |
+| `message(sol)` | `String` | Solver message |
+| `iterations(sol)` | `Int` | Number of iterations |
+| `constraints_violation(sol)` | `Float64` | Maximum constraint violation |
+| `infos(sol)` | `Dict` | Additional solver information |

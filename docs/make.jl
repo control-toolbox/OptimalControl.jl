@@ -1,3 +1,8 @@
+# to run the documentation generation:
+# julia --project=. docs/make.jl
+pushfirst!(LOAD_PATH, joinpath(@__DIR__, ".."))
+pushfirst!(LOAD_PATH, @__DIR__)
+
 # control-toolbox packages
 using OptimalControl
 using CTBase
@@ -148,7 +153,7 @@ cp(
 Draft = false
 ```
 =#
-draft = true  # Draft mode: if true, @example blocks in markdown are not executed
+draft = false  # Draft mode: if true, @example blocks in markdown are not executed
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Load extensions
@@ -208,8 +213,12 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "Use AI" => "manual-ai-llm.md",
                 "Problem characteristics" => "manual-model.md",
                 "Set an initial guess" => "manual-initial-guess.md",
-                "Solve a problem" => "manual-solve.md",
-                "Solve on GPU" => "manual-solve-gpu.md",
+                "Solve a problem" => [
+                    "Basic usage" => "manual-solve.md",
+                    "Advanced options" => "manual-solve-advanced.md",
+                    "Explicit mode" => "manual-solve-explicit.md",
+                    "GPU solving" => "manual-solve-gpu.md",
+                ],
                 "Solution characteristics" => "manual-solution.md",
                 "Plot a solution" => "manual-plot.md",
                 "Compute flows" => [
