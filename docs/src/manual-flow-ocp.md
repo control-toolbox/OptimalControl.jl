@@ -1,9 +1,5 @@
 # [How to compute flows from optimal control problems](@id manual-flow-ocp)
 
-```@meta
-CollapsedDocStrings = false
-```
-
 In this tutorial, we explain the `Flow` function, in particular to compute flows from an optimal control problem.
 
 ## Basic usage

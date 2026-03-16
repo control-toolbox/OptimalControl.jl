@@ -10,6 +10,7 @@ module TestCtsolvers
 using Test: Test
 using CTSolvers: CTSolvers
 using OptimalControl # using is mandatory since we test exported symbols
+import SolverCore # needed for ocp_solution signature check
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
@@ -124,16 +125,21 @@ function test_ctsolvers()
         end
 
         Test.@testset "Strategy Parameter Types" begin
-            # Test that parameter types are available but NOT reexported
-            # They should be accessible via isdefined but not in exports
+            # Test that parameter types are available
+            # AbstractStrategyParameter is imported only, CPU and GPU are reexported
             Test.@test isdefined(OptimalControl, :AbstractStrategyParameter)
             Test.@test isdefined(OptimalControl, :CPU)
             Test.@test isdefined(OptimalControl, :GPU)
 
-            # They should NOT be in the public exports (names with all=false)
+            # CPU and GPU should be accessible in current module since they are reexported
+            Test.@test isdefined(CurrentModule, :CPU)
+            Test.@test isdefined(CurrentModule, :GPU)
+
+            # AbstractStrategyParameter should NOT be in the public exports (names with all=false)
+            # CPU and GPU should BE in the public exports since they are reexported
             Test.@test :AbstractStrategyParameter ∉ names(OptimalControl; all=false)
-            Test.@test :CPU ∉ names(OptimalControl; all=false)
-            Test.@test :GPU ∉ names(OptimalControl; all=false)
+            Test.@test :CPU ∈ names(OptimalControl; all=false)
+            Test.@test :GPU ∈ names(OptimalControl; all=false)
 
             # They should also be accessible via CTSolvers
             Test.@test isdefined(CTSolvers, :AbstractStrategyParameter)
@@ -149,6 +155,52 @@ function test_ctsolvers()
             Test.@test !isdefined(OptimalControl, :is_parameter_type)
             Test.@test !isdefined(OptimalControl, :get_parameter_type)
             Test.@test !isdefined(OptimalControl, :available_parameters)
+        end
+
+        Test.@testset "Type Hierarchy" begin
+            Test.@testset "Modelers" begin
+                Test.@test OptimalControl.ADNLP <: OptimalControl.AbstractNLPModeler
+                Test.@test OptimalControl.Exa <: OptimalControl.AbstractNLPModeler
+            end
+            Test.@testset "Solvers" begin
+                Test.@test OptimalControl.Ipopt <: OptimalControl.AbstractNLPSolver
+                Test.@test OptimalControl.MadNLP <: OptimalControl.AbstractNLPSolver
+                Test.@test OptimalControl.MadNCL <: OptimalControl.AbstractNLPSolver
+                Test.@test OptimalControl.Knitro <: OptimalControl.AbstractNLPSolver
+            end
+            Test.@testset "Parameters" begin
+                Test.@test OptimalControl.CPU <: CTSolvers.AbstractStrategyParameter
+                Test.@test OptimalControl.GPU <: CTSolvers.AbstractStrategyParameter
+            end
+        end
+
+        Test.@testset "Method Signatures" begin
+            Test.@testset "ocp_model" begin
+                Test.@test hasmethod(ocp_model, Tuple{OptimalControl.DiscretizedModel})
+            end
+            Test.@testset "nlp_model" begin
+                Test.@test hasmethod(
+                    nlp_model,
+                    Tuple{
+                        OptimalControl.DiscretizedModel,
+                        Any,
+                        OptimalControl.AbstractNLPModeler,
+                    },
+                )
+            end
+            Test.@testset "ocp_solution" begin
+                Test.@test hasmethod(
+                    ocp_solution,
+                    Tuple{
+                        OptimalControl.DiscretizedModel,
+                        SolverCore.AbstractExecutionStats,
+                        OptimalControl.AbstractNLPModeler,
+                    },
+                )
+            end
+            Test.@testset "describe" begin
+                Test.@test hasmethod(describe, Tuple{Symbol})
+            end
         end
     end
 end

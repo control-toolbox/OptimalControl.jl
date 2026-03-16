@@ -28,7 +28,9 @@ import CTSolvers:
     BypassValue,
 
     # Parameter types (imported only, not reexported)
-    AbstractStrategyParameter,
+    AbstractStrategyParameter
+
+@reexport import CTSolvers:
     CPU,
     GPU
 

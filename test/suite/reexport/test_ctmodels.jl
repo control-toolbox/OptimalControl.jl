@@ -27,6 +27,9 @@ function test_ctmodels()
             Test.@test isdefined(OptimalControl, :plot)
             Test.@test isdefined(CurrentModule, :plot)
             Test.@test plot isa Function
+            Test.@test isdefined(OptimalControl, :plot!)
+            Test.@test isdefined(CurrentModule, :plot!)
+            Test.@test plot! isa Function
         end
 
         Test.@testset "Initial Guess Types" begin
@@ -182,6 +185,25 @@ function test_ctmodels()
                     Test.@test isdefined(CurrentModule, f)
                     Test.@test getfield(OptimalControl, f) isa Function
                 end
+            end
+        end
+
+        Test.@testset "Type Hierarchy" begin
+            Test.@test OptimalControl.Model <: OptimalControl.AbstractModel
+            Test.@test OptimalControl.Solution <: OptimalControl.AbstractSolution
+            Test.@test OptimalControl.InitialGuess <: OptimalControl.AbstractInitialGuess
+        end
+
+        Test.@testset "Method Signatures" begin
+            Test.@testset "export_ocp_solution" begin
+                Test.@test hasmethod(
+                    export_ocp_solution, Tuple{OptimalControl.AbstractSolution}
+                )
+            end
+            Test.@testset "import_ocp_solution" begin
+                Test.@test hasmethod(
+                    import_ocp_solution, Tuple{OptimalControl.AbstractModel}
+                )
             end
         end
     end

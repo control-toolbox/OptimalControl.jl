@@ -46,6 +46,30 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [1.3.0-beta] — 2026-03-16
+
+### Added
+
+- **Level 3 signature freezing tests** for reexport API across all CTX packages:
+  - Type hierarchy checks for inheritance relationships (e.g., `Collocation <: AbstractDiscretizer`)
+  - Method signature checks with `hasmethod()` for key functions (e.g., `discretize`, `solve`, `ocp_model`)
+  - Missing symbols `solve` and `plot!` now properly tested
+  - 503 reexport tests passing, up from 497
+
+### Changed
+
+- **Simplified ExaModels documentation**: removed warnings about coordinate-by-coordinate
+  dynamics and scalar nonlinear constraints requirements, improving user experience
+  when using the `:exa` modeler for GPU solving
+- **Removed outdated API documentation**: `docs/src/api/private.md` deleted
+
+### Fixed
+
+- **API breakage detection**: tests now detect when CTX packages modify their APIs,
+  preventing silent breakages in OptimalControl.jl
+
+---
+
 ## [1.2.3-beta] — 2026-03-07
 
 ### Added

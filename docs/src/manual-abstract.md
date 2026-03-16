@@ -230,9 +230,6 @@ The dynamics can also be declared coordinate by coordinate. The previous example
 end
 ```
 
-!!! warning
-    Declaring the dynamics coordinate by coordinate is **compulsory** when solving with the option `:exa` to rely on the ExaModels modeller (check the [solve section](@ref manual-solve)), for instance to [solve on GPU](@ref manual-solve-gpu).
-
 ## [Constraints](@id manual-abstract-constraints)
 
 ```julia
@@ -348,9 +345,6 @@ end
         ∫( 0.5u(t)^2 ) → min
     end
     ```
-
-!!! warning
-    When solving with the option `:exa` to rely on the ExaModels modeller (check the [solve section](@ref manual-solve)), for instance to [solve on GPU](@ref manual-solve-gpu), it is **compulsory** that *nonlinear* constraints (not ranges) are *scalar*, whatever the type (boundary, variable, control, state, mixed).
 
 ## [Mayer cost](@id manual-abstract-mayer)
 

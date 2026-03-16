@@ -1,14 +1,16 @@
-# [The solve function](@id manual-solve)
+# [Solve a problem](@id manual-solve)
 
-```@meta
-CollapsedDocStrings = false
-```
+This manual explains how to use the [`solve`](@ref) function to solve optimal control problems with OptimalControl.jl. The `solve` function provides a **descriptive mode** where you specify strategies using symbolic tokens, with automatic option routing and validation.
 
-In this manual, we explain the [`solve`](@ref) function from [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package.
+For advanced usage, see:
 
-## Basic usage
+- [Advanced options and disambiguation](@ref manual-solve-advanced)
+- [Explicit mode with typed components](@ref manual-solve-explicit)
+- [GPU solving](@ref manual-solve-gpu)
 
-Let us define a basic optimal control problem.
+## Quick start
+
+Let us define a basic optimal control problem:
 
 ```@example main
 using OptimalControl
@@ -23,145 +25,240 @@ ocp = @def begin
     u ∈ R, control
     x(t0) == x0
     x(tf) == [0, 0]
-    ẋ(t)  == [v(t), u(t)]
+    ẋ(t)  == [v(t), u(t)]
     0.5∫( u(t)^2 ) → min
 end
 nothing # hide
 ```
 
-We can now solve the problem:
+The simplest way to solve it is:
 
 ```@example main
 using NLPModelsIpopt
-solve(ocp)
+sol = solve(ocp)
 nothing # hide
 ```
 
-Note that we must import NLPModelsIpopt.jl before calling `solve`.  
-This is because the default method uses a direct approach, which transforms the optimal control problem into a nonlinear program (NLP) of the form:
+This uses default strategies: collocation discretization, ADNLP modeler, and Ipopt solver, all running on CPU.
 
-```math
-\text{minimize}\quad F(y), \quad\text{subject to the constraints}\quad g(y) \le 0, \quad h(y) = 0. 
-```
+!!! warning "Solver extension required"
 
-!!! warning
-
-    Calling `solve` without loading a NLP solver package first will notify the user:
-
+    You must load a solver package (e.g., `using NLPModelsIpopt`) before calling `solve`. Otherwise, you'll get:
+    
     ```julia
     julia> solve(ocp)
     ERROR: ExtensionError. Please make: julia> using NLPModelsIpopt
     ```
 
-## [Resolution methods and algorithms](@id manual-solve-methods)
+## Display
 
-OptimalControl.jl offers a list of methods. To get it, simply call `methods`.
+Control the configuration display with the `display` option:
+
+```@example main
+# Suppress all output
+sol = solve(ocp; display=false)
+nothing # hide
+```
+
+## Initial guess
+
+Provide an initial guess using `initial_guess` (or the alias `init`):
+
+```@example main
+# Using the @init macro
+init = @init ocp begin
+    u = 0.5
+end
+
+sol = solve(ocp; initial_guess=init, grid_size=50, display=false)
+nothing # hide
+```
+
+```@example main
+# Or using the alias
+sol = solve(ocp; init=init, grid_size=50, display=false)
+nothing # hide
+```
+
+For more details on initial guess specification, see [Set an initial guess](@ref manual-initial-guess).
+
+## Available methods
+
+OptimalControl.jl provides multiple solving strategies. To see all available combinations, call:
 
 ```@example main
 methods()
 ```
 
-Each line is a method, with priority going from top to bottom. This means that
+Each method is a **quadruplet** `(discretizer, modeler, solver, parameter)`:
+
+1. **Discretizer** — how to discretize the continuous OCP:
+   - `:collocation`: collocation method (currently the only option)
+
+2. **Modeler** — how to build the NLP model:
+   - `:adnlp`: uses [`ADNLPModels.ADNLPModel`](@extref) with automatic differentiation
+   - `:exa`: uses [`ExaModels.ExaModel`](@extref) with SIMD optimization (GPU-capable)
+
+3. **Solver** — which NLP solver to use:
+   - `:ipopt`: [Ipopt](https://coin-or.github.io/Ipopt/) interior point solver
+   - `:madnlp`: [MadNLP](https://madnlp.github.io/MadNLP.jl/) pure-Julia solver (GPU-capable)
+   - `:madncl`: [MadNCL](https://github.com/MadNLP/MadNCL.jl) (GPU-capable)
+   - `:knitro`: [Knitro](https://www.artelys.com/solvers/knitro/) commercial solver (license required)
+
+4. **Parameter** — execution backend:
+   - `:cpu`: CPU execution (default)
+   - `:gpu`: GPU execution (only for `:exa` modeler with `:madnlp` or `:madncl` solvers)
+
+You can inspect which strategies use a given parameter:
+
+```@example main
+describe(:cpu)
+```
+
+```@example main
+using CUDA, MadNLPGPU
+describe(:gpu)
+```
+
+!!! note "Priority order"
+
+    The order of methods in the list above determines the **priority** for auto-completion. When you provide a partial description, the first matching method from top to bottom is selected. This is why the first method `(:collocation, :adnlp, :ipopt, :cpu)` is the default.
+
+The first method in the list is the default, so:
 
 ```julia
 solve(ocp)
 ```
 
-is equivalent to
+is equivalent to:
 
 ```julia
-solve(ocp, :direct, :adnlp, :ipopt)
+solve(ocp, :collocation, :adnlp, :ipopt, :cpu)
 ```
 
-1. The first symbol refers to the general class of method. The only possible value is:
-    - `:direct`: currently, only the so-called [direct approach](https://en.wikipedia.org/wiki/Optimal_control#Numerical_methods_for_optimal_control) is implemented. Direct methods discretise the original optimal control problem and solve the resulting NLP. In this case, the main `solve` method redirects to `CTDirect.solve`.
-2. The second symbol refers to the NLP modeler. The possible values are:
-    - `:adnlp`: the NLP problem is modeled by a [`ADNLPModels.ADNLPModel`](@extref). It provides automatic differentiation (AD)-based models that follow the [NLPModels.jl](https://github.com/JuliaSmoothOptimizers/NLPModels.jl) API.
-    - `:exa`: the NLP problem is modeled by a [`ExaModels.ExaModel`](@extref). It provides automatic differentiation and [SIMD](https://en.wikipedia.org/wiki/Single_instruction,_multiple_data) abstraction.
-3. The third symbol specifies the NLP solver. Possible values are:
-   - `:ipopt`: calls [`NLPModelsIpopt.ipopt`](@extref) to solve the NLP problem.
-   - `:madnlp`: creates a [`MadNLP.MadNLPSolver`](@extref) instance from the NLP problem and solve it. [MadNLP.jl](https://madnlp.github.io/MadNLP.jl) is an open-source solver in Julia implementing a filter line-search interior-point algorithm like Ipopt.
-   - `:knitro`: uses the [Knitro](https://www.artelys.com/solvers/knitro/) solver (license required).
+## Choosing a method
 
-!!! warning
-
-    When using `:exa` for more performance (in particular to [solve on GPU](@ref manual-solve-gpu)), there are limitations on the syntax:  
-    - dynamics must be declared coordinate by coordinate (not globally as a vector valued expression)
-    - nonlinear constraints (boundary, variable, control, state, mixed ones, see [Constraints](@ref manual-abstract-constraints) must also be scalar expressions (linear constraints *aka.* ranges, on the other hand, can be vectors)
-    - all expressions must only involve algebraic operations that are known to ExaModels (check the [documentation](https://exanauts.github.io/ExaModels.jl/stable)), although one can provide additional user defined functions through *registration* (check [ExaModels API](https://exanauts.github.io/ExaModels.jl/stable/core/#ExaModels.@register_univariate-Tuple%7BAny,%2520Any,%2520Any%7D)) 
-
-For instance, let us try MadNLP solver with ExaModel modeller.
+You can specify a complete method description:
 
 ```@example main
 using MadNLP
-
-ocp = @def begin
-    t ∈ [ t0, tf ], time
-    x = (q, v) ∈ R², state
-    u ∈ R, control
-    x(t0) == x0
-    x(tf) == [0, 0]
-    ∂(q)(t) == v(t)
-    ∂(v)(t) == u(t)
-    0.5∫( u(t)^2 ) → min
-end
-
-solve(ocp, :exa, :madnlp; scheme=:trapeze)
+sol = solve(ocp, :collocation, :adnlp, :madnlp, :cpu)
 nothing # hide
 ```
 
-Note that you can provide a partial description. If multiple full descriptions contain it, priority is given to the first one in the list. Hence, all of the following calls are equivalent:
+Or provide a **partial description**. Missing tokens are auto-completed using the **first matching method** from `methods()` (top-to-bottom priority):
+
+```@example main
+# Only specify the solver → defaults to :collocation, :adnlp, :cpu
+sol = solve(ocp, :madnlp; print_level=MadNLP.ERROR)
+nothing # hide
+```
+
+The completion algorithm searches `methods()` from top to bottom and selects the first quadruplet that matches all provided tokens. For example:
+
+- `solve(ocp, :madnlp)` matches `(:collocation, :adnlp, :madnlp, :cpu)` (first match with `:madnlp`)
+- `solve(ocp, :exa)` matches `(:collocation, :exa, :ipopt, :cpu)` (first match with `:exa`)
+- `solve(ocp, :gpu)` matches `(:collocation, :exa, :madnlp, :gpu)` (first GPU method)
+
+All of these are equivalent (they all complete to `:collocation, :adnlp, :ipopt, :cpu`):
 
 ```julia
-solve(ocp)
-solve(ocp, :direct                )
-solve(ocp,          :adnlp        )
-solve(ocp,                  :ipopt)
-solve(ocp, :direct, :adnlp        )
-solve(ocp, :direct,         :ipopt)
-solve(ocp, :direct, :adnlp, :ipopt)
+solve(ocp)                                      # empty → use first method
+solve(ocp, :collocation)                        # specify discretizer
+solve(ocp, :adnlp)                              # specify modeler
+solve(ocp, :ipopt)                              # specify solver
+solve(ocp, :cpu)                                # specify parameter
+solve(ocp, :collocation, :adnlp)                # specify discretizer + modeler
+solve(ocp, :collocation, :ipopt)                # specify discretizer + solver
+solve(ocp, :collocation, :adnlp, :ipopt, :cpu)  # complete description
 ```
 
-## [Direct method and options](@id manual-solve-direct-method)
+## Passing options to strategies
 
-The main options for the direct method, with their [default] values, are:
-
-- `display` ([`true`], `false`): setting `display = false` disables output.
-- `init`: information for the initial guess. It can be given as numerical values, functions, or an existing solution. See [how to set an initial guess](@ref manual-initial-guess).
-- `grid_size` ([`250`]): number of time steps in the (uniform) time discretization grid.  
-  More precisely, if `N = grid_size` and the initial and final times are `t0` and `tf`, then the step length `Δt = (tf - t0) / N`.
-- `time_grid` ([`nothing`]): explicit time grid (can be non-uniform).  
-  If `time_grid = nothing`, a uniform grid of length `grid_size` is used.
-- `scheme` (`:trapeze`, [`:midpoint`], `:euler`, `:euler_implicit`, `:gauss_legendre_2`, `:gauss_legendre_3`): the discretisation scheme to transform the dynamics into nonlinear equations. See the [discretization method tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-discretisation.html) for more details.
-- `adnlp_backend` ([`:optimized`], `:manual`, `:default`): backend used for automatic differentiation to create the [`ADNLPModels.ADNLPModel`](@extref).
-
-For advanced usage, see:
-
-- [discrete continuation tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-continuation.html),
-- [NLP manipulation tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-nlp.html).
-
-!!! note
-
-    The main [`solve`](@ref) method from OptimalControl.jl simply redirects to `CTDirect.solve` in that case.
-
-## [NLP solvers specific options](@id manual-solve-solvers-specific-options)
-
-In addition to these options, any remaining keyword arguments passed to `solve` are forwarded to the NLP solver.
-
-!!! warning
-
-    The option names and accepted values depend on the chosen solver. For example, in Ipopt, `print_level` expects an integer, whereas in MadNLP it must be a `MadNLP.LogLevels` value (valid options: `MadNLP.{TRACE, DEBUG, INFO, NOTICE, WARN, ERROR}`). Moreover, some options are solver-specific: for instance, `mu_strategy` exists in Ipopt but not in MadNLP.
-
-Please refer to the [Ipopt options list](https://coin-or.github.io/Ipopt/OPTIONS.html) and the [NLPModelsIpopt.jl documentation](https://jso.dev/NLPModelsIpopt.jl).  
+You can pass options as keyword arguments. They are **automatically routed** to the appropriate strategy:
 
 ```@example main
-sol = solve(ocp; max_iter=0, tol=1e-6, print_level=0)
-iterations(sol)
+sol = solve(ocp, :madnlp; 
+    grid_size=100,              # → discretizer (Collocation)
+    max_iter=500,               # → solver (MadNLP)
+    print_level=MadNLP.ERROR    # → solver (MadNLP)
+)
+nothing # hide
 ```
 
-Likewise, see the [MadNLP.jl options](https://madnlp.github.io/MadNLP.jl/stable/options/) and the [MadNLP.jl documentation](https://madnlp.github.io/MadNLP.jl).  
+The solve function displays the configuration and shows which options were applied:
 
 ```@example main
-sol = solve(ocp, :madnlp; max_iter=0, tol=1e-6, print_level=MadNLP.ERROR)
-iterations(sol)
+sol = solve(ocp, :ipopt; 
+    grid_size=50, 
+    scheme=:trapeze,
+    max_iter=100,
+    print_level=0
+)
+nothing # hide
 ```
+
+Notice the `📦 Configuration` box showing:
+
+- **Discretizer**: `collocation` with `grid_size = 50, scheme = trapeze`
+- **Modeler**: `adnlp` (no custom options)
+- **Solver**: `ipopt` with `max_iter = 100, print_level = 0`
+
+## Strategy options
+
+Each strategy declares its available options. You can inspect them using `describe`.
+
+!!! note "Understanding default values"
+    When `describe` shows `(default: NotProvided)` for an option, it means OptimalControl does not override the strategy's native default value. For example:
+    - For Ipopt options with `(default: NotProvided)`, Ipopt's own default values are used
+    - For MadNLP options with `(default: NotProvided)`, MadNLP's own default values are used
+    - For other strategies, the same principle applies
+
+    Only options with explicit default values (e.g., `(default: 100)`) are overridden by OptimalControl.
+
+### Discretizer options
+
+```@example main
+describe(:collocation)
+```
+
+### Modeler options
+
+```@example main
+describe(:adnlp)
+```
+
+```@example main
+using CUDA
+describe(:exa)
+```
+
+### Solver options
+
+```@example main
+describe(:ipopt)
+```
+
+```@example main
+using MadNLPGPU
+describe(:madnlp)
+```
+
+### Official documentation
+
+For complete option lists, see the official documentation:
+
+- **ADNLP**: [ADNLPModels documentation](https://jso.dev/ADNLPModels.jl/stable/)
+- **Exa**: [ExaModels documentation](https://exanauts.github.io/ExaModels.jl/stable/)
+- **Ipopt**: [Ipopt options](https://coin-or.github.io/Ipopt/OPTIONS.html)
+- **MadNLP**: [MadNLP options](https://madnlp.github.io/MadNLP.jl/stable/options/)
+- **MadNCL**: [MadNCL documentation](https://github.com/MadNLP/MadNCL.jl)
+- **Knitro**: [Knitro options](https://www.artelys.com/docs/knitro/3_referenceManual/userOptions.html)
+
+## See also
+
+- **[Advanced options](@ref manual-solve-advanced)**: option routing, `route_to` for disambiguation, `bypass` for unknown options, introspection tools
+- **[Explicit mode](@ref manual-solve-explicit)**: using typed components (`Collocation()`, `Ipopt()`) instead of symbols
+- **[GPU solving](@ref manual-solve-gpu)**: using the `:gpu` parameter or `Exa{GPU}()` / `MadNLP{GPU}()` types
+- **[Initial guess](@ref manual-initial-guess)**: detailed guide on the `@init` macro
+- **[Solution](@ref manual-solution)**: working with the returned solution object
