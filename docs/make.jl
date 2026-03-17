@@ -233,4 +233,4 @@ with_api_reference(src_dir, ext_dir) do api_pages
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════
-deploydocs(; repo=repo_url * ".git", devbranch="main")
+deploydocs(; repo=repo_url * ".git", devbranch="main", push_preview=true)
