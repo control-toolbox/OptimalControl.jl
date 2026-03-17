@@ -64,9 +64,6 @@ mod = OptimalControl.ADNLP(backend=:optimized, show_time=false)
 
 # Solver with iteration limit and tolerance
 sol = OptimalControl.Ipopt(max_iter=500, tol=1e-6, print_level=0)
-
-# Uno solver with custom logging level
-uno_sol = OptimalControl.Uno(max_iter=1000, logger="INFO")
 nothing # hide
 ```
 
