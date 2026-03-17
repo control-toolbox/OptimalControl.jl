@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Basic usage · OptimalControl.jl</title><meta name="title" content="Basic usage · OptimalControl.jl"/><meta property="og:title" content="Basic usage · OptimalControl.jl"/><meta property="twitter:title" content="Basic usage · OptimalControl.jl"/><meta name="description" content="Documentation for OptimalControl.jl."/><meta property="og:description" content="Documentation for OptimalControl.jl."/><meta property="twitter:description" content="Documentation for OptimalControl.jl."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script><link href="https://control-toolbox.org/assets/css/documentation.css" rel="stylesheet" type="text/css"/><script src="https://control-toolbox.org/assets/js/documentation.js"></script><link href="assets/custom.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="index.html">OptimalControl.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="index.html">Introduction</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="example-double-integrator-energy.html">Energy minimisation</a></li><li><a class="tocitem" href="example-double-integrator-time.html">Time mininimisation</a></li></ul></li><li><span class="tocitem">Manual</span><ul><li><a class="tocitem" href="manual-abstract.html">Define a problem</a></li><li><a class="tocitem" href="manual-ai-llm.html">Use AI</a></li><li><a class="tocitem" href="manual-model.html">Problem characteristics</a></li><li><a class="tocitem" href="manual-initial-guess.html">Set an initial guess</a></li><li><input class="collapse-toggle" id="menuitem-3-5" type="checkbox" checked/><label class="tocitem" for="menuitem-3-5"><span class="docs-label">Solve a problem</span><i class="docs-chevron"></i></label><ul class="collapsed"><li class="is-active"><a class="tocitem" href="manual-solve.html">Basic usage</a><ul class="internal"><li><a class="tocitem" href="#Quick-start"><span>Quick start</span></a></li><li><a class="tocitem" href="#Display"><span>Display</span></a></li><li><a class="tocitem" href="#Initial-guess"><span>Initial guess</span></a></li><li><a class="tocitem" href="#Available-methods"><span>Available methods</span></a></li><li><a class="tocitem" href="#Choosing-a-method"><span>Choosing a method</span></a></li><li><a class="tocitem" href="#Solver-requirements"><span>Solver requirements</span></a></li><li><a class="tocitem" href="#Passing-options-to-strategies"><span>Passing options to strategies</span></a></li><li><a class="tocitem" href="#Strategy-options"><span>Strategy options</span></a></li><li><a class="tocitem" href="#See-also"><span>See also</span></a></li></ul></li><li><a class="tocitem" href="manual-solve-advanced.html">Advanced options</a></li><li><a class="tocitem" href="manual-solve-explicit.html">Explicit mode</a></li><li><a class="tocitem" href="manual-solve-gpu.html">GPU solving</a></li></ul></li><li><a class="tocitem" href="manual-solution.html">Solution characteristics</a></li><li><a class="tocitem" href="manual-plot.html">Plot a solution</a></li><li><input class="collapse-toggle" id="menuitem-3-8" type="checkbox"/><label class="tocitem" for="menuitem-3-8"><span class="docs-label">Compute flows</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="manual-flow-ocp.html">From optimal control problems</a></li><li><a class="tocitem" href="manual-flow-others.html">From Hamiltonians and others</a></li></ul></li></ul></li><li><span class="tocitem">API Reference</span><ul><li><a class="tocitem" href="api/public.html">Public</a></li><li><a class="tocitem" href="api/private.html">Private</a></li><li><a class="tocitem" href="api/subpackages.html">Subpackages</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Manual</a></li><li><a class="is-disabled">Solve a problem</a></li><li class="is-active"><a href="manual-solve.html">Basic usage</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="manual-solve.html">Basic usage</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="manual-solve"><a class="docs-heading-anchor" href="#manual-solve">Solve a problem</a><a id="manual-solve-1"></a><a class="docs-heading-anchor-permalink" href="#manual-solve" title="Permalink"></a></h1><p>This manual explains how to use the <a href="api/public.html#CommonSolve.solve-Tuple{CTSolvers.Optimization.AbstractOptimizationProblem, Any, CTSolvers.Modelers.AbstractNLPModeler, CTSolvers.Solvers.AbstractNLPSolver}"><code>solve</code></a> function to solve optimal control problems with OptimalControl.jl. The <code>solve</code> function provides a <strong>descriptive mode</strong> where you specify strategies using symbolic tokens, with automatic option routing and validation.</p><p>For advanced usage, see:</p><ul><li><a href="manual-solve-advanced.html#manual-solve-advanced">Advanced options and disambiguation</a></li><li><a href="manual-solve-explicit.html#manual-solve-explicit">Explicit mode with typed components</a></li><li><a href="manual-solve-gpu.html#manual-solve-gpu">GPU solving</a></li></ul><h2 id="Quick-start"><a class="docs-heading-anchor" href="#Quick-start">Quick start</a><a id="Quick-start-1"></a><a class="docs-heading-anchor-permalink" href="#Quick-start" title="Permalink"></a></h2><p>Let us define a basic optimal control problem:</p><pre><code class="language-julia hljs">using OptimalControl
+
+t0 = 0
+tf = 1
+x0 = [-1, 0]
+
+ocp = @def begin
+    t ∈ [ t0, tf ], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    x(t0) == x0
+    x(tf) == [0, 0]
+    ẋ(t)  == [v(t), u(t)]
+    0.5∫( u(t)^2 ) → min
+end</code></pre><p>The simplest way to solve it is:</p><pre><code class="language-julia hljs">using NLPModelsIpopt
+sol = solve(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ OptimalControl v1.3.1-beta solving with: collocation → adnlp → ipopt (cpu)
+
+  📦 Configuration:
+   ├─ Discretizer: collocation
+   ├─ Modeler: adnlp
+   └─ Solver: ipopt
+
+▫ This is Ipopt version 3.14.19, running with linear solver MUMPS 5.8.2.
+
+Number of nonzeros in equality constraint Jacobian...:     1754
+Number of nonzeros in inequality constraint Jacobian.:        0
+Number of nonzeros in Lagrangian Hessian.............:      250
+
+Total number of variables............................:      752
+                     variables with only lower bounds:        0
+                variables with lower and upper bounds:        0
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:      504
+Total number of inequality constraints...............:        0
+        inequality constraints with only lower bounds:        0
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:        0
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+   0  5.0000000e-03 1.10e+00 2.24e-14   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
+   1  6.0000960e+00 2.22e-16 1.78e-15 -11.0 6.08e+00    -  1.00e+00 1.00e+00h  1
+
+Number of Iterations....: 1
+
+                                   (scaled)                 (unscaled)
+Objective...............:   6.0000960015360381e+00    6.0000960015360381e+00
+Dual infeasibility......:   1.7763568394002505e-15    1.7763568394002505e-15
+Constraint violation....:   2.2204460492503131e-16    2.2204460492503131e-16
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
+Complementarity.........:   0.0000000000000000e+00    0.0000000000000000e+00
+Overall NLP error.......:   1.7763568394002505e-15    1.7763568394002505e-15
+
+
+Number of objective function evaluations             = 2
+Number of objective gradient evaluations             = 2
+Number of equality constraint evaluations            = 2
+Number of inequality constraint evaluations          = 0
+Number of equality constraint Jacobian evaluations   = 2
+Number of inequality constraint Jacobian evaluations = 0
+Number of Lagrangian Hessian evaluations             = 1
+Total seconds in IPOPT                               = 3.097
+
+EXIT: Optimal Solution Found.</code></pre><p>This uses default strategies: collocation discretization, ADNLP modeler, and Ipopt solver, all running on CPU.</p><div class="admonition is-warning" id="Solver-extension-required-d594540cb735c608"><header class="admonition-header">Solver extension required<a class="admonition-anchor" href="#Solver-extension-required-d594540cb735c608" title="Permalink"></a></header><div class="admonition-body"><p>You must load a solver package (e.g., <code>using NLPModelsIpopt</code>) before calling <code>solve</code>. Otherwise, you&#39;ll get:</p><pre><code class="language-julia hljs">julia&gt; solve(ocp)
+ERROR: ExtensionError. Please make: julia&gt; using NLPModelsIpopt</code></pre></div></div><h2 id="Display"><a class="docs-heading-anchor" href="#Display">Display</a><a id="Display-1"></a><a class="docs-heading-anchor-permalink" href="#Display" title="Permalink"></a></h2><p>Control the configuration display with the <code>display</code> option:</p><pre><code class="language-julia hljs"># Suppress all output
+sol = solve(ocp; display=false)</code></pre><h2 id="Initial-guess"><a class="docs-heading-anchor" href="#Initial-guess">Initial guess</a><a id="Initial-guess-1"></a><a class="docs-heading-anchor-permalink" href="#Initial-guess" title="Permalink"></a></h2><p>Provide an initial guess using <code>initial_guess</code> (or the alias <code>init</code>):</p><pre><code class="language-julia hljs"># Using the @init macro
+init = @init ocp begin
+    u = 0.5
+end
+
+sol = solve(ocp; initial_guess=init, grid_size=50, display=false)</code></pre><pre><code class="language-julia hljs"># Or using the alias
+sol = solve(ocp; init=init, grid_size=50, display=false)</code></pre><p>For more details on initial guess specification, see <a href="manual-initial-guess.html#manual-initial-guess">Set an initial guess</a>.</p><h2 id="Available-methods"><a class="docs-heading-anchor" href="#Available-methods">Available methods</a><a id="Available-methods-1"></a><a class="docs-heading-anchor-permalink" href="#Available-methods" title="Permalink"></a></h2><p>OptimalControl.jl provides multiple solving strategies. To see all available combinations, call:</p><pre><code class="language-julia hljs">methods()</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(:collocation, :adnlp, :ipopt, :cpu)
+(:collocation, :adnlp, :madnlp, :cpu)
+(:collocation, :adnlp, :uno, :cpu)
+(:collocation, :adnlp, :madncl, :cpu)
+(:collocation, :adnlp, :knitro, :cpu)
+(:collocation, :exa, :ipopt, :cpu)
+(:collocation, :exa, :madnlp, :cpu)
+(:collocation, :exa, :uno, :cpu)
+(:collocation, :exa, :madncl, :cpu)
+(:collocation, :exa, :knitro, :cpu)
+(:collocation, :exa, :madnlp, :gpu)
+(:collocation, :exa, :madncl, :gpu)</code></pre><p>Each method is a <strong>quadruplet</strong> <code>(discretizer, modeler, solver, parameter)</code>:</p><ol><li><p><strong>Discretizer</strong> — how to discretize the continuous OCP:</p><ul><li><code>:collocation</code>: collocation method (currently the only option)</li></ul></li><li><p><strong>Modeler</strong> — how to build the NLP model:</p><ul><li><code>:adnlp</code>: uses <a href="https://jso.dev/ADNLPModels.jl/stable/reference/#ADNLPModels.ADNLPModel-Union%7BTuple%7BS%7D%2C%20Tuple%7BAny%2C%20S%7D%7D%20where%20S"><code>ADNLPModels.ADNLPModel</code></a> with automatic differentiation</li><li><code>:exa</code>: uses <a href="https://exanauts.github.io/ExaModels.jl/stable/core/#ExaModels.ExaModel-Tuple%7BC%7D%20where%20C%3C%3AExaCore"><code>ExaModels.ExaModel</code></a> with SIMD optimization (GPU-capable)</li></ul></li><li><p><strong>Solver</strong> — which NLP solver to use:</p><ul><li><code>:ipopt</code>: <a href="https://coin-or.github.io/Ipopt/">Ipopt</a> interior point solver (CPU-only)</li><li><code>:madnlp</code>: <a href="https://madnlp.github.io/MadNLP.jl/">MadNLP</a> pure-Julia solver (GPU-capable)</li><li><code>:uno</code>: <a href="https://unosolver.readthedocs.io">Uno</a> unified nonlinear optimization solver (CPU-only)</li><li><code>:madncl</code>: <a href="https://github.com/MadNLP/MadNCL.jl">MadNCL</a> (GPU-capable)</li><li><code>:knitro</code>: <a href="https://www.artelys.com/solvers/knitro/">Knitro</a> commercial solver (license required)</li></ul></li><li><p><strong>Parameter</strong> — execution backend:</p><ul><li><code>:cpu</code>: CPU execution (default)</li><li><code>:gpu</code>: GPU execution (only for <code>:exa</code> modeler with <code>:madnlp</code> or <code>:madncl</code> solvers)</li></ul></li></ol><p>You can inspect which strategies use a given parameter:</p><pre><code class="language-julia hljs">describe(:cpu)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">CPU (parameter)
+├─ id: :cpu
+├─ hierarchy: CPU → AbstractStrategyParameter
+├─ description: CPU-based computation
+│
+└─ used by strategies (7):
+   ├─ :adnlp (AbstractNLPModeler) → CTSolvers.Modelers.ADNLP{CPU}
+   ├─ :exa (AbstractNLPModeler) → CTSolvers.Modelers.Exa{CPU}
+   ├─ :ipopt (AbstractNLPSolver) → CTSolvers.Solvers.Ipopt{CPU}
+   ├─ :knitro (AbstractNLPSolver) → CTSolvers.Solvers.Knitro{CPU}
+   ├─ :madncl (AbstractNLPSolver) → CTSolvers.Solvers.MadNCL{CPU}
+   ├─ :madnlp (AbstractNLPSolver) → CTSolvers.Solvers.MadNLP{CPU}
+   └─ :uno (AbstractNLPSolver) → CTSolvers.Solvers.Uno{CPU}</code></pre><pre><code class="language-julia hljs">using CUDA, MadNLPGPU
+describe(:gpu)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">GPU (parameter)
+├─ id: :gpu
+├─ hierarchy: GPU → AbstractStrategyParameter
+├─ description: GPU-based computation
+│
+└─ used by strategies (3):
+   ├─ :exa (AbstractNLPModeler) → CTSolvers.Modelers.Exa{GPU}
+   ├─ :madncl (AbstractNLPSolver) → CTSolvers.Solvers.MadNCL{GPU}
+   └─ :madnlp (AbstractNLPSolver) → CTSolvers.Solvers.MadNLP{GPU}</code></pre><div class="admonition is-info" id="Priority-order-a25c4948a519b8e0"><header class="admonition-header">Priority order<a class="admonition-anchor" href="#Priority-order-a25c4948a519b8e0" title="Permalink"></a></header><div class="admonition-body"><p>The order of methods in the list above determines the <strong>priority</strong> for auto-completion. When you provide a partial description, the first matching method from top to bottom is selected. This is why the first method <code>(:collocation, :adnlp, :ipopt, :cpu)</code> is the default.</p></div></div><p>The first method in the list is the default, so:</p><pre><code class="language-julia hljs">solve(ocp)</code></pre><p>is equivalent to:</p><pre><code class="language-julia hljs">solve(ocp, :collocation, :adnlp, :ipopt, :cpu)</code></pre><h2 id="Choosing-a-method"><a class="docs-heading-anchor" href="#Choosing-a-method">Choosing a method</a><a id="Choosing-a-method-1"></a><a class="docs-heading-anchor-permalink" href="#Choosing-a-method" title="Permalink"></a></h2><p>You can specify a complete method description:</p><pre><code class="language-julia hljs">using MadNLP
+sol = solve(ocp, :collocation, :adnlp, :madnlp, :cpu)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ OptimalControl v1.3.1-beta solving with: collocation → adnlp → madnlp (cpu)
+
+  📦 Configuration:
+   ├─ Discretizer: collocation
+   ├─ Modeler: adnlp
+   └─ Solver: madnlp (linear_solver = MumpsSolver [cpu-dependent])
+
+▫ This is <span class="sgr34">Mad</span><span class="sgr31">N</span><span class="sgr32">L</span><span class="sgr35">P</span> version v0.9.1, running with MUMPS v5.8.2
+
+Number of nonzeros in constraint Jacobian............:     1754
+Number of nonzeros in Lagrangian Hessian.............:      250
+
+Total number of variables............................:      752
+                     variables with only lower bounds:        0
+                variables with lower and upper bounds:        0
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:      504
+Total number of inequality constraints...............:        0
+        inequality constraints with only lower bounds:        0
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:        0
+
+iter    objective    inf_pr   inf_du inf_compl lg(mu) lg(rg) alpha_pr ir ls
+   0  5.0000000e-03 1.10e+00 3.44e-16 0.00e+00  -1.0     -   0.00e+00  1  0
+   1  6.0000960e+00 1.50e-15 1.82e-11 0.00e+00  -1.0     -   1.00e+00  1  1h
+
+Number of Iterations....: 1
+
+                                   (scaled)                 (unscaled)
+Objective...............:   6.0000960015359963e+00    6.0000960015359963e+00
+Dual infeasibility......:   1.8189894035458565e-11    1.8189894035458565e-11
+Constraint violation....:   1.4988010832439613e-15    1.4988010832439613e-15
+Complementarity.........:   0.0000000000000000e+00    0.0000000000000000e+00
+Overall NLP error.......:   1.8189894035458565e-11    1.8189894035458565e-11
+
+Number of objective function evaluations              = 2
+Number of objective gradient evaluations              = 2
+Number of constraint evaluations                      = 2
+Number of constraint Jacobian evaluations             = 2
+Number of Lagrangian Hessian evaluations              = 1
+Number of KKT factorizations                          = 2
+Number of KKT backsolves                              = 2
+
+Total wall secs in initialization                     =  0.086 s
+Total wall secs in linear solver                      =  0.001 s
+Total wall secs in NLP function evaluations           =  0.388 s
+Total wall secs in solver (w/o init./fun./lin. alg.)  =  0.001 s
+Total wall secs                                       =  0.477 s
+
+<span class="sgr32">EXIT: Optimal Solution Found (tol = 1.0e-08).</span></code></pre><p>Or provide a <strong>partial description</strong>. Missing tokens are auto-completed using the <strong>first matching method</strong> from <code>methods()</code> (top-to-bottom priority):</p><pre><code class="language-julia hljs"># Only specify the solver → defaults to :collocation, :adnlp, :cpu
+sol = solve(ocp, :madnlp; print_level=MadNLP.ERROR)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ OptimalControl v1.3.1-beta solving with: collocation → adnlp → madnlp (cpu)
+
+  📦 Configuration:
+   ├─ Discretizer: collocation
+   ├─ Modeler: adnlp
+   └─ Solver: madnlp (linear_solver = MumpsSolver [cpu-dependent], print_level = ERROR)</code></pre><p>The completion algorithm searches <code>methods()</code> from top to bottom and selects the first quadruplet that matches all provided tokens. For example:</p><ul><li><code>solve(ocp, :madnlp)</code> matches <code>(:collocation, :adnlp, :madnlp, :cpu)</code> (first match with <code>:madnlp</code>)</li><li><code>solve(ocp, :exa)</code> matches <code>(:collocation, :exa, :ipopt, :cpu)</code> (first match with <code>:exa</code>)</li><li><code>solve(ocp, :gpu)</code> matches <code>(:collocation, :exa, :madnlp, :gpu)</code> (first GPU method)</li></ul><p>All of these are equivalent (they all complete to <code>:collocation, :adnlp, :ipopt, :cpu</code>):</p><pre><code class="language-julia hljs">solve(ocp)                                      # empty → use first method
+solve(ocp, :collocation)                        # specify discretizer
+solve(ocp, :adnlp)                              # specify modeler
+solve(ocp, :ipopt)                              # specify solver
+solve(ocp, :cpu)                                # specify parameter
+solve(ocp, :collocation, :adnlp)                # specify discretizer + modeler
+solve(ocp, :collocation, :ipopt)                # specify discretizer + solver
+solve(ocp, :collocation, :adnlp, :ipopt, :cpu)  # complete description</code></pre><h2 id="Solver-requirements"><a class="docs-heading-anchor" href="#Solver-requirements">Solver requirements</a><a id="Solver-requirements-1"></a><a class="docs-heading-anchor-permalink" href="#Solver-requirements" title="Permalink"></a></h2><p>Each solver requires its package to be loaded to provide the solver implementation:</p><ul><li><strong>Ipopt</strong>: <code>using NLPModelsIpopt</code></li><li><strong>MadNLP</strong>: <code>using MadNLP</code> (CPU) or <code>using MadNLPGPU</code> (GPU)</li><li><strong>Uno</strong>: <code>using UnoSolver</code></li><li><strong>MadNCL</strong>: <code>using MadNCL</code> and <code>using MadNLP</code> (requires both)</li><li><strong>Knitro</strong>: <code>using NLPModelsKnitro</code> (commercial license required)</li></ul><p>For GPU solving with MadNLP or MadNCL, you also need: <code>using CUDA</code></p><h2 id="Passing-options-to-strategies"><a class="docs-heading-anchor" href="#Passing-options-to-strategies">Passing options to strategies</a><a id="Passing-options-to-strategies-1"></a><a class="docs-heading-anchor-permalink" href="#Passing-options-to-strategies" title="Permalink"></a></h2><p>You can pass options as keyword arguments. They are <strong>automatically routed</strong> to the appropriate strategy:</p><pre><code class="language-julia hljs">sol = solve(ocp, :madnlp;
+    grid_size=100,              # → discretizer (Collocation)
+    max_iter=500,               # → solver (MadNLP)
+    print_level=MadNLP.ERROR    # → solver (MadNLP)
+)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ OptimalControl v1.3.1-beta solving with: collocation → adnlp → madnlp (cpu)
+
+  📦 Configuration:
+   ├─ Discretizer: collocation (grid_size = 100)
+   ├─ Modeler: adnlp
+   └─ Solver: madnlp
+     linear_solver = MumpsSolver [cpu-dependent], max_iter = 500, print_level = ERROR</code></pre><p>The solve function displays the configuration and shows which options were applied:</p><pre><code class="language-julia hljs">sol = solve(ocp, :ipopt;
+    grid_size=50,
+    scheme=:trapeze,
+    max_iter=100,
+    print_level=0
+)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ OptimalControl v1.3.1-beta solving with: collocation → adnlp → ipopt (cpu)
+
+  📦 Configuration:
+   ├─ Discretizer: collocation (grid_size = 50, scheme = trapeze)
+   ├─ Modeler: adnlp
+   └─ Solver: ipopt (max_iter = 100, print_level = 0)</code></pre><p>Notice the <code>📦 Configuration</code> box showing:</p><ul><li><strong>Discretizer</strong>: <code>collocation</code> with <code>grid_size = 50, scheme = trapeze</code></li><li><strong>Modeler</strong>: <code>adnlp</code> (no custom options)</li><li><strong>Solver</strong>: <code>ipopt</code> with <code>max_iter = 100, print_level = 0</code></li></ul><h2 id="Strategy-options"><a class="docs-heading-anchor" href="#Strategy-options">Strategy options</a><a id="Strategy-options-1"></a><a class="docs-heading-anchor-permalink" href="#Strategy-options" title="Permalink"></a></h2><p>Each strategy declares its available options. You can inspect them using <code>describe</code>.</p><div class="admonition is-info" id="Understanding-default-values-610cdf57dffe5ec"><header class="admonition-header">Understanding default values<a class="admonition-anchor" href="#Understanding-default-values-610cdf57dffe5ec" title="Permalink"></a></header><div class="admonition-body"><p>When <code>describe</code> shows <code>(default: NotProvided)</code> for an option, it means OptimalControl does not override the strategy&#39;s native default value. For example:</p><ul><li>For Ipopt options with <code>(default: NotProvided)</code>, Ipopt&#39;s own default values are used</li><li>For MadNLP options with <code>(default: NotProvided)</code>, MadNLP&#39;s own default values are used</li><li>For other strategies, the same principle applies</li></ul><p>Only options with explicit default values (e.g., <code>(default: 100)</code>) are overridden by OptimalControl.</p></div></div><h3 id="Discretizer-options"><a class="docs-heading-anchor" href="#Discretizer-options">Discretizer options</a><a id="Discretizer-options-1"></a><a class="docs-heading-anchor-permalink" href="#Discretizer-options" title="Permalink"></a></h3><pre><code class="language-julia hljs">describe(:collocation)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Collocation (strategy)
+├─ id: :collocation
+├─ hierarchy: Collocation → AbstractDiscretizer → AbstractStrategy
+├─ family: AbstractDiscretizer
+│
+└─ options (3 options):
+   ├─ grid_size::Int64 (default: 250)
+   │  description: Number of time steps for the collocation grid
+   │
+   ├─ scheme::Symbol (default: midpoint)
+   │  description: Time integration scheme (e.g., :midpoint, :trapeze)
+   │
+   └─ time_grid::Any (default: nothing)
+      description: Explicit time grid (possibly non uniform) for the collocation</code></pre><h3 id="Modeler-options"><a class="docs-heading-anchor" href="#Modeler-options">Modeler options</a><a id="Modeler-options-1"></a><a class="docs-heading-anchor-permalink" href="#Modeler-options" title="Permalink"></a></h3><pre><code class="language-julia hljs">describe(:adnlp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">ADNLP (strategy)
+├─ id: :adnlp
+├─ hierarchy: ADNLP → AbstractNLPModeler → AbstractStrategy
+├─ family: AbstractNLPModeler
+├─ default parameter: CPU
+├─ parameters: CPU
+│
+└─ options (11 options):
+   ├─ show_time::Bool (default: NotProvided)
+   │  description: Whether to show timing information while building the ADNLP model
+   │
+   ├─ backend (adnlp_backend)::Symbol (default: optimized)
+   │  description: Automatic differentiation backend used by ADNLPModels
+   │
+   ├─ matrix_free::Bool (default: NotProvided)
+   │  description: Enable matrix-free mode (avoids explicit Hessian/Jacobian matrices)
+   │
+   ├─ name::String (default: NotProvided)
+   │  description: Name of the optimization model for identification
+   │
+   ├─ gradient_backend::Union{Nothing, ADNLPModels.ADBackend, Type{&lt;:ADNLPModels.ADBackend}} (default: NotProvided)
+   │  description: Override backend for gradient computation (advanced users only)
+   │
+   ├─ hprod_backend::Union{Nothing, ADNLPModels.ADBackend, Type{&lt;:ADNLPModels.ADBackend}} (default: NotProvided)
+   │  description: Override backend for Hessian-vector product (advanced users only)
+   │
+   ├─ jprod_backend::Union{Nothing, ADNLPModels.ADBackend, Type{&lt;:ADNLPModels.ADBackend}} (default: NotProvided)
+   │  description: Override backend for Jacobian-vector product (advanced users only)
+   │
+   ├─ jtprod_backend::Union{Nothing, ADNLPModels.ADBackend, Type{&lt;:ADNLPModels.ADBackend}} (default: NotProvided)
+   │  description: Override backend for transpose Jacobian-vector product (advanced users only)
+   │
+   ├─ jacobian_backend::Union{Nothing, ADNLPModels.ADBackend, Type{&lt;:ADNLPModels.ADBackend}} (default: NotProvided)
+   │  description: Override backend for Jacobian matrix computation (advanced users only)
+   │
+   ├─ hessian_backend::Union{Nothing, ADNLPModels.ADBackend, Type{&lt;:ADNLPModels.ADBackend}} (default: NotProvided)
+   │  description: Override backend for Hessian matrix computation (advanced users only)
+   │
+   └─ ghjvprod_backend::Union{Nothing, ADNLPModels.ADBackend, Type{&lt;:ADNLPModels.ADBackend}} (default: NotProvided)
+      description: Override backend for g^T ∇²c(x)v computation (advanced users only)</code></pre><pre><code class="language-julia hljs">using CUDA
+describe(:exa)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Exa (strategy)
+├─ id: :exa
+├─ hierarchy: Exa → AbstractNLPModeler → AbstractStrategy
+├─ family: AbstractNLPModeler
+├─ default parameter: CPU
+├─ parameters: CPU, GPU
+│
+┌ Warning: CUDA is loaded but not functional. GPU backend may not work properly.
+└ @ CTSolversCUDA ~/.julia/packages/CTSolvers/w8p3s/ext/CTSolversCUDA.jl:29
+├─ common options (1 option):
+│  └─ base_type::DataType (default: Float64)
+│     description: Base floating-point type used by ExaModels
+│
+├─ computed options for CPU:
+│  └─ backend (exa_backend)::Any (default: nothing [computed])
+│     description: Execution backend for ExaModels (CPU, GPU, etc.)
+│
+└─ computed options for GPU:
+   └─ backend (exa_backend)::Union{Nothing, KernelAbstractions.Backend} (default: CUDA.CUDAKernels.CUDABackend(false, false) [computed])
+      description: Execution backend for ExaModels (CPU, GPU, etc.)</code></pre><h3 id="Solver-options"><a class="docs-heading-anchor" href="#Solver-options">Solver options</a><a id="Solver-options-1"></a><a class="docs-heading-anchor-permalink" href="#Solver-options" title="Permalink"></a></h3><pre><code class="language-julia hljs">using NLPModelsIpopt
+describe(:ipopt)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Ipopt (strategy)
+├─ id: :ipopt
+├─ hierarchy: Ipopt → AbstractNLPSolver → AbstractStrategy
+├─ family: AbstractNLPSolver
+├─ default parameter: CPU
+├─ parameters: CPU
+│
+└─ options (29 options):
+   ├─ tol::Real (default: 1.0e-8)
+   │  description: Desired convergence tolerance (relative). Determines the convergence tolerance for the algorithm. The algorithm terminates successfully, if the (scaled) NLP error becomes smaller than this value, and if the (absolute) criteria according to dual_inf_tol, constr_viol_tol, and compl_inf_tol are met.
+   │
+   ├─ max_iter (maxiter, max_iterations, maxit)::Integer (default: 1000)
+   │  description: Maximum number of iterations. The algorithm terminates with a message if the number of iterations exceeded this number.
+   │
+   ├─ max_wall_time (maxtime, max_time, time_limit)::Real (default: NotProvided)
+   │  description: Maximum number of walltime clock seconds. A limit on walltime clock seconds that Ipopt can use to solve one problem.
+   │
+   ├─ max_cpu_time::Real (default: NotProvided)
+   │  description: Maximum number of CPU seconds. A limit on CPU seconds that Ipopt can use to solve one problem.
+   │
+   ├─ dual_inf_tol::Real (default: NotProvided)
+   │  description: Desired threshold for the dual infeasibility. Absolute tolerance on the dual infeasibility. Successful termination requires that the max-norm of the (unscaled) dual infeasibility is less than this threshold.
+   │
+   ├─ constr_viol_tol::Real (default: NotProvided)
+   │  description: Desired threshold for the constraint and variable bound violation. Absolute tolerance on the constraint and variable bound violation.
+   │
+   ├─ acceptable_tol (acc_tol)::Real (default: NotProvided)
+   │  description: Acceptable convergence tolerance (relative). Determines which (scaled) optimality error is considered close enough.
+   │
+   ├─ acceptable_iter::Integer (default: NotProvided)
+   │  description: Number of &quot;acceptable&quot; iterations required to trigger termination. If the algorithm encounters this many consecutive iterations that are acceptable, it terminates.
+   │
+   ├─ diverging_iterates_tol::Real (default: NotProvided)
+   │  description: Threshold for maximal value of primal iterates. If any component of the primal iterates exceeds this value (in absolute terms), the optimization is aborted.
+   │
+   ├─ derivative_test::String (default: NotProvided)
+   │  description: Enable derivative check. If enabled, performs a finite difference check of the derivatives.
+   │
+   ├─ derivative_test_tol::Real (default: NotProvided)
+   │  description: Threshold for identifying incorrect derivatives. If the relative error of the finite difference approximation exceeds this value, an error is reported.
+   │
+   ├─ derivative_test_print_all::String (default: NotProvided)
+   │  description: Indicates whether information for all estimated derivatives should be printed.
+   │
+   ├─ hessian_approximation::String (default: NotProvided)
+   │  description: Indicates what Hessian information regarding the Lagrangian function is to be used.
+   │
+   ├─ limited_memory_update_type::String (default: NotProvided)
+   │  description: Quasi-Newton update method for the limited memory approximation.
+   │
+   ├─ warm_start_init_point::String (default: NotProvided)
+   │  description: Indicates whether specific warm start values should be used for the primal and dual variables.
+   │
+   ├─ warm_start_bound_push::Real (default: NotProvided)
+   │  description: Indicates how much the primal variables should be pushed inside the bounds for the warm start.
+   │
+   ├─ warm_start_mult_bound_push::Real (default: NotProvided)
+   │  description: Indicates how much the dual variables should be pushed inside the bounds for the warm start.
+   │
+   ├─ mu_strategy::String (default: adaptive)
+   │  description: Barrier parameter update strategy
+   │
+   ├─ mu_init::Real (default: NotProvided)
+   │  description: Initial value for the barrier parameter.
+   │
+   ├─ mu_max_fact::Real (default: NotProvided)
+   │  description: Factor for maximal barrier parameter. This factor determines the upper bound on the barrier parameter.
+   │
+   ├─ mu_max::Real (default: NotProvided)
+   │  description: Maximal value for barrier parameter. This option overrides the factor setting.
+   │
+   ├─ mu_min::Real (default: NotProvided)
+   │  description: Minimal value for barrier parameter.
+   │
+   ├─ timing_statistics::String (default: NotProvided)
+   │  description: Indicates whether to measure time spent in components of Ipopt and NLP evaluation. The overall algorithm time is unaffected by this option.
+   │
+   ├─ linear_solver::String (default: mumps)
+   │  description: Linear solver used for step computations. Determines which linear algebra package is to be used for the solution of the augmented linear system (for obtaining the search directions).
+   │
+   ├─ print_level::Integer (default: 5)
+   │  description: Ipopt output verbosity (0-12)
+   │
+   ├─ print_timing_statistics::String (default: NotProvided)
+   │  description: Switch to print timing statistics. If selected, the program will print the time spent for selected tasks. This implies timing_statistics=yes.
+   │
+   ├─ print_frequency_iter::Integer (default: NotProvided)
+   │  description: Determines at which iteration frequency the summarizing iteration output line should be printed. Summarizing iteration output is printed every print_frequency_iter iterations, if at least print_frequency_time seconds have passed since last output.
+   │
+   ├─ print_frequency_time::Real (default: NotProvided)
+   │  description: Determines at which time frequency the summarizing iteration output line should be printed. Summarizing iteration output is printed if at least print_frequency_time seconds have passed since last output and the iteration number is a multiple of print_frequency_iter.
+   │
+   └─ sb::String (default: yes)
+      description: Suppress Ipopt banner (yes/no)</code></pre><pre><code class="language-julia hljs">using MadNLPGPU
+describe(:madnlp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">MadNLP (strategy)
+├─ id: :madnlp
+├─ hierarchy: MadNLP → AbstractNLPSolver → AbstractStrategy
+├─ family: AbstractNLPSolver
+├─ default parameter: CPU
+├─ parameters: CPU, GPU
+│
+├─ common options (22 options):
+│  ├─ bound_push::Real (default: NotProvided)
+│  │  description: Amount by which the initial point is pushed inside the bounds to ensure strictly interior starting point.
+│  │
+│  ├─ acceptable_tol (acc_tol)::Real (default: NotProvided)
+│  │  description: Relaxed tolerance for acceptable solution. If optimality error stays below this for &#39;acceptable_iter&#39; iterations, algorithm terminates with SOLVED_TO_ACCEPTABLE_LEVEL.
+│  │
+│  ├─ bound_fac::Real (default: NotProvided)
+│  │  description: Factor to determine how much the initial point is pushed inside the bounds.
+│  │
+│  ├─ mu_init::Real (default: NotProvided)
+│  │  description: Initial value for the barrier parameter mu.
+│  │
+│  ├─ equality_treatment::Type{&lt;:MadNLP.AbstractEqualityTreatment} (default: NotProvided)
+│  │  description: Method to handle equality constraints. Options: MadNLP.EnforceEquality, MadNLP.RelaxEquality.
+│  │
+│  ├─ nlp_scaling_max_gradient::Real (default: NotProvided)
+│  │  description: Maximum allowed gradient value when scaling the NLP problem. Used to prevent excessive scaling.
+│  │
+│  ├─ hessian_approximation::Union{UnionAll, Type{&lt;:MadNLP.AbstractHessian}} (default: NotProvided)
+│  │  description: Hessian approximation method (e.g., MadNLP.ExactHessian, MadNLP.CompactLBFGS, MadNLP.BFGS).
+│  │
+│  ├─ max_iter (maxiter, max_iterations, maxit)::Integer (default: 1000)
+│  │  description: Maximum number of interior-point iterations before termination. Set to 0 to evaluate initial point only.
+│  │
+│  ├─ tol::Real (default: 1.0e-8)
+│  │  description: Convergence tolerance for optimality conditions. The algorithm terminates when optimality error falls below this threshold.
+│  │
+│  ├─ mu_min::Real (default: NotProvided)
+│  │  description: Minimum value for the barrier parameter mu.
+│  │
+│  ├─ fixed_variable_treatment::Type{&lt;:MadNLP.AbstractFixedVariableTreatment} (default: NotProvided)
+│  │  description: Method to handle fixed variables. Options: MadNLP.MakeParameter, MadNLP.RelaxBound, MadNLP.NoFixedVariables.
+│  │
+│  ├─ max_wall_time (max_time, maxtime, time_limit)::Real (default: NotProvided)
+│  │  description: Maximum wall-clock time limit in seconds. Algorithm terminates with MAXIMUM_WALLTIME_EXCEEDED if exceeded.
+│  │
+│  ├─ diverging_iterates_tol::Real (default: NotProvided)
+│  │  description: NLP error threshold above which algorithm is declared diverging. Terminates with DIVERGING_ITERATES status.
+│  │
+│  ├─ print_level::MadNLP.LogLevels (default: INFO)
+│  │  description: Logging verbosity level. Valid values: MadNLP.TRACE, DEBUG, INFO (default), NOTICE, WARN, ERROR.
+│  │
+│  ├─ nlp_scaling::Bool (default: NotProvided)
+│  │  description: Whether to scale the NLP problem. If true, MadNLP automatically scales the objective and constraints.
+│  │
+│  ├─ constr_mult_init_max::Real (default: NotProvided)
+│  │  description: Maximum allowed value for the initial constraint multipliers.
+│  │
+│  ├─ kkt_system::Union{UnionAll, Type{&lt;:MadNLP.AbstractKKTSystem}} (default: NotProvided)
+│  │  description: KKT system solver type (e.g., MadNLP.SparseKKTSystem, MadNLP.DenseKKTSystem).
+│  │
+│  ├─ tau_min::Real (default: NotProvided)
+│  │  description: Lower bound for the fraction-to-the-boundary parameter tau.
+│  │
+│  ├─ acceptable_iter::Integer (default: NotProvided)
+│  │  description: Number of consecutive iterations with acceptable (but not optimal) error required before accepting the solution.
+│  │
+│  ├─ inertia_correction_method::Type{&lt;:MadNLP.AbstractInertiaCorrector} (default: NotProvided)
+│  │  description: Method for assumption of inertia correction (e.g., MadNLP.InertiaAuto, MadNLP.InertiaBased).
+│  │
+│  ├─ hessian_constant (hessian_cst)::Bool (default: NotProvided)
+│  │  description: Whether the Hessian of the Lagrangian is constant (i.e., quadratic objective with linear constraints). Can improve performance.
+│  │
+│  └─ jacobian_constant (jacobian_cst)::Bool (default: NotProvided)
+│     description: Whether the Jacobian of the constraints is constant (i.e., linear constraints). Can improve performance.
+│
+├─ computed options for CPU:
+│  └─ linear_solver::Type{&lt;:MadNLP.AbstractLinearSolver} (default: MumpsSolver [computed])
+│     description: Sparse linear solver for the KKT system. Default is MadNLP.MumpsSolver for CPU, MadNLPGPU.CUDSSSolver for GPU. Other options include MadNLP.UmfpackSolver, MadNLP.LDLSolver, MadNLP.CHOLMODSolver.
+│
+└─ computed options for GPU:
+   └─ linear_solver::Type{&lt;:MadNLP.AbstractLinearSolver} (default: MadNLPGPU.CUDSSSolver [computed])
+      description: Sparse linear solver for the KKT system. Default is MadNLP.MumpsSolver for CPU, MadNLPGPU.CUDSSSolver for GPU. Other options include MadNLP.UmfpackSolver, MadNLP.LDLSolver, MadNLP.CHOLMODSolver.</code></pre><pre><code class="language-julia hljs">using MadNCL
+describe(:madncl)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">MadNCL (strategy)
+├─ id: :madncl
+├─ hierarchy: MadNCL → AbstractNLPSolver → AbstractStrategy
+├─ family: AbstractNLPSolver
+├─ default parameter: CPU
+├─ parameters: CPU, GPU
+│
+├─ common options (23 options):
+│  ├─ bound_push::Real (default: NotProvided)
+│  │  description: Amount by which the initial point is pushed inside the bounds to ensure strictly interior starting point.
+│  │
+│  ├─ acceptable_tol (acc_tol)::Real (default: NotProvided)
+│  │  description: Relaxed tolerance for acceptable solution. If optimality error stays below this for &#39;acceptable_iter&#39; iterations, algorithm terminates with SOLVED_TO_ACCEPTABLE_LEVEL.
+│  │
+│  ├─ bound_fac::Real (default: NotProvided)
+│  │  description: Factor to determine how much the initial point is pushed inside the bounds.
+│  │
+│  ├─ ncl_options::MadNCL.NCLOptions (default: MadNCL.NCLOptions{Float64}(true, true, 0.3, true, 1.0, 1.0e-8, 1.0e-8, 0.0001, 100.0, 1.0e12, 20, 0.1, 1.99, 0.2, 1.0e-9))
+│  │  description: Low-level NCLOptions structure controlling the augmented Lagrangian algorithm.
+Available fields:
+- `verbose` (Bool): Print convergence logs (default: true)
+- `scaling` (Bool): Enable scaling (default: false)
+- `opt_tol` (Float): Optimality tolerance (default: 1e-8)
+- `feas_tol` (Float): Feasibility tolerance (default: 1e-8)
+- `rho_init` (Float): Initial Augmented Lagrangian penalty (default: 10.0)
+- `max_auglag_iter` (Int): Maximum number of outer iterations (default: 30)
+│  │
+│  ├─ mu_init::Real (default: NotProvided)
+│  │  description: Initial value for the barrier parameter mu.
+│  │
+│  ├─ equality_treatment::Type{&lt;:MadNLP.AbstractEqualityTreatment} (default: NotProvided)
+│  │  description: Method to handle equality constraints. Options: MadNLP.EnforceEquality, MadNLP.RelaxEquality.
+│  │
+│  ├─ nlp_scaling_max_gradient::Real (default: NotProvided)
+│  │  description: Maximum allowed gradient value when scaling the NLP problem. Used to prevent excessive scaling.
+│  │
+│  ├─ hessian_approximation::Union{UnionAll, Type{&lt;:MadNLP.AbstractHessian}} (default: NotProvided)
+│  │  description: Hessian approximation method (e.g., MadNLP.ExactHessian, MadNLP.CompactLBFGS, MadNLP.BFGS).
+│  │
+│  ├─ max_iter (maxiter, max_iterations, maxit)::Integer (default: 1000)
+│  │  description: Maximum number of augmented Lagrangian iterations
+│  │
+│  ├─ tol::Real (default: 1.0e-8)
+│  │  description: Optimality tolerance
+│  │
+│  ├─ mu_min::Real (default: NotProvided)
+│  │  description: Minimum value for the barrier parameter mu.
+│  │
+│  ├─ fixed_variable_treatment::Type{&lt;:MadNLP.AbstractFixedVariableTreatment} (default: NotProvided)
+│  │  description: Method to handle fixed variables. Options: MadNLP.MakeParameter, MadNLP.RelaxBound, MadNLP.NoFixedVariables.
+│  │
+│  ├─ max_wall_time (max_time, maxtime, time_limit)::Real (default: NotProvided)
+│  │  description: Maximum wall-clock time limit in seconds. Algorithm terminates with MAXIMUM_WALLTIME_EXCEEDED if exceeded.
+│  │
+│  ├─ diverging_iterates_tol::Real (default: NotProvided)
+│  │  description: NLP error threshold above which algorithm is declared diverging. Terminates with DIVERGING_ITERATES status.
+│  │
+│  ├─ print_level::MadNLP.LogLevels (default: INFO)
+│  │  description: MadNCL/MadNLP logging level
+│  │
+│  ├─ nlp_scaling::Bool (default: NotProvided)
+│  │  description: Whether to scale the NLP problem. If true, MadNLP automatically scales the objective and constraints.
+│  │
+│  ├─ constr_mult_init_max::Real (default: NotProvided)
+│  │  description: Maximum allowed value for the initial constraint multipliers.
+│  │
+│  ├─ kkt_system::Union{UnionAll, Type{&lt;:MadNLP.AbstractKKTSystem}} (default: NotProvided)
+│  │  description: KKT system solver type (e.g., MadNLP.SparseKKTSystem, MadNLP.DenseKKTSystem).
+│  │
+│  ├─ tau_min::Real (default: NotProvided)
+│  │  description: Lower bound for the fraction-to-the-boundary parameter tau.
+│  │
+│  ├─ acceptable_iter::Integer (default: NotProvided)
+│  │  description: Number of consecutive iterations with acceptable (but not optimal) error required before accepting the solution.
+│  │
+│  ├─ inertia_correction_method::Type{&lt;:MadNLP.AbstractInertiaCorrector} (default: NotProvided)
+│  │  description: Method for assumption of inertia correction (e.g., MadNLP.InertiaAuto, MadNLP.InertiaBased).
+│  │
+│  ├─ hessian_constant (hessian_cst)::Bool (default: NotProvided)
+│  │  description: Whether the Hessian of the Lagrangian is constant (i.e., quadratic objective with linear constraints). Can improve performance.
+│  │
+│  └─ jacobian_constant (jacobian_cst)::Bool (default: NotProvided)
+│     description: Whether the Jacobian of the constraints is constant (i.e., linear constraints). Can improve performance.
+│
+├─ computed options for CPU:
+│  └─ linear_solver::Type{&lt;:MadNLP.AbstractLinearSolver} (default: MumpsSolver [computed])
+│     description: Linear solver implementation used inside MadNCL. Default is MadNLP.MumpsSolver for CPU, MadNLPGPU.CUDSSSolver for GPU.
+│
+└─ computed options for GPU:
+   └─ linear_solver::Type{&lt;:MadNLP.AbstractLinearSolver} (default: MadNLPGPU.CUDSSSolver [computed])
+      description: Linear solver implementation used inside MadNCL. Default is MadNLP.MumpsSolver for CPU, MadNLPGPU.CUDSSSolver for GPU.</code></pre><pre><code class="language-julia hljs">using UnoSolver
+describe(:uno)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Uno (strategy)
+├─ id: :uno
+├─ hierarchy: Uno → AbstractNLPSolver → AbstractStrategy
+├─ family: AbstractNLPSolver
+├─ default parameter: CPU
+├─ parameters: CPU
+│
+└─ options (17 options):
+   ├─ preset::String (default: ipopt)
+   │  description: Uno implements presets, that is combinations of ingredients that correspond to existing solvers. At the moment, the available presets are filtersqp (after the trust-region restoration filter SQP solver filterSQP) and ipopt (after the line-search filter restoration infeasible interior-point solver IPOPT).
+   │
+   ├─ primal_tolerance::Real (default: 1.0e-8)
+   │  description: Tolerance on constraint violation. Determines the convergence tolerance for primal feasibility.
+   │
+   ├─ dual_tolerance::Real (default: 1.0e-8)
+   │  description: Tolerance on stationarity and complementarity. Determines the convergence tolerance for dual feasibility.
+   │
+   ├─ loose_primal_tolerance::Real (default: NotProvided)
+   │  description: Loose tolerance on constraint violation. Used for acceptable termination criteria.
+   │
+   ├─ loose_dual_tolerance::Real (default: NotProvided)
+   │  description: Loose tolerance on stationarity and complementarity. Used for acceptable termination criteria.
+   │
+   ├─ loose_tolerance_iteration_threshold::Integer (default: NotProvided)
+   │  description: Number of iterations for the loose tolerance to apply. If the algorithm encounters this many consecutive iterations that satisfy loose tolerances, it terminates.
+   │
+   ├─ max_iterations (maxiter, max_iter, maxit)::Integer (default: 1000)
+   │  description: Maximum number of outer iterations. The algorithm terminates with a message if the number of iterations exceeded this number.
+   │
+   ├─ time_limit (max_wall_time, maxtime, max_time)::Real (default: NotProvided)
+   │  description: Time limit in seconds. A limit on walltime clock seconds that Uno can use to solve one problem.
+   │
+   ├─ print_solution::Bool (default: false)
+   │  description: Whether the primal-dual solution is printed at termination.
+   │
+   ├─ unbounded_objective_threshold::Real (default: NotProvided)
+   │  description: Objective threshold under which the problem is declared unbounded. If the objective value falls below this threshold, the solver terminates with unbounded status.
+   │
+   ├─ logger::String (default: INFO)
+   │  description: Verbosity level of the logger. Controls the amount of output during the solve.
+   │
+   ├─ progress_norm::String (default: NotProvided)
+   │  description: Norm used for the progress measures. Determines how progress is measured during the solve.
+   │
+   ├─ residual_norm::String (default: NotProvided)
+   │  description: Norm used for the residuals. Determines how residuals are measured for convergence.
+   │
+   ├─ residual_scaling_threshold::Real (default: NotProvided)
+   │  description: Scaling factor in stationarity and complementarity residuals. Controls how residuals are scaled for convergence checks.
+   │
+   ├─ protect_actual_reduction_against_roundoff::Bool (default: NotProvided)
+   │  description: Whether the actual reduction is slightly modified to account for roundoff errors. Can improve numerical stability.
+   │
+   ├─ protected_actual_reduction_macheps_coefficient::Real (default: NotProvided)
+   │  description: Coefficient of the machine epsilon in the protected actual reduction. Only used if protect_actual_reduction_against_roundoff is true.
+   │
+   └─ print_subproblem::Bool (default: false)
+      description: Whether the subproblem is printed in DEBUG mode. Useful for debugging subproblem formulations.</code></pre><h3 id="Official-documentation"><a class="docs-heading-anchor" href="#Official-documentation">Official documentation</a><a id="Official-documentation-1"></a><a class="docs-heading-anchor-permalink" href="#Official-documentation" title="Permalink"></a></h3><p>For complete option lists, see the official documentation:</p><ul><li><strong>ADNLP</strong>: <a href="https://jso.dev/ADNLPModels.jl/stable/">ADNLPModels documentation</a></li><li><strong>Exa</strong>: <a href="https://exanauts.github.io/ExaModels.jl/stable/">ExaModels documentation</a></li><li><strong>Ipopt</strong>: <a href="https://coin-or.github.io/Ipopt/OPTIONS.html">Ipopt options</a></li><li><strong>MadNLP</strong>: <a href="https://madnlp.github.io/MadNLP.jl/stable/options/">MadNLP options</a></li><li><strong>Uno</strong>: <a href="https://unosolver.readthedocs.io">Uno documentation</a></li><li><strong>MadNCL</strong>: <a href="https://github.com/MadNLP/MadNCL.jl">MadNCL documentation</a></li><li><strong>Knitro</strong>: <a href="https://www.artelys.com/docs/knitro/3_referenceManual/userOptions.html">Knitro options</a></li></ul><h2 id="See-also"><a class="docs-heading-anchor" href="#See-also">See also</a><a id="See-also-1"></a><a class="docs-heading-anchor-permalink" href="#See-also" title="Permalink"></a></h2><ul><li><strong><a href="manual-solve-advanced.html#manual-solve-advanced">Advanced options</a></strong>: option routing, <code>route_to</code> for disambiguation, <code>bypass</code> for unknown options, introspection tools</li><li><strong><a href="manual-solve-explicit.html#manual-solve-explicit">Explicit mode</a></strong>: using typed components (<code>Collocation()</code>, <code>Ipopt()</code>) instead of symbols</li><li><strong><a href="manual-solve-gpu.html#manual-solve-gpu">GPU solving</a></strong>: using the <code>:gpu</code> parameter or <code>Exa{GPU}()</code> / <code>MadNLP{GPU}()</code> types</li><li><strong><a href="manual-initial-guess.html#manual-initial-guess">Initial guess</a></strong>: detailed guide on the <code>@init</code> macro</li><li><strong><a href="manual-solution.html#manual-solution">Solution</a></strong>: working with the returned solution object</li></ul><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-initial-guess.html">« Set an initial guess</a><a class="docs-footer-nextpage" href="manual-solve-advanced.html">Advanced options »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Tuesday 17 March 2026 13:12">Tuesday 17 March 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
