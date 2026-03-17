@@ -208,9 +208,9 @@ version = "0.2.7"
 
 [[deps.CTBase]]
 deps = ["DocStringExtensions"]
-git-tree-sha1 = "839532889c345a2c9384aaf6cb6bf4095d7fc9c4"
+git-tree-sha1 = "fac598a2d962f564824d37494a307652941c723d"
 uuid = "54762871-cc72-4466-b8e8-f6c8b58076cd"
-version = "0.18.5"
+version = "0.18.6-beta"
 
     [deps.CTBase.extensions]
     CoveragePostprocessing = ["Coverage"]
@@ -242,9 +242,9 @@ weakdeps = ["OrdinaryDiffEq"]
 
 [[deps.CTModels]]
 deps = ["CTBase", "DocStringExtensions", "LinearAlgebra", "MLStyle", "MacroTools", "OrderedCollections", "Parameters", "RecipesBase"]
-git-tree-sha1 = "5b8750830b98dc94f93b36ff252b17b33b2a3533"
+git-tree-sha1 = "c90116a8e74243ae258329325f0b7545cc5385f5"
 uuid = "34c4fa32-2049-4079-8329-de33c2a22e2d"
-version = "0.9.9-beta"
+version = "0.9.10-beta"
 weakdeps = ["JLD2", "JSON3", "Plots"]
 
     [deps.CTModels.extensions]
@@ -260,9 +260,9 @@ version = "0.8.10-beta"
 
 [[deps.CTSolvers]]
 deps = ["ADNLPModels", "CTBase", "CTModels", "CommonSolve", "DocStringExtensions", "ExaModels", "KernelAbstractions", "NLPModels", "SolverCore"]
-git-tree-sha1 = "ceab1d109b9711ceadf3cdbf6b1bc6ba69cb26cd"
+git-tree-sha1 = "21092a83de84623f3d2e55b301ffa54d8cb10e3b"
 uuid = "d3e8d392-8e4b-4d9b-8e92-d7d4e3650ef6"
-version = "0.4.9-beta"
+version = "0.4.10-beta"
 
     [deps.CTSolvers.extensions]
     CTSolversCUDA = "CUDA"
