@@ -18,7 +18,7 @@ julia> m = methods()
 ((:collocation, :adnlp, :ipopt, :cpu), (:collocation, :adnlp, :madnlp, :cpu), ...)
 
 julia> length(m)
-10  # 8 CPU methods + 2 GPU methods
+11  # 9 CPU methods + 2 GPU methods
 
 julia> # CPU methods
 julia> methods()[1]
@@ -32,7 +32,7 @@ julia> methods()[9]
 # Notes
 - Returns a precomputed constant tuple (allocation-free, type-stable)
 - All methods currently use `:collocation` discretization
-- CPU methods (8 total): All combinations of `{adnlp, exa}` × `{ipopt, madnlp, madncl, knitro}`
+- CPU methods (9 total): All combinations of `{adnlp, exa}` × `{ipopt, madnlp, uno, madncl, knitro}`
 - GPU methods (2 total): Only GPU-capable combinations `exa` × `{madnlp, madncl}`
 - GPU-capable strategies use parameterized types with automatic defaults
 - Used by `CTBase.Descriptions.complete` to complete partial method descriptions
@@ -44,11 +44,12 @@ function Base.methods()::Tuple{Vararg{Tuple{Symbol,Symbol,Symbol,Symbol}}}
         # CPU methods (all existing methods now with :cpu parameter)
         (:collocation, :adnlp, :ipopt, :cpu),
         (:collocation, :adnlp, :madnlp, :cpu),
+        (:collocation, :adnlp, :uno, :cpu),
+        (:collocation, :adnlp, :madncl, :cpu),
+        (:collocation, :adnlp, :knitro, :cpu),
         (:collocation, :exa, :ipopt, :cpu),
         (:collocation, :exa, :madnlp, :cpu),
-        (:collocation, :adnlp, :madncl, :cpu),
         (:collocation, :exa, :madncl, :cpu),
-        (:collocation, :adnlp, :knitro, :cpu),
         (:collocation, :exa, :knitro, :cpu),
 
         # GPU methods (only combinations that make sense)

@@ -29,6 +29,7 @@ For complete option lists, see the official documentation:
 - **MadNLP**: [MadNLP options](https://madnlp.github.io/MadNLP.jl/stable/options/)
 - **MadNCL**: [MadNCL documentation](https://github.com/MadNLP/MadNCL.jl)
 - **Knitro**: [Knitro options](https://www.artelys.com/docs/knitro/3_referenceManual/userOptions.html)
+- **Uno**: [Uno documentation](https://unosolver.readthedocs.io)
 
 See also: [`methods`](@ref), [`get_strategy_registry`](@ref), [`solve`](@ref)
 """

@@ -12,7 +12,7 @@ the complete workflow from problem definition to solution.
 - **Flexible solve interface**: Descriptive (symbolic) or explicit (typed components) modes
 - **Multiple discretization methods**: Collocation and other schemes via CTDirect
 - **Multiple NLP modelers**: ADNLP, ExaModels with CPU/GPU support
-- **Multiple solvers**: Ipopt, MadNLP, MadNCL, Knitro with CPU/GPU support
+- **Multiple solvers**: Ipopt, MadNLP, Uno, MadNCL, Knitro with CPU/GPU support
 - **Automatic component completion**: Partial specifications are completed intelligently
 - **Option routing**: Strategy-specific options are routed to the appropriate components
 

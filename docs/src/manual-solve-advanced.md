@@ -98,6 +98,7 @@ The `route_to` function accepts keyword arguments with **strategy names**:
 - `route_to(exa=value)` — route to the Exa modeler
 - `route_to(ipopt=value)` — route to the Ipopt solver
 - `route_to(madnlp=value)` — route to the MadNLP solver
+- `route_to(uno=value)` — route to the Uno solver
 - `route_to(madncl=value)` — route to the MadNCL solver
 - `route_to(knitro=value)` — route to the Knitro solver
 

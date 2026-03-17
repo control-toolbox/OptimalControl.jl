@@ -24,6 +24,7 @@ NLPModelsKnitro = "bec4dd0d-7755-52d5-9a02-22f0ffc7efcb"
 NonlinearSolve = "8913a72c-1f9b-4ce2-8d82-65094dcecaec"
 OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+UnoSolver = "1baa60ac-02f7-4b39-a7a8-2f4f58486b05"
 
 [compat]
 ADNLPModels = "0.8"
@@ -51,4 +52,5 @@ NLPModelsKnitro = "0.10"
 NonlinearSolve = "4"
 OrdinaryDiffEq = "6"
 Plots = "1"
+UnoSolver = "0.2"
 julia = "1.10"

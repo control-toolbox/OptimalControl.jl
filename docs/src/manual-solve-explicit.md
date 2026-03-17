@@ -42,7 +42,18 @@ The mode is **automatically detected**: if any of `discretizer`, `modeler`, or `
 
 ### Creating strategy instances
 
-Each strategy is constructed with its options as keyword arguments:
+Each strategy is constructed with its options as keyword arguments. 
+First, load the required solver packages:
+
+```julia
+# Load solver packages (only what you need)
+using NLPModelsIpopt   # for Ipopt
+using MadNLP           # for MadNLP
+using UnoSolver        # for Uno
+using MadNCL           # for MadNCL (also requires MadNLP)
+using NLPModelsKnitro  # for Knitro (commercial license required)
+# GPU solving also requires: using CUDA and using MadNLPGPU
+```
 
 ```@example explicit
 # Discretizer with custom grid and scheme
@@ -53,6 +64,9 @@ mod = OptimalControl.ADNLP(backend=:optimized, show_time=false)
 
 # Solver with iteration limit and tolerance
 sol = OptimalControl.Ipopt(max_iter=500, tol=1e-6, print_level=0)
+
+# Uno solver with custom logging level
+uno_sol = OptimalControl.Uno(max_iter=1000, logger="INFO")
 nothing # hide
 ```
 

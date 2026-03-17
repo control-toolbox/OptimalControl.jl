@@ -172,6 +172,33 @@ function will_solver_print(solver::CTSolvers.MadNCL)
     return true
 end
 
+"""
+$(TYPEDSIGNATURES)
+
+Check if Uno will produce output based on `logger` option.
+
+Uno is silent when `logger = "SILENT"`, verbose otherwise.
+Default is `"INFO"` which prints output.
+
+# Arguments
+- `solver::CTSolvers.Uno`: The Uno solver instance to check
+
+# Returns
+- `Bool`: `true` if Uno will print output, `false` otherwise
+
+# Notes
+- When `logger` is not specified, Uno defaults to verbose output (`"INFO"`)
+- Only `"SILENT"` suppresses output, other levels print
+- This method allows the display system to conditionally show the `▫` symbol
+
+See also: [`will_solver_print(::CTSolvers.AbstractNLPSolver)`](@ref)
+"""
+function will_solver_print(solver::CTSolvers.Uno)
+    opts = CTSolvers.options(solver)
+    logger = get(opts.options, :logger, nothing)
+    return logger === nothing || logger != "SILENT"
+end
+
 # ============================================================================
 # Parameter extraction helpers
 # ============================================================================

@@ -48,9 +48,10 @@ function test_registry()
             ids = CTSolvers.strategy_ids(CTSolvers.AbstractNLPSolver, registry)
             Test.@test :ipopt in ids
             Test.@test :madnlp in ids
+            Test.@test :uno in ids
             Test.@test :madncl in ids
             Test.@test :knitro in ids
-            Test.@test length(ids) == 4
+            Test.@test length(ids) == 5
         end
 
         Test.@testset "Parameter Support - Modelers" begin
@@ -102,10 +103,16 @@ function test_registry()
             knitro_filtered = CTSolvers.Strategies.available_parameters(
                 :knitro, CTSolvers.AbstractNLPSolver, registry
             )
+            uno_filtered = CTSolvers.Strategies.available_parameters(
+                :uno, CTSolvers.AbstractNLPSolver, registry
+            )
 
             # CPU-only solvers
             Test.@test CTSolvers.CPU in ipopt_filtered
             Test.@test CTSolvers.GPU ∉ ipopt_filtered
+
+            Test.@test CTSolvers.CPU in uno_filtered
+            Test.@test CTSolvers.GPU ∉ uno_filtered
 
             Test.@test CTSolvers.CPU in knitro_filtered
             Test.@test CTSolvers.GPU ∉ knitro_filtered
@@ -120,6 +127,7 @@ function test_registry()
             # Test parameter type extraction
             Test.@test CTSolvers.Strategies.get_parameter_type(CTSolvers.Ipopt) === nothing
             Test.@test CTSolvers.Strategies.get_parameter_type(CTSolvers.MadNLP) === nothing
+            Test.@test CTSolvers.Strategies.get_parameter_type(CTSolvers.Uno) === nothing
             Test.@test CTSolvers.Strategies.get_parameter_type(CTSolvers.MadNCL) === nothing
             Test.@test CTSolvers.Strategies.get_parameter_type(CTSolvers.Knitro) === nothing
         end
@@ -190,6 +198,7 @@ function test_registry()
                 solver_ids = CTSolvers.strategy_ids(CTSolvers.AbstractNLPSolver, registry)
                 Test.@test :ipopt in solver_ids    # CPU-only
                 Test.@test :madnlp in solver_ids   # CPU+GPU
+                Test.@test :uno in solver_ids      # CPU-only
                 Test.@test :madncl in solver_ids   # CPU+GPU
                 Test.@test :knitro in solver_ids   # CPU-only
             end
@@ -357,6 +366,7 @@ function test_registry()
                 Test.@test :exa in modeler_ids
                 Test.@test :ipopt in solver_ids
                 Test.@test :madnlp in solver_ids
+                Test.@test :uno in solver_ids
                 Test.@test :madncl in solver_ids
                 Test.@test :knitro in solver_ids
             end
