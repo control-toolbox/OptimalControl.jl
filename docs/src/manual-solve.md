@@ -117,7 +117,6 @@ describe(:cpu)
 ```
 
 ```@example main
-using CUDA, MadNLPGPU
 describe(:gpu)
 ```
 
