@@ -63,16 +63,17 @@ function test_canonical()
             ),
         ]
 
-        # Define modeler-solver pairs (Uno only works with ADNLP)
+        # Define modeler-solver pairs (Uno works with both ADNLP and Exa)
         modeler_solver_pairs = [
             # ADNLP modeler with all solvers
             ("ADNLP", "Ipopt", OptimalControl.ADNLP(), OptimalControl.Ipopt(print_level=0)),
             ("ADNLP", "MadNLP", OptimalControl.ADNLP(), OptimalControl.MadNLP(print_level=MadNLP.ERROR)),
             ("ADNLP", "Uno", OptimalControl.ADNLP(), OptimalControl.Uno(logger="SILENT")),
             ("ADNLP", "MadNCL", OptimalControl.ADNLP(), OptimalControl.MadNCL(print_level=MadNLP.ERROR)),
-            # Exa modeler with all solvers except Uno
+            # Exa modeler with all solvers
             ("Exa", "Ipopt", OptimalControl.Exa(), OptimalControl.Ipopt(print_level=0)),
             ("Exa", "MadNLP", OptimalControl.Exa(), OptimalControl.MadNLP(print_level=MadNLP.ERROR)),
+            ("Exa", "Uno", OptimalControl.Exa(), OptimalControl.Uno(logger="SILENT")),
             ("Exa", "MadNCL", OptimalControl.Exa(), OptimalControl.MadNCL(print_level=MadNLP.ERROR)),
         ]
 

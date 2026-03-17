@@ -49,6 +49,7 @@ function Base.methods()::Tuple{Vararg{Tuple{Symbol,Symbol,Symbol,Symbol}}}
         (:collocation, :adnlp, :knitro, :cpu),
         (:collocation, :exa, :ipopt, :cpu),
         (:collocation, :exa, :madnlp, :cpu),
+        (:collocation, :exa, :uno, :cpu),
         (:collocation, :exa, :madncl, :cpu),
         (:collocation, :exa, :knitro, :cpu),
 

@@ -37,6 +37,7 @@ function test_methods()
             Test.@test (:collocation, :adnlp, :knitro, :cpu) in methods
             Test.@test (:collocation, :exa, :ipopt, :cpu) in methods
             Test.@test (:collocation, :exa, :madnlp, :cpu) in methods
+            Test.@test (:collocation, :exa, :uno, :cpu) in methods
             Test.@test (:collocation, :exa, :madncl, :cpu) in methods
             Test.@test (:collocation, :exa, :knitro, :cpu) in methods
 
@@ -44,8 +45,8 @@ function test_methods()
             Test.@test (:collocation, :exa, :madnlp, :gpu) in methods
             Test.@test (:collocation, :exa, :madncl, :gpu) in methods
 
-            # Total count: 9 CPU methods + 2 GPU methods = 11 methods
-            Test.@test length(methods) == 11
+            # Total count: 10 CPU methods + 2 GPU methods = 12 methods
+            Test.@test length(methods) == 12
         end
 
         Test.@testset "Parameter Distribution" begin
@@ -55,7 +56,7 @@ function test_methods()
             cpu_methods = filter(m -> m[4] == :cpu, methods)
             gpu_methods = filter(m -> m[4] == :gpu, methods)
 
-            Test.@test length(cpu_methods) == 9  # All original methods now with :cpu + Uno
+            Test.@test length(cpu_methods) == 10  # All original methods now with :cpu + Uno
             Test.@test length(gpu_methods) == 2  # Only GPU-capable combinations
         end
 
@@ -175,8 +176,8 @@ function test_methods()
                 gpu_methods = filter(m -> m[4] == :gpu, methods)
 
                 # CPU methods should include all combinations except GPU-only
-                Test.@test length(cpu_methods) == 9
-                Test.@test length(gpu_methods) == 2
+                Test.@test length(cpu_methods) == 10  # All original methods now with :cpu + Uno
+                Test.@test length(gpu_methods) == 2  # Only GPU-capable combinations
 
                 # Total should match expected
                 Test.@test length(methods) == length(cpu_methods) + length(gpu_methods)

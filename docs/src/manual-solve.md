@@ -100,9 +100,9 @@ Each method is a **quadruplet** `(discretizer, modeler, solver, parameter)`:
    - `:exa`: uses [`ExaModels.ExaModel`](@extref) with SIMD optimization (GPU-capable)
 
 3. **Solver** — which NLP solver to use:
-   - `:ipopt`: [Ipopt](https://coin-or.github.io/Ipopt/) interior point solver
+   - `:ipopt`: [Ipopt](https://coin-or.github.io/Ipopt/) interior point solver (CPU-only)
    - `:madnlp`: [MadNLP](https://madnlp.github.io/MadNLP.jl/) pure-Julia solver (GPU-capable)
-   - `:uno`: [Uno](https://unosolver.readthedocs.io) unified nonlinear optimization solver (CPU-only, ADNLP-only)
+   - `:uno`: [Uno](https://unosolver.readthedocs.io) unified nonlinear optimization solver (CPU-only)
    - `:madncl`: [MadNCL](https://github.com/MadNLP/MadNCL.jl) (GPU-capable)
    - `:knitro`: [Knitro](https://www.artelys.com/solvers/knitro/) commercial solver (license required)
 
