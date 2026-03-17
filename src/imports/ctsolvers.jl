@@ -30,9 +30,7 @@ import CTSolvers:
     # Parameter types (imported only, not reexported)
     AbstractStrategyParameter
 
-@reexport import CTSolvers:
-    CPU,
-    GPU
+@reexport import CTSolvers: CPU, GPU
 
 @reexport import CTSolvers:
 

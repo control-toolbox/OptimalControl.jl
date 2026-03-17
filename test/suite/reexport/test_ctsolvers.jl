@@ -10,7 +10,7 @@ module TestCtsolvers
 using Test: Test
 using CTSolvers: CTSolvers
 using OptimalControl # using is mandatory since we test exported symbols
-import SolverCore # needed for ocp_solution signature check
+using SolverCore: SolverCore # needed for ocp_solution signature check
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
