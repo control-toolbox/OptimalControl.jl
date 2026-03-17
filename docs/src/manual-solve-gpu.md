@@ -15,6 +15,10 @@ using CUDA
 nothing # hide
 ```
 
+!!! note "Solver requirements"
+
+    For complete solver requirements including CPU solvers, see [Solver requirements](@ref manual-solve#solver-requirements) in the main solving manual.
+
 !!! warning "CUDA required"
 
     GPU solving requires a CUDA-capable GPU and properly configured CUDA drivers. Check `CUDA.functional()` to verify your setup.

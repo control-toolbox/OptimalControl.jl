@@ -12,7 +12,7 @@ import CTSolvers: DiscretizedModel
 import CTSolvers: AbstractNLPModeler, ADNLP, Exa
 
 # Solvers
-import CTSolvers: AbstractNLPSolver, Ipopt, MadNLP, MadNCL, Knitro
+import CTSolvers: AbstractNLPSolver, Ipopt, MadNLP, MadNCL, Knitro, Uno
 
 # Strategies
 import CTSolvers:

@@ -1,6 +1,72 @@
 # Display helpers for OptimalControl
 
 # ============================================================================
+# ANSI Color helpers for Documenter compatibility
+# ============================================================================
+
+"""
+    _ansi_color(color::Symbol, bold::Bool=false)
+
+Generate ANSI escape sequence for the specified color and formatting.
+
+# Arguments
+- `color::Symbol`: Color name (:cyan, :magenta, etc.)
+- `bold::Bool`: Whether to add bold formatting
+
+# Returns
+- `String`: ANSI escape sequence
+
+# Notes
+- Used instead of `printstyled` for Documenter compatibility
+- Documenter converts ANSI sequences to CSS classes in HTML output
+"""
+function _ansi_color(color::Symbol, bold::Bool=false)
+    color_codes = Dict(
+        :black => 30,
+        :red => 31,
+        :green => 32,
+        :yellow => 33,
+        :blue => 34,
+        :magenta => 35,
+        :cyan => 36,
+        :white => 37,
+        :default => 39
+    )
+    
+    code = get(color_codes, color, 39)
+    if bold
+        return "\033[1;$(code)m"
+    else
+        return "\033[$(code)m"
+    end
+end
+
+"""
+    _ansi_reset()
+
+Generate ANSI reset sequence to clear formatting.
+
+# Returns
+- `String`: ANSI reset sequence
+"""
+_ansi_reset() = "\033[0m"
+
+"""
+    _print_ansi_styled(io, text::Union{String,Symbol}, color::Symbol, bold::Bool=false)
+
+Print text with ANSI color formatting for Documenter compatibility.
+
+# Arguments
+- `io`: IO stream
+- `text::Union{String,Symbol}`: Text to print
+- `color::Symbol`: Color name
+- `bold::Bool`: Whether to use bold formatting
+"""
+function _print_ansi_styled(io, text::Union{String,Symbol}, color::Symbol, bold::Bool=false)
+    print(io, _ansi_color(color, bold), text, _ansi_reset())
+end
+
+# ============================================================================
 # Solver output detection
 # ============================================================================
 
@@ -172,6 +238,33 @@ function will_solver_print(solver::CTSolvers.MadNCL)
     return true
 end
 
+"""
+$(TYPEDSIGNATURES)
+
+Check if Uno will produce output based on `logger` option.
+
+Uno is silent when `logger = "SILENT"`, verbose otherwise.
+Default is `"INFO"` which prints output.
+
+# Arguments
+- `solver::CTSolvers.Uno`: The Uno solver instance to check
+
+# Returns
+- `Bool`: `true` if Uno will print output, `false` otherwise
+
+# Notes
+- When `logger` is not specified, Uno defaults to verbose output (`"INFO"`)
+- Only `"SILENT"` suppresses output, other levels print
+- This method allows the display system to conditionally show the `▫` symbol
+
+See also: [`will_solver_print(::CTSolvers.AbstractNLPSolver)`](@ref)
+"""
+function will_solver_print(solver::CTSolvers.Uno)
+    opts = CTSolvers.options(solver)
+    logger = get(opts.options, :logger, nothing)
+    return logger === nothing || logger != "SILENT"
+end
+
 # ============================================================================
 # Parameter extraction helpers
 # ============================================================================
@@ -265,7 +358,7 @@ parameter displayed inline when appropriate.
 
 # Arguments
 - `io::IO`: Output stream for printing
-- `component_id::String`: The component identifier to print
+- `component_id::Symbol`: The component identifier to print
 - `show_inline::Bool`: Whether to show the parameter inline
 - `param_sym::Union{Symbol, Nothing}`: Parameter symbol to display (can be `nothing`)
 
@@ -277,10 +370,10 @@ parameter displayed inline when appropriate.
 See also: [`display_ocp_configuration`](@ref)
 """
 function _print_component_with_param(io, component_id, show_inline, param_sym)
-    printstyled(io, component_id; color=:cyan, bold=true)
+    _print_ansi_styled(io, component_id, :cyan, true)
     if show_inline && param_sym !== nothing
         print(io, " (")
-        printstyled(io, string(param_sym); color=:magenta, bold=true)
+        _print_ansi_styled(io, param_sym, :magenta, true)
         print(io, ")")
     end
 end
@@ -409,7 +502,7 @@ function display_ocp_configuration(
     display_strategy = _determine_parameter_display_strategy(param_info.params)
 
     # Header with method
-    print(io, "▫ OptimalControl v", version_str, " solving with: ")
+    print(io, "▫ This is OptimalControl ", version_str, ", solving with: ")
 
     discretizer_id = OptimalControl.id(typeof(discretizer))
     modeler_id = OptimalControl.id(typeof(modeler))
@@ -428,7 +521,7 @@ function display_ocp_configuration(
     # Add common parameter at end if applicable
     if !display_strategy.show_inline && display_strategy.common !== nothing
         print(io, " (")
-        printstyled(io, string(display_strategy.common); color=:magenta, bold=true)
+        _print_ansi_styled(io, string(display_strategy.common), :magenta, true)
         print(io, ")")
     end
 
@@ -448,9 +541,9 @@ function display_ocp_configuration(
 
     function print_component(line_prefix, label, pkg, opts)
         print(io, line_prefix)
-        printstyled(io, label; bold=true)
+        _print_ansi_styled(io, label, :default, true)
         print(io, ": ")
-        printstyled(io, pkg; color=:cyan, bold=true)
+        _print_ansi_styled(io, pkg, :cyan, true)
         if show_options && opts !== nothing
             # Collect both user and computed options
             all_items = Tuple{Symbol,Any,Symbol}[]  # (key, opt, source)

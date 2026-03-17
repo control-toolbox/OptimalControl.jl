@@ -20,6 +20,7 @@ using NLPModelsIpopt: NLPModelsIpopt
 using MadNLP: MadNLP
 using MadNLPGPU: MadNLPGPU
 using MadNCL: MadNCL
+using UnoSolver: UnoSolver
 using CUDA: CUDA
 
 # Include shared test problems via TestProblems module
@@ -62,12 +63,18 @@ function test_canonical()
             ),
         ]
 
-        modelers = [("ADNLP", OptimalControl.ADNLP()), ("Exa", OptimalControl.Exa())]
-
-        solvers = [
-            ("Ipopt", OptimalControl.Ipopt(print_level=0)),
-            ("MadNLP", OptimalControl.MadNLP(print_level=MadNLP.ERROR)),
-            ("MadNCL", OptimalControl.MadNCL(print_level=MadNLP.ERROR)),
+        # Define modeler-solver pairs (Uno works with both ADNLP and Exa)
+        modeler_solver_pairs = [
+            # ADNLP modeler with all solvers
+            ("ADNLP", "Ipopt", OptimalControl.ADNLP(), OptimalControl.Ipopt(print_level=0)),
+            ("ADNLP", "MadNLP", OptimalControl.ADNLP(), OptimalControl.MadNLP(print_level=MadNLP.ERROR)),
+            ("ADNLP", "Uno", OptimalControl.ADNLP(), OptimalControl.Uno(logger="SILENT")),
+            ("ADNLP", "MadNCL", OptimalControl.ADNLP(), OptimalControl.MadNCL(print_level=MadNLP.ERROR)),
+            # Exa modeler with all solvers
+            ("Exa", "Ipopt", OptimalControl.Exa(), OptimalControl.Ipopt(print_level=0)),
+            ("Exa", "MadNLP", OptimalControl.Exa(), OptimalControl.MadNLP(print_level=MadNLP.ERROR)),
+            ("Exa", "Uno", OptimalControl.Exa(), OptimalControl.Uno(logger="SILENT")),
+            ("Exa", "MadNCL", OptimalControl.Exa(), OptimalControl.MadNCL(print_level=MadNLP.ERROR)),
         ]
 
         problems = [("Beam", Beam()), ("Goddard", Goddard())]
@@ -78,67 +85,65 @@ function test_canonical()
         for (pname, pb) in problems
             Test.@testset "$pname" begin
                 for (dname, disc) in discretizers
-                    for (mname, mod) in modelers
-                        for (sname, sol) in solvers
-                            # Extract short names for display
-                            d_short = String(split(dname, "/")[2])  # Get "midpoint" or "trapeze"
+                    for (mname, sname, mod, sol) in modeler_solver_pairs
+                        # Extract short names for display
+                        d_short = String(split(dname, "/")[2])  # Get "midpoint" or "trapeze"
 
-                            # Normalize initial guess before calling canonical solve (Layer 3)
-                            normalized_init = OptimalControl.build_initial_guess(
-                                pb.ocp, pb.init
+                        # Normalize initial guess before calling canonical solve (Layer 3)
+                        normalized_init = OptimalControl.build_initial_guess(
+                            pb.ocp, pb.init
+                        )
+
+                        # Execute with timing (DRY - single measurement)
+                        timed_result = @timed begin
+                            OptimalControl.solve(
+                                pb.ocp, normalized_init, disc, mod, sol; display=false
                             )
+                        end
 
-                            # Execute with timing (DRY - single measurement)
-                            timed_result = @timed begin
-                                OptimalControl.solve(
-                                    pb.ocp, normalized_init, disc, mod, sol; display=false
-                                )
-                            end
+                        # Extract results
+                        solve_result = timed_result.value
+                        solve_time = timed_result.time
+                        memory_bytes = timed_result.bytes
 
-                            # Extract results
-                            solve_result = timed_result.value
-                            solve_time = timed_result.time
-                            memory_bytes = timed_result.bytes
+                        success = OptimalControl.successful(solve_result)
+                        obj = success ? OptimalControl.objective(solve_result) : 0.0
 
-                            success = OptimalControl.successful(solve_result)
-                            obj = success ? OptimalControl.objective(solve_result) : 0.0
+                        # Extract iterations using CTModels function
+                        iters = OptimalControl.iterations(solve_result)
 
-                            # Extract iterations using CTModels function
-                            iters = OptimalControl.iterations(solve_result)
+                        # Display table line (SRP - responsibility delegated)
+                        if VERBOSE
+                            print_test_line(
+                                "CPU",
+                                pname,
+                                d_short,
+                                mname,
+                                sname,
+                                success,
+                                solve_time,
+                                obj,
+                                pb.obj,
+                                iters,
+                                memory_bytes > 0 ? memory_bytes : nothing,
+                                false,  # show_memory = false
+                            )
+                        end
 
-                            # Display table line (SRP - responsibility delegated)
-                            if VERBOSE
-                                print_test_line(
-                                    "CPU",
-                                    pname,
-                                    d_short,
-                                    mname,
-                                    sname,
-                                    success,
-                                    solve_time,
-                                    obj,
-                                    pb.obj,
-                                    iters,
-                                    memory_bytes > 0 ? memory_bytes : nothing,
-                                    false,  # show_memory = false
-                                )
-                            end
+                        # Update statistics
+                        total_tests += 1
+                        if success
+                            passed_tests += 1
+                        end
 
-                            # Update statistics
-                            total_tests += 1
+                        # Run the actual test assertions
+                        Test.@testset "$dname / $mname / $sname" begin
+                            Test.@test success
                             if success
-                                passed_tests += 1
-                            end
-
-                            # Run the actual test assertions
-                            Test.@testset "$dname / $mname / $sname" begin
-                                Test.@test success
-                                if success
-                                    Test.@test solve_result isa
-                                        OptimalControl.AbstractSolution
-                                    Test.@test OptimalControl.objective(solve_result) ≈
-                                        pb.obj rtol = OBJ_RTOL
-                                end
+                                Test.@test solve_result isa
+                                    OptimalControl.AbstractSolution
+                                Test.@test OptimalControl.objective(solve_result) ≈
+                                    pb.obj rtol = OBJ_RTOL
                             end
                         end
                     end

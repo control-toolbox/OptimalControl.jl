@@ -100,8 +100,9 @@ Each method is a **quadruplet** `(discretizer, modeler, solver, parameter)`:
    - `:exa`: uses [`ExaModels.ExaModel`](@extref) with SIMD optimization (GPU-capable)
 
 3. **Solver** — which NLP solver to use:
-   - `:ipopt`: [Ipopt](https://coin-or.github.io/Ipopt/) interior point solver
+   - `:ipopt`: [Ipopt](https://coin-or.github.io/Ipopt/) interior point solver (CPU-only)
    - `:madnlp`: [MadNLP](https://madnlp.github.io/MadNLP.jl/) pure-Julia solver (GPU-capable)
+   - `:uno`: [Uno](https://unosolver.readthedocs.io) unified nonlinear optimization solver (CPU-only)
    - `:madncl`: [MadNCL](https://github.com/MadNLP/MadNCL.jl) (GPU-capable)
    - `:knitro`: [Knitro](https://www.artelys.com/solvers/knitro/) commercial solver (license required)
 
@@ -173,6 +174,18 @@ solve(ocp, :collocation, :ipopt)                # specify discretizer + solver
 solve(ocp, :collocation, :adnlp, :ipopt, :cpu)  # complete description
 ```
 
+## Solver requirements
+
+Each solver requires its package to be loaded to provide the solver implementation:
+
+- **Ipopt**: `using NLPModelsIpopt`
+- **MadNLP**: `using MadNLP` (CPU) or `using MadNLPGPU` (GPU)
+- **Uno**: `using UnoSolver`
+- **MadNCL**: `using MadNCL` and `using MadNLP` (requires both)
+- **Knitro**: `using NLPModelsKnitro` (commercial license required)
+
+For GPU solving with MadNLP or MadNCL, you also need: `using CUDA`
+
 ## Passing options to strategies
 
 You can pass options as keyword arguments. They are **automatically routed** to the appropriate strategy:
@@ -236,12 +249,23 @@ describe(:exa)
 ### Solver options
 
 ```@example main
+using NLPModelsIpopt
 describe(:ipopt)
 ```
 
 ```@example main
 using MadNLPGPU
 describe(:madnlp)
+```
+
+```@example main
+using MadNCL
+describe(:madncl)
+```
+
+```@example main
+using UnoSolver
+describe(:uno)
 ```
 
 ### Official documentation
@@ -252,6 +276,7 @@ For complete option lists, see the official documentation:
 - **Exa**: [ExaModels documentation](https://exanauts.github.io/ExaModels.jl/stable/)
 - **Ipopt**: [Ipopt options](https://coin-or.github.io/Ipopt/OPTIONS.html)
 - **MadNLP**: [MadNLP options](https://madnlp.github.io/MadNLP.jl/stable/options/)
+- **Uno**: [Uno documentation](https://unosolver.readthedocs.io)
 - **MadNCL**: [MadNCL documentation](https://github.com/MadNLP/MadNCL.jl)
 - **Knitro**: [Knitro options](https://www.artelys.com/docs/knitro/3_referenceManual/userOptions.html)
 

@@ -7,6 +7,39 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [1.3.1-beta] — 2026-03-17
+
+### Added
+
+- **Uno solver integration**: Full support for the Uno nonlinear optimization solver
+  - Added to solver registry with CPU-only support
+  - Added methods `(:collocation, :adnlp, :uno, :cpu)` and `(:collocation, :exa, :uno, :cpu)` to available methods
+  - Uno compatible with both ADNLP and Exa modelers
+  - Comprehensive test coverage with Beam and Goddard problems
+  - Extension error handling when `UnoSolver` package not loaded
+
+- **Solver requirements documentation**: Clear documentation of required imports for each solver
+  - New "Solver requirements" section in `manual-solve.md`
+  - Updated examples in `manual-solve-explicit.md` with import instructions
+  - GPU requirements clarification in `manual-solve-gpu.md`
+  - Based on CTSolvers extension triggers:
+    - Ipopt: `using NLPModelsIpopt`
+    - MadNLP: `using MadNLP` (CPU) or `using MadNLPGPU` (GPU)
+    - Uno: `using UnoSolver`
+    - MadNCL: `using MadNCL` and `using MadNLP`
+    - Knitro: `using NLPModelsKnitro` (commercial license)
+
+- **Solver output detection**: `will_solver_print(::CTSolvers.Uno)` method to check if Uno will produce output based on `logger` option (silent when `logger="SILENT"`)
+
+### Changed
+
+- **Solver count**: Updated from 4 to 5 available solvers (Ipopt, MadNLP, Uno, MadNCL, Knitro)
+- **Method count**: Updated from 10 to 12 available methods (10 CPU + 2 GPU)
+- **Test structure**: Restructured canonical tests to use modeler-solver pairs, Uno now works with both ADNLP and Exa
+- **Documentation**: Updated solver lists and examples throughout documentation to include Uno
+
+---
+
 ## [Unreleased] — branch `action-options`
 
 ### Added

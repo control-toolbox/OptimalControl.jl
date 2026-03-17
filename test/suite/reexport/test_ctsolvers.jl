@@ -60,6 +60,7 @@ function test_ctsolvers()
                 OptimalControl.AbstractNLPSolver,
                 OptimalControl.Ipopt,
                 OptimalControl.MadNLP,
+                OptimalControl.Uno,
                 OptimalControl.MadNCL,
                 OptimalControl.Knitro,
             )
@@ -165,6 +166,7 @@ function test_ctsolvers()
             Test.@testset "Solvers" begin
                 Test.@test OptimalControl.Ipopt <: OptimalControl.AbstractNLPSolver
                 Test.@test OptimalControl.MadNLP <: OptimalControl.AbstractNLPSolver
+                Test.@test OptimalControl.Uno <: OptimalControl.AbstractNLPSolver
                 Test.@test OptimalControl.MadNCL <: OptimalControl.AbstractNLPSolver
                 Test.@test OptimalControl.Knitro <: OptimalControl.AbstractNLPSolver
             end

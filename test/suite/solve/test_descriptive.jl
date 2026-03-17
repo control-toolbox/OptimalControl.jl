@@ -20,6 +20,7 @@ using CommonSolve: CommonSolve
 using NLPModelsIpopt: NLPModelsIpopt
 using MadNLP: MadNLP
 using MadNCL: MadNCL
+using UnoSolver: UnoSolver
 using CUDA: CUDA
 
 # Include shared test problems via TestProblems module
@@ -122,6 +123,21 @@ function test_descriptive()
                 )
                 Test.@test result isa CTModels.AbstractSolution
                 Test.@test OptimalControl.successful(result)
+            end
+
+            Test.@testset "Complete description - Goddard with Uno" begin
+                result = OptimalControl.solve_descriptive(
+                    ocp,
+                    :collocation,
+                    :adnlp,
+                    :uno;
+                    initial_guess=init,
+                    display=false,
+                    registry=registry,
+                )
+                Test.@test result isa CTModels.AbstractSolution
+                Test.@test OptimalControl.successful(result)
+                Test.@test OptimalControl.objective(result) ≈ TestProblems.Goddard().obj rtol=1e-2
             end
         end
 
