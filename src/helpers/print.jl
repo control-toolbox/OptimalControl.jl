@@ -30,9 +30,9 @@ function _ansi_color(color::Symbol, bold::Bool=false)
         :magenta => 35,
         :cyan => 36,
         :white => 37,
-        :default => 39
+        :default => 39,
     )
-    
+
     code = get(color_codes, color, 39)
     if bold
         return "\033[1;$(code)m"
