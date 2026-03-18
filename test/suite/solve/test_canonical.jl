@@ -67,14 +67,34 @@ function test_canonical()
         modeler_solver_pairs = [
             # ADNLP modeler with all solvers
             ("ADNLP", "Ipopt", OptimalControl.ADNLP(), OptimalControl.Ipopt(print_level=0)),
-            ("ADNLP", "MadNLP", OptimalControl.ADNLP(), OptimalControl.MadNLP(print_level=MadNLP.ERROR)),
+            (
+                "ADNLP",
+                "MadNLP",
+                OptimalControl.ADNLP(),
+                OptimalControl.MadNLP(print_level=MadNLP.ERROR),
+            ),
             ("ADNLP", "Uno", OptimalControl.ADNLP(), OptimalControl.Uno(logger="SILENT")),
-            ("ADNLP", "MadNCL", OptimalControl.ADNLP(), OptimalControl.MadNCL(print_level=MadNLP.ERROR)),
+            (
+                "ADNLP",
+                "MadNCL",
+                OptimalControl.ADNLP(),
+                OptimalControl.MadNCL(print_level=MadNLP.ERROR),
+            ),
             # Exa modeler with all solvers
             ("Exa", "Ipopt", OptimalControl.Exa(), OptimalControl.Ipopt(print_level=0)),
-            ("Exa", "MadNLP", OptimalControl.Exa(), OptimalControl.MadNLP(print_level=MadNLP.ERROR)),
+            (
+                "Exa",
+                "MadNLP",
+                OptimalControl.Exa(),
+                OptimalControl.MadNLP(print_level=MadNLP.ERROR),
+            ),
             ("Exa", "Uno", OptimalControl.Exa(), OptimalControl.Uno(logger="SILENT")),
-            ("Exa", "MadNCL", OptimalControl.Exa(), OptimalControl.MadNCL(print_level=MadNLP.ERROR)),
+            (
+                "Exa",
+                "MadNCL",
+                OptimalControl.Exa(),
+                OptimalControl.MadNCL(print_level=MadNLP.ERROR),
+            ),
         ]
 
         problems = [("Beam", Beam()), ("Goddard", Goddard())]
@@ -140,10 +160,9 @@ function test_canonical()
                         Test.@testset "$dname / $mname / $sname" begin
                             Test.@test success
                             if success
-                                Test.@test solve_result isa
-                                    OptimalControl.AbstractSolution
-                                Test.@test OptimalControl.objective(solve_result) ≈
-                                    pb.obj rtol = OBJ_RTOL
+                                Test.@test solve_result isa OptimalControl.AbstractSolution
+                                Test.@test OptimalControl.objective(solve_result) ≈ pb.obj rtol =
+                                    OBJ_RTOL
                             end
                         end
                     end

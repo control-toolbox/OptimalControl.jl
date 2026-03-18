@@ -9,7 +9,7 @@ module TestCtflows
 
 using Test: Test
 using OptimalControl # using is mandatory since we test exported symbols
-import CTFlows # needed for abstract type checks
+using CTFlows: CTFlows # needed for abstract type checks
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
