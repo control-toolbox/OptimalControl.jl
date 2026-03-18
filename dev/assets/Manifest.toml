@@ -2672,16 +2672,18 @@ version = "1.11.0"
 
 [[deps.StructUtils]]
 deps = ["Dates", "UUIDs"]
-git-tree-sha1 = "28145feabf717c5d65c1d5e09747ee7b1ff3ed13"
+git-tree-sha1 = "fa95b3b097bcef5845c142ea2e085f1b2591e92c"
 uuid = "ec057cc2-7a8d-4b58-b3b3-92acb9f63b42"
-version = "2.6.3"
+version = "2.7.1"
 
     [deps.StructUtils.extensions]
     StructUtilsMeasurementsExt = ["Measurements"]
+    StructUtilsStaticArraysCoreExt = ["StaticArraysCore"]
     StructUtilsTablesExt = ["Tables"]
 
     [deps.StructUtils.weakdeps]
     Measurements = "eff96d63-e80a-5855-80a2-b1b0885c5ab7"
+    StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
     Tables = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
 
 [[deps.StyledStrings]]
@@ -2808,9 +2810,9 @@ version = "0.4.1"
 
 [[deps.UnoSolver]]
 deps = ["LinearAlgebra", "OpenBLAS32_jll", "Uno_jll"]
-git-tree-sha1 = "cf39af9c8be02fd5f5027bc3184e8582b8f6d2a0"
+git-tree-sha1 = "19f169da70b2fee1a9c27d24804d33c6daaaba83"
 uuid = "1baa60ac-02f7-4b39-a7a8-2f4f58486b05"
-version = "0.2.7"
+version = "0.2.8"
 
     [deps.UnoSolver.extensions]
     UnoSolverMathOptInterfaceExt = "MathOptInterface"
@@ -2822,9 +2824,9 @@ version = "0.2.7"
 
 [[deps.Uno_jll]]
 deps = ["ASL_jll", "Artifacts", "CompilerSupportLibraries_jll", "HSL_jll", "HiGHS_jll", "JLLWrappers", "LLVMOpenMP_jll", "Libdl", "METIS_jll", "MUMPS_seq_jll", "SPRAL_jll", "libblastrampoline_jll"]
-git-tree-sha1 = "30b1deeaeb5de7c0e0e4a7f9a253195147ed0e9e"
+git-tree-sha1 = "266a936de90865fa8684f052fe227985630daebf"
 uuid = "396d5378-14f1-5ab1-981d-48acd51740ed"
-version = "2.5.0+0"
+version = "2.5.1+0"
 
 [[deps.UnsafeAtomics]]
 git-tree-sha1 = "b13c4edda90890e5b04ba24e20a310fbe6f249ff"
