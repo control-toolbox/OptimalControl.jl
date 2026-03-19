@@ -6,3 +6,5 @@ on:
 jobs:
   call:
     uses: control-toolbox/CTActions/.github/workflows/compat-helper.yml@main
+    with:
+      subdirs: '["", "docs"]'
