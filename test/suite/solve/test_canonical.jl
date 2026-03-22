@@ -118,7 +118,7 @@ function test_canonical()
                         OptimalControl.solve(
                             pb.ocp, normalized_init, disc, mod, sol; display=false
                         ) # warmup
-                        timed_result = CUDA.@timed begin
+                        timed_result = @timed begin
                             OptimalControl.solve(
                                 pb.ocp, normalized_init, disc, mod, sol; display=false
                             )
@@ -127,7 +127,7 @@ function test_canonical()
                         # Extract results
                         solve_result = timed_result.value
                         solve_time = timed_result.time
-                        memory_bytes = timed_result.cpu_bytes + timed_result.gpu_bytes
+                        memory_bytes = timed_result.bytes
 
                         success = OptimalControl.successful(solve_result)
                         obj = success ? OptimalControl.objective(solve_result) : 0.0
@@ -206,7 +206,7 @@ function test_canonical()
                             gpu_solver[2];
                             display=false,
                         ) # warmup
-                        timed_result = @timed begin
+                        timed_result = CUDA.@timed begin
                             OptimalControl.solve(
                                 pb.ocp,
                                 normalized_init,
@@ -220,7 +220,7 @@ function test_canonical()
                         # Extract results
                         solve_result = timed_result.value
                         solve_time = timed_result.time
-                        memory_bytes = timed_result.bytes
+                        memory_bytes = timed_result.cpu_bytes + timed_result.gpu_bytes
 
                         success = OptimalControl.successful(solve_result)
                         obj = success ? OptimalControl.objective(solve_result) : 0.0
