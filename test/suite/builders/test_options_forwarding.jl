@@ -54,7 +54,7 @@ function test_options_forwarding()
             if is_cuda_on()
                 Test.@testset "backend (CUDA)" begin
                     Test.@test begin
-                        modeler = OptimalControl.Exa(backend=CUDA.CUDABackend())
+                        modeler = OptimalControl.Exa{OptimalControl.GPU}(backend=CUDA.CUDABackend())
                         nlp = OptimalControl.nlp_model(docp, normalized_init, modeler)
                         # With CUDA backend, x0 should be CUDA array
                         nlp.meta.x0 isa CUDA.CuArray
