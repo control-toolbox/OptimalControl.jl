@@ -177,10 +177,10 @@ function test_canonical()
         # GPU tests (only if CUDA is available)
         # ----------------------------------------------------------------
         if is_cuda_on()
-            gpu_modeler = ("Exa/GPU", OptimalControl.Exa(backend=CUDA.CUDABackend()))
+            gpu_modeler = ("Exa/GPU", OptimalControl.Exa{GPU}(backend=CUDA.CUDABackend()))
             gpu_solver = (
                 "MadNLP/GPU",
-                OptimalControl.MadNLP(
+                OptimalControl.MadNLP{GPU}(
                     print_level=MadNLP.ERROR, linear_solver=MadNLPGPU.CUDSSSolver
                 ),
             )
