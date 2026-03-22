@@ -114,7 +114,10 @@ function test_canonical()
                             pb.ocp, pb.init
                         )
 
-                        # Execute with timing (DRY - single measurement)
+                        # Execute with timing
+                        OptimalControl.solve(
+                            pb.ocp, normalized_init, disc, mod, sol; display=false
+                        ) # warmup
                         timed_result = @timed begin
                             OptimalControl.solve(
                                 pb.ocp, normalized_init, disc, mod, sol; display=false
@@ -194,6 +197,15 @@ function test_canonical()
                             pb.ocp, pb.init
                         )
 
+                        # Execute with timing
+                        OptimalControl.solve(
+                            pb.ocp,
+                            normalized_init,
+                            disc,
+                            gpu_modeler[2],
+                            gpu_solver[2];
+                            display=false,
+                        ) # warmup
                         timed_result = @timed begin
                             OptimalControl.solve(
                                 pb.ocp,
