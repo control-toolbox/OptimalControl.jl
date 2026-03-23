@@ -1701,9 +1701,9 @@ version = "0.11.2"
 
 [[deps.NLPModelsKnitro]]
 deps = ["KNITRO", "NLPModels", "NLPModelsModifiers", "SolverCore"]
-git-tree-sha1 = "f35898a07a02c4f46bc08eca0b19116e894ef464"
+git-tree-sha1 = "90e9e12bf859aa3b9453a852015a552592b8ea95"
 uuid = "bec4dd0d-7755-52d5-9a02-22f0ffc7efcb"
-version = "0.10.1"
+version = "0.10.2"
 
 [[deps.NLPModelsModifiers]]
 deps = ["FastClosures", "LinearAlgebra", "LinearOperators", "NLPModels", "Printf", "SparseArrays"]
