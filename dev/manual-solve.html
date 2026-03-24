@@ -14,7 +14,7 @@ ocp = @def begin
     ẋ(t)  == [v(t), u(t)]
     0.5∫( u(t)^2 ) → min
 end</code></pre><p>The simplest way to solve it is:</p><pre><code class="language-julia hljs">using NLPModelsIpopt
-sol = solve(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 1.3.2-beta, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">ipopt</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
+sol = solve(ocp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 1.3.3-beta, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">ipopt</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
 
   📦 Configuration:
    ├─ <span class="sgr1">Discretizer</span>: <span class="sgr36"><span class="sgr1">collocation</span></span>
@@ -59,7 +59,7 @@ Number of inequality constraint evaluations          = 0
 Number of equality constraint Jacobian evaluations   = 2
 Number of inequality constraint Jacobian evaluations = 0
 Number of Lagrangian Hessian evaluations             = 1
-Total seconds in IPOPT                               = 2.945
+Total seconds in IPOPT                               = 3.336
 
 EXIT: Optimal Solution Found.</code></pre><p>This uses default strategies: collocation discretization, ADNLP modeler, and Ipopt solver, all running on CPU.</p><div class="admonition is-warning" id="Solver-extension-required-d594540cb735c608"><header class="admonition-header">Solver extension required<a class="admonition-anchor" href="#Solver-extension-required-d594540cb735c608" title="Permalink"></a></header><div class="admonition-body"><p>You must load a solver package (e.g., <code>using NLPModelsIpopt</code>) before calling <code>solve</code>. Otherwise, you&#39;ll get:</p><pre><code class="language-julia hljs">julia&gt; solve(ocp)
 ERROR: ExtensionError. Please make: julia&gt; using NLPModelsIpopt</code></pre></div></div><h2 id="Display"><a class="docs-heading-anchor" href="#Display">Display</a><a id="Display-1"></a><a class="docs-heading-anchor-permalink" href="#Display" title="Permalink"></a></h2><p>Control the configuration display with the <code>display</code> option:</p><pre><code class="language-julia hljs"># Suppress all output
@@ -101,7 +101,7 @@ sol = solve(ocp; init=init, grid_size=50, display=false)</code></pre><p>For more
    ├─ <span class="sgr33">:exa</span> (<span class="sgr36">AbstractNLPModeler</span>) → <span class="sgr36">CTSolvers.Modelers.Exa{GPU}</span>
    ├─ <span class="sgr33">:madncl</span> (<span class="sgr36">AbstractNLPSolver</span>) → <span class="sgr36">CTSolvers.Solvers.MadNCL{GPU}</span>
    └─ <span class="sgr33">:madnlp</span> (<span class="sgr36">AbstractNLPSolver</span>) → <span class="sgr36">CTSolvers.Solvers.MadNLP{GPU}</span></code></pre><div class="admonition is-info" id="Priority-order-a25c4948a519b8e0"><header class="admonition-header">Priority order<a class="admonition-anchor" href="#Priority-order-a25c4948a519b8e0" title="Permalink"></a></header><div class="admonition-body"><p>The order of methods in the list above determines the <strong>priority</strong> for auto-completion. When you provide a partial description, the first matching method from top to bottom is selected. This is why the first method <code>(:collocation, :adnlp, :ipopt, :cpu)</code> is the default.</p></div></div><p>The first method in the list is the default, so:</p><pre><code class="language-julia hljs">solve(ocp)</code></pre><p>is equivalent to:</p><pre><code class="language-julia hljs">solve(ocp, :collocation, :adnlp, :ipopt, :cpu)</code></pre><h2 id="Choosing-a-method"><a class="docs-heading-anchor" href="#Choosing-a-method">Choosing a method</a><a id="Choosing-a-method-1"></a><a class="docs-heading-anchor-permalink" href="#Choosing-a-method" title="Permalink"></a></h2><p>You can specify a complete method description:</p><pre><code class="language-julia hljs">using MadNLP
-sol = solve(ocp, :collocation, :adnlp, :madnlp, :cpu)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 1.3.2-beta, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">madnlp</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
+sol = solve(ocp, :collocation, :adnlp, :madnlp, :cpu)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 1.3.3-beta, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">madnlp</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
 
   📦 Configuration:
    ├─ <span class="sgr1">Discretizer</span>: <span class="sgr36"><span class="sgr1">collocation</span></span>
@@ -144,14 +144,14 @@ Number of Lagrangian Hessian evaluations              = 1
 Number of KKT factorizations                          = 2
 Number of KKT backsolves                              = 2
 
-Total wall secs in initialization                     =  0.083 s
+Total wall secs in initialization                     =  0.086 s
 Total wall secs in linear solver                      =  0.001 s
-Total wall secs in NLP function evaluations           =  0.380 s
+Total wall secs in NLP function evaluations           =  0.389 s
 Total wall secs in solver (w/o init./fun./lin. alg.)  =  0.001 s
-Total wall secs                                       =  0.465 s
+Total wall secs                                       =  0.477 s
 
 <span class="sgr32">EXIT: Optimal Solution Found (tol = 1.0e-08).</span></code></pre><p>Or provide a <strong>partial description</strong>. Missing tokens are auto-completed using the <strong>first matching method</strong> from <code>methods()</code> (top-to-bottom priority):</p><pre><code class="language-julia hljs"># Only specify the solver → defaults to :collocation, :adnlp, :cpu
-sol = solve(ocp, :madnlp; print_level=MadNLP.ERROR)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 1.3.2-beta, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">madnlp</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
+sol = solve(ocp, :madnlp; print_level=MadNLP.ERROR)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 1.3.3-beta, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">madnlp</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
 
   📦 Configuration:
    ├─ <span class="sgr1">Discretizer</span>: <span class="sgr36"><span class="sgr1">collocation</span></span>
@@ -167,7 +167,7 @@ solve(ocp, :collocation, :adnlp, :ipopt, :cpu)  # complete description</code></p
     grid_size=100,              # → discretizer (Collocation)
     max_iter=500,               # → solver (MadNLP)
     print_level=MadNLP.ERROR    # → solver (MadNLP)
-)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 1.3.2-beta, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">madnlp</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
+)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 1.3.3-beta, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">madnlp</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
 
   📦 Configuration:
    ├─ <span class="sgr1">Discretizer</span>: <span class="sgr36"><span class="sgr1">collocation</span></span> (grid_size = 100)
@@ -178,7 +178,7 @@ solve(ocp, :collocation, :adnlp, :ipopt, :cpu)  # complete description</code></p
     scheme=:trapeze,
     max_iter=100,
     print_level=0
-)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 1.3.2-beta, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">ipopt</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
+)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 1.3.3-beta, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">ipopt</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
 
   📦 Configuration:
    ├─ <span class="sgr1">Discretizer</span>: <span class="sgr36"><span class="sgr1">collocation</span></span> (grid_size = 50, scheme = trapeze)
@@ -584,4 +584,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-initial-guess.html">« Set an initial guess</a><a class="docs-footer-nextpage" href="manual-solve-advanced.html">Advanced options »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Monday 23 March 2026 07:50">Monday 23 March 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-initial-guess.html">« Set an initial guess</a><a class="docs-footer-nextpage" href="manual-solve-advanced.html">Advanced options »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Tuesday 24 March 2026 13:04">Tuesday 24 March 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

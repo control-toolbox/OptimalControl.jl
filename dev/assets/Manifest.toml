@@ -1571,9 +1571,9 @@ version = "0.5.16"
 
 [[deps.MadNCL]]
 deps = ["Atomix", "KernelAbstractions", "LinearAlgebra", "MadNLP", "NLPModels", "Printf", "Random", "SparseArrays"]
-git-tree-sha1 = "fd3e96ec2e760b48084345414b7943a7b607aa0c"
+git-tree-sha1 = "8cdb50494fa73f9af44aabadfac51d39413a707e"
 uuid = "434a0bcb-5a7c-42b2-a9d3-9e3f760e7af0"
-version = "0.2.0"
+version = "0.2.1"
 weakdeps = ["MadNLPGPU"]
 
     [deps.MadNCL.extensions]
@@ -1883,7 +1883,7 @@ version = "0.5.6+0"
 deps = ["ADNLPModels", "CTBase", "CTDirect", "CTFlows", "CTModels", "CTParser", "CTSolvers", "CommonSolve", "DocStringExtensions", "Documenter", "ExaModels", "LinearAlgebra", "NLPModels", "RecipesBase", "Reexport", "SolverCore"]
 path = "/home/runner/work/OptimalControl.jl/OptimalControl.jl"
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
-version = "1.3.2-beta"
+version = "1.3.3-beta"
 
 [[deps.Opus_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -2378,9 +2378,9 @@ version = "2025.9.18+0"
 
 [[deps.SciMLBase]]
 deps = ["ADTypes", "Accessors", "Adapt", "ArrayInterface", "CommonSolve", "ConstructionBase", "Distributed", "DocStringExtensions", "EnumX", "FunctionWrappersWrappers", "IteratorInterfaceExtensions", "LinearAlgebra", "Logging", "Markdown", "Moshi", "PreallocationTools", "PrecompileTools", "Preferences", "Printf", "RecipesBase", "RecursiveArrayTools", "Reexport", "RuntimeGeneratedFunctions", "SciMLLogging", "SciMLOperators", "SciMLPublic", "SciMLStructures", "StaticArraysCore", "Statistics", "SymbolicIndexingInterface"]
-git-tree-sha1 = "2159782e0639da9a05856528950a4d9ba0aa7f46"
+git-tree-sha1 = "13f14de38533e309d8617ab7563782baf0215a2f"
 uuid = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
-version = "2.151.0"
+version = "2.152.0"
 
     [deps.SciMLBase.extensions]
     SciMLBaseChainRulesCoreExt = "ChainRulesCore"
