@@ -1,7 +1,10 @@
 # CTFlows reexports
 
+# Generated code
+@reexport import CTFlows: CTFlows # for generated code (prefix)
+
 # Types
-@reexport import CTFlows: Hamiltonian, HamiltonianLift, HamiltonianVectorField
+import CTFlows: Hamiltonian, HamiltonianLift, HamiltonianVectorField
 
 # Methods
 @reexport import CTFlows: Lift, Flow, ⋅, Lie, Poisson, @Lie, *
