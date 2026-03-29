@@ -148,7 +148,7 @@ function test_canonical()
             ("Ipopt", OptimalControl.Ipopt(print_level=0)),
             ("MadNLP", OptimalControl.MadNLP(print_level=MadNLP.ERROR)),
             ("Uno", OptimalControl.Uno(logger="SILENT")),
-            # ("MadNCL", OptimalControl.MadNCL(print_level=MadNLP.ERROR)),
+            ("MadNCL", OptimalControl.MadNCL(print_level=MadNLP.ERROR)),
         ]
 
         problems = [
