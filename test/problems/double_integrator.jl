@@ -56,6 +56,7 @@ function DoubleIntegratorTime()
         ocp=ocp,
         obj=2.0,
         name="double_integrator_time",
+        init=nothing,
         x0=x0,
         xf=xf,
         t0=t0,
@@ -107,7 +108,7 @@ function DoubleIntegratorEnergy()
         0.5∫(u(t)^2) → min
     end
     
-    return (ocp=ocp, obj=6.0, name="double_integrator_energy", x0=x0, xf=xf, t0=t0, tf=tf)
+    return (ocp=ocp, obj=6.0, name="double_integrator_energy", init=nothing, x0=x0, xf=xf, t0=t0, tf=tf)
 end
 
 """
@@ -159,8 +160,9 @@ function DoubleIntegratorEnergyConstrained()
     
     return (
         ocp=ocp,
-        obj=nothing,
+        obj=7.680030,
         name="double_integrator_energy_constrained",
+        init=nothing,
         x0=x0,
         xf=xf,
         t0=t0,

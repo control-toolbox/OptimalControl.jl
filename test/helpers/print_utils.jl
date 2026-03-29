@@ -110,7 +110,7 @@ function print_test_header(show_memory::Bool=false)
     print(" │ ")
     printstyled(rpad("Type", 4); bold=true)
     print(" │ ")
-    printstyled(rpad("Problem", 8); bold=true)
+    printstyled(rpad("Problem", 14); bold=true)
     print(" │ ")
     printstyled(rpad("Disc", 8); bold=true)
     print(" │ ")
@@ -140,7 +140,7 @@ function print_test_header(show_memory::Bool=false)
     print("─┼─")
     print("────")
     print("─┼─")
-    print("────────")
+    print("──────────────")
     print("─┼─")
     print("────────")
     print("─┼─")
@@ -179,7 +179,7 @@ end
         success::Bool,
         time::Real,
         obj::Real,
-        ref_obj::Real,
+        ref_obj::Union{Real, Nothing},
         iterations::Union{Int, Nothing} = nothing,
         memory_bytes::Union{Int, Nothing} = nothing,
         show_memory::Bool = false
@@ -225,13 +225,13 @@ function print_test_line(
     success::Bool,
     time::Real,
     obj::Real,
-    ref_obj::Real,
+    ref_obj::Union{Real,Nothing},
     iterations::Union{Int,Nothing}=nothing,
     memory_bytes::Union{Int,Nothing}=nothing,
     show_memory::Bool=false,
 )
     # Relative error calculation
-    rel_error = abs(obj - ref_obj) / abs(ref_obj) * 100
+    rel_error = ref_obj === nothing ? missing : abs(obj - ref_obj) / abs(ref_obj) * 100
 
     # Colored status (✓ green or ✗ red)
     if success
@@ -248,7 +248,7 @@ function print_test_line(
 
     # Fixed columns with rpad/lpad (like CTBenchmarks)
     # Problem: 8 characters
-    printstyled(rpad(problem, 8); color=:cyan, bold=true)
+    printstyled(rpad(problem, 14); color=:cyan, bold=true)
     print(" │ ")
 
     # Discretizer: 8 characters
@@ -282,16 +282,16 @@ function print_test_line(
     print(" │ ")
 
     # Reference: scientific format with phantom sign
-    ref_str = @sprintf("%.6e", ref_obj)
-    if ref_obj >= 0
+    ref_str = ref_obj === nothing ? "N/A" : @sprintf("%.6e", ref_obj)
+    if ref_obj !== nothing && ref_obj >= 0
         ref_str = " " * ref_str  # Phantom sign
     end
     print(lpad(ref_str, 14))
     print(" │ ")
 
     # Error: scientific notation with 2 decimal places
-    err_str = @sprintf("%.2e", rel_error / 100)  # Convert to fraction then scientific format
-    err_color = rel_error < 1 ? :green : (rel_error < 5 ? :yellow : :red)
+    err_str = rel_error === missing ? "N/A" : @sprintf("%.2e", rel_error / 100)  # Convert to fraction then scientific format
+    err_color = rel_error === missing ? :white : (rel_error < 1 ? :green : (rel_error < 5 ? :yellow : :red))
     printstyled(lpad(err_str, 7); color=err_color)
 
     # Memory: optional, right-aligned, 10 characters
