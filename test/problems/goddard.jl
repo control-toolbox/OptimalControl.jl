@@ -17,7 +17,7 @@ The function returns a NamedTuple with fields:
 function Goddard(; vmax=0.1, Tmax=3.5)
     # constants
     Cd = 310
-    beta = 500
+    β = 500
     b = 2
     r0 = 1
     v0 = 0
@@ -46,7 +46,7 @@ function Goddard(; vmax=0.1, Tmax=3.5)
         0 ≤ u(t) ≤ 1
 
         # Component-wise dynamics (Goddard rocket)
-        D = Cd * v(t)^2 * exp(-beta * (r(t) - r0))
+        D = Cd * v(t)^2 * exp(-β * (r(t) - r0))
         g = 1 / r(t)^2
         T = Tmax * u(t)
 
@@ -60,5 +60,17 @@ function Goddard(; vmax=0.1, Tmax=3.5)
     # Components for a reasonable initial guess around a feasible trajectory.
     init = (state=[1.01, 0.05, 0.8], control=0.5, variable=[0.1])
 
-    return (ocp=goddard, obj=1.01257, name="goddard", init=init)
+    # Dynamics functions for indirect methods
+    function F0(x)
+        r, v, m = x
+        D = Cd * v^2 * exp(-β * (r - r0))
+        return [v, -D / m - 1 / r^2, 0]
+    end
+
+    function F1(x)
+        r, v, m = x
+        return [0, Tmax / m, -b * Tmax]
+    end
+
+    return (ocp=goddard, obj=1.01257, name="goddard", init=init, F0=F0, F1=F1)
 end
