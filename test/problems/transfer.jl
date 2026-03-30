@@ -53,8 +53,8 @@ function F3(x)
 end
 
 function Transfer(; Tmax=60)
-
-    cTmax = 3600^2 / 1e6; T = Tmax * cTmax     # Conversion from Newtons to kg x Mm / h²
+    cTmax = 3600^2 / 1e6;
+    T = Tmax * cTmax     # Conversion from Newtons to kg x Mm / h²
     mass0 = 1500                               # Initial mass of the spacecraft
     β = 1.42e-02                               # Engine specific impulsion
     P0 = 11.625                                # Initial semilatus rectum
@@ -67,7 +67,7 @@ function Transfer(; Tmax=60)
     Lf = 3π                                    # Estimation of final longitude
     x0 = [P0, ex0, ey0, hx0, hy0, L0]          # Initial state
     xf = [Pf, exf, eyf, hxf, hyf, Lf]          # Final state
-    
+
     ocp = @def begin
         tf ∈ R, variable
         t ∈ [0, tf], time
@@ -76,17 +76,18 @@ function Transfer(; Tmax=60)
         x(0) == x0
         x[1:5](tf) == xf[1:5]
         mass = mass0 - β * T * t
-        ẋ(t) == F0(x(t)) + T / mass * (u₁(t) * F1(x(t)) + u₂(t) * F2(x(t)) + u₃(t) * F3(x(t)))
+        ẋ(t) ==
+        F0(x(t)) + T / mass * (u₁(t) * F1(x(t)) + u₂(t) * F2(x(t)) + u₃(t) * F3(x(t)))
         u₁(t)^2 + u₂(t)^2 + u₃(t)^2 ≤ 1
         tf → min
     end
-    
-    init = @init ocp begin 
+
+    init = @init ocp begin
         tf_i = 15
         x(t) := x0 + (xf - x0) * t / tf_i       # Linear interpolation
-        u(t) := [0.1, 0.5, 0.]                  # Initial guess for the control
+        u(t) := [0.1, 0.5, 0.0]                  # Initial guess for the control
         tf := tf_i                              # Initial guess for final time
     end
-    
+
     return (ocp=ocp, obj=14.79643132, name="transfer", init=init)
 end

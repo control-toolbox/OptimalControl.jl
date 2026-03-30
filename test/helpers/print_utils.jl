@@ -291,7 +291,11 @@ function print_test_line(
 
     # Error: scientific notation with 2 decimal places
     err_str = rel_error === missing ? "N/A" : @sprintf("%.2e", rel_error / 100)  # Convert to fraction then scientific format
-    err_color = rel_error === missing ? :white : (rel_error < 1 ? :green : (rel_error < 5 ? :yellow : :red))
+    err_color = if rel_error === missing
+        :white
+    else
+        (rel_error < 1 ? :green : (rel_error < 5 ? :yellow : :red))
+    end
     printstyled(lpad(err_str, 7); color=err_color)
 
     # Memory: optional, right-aligned, 10 characters

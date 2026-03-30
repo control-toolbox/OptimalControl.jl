@@ -33,25 +33,25 @@ function DoubleIntegratorTime()
     xf = [0.0, 0.0]
     u_max = 1.0
     u_min = -1.0
-    
+
     @def ocp begin
         tf ∈ R, variable
         t ∈ [0, tf], time
         x = (q, v) ∈ R², state
         u ∈ R, control
-        
+
         -1 ≤ u(t) ≤ 1
-        
+
         q(0) == -1
         v(0) == 0
         q(tf) == 0
         v(tf) == 0
-        
+
         ẋ(t) == [v(t), u(t)]
-        
+
         tf → min
     end
-    
+
     return (
         ocp=ocp,
         obj=2.0,
@@ -62,7 +62,7 @@ function DoubleIntegratorTime()
         t0=t0,
         tf=2.0,
         u_max=u_max,
-        u_min=u_min
+        u_min=u_min,
     )
 end
 
@@ -93,22 +93,31 @@ function DoubleIntegratorEnergy()
     tf = 1.0
     x0 = [-1.0, 0.0]
     xf = [0.0, 0.0]
-    
+
     @def ocp begin
         t ∈ [0, 1], time
         x = (q, v) ∈ R², state
         u ∈ R, control
-        
+
         x(0) == [-1, 0]
         x(1) == [0, 0]
-        
+
         ∂(q)(t) == v(t)
         ∂(v)(t) == u(t)
-        
+
         0.5∫(u(t)^2) → min
     end
-    
-    return (ocp=ocp, obj=6.0, name="double_integrator_energy", init=nothing, x0=x0, xf=xf, t0=t0, tf=tf)
+
+    return (
+        ocp=ocp,
+        obj=6.0,
+        name="double_integrator_energy",
+        init=nothing,
+        x0=x0,
+        xf=xf,
+        t0=t0,
+        tf=tf,
+    )
 end
 
 """
@@ -141,23 +150,23 @@ function DoubleIntegratorEnergyConstrained()
     x0 = [-1.0, 0.0]
     xf = [0.0, 0.0]
     v_max = 1.2
-    
+
     @def ocp begin
         t ∈ [0, 1], time
         x = (q, v) ∈ R², state
         u ∈ R, control
-        
+
         v(t) ≤ 1.2
-        
+
         x(0) == [-1, 0]
         x(1) == [0, 0]
-        
+
         ∂(q)(t) == v(t)
         ∂(v)(t) == u(t)
-        
+
         0.5∫(u(t)^2) → min
     end
-    
+
     return (
         ocp=ocp,
         obj=7.680030,
@@ -167,6 +176,6 @@ function DoubleIntegratorEnergyConstrained()
         xf=xf,
         t0=t0,
         tf=tf,
-        v_max=v_max
+        v_max=v_max,
     )
 end
