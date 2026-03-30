@@ -37,7 +37,19 @@ const OBJ_RTOL = 1e-2
 is_cuda_on() = CUDA.functional()
 
 # Generic helper function for test execution (CPU or GPU)
-function run_test(pb, pname, dname, disc, mname, mod, sname, sol, total_tests_ref, passed_tests_ref, device_type::Symbol)
+function run_test(
+    pb,
+    pname,
+    dname,
+    disc,
+    mname,
+    mod,
+    sname,
+    sol,
+    total_tests_ref,
+    passed_tests_ref,
+    device_type::Symbol,
+)
     # Extract short names for display
     d_short = String(split(dname, "/")[2])  # Get "midpoint" or "trapeze"
 
@@ -46,7 +58,7 @@ function run_test(pb, pname, dname, disc, mname, mod, sname, sol, total_tests_re
 
     # Execute with timing (warmup)
     OptimalControl.solve(pb.ocp, normalized_init, disc, mod, sol; display=false)
-    
+
     # Timed execution (different for CPU vs GPU)
     if device_type == :CPU
         timed_result = @timed begin
@@ -105,11 +117,41 @@ function run_test(pb, pname, dname, disc, mname, mod, sname, sol, total_tests_re
 end
 
 # Convenience wrappers
-run_cpu_test(pb, pname, dname, disc, mname, mod, sname, sol, total_tests_ref, passed_tests_ref) =
-    run_test(pb, pname, dname, disc, mname, mod, sname, sol, total_tests_ref, passed_tests_ref, :CPU)
+function run_cpu_test(
+    pb, pname, dname, disc, mname, mod, sname, sol, total_tests_ref, passed_tests_ref
+)
+    run_test(
+        pb,
+        pname,
+        dname,
+        disc,
+        mname,
+        mod,
+        sname,
+        sol,
+        total_tests_ref,
+        passed_tests_ref,
+        :CPU,
+    )
+end
 
-run_gpu_test(pb, pname, dname, disc, mname, mod, sname, sol, total_tests_ref, passed_tests_ref) =
-    run_test(pb, pname, dname, disc, mname, mod, sname, sol, total_tests_ref, passed_tests_ref, :GPU)
+function run_gpu_test(
+    pb, pname, dname, disc, mname, mod, sname, sol, total_tests_ref, passed_tests_ref
+)
+    run_test(
+        pb,
+        pname,
+        dname,
+        disc,
+        mname,
+        mod,
+        sname,
+        sol,
+        total_tests_ref,
+        passed_tests_ref,
+        :GPU,
+    )
+end
 
 function test_canonical()
     Test.@testset "Canonical solve" verbose = VERBOSE showtiming = SHOWTIMING begin
@@ -139,11 +181,8 @@ function test_canonical()
         ]
 
         # Define modelers and solvers separately to test all combinations
-        modelers = [
-            ("ADNLP", OptimalControl.ADNLP()),
-            ("Exa", OptimalControl.Exa()),
-        ]
-        
+        modelers = [("ADNLP", OptimalControl.ADNLP()), ("Exa", OptimalControl.Exa())]
+
         solvers = [
             ("Ipopt", OptimalControl.Ipopt(print_level=0)),
             ("MadNLP", OptimalControl.MadNLP(print_level=MadNLP.ERROR)),
@@ -173,7 +212,18 @@ function test_canonical()
                 for (dname, disc) in discretizers
                     for (mname, mod) in modelers
                         for (sname, sol) in solvers
-                            run_cpu_test(pb, pname, dname, disc, mname, mod, sname, sol, total_tests_ref, passed_tests_ref)
+                            run_cpu_test(
+                                pb,
+                                pname,
+                                dname,
+                                disc,
+                                mname,
+                                mod,
+                                sname,
+                                sol,
+                                total_tests_ref,
+                                passed_tests_ref,
+                            )
                         end  # end solvers loop
                     end  # end modelers loop
                 end  # end discretizers loop
@@ -189,15 +239,16 @@ function test_canonical()
         # ----------------------------------------------------------------
         if is_cuda_on()
             # Define GPU modelers and solvers as lists (even with single element)
-            gpu_modelers = [
-                ("Exa", OptimalControl.Exa{OptimalControl.GPU}(backend=CUDA.CUDABackend())),
-            ]
-            
-            gpu_solvers = [
-                ("MadNLP", OptimalControl.MadNLP{OptimalControl.GPU}(
+            gpu_modelers = [(
+                "Exa", OptimalControl.Exa{OptimalControl.GPU}(backend=CUDA.CUDABackend())
+            ),]
+
+            gpu_solvers = [(
+                "MadNLP",
+                OptimalControl.MadNLP{OptimalControl.GPU}(
                     print_level=MadNLP.ERROR, linear_solver=MadNLPGPU.CUDSSSolver
-                )),
-            ]
+                ),
+            ),]
 
             # Use Refs for statistics
             total_tests_ref = Ref(total_tests)
@@ -208,7 +259,18 @@ function test_canonical()
                     for (dname, disc) in discretizers
                         for (mname, mod) in gpu_modelers
                             for (sname, sol) in gpu_solvers
-                                run_gpu_test(pb, pname, dname, disc, mname, mod, sname, sol, total_tests_ref, passed_tests_ref)
+                                run_gpu_test(
+                                    pb,
+                                    pname,
+                                    dname,
+                                    disc,
+                                    mname,
+                                    mod,
+                                    sname,
+                                    sol,
+                                    total_tests_ref,
+                                    passed_tests_ref,
+                                )
                             end  # end gpu_solvers loop
                         end  # end gpu_modelers loop
                     end  # end discretizers loop

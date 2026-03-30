@@ -6,7 +6,6 @@
 #   - name :: a short problem name
 #   - init :: NamedTuple of components for CTSolvers.initial_guess
 function Quadrotor(; T=1, g=9.8, r=0.1)
-
     ocp = @def begin
         t ∈ [0, T], time
         x ∈ R⁹, state
@@ -46,8 +45,8 @@ function Quadrotor(; T=1, g=9.8, r=0.1)
     end
 
     init = @init ocp begin
-        x(t) := 0.1 * ones(9) 
-        u(t) := 0.1 * ones(4) 
+        x(t) := 0.1 * ones(9)
+        u(t) := 0.1 * ones(4)
     end
 
     return (ocp=ocp, obj=4.2679623758, name="quadrotor", init=init)
