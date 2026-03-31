@@ -38,13 +38,13 @@ Total number of inequality constraints...............:        0
         inequality constraints with only upper bounds:        0
 
 iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
-   0  5.0000000e-03 1.10e+00 2.24e-14   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
+   0  5.0000000e-03 1.10e+00 2.03e-14   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
    1  6.0000960e+00 2.22e-16 1.78e-15 -11.0 6.08e+00    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 1
 
                                    (scaled)                 (unscaled)
-Objective...............:   6.0000960015360381e+00    6.0000960015360381e+00
+Objective...............:   6.0000960015360247e+00    6.0000960015360247e+00
 Dual infeasibility......:   1.7763568394002505e-15    1.7763568394002505e-15
 Constraint violation....:   2.2204460492503131e-16    2.2204460492503131e-16
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
@@ -59,7 +59,7 @@ Number of inequality constraint evaluations          = 0
 Number of equality constraint Jacobian evaluations   = 2
 Number of inequality constraint Jacobian evaluations = 0
 Number of Lagrangian Hessian evaluations             = 1
-Total seconds in IPOPT                               = 2.953
+Total seconds in IPOPT                               = 2.983
 
 EXIT: Optimal Solution Found.</code></pre><p>This uses default strategies: collocation discretization, ADNLP modeler, and Ipopt solver, all running on CPU.</p><div class="admonition is-warning" id="Solver-extension-required-d594540cb735c608"><header class="admonition-header">Solver extension required<a class="admonition-anchor" href="#Solver-extension-required-d594540cb735c608" title="Permalink"></a></header><div class="admonition-body"><p>You must load a solver package (e.g., <code>using NLPModelsIpopt</code>) before calling <code>solve</code>. Otherwise, you&#39;ll get:</p><pre><code class="language-julia hljs">julia&gt; solve(ocp)
 ERROR: ExtensionError. Please make: julia&gt; using NLPModelsIpopt</code></pre></div></div><h2 id="Display"><a class="docs-heading-anchor" href="#Display">Display</a><a id="Display-1"></a><a class="docs-heading-anchor-permalink" href="#Display" title="Permalink"></a></h2><p>Control the configuration display with the <code>display</code> option:</p><pre><code class="language-julia hljs"># Suppress all output
@@ -86,21 +86,21 @@ sol = solve(ocp; init=init, grid_size=50, display=false)</code></pre><p>For more
 ├─ <span class="sgr90">description: </span>CPU-based computation
 │
 └─ <span class="sgr90">used by strategies (</span><span class="sgr35">7</span>):
-   ├─ <span class="sgr33">:adnlp</span> (<span class="sgr36">AbstractNLPModeler</span>) → <span class="sgr36">CTSolvers.Modelers.ADNLP{CPU}</span>
-   ├─ <span class="sgr33">:exa</span> (<span class="sgr36">AbstractNLPModeler</span>) → <span class="sgr36">CTSolvers.Modelers.Exa{CPU}</span>
-   ├─ <span class="sgr33">:ipopt</span> (<span class="sgr36">AbstractNLPSolver</span>) → <span class="sgr36">CTSolvers.Solvers.Ipopt{CPU}</span>
-   ├─ <span class="sgr33">:knitro</span> (<span class="sgr36">AbstractNLPSolver</span>) → <span class="sgr36">CTSolvers.Solvers.Knitro{CPU}</span>
-   ├─ <span class="sgr33">:madncl</span> (<span class="sgr36">AbstractNLPSolver</span>) → <span class="sgr36">CTSolvers.Solvers.MadNCL{CPU}</span>
-   ├─ <span class="sgr33">:madnlp</span> (<span class="sgr36">AbstractNLPSolver</span>) → <span class="sgr36">CTSolvers.Solvers.MadNLP{CPU}</span>
-   └─ <span class="sgr33">:uno</span> (<span class="sgr36">AbstractNLPSolver</span>) → <span class="sgr36">CTSolvers.Solvers.Uno{CPU}</span></code></pre><pre><code class="language-julia hljs">describe(:gpu)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr34"><span class="sgr1">GPU</span></span> (parameter)
+   ├─ <span class="sgr33">:adnlp</span> (<span class="sgr36">AbstractNLPModeler</span>) → <span class="sgr36">ADNLP{CPU}</span>
+   ├─ <span class="sgr33">:exa</span> (<span class="sgr36">AbstractNLPModeler</span>) → <span class="sgr36">Exa{CPU}</span>
+   ├─ <span class="sgr33">:ipopt</span> (<span class="sgr36">AbstractNLPSolver</span>) → <span class="sgr36">Ipopt{CPU}</span>
+   ├─ <span class="sgr33">:knitro</span> (<span class="sgr36">AbstractNLPSolver</span>) → <span class="sgr36">Knitro{CPU}</span>
+   ├─ <span class="sgr33">:madncl</span> (<span class="sgr36">AbstractNLPSolver</span>) → <span class="sgr36">MadNCL{CPU}</span>
+   ├─ <span class="sgr33">:madnlp</span> (<span class="sgr36">AbstractNLPSolver</span>) → <span class="sgr36">MadNLP{CPU}</span>
+   └─ <span class="sgr33">:uno</span> (<span class="sgr36">AbstractNLPSolver</span>) → <span class="sgr36">Uno{CPU}</span></code></pre><pre><code class="language-julia hljs">describe(:gpu)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr34"><span class="sgr1">GPU</span></span> (parameter)
 ├─ <span class="sgr90">id: </span><span class="sgr33">:gpu</span>
 ├─ <span class="sgr90">hierarchy: </span><span class="sgr36">GPU</span> → <span class="sgr36">AbstractStrategyParameter</span>
 ├─ <span class="sgr90">description: </span>GPU-based computation
 │
 └─ <span class="sgr90">used by strategies (</span><span class="sgr35">3</span>):
-   ├─ <span class="sgr33">:exa</span> (<span class="sgr36">AbstractNLPModeler</span>) → <span class="sgr36">CTSolvers.Modelers.Exa{GPU}</span>
-   ├─ <span class="sgr33">:madncl</span> (<span class="sgr36">AbstractNLPSolver</span>) → <span class="sgr36">CTSolvers.Solvers.MadNCL{GPU}</span>
-   └─ <span class="sgr33">:madnlp</span> (<span class="sgr36">AbstractNLPSolver</span>) → <span class="sgr36">CTSolvers.Solvers.MadNLP{GPU}</span></code></pre><div class="admonition is-info" id="Priority-order-a25c4948a519b8e0"><header class="admonition-header">Priority order<a class="admonition-anchor" href="#Priority-order-a25c4948a519b8e0" title="Permalink"></a></header><div class="admonition-body"><p>The order of methods in the list above determines the <strong>priority</strong> for auto-completion. When you provide a partial description, the first matching method from top to bottom is selected. This is why the first method <code>(:collocation, :adnlp, :ipopt, :cpu)</code> is the default.</p></div></div><p>The first method in the list is the default, so:</p><pre><code class="language-julia hljs">solve(ocp)</code></pre><p>is equivalent to:</p><pre><code class="language-julia hljs">solve(ocp, :collocation, :adnlp, :ipopt, :cpu)</code></pre><h2 id="Choosing-a-method"><a class="docs-heading-anchor" href="#Choosing-a-method">Choosing a method</a><a id="Choosing-a-method-1"></a><a class="docs-heading-anchor-permalink" href="#Choosing-a-method" title="Permalink"></a></h2><p>You can specify a complete method description:</p><pre><code class="language-julia hljs">using MadNLP
+   ├─ <span class="sgr33">:exa</span> (<span class="sgr36">AbstractNLPModeler</span>) → <span class="sgr36">Exa{GPU}</span>
+   ├─ <span class="sgr33">:madncl</span> (<span class="sgr36">AbstractNLPSolver</span>) → <span class="sgr36">MadNCL{GPU}</span>
+   └─ <span class="sgr33">:madnlp</span> (<span class="sgr36">AbstractNLPSolver</span>) → <span class="sgr36">MadNLP{GPU}</span></code></pre><div class="admonition is-info" id="Priority-order-a25c4948a519b8e0"><header class="admonition-header">Priority order<a class="admonition-anchor" href="#Priority-order-a25c4948a519b8e0" title="Permalink"></a></header><div class="admonition-body"><p>The order of methods in the list above determines the <strong>priority</strong> for auto-completion. When you provide a partial description, the first matching method from top to bottom is selected. This is why the first method <code>(:collocation, :adnlp, :ipopt, :cpu)</code> is the default.</p></div></div><p>The first method in the list is the default, so:</p><pre><code class="language-julia hljs">solve(ocp)</code></pre><p>is equivalent to:</p><pre><code class="language-julia hljs">solve(ocp, :collocation, :adnlp, :ipopt, :cpu)</code></pre><h2 id="Choosing-a-method"><a class="docs-heading-anchor" href="#Choosing-a-method">Choosing a method</a><a id="Choosing-a-method-1"></a><a class="docs-heading-anchor-permalink" href="#Choosing-a-method" title="Permalink"></a></h2><p>You can specify a complete method description:</p><pre><code class="language-julia hljs">using MadNLP
 sol = solve(ocp, :collocation, :adnlp, :madnlp, :cpu)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 1.3.3-beta, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">madnlp</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
 
   📦 Configuration:
@@ -125,16 +125,16 @@ Total number of inequality constraints...............:        0
 
 iter    objective    inf_pr   inf_du inf_compl lg(mu) lg(rg) alpha_pr ir ls
    0  5.0000000e-03 1.10e+00 3.44e-16 0.00e+00  -1.0     -   0.00e+00  1  0
-   1  6.0000960e+00 1.50e-15 1.82e-11 0.00e+00  -1.0     -   1.00e+00  1  1h
+   1  6.0000960e+00 1.50e-15 7.28e-12 0.00e+00  -1.0     -   1.00e+00  1  1h
 
 Number of Iterations....: 1
 
                                    (scaled)                 (unscaled)
-Objective...............:   6.0000960015359963e+00    6.0000960015359963e+00
-Dual infeasibility......:   1.8189894035458565e-11    1.8189894035458565e-11
+Objective...............:   6.0000960015359874e+00    6.0000960015359874e+00
+Dual infeasibility......:   7.2759576141834259e-12    7.2759576141834259e-12
 Constraint violation....:   1.4988010832439613e-15    1.4988010832439613e-15
 Complementarity.........:   0.0000000000000000e+00    0.0000000000000000e+00
-Overall NLP error.......:   1.8189894035458565e-11    1.8189894035458565e-11
+Overall NLP error.......:   7.2759576141834259e-12    7.2759576141834259e-12
 
 Number of objective function evaluations              = 2
 Number of objective gradient evaluations              = 2
@@ -144,11 +144,11 @@ Number of Lagrangian Hessian evaluations              = 1
 Number of KKT factorizations                          = 2
 Number of KKT backsolves                              = 2
 
-Total wall secs in initialization                     =  0.085 s
+Total wall secs in initialization                     =  0.078 s
 Total wall secs in linear solver                      =  0.001 s
-Total wall secs in NLP function evaluations           =  0.391 s
+Total wall secs in NLP function evaluations           =  0.304 s
 Total wall secs in solver (w/o init./fun./lin. alg.)  =  0.001 s
-Total wall secs                                       =  0.479 s
+Total wall secs                                       =  0.385 s
 
 <span class="sgr32">EXIT: Optimal Solution Found (tol = 1.0e-08).</span></code></pre><p>Or provide a <strong>partial description</strong>. Missing tokens are auto-completed using the <strong>first matching method</strong> from <code>methods()</code> (top-to-bottom priority):</p><pre><code class="language-julia hljs"># Only specify the solver → defaults to :collocation, :adnlp, :cpu
 sol = solve(ocp, :madnlp; print_level=MadNLP.ERROR)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 1.3.3-beta, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">madnlp</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
@@ -196,7 +196,7 @@ solve(ocp, :collocation, :adnlp, :ipopt, :cpu)  # complete description</code></p
    │  <span class="sgr90">description: </span>Time integration scheme (e.g., :midpoint, :trapeze)
    │
    └─ <span class="sgr34"><span class="sgr1">time_grid</span></span>::<span class="sgr36">Any</span> (<span class="sgr32">default: nothing</span>)
-      <span class="sgr90">description: </span>Explicit time grid (possibly non uniform) for the collocation</code></pre><h3 id="Modeler-options"><a class="docs-heading-anchor" href="#Modeler-options">Modeler options</a><a id="Modeler-options-1"></a><a class="docs-heading-anchor-permalink" href="#Modeler-options" title="Permalink"></a></h3><pre><code class="language-julia hljs">describe(:adnlp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr34"><span class="sgr1">ADNLP</span></span> (strategy)
+      <span class="sgr90">description: </span>Explicit time grid (possibly non uniform) for the collocation</code></pre><h3 id="Modeler-options"><a class="docs-heading-anchor" href="#Modeler-options">Modeler options</a><a id="Modeler-options-1"></a><a class="docs-heading-anchor-permalink" href="#Modeler-options" title="Permalink"></a></h3><pre><code class="language-julia hljs">describe(:adnlp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr34"><span class="sgr1">ADNLP{CPU}</span></span> (strategy)
 ├─ <span class="sgr90">id: </span><span class="sgr33">:adnlp</span>
 ├─ <span class="sgr90">hierarchy: </span><span class="sgr36">ADNLP</span> → <span class="sgr36">AbstractNLPModeler</span> → <span class="sgr36">AbstractStrategy</span>
 ├─ <span class="sgr90">family: </span><span class="sgr36">AbstractNLPModeler</span>
@@ -236,7 +236,7 @@ solve(ocp, :collocation, :adnlp, :ipopt, :cpu)  # complete description</code></p
    │
    └─ <span class="sgr34"><span class="sgr1">ghjvprod_backend</span></span>::<span class="sgr36">Union{Nothing, ADNLPModels.ADBackend, Type{&lt;:ADNLPModels.ADBackend}}</span> (<span class="sgr32">default: NotProvided</span>)
       <span class="sgr90">description: </span>Override backend for g^T ∇²c(x)v computation (advanced users only)</code></pre><pre><code class="language-julia hljs">using CUDA
-describe(:exa)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr34"><span class="sgr1">Exa</span></span> (strategy)
+describe(:exa)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr34"><span class="sgr1">Exa{CPU}</span></span> (strategy)
 ├─ <span class="sgr90">id: </span><span class="sgr33">:exa</span>
 ├─ <span class="sgr90">hierarchy: </span><span class="sgr36">Exa</span> → <span class="sgr36">AbstractNLPModeler</span> → <span class="sgr36">AbstractStrategy</span>
 ├─ <span class="sgr90">family: </span><span class="sgr36">AbstractNLPModeler</span>
@@ -244,7 +244,7 @@ describe(:exa)</code></pre><pre class="documenter-example-output"><code class="n
 ├─ <span class="sgr90">parameters: </span><span class="sgr36">CPU</span>, <span class="sgr36">GPU</span>
 │
 ┌ Warning: CUDA is loaded but not functional. GPU backend may not work properly.
-└ @ CTSolversCUDA ~/.julia/packages/CTSolvers/BVwXW/ext/CTSolversCUDA.jl:29
+└ @ CTSolversCUDA ~/.julia/packages/CTSolvers/oXAcJ/ext/CTSolversCUDA.jl:29
 ├─ <span class="sgr90">common options (</span><span class="sgr35">1</span> option):
 │  └─ <span class="sgr34"><span class="sgr1">base_type</span></span>::<span class="sgr36">DataType</span> (<span class="sgr32">default: Float64</span>)
 │     <span class="sgr90">description: </span>Base floating-point type used by ExaModels
@@ -256,7 +256,7 @@ describe(:exa)</code></pre><pre class="documenter-example-output"><code class="n
 └─ <span class="sgr90">computed options for </span><span class="sgr36">GPU</span>:
    └─ <span class="sgr34"><span class="sgr1">backend</span></span> (<span class="sgr33">exa_backend</span>)::<span class="sgr36">Union{Nothing, KernelAbstractions.Backend}</span> (<span class="sgr32">default: CUDA.CUDAKernels.CUDABackend(false, false)</span> [<span class="sgr33">computed</span>])
       <span class="sgr90">description: </span>Execution backend for ExaModels (CPU, GPU, etc.)</code></pre><h3 id="Solver-options"><a class="docs-heading-anchor" href="#Solver-options">Solver options</a><a id="Solver-options-1"></a><a class="docs-heading-anchor-permalink" href="#Solver-options" title="Permalink"></a></h3><pre><code class="language-julia hljs">using NLPModelsIpopt
-describe(:ipopt)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr34"><span class="sgr1">Ipopt</span></span> (strategy)
+describe(:ipopt)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr34"><span class="sgr1">Ipopt{CPU}</span></span> (strategy)
 ├─ <span class="sgr90">id: </span><span class="sgr33">:ipopt</span>
 ├─ <span class="sgr90">hierarchy: </span><span class="sgr36">Ipopt</span> → <span class="sgr36">AbstractNLPSolver</span> → <span class="sgr36">AbstractStrategy</span>
 ├─ <span class="sgr90">family: </span><span class="sgr36">AbstractNLPSolver</span>
@@ -350,7 +350,7 @@ describe(:ipopt)</code></pre><pre class="documenter-example-output"><code class=
    │
    └─ <span class="sgr34"><span class="sgr1">sb</span></span>::<span class="sgr36">String</span> (<span class="sgr32">default: yes</span>)
       <span class="sgr90">description: </span>Suppress Ipopt banner (yes/no)</code></pre><pre><code class="language-julia hljs">using MadNLPGPU
-describe(:madnlp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr34"><span class="sgr1">MadNLP</span></span> (strategy)
+describe(:madnlp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr34"><span class="sgr1">MadNLP{CPU}</span></span> (strategy)
 ├─ <span class="sgr90">id: </span><span class="sgr33">:madnlp</span>
 ├─ <span class="sgr90">hierarchy: </span><span class="sgr36">MadNLP</span> → <span class="sgr36">AbstractNLPSolver</span> → <span class="sgr36">AbstractStrategy</span>
 ├─ <span class="sgr90">family: </span><span class="sgr36">AbstractNLPSolver</span>
@@ -431,7 +431,7 @@ describe(:madnlp)</code></pre><pre class="documenter-example-output"><code class
 └─ <span class="sgr90">computed options for </span><span class="sgr36">GPU</span>:
    └─ <span class="sgr34"><span class="sgr1">linear_solver</span></span>::<span class="sgr36">Type{&lt;:MadNLP.AbstractLinearSolver}</span> (<span class="sgr32">default: MadNLPGPU.CUDSSSolver</span> [<span class="sgr33">computed</span>])
       <span class="sgr90">description: </span>Sparse linear solver for the KKT system. Default is MadNLP.MumpsSolver for CPU, MadNLPGPU.CUDSSSolver for GPU. Other options include MadNLP.UmfpackSolver, MadNLP.LDLSolver, MadNLP.CHOLMODSolver.</code></pre><pre><code class="language-julia hljs">using MadNCL
-describe(:madncl)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr34"><span class="sgr1">MadNCL</span></span> (strategy)
+describe(:madncl)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr34"><span class="sgr1">MadNCL{CPU}</span></span> (strategy)
 ├─ <span class="sgr90">id: </span><span class="sgr33">:madncl</span>
 ├─ <span class="sgr90">hierarchy: </span><span class="sgr36">MadNCL</span> → <span class="sgr36">AbstractNLPSolver</span> → <span class="sgr36">AbstractStrategy</span>
 ├─ <span class="sgr90">family: </span><span class="sgr36">AbstractNLPSolver</span>
@@ -522,7 +522,7 @@ Available fields:
 └─ <span class="sgr90">computed options for </span><span class="sgr36">GPU</span>:
    └─ <span class="sgr34"><span class="sgr1">linear_solver</span></span>::<span class="sgr36">Type{&lt;:MadNLP.AbstractLinearSolver}</span> (<span class="sgr32">default: MadNLPGPU.CUDSSSolver</span> [<span class="sgr33">computed</span>])
       <span class="sgr90">description: </span>Linear solver implementation used inside MadNCL. Default is MadNLP.MumpsSolver for CPU, MadNLPGPU.CUDSSSolver for GPU.</code></pre><pre><code class="language-julia hljs">using UnoSolver
-describe(:uno)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr34"><span class="sgr1">Uno</span></span> (strategy)
+describe(:uno)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr34"><span class="sgr1">Uno{CPU}</span></span> (strategy)
 ├─ <span class="sgr90">id: </span><span class="sgr33">:uno</span>
 ├─ <span class="sgr90">hierarchy: </span><span class="sgr36">Uno</span> → <span class="sgr36">AbstractNLPSolver</span> → <span class="sgr36">AbstractStrategy</span>
 ├─ <span class="sgr90">family: </span><span class="sgr36">AbstractNLPSolver</span>
@@ -584,4 +584,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-initial-guess.html">« Set an initial guess</a><a class="docs-footer-nextpage" href="manual-solve-advanced.html">Advanced options »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Monday 30 March 2026 07:45">Monday 30 March 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-initial-guess.html">« Set an initial guess</a><a class="docs-footer-nextpage" href="manual-solve-advanced.html">Advanced options »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Tuesday 31 March 2026 16:19">Tuesday 31 March 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
