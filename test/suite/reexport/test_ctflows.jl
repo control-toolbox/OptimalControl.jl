@@ -23,6 +23,7 @@ function test_ctflows()
                 OptimalControl.Hamiltonian,
                 OptimalControl.HamiltonianLift,
                 OptimalControl.HamiltonianVectorField,
+                OptimalControl.VectorField,
             )
                 Test.@test isdefined(OptimalControl, nameof(T))
                 Test.@test !isdefined(CurrentModule, nameof(T))
@@ -37,7 +38,7 @@ function test_ctflows()
             end
         end
         Test.@testset "Operators" begin
-            for op in (:⋅, :Lie, :Poisson, :*)
+            for op in (:⋅, :Lie, :Poisson, :*, :∂ₜ)
                 Test.@test isdefined(OptimalControl, op)
                 Test.@test isdefined(CurrentModule, op)
             end
@@ -221,6 +222,37 @@ function test_ctflows()
                 H2 = OptimalControl.Hamiltonian((x, p) -> x[2]*p[2])
                 result3 = @Lie {H1, H2}
                 Test.@test result3 isa CTFlows.Hamiltonian
+            end
+
+            Test.@testset "VectorField Construction" begin
+                # Test VectorField construction patterns
+                X1 = OptimalControl.VectorField(x -> [x[2], -x[1]])
+                Test.@test X1 isa OptimalControl.VectorField
+                Test.@test X1([1, 2]) isa Vector
+
+                # Non-autonomous
+                X2 = OptimalControl.VectorField((t, x) -> [t + x[2], -x[1]]; autonomous=false)
+                Test.@test X2 isa OptimalControl.VectorField
+                Test.@test X2(1.0, [1, 2]) isa Vector
+
+                # Variable
+                X3 = OptimalControl.VectorField((x, v) -> [x[2] + v, -x[1]]; variable=true)
+                Test.@test X3 isa OptimalControl.VectorField
+                Test.@test X3([1, 2], 1.0) isa Vector
+            end
+
+            Test.@testset "∂ₜ Operator" begin
+                # Test partial time derivative
+                f = (t, x) -> t * x
+                df = ∂ₜ(f)
+                Test.@test df isa Function
+                Test.@test df(0, 8) ≈ 8
+                Test.@test df(2, 3) ≈ 3
+
+                # More complex function
+                g = (t, x, p) -> t^2 + x[1]*p[1]
+                dg = ∂ₜ(g)
+                Test.@test dg(3, [1, 2], [4, 5]) ≈ 6
             end
         end
     end

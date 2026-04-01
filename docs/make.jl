@@ -153,7 +153,7 @@ cp(
 Draft = false
 ```
 =#
-draft = false  # Draft mode: if true, @example blocks in markdown are not executed
+draft = true  # Draft mode: if true, @example blocks in markdown are not executed
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Load extensions
@@ -208,6 +208,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "Energy minimisation" => "example-double-integrator-energy.md",
                 "Time mininimisation" => "example-double-integrator-time.md",
                 "Control-free problems" => "example-control-free.md",
+                "Singular control" => "example-singular-control.md",
             ],
             "Manual" => [
                 "Define a problem" => "manual-abstract.md",
@@ -222,6 +223,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 ],
                 "Solution characteristics" => "manual-solution.md",
                 "Plot a solution" => "manual-plot.md",
+                "Differential geometry tools" => "manual-differential-geometry.md",
                 "Compute flows" => [
                     "From optimal control problems" => "manual-flow-ocp.md",
                     "From Hamiltonians and others" => "manual-flow-others.md",
