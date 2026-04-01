@@ -22,12 +22,12 @@ The table below summarizes the main plotting arguments and links to the correspo
 
 | Section                                             | Relevant Arguments                                                                            |
 | :---------------------------------------------------| :-------------------------------------------------------------------------------------------- |
-| [Basic concepts](@ref manual-plot-basic)          | `size`, `state_style`, `costate_style`, `control_style`, `time_style`, `kwargs...`            |
-| [Split vs. group layout](@ref manual-plot-layout) | `layout`                                                                                      |
-| [Plotting control norm](@ref manual-plot-control) | `control`                                                                                     |
-| [Normalised time](@ref manual-plot-time)          | `time`                                                                                        |
-| [Constraints](@ref manual-plot-constraints)       | `state_bounds_style`, `control_bounds_style`, `path_style`, `path_bounds_style`, `dual_style` |
-| [What to plot](@ref manual-plot-select)           | `description...`                                                                              |
+| [Basic concepts](@ref manual-plot-basic)            | `size`, `state_style`, `costate_style`, `control_style`, `time_style`, `kwargs...`            |
+| [Split vs. group layout](@ref manual-plot-layout)   | `layout`                                                                                      |
+| [Plotting control norm](@ref manual-plot-control)   | `control`                                                                                     |
+| [Normalised time](@ref manual-plot-time)            | `time`                                                                                        |
+| [Constraints](@ref manual-plot-constraints)         | `state_bounds_style`, `control_bounds_style`, `path_style`, `path_bounds_style`, `dual_style` |
+| [What to plot](@ref manual-plot-select)             | `description...`                                                                              |
 
 You can plot solutions obtained from the `solve` function or from a flow computed using an optimal control problem and a control law. See the [Basic Concepts](@ref manual-plot-basic) and [From Flow function](@ref manual-plot-flow) sections for details.
 
@@ -104,6 +104,7 @@ plotattr("color") # Specific Attribute Example
 You can also visit the Plot documentation online to get the descriptions of the attributes:
 
 - To pass attributes to the plot, see the [attributes plot](https://docs.juliaplots.org/latest/generated/attributes_plot/) documentation. For instance, you can specify the size of the figure.
+
 ```@raw html
 <details style="margin-left:3em"><summary>List of plot attributes.</summary>
 ```
@@ -117,7 +118,9 @@ end # hide
 ```@raw html
 </details>
 ```
+
 - You can pass attributes to all subplots at once by referring to the [attributes subplot](https://docs.juliaplots.org/latest/generated/attributes_subplot/) documentation. For example, you can specify the location of the legends.
+
 ```@raw html
 <details style="margin-left:3em"><summary>List of subplot attributes.</summary>
 ```
@@ -131,7 +134,9 @@ end # hide
 ```@raw html
 </details>
 ```
+
 - Similarly, you can pass axis attributes to all subplots. See the [attributes axis](https://docs.juliaplots.org/latest/generated/attributes_axis/) documentation. For example, you can remove the grid from every subplot.
+
 ```@raw html
 <details style="margin-left:3em"><summary>List of axis attributes.</summary>
 ```
@@ -145,7 +150,9 @@ end # hide
 ```@raw html
 </details>
 ```
+
 - Finally, you can pass series attributes to all subplots. Refer to the [attributes series](https://docs.juliaplots.org/latest/generated/attributes_series/) documentation. For instance, you can set the width of the curves using `linewidth`.
+
 ```@raw html
 <details style="margin-left:3em"><summary>List of series attributes.</summary>
 ```
@@ -174,7 +181,7 @@ plot(sol;
      control_style = (color=:red, linewidth=2))       # style: control trajectory
 ```
 
-Vertical axes at the initial and final times are automatically plotted. The style can me modified with the `time_style` keyword argument. 
+Vertical axes at the initial and final times are automatically plotted. The style can me modified with the `time_style` keyword argument.
 Additionally, you can choose not to display for instance the state and the costate trajectories by setting their styles to `:none`. You can set to `:none` any style.
 
 ```@example main
@@ -235,7 +242,7 @@ If you prefer to get a more compact figure, you can use the `layout` optional ke
 ```@example main
 plot(sol; layout=:group)
 ```
-    
+
 The default layout value is `:split` which corresponds to the grid of subplots presented above.
 
 ```@example main
@@ -316,6 +323,7 @@ plot(plt[1]) # x₁
 plt = plot(sol)
 plot(plt[2]) # x₂
 ```
+
 ```@example main
 plt = plot(sol)
 plot(plt[3]) # p₁

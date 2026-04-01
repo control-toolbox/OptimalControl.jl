@@ -70,7 +70,7 @@ where $p^0 = -1$ since we are in the normal case. From the Pontryagin maximum pr
 u(x, p) = p_v
 ```
 
-since $\partial^2_{uu} H = p^0 = - 1 < 0$. 
+since $\partial^2_{uu} H = p^0 = - 1 < 0$.
 
 ```@example main
 u = (x, p) -> p[2]          # control law in feedback form
@@ -231,7 +231,7 @@ is_autonomous(ocp)  # false if dynamics or cost depend on time
 
 For more details on autonomy, see the [Time dependence](@ref manual-model-time-dependence) section below.
 
-#### Summary table
+#### [Summary table](@id manual-model-summary-time)
 
 | Method | Returns | Description |
 | -------- | --------- | --------- |
@@ -293,7 +293,7 @@ Get the dimension of state box constraints:
 dim_state_constraints_box(ocp)  # returns number of box constraints on state
 ```
 
-#### Summary table
+#### [Summary table](@id manual-model-summary-state)
 
 | Method | Returns | Description |
 | -------- | --------- | --------- |
@@ -344,7 +344,7 @@ Get the dimension of control box constraints:
 dim_control_constraints_box(ocp)  # returns number of box constraints on control
 ```
 
-#### Summary table
+#### [Summary table](@id manual-model-summary-control)
 
 | Method | Returns | Description |
 | -------- | --------- | --------- |
@@ -395,7 +395,7 @@ Get the dimension of variable box constraints:
 dim_variable_constraints_box(ocp)  # returns number of box constraints on variable
 ```
 
-#### Summary table
+#### [Summary table](@id manual-model-summary-variable)
 
 | Method | Returns | Description |
 | -------- | --------- | --------- |
@@ -431,7 +431,7 @@ The first argument `dx` is mutated upon call and contains the state derivative. 
 * `u`: control
 * `v`: variable
 
-#### Summary table
+#### [Summary table](@id manual-model-summary-dynamics)
 
 | Method | Returns | Description |
 | -------- | --------- | --------- |
@@ -493,7 +493,7 @@ v = [1.0, 2.0]
 f⁰(s, q, u, v)  # returns the integrand value
 ```
 
-#### Summary table
+#### [Summary table](@id manual-model-summary-objective)
 
 | Method | Returns | Description |
 | -------- | --------- | --------- |
@@ -595,7 +595,7 @@ dim_boundary_constraints_nl(ocp)  # number of nonlinear boundary constraints
 
     To get the dual variable (or Lagrange multiplier) associated to a constraint, use the [`dual`](@ref) method on a solution.
 
-#### Summary table
+#### [Summary table](@id manual-model-summary-constraints)
 
 | Method | Returns | Description |
 | -------- | --------- | --------- |

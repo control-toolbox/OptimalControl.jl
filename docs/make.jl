@@ -207,6 +207,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
             "Basic Examples" => [
                 "Energy minimisation" => "example-double-integrator-energy.md",
                 "Time mininimisation" => "example-double-integrator-time.md",
+                "Control-free problems" => "example-control-free.md",
             ],
             "Manual" => [
                 "Define a problem" => "manual-abstract.md",

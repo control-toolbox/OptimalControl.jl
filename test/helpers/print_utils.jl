@@ -182,7 +182,9 @@ end
         ref_obj::Union{Real, Nothing},
         iterations::Union{Int, Nothing} = nothing,
         memory_bytes::Union{Int, Nothing} = nothing,
-        show_memory::Bool = false
+        show_memory::Bool = false,
+        rtol::Real = 1e-2,
+        atol::Real = 1e-3
     )
 
 Display a formatted table line for a test result.
@@ -215,6 +217,8 @@ Format inspired by print_benchmark_line() in CTBenchmarks.jl.
 - `iterations`: Number of iterations (optional)
 - `memory_bytes`: Allocated memory in bytes (optional)
 - `show_memory`: Show memory (default: false)
+- `rtol`: Relative tolerance for color thresholds (default: 1e-2)
+- `atol`: Absolute tolerance for color thresholds (default: 1e-3)
 """
 function print_test_line(
     test_type::String,
@@ -229,9 +233,17 @@ function print_test_line(
     iterations::Union{Int,Nothing}=nothing,
     memory_bytes::Union{Int,Nothing}=nothing,
     show_memory::Bool=false,
+    rtol::Real=1e-2,
+    atol::Real=1e-3,
 )
-    # Relative error calculation
-    rel_error = ref_obj === nothing ? missing : abs(obj - ref_obj) / abs(ref_obj) * 100
+    # Error calculation: use absolute error when ref is near zero, otherwise relative error
+    error_value = if ref_obj === nothing
+        missing
+    elseif abs(ref_obj) < 1e-6
+        abs(obj - ref_obj)  # Absolute error for near-zero reference
+    else
+        abs(obj - ref_obj) / abs(ref_obj) * 100  # Relative error in %
+    end
 
     # Colored status (✓ green or ✗ red)
     if success
@@ -289,12 +301,27 @@ function print_test_line(
     print(lpad(ref_str, 14))
     print(" │ ")
 
-    # Error: scientific notation with 2 decimal places
-    err_str = rel_error === missing ? "N/A" : @sprintf("%.2e", rel_error / 100)  # Convert to fraction then scientific format
-    err_color = if rel_error === missing
-        :white
+    # Error: display format depends on whether it's absolute or relative
+    err_str = if error_value === missing
+        "N/A"
+    elseif ref_obj !== nothing && abs(ref_obj) < 1e-6
+        # Absolute error: display as scientific notation
+        @sprintf("%.2e", error_value)
     else
-        (rel_error < 1 ? :green : (rel_error < 5 ? :yellow : :red))
+        # Relative error: display as scientific notation (convert % to fraction)
+        @sprintf("%.2e", error_value / 100)
+    end
+    
+    # Color thresholds based on provided tolerances
+    err_color = if error_value === missing
+        :white
+    elseif ref_obj !== nothing && abs(ref_obj) < 1e-6
+        # Absolute error: green if < atol, yellow if < 5*atol, red otherwise
+        (error_value < atol ? :green : (error_value < 5 * atol ? :yellow : :red))
+    else
+        # Relative error (in %): green if < rtol*100, yellow if < 5*rtol*100, red otherwise
+        rtol_percent = rtol * 100
+        (error_value < rtol_percent ? :green : (error_value < 5 * rtol_percent ? :yellow : :red))
     end
     printstyled(lpad(err_str, 7); color=err_color)
 
