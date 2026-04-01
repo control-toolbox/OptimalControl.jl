@@ -1,15 +1,15 @@
-# [Control-free problems: parameter estimation and dynamic optimization](@id example-control-free)
+# [Control-free problems](@id example-control-free)
 
-Control-free problems are optimal control problems without a control variable. They are useful for:
+Control-free problems are optimal control problems without a control variable. They are used for **optimizing constant parameters in dynamical systems**, such as:
 
-- **Parameter estimation**: identifying unknown parameters in differential equations from observed data
-- **Dynamic optimization**: optimizing constant parameters subject to ODE constraints
+- Identifying unknown parameters from observed data (parameter estimation)
+- Finding optimal parameters for a given performance criterion
 
 This page demonstrates two simple examples with known analytical solutions.
 
 !!! compat "Upcoming feature"
 
-    The syntax shown here uses a workaround with a dummy control (`u ∈ R, control` and `u(t) == 0`) because the parser does not yet support omitting the control declaration. These workaround lines are marked with `# TO REMOVE WHEN POSSIBLE` and will be removed once native control-free syntax is implemented.
+    The syntax shown here uses a workaround with a dummy control variable (`u ∈ R, control`) and a small penalty term (`1e-5*u(t)^2`) in the cost to force `u ≈ 0`, because the parser does not yet support omitting the control declaration. These workaround lines are marked with `# TO REMOVE WHEN POSSIBLE` and will be removed once native control-free syntax is implemented.
 
 First, we import the necessary packages:
 
@@ -84,13 +84,13 @@ Consider a harmonic oscillator:
 with initial conditions $q(0) = 1$, $\dot{q}(0) = 0$ and final condition $q(1) = 0$. We want to find the minimal pulsation $\omega$ satisfying these constraints:
 
 ```math
-\begin{aligned}
-& \min_{\omega} \omega^2 \\
-& \text{subject to} \\
-& \quad \ddot{q}(t) = -\omega^2 q(t), \\
-& \quad q(0) = 1, \quad \dot{q}(0) = 0, \\
-& \quad q(1) = 0.
-\end{aligned}
+    \begin{aligned}
+        & \text{Minimise} && \omega^2 \\
+        & \text{subject to} \\
+        & && \ddot{q}(t) = -\omega^2 q(t), \\[1.0em]
+        & && q(0) = 1, \quad \dot{q}(0) = 0, \\[0.5em]
+        & && q(1) = 0.
+    \end{aligned}
 ```
 
 The analytical solution is $\omega = \pi/2 \approx 1.5708$, giving $q(t) = \cos(\pi t / 2)$.
