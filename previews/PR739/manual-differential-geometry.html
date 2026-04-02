@@ -3,82 +3,112 @@
 X(x) = [x[2], -x[1]]
 
 # Compute its Hamiltonian lift
-H = Lift(X)
+HX = Lift(X)
 
 # Evaluate at a point (x, p)
-x = [1.0, 2.0]
-p = [3.0, 4.0]
-H(x, p)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2.0</code></pre><p>The result is <span>$H(x, p) = p_1 x_2 + p_2 (-x_1) = 3 \times 2 + 4 \times (-1) = 2$</span>.</p><h3 id="From-VectorField-type"><a class="docs-heading-anchor" href="#From-VectorField-type">From VectorField type</a><a id="From-VectorField-type-1"></a><a class="docs-heading-anchor-permalink" href="#From-VectorField-type" title="Permalink"></a></h3><p>You can also use the <code>OptimalControl.VectorField</code> type, which allows more control over the function&#39;s properties:</p><pre><code class="language-julia hljs"># Wrap in VectorField (autonomous, non-variable by default)
-X_vf = OptimalControl.VectorField(x -&gt; [x[2], -x[1]])
-H_vf = Lift(X_vf)
+x = [1, 2]
+p = [3, 4]
+HX(x, p)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2</code></pre><p>The result is <span>$H(x, p) = p_1 x_2 + p_2 (-x_1) = 3 \times 2 + 4 \times (-1) = 2$</span>.</p><h3 id="From-VectorField-type"><a class="docs-heading-anchor" href="#From-VectorField-type">From VectorField type</a><a id="From-VectorField-type-1"></a><a class="docs-heading-anchor-permalink" href="#From-VectorField-type" title="Permalink"></a></h3><p>You can also use the <code>OptimalControl.VectorField</code> type, which allows more control over the function&#39;s properties:</p><pre><code class="language-julia hljs"># Wrap in VectorField (autonomous, non-variable by default)
+X = OptimalControl.VectorField(x -&gt; [x[2], -x[1]])
+HX = Lift(X)
 
 # This returns a HamiltonianLift object
-H_vf([1.0, 2.0], [3.0, 4.0])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2.0</code></pre><h3 id="Non-autonomous-case"><a class="docs-heading-anchor" href="#Non-autonomous-case">Non-autonomous case</a><a id="Non-autonomous-case-1"></a><a class="docs-heading-anchor-permalink" href="#Non-autonomous-case" title="Permalink"></a></h3><p>For time-dependent vector fields, use <code>autonomous=false</code>:</p><pre><code class="language-julia hljs"># Non-autonomous vector field: X(t, x) = [t*x[2], -x[1]]
-X_na(t, x) = [t * x[2], -x[1]]
-H_na = Lift(X_na; autonomous=false)
+HX([1, 2], [3, 4])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2</code></pre><h3 id="Non-autonomous-case"><a class="docs-heading-anchor" href="#Non-autonomous-case">Non-autonomous case</a><a id="Non-autonomous-case-1"></a><a class="docs-heading-anchor-permalink" href="#Non-autonomous-case" title="Permalink"></a></h3><p>For time-dependent vector fields, use <code>autonomous=false</code>:</p><pre><code class="language-julia hljs"># Non-autonomous vector field: X(t, x) = [t*x[2], -x[1]]
+X(t, x) = [t * x[2], -x[1]]
+HX = Lift(X; autonomous=false)
 
 # Signature is now H(t, x, p)
-H_na(2.0, [1.0, 2.0], [3.0, 4.0])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8.0</code></pre><h3 id="Variable-case"><a class="docs-heading-anchor" href="#Variable-case">Variable case</a><a id="Variable-case-1"></a><a class="docs-heading-anchor-permalink" href="#Variable-case" title="Permalink"></a></h3><p>For vector fields depending on an additional parameter <span>$v$</span>, use <code>variable=true</code>:</p><pre><code class="language-julia hljs"># Variable vector field: X(x, v) = [x[2] + v, -x[1]]
-X_var(x, v) = [x[2] + v, -x[1]]
-H_var = Lift(X_var; variable=true)
+HX(2, [1, 2], [3, 4])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8</code></pre><h3 id="Variable-case"><a class="docs-heading-anchor" href="#Variable-case">Variable case</a><a id="Variable-case-1"></a><a class="docs-heading-anchor-permalink" href="#Variable-case" title="Permalink"></a></h3><p>For vector fields depending on an additional parameter <span>$v$</span>, use <code>variable=true</code>:</p><pre><code class="language-julia hljs"># Variable vector field: X(x, v) = [x[2] + v, -x[1]]
+X(x, v) = [x[2] + v, -x[1]]
+HX = Lift(X; variable=true)
 
 # Signature is now H(x, p, v)
-H_var([1.0, 2.0], [3.0, 4.0], 1.0)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">5.0</code></pre><h2 id="Lie-derivative"><a class="docs-heading-anchor" href="#Lie-derivative">Lie derivative</a><a id="Lie-derivative-1"></a><a class="docs-heading-anchor-permalink" href="#Lie-derivative" title="Permalink"></a></h2><p>The <strong>Lie derivative</strong> of a function <span>$f: \mathbb{R}^n \to \mathbb{R}$</span> along a vector field <span>$X$</span> is defined by</p><p class="math-container">\[(X \cdot f)(x) = f&#39;(x) \cdot X(x) = \sum_{i=1}^n \frac{\partial f}{\partial x_i}(x) X_i(x).\]</p><p>This represents the directional derivative of <span>$f$</span> along <span>$X$</span>.</p><h3 id="lie-from-functions"><a class="docs-heading-anchor" href="#lie-from-functions">From plain Julia functions</a><a id="lie-from-functions-1"></a><a class="docs-heading-anchor-permalink" href="#lie-from-functions" title="Permalink"></a></h3><p>When using plain Julia functions, they are treated as autonomous and non-variable:</p><pre><code class="language-julia hljs"># Vector field and scalar function
-φ(x) = [x[2], -x[1]]
+HX([1, 2], [3, 4], 1)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">5</code></pre><h2 id="Lie-derivative"><a class="docs-heading-anchor" href="#Lie-derivative">Lie derivative</a><a id="Lie-derivative-1"></a><a class="docs-heading-anchor-permalink" href="#Lie-derivative" title="Permalink"></a></h2><p>The <strong>Lie derivative</strong> of a function <span>$f: \mathbb{R}^n \to \mathbb{R}$</span> along a vector field <span>$X$</span> is defined by</p><p class="math-container">\[(X \cdot f)(x) = f&#39;(x) \cdot X(x) = \sum_{i=1}^n \frac{\partial f}{\partial x_i}(x) X_i(x).\]</p><p>This represents the directional derivative of <span>$f$</span> along <span>$X$</span>.</p><h3 id="lie-from-functions"><a class="docs-heading-anchor" href="#lie-from-functions">From plain Julia functions</a><a id="lie-from-functions-1"></a><a class="docs-heading-anchor-permalink" href="#lie-from-functions" title="Permalink"></a></h3><p>When using plain Julia functions, they are treated as autonomous and non-variable:</p><pre><code class="language-julia hljs"># Vector field and scalar function
+X(x) = [x[2], -x[1]]
 f(x) = x[1]^2 + x[2]^2
 
 # Lie derivative (using dot operator)
-Xf = φ ⋅ f
+Xf = X ⋅ f
 
 # Evaluate at a point
-Xf([1.0, 2.0])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">0.0</code></pre><p>For the harmonic oscillator with <span>$X(x) = (x_2, -x_1)$</span> and energy <span>$f(x) = x_1^2 + x_2^2$</span>:</p><p class="math-container">\[(X \cdot f)(x) = 2x_1 x_2 + 2x_2(-x_1) = 0,\]</p><p>which confirms that energy is conserved along trajectories.</p><h3 id="lie-from-vectorfield"><a class="docs-heading-anchor" href="#lie-from-vectorfield">From VectorField type</a><a id="lie-from-vectorfield-1"></a><a class="docs-heading-anchor-permalink" href="#lie-from-vectorfield" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Using VectorField type
+Xf([1, 2])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">0</code></pre><p>For the harmonic oscillator with <span>$X(x) = (x_2, -x_1)$</span> and energy <span>$f(x) = x_1^2 + x_2^2$</span>:</p><p class="math-container">\[(X \cdot f)(x) = 2x_1 x_2 + 2x_2(-x_1) = 0,\]</p><p>which confirms that energy is conserved along trajectories.</p><h3 id="lie-from-vectorfield"><a class="docs-heading-anchor" href="#lie-from-vectorfield">From VectorField type</a><a id="lie-from-vectorfield-1"></a><a class="docs-heading-anchor-permalink" href="#lie-from-vectorfield" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Using VectorField type
 X = OptimalControl.VectorField(x -&gt; [x[2], -x[1]])
 g(x) = x[1]^2 + x[2]^2
 
 # Lie derivative
 Xg = X ⋅ g
-Xg([1.0, 2.0])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">0.0</code></pre><h3 id="Alternative-syntax"><a class="docs-heading-anchor" href="#Alternative-syntax">Alternative syntax</a><a id="Alternative-syntax-1"></a><a class="docs-heading-anchor-permalink" href="#Alternative-syntax" title="Permalink"></a></h3><p>The <code>Lie</code> function is equivalent to the <code>⋅</code> operator:</p><pre><code class="language-julia hljs"># These are equivalent
-result1 = X ⋅ g
-result2 = Lie(X, g)
+Xg([1, 2])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">0</code></pre><h3 id="Alternative-syntax"><a class="docs-heading-anchor" href="#Alternative-syntax">Alternative syntax</a><a id="Alternative-syntax-1"></a><a class="docs-heading-anchor-permalink" href="#Alternative-syntax" title="Permalink"></a></h3><p>The <code>Lie</code> function is equivalent to the <code>⋅</code> operator:</p><pre><code class="language-julia hljs"># These are equivalent
+Xg1 = X ⋅ g
+Xg2 = Lie(X, g)
 
-result1([1.0, 2.0]) == result2([1.0, 2.0])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">true</code></pre><h3 id="With-keyword-arguments"><a class="docs-heading-anchor" href="#With-keyword-arguments">With keyword arguments</a><a id="With-keyword-arguments-1"></a><a class="docs-heading-anchor-permalink" href="#With-keyword-arguments" title="Permalink"></a></h3><p>For non-autonomous or variable cases, use the <code>Lie</code> function with keyword arguments:</p><pre><code class="language-julia hljs"># Non-autonomous case
-φ_na(t, x) = [t + x[2], -x[1]]
-f_na(t, x) = t + x[1]^2 + x[2]^2
+Xg1([1, 2]) == Xg2([1, 2])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">true</code></pre><h3 id="With-keyword-arguments"><a class="docs-heading-anchor" href="#With-keyword-arguments">With keyword arguments</a><a id="With-keyword-arguments-1"></a><a class="docs-heading-anchor-permalink" href="#With-keyword-arguments" title="Permalink"></a></h3><p>For non-autonomous or variable cases, use the <code>Lie</code> function with keyword arguments:</p><pre><code class="language-julia hljs"># Non-autonomous case
+X(t, x) = [t + x[2], -x[1]]
+f(t, x) = t + x[1]^2 + x[2]^2
 
-Xf_na = Lie(φ_na, f_na; autonomous=false)
-Xf_na(1.0, [1.0, 2.0])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2.0</code></pre><pre><code class="language-julia hljs"># Variable case
-φ_var(x, v) = [x[2] + v, -x[1]]
-f_var(x, v) = x[1]^2 + x[2]^2 + v
+Xf = Lie(X, f; autonomous=false)
+Xf(1, [1, 2])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2</code></pre><pre><code class="language-julia hljs"># Variable case
+X(x, v) = [x[2] + v, -x[1]]
+f(x, v) = x[1]^2 + x[2]^2 + v
 
-Xf_var = Lie(φ_var, f_var; variable=true)
-Xf_var([1.0, 2.0], 1.0)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2.0</code></pre><h2 id="Poisson-bracket"><a class="docs-heading-anchor" href="#Poisson-bracket">Poisson bracket</a><a id="Poisson-bracket-1"></a><a class="docs-heading-anchor-permalink" href="#Poisson-bracket" title="Permalink"></a></h2><p>For two functions <span>$f, g: \mathbb{R}^n \times (\mathbb{R}^n)^* \to \mathbb{R}$</span>, the <strong>Poisson bracket</strong> is defined by</p><p class="math-container">\[\{f, g\}(x, p) = \sum_{i=1}^n \left( \frac{\partial f}{\partial p_i} \frac{\partial g}{\partial x_i} - \frac{\partial f}{\partial x_i} \frac{\partial g}{\partial p_i} \right).\]</p><h3 id="Properties"><a class="docs-heading-anchor" href="#Properties">Properties</a><a id="Properties-1"></a><a class="docs-heading-anchor-permalink" href="#Properties" title="Permalink"></a></h3><p>The Poisson bracket satisfies:</p><ul><li><strong>Bilinearity</strong>: <span>$\{af + bg, h\} = a\{f, h\} + b\{g, h\}$</span> for scalars <span>$a, b$</span></li><li><strong>Antisymmetry</strong>: <span>$\{f, g\} = -\{g, f\}$</span></li><li><strong>Leibniz rule</strong>: <span>$\{fg, h\} = f\{g, h\} + g\{f, h\}$</span></li><li><strong>Jacobi identity</strong>: <span>$\{\{f, g\}, h\} + \{\{h, f\}, g\} + \{\{g, h\}, f\} = 0$</span></li></ul><h3 id="poisson-from-functions"><a class="docs-heading-anchor" href="#poisson-from-functions">From plain Julia functions</a><a id="poisson-from-functions-1"></a><a class="docs-heading-anchor-permalink" href="#poisson-from-functions" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Define two Hamiltonian functions
+Xf = Lie(X, f; variable=true)
+Xf([1, 2], 1)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2</code></pre><h3 id="With-VectorField-type"><a class="docs-heading-anchor" href="#With-VectorField-type">With VectorField type</a><a id="With-VectorField-type-1"></a><a class="docs-heading-anchor-permalink" href="#With-VectorField-type" title="Permalink"></a></h3><p>You can also create the VectorField explicitly with the keywords, then use it without keywords in the Lie function:</p><pre><code class="language-julia hljs"># Non-autonomous VectorField created with keywords
+X = OptimalControl.VectorField((t, x) -&gt; [t + x[2], -x[1]]; autonomous=false)
+f(t, x) = t + x[1]^2 + x[2]^2
+
+# No keywords needed here - the VectorField already knows its properties
+Xf = Lie(X, f)
+Xf(1, [1, 2])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2</code></pre><pre><code class="language-julia hljs"># Variable VectorField created with keywords
+X = OptimalControl.VectorField((x, v) -&gt; [x[2] + v, -x[1]]; variable=true)
+f(x, v) = x[1]^2 + x[2]^2 + v
+
+# No keywords needed here
+Xf = Lie(X, f)
+Xf([1, 2], 1)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2</code></pre><h2 id="Poisson-bracket"><a class="docs-heading-anchor" href="#Poisson-bracket">Poisson bracket</a><a id="Poisson-bracket-1"></a><a class="docs-heading-anchor-permalink" href="#Poisson-bracket" title="Permalink"></a></h2><p>For two functions <span>$f, g: \mathbb{R}^n \times (\mathbb{R}^n)^* \to \mathbb{R}$</span>, the <strong>Poisson bracket</strong> is defined by</p><p class="math-container">\[\{f, g\}(x, p) = \sum_{i=1}^n \left( \frac{\partial f}{\partial p_i} \frac{\partial g}{\partial x_i} - \frac{\partial f}{\partial x_i} \frac{\partial g}{\partial p_i} \right).\]</p><h3 id="Properties"><a class="docs-heading-anchor" href="#Properties">Properties</a><a id="Properties-1"></a><a class="docs-heading-anchor-permalink" href="#Properties" title="Permalink"></a></h3><p>The Poisson bracket satisfies:</p><ul><li><strong>Bilinearity</strong>: <span>$\{af + bg, h\} = a\{f, h\} + b\{g, h\}$</span> for scalars <span>$a, b$</span></li><li><strong>Antisymmetry</strong>: <span>$\{f, g\} = -\{g, f\}$</span></li><li><strong>Leibniz rule</strong>: <span>$\{fg, h\} = f\{g, h\} + g\{f, h\}$</span></li><li><strong>Jacobi identity</strong>: <span>$\{\{f, g\}, h\} + \{\{h, f\}, g\} + \{\{g, h\}, f\} = 0$</span></li></ul><h3 id="poisson-from-functions"><a class="docs-heading-anchor" href="#poisson-from-functions">From plain Julia functions</a><a id="poisson-from-functions-1"></a><a class="docs-heading-anchor-permalink" href="#poisson-from-functions" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Define two Hamiltonian functions
 f(x, p) = p[1] * x[2] + p[2] * x[1]
 g(x, p) = x[1]^2 + p[2]^2
 
 # Compute the Poisson bracket
-bracket = Poisson(f, g)
+Hfg = Poisson(f, g)
 
 # Evaluate at a point
-x = [1.0, 2.0]
-p = [3.0, 4.0]
-bracket(x, p)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">-20.0</code></pre><h3 id="Verify-antisymmetry"><a class="docs-heading-anchor" href="#Verify-antisymmetry">Verify antisymmetry</a><a id="Verify-antisymmetry-1"></a><a class="docs-heading-anchor-permalink" href="#Verify-antisymmetry" title="Permalink"></a></h3><pre><code class="language-julia hljs">bracket_fg = Poisson(f, g)
-bracket_gf = Poisson(g, f)
+x = [1, 2]
+p = [3, 4]
+Hfg(x, p)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">-20</code></pre><h3 id="Verify-antisymmetry"><a class="docs-heading-anchor" href="#Verify-antisymmetry">Verify antisymmetry</a><a id="Verify-antisymmetry-1"></a><a class="docs-heading-anchor-permalink" href="#Verify-antisymmetry" title="Permalink"></a></h3><pre><code class="language-julia hljs">Hfg = Poisson(f, g)
+Hgf = Poisson(g, f)
 
-println(&quot;Poisson(f, g) = &quot;, bracket_fg(x, p))
-println(&quot;Poisson(g, f) = &quot;, bracket_gf(x, p))
-println(&quot;Sum = &quot;, bracket_fg(x, p) + bracket_gf(x, p))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Poisson(f, g) = -20.0
-Poisson(g, f) = 20.0
-Sum = 0.0</code></pre><h3 id="From-Hamiltonian-type"><a class="docs-heading-anchor" href="#From-Hamiltonian-type">From Hamiltonian type</a><a id="From-Hamiltonian-type-1"></a><a class="docs-heading-anchor-permalink" href="#From-Hamiltonian-type" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Wrap in Hamiltonian type
+println(&quot;Poisson(f, g) = &quot;, Hfg(x, p))
+println(&quot;Poisson(g, f) = &quot;, Hgf(x, p))
+println(&quot;Sum = &quot;, Hfg(x, p) + Hgf(x, p))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Poisson(f, g) = -20
+Poisson(g, f) = 20
+Sum = 0</code></pre><h3 id="From-Hamiltonian-type"><a class="docs-heading-anchor" href="#From-Hamiltonian-type">From Hamiltonian type</a><a id="From-Hamiltonian-type-1"></a><a class="docs-heading-anchor-permalink" href="#From-Hamiltonian-type" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Wrap in Hamiltonian type
 F = OptimalControl.Hamiltonian(f)
 G = OptimalControl.Hamiltonian(g)
 
-bracket_HH = Poisson(F, G)
-bracket_HH(x, p)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">-20.0</code></pre><h3 id="poisson-kwargs"><a class="docs-heading-anchor" href="#poisson-kwargs">With keyword arguments</a><a id="poisson-kwargs-1"></a><a class="docs-heading-anchor-permalink" href="#poisson-kwargs" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Non-autonomous case
-f_na(t, x, p) = t + p[1] * x[2] + p[2] * x[1]
-g_na(t, x, p) = t^2 + x[1]^2 + p[2]^2
+Hfg = Poisson(F, G)
+Hfg(x, p)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">-20</code></pre><h3 id="poisson-kwargs"><a class="docs-heading-anchor" href="#poisson-kwargs">With keyword arguments</a><a id="poisson-kwargs-1"></a><a class="docs-heading-anchor-permalink" href="#poisson-kwargs" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Non-autonomous case
+f(t, x, p) = t + p[1] * x[2] + p[2] * x[1]
+g(t, x, p) = t^2 + x[1]^2 + p[2]^2
 
-bracket_na = Poisson(f_na, g_na; autonomous=false)
-bracket_na(1.0, [1.0, 2.0], [3.0, 4.0])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">-20.0</code></pre><h3 id="Relation-to-Hamiltonian-vector-fields"><a class="docs-heading-anchor" href="#Relation-to-Hamiltonian-vector-fields">Relation to Hamiltonian vector fields</a><a id="Relation-to-Hamiltonian-vector-fields-1"></a><a class="docs-heading-anchor-permalink" href="#Relation-to-Hamiltonian-vector-fields" title="Permalink"></a></h3><p>The Poisson bracket is closely related to the Lie derivative. If <span>$\vec{H} = (\nabla_p H, -\nabla_x H)$</span> denotes the Hamiltonian vector field associated to <span>$H$</span>, then</p><p class="math-container">\[\{H, G\} = \vec{H} \cdot G.\]</p><p>This means the Poisson bracket of <span>$H$</span> and <span>$G$</span> equals the Lie derivative of <span>$G$</span> along the Hamiltonian vector field of <span>$H$</span>.</p><h3 id="Poisson-bracket-of-Hamiltonian-lifts"><a class="docs-heading-anchor" href="#Poisson-bracket-of-Hamiltonian-lifts">Poisson bracket of Hamiltonian lifts</a><a id="Poisson-bracket-of-Hamiltonian-lifts-1"></a><a class="docs-heading-anchor-permalink" href="#Poisson-bracket-of-Hamiltonian-lifts" title="Permalink"></a></h3><p>When computing the Poisson bracket of two Hamiltonian lifts, the result is the Hamiltonian lift of the Lie bracket of the underlying vector fields:</p><pre><code class="language-julia hljs"># Two vector fields
+Hfg = Poisson(f, g; autonomous=false)
+Hfg(1, [1, 2], [3, 4])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">-20</code></pre><h3 id="With-Hamiltonian-type-and-keywords"><a class="docs-heading-anchor" href="#With-Hamiltonian-type-and-keywords">With Hamiltonian type and keywords</a><a id="With-Hamiltonian-type-and-keywords-1"></a><a class="docs-heading-anchor-permalink" href="#With-Hamiltonian-type-and-keywords" title="Permalink"></a></h3><p>You can also create Hamiltonian objects explicitly with keywords, then use them without keywords in the Poisson function. <strong>Important</strong>: both Hamiltonians must have the same time and variable dependencies:</p><pre><code class="language-julia hljs"># Non-autonomous Hamiltonians created with keywords
+f(t, x, p) = t + p[1] * x[2] + p[2] * x[1]
+g(t, x, p) = t^2 + x[1]^2 + p[2]^2
+
+F = OptimalControl.Hamiltonian(f; autonomous=false)
+G = OptimalControl.Hamiltonian(g; autonomous=false)
+
+# No keywords needed here - both Hamiltonians are already non-autonomous
+Hfg = Poisson(F, G)
+Hfg(1, [1, 2], [3, 4])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">-20</code></pre><pre><code class="language-julia hljs"># Variable Hamiltonians created with keywords
+f(x, p, v) = x[1]^2 + p[2]^2 + v
+g(x, p, v) = x[2]^2 + p[1]^2 + 2*v
+
+F = OptimalControl.Hamiltonian(f; variable=true)
+G = OptimalControl.Hamiltonian(g; variable=true)
+
+# Both are variable, so the Poisson bracket is also variable
+Hfg = Poisson(F, G)
+Hfg([1, 2], [3, 4], 1)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">20</code></pre><h3 id="Relation-to-Hamiltonian-vector-fields"><a class="docs-heading-anchor" href="#Relation-to-Hamiltonian-vector-fields">Relation to Hamiltonian vector fields</a><a id="Relation-to-Hamiltonian-vector-fields-1"></a><a class="docs-heading-anchor-permalink" href="#Relation-to-Hamiltonian-vector-fields" title="Permalink"></a></h3><p>The Poisson bracket is closely related to the Lie derivative. If <span>$\vec{H} = (\nabla_p H, -\nabla_x H)$</span> denotes the Hamiltonian vector field associated to <span>$H$</span>, then</p><p class="math-container">\[\{H, G\} = \vec{H} \cdot G.\]</p><p>This means the Poisson bracket of <span>$H$</span> and <span>$G$</span> equals the Lie derivative of <span>$G$</span> along the Hamiltonian vector field of <span>$H$</span>.</p><h3 id="Poisson-bracket-of-Hamiltonian-lifts"><a class="docs-heading-anchor" href="#Poisson-bracket-of-Hamiltonian-lifts">Poisson bracket of Hamiltonian lifts</a><a id="Poisson-bracket-of-Hamiltonian-lifts-1"></a><a class="docs-heading-anchor-permalink" href="#Poisson-bracket-of-Hamiltonian-lifts" title="Permalink"></a></h3><p>When computing the Poisson bracket of two Hamiltonian lifts, the result is the Hamiltonian lift of the Lie bracket of the underlying vector fields:</p><pre><code class="language-julia hljs"># Two vector fields
 X(x) = [x[1]^2, x[2]^2]
 Y(x) = [x[2], -x[1]]
 
@@ -87,8 +117,8 @@ HX = Lift(X)
 HY = Lift(Y)
 
 # Poisson bracket of lifts
-bracket_lifts = Poisson(HX, HY)
-bracket_lifts([1.0, 2.0], [3.0, 4.0])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">12.0</code></pre><p>This satisfies: <span>$\{H_X, H_Y\} = H_{[X,Y]}$</span> where <span>$[X,Y]$</span> is the Lie bracket of vector fields (see next section).</p><h2 id="Lie-bracket-of-vector-fields"><a class="docs-heading-anchor" href="#Lie-bracket-of-vector-fields">Lie bracket of vector fields</a><a id="Lie-bracket-of-vector-fields-1"></a><a class="docs-heading-anchor-permalink" href="#Lie-bracket-of-vector-fields" title="Permalink"></a></h2><p>For two vector fields <span>$X, Y: \mathbb{R}^n \to \mathbb{R}^n$</span>, the <strong>Lie bracket</strong> is the vector field <span>$[X, Y]$</span> defined by</p><p class="math-container">\[[X, Y](x) = Y&#39;(x) \cdot X(x) - X&#39;(x) \cdot Y(x),\]</p><p>where <span>$X&#39;(x)$</span> denotes the Jacobian matrix of <span>$X$</span> at <span>$x$</span>.</p><h3 id="bracket-from-vectorfield"><a class="docs-heading-anchor" href="#bracket-from-vectorfield">From VectorField type</a><a id="bracket-from-vectorfield-1"></a><a class="docs-heading-anchor-permalink" href="#bracket-from-vectorfield" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Define two vector fields
+HXY = Poisson(HX, HY)
+HXY([1, 2], [3, 4])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">12</code></pre><p>This satisfies: <span>$\{H_X, H_Y\} = H_{[X,Y]}$</span> where <span>$[X,Y]$</span> is the Lie bracket of vector fields (see next section).</p><h2 id="Lie-bracket-of-vector-fields"><a class="docs-heading-anchor" href="#Lie-bracket-of-vector-fields">Lie bracket of vector fields</a><a id="Lie-bracket-of-vector-fields-1"></a><a class="docs-heading-anchor-permalink" href="#Lie-bracket-of-vector-fields" title="Permalink"></a></h2><p>For two vector fields <span>$X, Y: \mathbb{R}^n \to \mathbb{R}^n$</span>, the <strong>Lie bracket</strong> is the vector field <span>$[X, Y]$</span> defined by</p><p class="math-container">\[[X, Y](x) = Y&#39;(x) \cdot X(x) - X&#39;(x) \cdot Y(x),\]</p><p>where <span>$X&#39;(x)$</span> denotes the Jacobian matrix of <span>$X$</span> at <span>$x$</span>.</p><h3 id="bracket-from-vectorfield"><a class="docs-heading-anchor" href="#bracket-from-vectorfield">From VectorField type</a><a id="bracket-from-vectorfield-1"></a><a class="docs-heading-anchor-permalink" href="#bracket-from-vectorfield" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Define two vector fields
 X = OptimalControl.VectorField(x -&gt; [x[2], -x[1]])
 Y = OptimalControl.VectorField(x -&gt; [x[1], x[2]])
 
@@ -96,41 +126,84 @@ Y = OptimalControl.VectorField(x -&gt; [x[1], x[2]])
 Z = Lie(X, Y)
 
 # Evaluate at a point
-Z([1.0, 2.0])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2-element Vector{Float64}:
- 0.0
- 0.0</code></pre><h3 id="Relation-to-Poisson-brackets"><a class="docs-heading-anchor" href="#Relation-to-Poisson-brackets">Relation to Poisson brackets</a><a id="Relation-to-Poisson-brackets-1"></a><a class="docs-heading-anchor-permalink" href="#Relation-to-Poisson-brackets" title="Permalink"></a></h3><p>If <span>$H_X = \text{Lift}(X)$</span> and <span>$H_Y = \text{Lift}(Y)$</span> are the Hamiltonian lifts, then:</p><p class="math-container">\[\{H_X, H_Y\} = H_{[X,Y]}.\]</p><p>Let&#39;s verify this numerically:</p><pre><code class="language-julia hljs"># Hamiltonian lifts
+Z([1, 2])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2-element Vector{Int64}:
+ 0
+ 0</code></pre><h3 id="Relation-to-Poisson-brackets"><a class="docs-heading-anchor" href="#Relation-to-Poisson-brackets">Relation to Poisson brackets</a><a id="Relation-to-Poisson-brackets-1"></a><a class="docs-heading-anchor-permalink" href="#Relation-to-Poisson-brackets" title="Permalink"></a></h3><p>If <span>$H_X = \text{Lift}(X)$</span> and <span>$H_Y = \text{Lift}(Y)$</span> are the Hamiltonian lifts, then:</p><p class="math-container">\[\{H_X, H_Y\} = H_{[X,Y]}.\]</p><p>Let&#39;s verify this numerically:</p><pre><code class="language-julia hljs"># Hamiltonian lifts
 HX = Lift(x -&gt; X(x))
 HY = Lift(x -&gt; Y(x))
 
 # Poisson bracket of the lifts
-bracket_XY = Poisson(HX, HY)
+HXY = Poisson(HX, HY)
 
 # Lift of the Lie bracket
 HZ = Lift(x -&gt; Z(x))
 
 # Compare at a point
-x = [1.0, 2.0]
-p = [3.0, 4.0]
+x = [1, 2]
+p = [3, 4]
 
-println(&quot;Poisson bracket: &quot;, bracket_XY(x, p))
-println(&quot;Lift of Lie bracket: &quot;, HZ(x, p))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Poisson bracket: 0.0
-Lift of Lie bracket: 0.0</code></pre><h2 id="The-@Lie-macro"><a class="docs-heading-anchor" href="#The-@Lie-macro">The <code>@Lie</code> macro</a><a id="The-@Lie-macro-1"></a><a class="docs-heading-anchor-permalink" href="#The-@Lie-macro" title="Permalink"></a></h2><p>The <code>@Lie</code> macro provides a convenient syntax for computing Lie brackets (for vector fields) and Poisson brackets (for Hamiltonians).</p><h3 id="Lie-brackets-with-VectorField"><a class="docs-heading-anchor" href="#Lie-brackets-with-VectorField">Lie brackets with VectorField</a><a id="Lie-brackets-with-VectorField-1"></a><a class="docs-heading-anchor-permalink" href="#Lie-brackets-with-VectorField" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Define vector fields
+println(&quot;Poisson bracket: &quot;, HXY(x, p))
+println(&quot;Lift of Lie bracket: &quot;, HZ(x, p))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Poisson bracket: 0
+Lift of Lie bracket: 0</code></pre><h2 id="The-@Lie-macro"><a class="docs-heading-anchor" href="#The-@Lie-macro">The <code>@Lie</code> macro</a><a id="The-@Lie-macro-1"></a><a class="docs-heading-anchor-permalink" href="#The-@Lie-macro" title="Permalink"></a></h2><p>The <code>@Lie</code> macro provides a convenient syntax for computing Lie brackets (for vector fields) and Poisson brackets (for Hamiltonians).</p><div class="admonition is-warning" id="Important-distinction-46ccef2b3b134e35"><header class="admonition-header">Important distinction<a class="admonition-anchor" href="#Important-distinction-46ccef2b3b134e35" title="Permalink"></a></header><div class="admonition-body"></div></div><ul><li><strong>Square brackets <code>[...]</code></strong> denote <strong>Lie brackets</strong> and work with:<ul><li><code>VectorField</code> objects</li><li>Plain Julia functions (automatically wrapped as <code>VectorField</code>)</li></ul></li><li><strong>Curly braces <code>{...}</code></strong> denote <strong>Poisson brackets</strong> and work with:<ul><li>Plain Julia functions (automatically wrapped as <code>Hamiltonian</code>)</li><li><code>Hamiltonian</code> objects</li></ul></li></ul><p>When using plain functions, specify <code>autonomous</code> and <code>variable</code> keywords as needed to match your function signature.</p><h3 id="Lie-brackets-with-VectorField"><a class="docs-heading-anchor" href="#Lie-brackets-with-VectorField">Lie brackets with VectorField</a><a id="Lie-brackets-with-VectorField-1"></a><a class="docs-heading-anchor-permalink" href="#Lie-brackets-with-VectorField" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Define vector fields
 F1 = OptimalControl.VectorField(x -&gt; [0, -x[3], x[2]])
 F2 = OptimalControl.VectorField(x -&gt; [x[3], 0, -x[1]])
 
 # Compute Lie bracket using macro
-L = @Lie [F1, F2]
+F12 = @Lie [F1, F2]
 
 # Evaluate
-L([1.0, 2.0, 3.0])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">3-element Vector{Float64}:
-  2.0
- -1.0
-  0.0</code></pre><h3 id="Nested-Lie-brackets"><a class="docs-heading-anchor" href="#Nested-Lie-brackets">Nested Lie brackets</a><a id="Nested-Lie-brackets-1"></a><a class="docs-heading-anchor-permalink" href="#Nested-Lie-brackets" title="Permalink"></a></h3><pre><code class="language-julia hljs">F3 = OptimalControl.VectorField(x -&gt; [x[1], x[2], x[3]])
-nested = @Lie [[F1, F2], F3]
-nested([1.0, 2.0, 3.0])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">3-element Vector{Float64}:
- 0.0
- 0.0
- 0.0</code></pre><h3 id="Poisson-brackets-from-plain-functions"><a class="docs-heading-anchor" href="#Poisson-brackets-from-plain-functions">Poisson brackets from plain functions</a><a id="Poisson-brackets-from-plain-functions-1"></a><a class="docs-heading-anchor-permalink" href="#Poisson-brackets-from-plain-functions" title="Permalink"></a></h3><p>For Hamiltonian functions (plain Julia functions), use curly braces <code>{_, _}</code>:</p><pre><code class="language-julia hljs"># Define Hamiltonian functions
+F12([1, 2, 3])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">3-element Vector{Int64}:
+  2
+ -1
+  0</code></pre><h3 id="Nested-Lie-brackets"><a class="docs-heading-anchor" href="#Nested-Lie-brackets">Nested Lie brackets</a><a id="Nested-Lie-brackets-1"></a><a class="docs-heading-anchor-permalink" href="#Nested-Lie-brackets" title="Permalink"></a></h3><pre><code class="language-julia hljs">F3 = OptimalControl.VectorField(x -&gt; [x[1], x[2], x[3]])
+F123 = @Lie [[F1, F2], F3]
+F123([1, 2, 3])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">3-element Vector{Int64}:
+ 0
+ 0
+ 0</code></pre><h3 id="Lie-brackets-with-plain-Julia-functions"><a class="docs-heading-anchor" href="#Lie-brackets-with-plain-Julia-functions">Lie brackets with plain Julia functions</a><a id="Lie-brackets-with-plain-Julia-functions-1"></a><a class="docs-heading-anchor-permalink" href="#Lie-brackets-with-plain-Julia-functions" title="Permalink"></a></h3><p>You can also use plain Julia functions directly with the <code>@Lie</code> macro. The functions will be automatically wrapped in <code>VectorField</code> objects:</p><pre><code class="language-julia hljs"># Define plain Julia functions
+X(x) = [x[2], -x[1]]
+Y(x) = [x[1], x[2]]
+
+# Compute Lie bracket using macro with plain functions
+Z = @Lie [X, Y]
+
+# Evaluate
+Z([1, 2])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2-element Vector{Int64}:
+ 0
+ 0</code></pre><h3 id="With-keyword-arguments-for-plain-functions"><a class="docs-heading-anchor" href="#With-keyword-arguments-for-plain-functions">With keyword arguments for plain functions</a><a id="With-keyword-arguments-for-plain-functions-1"></a><a class="docs-heading-anchor-permalink" href="#With-keyword-arguments-for-plain-functions" title="Permalink"></a></h3><p>For non-autonomous or variable cases, specify the keywords:</p><pre><code class="language-julia hljs"># Non-autonomous plain functions
+X(t, x) = [t + x[2], -x[1]]
+Y(t, x) = [x[1], t*x[2]]
+
+# Use autonomous=false keyword
+Z = @Lie [X, Y] autonomous=false
+Z(1, [1, 2])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2-element Vector{Int64}:
+ 1
+ 0</code></pre><pre><code class="language-julia hljs"># Variable plain functions
+X(x, v) = [x[2] + v, -x[1]]
+Y(x, v) = [x[1], x[2] + v]
+
+# Use variable=true keyword
+Z = @Lie [X, Y] variable=true
+Z([1, 2], 1)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2-element Vector{Int64}:
+ 0
+ 0</code></pre><h3 id="Nested-brackets-with-plain-functions"><a class="docs-heading-anchor" href="#Nested-brackets-with-plain-functions">Nested brackets with plain functions</a><a id="Nested-brackets-with-plain-functions-1"></a><a class="docs-heading-anchor-permalink" href="#Nested-brackets-with-plain-functions" title="Permalink"></a></h3><pre><code class="language-julia hljs">X(x) = [0, -x[3], x[2]]
+Y(x) = [x[3], 0, -x[1]]
+Z_func(x) = [x[1], x[2], x[3]]
+
+# Nested Lie brackets
+nested = @Lie [[X, Y], Z_func]
+nested([1, 2, 3])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">3-element Vector{Int64}:
+ 0
+ 0
+ 0</code></pre><div class="admonition is-success" id="Plain-functions-vs-VectorField-ad78b6bb3319ec9c"><header class="admonition-header">Plain functions vs VectorField<a class="admonition-anchor" href="#Plain-functions-vs-VectorField-ad78b6bb3319ec9c" title="Permalink"></a></header><div class="admonition-body"></div></div><p>Using plain functions with <code>@Lie [X, Y]</code> is convenient for quick computations. However, if you need to reuse the same vector field multiple times or want explicit control over the autonomy/variability, consider creating <code>VectorField</code> objects explicitly:</p><pre><code class="language-julia hljs"># Explicit VectorField (keywords at creation)
+X = OptimalControl.VectorField((t, x) -&gt; [t + x[2], -x[1]]; autonomous=false)
+Y = OptimalControl.VectorField((t, x) -&gt; [x[1], t*x[2]]; autonomous=false)
+Z = @Lie [X, Y]  # No keywords needed
+
+# Plain functions (keywords at macro call)
+X_func(t, x) = [t + x[2], -x[1]]
+Y_func(t, x) = [x[1], t*x[2]]
+Z = @Lie [X_func, Y_func] autonomous=false</code></pre><h3 id="Poisson-brackets-from-plain-functions"><a class="docs-heading-anchor" href="#Poisson-brackets-from-plain-functions">Poisson brackets from plain functions</a><a id="Poisson-brackets-from-plain-functions-1"></a><a class="docs-heading-anchor-permalink" href="#Poisson-brackets-from-plain-functions" title="Permalink"></a></h3><p>For Hamiltonian functions (plain Julia functions), use curly braces <code>{_, _}</code>:</p><pre><code class="language-julia hljs"># Define Hamiltonian functions
 H0(x, p) = p[1] * x[2] + p[2] * (-x[1])
 H1(x, p) = p[2]
 
@@ -138,7 +211,7 @@ H1(x, p) = p[2]
 H01 = @Lie {H0, H1}
 
 # Evaluate
-H01([1.0, 2.0], [3.0, 4.0])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">-3.0</code></pre><h3 id="Iterated-Poisson-brackets"><a class="docs-heading-anchor" href="#Iterated-Poisson-brackets">Iterated Poisson brackets</a><a id="Iterated-Poisson-brackets-1"></a><a class="docs-heading-anchor-permalink" href="#Iterated-Poisson-brackets" title="Permalink"></a></h3><p>The macro is particularly useful for computing iterated brackets, which appear in singular control analysis:</p><pre><code class="language-julia hljs"># First-order bracket
+H01([1, 2], [3, 4])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">-3</code></pre><h3 id="Iterated-Poisson-brackets"><a class="docs-heading-anchor" href="#Iterated-Poisson-brackets">Iterated Poisson brackets</a><a id="Iterated-Poisson-brackets-1"></a><a class="docs-heading-anchor-permalink" href="#Iterated-Poisson-brackets" title="Permalink"></a></h3><p>The macro is particularly useful for computing iterated brackets, which appear in singular control analysis:</p><pre><code class="language-julia hljs"># First-order bracket
 H01 = @Lie {H0, H1}
 
 # Second-order brackets
@@ -146,28 +219,28 @@ H001 = @Lie {H0, H01}
 H101 = @Lie {H1, H01}
 
 # Evaluate
-x = [1.0, 2.0]
-p = [3.0, 4.0]
+x = [1, 2]
+p = [3, 4]
 
 println(&quot;H01(x, p) = &quot;, H01(x, p))
 println(&quot;H001(x, p) = &quot;, H001(x, p))
-println(&quot;H101(x, p) = &quot;, H101(x, p))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">H01(x, p) = -3.0
-H001(x, p) = -4.0
-H101(x, p) = 0.0</code></pre><p>These iterated brackets are used to compute singular controls. For a pseudo-Hamiltonian of the form <span>$H = H_0 + u H_1$</span>, if the switching function <span>$H_1$</span> vanishes on an interval (singular arc), the control is given by</p><p class="math-container">\[u_s = -\frac{H_{001}}{H_{101}},\]</p><p>provided <span>$H_{101} \neq 0$</span>. See the <a href="example-singular-control.html#example-singular-control">singular control example</a> for a complete application.</p><h3 id="macro-kwargs"><a class="docs-heading-anchor" href="#macro-kwargs">With keyword arguments</a><a id="macro-kwargs-1"></a><a class="docs-heading-anchor-permalink" href="#macro-kwargs" title="Permalink"></a></h3><p>For non-autonomous functions, specify <code>autonomous=false</code>:</p><pre><code class="language-julia hljs"># Non-autonomous Hamiltonians
-H0_na(t, x, p) = t + p[1] * x[2] + p[2] * (-x[1])
-H1_na(t, x, p) = p[2]
+println(&quot;H101(x, p) = &quot;, H101(x, p))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">H01(x, p) = -3
+H001(x, p) = -4
+H101(x, p) = 0</code></pre><p>These iterated brackets are used to compute singular controls. For a pseudo-Hamiltonian of the form <span>$H = H_0 + u H_1$</span>, if the switching function <span>$H_1$</span> vanishes on an interval (singular arc), the control is given by</p><p class="math-container">\[u_s = -\frac{H_{001}}{H_{101}},\]</p><p>provided <span>$H_{101} \neq 0$</span>. See the <a href="example-singular-control.html#example-singular-control">singular control example</a> for a complete application.</p><h3 id="macro-kwargs"><a class="docs-heading-anchor" href="#macro-kwargs">With keyword arguments</a><a id="macro-kwargs-1"></a><a class="docs-heading-anchor-permalink" href="#macro-kwargs" title="Permalink"></a></h3><p>For non-autonomous functions, specify <code>autonomous=false</code>:</p><pre><code class="language-julia hljs"># Non-autonomous Hamiltonians
+H0(t, x, p) = t + p[1] * x[2] + p[2] * (-x[1])
+H1(t, x, p) = p[2]
 
 # Poisson bracket with keyword
-H01_na = @Lie {H0_na, H1_na} autonomous=false
+H01 = @Lie {H0, H1} autonomous=false
 
 # Evaluate
-H01_na(1.0, [1.0, 2.0], [3.0, 4.0])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">-3.0</code></pre><h3 id="Poisson-brackets-from-Hamiltonian-type"><a class="docs-heading-anchor" href="#Poisson-brackets-from-Hamiltonian-type">Poisson brackets from Hamiltonian type</a><a id="Poisson-brackets-from-Hamiltonian-type-1"></a><a class="docs-heading-anchor-permalink" href="#Poisson-brackets-from-Hamiltonian-type" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Using Hamiltonian type
-H1_ham = OptimalControl.Hamiltonian((x, p) -&gt; x[1]^2 + p[2]^2)
-H2_ham = OptimalControl.Hamiltonian((x, p) -&gt; x[2]^2 + p[1]^2)
+H01(1, [1, 2], [3, 4])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">-3</code></pre><h3 id="Poisson-brackets-from-Hamiltonian-type"><a class="docs-heading-anchor" href="#Poisson-brackets-from-Hamiltonian-type">Poisson brackets from Hamiltonian type</a><a id="Poisson-brackets-from-Hamiltonian-type-1"></a><a class="docs-heading-anchor-permalink" href="#Poisson-brackets-from-Hamiltonian-type" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Using Hamiltonian type
+H1 = OptimalControl.Hamiltonian((x, p) -&gt; x[1]^2 + p[2]^2)
+H2 = OptimalControl.Hamiltonian((x, p) -&gt; x[2]^2 + p[1]^2)
 
 # Macro works with Hamiltonian objects too
-P = @Lie {H1_ham, H2_ham}
-P([1.0, 1.0], [3.0, 2.0])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">-4.0</code></pre><h2 id="Partial-time-derivative"><a class="docs-heading-anchor" href="#Partial-time-derivative">Partial time derivative</a><a id="Partial-time-derivative-1"></a><a class="docs-heading-anchor-permalink" href="#Partial-time-derivative" title="Permalink"></a></h2><p>For non-autonomous functions <span>$f(t, x, \ldots)$</span>, the <strong>partial derivative with respect to time</strong> is computed using the <code>∂ₜ</code> operator:</p><p class="math-container">\[(\partial_t f)(t, x, \ldots) = \frac{\partial f}{\partial t}(t, x, \ldots).\]</p><h3 id="Basic-usage"><a class="docs-heading-anchor" href="#Basic-usage">Basic usage</a><a id="Basic-usage-1"></a><a class="docs-heading-anchor-permalink" href="#Basic-usage" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Define a time-dependent function
+H12 = @Lie {H1, H2}
+H12([1, 1], [3, 2])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">-4</code></pre><h2 id="Partial-time-derivative"><a class="docs-heading-anchor" href="#Partial-time-derivative">Partial time derivative</a><a id="Partial-time-derivative-1"></a><a class="docs-heading-anchor-permalink" href="#Partial-time-derivative" title="Permalink"></a></h2><p>For non-autonomous functions <span>$f(t, x, \ldots)$</span>, the <strong>partial derivative with respect to time</strong> is computed using the <code>∂ₜ</code> operator:</p><p class="math-container">\[(\partial_t f)(t, x, \ldots) = \frac{\partial f}{\partial t}(t, x, \ldots).\]</p><h3 id="Basic-usage"><a class="docs-heading-anchor" href="#Basic-usage">Basic usage</a><a id="Basic-usage-1"></a><a class="docs-heading-anchor-permalink" href="#Basic-usage" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Define a time-dependent function
 f(t, x) = t * x
 
 # Compute partial time derivative
@@ -181,9 +254,9 @@ g(t, x, p) = t^2 + x[1] * p[1] + x[2] * p[2]
 dg = ∂ₜ(g)
 
 # At t=3, ∂g/∂t = 2t = 6
-dg(3, [1.0, 2.0], [4.0, 5.0])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">6.0</code></pre><h3 id="Relation-to-total-time-derivative"><a class="docs-heading-anchor" href="#Relation-to-total-time-derivative">Relation to total time derivative</a><a id="Relation-to-total-time-derivative-1"></a><a class="docs-heading-anchor-permalink" href="#Relation-to-total-time-derivative" title="Permalink"></a></h3><p>For a non-autonomous Hamiltonian <span>$H(t, x, p)$</span> and a function <span>$G(t, x, p)$</span>, the <strong>total time derivative</strong> along the Hamiltonian flow is:</p><p class="math-container">\[\frac{d}{dt} G(t, x(t), p(t)) = \partial_t G + \{H, G\}.\]</p><p>This is the sum of:</p><ul><li>The <strong>partial time derivative</strong> <span>$\partial_t G$</span> (explicit time dependence)</li><li>The <strong>Poisson bracket</strong> <span>$\{H, G\}$</span> (evolution along the flow)</li></ul><p>This relation is fundamental in non-autonomous optimal control theory.</p><h2 id="Summary"><a class="docs-heading-anchor" href="#Summary">Summary</a><a id="Summary-1"></a><a class="docs-heading-anchor-permalink" href="#Summary" title="Permalink"></a></h2><table><tr><th style="text-align: right">Function/Operator</th><th style="text-align: right">Mathematical notation</th><th style="text-align: right">Julia syntax</th></tr><tr><td style="text-align: right">Hamiltonian lift</td><td style="text-align: right"><span>$H_X(x,p) = \langle p, X(x) \rangle$</span></td><td style="text-align: right"><code>H = Lift(X)</code></td></tr><tr><td style="text-align: right">Lie derivative</td><td style="text-align: right"><span>$(X \cdot f)(x) = f&#39;(x) \cdot X(x)$</span></td><td style="text-align: right"><code>X ⋅ f</code> or <code>Lie(X, f)</code></td></tr><tr><td style="text-align: right">Poisson bracket</td><td style="text-align: right"><span>$\{f,g\}(x,p) = \langle \nabla_p f, \nabla_x g \rangle - \langle \nabla_x f, \nabla_p g \rangle$</span></td><td style="text-align: right"><code>Poisson(f, g)</code> or <code>@Lie {f, g}</code></td></tr><tr><td style="text-align: right">Lie bracket</td><td style="text-align: right"><span>$[X,Y](x) = Y&#39;(x) X(x) - X&#39;(x) Y(x)$</span></td><td style="text-align: right"><code>Lie(X, Y)</code> or <code>@Lie [X, Y]</code></td></tr><tr><td style="text-align: right">Partial time derivative</td><td style="text-align: right"><span>$\partial_t f(t, x, \ldots)$</span></td><td style="text-align: right"><code>∂ₜ(f)</code></td></tr></table><h2 id="See-also"><a class="docs-heading-anchor" href="#See-also">See also</a><a id="See-also-1"></a><a class="docs-heading-anchor-permalink" href="#See-also" title="Permalink"></a></h2><ul><li><a href="manual-flow-others.html#manual-flow-others">Compute flows from Hamiltonians and others</a> — Using flows with Hamiltonian vector fields</li><li><a href="example-singular-control.html#example-singular-control">Singular control example</a> — Application to computing singular controls</li><li><a href="https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html">Goddard tutorial</a> — Complex example with bang, singular, and boundary arcs</li></ul><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+dg(3, [1, 2], [4, 5])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">6</code></pre><h3 id="Relation-to-total-time-derivative"><a class="docs-heading-anchor" href="#Relation-to-total-time-derivative">Relation to total time derivative</a><a id="Relation-to-total-time-derivative-1"></a><a class="docs-heading-anchor-permalink" href="#Relation-to-total-time-derivative" title="Permalink"></a></h3><p>For a non-autonomous Hamiltonian <span>$H(t, x, p)$</span> and a function <span>$G(t, x, p)$</span>, the <strong>total time derivative</strong> along the Hamiltonian flow is:</p><p class="math-container">\[\frac{d}{dt} G(t, x(t), p(t)) = \partial_t G + \{H, G\}.\]</p><p>This is the sum of:</p><ul><li>The <strong>partial time derivative</strong> <span>$\partial_t G$</span> (explicit time dependence)</li><li>The <strong>Poisson bracket</strong> <span>$\{H, G\}$</span> (evolution along the flow)</li></ul><p>This relation is fundamental in non-autonomous optimal control theory.</p><h2 id="Summary"><a class="docs-heading-anchor" href="#Summary">Summary</a><a id="Summary-1"></a><a class="docs-heading-anchor-permalink" href="#Summary" title="Permalink"></a></h2><table><tr><th style="text-align: right">Function/Operator</th><th style="text-align: right">Mathematical notation</th><th style="text-align: right">Julia syntax</th></tr><tr><td style="text-align: right">Hamiltonian lift</td><td style="text-align: right"><span>$H_X(x,p) = \langle p, X(x) \rangle$</span></td><td style="text-align: right"><code>H = Lift(X)</code></td></tr><tr><td style="text-align: right">Lie derivative</td><td style="text-align: right"><span>$(X \cdot f)(x) = f&#39;(x) \cdot X(x)$</span></td><td style="text-align: right"><code>X ⋅ f</code> or <code>Lie(X, f)</code></td></tr><tr><td style="text-align: right">Poisson bracket</td><td style="text-align: right"><span>$\{f,g\}(x,p) = \langle \nabla_p f, \nabla_x g \rangle - \langle \nabla_x f, \nabla_p g \rangle$</span></td><td style="text-align: right"><code>Poisson(f, g)</code> or <code>@Lie {f, g}</code></td></tr><tr><td style="text-align: right">Lie bracket</td><td style="text-align: right"><span>$[X,Y](x) = Y&#39;(x) X(x) - X&#39;(x) Y(x)$</span></td><td style="text-align: right"><code>Lie(X, Y)</code> or <code>@Lie [X, Y]</code></td></tr><tr><td style="text-align: right">Partial time derivative</td><td style="text-align: right"><span>$\partial_t f(t, x, \ldots)$</span></td><td style="text-align: right"><code>∂ₜ(f)</code></td></tr></table><h2 id="See-also"><a class="docs-heading-anchor" href="#See-also">See also</a><a id="See-also-1"></a><a class="docs-heading-anchor-permalink" href="#See-also" title="Permalink"></a></h2><ul><li><a href="manual-flow-others.html#manual-flow-others">Compute flows from Hamiltonians and others</a> — Using flows with Hamiltonian vector fields</li><li><a href="example-singular-control.html#example-singular-control">Singular control example</a> — Application to computing singular controls</li><li><a href="https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html">Goddard tutorial</a> — Complex example with bang, singular, and boundary arcs</li></ul><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-plot.html">« Plot a solution</a><a class="docs-footer-nextpage" href="manual-flow-ocp.html">From optimal control problems »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Thursday 2 April 2026 13:26">Thursday 2 April 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-plot.html">« Plot a solution</a><a class="docs-footer-nextpage" href="manual-flow-ocp.html">From optimal control problems »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Thursday 2 April 2026 21:45">Thursday 2 April 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
