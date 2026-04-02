@@ -1,9 +1,13 @@
 # [Differential geometry tools](@id manual-differential-geometry)
 
+```@meta
+Draft = false
+```
+
 Optimal control theory relies on differential geometry tools to analyze Hamiltonian systems, compute singular controls, study controllability, and more. This page introduces the main operators available in OptimalControl.jl: Hamiltonian lift, Lie derivatives, Poisson brackets, Lie brackets, and partial time derivatives.
 
 !!! note "Type qualification"
-    
+
     Types like `Hamiltonian`, `HamiltonianLift`, `VectorField`, and `HamiltonianVectorField` are **not exported** by OptimalControl.jl. You must qualify them with `OptimalControl.` when using them (e.g., `OptimalControl.VectorField`). Functions and operators (`Lift`, `⋅`, `Lie`, `Poisson`, `@Lie`, `∂ₜ`) are exported and can be used directly.
 
 First, import the package:
@@ -43,7 +47,8 @@ The result is $H(x, p) = p_1 x_2 + p_2 (-x_1) = 3 \times 2 + 4 \times (-1) = 2$.
 
 You can also use the `OptimalControl.VectorField` type, which allows more control over the function's properties:
 
-```@example main
+```@example main-1
+using OptimalControl # hide
 # Wrap in VectorField (autonomous, non-variable by default)
 X_vf = OptimalControl.VectorField(x -> [x[2], -x[1]])
 H_vf = Lift(X_vf)
@@ -56,7 +61,8 @@ H_vf([1.0, 2.0], [3.0, 4.0])
 
 For time-dependent vector fields, use `autonomous=false`:
 
-```@example main
+```@example main-2
+using OptimalControl # hide
 # Non-autonomous vector field: X(t, x) = [t*x[2], -x[1]]
 X_na(t, x) = [t * x[2], -x[1]]
 H_na = Lift(X_na; autonomous=false)
@@ -69,7 +75,8 @@ H_na(2.0, [1.0, 2.0], [3.0, 4.0])
 
 For vector fields depending on an additional parameter $v$, use `variable=true`:
 
-```@example main
+```@example main-3
+using OptimalControl # hide
 # Variable vector field: X(x, v) = [x[2] + v, -x[1]]
 X_var(x, v) = [x[2] + v, -x[1]]
 H_var = Lift(X_var; variable=true)
@@ -88,11 +95,12 @@ The **Lie derivative** of a function $f: \mathbb{R}^n \to \mathbb{R}$ along a ve
 
 This represents the directional derivative of $f$ along $X$.
 
-### From plain Julia functions
+### [From plain Julia functions](@id lie-from-functions)
 
 When using plain Julia functions, they are treated as autonomous and non-variable:
 
-```@example main
+```@example main-4
+using OptimalControl # hide
 # Vector field and scalar function
 φ(x) = [x[2], -x[1]]
 f(x) = x[1]^2 + x[2]^2
@@ -112,9 +120,10 @@ For the harmonic oscillator with $X(x) = (x_2, -x_1)$ and energy $f(x) = x_1^2 +
 
 which confirms that energy is conserved along trajectories.
 
-### From VectorField type
+### [From VectorField type](@id lie-from-vectorfield)
 
-```@example main
+```@example main-5
+using OptimalControl # hide
 # Using VectorField type
 X = OptimalControl.VectorField(x -> [x[2], -x[1]])
 g(x) = x[1]^2 + x[2]^2
@@ -128,7 +137,7 @@ Xg([1.0, 2.0])
 
 The `Lie` function is equivalent to the `⋅` operator:
 
-```@example main
+```@example main-5
 # These are equivalent
 result1 = X ⋅ g
 result2 = Lie(X, g)
@@ -140,7 +149,8 @@ result1([1.0, 2.0]) == result2([1.0, 2.0])
 
 For non-autonomous or variable cases, use the `Lie` function with keyword arguments:
 
-```@example main
+```@example main-6
+using OptimalControl # hide
 # Non-autonomous case
 φ_na(t, x) = [t + x[2], -x[1]]
 f_na(t, x) = t + x[1]^2 + x[2]^2
@@ -149,7 +159,8 @@ Xf_na = Lie(φ_na, f_na; autonomous=false)
 Xf_na(1.0, [1.0, 2.0])
 ```
 
-```@example main
+```@example main-7
+using OptimalControl # hide
 # Variable case
 φ_var(x, v) = [x[2] + v, -x[1]]
 f_var(x, v) = x[1]^2 + x[2]^2 + v
@@ -175,9 +186,10 @@ The Poisson bracket satisfies:
 - **Leibniz rule**: $\{fg, h\} = f\{g, h\} + g\{f, h\}$
 - **Jacobi identity**: $\{\{f, g\}, h\} + \{\{h, f\}, g\} + \{\{g, h\}, f\} = 0$
 
-### From plain Julia functions
+### [From plain Julia functions](@id poisson-from-functions)
 
-```@example main
+```@example main-8
+using OptimalControl # hide
 # Define two Hamiltonian functions
 f(x, p) = p[1] * x[2] + p[2] * x[1]
 g(x, p) = x[1]^2 + p[2]^2
@@ -193,7 +205,7 @@ bracket(x, p)
 
 ### Verify antisymmetry
 
-```@example main
+```@example main-8
 bracket_fg = Poisson(f, g)
 bracket_gf = Poisson(g, f)
 
@@ -204,7 +216,7 @@ println("Sum = ", bracket_fg(x, p) + bracket_gf(x, p))
 
 ### From Hamiltonian type
 
-```@example main
+```@example main-8
 # Wrap in Hamiltonian type
 F = OptimalControl.Hamiltonian(f)
 G = OptimalControl.Hamiltonian(g)
@@ -213,9 +225,10 @@ bracket_HH = Poisson(F, G)
 bracket_HH(x, p)
 ```
 
-### With keyword arguments
+### [With keyword arguments](@id poisson-kwargs)
 
-```@example main
+```@example main-9
+using OptimalControl # hide
 # Non-autonomous case
 f_na(t, x, p) = t + p[1] * x[2] + p[2] * x[1]
 g_na(t, x, p) = t^2 + x[1]^2 + p[2]^2
@@ -238,7 +251,8 @@ This means the Poisson bracket of $H$ and $G$ equals the Lie derivative of $G$ a
 
 When computing the Poisson bracket of two Hamiltonian lifts, the result is the Hamiltonian lift of the Lie bracket of the underlying vector fields:
 
-```@example main
+```@example main-10
+using OptimalControl # hide
 # Two vector fields
 X(x) = [x[1]^2, x[2]^2]
 Y(x) = [x[2], -x[1]]
@@ -264,9 +278,10 @@ For two vector fields $X, Y: \mathbb{R}^n \to \mathbb{R}^n$, the **Lie bracket**
 
 where $X'(x)$ denotes the Jacobian matrix of $X$ at $x$.
 
-### From VectorField type
+### [From VectorField type](@id bracket-from-vectorfield)
 
-```@example main
+```@example main-11
+using OptimalControl # hide
 # Define two vector fields
 X = OptimalControl.VectorField(x -> [x[2], -x[1]])
 Y = OptimalControl.VectorField(x -> [x[1], x[2]])
@@ -288,7 +303,7 @@ If $H_X = \text{Lift}(X)$ and $H_Y = \text{Lift}(Y)$ are the Hamiltonian lifts, 
 
 Let's verify this numerically:
 
-```@example main
+```@example main-11
 # Hamiltonian lifts
 HX = Lift(x -> X(x))
 HY = Lift(x -> Y(x))
@@ -313,7 +328,8 @@ The `@Lie` macro provides a convenient syntax for computing Lie brackets (for ve
 
 ### Lie brackets with VectorField
 
-```@example main
+```@example main-12
+using OptimalControl # hide
 # Define vector fields
 F1 = OptimalControl.VectorField(x -> [0, -x[3], x[2]])
 F2 = OptimalControl.VectorField(x -> [x[3], 0, -x[1]])
@@ -327,7 +343,7 @@ L([1.0, 2.0, 3.0])
 
 ### Nested Lie brackets
 
-```@example main
+```@example main-12
 F3 = OptimalControl.VectorField(x -> [x[1], x[2], x[3]])
 nested = @Lie [[F1, F2], F3]
 nested([1.0, 2.0, 3.0])
@@ -337,7 +353,8 @@ nested([1.0, 2.0, 3.0])
 
 For Hamiltonian functions (plain Julia functions), use curly braces `{_, _}`:
 
-```@example main
+```@example main-13
+using OptimalControl # hide
 # Define Hamiltonian functions
 H0(x, p) = p[1] * x[2] + p[2] * (-x[1])
 H1(x, p) = p[2]
@@ -353,7 +370,7 @@ H01([1.0, 2.0], [3.0, 4.0])
 
 The macro is particularly useful for computing iterated brackets, which appear in singular control analysis:
 
-```@example main
+```@example main-13
 # First-order bracket
 H01 = @Lie {H0, H1}
 
@@ -378,11 +395,12 @@ u_s = -\frac{H_{001}}{H_{101}},
 
 provided $H_{101} \neq 0$. See the [singular control example](@ref example-singular-control) for a complete application.
 
-### With keyword arguments
+### [With keyword arguments](@id macro-kwargs)
 
 For non-autonomous functions, specify `autonomous=false`:
 
-```@example main
+```@example main-14
+using OptimalControl # hide
 # Non-autonomous Hamiltonians
 H0_na(t, x, p) = t + p[1] * x[2] + p[2] * (-x[1])
 H1_na(t, x, p) = p[2]
@@ -396,7 +414,8 @@ H01_na(1.0, [1.0, 2.0], [3.0, 4.0])
 
 ### Poisson brackets from Hamiltonian type
 
-```@example main
+```@example main-15
+using OptimalControl # hide
 # Using Hamiltonian type
 H1_ham = OptimalControl.Hamiltonian((x, p) -> x[1]^2 + p[2]^2)
 H2_ham = OptimalControl.Hamiltonian((x, p) -> x[2]^2 + p[1]^2)
@@ -416,7 +435,8 @@ For non-autonomous functions $f(t, x, \ldots)$, the **partial derivative with re
 
 ### Basic usage
 
-```@example main
+```@example main-16
+using OptimalControl # hide
 # Define a time-dependent function
 f(t, x) = t * x
 
@@ -427,13 +447,14 @@ df = ∂ₜ(f)
 df(0, 8)
 ```
 
-```@example main
+```@example main-16
 df(2, 3)
 ```
 
 ### More complex example
 
-```@example main
+```@example main-17
+using OptimalControl # hide
 # Function with multiple arguments
 g(t, x, p) = t^2 + x[1] * p[1] + x[2] * p[2]
 
@@ -453,6 +474,7 @@ For a non-autonomous Hamiltonian $H(t, x, p)$ and a function $G(t, x, p)$, the *
 ```
 
 This is the sum of:
+
 - The **partial time derivative** $\partial_t G$ (explicit time dependence)
 - The **Poisson bracket** $\{H, G\}$ (evolution along the flow)
 
@@ -461,7 +483,7 @@ This relation is fundamental in non-autonomous optimal control theory.
 ## Summary
 
 | Function/Operator | Mathematical notation | Julia syntax |
-|-------------------|----------------------|--------------|
+| ----------------- | --------------------- | ------------ |
 | Hamiltonian lift | $H_X(x,p) = \langle p, X(x) \rangle$ | `H = Lift(X)` |
 | Lie derivative | $(X \cdot f)(x) = f'(x) \cdot X(x)$ | `X ⋅ f` or `Lie(X, f)` |
 | Poisson bracket | $\{f,g\}(x,p) = \langle \nabla_p f, \nabla_x g \rangle - \langle \nabla_x f, \nabla_p g \rangle$ | `Poisson(f, g)` or `@Lie {f, g}` |
