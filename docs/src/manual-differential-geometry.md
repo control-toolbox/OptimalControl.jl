@@ -393,7 +393,7 @@ The `@Lie` macro provides a convenient syntax for computing Lie brackets (for ve
   - Plain Julia functions (automatically wrapped as `Hamiltonian`)
   - `Hamiltonian` objects
 
-When using **only plain functions** (no VectorField objects), specify `autonomous` and `variable` keywords as needed to match your function signature. If you mix plain functions with VectorField objects, the keywords are inferred from the VectorField objects.
+When using **only plain functions** (no `VectorField` or `Hamiltonian` objects), specify `autonomous` and/or `variable` keywords as needed to match your function signature. Keywords are optional - if not specified, they use the default values (`autonomous=true`, `variable=false`). If you mix plain functions with `VectorField` or `Hamiltonian` objects, the keywords are inferred from the `VectorField` or `Hamiltonian` objects.
 
 ### Lie brackets with VectorField
 
