@@ -33,12 +33,12 @@ The simplest way to compute a Hamiltonian lift is from a plain Julia function. B
 X(x) = [x[2], -x[1]]
 
 # Compute its Hamiltonian lift
-HX = Lift(X)
+H = Lift(X)
 
 # Evaluate at a point (x, p)
 x = [1, 2]
 p = [3, 4]
-HX(x, p)
+H(x, p)
 ```
 
 The result is $H(x, p) = p_1 x_2 + p_2 (-x_1) = 3 \times 2 + 4 \times (-1) = 2$.
@@ -51,10 +51,10 @@ You can also use the `OptimalControl.VectorField` type, which allows more contro
 using OptimalControl # hide
 # Wrap in VectorField (autonomous, non-variable by default)
 X = OptimalControl.VectorField(x -> [x[2], -x[1]])
-HX = Lift(X)
+H = Lift(X)
 
 # This returns a HamiltonianLift object
-HX([1, 2], [3, 4])
+H([1, 2], [3, 4])
 ```
 
 ### Non-autonomous case
@@ -65,10 +65,10 @@ For time-dependent vector fields, use `autonomous=false`:
 using OptimalControl # hide
 # Non-autonomous vector field: X(t, x) = [t*x[2], -x[1]]
 X(t, x) = [t * x[2], -x[1]]
-HX = Lift(X; autonomous=false)
+H = Lift(X; autonomous=false)
 
 # Signature is now H(t, x, p)
-HX(2, [1, 2], [3, 4])
+H(2, [1, 2], [3, 4])
 ```
 
 ### Variable case
@@ -79,10 +79,10 @@ For vector fields depending on an additional parameter $v$, use `variable=true`:
 using OptimalControl # hide
 # Variable vector field: X(x, v) = [x[2] + v, -x[1]]
 X(x, v) = [x[2] + v, -x[1]]
-HX = Lift(X; variable=true)
+H = Lift(X; variable=true)
 
 # Signature is now H(x, p, v)
-HX([1, 2], [3, 4], 1)
+H([1, 2], [3, 4], 1)
 ```
 
 ## Lie derivative
@@ -393,7 +393,7 @@ The `@Lie` macro provides a convenient syntax for computing Lie brackets (for ve
   - Plain Julia functions (automatically wrapped as `Hamiltonian`)
   - `Hamiltonian` objects
 
-When using plain functions, specify `autonomous` and `variable` keywords as needed to match your function signature.
+When using **only plain functions** (no VectorField objects), specify `autonomous` and `variable` keywords as needed to match your function signature. If you mix plain functions with VectorField objects, the keywords are inferred from the VectorField objects.
 
 ### Lie brackets with VectorField
 
