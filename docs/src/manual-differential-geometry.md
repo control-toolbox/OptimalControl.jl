@@ -263,6 +263,38 @@ Hfg = Poisson(f, g; autonomous=false)
 Hfg(1, [1, 2], [3, 4])
 ```
 
+### With Hamiltonian type and keywords
+
+You can also create Hamiltonian objects explicitly with keywords, then use them without keywords in the Poisson function. **Important**: both Hamiltonians must have the same time and variable dependencies:
+
+```@example main-10
+using OptimalControl # hide
+# Non-autonomous Hamiltonians created with keywords
+f_na(t, x, p) = t + p[1] * x[2] + p[2] * x[1]
+g_na(t, x, p) = t^2 + x[1]^2 + p[2]^2
+
+F = OptimalControl.Hamiltonian(f_na; autonomous=false)
+G = OptimalControl.Hamiltonian(g_na; autonomous=false)
+
+# No keywords needed here - both Hamiltonians are already non-autonomous
+Hfg = Poisson(F, G)
+Hfg(1, [1, 2], [3, 4])
+```
+
+```@example main-11
+using OptimalControl # hide
+# Variable Hamiltonians created with keywords
+f_var(x, p, v) = x[1]^2 + p[2]^2 + v
+g_var(x, p, v) = x[2]^2 + p[1]^2 + 2*v
+
+F = OptimalControl.Hamiltonian(f_var; variable=true)
+G = OptimalControl.Hamiltonian(g_var; variable=true)
+
+# Both are variable, so the Poisson bracket is also variable
+Hfg = Poisson(F, G)
+Hfg([1, 2], [3, 4], 1)
+```
+
 ### Relation to Hamiltonian vector fields
 
 The Poisson bracket is closely related to the Lie derivative. If $\vec{H} = (\nabla_p H, -\nabla_x H)$ denotes the Hamiltonian vector field associated to $H$, then
