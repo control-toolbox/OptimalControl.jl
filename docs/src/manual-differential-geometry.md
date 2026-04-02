@@ -33,12 +33,12 @@ The simplest way to compute a Hamiltonian lift is from a plain Julia function. B
 X(x) = [x[2], -x[1]]
 
 # Compute its Hamiltonian lift
-H = Lift(X)
+HX = Lift(X)
 
 # Evaluate at a point (x, p)
-x = [1.0, 2.0]
-p = [3.0, 4.0]
-H(x, p)
+x = [1, 2]
+p = [3, 4]
+HX(x, p)
 ```
 
 The result is $H(x, p) = p_1 x_2 + p_2 (-x_1) = 3 \times 2 + 4 \times (-1) = 2$.
@@ -50,11 +50,11 @@ You can also use the `OptimalControl.VectorField` type, which allows more contro
 ```@example main-1
 using OptimalControl # hide
 # Wrap in VectorField (autonomous, non-variable by default)
-X_vf = OptimalControl.VectorField(x -> [x[2], -x[1]])
-H_vf = Lift(X_vf)
+X = OptimalControl.VectorField(x -> [x[2], -x[1]])
+HX = Lift(X)
 
 # This returns a HamiltonianLift object
-H_vf([1.0, 2.0], [3.0, 4.0])
+HX([1, 2], [3, 4])
 ```
 
 ### Non-autonomous case
@@ -64,11 +64,11 @@ For time-dependent vector fields, use `autonomous=false`:
 ```@example main-2
 using OptimalControl # hide
 # Non-autonomous vector field: X(t, x) = [t*x[2], -x[1]]
-X_na(t, x) = [t * x[2], -x[1]]
-H_na = Lift(X_na; autonomous=false)
+X(t, x) = [t * x[2], -x[1]]
+HX = Lift(X; autonomous=false)
 
 # Signature is now H(t, x, p)
-H_na(2.0, [1.0, 2.0], [3.0, 4.0])
+HX(2, [1, 2], [3, 4])
 ```
 
 ### Variable case
@@ -78,11 +78,11 @@ For vector fields depending on an additional parameter $v$, use `variable=true`:
 ```@example main-3
 using OptimalControl # hide
 # Variable vector field: X(x, v) = [x[2] + v, -x[1]]
-X_var(x, v) = [x[2] + v, -x[1]]
-H_var = Lift(X_var; variable=true)
+X(x, v) = [x[2] + v, -x[1]]
+HX = Lift(X; variable=true)
 
 # Signature is now H(x, p, v)
-H_var([1.0, 2.0], [3.0, 4.0], 1.0)
+HX([1, 2], [3, 4], 1)
 ```
 
 ## Lie derivative
@@ -102,14 +102,14 @@ When using plain Julia functions, they are treated as autonomous and non-variabl
 ```@example main-4
 using OptimalControl # hide
 # Vector field and scalar function
-φ(x) = [x[2], -x[1]]
+X(x) = [x[2], -x[1]]
 f(x) = x[1]^2 + x[2]^2
 
 # Lie derivative (using dot operator)
-Xf = φ ⋅ f
+Xf = X ⋅ f
 
 # Evaluate at a point
-Xf([1.0, 2.0])
+Xf([1, 2])
 ```
 
 For the harmonic oscillator with $X(x) = (x_2, -x_1)$ and energy $f(x) = x_1^2 + x_2^2$:
@@ -130,7 +130,7 @@ g(x) = x[1]^2 + x[2]^2
 
 # Lie derivative
 Xg = X ⋅ g
-Xg([1.0, 2.0])
+Xg([1, 2])
 ```
 
 ### Alternative syntax
@@ -139,10 +139,10 @@ The `Lie` function is equivalent to the `⋅` operator:
 
 ```@example main-5
 # These are equivalent
-result1 = X ⋅ g
-result2 = Lie(X, g)
+Xg1 = X ⋅ g
+Xg2 = Lie(X, g)
 
-result1([1.0, 2.0]) == result2([1.0, 2.0])
+Xg1([1, 2]) == Xg2([1, 2])
 ```
 
 ### With keyword arguments
@@ -152,21 +152,47 @@ For non-autonomous or variable cases, use the `Lie` function with keyword argume
 ```@example main-6
 using OptimalControl # hide
 # Non-autonomous case
-φ_na(t, x) = [t + x[2], -x[1]]
-f_na(t, x) = t + x[1]^2 + x[2]^2
+X(t, x) = [t + x[2], -x[1]]
+f(t, x) = t + x[1]^2 + x[2]^2
 
-Xf_na = Lie(φ_na, f_na; autonomous=false)
-Xf_na(1.0, [1.0, 2.0])
+Xf = Lie(X, f; autonomous=false)
+Xf(1, [1, 2])
 ```
 
 ```@example main-7
 using OptimalControl # hide
 # Variable case
-φ_var(x, v) = [x[2] + v, -x[1]]
-f_var(x, v) = x[1]^2 + x[2]^2 + v
+X(x, v) = [x[2] + v, -x[1]]
+f(x, v) = x[1]^2 + x[2]^2 + v
 
-Xf_var = Lie(φ_var, f_var; variable=true)
-Xf_var([1.0, 2.0], 1.0)
+Xf = Lie(X, f; variable=true)
+Xf([1, 2], 1)
+```
+
+### With VectorField type
+
+You can also create the VectorField explicitly with the keywords, then use it without keywords in the Lie function:
+
+```@example main-8
+using OptimalControl # hide
+# Non-autonomous VectorField created with keywords
+X = OptimalControl.VectorField((t, x) -> [t + x[2], -x[1]]; autonomous=false)
+f(t, x) = t + x[1]^2 + x[2]^2
+
+# No keywords needed here - the VectorField already knows its properties
+Xf = Lie(X, f)
+Xf(1, [1, 2])
+```
+
+```@example main-9
+using OptimalControl # hide
+# Variable VectorField created with keywords
+X = OptimalControl.VectorField((x, v) -> [x[2] + v, -x[1]]; variable=true)
+f(x, v) = x[1]^2 + x[2]^2 + v
+
+# No keywords needed here
+Xf = Lie(X, f)
+Xf([1, 2], 1)
 ```
 
 ## Poisson bracket
@@ -195,23 +221,23 @@ f(x, p) = p[1] * x[2] + p[2] * x[1]
 g(x, p) = x[1]^2 + p[2]^2
 
 # Compute the Poisson bracket
-bracket = Poisson(f, g)
+Hfg = Poisson(f, g)
 
 # Evaluate at a point
-x = [1.0, 2.0]
-p = [3.0, 4.0]
-bracket(x, p)
+x = [1, 2]
+p = [3, 4]
+Hfg(x, p)
 ```
 
 ### Verify antisymmetry
 
 ```@example main-8
-bracket_fg = Poisson(f, g)
-bracket_gf = Poisson(g, f)
+Hfg = Poisson(f, g)
+Hgf = Poisson(g, f)
 
-println("Poisson(f, g) = ", bracket_fg(x, p))
-println("Poisson(g, f) = ", bracket_gf(x, p))
-println("Sum = ", bracket_fg(x, p) + bracket_gf(x, p))
+println("Poisson(f, g) = ", Hfg(x, p))
+println("Poisson(g, f) = ", Hgf(x, p))
+println("Sum = ", Hfg(x, p) + Hgf(x, p))
 ```
 
 ### From Hamiltonian type
@@ -221,8 +247,8 @@ println("Sum = ", bracket_fg(x, p) + bracket_gf(x, p))
 F = OptimalControl.Hamiltonian(f)
 G = OptimalControl.Hamiltonian(g)
 
-bracket_HH = Poisson(F, G)
-bracket_HH(x, p)
+Hfg = Poisson(F, G)
+Hfg(x, p)
 ```
 
 ### [With keyword arguments](@id poisson-kwargs)
@@ -230,11 +256,11 @@ bracket_HH(x, p)
 ```@example main-9
 using OptimalControl # hide
 # Non-autonomous case
-f_na(t, x, p) = t + p[1] * x[2] + p[2] * x[1]
-g_na(t, x, p) = t^2 + x[1]^2 + p[2]^2
+f(t, x, p) = t + p[1] * x[2] + p[2] * x[1]
+g(t, x, p) = t^2 + x[1]^2 + p[2]^2
 
-bracket_na = Poisson(f_na, g_na; autonomous=false)
-bracket_na(1.0, [1.0, 2.0], [3.0, 4.0])
+Hfg = Poisson(f, g; autonomous=false)
+Hfg(1, [1, 2], [3, 4])
 ```
 
 ### Relation to Hamiltonian vector fields
@@ -262,8 +288,8 @@ HX = Lift(X)
 HY = Lift(Y)
 
 # Poisson bracket of lifts
-bracket_lifts = Poisson(HX, HY)
-bracket_lifts([1.0, 2.0], [3.0, 4.0])
+HXY = Poisson(HX, HY)
+HXY([1, 2], [3, 4])
 ```
 
 This satisfies: $\{H_X, H_Y\} = H_{[X,Y]}$ where $[X,Y]$ is the Lie bracket of vector fields (see next section).
@@ -290,7 +316,7 @@ Y = OptimalControl.VectorField(x -> [x[1], x[2]])
 Z = Lie(X, Y)
 
 # Evaluate at a point
-Z([1.0, 2.0])
+Z([1, 2])
 ```
 
 ### Relation to Poisson brackets
@@ -309,16 +335,16 @@ HX = Lift(x -> X(x))
 HY = Lift(x -> Y(x))
 
 # Poisson bracket of the lifts
-bracket_XY = Poisson(HX, HY)
+HXY = Poisson(HX, HY)
 
 # Lift of the Lie bracket
 HZ = Lift(x -> Z(x))
 
 # Compare at a point
-x = [1.0, 2.0]
-p = [3.0, 4.0]
+x = [1, 2]
+p = [3, 4]
 
-println("Poisson bracket: ", bracket_XY(x, p))
+println("Poisson bracket: ", HXY(x, p))
 println("Lift of Lie bracket: ", HZ(x, p))
 ```
 
@@ -335,18 +361,18 @@ F1 = OptimalControl.VectorField(x -> [0, -x[3], x[2]])
 F2 = OptimalControl.VectorField(x -> [x[3], 0, -x[1]])
 
 # Compute Lie bracket using macro
-L = @Lie [F1, F2]
+F12 = @Lie [F1, F2]
 
 # Evaluate
-L([1.0, 2.0, 3.0])
+F12([1, 2, 3])
 ```
 
 ### Nested Lie brackets
 
 ```@example main-12
 F3 = OptimalControl.VectorField(x -> [x[1], x[2], x[3]])
-nested = @Lie [[F1, F2], F3]
-nested([1.0, 2.0, 3.0])
+F123 = @Lie [[F1, F2], F3]
+F123([1, 2, 3])
 ```
 
 ### Poisson brackets from plain functions
@@ -363,7 +389,7 @@ H1(x, p) = p[2]
 H01 = @Lie {H0, H1}
 
 # Evaluate
-H01([1.0, 2.0], [3.0, 4.0])
+H01([1, 2], [3, 4])
 ```
 
 ### Iterated Poisson brackets
@@ -379,8 +405,8 @@ H001 = @Lie {H0, H01}
 H101 = @Lie {H1, H01}
 
 # Evaluate
-x = [1.0, 2.0]
-p = [3.0, 4.0]
+x = [1, 2]
+p = [3, 4]
 
 println("H01(x, p) = ", H01(x, p))
 println("H001(x, p) = ", H001(x, p))
@@ -402,14 +428,14 @@ For non-autonomous functions, specify `autonomous=false`:
 ```@example main-14
 using OptimalControl # hide
 # Non-autonomous Hamiltonians
-H0_na(t, x, p) = t + p[1] * x[2] + p[2] * (-x[1])
-H1_na(t, x, p) = p[2]
+H0(t, x, p) = t + p[1] * x[2] + p[2] * (-x[1])
+H1(t, x, p) = p[2]
 
 # Poisson bracket with keyword
-H01_na = @Lie {H0_na, H1_na} autonomous=false
+H01 = @Lie {H0, H1} autonomous=false
 
 # Evaluate
-H01_na(1.0, [1.0, 2.0], [3.0, 4.0])
+H01(1, [1, 2], [3, 4])
 ```
 
 ### Poisson brackets from Hamiltonian type
@@ -417,12 +443,12 @@ H01_na(1.0, [1.0, 2.0], [3.0, 4.0])
 ```@example main-15
 using OptimalControl # hide
 # Using Hamiltonian type
-H1_ham = OptimalControl.Hamiltonian((x, p) -> x[1]^2 + p[2]^2)
-H2_ham = OptimalControl.Hamiltonian((x, p) -> x[2]^2 + p[1]^2)
+H1 = OptimalControl.Hamiltonian((x, p) -> x[1]^2 + p[2]^2)
+H2 = OptimalControl.Hamiltonian((x, p) -> x[2]^2 + p[1]^2)
 
 # Macro works with Hamiltonian objects too
-P = @Lie {H1_ham, H2_ham}
-P([1.0, 1.0], [3.0, 2.0])
+H12 = @Lie {H1, H2}
+H12([1, 1], [3, 2])
 ```
 
 ## Partial time derivative
@@ -462,7 +488,7 @@ g(t, x, p) = t^2 + x[1] * p[1] + x[2] * p[2]
 dg = ∂ₜ(g)
 
 # At t=3, ∂g/∂t = 2t = 6
-dg(3, [1.0, 2.0], [4.0, 5.0])
+dg(3, [1, 2], [4, 5])
 ```
 
 ### Relation to total time derivative
