@@ -1,9 +1,5 @@
 # [Differential geometry tools](@id manual-differential-geometry)
 
-```@meta
-Draft = false
-```
-
 Optimal control theory relies on differential geometry tools to analyze Hamiltonian systems, compute singular controls, study controllability, and more. This page introduces the main operators available in OptimalControl.jl: Hamiltonian lift, Lie derivatives, Poisson brackets, Lie brackets, and partial time derivatives.
 
 !!! note "Type qualification"
@@ -221,12 +217,12 @@ f(x, p) = p[1] * x[2] + p[2] * x[1]
 g(x, p) = x[1]^2 + p[2]^2
 
 # Compute the Poisson bracket
-Hfg = Poisson(f, g)
+H = Poisson(f, g)
 
 # Evaluate at a point
 x = [1, 2]
 p = [3, 4]
-Hfg(x, p)
+H(x, p)
 ```
 
 ### Verify antisymmetry
@@ -247,8 +243,8 @@ println("Sum = ", Hfg(x, p) + Hgf(x, p))
 F = OptimalControl.Hamiltonian(f)
 G = OptimalControl.Hamiltonian(g)
 
-Hfg = Poisson(F, G)
-Hfg(x, p)
+H = Poisson(F, G)
+H(x, p)
 ```
 
 ### [With keyword arguments](@id poisson-kwargs)
@@ -259,8 +255,8 @@ using OptimalControl # hide
 f(t, x, p) = t + p[1] * x[2] + p[2] * x[1]
 g(t, x, p) = t^2 + x[1]^2 + p[2]^2
 
-Hfg = Poisson(f, g; autonomous=false)
-Hfg(1, [1, 2], [3, 4])
+H = Poisson(f, g; autonomous=false)
+H(1, [1, 2], [3, 4])
 ```
 
 ### With Hamiltonian type and keywords
@@ -277,8 +273,8 @@ F = OptimalControl.Hamiltonian(f; autonomous=false)
 G = OptimalControl.Hamiltonian(g; autonomous=false)
 
 # No keywords needed here - both Hamiltonians are already non-autonomous
-Hfg = Poisson(F, G)
-Hfg(1, [1, 2], [3, 4])
+H = Poisson(F, G)
+H(1, [1, 2], [3, 4])
 ```
 
 ```@example main-9b
@@ -291,8 +287,8 @@ F = OptimalControl.Hamiltonian(f; variable=true)
 G = OptimalControl.Hamiltonian(g; variable=true)
 
 # Both are variable, so the Poisson bracket is also variable
-Hfg = Poisson(F, G)
-Hfg([1, 2], [3, 4], 1)
+H = Poisson(F, G)
+H([1, 2], [3, 4], 1)
 ```
 
 ### Relation to Hamiltonian vector fields
@@ -320,8 +316,8 @@ HX = Lift(X)
 HY = Lift(Y)
 
 # Poisson bracket of lifts
-HXY = Poisson(HX, HY)
-HXY([1, 2], [3, 4])
+H = Poisson(HX, HY)
+H([1, 2], [3, 4])
 ```
 
 This satisfies: $\{H_X, H_Y\} = H_{[X,Y]}$ where $[X,Y]$ is the Lie bracket of vector fields (see next section).
@@ -386,14 +382,14 @@ The `@Lie` macro provides a convenient syntax for computing Lie brackets (for ve
 
 !!! warning "Important distinction"
 
-- **Square brackets `[...]`** denote **Lie brackets** and work with:
-  - `VectorField` objects
-  - Plain Julia functions (automatically wrapped as `VectorField`)
-- **Curly braces `{...}`** denote **Poisson brackets** and work with:
-  - Plain Julia functions (automatically wrapped as `Hamiltonian`)
-  - `Hamiltonian` objects
+    - **Square brackets `[...]`** denote **Lie brackets** and work with:
+        - `VectorField` objects
+        - Plain Julia functions (automatically wrapped as `VectorField`)
+    - **Curly braces `{...}`** denote **Poisson brackets** and work with:
+        - Plain Julia functions (automatically wrapped as `Hamiltonian`)
+        - `Hamiltonian` objects
 
-When using **only plain functions** (no `VectorField` or `Hamiltonian` objects), specify `autonomous` and/or `variable` keywords as needed to match your function signature. Keywords are optional - if not specified, they use the default values (`autonomous=true`, `variable=false`). If you mix plain functions with `VectorField` or `Hamiltonian` objects, the keywords are inferred from the `VectorField` or `Hamiltonian` objects.
+    When using **only plain functions** (no `VectorField` or `Hamiltonian` objects), specify `autonomous` and/or `variable` keywords as needed to match your function signature. Keywords are optional - if not specified, they use the default values (`autonomous=true`, `variable=false`). If you mix plain functions with `VectorField` or `Hamiltonian` objects, the keywords are inferred from the `VectorField` or `Hamiltonian` objects.
 
 ### Lie brackets with VectorField
 
@@ -467,28 +463,28 @@ Z([1, 2], 1)
 using OptimalControl # hide
 X(x) = [0, -x[3], x[2]]
 Y(x) = [x[3], 0, -x[1]]
-Z_func(x) = [x[1], x[2], x[3]]
+Z(x) = [x[1], x[2], x[3]]
 
 # Nested Lie brackets
-nested = @Lie [[X, Y], Z_func]
+nested = @Lie [[X, Y], Z]
 nested([1, 2, 3])
 ```
 
 !!! tip "Plain functions vs VectorField"
 
-Using plain functions with `@Lie [X, Y]` is convenient for quick computations. However, if you need to reuse the same vector field multiple times or want explicit control over the autonomy/variability, consider creating `VectorField` objects explicitly:
+    Using plain functions with `@Lie [X, Y]` is convenient for quick computations. However, if you need to reuse the same vector field multiple times or want explicit control over the autonomy/variability, consider creating `VectorField` objects explicitly:
 
-```julia
-# Explicit VectorField (keywords at creation)
-X = OptimalControl.VectorField((t, x) -> [t + x[2], -x[1]]; autonomous=false)
-Y = OptimalControl.VectorField((t, x) -> [x[1], t*x[2]]; autonomous=false)
-Z = @Lie [X, Y]  # No keywords needed
+    ```julia
+    # Explicit VectorField (keywords at creation)
+    X = OptimalControl.VectorField((t, x) -> [t + x[2], -x[1]]; autonomous=false)
+    Y = OptimalControl.VectorField((t, x) -> [x[1], t*x[2]]; autonomous=false)
+    Z = @Lie [X, Y]  # No keywords needed
 
-# Plain functions (keywords at macro call)
-X_func(t, x) = [t + x[2], -x[1]]
-Y_func(t, x) = [x[1], t*x[2]]
-Z = @Lie [X_func, Y_func] autonomous=false
-```
+    # Plain functions (keywords at macro call)
+    X(t, x) = [t + x[2], -x[1]]
+    Y(t, x) = [x[1], t*x[2]]
+    Z = @Lie [X, Y] autonomous=false
+    ```
 
 ### Poisson brackets from plain functions
 
