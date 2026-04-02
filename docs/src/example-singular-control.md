@@ -40,8 +40,8 @@ ocp = @def begin
     q = (x, y, θ) ∈ R³, state
     u ∈ R, control
 
-    -1 ≤ u(t) ≤ 1
-    -π/2 ≤ θ(t) ≤ π/2
+    -1 ≤ u(t) ≤ 1                     # Control bounds
+    -π/2 ≤ θ(t) ≤ π/2                 # State bounds (helps direct method convergence)
 
     x(0) == 0
     y(0) == 0
@@ -77,21 +77,21 @@ Let's plot the solution:
 
 ```@example main
 opt = (state_bounds_style=:none, control_bounds_style=:none)
-plt = plot(direct_sol; opt..., size=(800, 800))
+plt = plot(direct_sol; label="direct", size=(800, 800), opt...)
 ```
 
 ## Singular control by hand
 
-The pseudo-Hamiltonian for this time-optimal problem is (with $p^0 = -1$):
+The pseudo-Hamiltonian for this time-optimal problem is:
 
 ```math
-H(q, p, u) = p_1 \cos\theta + p_2(\sin\theta + x) + p_3 u - 1.
+H(q, p, u) = p_1 \cos\theta + p_2(\sin\theta + x) + p_3 u.
 ```
 
 This is control-affine: $H = H_0 + u H_1$ with:
 
 ```math
-H_0(q, p) = p_1 \cos\theta + p_2(\sin\theta + x) - 1, \quad H_1(q, p) = p_3.
+H_0(q, p) = p_1 \cos\theta + p_2(\sin\theta + x), \quad H_1(q, p) = p_3.
 ```
 
 The switching function is $H_1 = p_3$. On a singular arc, we have $H_1 = 0$ and all its time derivatives must vanish.
@@ -110,16 +110,16 @@ H_{01} = \frac{\partial H_0}{\partial p_1} \frac{\partial H_1}{\partial x} - \fr
        + \frac{\partial H_0}{\partial p_3} \frac{\partial H_1}{\partial \theta} - \frac{\partial H_0}{\partial \theta} \frac{\partial H_1}{\partial p_3}.
 ```
 
-Since $H_1 = p_3$ depends only on $p_3$, most terms vanish:
+Since $H_1 = p_3$ depends only on $p_3$, the only non-zero contribution comes from the $(\theta, p_3)$ pair:
 
 ```math
-H_{01} = -\frac{\partial H_0}{\partial \theta} = -(-p_1 \sin\theta + p_2 \cos\theta) = p_1 \sin\theta - p_2 \cos\theta.
+H_{01} = \frac{\partial H_0}{\partial \theta} \frac{\partial H_1}{\partial p_3} - \frac{\partial H_0}{\partial p_3} \frac{\partial H_1}{\partial \theta} = (-p_1 \sin\theta + p_2 \cos\theta) \cdot 1 - 0 = -p_1 \sin\theta + p_2 \cos\theta.
 ```
 
 On the singular arc, $H_{01} = 0$, which gives the constraint:
 
 ```math
-p_1 \sin\theta = p_2 \cos\theta.
+p_2 \cos\theta = p_1 \sin\theta.
 ```
 
 **Second derivative:**
@@ -131,27 +131,23 @@ p_1 \sin\theta = p_2 \cos\theta.
 For the arc to remain singular, $\dot{H}_{01} = 0$, which gives:
 
 ```math
-u_s = -\frac{H_{001}}{H_{101}}.
+u_s = -\frac{H_{001}}{H_{101}},
 ```
 
-Computing $H_{001}$:
+whenever $H_{101} \neq 0$. Computing $H_{001} = \{H_0, H_{01}\}$ with $H_{01} = -p_1 \sin\theta + p_2 \cos\theta$:
+
+The only non-zero contribution comes from the $(x, p_1)$ pair:
 
 ```math
-H_{001} = \frac{\partial H_0}{\partial p_2} \frac{\partial H_{01}}{\partial \theta} - \frac{\partial H_0}{\partial \theta} \frac{\partial H_{01}}{\partial p_2}
-        = (\sin\theta + x)(p_1 \cos\theta + p_2 \sin\theta) - (-p_1 \sin\theta + p_2 \cos\theta)(-\cos\theta)
-        = (\sin\theta + x)(p_1 \cos\theta + p_2 \sin\theta) - p_1 \sin\theta \cos\theta + p_2 \cos^2\theta.
+H_{001} = \frac{\partial H_0}{\partial x} \frac{\partial H_{01}}{\partial p_1} - \frac{\partial H_0}{\partial p_1} \frac{\partial H_{01}}{\partial x} = p_2 \cdot (-\sin\theta) - \cos\theta \cdot 0 = -p_2 \sin\theta.
 ```
 
-Since we're on the singular arc where $x$ is part of the state trajectory, we simplify by focusing on the terms involving $p$ and $\theta$. After calculation:
+Computing $H_{101} = \{H_1, H_{01}\}$ with $H_1 = p_3$ and $H_{01} = -p_1 \sin\theta + p_2 \cos\theta$:
+
+The only non-zero contribution comes from the $(\theta, p_3)$ pair:
 
 ```math
-H_{001} = -p_2 \sin\theta.
-```
-
-Computing $H_{101}$:
-
-```math
-H_{101} = \frac{\partial H_1}{\partial p_3} \frac{\partial H_{01}}{\partial \theta} = 1 \cdot (p_1 \cos\theta + p_2 \sin\theta) = p_1 \cos\theta + p_2 \sin\theta.
+H_{101} = \frac{\partial H_1}{\partial \theta} \frac{\partial H_{01}}{\partial p_3} - \frac{\partial H_1}{\partial p_3} \frac{\partial H_{01}}{\partial \theta} = 0 - 1 \cdot (-p_1 \cos\theta - p_2 \sin\theta) = p_1 \cos\theta + p_2 \sin\theta.
 ```
 
 Therefore:
@@ -160,24 +156,29 @@ Therefore:
 u_s = -\frac{H_{001}}{H_{101}} = \frac{p_2 \sin\theta}{p_1 \cos\theta + p_2 \sin\theta}.
 ```
 
+!!! note "Non-degeneracy condition"
+
+    We can show that $H_{101} \neq 0$ on the singular arc. From the constraint $p_1 \sin\theta = p_2 \cos\theta$, if we had $H_{101} = p_1 \cos\theta + p_2 \sin\theta = 0$, then:
+
+    ```math
+    \begin{pmatrix} \cos\theta & \sin\theta \\ -\sin\theta & \cos\theta \end{pmatrix}
+    \begin{pmatrix} p_1 \\ p_2 \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix}.
+    ```
+
+    Since this matrix has determinant 1 (hence is invertible), we would have $p_1 = p_2 = 0$. Combined with $p_3 = 0$ (from $H_1 = 0$), this gives $p = 0$, which is impossible for a time-minimization problem.
+
 **Simplification using the constraint:**
 
-From $p_1 \sin\theta = p_2 \cos\theta$, multiply both sides by $\sin\theta$:
+Multiply numerator and denominator by $\sin\theta$:
 
 ```math
-p_1 \sin^2\theta = p_2 \sin\theta \cos\theta.
+u_s = \frac{p_2 \sin^2\theta}{p_1 \cos\theta \sin\theta + p_2 \sin^2\theta}.
 ```
 
-Substituting into the numerator of $u_s$:
+From the constraint $p_1 \sin\theta = p_2 \cos\theta$, we have $p_1 \cos\theta \sin\theta = p_2 \cos^2\theta$. Substituting in the denominator:
 
 ```math
-u_s = \frac{p_1 \sin^2\theta}{p_1 \cos\theta \sin\theta + p_1 \sin^2\theta} = \frac{p_1 \sin^2\theta}{p_1(\cos\theta \sin\theta + \sin^2\theta)} = \frac{\sin^2\theta}{\sin\theta(\cos\theta + \sin\theta)} = \sin^2\theta.
-```
-
-Wait, let me recalculate more carefully. From the constraint $p_1 \sin\theta = p_2 \cos\theta$, we have $p_2 = p_1 \tan\theta$. Substituting:
-
-```math
-u_s = \frac{p_1 \tan\theta \sin\theta}{p_1 \cos\theta + p_1 \tan\theta \sin\theta} = \frac{p_1 \frac{\sin^2\theta}{\cos\theta}}{p_1(\cos\theta + \frac{\sin^2\theta}{\cos\theta})} = \frac{\sin^2\theta}{\cos^2\theta + \sin^2\theta} = \sin^2\theta.
+u_s = \frac{p_2 \sin^2\theta}{p_2 \cos^2\theta + p_2 \sin^2\theta} = \frac{p_2 \sin^2\theta}{p_2(\cos^2\theta + \sin^2\theta)} = \sin^2\theta.
 ```
 
 So the singular control is:
@@ -192,7 +193,8 @@ Let's overlay this on the numerical solution:
 T = time_grid(direct_sol, :control)
 θ(t) = state(direct_sol)(t)[3]
 us(t) = sin(θ(t))^2
-plot!(plt, T, us; line=:dash, lw=2, subplot=7, label="us (hand)")
+plot!(plt, T, us; subplot=7, line=:dash, lw=2, label="us (hand)")
+plot(plt[7]; size=(800, 400))
 ```
 
 ## Singular control via Poisson brackets
@@ -237,7 +239,8 @@ Let's verify this gives the same result:
 q(t) = state(direct_sol)(t)
 p(t) = costate(direct_sol)(t)
 us_b(t) = us_bracket(q(t), p(t))
-plot!(plt, T, us_b; line=:dashdot, lw=2, subplot=7, label="us (brackets)")
+plot!(plt, T, us_b; subplot=7, line=:dashdot, lw=2, label="us (brackets)")
+plot(plt[7]; size=(800, 400))
 ```
 
 Both methods give the same singular control, which matches the numerical solution from the direct method.
@@ -267,13 +270,7 @@ f = Flow(ocp, (x, p, tf) -> u_indirect(x))
 nothing # hide
 ```
 
-Define the shooting function. We have 5 unknowns: the initial costate $p_0 \in \mathbb{R}^3$, the initial orientation $\theta_0$, and the final time $t_f$. The 5 equations are:
-
-1. $x(t_f) = 1$ (final position constraint)
-2. $y(t_f) = 0$ (final position constraint)
-3. $p_\theta(0) = 0$ (transversality condition: $H_1(0) = 0$)
-4. $p_\theta(t_f) = 0$ (transversality condition: $H_1(t_f) = 0$)
-5. $H(t_f) = 1$ (Hamiltonian constant for time-optimal problems with free final time)
+Define the shooting function. We have 5 unknowns: the initial costate $p_0 \in \mathbb{R}^3$, the initial orientation $\theta_0$, and the final time $t_f$. We must define 5 equations to solve for these unknowns.
 
 ```@example main
 t0 = 0
@@ -282,10 +279,10 @@ function shoot!(s, p0, θ0, tf)
     q_t0, p_t0 = [0, 0, θ0], p0
     q_tf, p_tf = f(t0, q_t0, p_t0, tf)
     
-    s[1] = q_tf[1] - 1      # x(tf) = 1
-    s[2] = q_tf[2]          # y(tf) = 0
-    s[3] = p_t0[3]          # p_θ(0) = 0
-    s[4] = p_tf[3]          # p_θ(tf) = 0
+    s[1] = q_tf[1] - 1      # x(tf) = 1 (boundary condition)
+    s[2] = q_tf[2]          # y(tf) = 0 (boundary condition)
+    s[3] = p_t0[3]          # pθ(0) = 0 (transversality condition)
+    s[4] = p_tf[3]          # pθ(tf) = 0 (transversality condition)
     
     # H(tf) = 1 (for time-optimal with p^0 = -1)
     pxf = p_tf[1]
@@ -303,7 +300,10 @@ p0 = costate(direct_sol)(t0)
 θ0 = state(direct_sol)(t0)[3]
 tf = variable(direct_sol)
 
-println("Initial guess: p0 = ", p0, ", θ0 = ", θ0, ", tf = ", tf)
+println("Initial guess:")
+println("p0 = ", p0)
+println("θ0 = ", θ0)
+println("tf = ", tf)
 nothing # hide
 ```
 
@@ -323,7 +323,7 @@ prob = NonlinearProblem(nle!, ξ_guess)
 shooting_sol = solve(prob; show_trace=Val(false))
 p0_sol, θ0_sol, tf_sol = shooting_sol.u[1:3], shooting_sol.u[4], shooting_sol.u[5]
 
-println("\nShooting solution:")
+println("Shooting solution:")
 println("p0 = ", p0_sol)
 println("θ0 = ", θ0_sol)
 println("tf = ", tf_sol)
@@ -340,7 +340,7 @@ nothing # hide
 Plot the indirect solution alongside the direct solution:
 
 ```@example main
-plot!(plt, indirect_sol; label="Indirect", color=2, linestyle=:dash, opt...)
+plot!(plt, indirect_sol; label="indirect", color=2, linestyle=:dash, opt...)
 ```
 
 The indirect and direct solutions match very well, confirming that our singular control computation is correct.
