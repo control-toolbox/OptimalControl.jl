@@ -230,6 +230,22 @@ Each strategy declares its available options. You can inspect them using `descri
 
 ### Discretizer options
 
+The collocation discretizer supports multiple integration schemes:
+
+- `:trapeze` - Trapezoidal rule (second-order accurate)
+- `:midpoint` - Midpoint rule (second-order accurate)  
+- `:euler` or `:euler_explicit` or `:euler_forward` - Explicit Euler method (first-order accurate)
+- `:euler_implicit` or `:euler_backward` - Implicit Euler method (first-order accurate, more stable for stiff problems)
+
+!!! note "Additional schemes with ADNLP modeler"
+
+    When using the `:adnlp` modeler, two additional high-order collocation schemes are available:
+
+    - `:gauss_legendre_2` - 2-point Gauss-Legendre collocation (fourth-order accurate)
+    - `:gauss_legendre_3` - 3-point Gauss-Legendre collocation (sixth-order accurate)
+
+    These schemes provide higher accuracy but require more computational effort.
+
 ```@example main
 describe(:collocation)
 ```
