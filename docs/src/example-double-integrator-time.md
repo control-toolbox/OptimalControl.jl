@@ -90,14 +90,14 @@ nothing # hide
 Let us solve it with a direct method (we set the number of time steps to 200):
 
 ```@example main
-sol = solve(ocp; grid_size=200)
+direct_sol = solve(ocp; grid_size=200)
 nothing # hide
 ```
 
 and plot the solution:
 
 ```@example main
-plt = plot(sol; label="Direct", size=(800, 600))
+plt = plot(direct_sol; label="Direct", size=(800, 600))
 ```
 
 !!! note "Nota bene"
@@ -161,15 +161,24 @@ We are now ready to solve the shooting equations:
 # in-place shooting function
 nle!(s, ξ, λ) = shoot!(s, ξ[1:2], ξ[3], ξ[4]) 
 
-# initial guess: costate and final time
-ξ_guess = [0.1, 0.1, 0.5, 1]
+# initial guess for the Newton solver from direct method
+t = time_grid(direct_sol) # the time grid as a vector
+p = costate(direct_sol)   # the costate as a function of time
+p0_guess = p(t0)          # initial costate
+tf_guess = variable(direct_sol) # final time
+
+# find switching time t1 where p2(t) changes sign
+p2_values = [p(ti)[2] for ti in t]
+t1_guess = t[findfirst(i -> i > 1 && p2_values[i] * p2_values[i-1] < 0, 2:length(p2_values))]
+
+ξ_guess = [p0_guess[1], p0_guess[2], t1_guess, tf_guess]
 
 # NLE problem
 prob = NonlinearProblem(nle!, ξ_guess)
 
 # resolution of the shooting equations
-sol = solve(prob; show_trace=Val(true))
-p0, t1, tf = sol.u[1:2], sol.u[3], sol.u[4]
+shoot_sol = solve(prob; show_trace=Val(true))
+p0, t1, tf = shoot_sol.u[1:2], shoot_sol.u[3], shoot_sol.u[4]
 
 # print the solution
 println("\np0 = ", p0, "\nt1 = ", t1, "\ntf = ", tf)
@@ -182,10 +191,10 @@ Finally, we reconstruct and plot the solution obtained by the indirect method:
 φ = f_max * (t1, f_min)
 
 # compute the solution: state, costate, control...
-flow_sol = φ((t0, tf), x0, p0; saveat=range(t0, tf, 200))
+indirect_sol = φ((t0, tf), x0, p0; saveat=range(t0, tf, 200))
 
 # plot the solution on the previous plot
-plot!(plt, flow_sol; label="Indirect", color=2, linestyle=:dash)
+plot!(plt, indirect_sol; label="Indirect", color=2, linestyle=:dash)
 ```
 
 !!! note

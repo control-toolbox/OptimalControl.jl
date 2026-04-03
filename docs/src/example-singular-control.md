@@ -77,7 +77,7 @@ Let's plot the solution:
 
 ```@example main
 opt = (state_bounds_style=:none, control_bounds_style=:none)
-plt = plot(direct_sol; label="direct", size=(800, 800), opt...)
+plt = plot(direct_sol; label="Direct", size=(800, 800), opt...)
 ```
 
 ## Singular control by hand
@@ -340,7 +340,7 @@ nothing # hide
 Plot the indirect solution alongside the direct solution:
 
 ```@example main
-plot!(plt, indirect_sol; label="indirect", color=2, linestyle=:dash, opt...)
+plot!(plt, indirect_sol; label="Indirect", color=2, linestyle=:dash, opt...)
 ```
 
 The indirect and direct solutions match very well, confirming that our singular control computation is correct.

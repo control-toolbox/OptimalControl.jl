@@ -135,8 +135,10 @@ We are now ready to solve the shooting equations.
 # auxiliary in-place NLE function
 nle!(s, p0, _) = s[:] = S(p0)
 
-# initial guess for the Newton solver
-p0_guess = [1, 1]
+# initial guess for the Newton solver from the direct solution
+t = time_grid(direct_sol) # the time grid as a vector
+p = costate(direct_sol)   # the costate as a function of time
+p0_guess = p(t0)          # initial costate
 
 # NLE problem with initial guess
 prob = NonlinearProblem(nle!, p0_guess)
