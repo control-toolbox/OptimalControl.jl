@@ -190,7 +190,7 @@ u_s(\theta) = \sin^2\theta.
 Let's overlay this on the numerical solution:
 
 ```@example main
-T = time_grid(direct_sol, :control)
+T = time_grid(direct_sol)
 θ(t) = state(direct_sol)(t)[3]
 us(t) = sin(θ(t))^2
 plot!(plt, T, us; subplot=7, line=:dash, lw=2, label="us (hand)")
