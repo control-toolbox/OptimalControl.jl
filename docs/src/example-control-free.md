@@ -46,7 +46,7 @@ ocp1 = @def begin
     x(0) == 2.0
     ẋ(t) == p * x(t)
     
-    ∫(x(t) - data(t))^2 → min  # fit to observed data
+    ∫((x(t) - data(t))^2) → min  # fit to observed data
 end
 nothing # hide
 ```
