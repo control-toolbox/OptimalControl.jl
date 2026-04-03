@@ -29,13 +29,12 @@ function ExponentialGrowth()
         p ∈ R, variable              # growth rate to estimate
         t ∈ [0, 10], time
         x ∈ R, state
-        u ∈ R, control               # TO REMOVE WHEN POSSIBLE
 
         x(0) == 2.0
 
         ẋ(t) == p * x(t)
 
-        ∫((x(t) - data(t))^2 + 1e-5*u(t)^2) → min  # fit to observed data # TO REMOVE u(t) when possible
+        ∫((x(t) - data(t))^2) → min  # fit to observed data
     end
 
     return (
@@ -73,7 +72,6 @@ function HarmonicOscillator()
         ω ∈ R, variable              # pulsation to optimize
         t ∈ [0, 1], time
         x = (q, v) ∈ R², state
-        u ∈ R, control               # TO REMOVE WHEN POSSIBLE
 
         q(0) == 1.0
         v(0) == 0.0
@@ -81,7 +79,7 @@ function HarmonicOscillator()
 
         ẋ(t) == [v(t), -ω^2 * q(t)]
 
-        ω^2 + 1e-5*∫(u(t)^2) → min   # minimize pulsation # TO REMOVE u(t) when possible
+        ω^2 → min   # minimize pulsation
     end
 
     return (
