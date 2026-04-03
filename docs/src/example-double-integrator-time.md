@@ -18,9 +18,7 @@ This problem can be interpreted as a simple model for a wagon with constant mass
 <img src="./assets/chariot.svg" style="display: block; margin: 0 auto 20px auto;" width="400px">
 ```
 
-First, we need to import the [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package to define the 
-optimal control problem and [NLPModelsIpopt.jl](https://jso.dev/NLPModelsIpopt.jl) to solve it. 
-We also need to import the [Plots.jl](https://docs.juliaplots.org) package to plot the solution.
+First, we need to import the [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package to define the optimal control problem and [NLPModelsIpopt.jl](https://jso.dev/NLPModelsIpopt.jl) to solve it. We also need to import the [Plots.jl](https://docs.juliaplots.org) package to plot the solution.
 
 ```@example main
 using OptimalControl
@@ -38,24 +36,22 @@ Let us define the problem:
 ```
 
 ```@example main
-ocp = @def begin
+t0 = 0; x0 = [-1, 0]; xf = [0, 0]
 
+ocp = @def begin
     tf ∈ R,          variable
-    t ∈ [0, tf],     time
+    t ∈ [t0, tf],    time
     x = (q, v) ∈ R², state
     u ∈ R,           control
 
     -1 ≤ u(t) ≤ 1
 
-    q(0)  == -1
-    v(0)  == 0
-    q(tf) == 0
-    v(tf) == 0
+    x(t0) == x0
+    x(tf) == xf
 
-    ẋ(t) == [v(t), u(t)]
+    ẋ(t) == [v(t), u(t)]
 
     tf → min
-
 end
 nothing # hide
 ```
@@ -71,13 +67,10 @@ nothing # hide
     \begin{aligned}
         & \text{Minimise} && t_f \\[0.5em]
         & \text{subject to} \\[0.5em]
-        & && \dot q(t) = v(t), \\
-        & && \dot v(t) = u(t), \\[0.5em]
+        & && \dot x(t) = [v(t), u(t)], \\[0.5em]
         & && -1 \le u(t) \le 1, \\[0.5em]
-        & && q(0) = -1, \\[0.5em]
-        & && v(0) = 0, \\[0.5em]
-        & && q(t_f) = 0, \\[0.5em]
-        & && v(t_f) = 0.
+        & && x(0) = (-1, 0), \\[0.5em]
+        & && x(t_f) = (0, 0).
     \end{aligned}
 ```
 
@@ -151,9 +144,6 @@ nothing # hide
 The shooting function enforces the conditions:
 
 ```@example main
-t0 = 0
-x0 = [-1, 0]
-xf = [ 0, 0]
 function shoot!(s, p0, t1, tf) 
     x_t0, p_t0 = x0, p0
     x_t1, p_t1 = f_max(t0, x_t0, p_t0, t1)

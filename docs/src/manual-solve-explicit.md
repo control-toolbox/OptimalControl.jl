@@ -42,8 +42,7 @@ The mode is **automatically detected**: if any of `discretizer`, `modeler`, or `
 
 ### Creating strategy instances
 
-Each strategy is constructed with its options as keyword arguments. 
-First, load the required solver packages:
+Each strategy is constructed with its options as keyword arguments. First, load the required solver packages:
 
 ```julia
 # Load solver packages (only what you need)

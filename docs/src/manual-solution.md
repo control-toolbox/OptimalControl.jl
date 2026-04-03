@@ -9,7 +9,7 @@ After covering these core functionalities, we'll delve into the **structure of a
 
 ---
 
-**Content**
+## Content
 
 * [Main functionalities](@ref manual-solution-main-functionalities)
 * [Solution struct](@ref manual-solution-struct)
@@ -195,7 +195,7 @@ times(sol)  # returns the TimesModel struct containing time information
 !!! note "Trajectory data formats"
     Trajectories (`state`, `control`, `costate`, `path_constraints_dual`) can be provided either as matrices (rows = time points, columns = components) or as functions `t -> vector` for interpolated or analytical data.
 
-#### Summary table
+#### [Summary table](@id manual-solution-summary-trajectories)
 
 | Method | Returns | Description |
 | -------- | --------- | ------------- |
@@ -218,7 +218,7 @@ Get the optimal objective value:
 objective(sol)  # returns the objective value
 ```
 
-#### Summary table
+#### [Summary table](@id manual-solution-summary-objective)
 
 | Method | Returns | Description |
 | -------- | --------- | ------------- |
@@ -375,7 +375,7 @@ Get additional solver-specific information:
 infos(sol)  # returns dictionary of solver info
 ```
 
-#### Summary table
+#### [Summary table](@id manual-solution-summary-solver)
 
 | Method | Returns | Description |
 | -------- | --------- | ------------- |

@@ -32,6 +32,7 @@ const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING :
 
 # Objective tolerance for comparison with reference values
 const OBJ_RTOL = 1e-2
+const OBJ_ATOL = 1e-3  # Absolute tolerance for small objectives
 
 # CUDA availability check
 is_cuda_on() = CUDA.functional()
@@ -97,6 +98,8 @@ function run_test(
             iters,
             memory_bytes > 0 ? memory_bytes : nothing,
             false,  # show_memory = false
+            OBJ_RTOL,  # rtol for color thresholds
+            OBJ_ATOL,  # atol for color thresholds
         )
     end
 
@@ -111,7 +114,12 @@ function run_test(
         Test.@test success
         if success
             Test.@test solve_result isa OptimalControl.AbstractSolution
-            Test.@test OptimalControl.objective(solve_result) ≈ pb.obj rtol = OBJ_RTOL
+            # Use absolute tolerance when reference objective is near zero
+            if abs(pb.obj) < 1e-6
+                Test.@test OptimalControl.objective(solve_result) ≈ pb.obj atol = OBJ_ATOL
+            else
+                Test.@test OptimalControl.objective(solve_result) ≈ pb.obj rtol = OBJ_RTOL
+            end
         end
     end
 end
@@ -191,13 +199,15 @@ function test_canonical()
         ]
 
         problems = [
+            # ("Quadrotor", Quadrotor()), # some DomainError some times
+            # ("Transfer", Transfer()), # debug: add later (currently issue with :exa)
             ("Beam", Beam()),
             ("Goddard", Goddard()),
-            # ("Quadrotor", Quadrotor()), # some DomainError some times
             ("DI_Time", DoubleIntegratorTime()),
             ("DI_Energy", DoubleIntegratorEnergy()),
             ("DI_EnergyCons", DoubleIntegratorEnergyConstrained()),
-            # ("Transfer", Transfer()), # debug: add later (currently issue with :exa)
+            ("ExpGrowth", ExponentialGrowth()),
+            ("HarmOsc", HarmonicOscillator()),
         ]
 
         # Use Refs for statistics to pass to helper functions

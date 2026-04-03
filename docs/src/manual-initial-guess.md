@@ -63,6 +63,20 @@ nothing # hide
 We first solve the problem without giving an initial guess.
 This will default to initialize all variables to 0.1.
 
+To visualize the default initial guess before solving, we can run the solver with `max_iter=0`:
+
+```@example main
+# visualize the default initial guess (no iterations)
+sol_init = solve(ocp1; init=nothing, max_iter=0, display=false)
+plot(sol_init; size=(600, 450))
+```
+
+!!! tip "Visualizing any initial guess"
+
+    This technique works with any initial guess specification. By setting `max_iter=0`, the solver stops immediately after initialization, allowing you to visualize the initial guess before the optimization process begins.
+
+Now let us solve the problem completely:
+
 ```@example main
 # solve the optimal control problem without initial guess
 sol = solve(ocp1; display=false)

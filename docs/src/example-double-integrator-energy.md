@@ -49,8 +49,7 @@ ocp = @def begin
     x(t0) == x0
     x(tf) == xf
 
-    ∂(q)(t) == v(t)
-    ∂(v)(t) == u(t)
+    ẋ(t) == [v(t), u(t)]
 
     0.5∫( u(t)^2 ) → min
 end
@@ -68,8 +67,7 @@ nothing # hide
     \begin{aligned}
         & \text{Minimise} && \frac{1}{2}\int_0^1 u^2(t) \,\mathrm{d}t \\
         & \text{subject to} \\
-        & && \dot{q}(t) = v(t), \\[0.5em]
-        & && \dot{v}(t) = u(t), \\[1.0em]
+        & && \dot{x}(t) = [v(t), u(t)], \\[1.0em]
         & && x(0) = (-1,0), \\[0.5em] 
         & && x(1) = (0,0).
     \end{aligned}
@@ -200,8 +198,7 @@ ocp = @def begin
     x(t0) == x0
     x(tf) == xf
 
-    ∂(q)(t) == v(t)
-    ∂(v)(t) == u(t)
+    ẋ(t) == [v(t), u(t)]
 
     0.5∫( u(t)^2 ) → min
 end

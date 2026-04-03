@@ -24,7 +24,8 @@ end
 ```
 
 !!! warning
-    Note that the full code of the definition above is not provided (hence the `...`) The same is true for most examples below (only those without `...` are indeed complete). Also note that problem definitions must at least include definitions for time, state, control, dynamics and cost.
+    - Note that the full code of the definition above is not provided (hence the `...`) The same is true for most examples below (only those without `...` are indeed complete).
+    - Also note that problem definitions must at least include definitions for time, state, dynamics and cost. The control declaration is optional (see [Control-free problems](@ref manual-abstract-control-free)).
 
 Aliases `v₁`, `v₂` (and `v1`, `v2`) are automatically defined and can be used in subsequent expressions instead of `v[1]` and `v[2]`. The user can also define her own aliases for the components (one alias per dimension):
 
@@ -127,6 +128,45 @@ end
 !!! note
     One dimensional variable, state or control are treated as scalars (`Real`), not vectors (`Vector`). In Julia, for `x::Real`, it is possible to write `x[1]` (and `x[1][1]`...) so it is OK (though useless) to write `x₁`, `x1` or `x[1]` instead of simply `x` to access the corresponding value. Conversely it is *not* OK to use such an `x` as a vector, for instance as in `...f(x)...` where `f(x::Vector{T}) where {T <: Real}`.
 
+## [Control-free problems](@id manual-abstract-control-free)
+
+The control declaration is **optional**. You can define problems without control for:
+
+- **Parameter estimation**: Identify unknown parameters in the dynamics from observed data
+- **Dynamic optimization**: Optimize constant parameters subject to ODE constraints
+
+For example, to estimate a growth rate parameter:
+
+```julia
+@def begin
+    p ∈ R, variable              # parameter to estimate
+    t ∈ [0, 10], time
+    x ∈ R, state
+    x(0) == 2.0
+    ẋ(t) == p * x(t)             # dynamics depends on p
+    ∫(x(t) - data(t))² → min     # fit to observed data
+end
+```
+
+Or to optimize the pulsation of a harmonic oscillator:
+
+```julia
+@def begin
+    ω ∈ R, variable              # pulsation to optimize
+    t ∈ [0, 1], time
+    x = (q, v) ∈ R², state
+    q(0) == 1.0
+    v(0) == 0.0
+    q(1) == 0.0                  # final condition
+    ẋ(t) == [v(t), -ω²*q(t)]    # harmonic oscillator
+    ω² → min                     # minimize pulsation
+end
+```
+
+!!! compat "Upcoming feature"
+
+    Control-free problem syntax (omitting the control declaration) is currently being implemented. For now, use a dummy control with `u ∈ R, control` and `u(t) == 0` as a workaround. See the [Control-free problems example](@ref example-control-free) for executable examples.
+
 ## [Dynamics](@id manual-abstract-dynamics)
 
 ```julia
@@ -136,7 +176,7 @@ end
 The dynamics is given in the standard vectorial ODE form:
 
 ```math
-    \dot{x}(t) = f([t, ]x(t), u(t)[, v])
+    \dot{x}(t) = f([t, ]x(t)[, u(t)][, v])
 ```
 
 depending on whether it is autonomous / with a variable or not (the parser will detect time and variable dependences,
@@ -534,7 +574,7 @@ end
 
 ## Misc
 
-- Declarations (of variable - if any -, time, state and control) must be done first. Then, dynamics, constraints and cost can be introduced in an arbitrary order.
+- Declarations (of variable - if any -, time, state and control - if any -) must be done first. Then, dynamics, constraints and cost can be introduced in an arbitrary order.
 - It is possible to provide numbers / labels (as in math equations) for the constraints to improve readability (this is mostly for future use, typically to retrieve the Lagrange multiplier associated with the discretisation of a given constraint):
 
 ```julia

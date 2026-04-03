@@ -23,6 +23,7 @@ function test_ctflows()
                 OptimalControl.Hamiltonian,
                 OptimalControl.HamiltonianLift,
                 OptimalControl.HamiltonianVectorField,
+                OptimalControl.VectorField,
             )
                 Test.@test isdefined(OptimalControl, nameof(T))
                 Test.@test !isdefined(CurrentModule, nameof(T))
@@ -37,7 +38,7 @@ function test_ctflows()
             end
         end
         Test.@testset "Operators" begin
-            for op in (:⋅, :Lie, :Poisson, :*)
+            for op in (:⋅, :Lie, :Poisson, :*, :∂ₜ)
                 Test.@test isdefined(OptimalControl, op)
                 Test.@test isdefined(CurrentModule, op)
             end
@@ -128,7 +129,7 @@ function test_ctflows()
             end
 
             Test.@testset "@Lie Macro" begin
-                # Test basic macro usage
+                # Test basic macro usage with VectorField
                 X1 = CTFlows.VectorField(x -> [x[2], -x[1]])
                 X2 = CTFlows.VectorField(x -> [x[1], x[2]])
 
@@ -138,6 +139,108 @@ function test_ctflows()
 
                 # Test evaluation
                 Test.@test lie_macro_result([1, 2]) isa Vector
+            end
+
+            Test.@testset "@Lie Macro with Plain Functions" begin
+                # ================================================================
+                # Autonomous plain functions
+                # ================================================================
+                Test.@testset "Autonomous plain functions" begin
+                    X(x) = [x[2], -x[1]]
+                    Y(x) = [x[1], x[2]]
+
+                    # Lie bracket with macro
+                    Z = @Lie [X, Y]
+                    Test.@test Z isa CTFlows.VectorField
+                    Test.@test Z([1, 2]) isa Vector
+
+                    # Should give same result as with VectorField objects
+                    X_vf = CTFlows.VectorField(X)
+                    Y_vf = CTFlows.VectorField(Y)
+                    Z_vf = @Lie [X_vf, Y_vf]
+                    Test.@test Z([1, 2]) ≈ Z_vf([1, 2])
+                end
+
+                # ================================================================
+                # Non-autonomous plain functions
+                # ================================================================
+                Test.@testset "Non-autonomous plain functions" begin
+                    X(t, x) = [t + x[2], -x[1]]
+                    Y(t, x) = [x[1], t * x[2]]
+
+                    Z = @Lie [X, Y] autonomous = false
+                    Test.@test Z isa CTFlows.VectorField
+                    Test.@test Z(1, [1, 2]) isa Vector
+
+                    # Verify against VectorField version
+                    X_vf = CTFlows.VectorField(X; autonomous=false)
+                    Y_vf = CTFlows.VectorField(Y; autonomous=false)
+                    Z_vf = @Lie [X_vf, Y_vf]
+                    Test.@test Z(1, [1, 2]) ≈ Z_vf(1, [1, 2])
+                end
+
+                # ================================================================
+                # Variable plain functions
+                # ================================================================
+                Test.@testset "Variable plain functions" begin
+                    X(x, v) = [x[2] + v, -x[1]]
+                    Y(x, v) = [x[1], x[2] + v]
+
+                    Z = @Lie [X, Y] variable = true
+                    Test.@test Z isa CTFlows.VectorField
+                    Test.@test Z([1, 2], 1) isa Vector
+
+                    # Verify against VectorField version
+                    X_vf = CTFlows.VectorField(X; variable=true)
+                    Y_vf = CTFlows.VectorField(Y; variable=true)
+                    Z_vf = @Lie [X_vf, Y_vf]
+                    Test.@test Z([1, 2], 1) ≈ Z_vf([1, 2], 1)
+                end
+
+                # ================================================================
+                # Non-autonomous + variable plain functions
+                # ================================================================
+                Test.@testset "Non-autonomous variable plain functions" begin
+                    X(t, x, v) = [t + x[2] + v, -x[1]]
+                    Y(t, x, v) = [x[1], t * x[2] + v]
+
+                    Z = @Lie [X, Y] autonomous = false variable = true
+                    Test.@test Z isa CTFlows.VectorField
+                    Test.@test Z(1, [1, 2], 1) isa Vector
+
+                    # Verify against VectorField version
+                    X_vf = CTFlows.VectorField(X; autonomous=false, variable=true)
+                    Y_vf = CTFlows.VectorField(Y; autonomous=false, variable=true)
+                    Z_vf = @Lie [X_vf, Y_vf]
+                    Test.@test Z(1, [1, 2], 1) ≈ Z_vf(1, [1, 2], 1)
+                end
+
+                # ================================================================
+                # Nested Lie brackets with plain functions
+                # ================================================================
+                Test.@testset "Nested brackets with plain functions" begin
+                    X(x) = [x[2], -x[1]]
+                    Y(x) = [x[1], x[2]]
+                    Z_func(x) = [0, x[1]]
+
+                    # [[X, Y], Z]
+                    nested = @Lie [[X, Y], Z_func]
+                    Test.@test nested isa CTFlows.VectorField
+                    Test.@test nested([1, 2]) isa Vector
+                end
+
+                # ================================================================
+                # Mixed: plain function + VectorField
+                # ================================================================
+                Test.@testset "Mixed plain function and VectorField" begin
+                    X(x) = [x[2], -x[1]]
+                    Y_vf = CTFlows.VectorField(x -> [x[1], x[2]])
+
+                    # Should work with one plain function and one VectorField
+                    Z = @Lie [X, Y_vf]
+                    Test.@test Z isa CTFlows.VectorField
+                    Test.@test Z([1, 2]) isa Vector
+                end
             end
 
             Test.@testset "Complex Signature Tests" begin
@@ -221,6 +324,37 @@ function test_ctflows()
                 H2 = OptimalControl.Hamiltonian((x, p) -> x[2]*p[2])
                 result3 = @Lie {H1, H2}
                 Test.@test result3 isa CTFlows.Hamiltonian
+            end
+
+            Test.@testset "VectorField Construction" begin
+                # Test VectorField construction patterns
+                X1 = OptimalControl.VectorField(x -> [x[2], -x[1]])
+                Test.@test X1 isa OptimalControl.VectorField
+                Test.@test X1([1, 2]) isa Vector
+
+                # Non-autonomous
+                X2 = OptimalControl.VectorField((t, x) -> [t + x[2], -x[1]]; autonomous=false)
+                Test.@test X2 isa OptimalControl.VectorField
+                Test.@test X2(1.0, [1, 2]) isa Vector
+
+                # Variable
+                X3 = OptimalControl.VectorField((x, v) -> [x[2] + v, -x[1]]; variable=true)
+                Test.@test X3 isa OptimalControl.VectorField
+                Test.@test X3([1, 2], 1.0) isa Vector
+            end
+
+            Test.@testset "∂ₜ Operator" begin
+                # Test partial time derivative
+                f = (t, x) -> t * x
+                df = ∂ₜ(f)
+                Test.@test df isa Function
+                Test.@test df(0, 8) ≈ 8
+                Test.@test df(2, 3) ≈ 3
+
+                # More complex function
+                g = (t, x, p) -> t^2 + x[1]*p[1]
+                dg = ∂ₜ(g)
+                Test.@test dg(3, [1, 2], [4, 5]) ≈ 6
             end
         end
     end
