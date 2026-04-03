@@ -7,6 +7,128 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.0.0] — 2026-04-03
+
+**Major version release** with complete solve architecture redesign. This release introduces breaking changes from v1.1.6 (last stable release). See [BREAKING.md](BREAKING.md) for detailed migration guide.
+
+### Breaking Changes
+
+- **Removed functions** from v1.1.6:
+  - `direct_transcription` → replaced by `discretize`
+  - `set_initial_guess` → replaced by `@init` macro
+  - `build_OCP_solution` → replaced by `ocp_solution`
+
+- **Changed exports**:
+  - CTBase exceptions: removed `IncorrectMethod`, `IncorrectOutput`, `UnauthorizedCall`; added `PreconditionError`
+  - CTFlows types: `VectorField`, `Hamiltonian`, `HamiltonianLift`, `HamiltonianVectorField` no longer exported (use qualified access)
+
+- **New solve architecture**:
+  - `methods()` now returns 4-tuples `(discretizer, modeler, solver, parameter)` instead of 3-tuples
+  - Parameter (`:cpu` or `:gpu`) is now required for complete method specification
+
+### Added
+
+- **Complete solve architecture redesign**:
+  - **Descriptive mode**: `solve(ocp, :collocation, :adnlp, :ipopt, :cpu)` with symbolic strategy specification
+  - **Explicit mode**: `solve(ocp; discretizer=Collocation(), modeler=ADNLP(), solver=Ipopt())` with typed components
+  - **Partial specification**: Auto-completion of missing strategies using first matching method
+  - **Method introspection**: `methods()` lists all available solving methods
+
+- **GPU/CPU parameter system**:
+  - 4th parameter in method tuples for execution backend (`:cpu` or `:gpu`)
+  - Explicit GPU support via `:gpu` parameter with ExaModels + MadNLP/MadNCL
+  - 12 total methods: 10 CPU methods + 2 GPU methods
+
+- **Advanced option routing system**:
+  - `describe(strategy)`: Display available options for any strategy (discretizer, modeler, solver)
+  - `route_to(strategy=option=>value)`: Disambiguate shared options between strategies
+  - `bypass(strategy=option=>value)`: Pass undeclared options to strategies
+  - Automatic option routing to appropriate components
+  - Option introspection: `options()`, `option_names()`, `option_type()`, `option_description()`, `option_default()`
+
+- **Initial guess with @init macro**:
+  - New `@init` macro for constructing initial guesses
+  - Alias `init` for `initial_guess` keyword argument in solve
+  - Replaces functional initial guess construction from v1.1.6
+
+- **Control-free problems support**:
+  - Optimal control problems without control variables
+  - Optimization of constant parameters in dynamical systems
+  - Full integration with solve pipeline
+
+- **New solvers**:
+  - **Uno**: CPU-only nonlinear optimization solver (methods with `:uno`)
+  - **MadNCL**: GPU-capable solver (methods with `:madncl`)
+  - Total of 5 solvers: Ipopt, MadNLP, Uno, MadNCL, Knitro
+
+- **Additional discretization schemes**:
+  - Basic schemes: `:trapeze`, `:midpoint`, `:euler` (and aliases), `:euler_implicit` (and aliases)
+  - ADNLP-specific schemes: `:gauss_legendre_2`, `:gauss_legendre_3` (high-order collocation)
+
+- **Comprehensive documentation rewrite**:
+  - New solve manual with descriptive/explicit modes
+  - Advanced options guide with routing and disambiguation
+  - GPU solving guide
+  - Initial guess guide with `@init` macro
+  - Differential geometry tools manual
+  - Control-free problems example
+
+- **Modernized reexport system**:
+  - Using `@reexport import` from Reexport.jl
+  - Organized by source package (ctbase.jl, ctdirect.jl, ctflows.jl, ctmodels.jl, ctparser.jl, ctsolvers.jl)
+  - Cleaner separation between imported and exported symbols
+
+- **Strategy registry system**:
+  - `StrategyRegistry` with metadata for all strategies
+  - `StrategyMetadata` with id, options, and parameter support
+  - `OptionDefinition` with type, default, description, and aliases
+  - Dependency injection support for testing
+
+### Changed
+
+- **Solve function signatures**:
+  - Layer 3 (canonical): `solve(ocp, strategies...; kwargs...)`
+  - Layer 2 descriptive: `solve_descriptive(ocp, strategies...; kwargs...)`
+  - Layer 2 explicit: `solve_explicit(ocp; discretizer, modeler, solver, kwargs...)`
+  - Automatic mode detection based on argument types
+
+- **Component completion**:
+  - Intelligent completion of missing strategies using registry
+  - First-match priority from `methods()` list
+  - Support for partial method specifications
+
+- **Display system**:
+  - Configuration box showing applied strategies and options
+  - Option source tracking (user, default, computed)
+  - Parameter display for GPU/CPU distinction
+  - Improved formatting and clarity
+
+- **Test infrastructure**:
+  - Comprehensive test suite for solve pipeline (422+ tests)
+  - Integration tests with real strategies
+  - Mock registry for dispatch testing
+  - Parametric mocks for strategy testing
+  - Level 3 signature freezing tests for API stability
+
+### Dependencies
+
+- **CTBase**: 0.18.x (was 0.16-0.17)
+- **CTModels**: 0.9.x (was 0.6.x)
+- **CTDirect**: 1.x (was 0.x)
+- **CTSolvers**: 0.4.x (new dependency)
+- **CTParser**: 0.8.x (was 0.7-0.8)
+- **CTFlows**: 0.8.x
+
+**New dependency**: CTSolvers.jl handles NLP modeling, solving, and strategy orchestration.
+
+### Notes
+
+This release consolidates all beta versions (1.2.0-beta through 1.3.1-beta) into a stable 2.0.0 release. The comparison is made against v1.1.6, the last stable release before the architectural redesign.
+
+For users migrating from v1.1.6, please consult [BREAKING.md](BREAKING.md) for detailed migration instructions and examples.
+
+---
+
 ## [1.3.1-beta] — 2026-03-17
 
 ### Added
