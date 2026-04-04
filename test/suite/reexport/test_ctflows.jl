@@ -333,7 +333,9 @@ function test_ctflows()
                 Test.@test X1([1, 2]) isa Vector
 
                 # Non-autonomous
-                X2 = OptimalControl.VectorField((t, x) -> [t + x[2], -x[1]]; autonomous=false)
+                X2 = OptimalControl.VectorField(
+                    (t, x) -> [t + x[2], -x[1]]; autonomous=false
+                )
                 Test.@test X2 isa OptimalControl.VectorField
                 Test.@test X2(1.0, [1, 2]) isa Vector
 

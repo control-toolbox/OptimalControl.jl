@@ -311,7 +311,7 @@ function print_test_line(
         # Relative error: display as scientific notation (convert % to fraction)
         @sprintf("%.2e", error_value / 100)
     end
-    
+
     # Color thresholds based on provided tolerances
     err_color = if error_value === missing
         :white
@@ -321,7 +321,13 @@ function print_test_line(
     else
         # Relative error (in %): green if < rtol*100, yellow if < 5*rtol*100, red otherwise
         rtol_percent = rtol * 100
-        (error_value < rtol_percent ? :green : (error_value < 5 * rtol_percent ? :yellow : :red))
+        (
+            if error_value < rtol_percent
+                :green
+            else
+                (error_value < 5 * rtol_percent ? :yellow : :red)
+            end
+        )
     end
     printstyled(lpad(err_str, 7); color=err_color)
 
