@@ -29,19 +29,19 @@ sol = solve(ocp;
    ├─ <span class="sgr1">Modeler</span>: <span class="sgr36"><span class="sgr1">adnlp</span></span> (show_time = true)
    └─ <span class="sgr1">Solver</span>: <span class="sgr36"><span class="sgr1">ipopt</span></span> (max_iter = 500, print_level = 0)
 
-gradient backend ADNLPModels.ReverseDiffADGradient: 0.615239256 seconds;
-hprod    backend ADNLPModels.EmptyADbackend: 4.679e-6 seconds;
-jprod    backend ADNLPModels.EmptyADbackend: 9.62e-7 seconds;
-jtprod   backend ADNLPModels.EmptyADbackend: 1.142e-6 seconds;
-  • Sparsity pattern detection of the Jacobian: 8.7663e-5 seconds.
-  • Coloring of the sparse Jacobian: 1.6792e-5 seconds.
-  • Allocation of the AD buffers for the sparse Jacobian: 4.41e-7 seconds.
-jacobian backend ADNLPModels.SparseADJacobian: 0.811445507 seconds;
-  • Sparsity pattern detection of the Hessian: 1.005535694 seconds.
-  • Coloring of the sparse Hessian: 2.2522e-5 seconds.
-  • Allocation of the AD buffers for the sparse Hessian: 3.818115704 seconds.
-hessian  backend ADNLPModels.SparseReverseADHessian: 5.205936869 seconds;
-ghjvprod backend ADNLPModels.EmptyADbackend: 4.879e-6 seconds.</code></pre><h3 id="How-routing-works"><a class="docs-heading-anchor" href="#How-routing-works">How routing works</a><a id="How-routing-works-1"></a><a class="docs-heading-anchor-permalink" href="#How-routing-works" title="Permalink"></a></h3><p>Each strategy declares its available options via metadata. When you pass an option:</p><ol><li><strong>Lookup</strong>: The system checks which strategies recognize this option name</li><li><strong>Route</strong>: If exactly one strategy family (discretizer/modeler/solver) recognizes it, the option is routed there</li><li><strong>Validate</strong>: The option value is validated against the declared type and constraints</li><li><strong>Error</strong>: If no strategy recognizes the option, or if multiple families claim it, an error is raised</li></ol><p>You can inspect a strategy&#39;s declared options using <code>describe</code>:</p><pre><code class="language-julia hljs">using CUDA
+gradient backend ADNLPModels.ReverseDiffADGradient: 0.617936002 seconds;
+hprod    backend ADNLPModels.EmptyADbackend: 3.787e-6 seconds;
+jprod    backend ADNLPModels.EmptyADbackend: 1.583e-6 seconds;
+jtprod   backend ADNLPModels.EmptyADbackend: 1.433e-6 seconds;
+  • Sparsity pattern detection of the Jacobian: 8.9507e-5 seconds.
+  • Coloring of the sparse Jacobian: 1.8144e-5 seconds.
+  • Allocation of the AD buffers for the sparse Jacobian: 7.51e-7 seconds.
+jacobian backend ADNLPModels.SparseADJacobian: 0.923285497 seconds;
+  • Sparsity pattern detection of the Hessian: 1.028600195 seconds.
+  • Coloring of the sparse Hessian: 2.2512e-5 seconds.
+  • Allocation of the AD buffers for the sparse Hessian: 3.807135839 seconds.
+hessian  backend ADNLPModels.SparseReverseADHessian: 5.187307594 seconds;
+ghjvprod backend ADNLPModels.EmptyADbackend: 4.559e-6 seconds.</code></pre><h3 id="How-routing-works"><a class="docs-heading-anchor" href="#How-routing-works">How routing works</a><a id="How-routing-works-1"></a><a class="docs-heading-anchor-permalink" href="#How-routing-works" title="Permalink"></a></h3><p>Each strategy declares its available options via metadata. When you pass an option:</p><ol><li><strong>Lookup</strong>: The system checks which strategies recognize this option name</li><li><strong>Route</strong>: If exactly one strategy family (discretizer/modeler/solver) recognizes it, the option is routed there</li><li><strong>Validate</strong>: The option value is validated against the declared type and constraints</li><li><strong>Error</strong>: If no strategy recognizes the option, or if multiple families claim it, an error is raised</li></ol><p>You can inspect a strategy&#39;s declared options using <code>describe</code>:</p><pre><code class="language-julia hljs">using CUDA
 describe(:exa)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr34"><span class="sgr1">Exa{CPU}</span></span> (strategy)
 ├─ <span class="sgr90">id: </span><span class="sgr33">:exa</span>
 ├─ <span class="sgr90">hierarchy: </span><span class="sgr36">Exa</span> → <span class="sgr36">AbstractNLPModeler</span> → <span class="sgr36">AbstractStrategy</span>
@@ -138,7 +138,7 @@ Number of inequality constraint evaluations          = 0
 Number of equality constraint Jacobian evaluations   = 2
 Number of inequality constraint Jacobian evaluations = 0
 Number of Lagrangian Hessian evaluations             = 1
-Total seconds in IPOPT                               = 0.105
+Total seconds in IPOPT                               = 0.112
 
 EXIT: Optimal Solution Found.
 • Solver:
@@ -163,4 +163,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-solve.html">« Basic usage</a><a class="docs-footer-nextpage" href="manual-solve-explicit.html">Explicit mode »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Friday 3 April 2026 16:03">Friday 3 April 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-solve.html">« Basic usage</a><a class="docs-footer-nextpage" href="manual-solve-explicit.html">Explicit mode »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Saturday 4 April 2026 07:55">Saturday 4 April 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
