@@ -242,9 +242,9 @@ weakdeps = ["OrdinaryDiffEq"]
 
 [[deps.CTModels]]
 deps = ["CTBase", "DocStringExtensions", "LinearAlgebra", "MLStyle", "MacroTools", "OrderedCollections", "Parameters", "RecipesBase"]
-git-tree-sha1 = "3e9df6b6cb96ccb05051ded9a5d4f76f649f6d0c"
+git-tree-sha1 = "791bcfa3cc9b39d2c1b5bc66581d1739bd8c96c0"
 uuid = "34c4fa32-2049-4079-8329-de33c2a22e2d"
-version = "0.9.12-beta"
+version = "0.9.13"
 weakdeps = ["JLD2", "JSON3", "Plots"]
 
     [deps.CTModels.extensions]
@@ -254,9 +254,9 @@ weakdeps = ["JLD2", "JSON3", "Plots"]
 
 [[deps.CTParser]]
 deps = ["CTBase", "DocStringExtensions", "MLStyle", "OrderedCollections", "Parameters", "Unicode"]
-git-tree-sha1 = "1a7445af1c937c291371e0f7c0a51a80f5b5d0eb"
+git-tree-sha1 = "0a57111b2d95d6272bb76f4f6f7c4fee1e40ce82"
 uuid = "32681960-a1b1-40db-9bff-a1ca817385d1"
-version = "0.8.12-beta"
+version = "0.8.13"
 
 [[deps.CTSolvers]]
 deps = ["ADNLPModels", "CTBase", "CTModels", "CommonSolve", "DocStringExtensions", "ExaModels", "KernelAbstractions", "NLPModels", "SolverCore"]
