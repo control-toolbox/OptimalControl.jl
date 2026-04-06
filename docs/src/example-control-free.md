@@ -26,7 +26,7 @@ Consider a system with exponential growth:
 where $\lambda$ is an unknown growth rate parameter. We have observed data with some perturbations and want to estimate $\lambda$ by minimizing the squared error:
 
 ```math
-\min_{\lambda} \int_0^{2} (x(t) - x_{\text{obs}}(t))^2 \, dt
+\min_{\lambda} \int_0^{2} (x(t) - x_{\text{obs}}(t))^2 \, \mathrm{d}t
 ```
 
 The underlying model has $\lambda = 0.5$, but the observed data includes perturbations.
@@ -94,17 +94,17 @@ To handle the variable parameter $\lambda$, we treat it as an additional state w
 
 ```math
 \begin{aligned}
-\frac{dx}{dt} &= \frac{\partial H}{\partial p} = \lambda x \\
-\frac{d\lambda}{dt} &= 0 \quad \text{(constant parameter)} \\
-\frac{dp}{dt} &= -\frac{\partial H}{\partial x} = -p\lambda + 2(x - x_{\text{obs}}(t)) \\
-\frac{dp_\lambda}{dt} &= -\frac{\partial H}{\partial \lambda} = -px
+\frac{\mathrm{d}x}{\mathrm{d}t} &= \frac{\partial H}{\partial p} = \lambda x \\
+\frac{\mathrm{d}\lambda}{\mathrm{d}t} &= 0 \quad \text{(constant parameter)} \\
+\frac{\mathrm{d}p}{\mathrm{d}t} &= -\frac{\partial H}{\partial x} = -p\lambda + 2(x - x_{\text{obs}}(t)) \\
+\frac{\mathrm{d}p_\lambda}{\mathrm{d}t} &= -\frac{\partial H}{\partial \lambda} = -px
 \end{aligned}
 ```
 
 The transversality condition for the variable parameter requires $p_\lambda(t_f) - p_\lambda(t_0) = 0$. Assuming $p_\lambda(t_0) = 0$, we have to satisfy:
 
 ```math
-p_\lambda(t_f) = -\int_{t_0}^{t_f} \frac{\partial H}{\partial \lambda}(t, x(t), p(t), \lambda) \, dt = 0
+p_\lambda(t_f) = -\int_{t_0}^{t_f} \frac{\partial H}{\partial \lambda}(t, x(t), p(t), \lambda) \, \mathrm{d}t = 0
 ```
 
 We use CTFlows' `augment=true` feature to automatically compute $p_\lambda(t_f)$ without manually constructing the augmented system.
@@ -271,12 +271,12 @@ To handle the variable parameter $\omega$, we treat it as an additional state wi
 
 ```math
 \begin{aligned}
-\frac{dq}{dt} &= \frac{\partial H}{\partial p_1} = v \\
-\frac{dv}{dt} &= \frac{\partial H}{\partial p_2} = -\omega^2 q \\
-\frac{d\omega}{dt} &= 0 \quad \text{(constant parameter)} \\
-\frac{dp_1}{dt} &= -\frac{\partial H}{\partial q} = \omega^2 p_2 \\
-\frac{dp_2}{dt} &= -\frac{\partial H}{\partial v} = -p_1 \\
-\frac{dp_\omega}{dt} &= -\frac{\partial H}{\partial \omega} = 2\omega q p_2
+\frac{\mathrm{d}q}{\mathrm{d}t} &= \frac{\partial H}{\partial p_1} = v \\
+\frac{\mathrm{d}v}{\mathrm{d}t} &= \frac{\partial H}{\partial p_2} = -\omega^2 q \\
+\frac{\mathrm{d}\omega}{\mathrm{d}t} &= 0 \quad \text{(constant parameter)} \\
+\frac{\mathrm{d}p_1}{\mathrm{d}t} &= -\frac{\partial H}{\partial q} = \omega^2 p_2 \\
+\frac{\mathrm{d}p_2}{\mathrm{d}t} &= -\frac{\partial H}{\partial v} = -p_1 \\
+\frac{\mathrm{d}p_\omega}{\mathrm{d}t} &= -\frac{\partial H}{\partial \omega} = 2\omega q p_2
 \end{aligned}
 ```
 
@@ -289,7 +289,7 @@ p_\omega(t_f) - p_\omega(t_0)= -\frac{\partial g}{\partial \omega} = -2\omega
 Assuming $p_\omega(t_0) = 0$, we have:
 
 ```math
-p_\omega(t_f) = -\int_{t_0}^{t_f} \frac{\partial H}{\partial \omega}(t, x(t), p(t), \omega) \, dt = -2\omega
+p_\omega(t_f) = -\int_{t_0}^{t_f} \frac{\partial H}{\partial \omega}(t, x(t), p(t), \omega) \, \mathrm{d}t = -2\omega
 ```
 
 We use CTFlows' `augment=true` feature to automatically compute $p_\omega(t_f)$ without manually constructing the augmented system:
