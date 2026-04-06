@@ -164,7 +164,6 @@ Finally, we compute and plot the indirect solution:
 
 ```@example main-growth
 # Compute and plot indirect solution
-f = Flow(ocp)
 indirect_sol = f((t0, tf), x0, p0_sol, λ_sol; saveat=range(t0, tf, 200))
 plot!(plt, indirect_sol; linestyle=:dash, lw=2, label="Indirect", color=2)
 ```
@@ -357,7 +356,6 @@ Finally, we compute and plot the indirect solution:
 
 ```@example main-harmonic
 # Compute and plot indirect solution
-f = Flow(ocp)
 indirect_sol = f((t0, tf), [q0, v0], p0_sol, ω_sol; saveat=range(t0, tf, 200))
 plot!(plt, indirect_sol; linestyle=:dash, lw=2, label="Indirect", color=2)
 ```
