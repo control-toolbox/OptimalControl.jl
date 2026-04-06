@@ -316,6 +316,126 @@ yf, pf = f(0, [x0, tf], [p0, 0], 1)
 
     In the [Goddard problem](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html#tutorial-goddard-structure), you may find other constructions of flows, especially for singular and boundary arcs.
 
+## Augmented costate computation with `augment=true`
+
+When working with optimal control problems that have variables, it can be useful to compute the costate associated with the variable parameter. The `augment=true` keyword argument provides automatic computation of this costate without requiring manual construction of the augmented Hamiltonian system.
+
+### Mathematical background
+
+For an optimal control problem with Hamiltonian $H(t, x, p, v)$, where $x$ is the state, $p$ is the costate, and $v$ is a variable parameter, the **augmented system** treats the variable as an additional state with zero dynamics:
+
+```math
+\begin{aligned}
+\frac{\mathrm{d}x}{\mathrm{d}t} &= \frac{\partial H}{\partial p} \\
+\frac{\mathrm{d}v}{\mathrm{d}t} &= 0 \quad \text{(constant parameter)} \\
+\frac{\mathrm{d}p}{\mathrm{d}t} &= -\frac{\partial H}{\partial x} \\
+\frac{\mathrm{d}p_v}{\mathrm{d}t} &= -\frac{\partial H}{\partial v}
+\end{aligned}
+```
+
+With the initial condition $p_v(t_0) = 0$, the final costate $p_v(t_f)$ represents the accumulated sensitivity:
+
+```math
+p_v(t_f) = -\int_{t_0}^{t_f} \frac{\partial H}{\partial v}(t, x(t), p(t), v) \, \mathrm{d}t
+```
+
+### Usage
+
+Let us consider a harmonic oscillator problem where the pulsation $\omega$ is a variable parameter appearing in the dynamics:
+
+```@example main
+q0 = 1
+v0 = 0
+t0 = 0
+tf = 1
+
+ocp_aug = @def begin
+    ω ∈ R, variable              # pulsation to optimize
+    t ∈ [t0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    
+    q(t0) == q0
+    v(t0) == v0
+    q(tf) == 0.0
+    
+    ẋ(t) == [v(t), -ω^2 * q(t) + u(t)]
+    
+    ω^2 + 0.5∫(u(t)^2) → min
+end
+
+# Maximizing control from Pontryagin's principle
+u_aug(x, p, ω) = p[2]
+f_aug = Flow(ocp_aug, u_aug)
+nothing # hide
+```
+
+Without `augment=true`, the flow returns only the state and costate:
+
+```@example main
+ω_val = π/2
+p0_val = [1.0, 0.5]
+xf, pf = f_aug(t0, [q0, v0], p0_val, tf, ω_val)
+println("q(tf) = ", xf[1], ", v(tf) = ", xf[2])
+```
+
+With `augment=true`, the flow automatically computes and returns the costate associated with the variable `ω`:
+
+```@example main
+xf, pf, pω = f_aug(t0, [q0, v0], p0_val, tf, ω_val; augment=true)
+println("q(tf) = ", xf[1], ", v(tf) = ", xf[2], ", p_ω(tf) = ", pω)
+```
+
+The value `pω` represents the sensitivity of the Hamiltonian with respect to the pulsation parameter:
+
+```math
+p_{ω}(t_f) = -\int_{t_0}^{t_f} \frac{\partial H}{\partial \omega}(t, x(t), p(t), \omega) \, \mathrm{d}t
+```
+
+with $p_{\omega}(t_0) = 0$ by construction. This is particularly useful for computing transversality conditions in control-free problems.
+
+### Advantages
+
+The `augment=true` feature provides several benefits:
+
+- **No manual work**: No need to manually construct the augmented Hamiltonian or augmented ODEs
+- **Type-safe**: Automatic handling of scalar vs vector variables
+- **Robust**: Uses the existing, well-tested `Flow(Hamiltonian(...))` infrastructure
+- **Mathematical rigor**: Proper initial conditions and transversality handling
+
+### Error handling
+
+The `augment=true` option is only available for problems with variables:
+
+```julia
+# This will throw an error (no variable in the problem)
+ocp_no_var = @def begin
+    t ∈ [0, 1], time
+    x ∈ R, state
+    u ∈ R, control
+    x(0) == 0
+    ẋ(t) == u(t)
+    ∫(u(t)^2) → min
+end
+
+f_no_var = Flow(ocp_no_var, (x, p) -> p)
+f_no_var(0, 0, 1, 1; augment=true)  # ERROR: PreconditionError
+```
+
+Additionally, `augment=true` only works for point evaluation, not for trajectory computation:
+
+```julia
+# This works (point evaluation)
+xf, pf, pvf = f_aug(t0, x0, p0, tf, v; augment=true)
+
+# This will throw an error (trajectory call)
+sol = f_aug((t0, tf), x0, p0, v; augment=true)  # ERROR: PreconditionError
+```
+
+!!! note "Control-free problems"
+
+    The `augment=true` feature is particularly useful for control-free problems where the variable parameter appears in the dynamics. See the [control-free problems example](@ref example-control-free) for detailed applications with transversality conditions.
+
 ## Concatenation of arcs
 
 In this part, we present how to concatenate several flows. Let us consider the following problem.

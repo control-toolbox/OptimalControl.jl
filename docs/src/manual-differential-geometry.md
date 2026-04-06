@@ -607,7 +607,7 @@ dg(3, [1, 2], [4, 5])
 For a non-autonomous Hamiltonian $H(t, x, p)$ and a function $G(t, x, p)$, the **total time derivative** along the Hamiltonian flow is:
 
 ```math
-\frac{d}{dt} G(t, x(t), p(t)) = \partial_t G + \{H, G\}.
+\frac{\mathrm{d}}{\mathrm{d}t} G(t, x(t), p(t)) = \partial_t G + \{H, G\}.
 ```
 
 This is the sum of:

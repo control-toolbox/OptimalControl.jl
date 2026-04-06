@@ -55,6 +55,10 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   - Optimal control problems without control variables
   - Optimization of constant parameters in dynamical systems
   - Full integration with solve pipeline
+  - **Augmented Hamiltonian approach**: `augment=true` feature in CTFlows for automatic costate computation
+  - **Simplified flow creation**: `Flow(ocp)` directly creates Hamiltonian flow from control-free problems
+  - **Mathematical framework**: Complete transversality conditions for variable parameters
+  - **Documentation**: Comprehensive examples with exponential growth and harmonic oscillator
 
 - **New solvers**:
   - **Uno**: CPU-only nonlinear optimization solver (methods with `:uno`)
@@ -77,6 +81,12 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   - Using `@reexport import` from Reexport.jl
   - Organized by source package (ctbase.jl, ctdirect.jl, ctflows.jl, ctmodels.jl, ctparser.jl, ctsolvers.jl)
   - Cleaner separation between imported and exported symbols
+
+- **CTFlows enhancements**:
+  - **Augmented Hamiltonian computation**: `augment=true` automatically computes costates for variable parameters
+  - **Direct OCP flow creation**: `Flow(ocp)` creates Hamiltonian flow without manual Hamiltonian definition
+  - **Transversality conditions**: Automatic handling of $p_\lambda(t_f) = 0$ for Lagrange costs and $p_\omega(t_f) = -2\omega$ for Mayer costs
+  - **Mathematical rigor**: Complete augmented system dynamics with proper initial conditions
 
 - **Strategy registry system**:
   - `StrategyRegistry` with metadata for all strategies
