@@ -10,6 +10,7 @@ module TestCtflows
 using Test: Test
 using OptimalControl # using is mandatory since we test exported symbols
 using CTFlows: CTFlows # needed for abstract type checks
+using OrdinaryDiffEq
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
@@ -355,6 +356,127 @@ function test_ctflows()
                 g = (t, x, p) -> t^2 + x[1]*p[1]
                 dg = ∂ₜ(g)
                 Test.@test dg(3, [1, 2], [4, 5]) ≈ 6
+            end
+        end
+
+        # ====================================================================
+        # FLOW FROM OCP AND AUGMENT TESTS
+        # ====================================================================
+        # These tests verify the Flow(ocp) construction for control-free problems
+        # and the augment=true feature for automatic costate computation.
+
+        Test.@testset "Flow from OCP and augment" begin
+            Test.@testset "Flow from Control-Free OCP" begin
+                # Define a simple control-free OCP (exponential growth)
+                t0 = 0
+                tf = 1
+                x0 = 1.0
+                
+                ocp = @def begin
+                    λ ∈ R, variable
+                    t ∈ [t0, tf], time
+                    x ∈ R, state
+                    x(t0) == x0
+                    ẋ(t) == λ * x(t)
+                    ∫(x(t)^2) → min
+                end
+                
+                # Test: Flow(ocp) works for control-free problems
+                f = Flow(ocp)
+                
+                # Test: basic call returns 2 values (state, costate)
+                λ_val = 0.5
+                p0 = 1.0
+                Test.@test applicable(f, t0, x0, p0, tf, λ_val)
+                xf, pf = f(t0, x0, p0, tf, λ_val)
+                Test.@test xf isa Real
+                Test.@test pf isa Real
+            end
+
+            Test.@testset "Flow with augment=true" begin
+                # Same OCP as above
+                t0 = 0
+                tf = 1
+                x0 = 1.0
+                
+                ocp = @def begin
+                    λ ∈ R, variable
+                    t ∈ [t0, tf], time
+                    x ∈ R, state
+                    x(t0) == x0
+                    ẋ(t) == λ * x(t)
+                    ∫(x(t)^2) → min
+                end
+                
+                f = Flow(ocp)
+                λ_val = 0.5
+                p0 = 1.0
+                
+                # Test: augment=true returns 3 values (state, costate, variable costate)
+                xf, pf, pλ = f(t0, x0, p0, tf, λ_val; augment=true)
+                Test.@test xf isa Real
+                Test.@test pf isa Real
+                Test.@test pλ isa Real  # The new one: costate of λ
+            end
+
+            Test.@testset "Manual vs Automatic Hamiltonian" begin
+                # Define OCP
+                t0 = 0
+                tf = 1
+                x0 = 1.0
+                λ_val = 0.5
+                p0 = 1.0
+                
+                ocp = @def begin
+                    λ ∈ R, variable
+                    t ∈ [t0, tf], time
+                    x ∈ R, state
+                    x(t0) == x0
+                    ẋ(t) == λ * x(t)
+                    ∫(x(t)^2) → min
+                end
+                
+                # Manual Hamiltonian construction
+                H(x, p, λ) = p * λ * x - x^2
+                function H_aug(x_, p_)
+                    x, λ = x_
+                    p, _ = p_
+                    return H(x, p, λ)
+                end
+                f_manual = Flow(OptimalControl.Hamiltonian(H_aug))
+                
+                # Automatic Flow from OCP
+                f_auto = Flow(ocp)
+                
+                # Test: both give similar results
+                xf_manual, pf_manual = f_manual(t0, [x0, λ_val], [p0, 0.0], tf)
+                xf_auto, pf_auto = f_auto(t0, x0, p0, tf, λ_val)
+                
+                Test.@test xf_manual[1] ≈ xf_auto rtol=1e-6
+                Test.@test pf_manual[1] ≈ pf_auto rtol=1e-6
+            end
+
+            Test.@testset "Analytical Solution Check" begin
+                # For λ=0, x(t) = x0 (constant)
+                t0 = 0
+                tf = 1
+                x0 = 1.0
+                
+                ocp = @def begin
+                    λ ∈ R, variable
+                    t ∈ [t0, tf], time
+                    x ∈ R, state
+                    x(t0) == x0
+                    ẋ(t) == λ * x(t)
+                    ∫(x(t)^2) → min
+                end
+                
+                f = Flow(ocp)
+                λ_zero = 0.0
+                p0 = 1.0
+                
+                xf, pf = f(t0, x0, p0, tf, λ_zero)
+                Test.@test xf ≈ x0 rtol=1e-10  # x remains constant
             end
         end
     end

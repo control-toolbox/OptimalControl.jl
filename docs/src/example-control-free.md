@@ -58,7 +58,7 @@ nothing # hide
 ### Direct method
 
 ```@example main-growth
-direct_sol = solve(ocp; display=false)
+direct_sol = solve(ocp; grid_size=20, display=false)
 println("Estimated growth rate: λ = ", variable(direct_sol))
 println("Objective value: ", objective(direct_sol))
 nothing # hide
@@ -225,7 +225,7 @@ nothing # hide
 ### [Direct method](@id example-control-free-direct-2)
 
 ```@example main-harmonic
-direct_sol = solve(ocp; display=false)
+direct_sol = solve(ocp; grid_size=20, display=false)
 println("Optimal pulsation: ω = ", variable(direct_sol))
 println("Objective value: ω² = ", objective(direct_sol))
 println("Expected: ω = π/2 ≈ 1.5708, ω² ≈ 2.4674")
