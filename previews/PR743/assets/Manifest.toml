@@ -232,9 +232,9 @@ version = "1.0.6"
 
 [[deps.CTFlows]]
 deps = ["CTBase", "CTModels", "DocStringExtensions", "ForwardDiff", "LinearAlgebra", "MLStyle", "MacroTools"]
-git-tree-sha1 = "c4a9adf514aca4e006131a5e39792bcf01b449b4"
+git-tree-sha1 = "919b47b3c8a9c2fc2c8606ee8fce826bef6d36b2"
 uuid = "1c39547c-7794-42f7-af83-d98194f657c2"
-version = "0.8.22-beta"
+version = "0.8.23"
 weakdeps = ["OrdinaryDiffEq"]
 
     [deps.CTFlows.extensions]
