@@ -84,27 +84,34 @@ using OrdinaryDiffEq  # ODE solver
 using NonlinearSolve  # Nonlinear solver
 ```
 
-For control-free problems with a variable parameter, we use an **augmented Hamiltonian** approach: the variable $\lambda$ is treated as an additional state with zero dynamics. The Hamiltonian is:
+For control-free problems with a variable parameter, we use an **augmented Hamiltonian** approach. The Hamiltonian for this problem is:
 
 ```math
 H(t, x, p, \lambda) = p \lambda x - (x - x_{\text{obs}}(t))^2
 ```
 
-Defining the augmented state $x\_\text{aug} = (x, \lambda)$ and augmented costate $p\_\text{aug} = (p, p_\lambda)$, we construct the augmented Hamiltonian:
+To handle the variable parameter $\lambda$, we treat it as an additional state with zero dynamics. This gives us the augmented system with state $(x, \lambda)$ and costate $(p, p_\lambda)$, where:
+
+```math
+\begin{aligned}
+\frac{dx}{dt} &= \frac{\partial H}{\partial p} = \lambda x \\
+\frac{d\lambda}{dt} &= 0 \quad \text{(constant parameter)} \\
+\frac{dp}{dt} &= -\frac{\partial H}{\partial x} = -p\lambda + 2(x - x_{\text{obs}}(t)) \\
+\frac{dp_\lambda}{dt} &= -\frac{\partial H}{\partial \lambda} = -px
+\end{aligned}
+```
+
+The transversality condition for the variable parameter requires $p_\lambda(t_f) - p_\lambda(t_0) = 0$. Assuming $p_\lambda(t_0) = 0$, we have to satisfy:
+
+```math
+p_\lambda(t_f) = -\int_{t_0}^{t_f} \frac{\partial H}{\partial \lambda}(t, x(t), p(t), \lambda) \, dt = 0
+```
+
+We use CTFlows' `augment=true` feature to automatically compute $p_\lambda(t_f)$ without manually constructing the augmented system.
 
 ```@example main-growth
-# Hamiltonian
-H(t, x, p, λ) = p*λ*x - (x - data(t))^2
-
-# Augmented Hamiltonian
-function H_aug(t, x_, p_)
-    x, λ = x_
-    p, _ = p_
-    return H(t, x, p, λ)
-end
-
-# Create Hamiltonian flow
-f = Flow(OptimalControl.Hamiltonian(H_aug; autonomous=false))
+# Create Hamiltonian flow from OCP
+f = Flow(ocp)
 nothing # hide
 ```
 
@@ -112,13 +119,15 @@ nothing # hide
 
     For more details about the flow construction, see [this page](@ref manual-flow-others).
 
-The shooting function enforces the transversality conditions $p(t_f) = 0$ and $p_\lambda(t_f) = 0$:
+The shooting function enforces the transversality conditions $p(t_f) = 0$ and $p_\lambda(t_f) = 0$. Using `augment=true`, the flow automatically returns $(x(t_f), p(t_f), p_\lambda(t_f))$, with $p_\lambda(t_0) = 0$ by construction.
 
 ```@example main-growth
 # Shooting function: S(p0, λ) = (p(tf), pλ(tf))
+# We want both components to be zero at tf
 function shoot!(s, p0, λ)
-    _, p_tf_ = f(t0, [x0, λ], [p0, 0], tf)
-    s[:] = p_tf_
+    _, px_tf, pλ_tf = f(t0, x0, p0, tf, λ; augment=true)
+    s[1] = px_tf
+    s[2] = pλ_tf
     return nothing
 end
 
@@ -138,7 +147,7 @@ p_direct = costate(direct_sol)
 p0_guess = p_direct(t0)
 λ_guess = λ_direct
 
-# NLE problem with initial guess
+# NLE problem with initial guess (2 unknowns: p0, λ)
 prob_indirect = NonlinearProblem(nle!, [p0_guess, λ_guess])
 
 # Solve shooting equations
@@ -154,14 +163,10 @@ nothing # hide
 Finally, we compute and plot the indirect solution:
 
 ```@example main-growth
-# Compute indirect solution trajectory
-x0_sol_ = [x0, λ_sol]
-p0_sol_ = [p0_sol, 0.0]
-indirect_sol = f((t0, tf), x0_sol_, p0_sol_; saveat=range(t0, tf, 200))
-
-# Plot comparison
-plot!(plt, indirect_sol; vars = (0, 1), subplot=1, line=:dash, lw=2, label="Indirect", color=:red)
-plot!(plt, indirect_sol; vars = (0, 3), subplot=2, line=:dash, lw=2, label="Indirect", color=:red)
+# Compute and plot indirect solution
+f = Flow(ocp)
+indirect_sol = f((t0, tf), x0, p0_sol, λ_sol; saveat=range(t0, tf, 200))
+plot!(plt, indirect_sol; linestyle=:dash, lw=2, label="Indirect", color=2)
 ```
 
 The direct and indirect solutions match closely, both fitting the perturbed observed data.
@@ -256,27 +261,42 @@ The numerical and analytical solutions should match very closely.
 
 ### [Indirect method](@id example-control-free-indirect-2)
 
-We now solve the same problem using an indirect shooting method. For this control-free problem with a variable parameter, we use an **augmented Hamiltonian** approach: the variable $\omega$ is treated as an additional state with zero dynamics. The Hamiltonian is:
+We now solve the same problem using an indirect shooting method. For this control-free problem with a variable parameter, we use an **augmented Hamiltonian** approach. The Hamiltonian for this problem is:
 
 ```math
 H(x, p, \omega) = p_1 v + p_2 (-\omega^2 q)
 ```
 
-Defining the augmented state $x\_\text{aug} = (q, v, \omega)$ and augmented costate $p\_\text{aug} = (p_1, p_2, p_\omega)$, we construct the augmented Hamiltonian:
+To handle the variable parameter $\omega$, we treat it as an additional state with zero dynamics. This gives us the augmented system with state $(q, v, \omega)$ and costate $(p_1, p_2, p_\omega)$, where:
+
+```math
+\begin{aligned}
+\frac{dq}{dt} &= \frac{\partial H}{\partial p_1} = v \\
+\frac{dv}{dt} &= \frac{\partial H}{\partial p_2} = -\omega^2 q \\
+\frac{d\omega}{dt} &= 0 \quad \text{(constant parameter)} \\
+\frac{dp_1}{dt} &= -\frac{\partial H}{\partial q} = \omega^2 p_2 \\
+\frac{dp_2}{dt} &= -\frac{\partial H}{\partial v} = -p_1 \\
+\frac{dp_\omega}{dt} &= -\frac{\partial H}{\partial \omega} = 2\omega q p_2
+\end{aligned}
+```
+
+For this problem with a Mayer cost $g(\omega) = \omega^2$, the transversality condition for the variable parameter is:
+
+```math
+p_\omega(t_f) - p_\omega(t_0)= -\frac{\partial g}{\partial \omega} = -2\omega
+```
+
+Assuming $p_\omega(t_0) = 0$, we have:
+
+```math
+p_\omega(t_f) = -\int_{t_0}^{t_f} \frac{\partial H}{\partial \omega}(t, x(t), p(t), \omega) \, dt = -2\omega
+```
+
+We use CTFlows' `augment=true` feature to automatically compute $p_\omega(t_f)$ without manually constructing the augmented system:
 
 ```@example main-harmonic
-# Hamiltonian
-H(x, p, ω) = p[1]*x[2] + p[2]*(-ω^2*x[1])
-
-# Augmented Hamiltonian
-function H_aug(x_, p_)
-    q, v, ω = x_
-    p1, p2, pω = p_
-    return H([q, v], [p1, p2], ω)
-end
-
-# Create Hamiltonian flow
-f = Flow(OptimalControl.Hamiltonian(H_aug))
+# Create Hamiltonian flow from OCP
+f = Flow(ocp)
 nothing # hide
 ```
 
@@ -290,13 +310,17 @@ The shooting function enforces the conditions:
 - Free final velocity: $p_2(t_f) = 0$
 - Transversality condition for Mayer cost: $p_\omega(t_f) + 2\omega = 0$
 
+Using `augment=true`, the flow automatically returns $(x(t_f), p(t_f), p_\omega(t_f))$, with $p_\omega(t_0) = 0$ by construction.
+
 ```@example main-harmonic
 # Shooting function: S(p0, ω)
 function shoot!(s, p0, ω)
-    x_tf, p_tf = f(t0, [q0, v0, ω], [p0..., 0], tf)
-    s[1] = x_tf[1]
-    s[2] = p_tf[2]
-    s[3] = p_tf[3] + 2ω
+    x_tf, p_tf, pω_tf = f(t0, [q0, v0], p0, tf, ω; augment=true)
+    q_tf = x_tf[1]
+    pv_tf = p_tf[2]
+    s[1] = q_tf         # q(tf) = 0
+    s[2] = pv_tf        # p2(tf) = 0 (free final velocity)
+    s[3] = pω_tf + 2ω  # pω(tf) + 2ω = 0 (Mayer cost transversality)
     return nothing
 end
 
@@ -332,16 +356,10 @@ nothing # hide
 Finally, we compute and plot the indirect solution:
 
 ```@example main-harmonic
-# Compute indirect solution trajectory
-x0_sol_ = [q0, v0, ω_sol]
-p0_sol_ = [p0_sol..., 0.0]
-indirect_sol = f((t0, tf), x0_sol_, p0_sol_; saveat=range(t0, tf, 200))
-
-# Plot comparison
-plot!(plt, indirect_sol; vars = (0, 1), subplot=1, line=:dash, lw=2, label="Indirect", color=:red)
-plot!(plt, indirect_sol; vars = (0, 2), subplot=2, line=:dash, lw=2, label="Indirect", color=:red)
-plot!(plt, indirect_sol; vars = (0, 4), subplot=3, line=:dash, lw=2, label="Indirect", color=:red)
-plot!(plt, indirect_sol; vars = (0, 5), subplot=4, line=:dash, lw=2, label="Indirect", color=:red)
+# Compute and plot indirect solution
+f = Flow(ocp)
+indirect_sol = f((t0, tf), [q0, v0], p0_sol, ω_sol; saveat=range(t0, tf, 200))
+plot!(plt, indirect_sol; linestyle=:dash, lw=2, label="Indirect", color=2)
 ```
 
 The direct and indirect solutions match closely, both finding the optimal pulsation $\omega \approx \pi/2$.
