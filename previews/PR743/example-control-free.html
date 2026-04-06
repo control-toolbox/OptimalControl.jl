@@ -26,22 +26,19 @@ plt = plot(direct_sol; size=(800, 400), label=&quot;Direct&quot;)
 
 # Add data on first plot
 t_grid = time_grid(direct_sol)
-plot!(plt, t_grid, data.(t_grid); subplot=1, line=:dot, lw=2, label=&quot;Data&quot;, color=:black)</code></pre><img src="example-control-free-5a8ddadd.svg" alt="Example block output"/><p>The estimated parameter should be close to <span>$\lambda \approx 0.5$</span>.</p><h3 id="Indirect-method"><a class="docs-heading-anchor" href="#Indirect-method">Indirect method</a><a id="Indirect-method-1"></a><a class="docs-heading-anchor-permalink" href="#Indirect-method" title="Permalink"></a></h3><p>We now solve the same problem using an indirect shooting method based on Pontryagin&#39;s Maximum Principle. First, we import the necessary packages:</p><pre><code class="language-julia hljs">using OrdinaryDiffEq  # ODE solver
-using NonlinearSolve  # Nonlinear solver</code></pre><p>For control-free problems with a variable parameter, we use an <strong>augmented Hamiltonian</strong> approach: the variable <span>$\lambda$</span> is treated as an additional state with zero dynamics. The Hamiltonian is:</p><p class="math-container">\[H(t, x, p, \lambda) = p \lambda x - (x - x_{\text{obs}}(t))^2\]</p><p>Defining the augmented state <span>$x\_\text{aug} = (x, \lambda)$</span> and augmented costate <span>$p\_\text{aug} = (p, p_\lambda)$</span>, we construct the augmented Hamiltonian:</p><pre><code class="language-julia hljs"># Hamiltonian
-H(t, x, p, λ) = p*λ*x - (x - data(t))^2
-
-# Augmented Hamiltonian
-function H_aug(t, x_, p_)
-    x, λ = x_
-    p, _ = p_
-    return H(t, x, p, λ)
-end
-
-# Create Hamiltonian flow
-f = Flow(OptimalControl.Hamiltonian(H_aug; autonomous=false))</code></pre><div class="admonition is-info" id="Note-383fd5298e9c6e51"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-383fd5298e9c6e51" title="Permalink"></a></header><div class="admonition-body"><p>For more details about the flow construction, see <a href="manual-flow-others.html#manual-flow-others">this page</a>.</p></div></div><p>The shooting function enforces the transversality conditions <span>$p(t_f) = 0$</span> and <span>$p_\lambda(t_f) = 0$</span>:</p><pre><code class="language-julia hljs"># Shooting function: S(p0, λ) = (p(tf), pλ(tf))
+plot!(plt, t_grid, data.(t_grid); subplot=1, line=:dot, lw=2, label=&quot;Data&quot;, color=:black)</code></pre><img src="example-control-free-4174e550.svg" alt="Example block output"/><p>The estimated parameter should be close to <span>$\lambda \approx 0.5$</span>.</p><h3 id="Indirect-method"><a class="docs-heading-anchor" href="#Indirect-method">Indirect method</a><a id="Indirect-method-1"></a><a class="docs-heading-anchor-permalink" href="#Indirect-method" title="Permalink"></a></h3><p>We now solve the same problem using an indirect shooting method based on Pontryagin&#39;s Maximum Principle. First, we import the necessary packages:</p><pre><code class="language-julia hljs">using OrdinaryDiffEq  # ODE solver
+using NonlinearSolve  # Nonlinear solver</code></pre><p>For control-free problems with a variable parameter, we use an <strong>augmented Hamiltonian</strong> approach. The Hamiltonian for this problem is:</p><p class="math-container">\[H(t, x, p, \lambda) = p \lambda x - (x - x_{\text{obs}}(t))^2\]</p><p>To handle the variable parameter <span>$\lambda$</span>, we treat it as an additional state with zero dynamics. This gives us the augmented system with state <span>$(x, \lambda)$</span> and costate <span>$(p, p_\lambda)$</span>, where:</p><p class="math-container">\[\begin{aligned}
+\frac{dx}{dt} &amp;= \frac{\partial H}{\partial p} = \lambda x \\
+\frac{d\lambda}{dt} &amp;= 0 \quad \text{(constant parameter)} \\
+\frac{dp}{dt} &amp;= -\frac{\partial H}{\partial x} = -p\lambda + 2(x - x_{\text{obs}}(t)) \\
+\frac{dp_\lambda}{dt} &amp;= -\frac{\partial H}{\partial \lambda} = -px
+\end{aligned}\]</p><p>The transversality condition for the variable parameter requires <span>$p_\lambda(t_f) - p_\lambda(t_0) = 0$</span>. Assuming <span>$p_\lambda(t_0) = 0$</span>, we have to satisfy:</p><p class="math-container">\[p_\lambda(t_f) = -\int_{t_0}^{t_f} \frac{\partial H}{\partial \lambda}(t, x(t), p(t), \lambda) \, dt = 0\]</p><p>We use CTFlows&#39; <code>augment=true</code> feature to automatically compute <span>$p_\lambda(t_f)$</span> without manually constructing the augmented system.</p><pre><code class="language-julia hljs"># Create Hamiltonian flow from OCP
+f = Flow(ocp)</code></pre><div class="admonition is-info" id="Note-383fd5298e9c6e51"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-383fd5298e9c6e51" title="Permalink"></a></header><div class="admonition-body"><p>For more details about the flow construction, see <a href="manual-flow-others.html#manual-flow-others">this page</a>.</p></div></div><p>The shooting function enforces the transversality conditions <span>$p(t_f) = 0$</span> and <span>$p_\lambda(t_f) = 0$</span>. Using <code>augment=true</code>, the flow automatically returns <span>$(x(t_f), p(t_f), p_\lambda(t_f))$</span>, with <span>$p_\lambda(t_0) = 0$</span> by construction.</p><pre><code class="language-julia hljs"># Shooting function: S(p0, λ) = (p(tf), pλ(tf))
+# We want both components to be zero at tf
 function shoot!(s, p0, λ)
-    _, p_tf_ = f(t0, [x0, λ], [p0, 0], tf)
-    s[:] = p_tf_
+    _, px_tf, pλ_tf = f(t0, x0, p0, tf, λ; augment=true)
+    s[1] = px_tf
+    s[2] = pλ_tf
     return nothing
 end
 
@@ -54,7 +51,7 @@ p_direct = costate(direct_sol)
 p0_guess = p_direct(t0)
 λ_guess = λ_direct
 
-# NLE problem with initial guess
+# NLE problem with initial guess (2 unknowns: p0, λ)
 prob_indirect = NonlinearProblem(nle!, [p0_guess, λ_guess])
 
 # Solve shooting equations
@@ -65,14 +62,10 @@ println(&quot;Indirect solution:&quot;)
 println(&quot;Initial costate: p0 = &quot;, p0_sol)
 println(&quot;Parameter: λ = &quot;, λ_sol)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Indirect solution:
 Initial costate: p0 = 0.058478510601395285
-Parameter: λ = 0.4966212669483577</code></pre><p>Finally, we compute and plot the indirect solution:</p><pre><code class="language-julia hljs"># Compute indirect solution trajectory
-x0_sol_ = [x0, λ_sol]
-p0_sol_ = [p0_sol, 0.0]
-indirect_sol = f((t0, tf), x0_sol_, p0_sol_; saveat=range(t0, tf, 200))
-
-# Plot comparison
-plot!(plt, indirect_sol; vars = (0, 1), subplot=1, line=:dash, lw=2, label=&quot;Indirect&quot;, color=:red)
-plot!(plt, indirect_sol; vars = (0, 3), subplot=2, line=:dash, lw=2, label=&quot;Indirect&quot;, color=:red)</code></pre><img src="example-control-free-0f758ed8.svg" alt="Example block output"/><p>The direct and indirect solutions match closely, both fitting the perturbed observed data.</p><h2 id="Example-2:-Harmonic-oscillator-pulsation-optimization"><a class="docs-heading-anchor" href="#Example-2:-Harmonic-oscillator-pulsation-optimization">Example 2: Harmonic oscillator pulsation optimization</a><a id="Example-2:-Harmonic-oscillator-pulsation-optimization-1"></a><a class="docs-heading-anchor-permalink" href="#Example-2:-Harmonic-oscillator-pulsation-optimization" title="Permalink"></a></h2><p>Consider a harmonic oscillator:</p><p class="math-container">\[\ddot{q}(t) = -\omega^2 q(t)\]</p><p>with initial conditions <span>$q(0) = 1$</span>, <span>$\dot{q}(0) = 0$</span> and final condition <span>$q(1) = 0$</span>. We want to find the minimal pulsation <span>$\omega$</span> satisfying these constraints:</p><p class="math-container">\[    \begin{aligned}
+Parameter: λ = 0.4966212669483577</code></pre><p>Finally, we compute and plot the indirect solution:</p><pre><code class="language-julia hljs"># Compute and plot indirect solution
+f = Flow(ocp)
+indirect_sol = f((t0, tf), x0, p0_sol, λ_sol; saveat=range(t0, tf, 200))
+plot!(plt, indirect_sol; linestyle=:dash, lw=2, label=&quot;Indirect&quot;, color=2)</code></pre><img src="example-control-free-4435bc34.svg" alt="Example block output"/><p>The direct and indirect solutions match closely, both fitting the perturbed observed data.</p><h2 id="Example-2:-Harmonic-oscillator-pulsation-optimization"><a class="docs-heading-anchor" href="#Example-2:-Harmonic-oscillator-pulsation-optimization">Example 2: Harmonic oscillator pulsation optimization</a><a id="Example-2:-Harmonic-oscillator-pulsation-optimization-1"></a><a class="docs-heading-anchor-permalink" href="#Example-2:-Harmonic-oscillator-pulsation-optimization" title="Permalink"></a></h2><p>Consider a harmonic oscillator:</p><p class="math-container">\[\ddot{q}(t) = -\omega^2 q(t)\]</p><p>with initial conditions <span>$q(0) = 1$</span>, <span>$\dot{q}(0) = 0$</span> and final condition <span>$q(1) = 0$</span>. We want to find the minimal pulsation <span>$\omega$</span> satisfying these constraints:</p><p class="math-container">\[    \begin{aligned}
         &amp; \text{Minimise} &amp;&amp; \omega^2 \\
         &amp; \text{subject to} \\
         &amp; &amp;&amp; \ddot{q}(t) = -\omega^2 q(t), \\[1.0em]
@@ -98,7 +91,7 @@ println(&quot;Optimal pulsation: ω = &quot;, variable(direct_sol))
 println(&quot;Objective value: ω² = &quot;, objective(direct_sol))
 println(&quot;Expected: ω = π/2 ≈ 1.5708, ω² ≈ 2.4674&quot;)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Optimal pulsation: ω = 1.570801494616592
 Objective value: ω² = 2.4674173354897193
-Expected: ω = π/2 ≈ 1.5708, ω² ≈ 2.4674</code></pre><pre><code class="language-julia hljs">plot(direct_sol; size=(800, 400))</code></pre><img src="example-control-free-ae05ad23.svg" alt="Example block output"/><p>The optimal pulsation should be close to <span>$\omega = \pi/2 \approx 1.5708$</span>, and the objective <span>$\omega^2 \approx 2.4674$</span>.</p><h2 id="Comparison-with-analytical-solutions"><a class="docs-heading-anchor" href="#Comparison-with-analytical-solutions">Comparison with analytical solutions</a><a id="Comparison-with-analytical-solutions-1"></a><a class="docs-heading-anchor-permalink" href="#Comparison-with-analytical-solutions" title="Permalink"></a></h2><p>For the harmonic oscillator, we can compare the numerical solution with the analytical one:</p><pre><code class="language-julia hljs"># analytical solution
+Expected: ω = π/2 ≈ 1.5708, ω² ≈ 2.4674</code></pre><pre><code class="language-julia hljs">plot(direct_sol; size=(800, 400))</code></pre><img src="example-control-free-bfee3411.svg" alt="Example block output"/><p>The optimal pulsation should be close to <span>$\omega = \pi/2 \approx 1.5708$</span>, and the objective <span>$\omega^2 \approx 2.4674$</span>.</p><h2 id="Comparison-with-analytical-solutions"><a class="docs-heading-anchor" href="#Comparison-with-analytical-solutions">Comparison with analytical solutions</a><a id="Comparison-with-analytical-solutions-1"></a><a class="docs-heading-anchor-permalink" href="#Comparison-with-analytical-solutions" title="Permalink"></a></h2><p>For the harmonic oscillator, we can compare the numerical solution with the analytical one:</p><pre><code class="language-julia hljs"># analytical solution
 t_analytical = range(0, 1, 100)
 q_analytical = cos.(π * t_analytical / 2)
 v_analytical = -(π/2) * sin.(π * t_analytical / 2)
@@ -108,23 +101,22 @@ plt = plot(direct_sol; size=(800, 600), label=&quot;Direct&quot;)
 plot!(plt, t_analytical, q_analytical;
       label=&quot;q (analytical)&quot;, linestyle=:dash, linewidth=2, subplot=1)
 plot!(plt, t_analytical, v_analytical;
-      label=&quot;v (analytical)&quot;, linestyle=:dash, linewidth=2, subplot=2)</code></pre><img src="example-control-free-abbc9ca2.svg" alt="Example block output"/><p>The numerical and analytical solutions should match very closely.</p><h3 id="example-control-free-indirect-2"><a class="docs-heading-anchor" href="#example-control-free-indirect-2">Indirect method</a><a id="example-control-free-indirect-2-1"></a><a class="docs-heading-anchor-permalink" href="#example-control-free-indirect-2" title="Permalink"></a></h3><p>We now solve the same problem using an indirect shooting method. For this control-free problem with a variable parameter, we use an <strong>augmented Hamiltonian</strong> approach: the variable <span>$\omega$</span> is treated as an additional state with zero dynamics. The Hamiltonian is:</p><p class="math-container">\[H(x, p, \omega) = p_1 v + p_2 (-\omega^2 q)\]</p><p>Defining the augmented state <span>$x\_\text{aug} = (q, v, \omega)$</span> and augmented costate <span>$p\_\text{aug} = (p_1, p_2, p_\omega)$</span>, we construct the augmented Hamiltonian:</p><pre><code class="language-julia hljs"># Hamiltonian
-H(x, p, ω) = p[1]*x[2] + p[2]*(-ω^2*x[1])
-
-# Augmented Hamiltonian
-function H_aug(x_, p_)
-    q, v, ω = x_
-    p1, p2, pω = p_
-    return H([q, v], [p1, p2], ω)
-end
-
-# Create Hamiltonian flow
-f = Flow(OptimalControl.Hamiltonian(H_aug))</code></pre><div class="admonition is-info" id="Note-383fd5298e9c6e51"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-383fd5298e9c6e51" title="Permalink"></a></header><div class="admonition-body"><p>For more details about the flow construction, see <a href="manual-flow-others.html#manual-flow-others">this page</a>.</p></div></div><p>The shooting function enforces the conditions:</p><ul><li>Final condition: <span>$q(t_f) = 0$</span></li><li>Free final velocity: <span>$p_2(t_f) = 0$</span></li><li>Transversality condition for Mayer cost: <span>$p_\omega(t_f) + 2\omega = 0$</span></li></ul><pre><code class="language-julia hljs"># Shooting function: S(p0, ω)
+      label=&quot;v (analytical)&quot;, linestyle=:dash, linewidth=2, subplot=2)</code></pre><img src="example-control-free-a8f80c89.svg" alt="Example block output"/><p>The numerical and analytical solutions should match very closely.</p><h3 id="example-control-free-indirect-2"><a class="docs-heading-anchor" href="#example-control-free-indirect-2">Indirect method</a><a id="example-control-free-indirect-2-1"></a><a class="docs-heading-anchor-permalink" href="#example-control-free-indirect-2" title="Permalink"></a></h3><p>We now solve the same problem using an indirect shooting method. For this control-free problem with a variable parameter, we use an <strong>augmented Hamiltonian</strong> approach. The Hamiltonian for this problem is:</p><p class="math-container">\[H(x, p, \omega) = p_1 v + p_2 (-\omega^2 q)\]</p><p>To handle the variable parameter <span>$\omega$</span>, we treat it as an additional state with zero dynamics. This gives us the augmented system with state <span>$(q, v, \omega)$</span> and costate <span>$(p_1, p_2, p_\omega)$</span>, where:</p><p class="math-container">\[\begin{aligned}
+\frac{dq}{dt} &amp;= \frac{\partial H}{\partial p_1} = v \\
+\frac{dv}{dt} &amp;= \frac{\partial H}{\partial p_2} = -\omega^2 q \\
+\frac{d\omega}{dt} &amp;= 0 \quad \text{(constant parameter)} \\
+\frac{dp_1}{dt} &amp;= -\frac{\partial H}{\partial q} = \omega^2 p_2 \\
+\frac{dp_2}{dt} &amp;= -\frac{\partial H}{\partial v} = -p_1 \\
+\frac{dp_\omega}{dt} &amp;= -\frac{\partial H}{\partial \omega} = 2\omega q p_2
+\end{aligned}\]</p><p>For this problem with a Mayer cost <span>$g(\omega) = \omega^2$</span>, the transversality condition for the variable parameter is:</p><p class="math-container">\[p_\omega(t_f) - p_\omega(t_0)= -\frac{\partial g}{\partial \omega} = -2\omega\]</p><p>Assuming <span>$p_\omega(t_0) = 0$</span>, we have:</p><p class="math-container">\[p_\omega(t_f) = -\int_{t_0}^{t_f} \frac{\partial H}{\partial \omega}(t, x(t), p(t), \omega) \, dt = -2\omega\]</p><p>We use CTFlows&#39; <code>augment=true</code> feature to automatically compute <span>$p_\omega(t_f)$</span> without manually constructing the augmented system:</p><pre><code class="language-julia hljs"># Create Hamiltonian flow from OCP
+f = Flow(ocp)</code></pre><div class="admonition is-info" id="Note-383fd5298e9c6e51"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-383fd5298e9c6e51" title="Permalink"></a></header><div class="admonition-body"><p>For more details about the flow construction, see <a href="manual-flow-others.html#manual-flow-others">this page</a>.</p></div></div><p>The shooting function enforces the conditions:</p><ul><li>Final condition: <span>$q(t_f) = 0$</span></li><li>Free final velocity: <span>$p_2(t_f) = 0$</span></li><li>Transversality condition for Mayer cost: <span>$p_\omega(t_f) + 2\omega = 0$</span></li></ul><p>Using <code>augment=true</code>, the flow automatically returns <span>$(x(t_f), p(t_f), p_\omega(t_f))$</span>, with <span>$p_\omega(t_0) = 0$</span> by construction.</p><pre><code class="language-julia hljs"># Shooting function: S(p0, ω)
 function shoot!(s, p0, ω)
-    x_tf, p_tf = f(t0, [q0, v0, ω], [p0..., 0], tf)
-    s[1] = x_tf[1]
-    s[2] = p_tf[2]
-    s[3] = p_tf[3] + 2ω
+    x_tf, p_tf, pω_tf = f(t0, [q0, v0], p0, tf, ω; augment=true)
+    q_tf = x_tf[1]
+    pv_tf = p_tf[2]
+    s[1] = q_tf         # q(tf) = 0
+    s[2] = pv_tf        # p2(tf) = 0 (free final velocity)
+    s[3] = pω_tf + 2ω  # pω(tf) + 2ω = 0 (Mayer cost transversality)
     return nothing
 end
 
@@ -148,18 +140,12 @@ println(&quot;Indirect solution:&quot;)
 println(&quot;Initial costate: p0 = &quot;, p0_sol)
 println(&quot;Parameter: ω = &quot;, ω_sol)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Indirect solution:
 Initial costate: p0 = [-8.582332771507338e-16, -2.0000000000035043]
-Parameter: ω = 1.5707963267948073</code></pre><p>Finally, we compute and plot the indirect solution:</p><pre><code class="language-julia hljs"># Compute indirect solution trajectory
-x0_sol_ = [q0, v0, ω_sol]
-p0_sol_ = [p0_sol..., 0.0]
-indirect_sol = f((t0, tf), x0_sol_, p0_sol_; saveat=range(t0, tf, 200))
-
-# Plot comparison
-plot!(plt, indirect_sol; vars = (0, 1), subplot=1, line=:dash, lw=2, label=&quot;Indirect&quot;, color=:red)
-plot!(plt, indirect_sol; vars = (0, 2), subplot=2, line=:dash, lw=2, label=&quot;Indirect&quot;, color=:red)
-plot!(plt, indirect_sol; vars = (0, 4), subplot=3, line=:dash, lw=2, label=&quot;Indirect&quot;, color=:red)
-plot!(plt, indirect_sol; vars = (0, 5), subplot=4, line=:dash, lw=2, label=&quot;Indirect&quot;, color=:red)</code></pre><img src="example-control-free-e391c3d9.svg" alt="Example block output"/><p>The direct and indirect solutions match closely, both finding the optimal pulsation <span>$\omega \approx \pi/2$</span>.</p><div class="admonition is-info" id="Applications-5b92ae74b39d436b"><header class="admonition-header">Applications<a class="admonition-anchor" href="#Applications-5b92ae74b39d436b" title="Permalink"></a></header><div class="admonition-body"><p>Control-free problems appear in many contexts:</p><ul><li><strong>System identification</strong>: estimating physical parameters (mass, damping, stiffness) from experimental data</li><li><strong>Optimal design</strong>: finding optimal geometric or physical parameters (length, stiffness, etc.)</li><li><strong>Inverse problems</strong>: reconstructing unknown inputs or initial conditions from partial observations</li></ul><p>See the <a href="manual-abstract.html#manual-abstract-control-free">syntax documentation</a> for more details on defining control-free problems.</p></div></div><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+Parameter: ω = 1.5707963267948073</code></pre><p>Finally, we compute and plot the indirect solution:</p><pre><code class="language-julia hljs"># Compute and plot indirect solution
+f = Flow(ocp)
+indirect_sol = f((t0, tf), [q0, v0], p0_sol, ω_sol; saveat=range(t0, tf, 200))
+plot!(plt, indirect_sol; linestyle=:dash, lw=2, label=&quot;Indirect&quot;, color=2)</code></pre><img src="example-control-free-4f8e7d70.svg" alt="Example block output"/><p>The direct and indirect solutions match closely, both finding the optimal pulsation <span>$\omega \approx \pi/2$</span>.</p><div class="admonition is-info" id="Applications-5b92ae74b39d436b"><header class="admonition-header">Applications<a class="admonition-anchor" href="#Applications-5b92ae74b39d436b" title="Permalink"></a></header><div class="admonition-body"><p>Control-free problems appear in many contexts:</p><ul><li><strong>System identification</strong>: estimating physical parameters (mass, damping, stiffness) from experimental data</li><li><strong>Optimal design</strong>: finding optimal geometric or physical parameters (length, stiffness, etc.)</li><li><strong>Inverse problems</strong>: reconstructing unknown inputs or initial conditions from partial observations</li></ul><p>See the <a href="manual-abstract.html#manual-abstract-control-free">syntax documentation</a> for more details on defining control-free problems.</p></div></div><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="example-double-integrator-time.html">« Time mininimisation</a><a class="docs-footer-nextpage" href="example-singular-control.html">Singular control »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Sunday 5 April 2026 20:26">Sunday 5 April 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="example-double-integrator-time.html">« Time mininimisation</a><a class="docs-footer-nextpage" href="example-singular-control.html">Singular control »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Monday 6 April 2026 12:37">Monday 6 April 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
