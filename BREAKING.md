@@ -10,7 +10,8 @@ Version 2.0.0 represents a major architectural redesign of OptimalControl.jl, in
 - **GPU/CPU parameter system** for heterogeneous computing
 - **Advanced option routing** with introspection and disambiguation tools
 - **New solver integrations** (Uno, MadNCL)
-- **Control-free problems** support
+- **Control-free problems** support with augmented Hamiltonian approach
+- **CTFlows enhancements** with `augment=true` and direct OCP flow creation
 - **Modernized reexport system** using `@reexport import`
 
 ## Removed Functions
@@ -172,7 +173,7 @@ The old functional approach is no longer supported.
 
 These features are new in v2.0.0 but don't break existing code:
 
-### Control-Free Problems
+### Control-Free Problems Support
 
 Support for optimal control problems without control variables:
 
@@ -219,6 +220,45 @@ sol = solve(ocp, :collocation, :adnlp, :ipopt, :cpu)
 using CUDA, MadNLPGPU
 sol = solve(ocp, :collocation, :exa, :madnlp, :gpu)
 ```
+
+## CTFlows Features
+
+### Control-Free Problems
+
+v2.0.0 introduces comprehensive support for control-free problems (optimal control without control variables) with enhanced CTFlows integration:
+
+**Augmented Hamiltonian approach:**
+
+```julia
+# v1.1.6: Manual augmented Hamiltonian construction
+function H_aug(t, x_, p_)
+    x, λ = x_
+    p, _ = p_
+    return H(t, x, p, λ)
+end
+f = Flow(Hamiltonian(H_aug))
+
+# v2.0.0: Direct OCP flow creation
+f = Flow(ocp)
+```
+
+**Automatic costate computation:**
+
+```julia
+# v2.0.0: augment=true automatically computes p_λ(tf)
+function shoot!(s, p0, λ)
+    _, px_tf, pλ_tf = f(t0, x0, p0, tf, λ; augment=true)
+    s[1] = px_tf  # p(tf) = 0
+    s[2] = pλ_tf  # p_λ(tf) = 0
+end
+```
+
+**Mathematical framework:**
+
+- Complete augmented system dynamics with proper transversality conditions
+- Automatic handling of Lagrange costs: $p_\lambda(t_f) = 0$
+- Automatic handling of Mayer costs: $p_\omega(t_f) = -2\omega$
+- Initial conditions: $p_\lambda(t_0) = 0$ by construction
 
 ## Dependency Updates
 
