@@ -1067,9 +1067,9 @@ version = "0.2.0"
 
 [[deps.HiGHS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "Zlib_jll", "libblastrampoline_jll"]
-git-tree-sha1 = "621d773f277b9eadac7e049eaa6418af65c7b9d7"
+git-tree-sha1 = "50ed12dc8c37ebb8d2b759f21755259d8512f2bd"
 uuid = "8fd58aa0-07eb-5a78-9b36-339c94fd15ea"
-version = "1.13.1+0"
+version = "1.14.0+0"
 
 [[deps.Hwloc_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "XML2_jll", "Xorg_libpciaccess_jll"]
@@ -1788,9 +1788,9 @@ version = "4.17.0"
 
 [[deps.NonlinearSolveBase]]
 deps = ["ADTypes", "Adapt", "ArrayInterface", "CommonSolve", "Compat", "ConcreteStructs", "DifferentiationInterface", "EnzymeCore", "FastClosures", "FunctionWrappers", "FunctionWrappersWrappers", "LinearAlgebra", "LogExpFunctions", "Markdown", "MaybeInplace", "PreallocationTools", "PrecompileTools", "Preferences", "Printf", "RecursiveArrayTools", "SciMLBase", "SciMLJacobianOperators", "SciMLLogging", "SciMLOperators", "SciMLStructures", "Setfield", "StaticArraysCore", "SymbolicIndexingInterface", "TimerOutputs"]
-git-tree-sha1 = "e9bad06173df78880b8c0fd51ad9cd940547a195"
+git-tree-sha1 = "f58613b44ce12a3a74be0bc4a865cc1f2e776737"
 uuid = "be0214bd-f91f-a760-ac4e-3421ce2b2da0"
-version = "2.21.0"
+version = "2.22.0"
 
     [deps.NonlinearSolveBase.extensions]
     NonlinearSolveBaseBandedMatricesExt = "BandedMatrices"
@@ -1926,9 +1926,9 @@ version = "1.24.0"
 
 [[deps.OrdinaryDiffEqCore]]
 deps = ["ADTypes", "Accessors", "Adapt", "ArrayInterface", "ConcreteStructs", "DataStructures", "DiffEqBase", "DocStringExtensions", "EnumX", "EnzymeCore", "FastBroadcast", "FastClosures", "FastPower", "FunctionWrappersWrappers", "InteractiveUtils", "LinearAlgebra", "Logging", "MacroTools", "MuladdMacro", "Polyester", "PrecompileTools", "Preferences", "Random", "RecursiveArrayTools", "Reexport", "SciMLBase", "SciMLLogging", "SciMLOperators", "SciMLStructures", "Static", "StaticArraysCore", "SymbolicIndexingInterface", "TruncatedStacktraces"]
-git-tree-sha1 = "73e431f66fb9854474c0bec1c11053e8889629c1"
+git-tree-sha1 = "b85ff46f8ca4c8aa5aac6c22f99e3b54abba8b51"
 uuid = "bbf590c4-e513-4bbe-9b18-05decba2e5d8"
-version = "3.27.0"
+version = "3.28.0"
 
     [deps.OrdinaryDiffEqCore.extensions]
     OrdinaryDiffEqCoreMooncakeExt = "Mooncake"
