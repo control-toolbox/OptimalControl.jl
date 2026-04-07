@@ -260,9 +260,9 @@ version = "0.8.13"
 
 [[deps.CTSolvers]]
 deps = ["ADNLPModels", "CTBase", "CTModels", "CommonSolve", "DocStringExtensions", "ExaModels", "KernelAbstractions", "NLPModels", "SolverCore"]
-git-tree-sha1 = "46f28bf27a6158333527417d97787b8125b1a07c"
+git-tree-sha1 = "82589c7e9537e5630d1ce3f91c522e5220e6c705"
 uuid = "d3e8d392-8e4b-4d9b-8e92-d7d4e3650ef6"
-version = "0.4.12"
+version = "0.4.13"
 
     [deps.CTSolvers.extensions]
     CTSolversCUDA = "CUDA"

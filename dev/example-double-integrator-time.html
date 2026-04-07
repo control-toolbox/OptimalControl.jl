@@ -64,17 +64,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
 iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   10  2.0002715e+00 5.69e-06 6.16e-06  -5.9 4.04e-01    -  9.77e-01 1.00e+00h  1
   11  2.0000002e+00 5.64e-08 1.07e-07 -11.0 4.16e-02    -  9.80e-01 1.00e+00h  1
-  12  2.0000000e+00 4.01e-13 3.01e-14 -11.0 3.92e-04    -  1.00e+00 1.00e+00h  1
+  12  2.0000000e+00 4.01e-13 3.14e-14 -11.0 3.92e-04    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 12
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.9999999920052862e+00    1.9999999920052862e+00
-Dual infeasibility......:   3.0087043967341742e-14    3.0087043967341742e-14
-Constraint violation....:   4.0090153419214403e-13    4.0090153419214403e-13
+Objective...............:   1.9999999920052867e+00    1.9999999920052867e+00
+Dual infeasibility......:   3.1419311596891930e-14    3.1419311596891930e-14
+Constraint violation....:   4.0079051188968151e-13    4.0079051188968151e-13
 Variable bound violation:   8.9949565573732571e-09    8.9949565573732571e-09
-Complementarity.........:   1.2075472772089570e-11    1.2075472772089570e-11
-Overall NLP error.......:   1.2075472772089570e-11    1.2075472772089570e-11
+Complementarity.........:   1.2075473617714966e-11    1.2075473617714966e-11
+Overall NLP error.......:   1.2075473617714966e-11    1.2075473617714966e-11
 
 
 Number of objective function evaluations             = 21
@@ -84,9 +84,9 @@ Number of inequality constraint evaluations          = 0
 Number of equality constraint Jacobian evaluations   = 13
 Number of inequality constraint Jacobian evaluations = 0
 Number of Lagrangian Hessian evaluations             = 12
-Total seconds in IPOPT                               = 3.774
+Total seconds in IPOPT                               = 3.740
 
-EXIT: Optimal Solution Found.</code></pre><p>and plot the solution:</p><pre><code class="language-julia hljs">plt = plot(direct_sol; label=&quot;Direct&quot;, size=(800, 600))</code></pre><img src="example-double-integrator-time-e1d22169.svg" alt="Example block output"/><div class="admonition is-info" id="Nota-bene-be64041ed186995c"><header class="admonition-header">Nota bene<a class="admonition-anchor" href="#Nota-bene-be64041ed186995c" title="Permalink"></a></header><div class="admonition-body"><p>The <code>solve</code> function has options, see the <a href="manual-solve.html#manual-solve">solve tutorial</a>. You can customise the plot, see the <a href="manual-plot.html#manual-plot">plot tutorial</a>.</p></div></div><h3 id="Indirect-method"><a class="docs-heading-anchor" href="#Indirect-method">Indirect method</a><a id="Indirect-method-1"></a><a class="docs-heading-anchor-permalink" href="#Indirect-method" title="Permalink"></a></h3><p>We now turn to the indirect method, which relies on Pontryagin’s Maximum Principle.  The pseudo-Hamiltonian is given by</p><p class="math-container">\[H(x, p, u) = p_1 v + p_2 u - 1,\]</p><p>where <span>$p = (p_1, p_2)$</span> is the costate vector. The optimal control is of bang–bang type:</p><p class="math-container">\[u(t) = \mathrm{sign}(p_2(t)),\]</p><p>with one switch from <span>$u=+1$</span> to <span>$u=-1$</span> at one single time denoted <span>$t_1$</span>. Let us implement this approach. First, we import the necessary packages:</p><pre><code class="language-julia hljs">using OrdinaryDiffEq
+EXIT: Optimal Solution Found.</code></pre><p>and plot the solution:</p><pre><code class="language-julia hljs">plt = plot(direct_sol; label=&quot;Direct&quot;, size=(800, 600))</code></pre><img src="example-double-integrator-time-fcc30027.svg" alt="Example block output"/><div class="admonition is-info" id="Nota-bene-be64041ed186995c"><header class="admonition-header">Nota bene<a class="admonition-anchor" href="#Nota-bene-be64041ed186995c" title="Permalink"></a></header><div class="admonition-body"><p>The <code>solve</code> function has options, see the <a href="manual-solve.html#manual-solve">solve tutorial</a>. You can customise the plot, see the <a href="manual-plot.html#manual-plot">plot tutorial</a>.</p></div></div><h3 id="Indirect-method"><a class="docs-heading-anchor" href="#Indirect-method">Indirect method</a><a id="Indirect-method-1"></a><a class="docs-heading-anchor-permalink" href="#Indirect-method" title="Permalink"></a></h3><p>We now turn to the indirect method, which relies on Pontryagin’s Maximum Principle.  The pseudo-Hamiltonian is given by</p><p class="math-container">\[H(x, p, u) = p_1 v + p_2 u - 1,\]</p><p>where <span>$p = (p_1, p_2)$</span> is the costate vector. The optimal control is of bang–bang type:</p><p class="math-container">\[u(t) = \mathrm{sign}(p_2(t)),\]</p><p>with one switch from <span>$u=+1$</span> to <span>$u=-1$</span> at one single time denoted <span>$t_1$</span>. Let us implement this approach. First, we import the necessary packages:</p><pre><code class="language-julia hljs">using OrdinaryDiffEq
 using NonlinearSolve</code></pre><p>Define the bang–bang control and Hamiltonian flow:</p><pre><code class="language-julia hljs"># pseudo-Hamiltonian
 H(x, p, u) = p[1]*x[2] + p[2]*u - 1
 
@@ -142,23 +142,23 @@ Iter    	f(u) inf-norm       	Step 2-norm
 ----    	-------------       	-----------
 0       	2.01000078e-02      	0.00000000e+00
 1       	1.01007469e-04      	1.16195417e-02
-2       	5.15356535e-09      	1.23924849e-04
-3       	2.22044605e-16      	4.79305789e-09
-Final   	2.22044605e-16
+2       	5.15356602e-09      	1.23924849e-04
+3       	4.48999074e-16      	4.79305872e-09
+Final   	4.48999074e-16
 ----------------------
 
-p0 = [0.9999999999999996, 0.9999999999999999]
-t1 = 1.0000000000000004
-tf = 2.000000000000001</code></pre><p>Finally, we reconstruct and plot the solution obtained by the indirect method:</p><pre><code class="language-julia hljs"># concatenation of the flows
+p0 = [1.0, 1.0]
+t1 = 1.0000000000000002
+tf = 2.0000000000000004</code></pre><p>Finally, we reconstruct and plot the solution obtained by the indirect method:</p><pre><code class="language-julia hljs"># concatenation of the flows
 φ = f_max * (t1, f_min)
 
 # compute the solution: state, costate, control...
 indirect_sol = φ((t0, tf), x0, p0; saveat=range(t0, tf, 200))
 
 # plot the solution on the previous plot
-plot!(plt, indirect_sol; label=&quot;Indirect&quot;, color=2, linestyle=:dash)</code></pre><img src="example-double-integrator-time-1ebb1c39.svg" alt="Example block output"/><div class="admonition is-info" id="Note-a84d781b8f8152fc"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-a84d781b8f8152fc" title="Permalink"></a></header><div class="admonition-body"><ul><li>You can use <a href="https://control-toolbox.org/Tutorials.jl/stable/tutorial-iss.html#Resolution-of-the-shooting-equation">MINPACK.jl</a> instead of <a href="https://docs.sciml.ai/NonlinearSolve">NonlinearSolve.jl</a>.</li><li>For more details about the flow construction, visit the <a href="manual-flow-ocp.html#manual-flow-ocp">Compute flows from optimal control problems</a> page.</li><li>In this simple example, we have set an arbitrary initial guess. It can be helpful to use the solution of the direct method to initialise the shooting method. See the <a href="https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html">Goddard tutorial</a> for such a concrete application.</li></ul></div></div><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+plot!(plt, indirect_sol; label=&quot;Indirect&quot;, color=2, linestyle=:dash)</code></pre><img src="example-double-integrator-time-07042368.svg" alt="Example block output"/><div class="admonition is-info" id="Note-a84d781b8f8152fc"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-a84d781b8f8152fc" title="Permalink"></a></header><div class="admonition-body"><ul><li>You can use <a href="https://control-toolbox.org/Tutorials.jl/stable/tutorial-iss.html#Resolution-of-the-shooting-equation">MINPACK.jl</a> instead of <a href="https://docs.sciml.ai/NonlinearSolve">NonlinearSolve.jl</a>.</li><li>For more details about the flow construction, visit the <a href="manual-flow-ocp.html#manual-flow-ocp">Compute flows from optimal control problems</a> page.</li><li>In this simple example, we have set an arbitrary initial guess. It can be helpful to use the solution of the direct method to initialise the shooting method. See the <a href="https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html">Goddard tutorial</a> for such a concrete application.</li></ul></div></div><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="example-double-integrator-energy.html">« Energy minimisation</a><a class="docs-footer-nextpage" href="example-control-free.html">Control-free problems »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Tuesday 7 April 2026 07:13">Tuesday 7 April 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="example-double-integrator-energy.html">« Energy minimisation</a><a class="docs-footer-nextpage" href="example-control-free.html">Control-free problems »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Tuesday 7 April 2026 08:51">Tuesday 7 April 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
