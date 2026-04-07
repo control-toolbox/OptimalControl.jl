@@ -134,17 +134,13 @@ For the arc to remain singular, $\dot{H}_{01} = 0$, which gives:
 u_s = -\frac{H_{001}}{H_{101}},
 ```
 
-whenever $H_{101} \neq 0$. Computing $H_{001} = \{H_0, H_{01}\}$ with $H_{01} = -p_1 \sin\theta + p_2 \cos\theta$:
-
-The only non-zero contribution comes from the $(x, p_1)$ pair:
+whenever $H_{101} \neq 0$. Computing $H_{001} = \{H_0, H_{01}\}$ with $H_{01} = -p_1 \sin\theta + p_2 \cos\theta$, the only non-zero contribution comes from the $(x, p_1)$ pair:
 
 ```math
 H_{001} = \frac{\partial H_0}{\partial x} \frac{\partial H_{01}}{\partial p_1} - \frac{\partial H_0}{\partial p_1} \frac{\partial H_{01}}{\partial x} = p_2 \cdot (-\sin\theta) - \cos\theta \cdot 0 = -p_2 \sin\theta.
 ```
 
-Computing $H_{101} = \{H_1, H_{01}\}$ with $H_1 = p_3$ and $H_{01} = -p_1 \sin\theta + p_2 \cos\theta$:
-
-The only non-zero contribution comes from the $(\theta, p_3)$ pair:
+Computing $H_{101} = \{H_1, H_{01}\}$ with $H_1 = p_3$ and $H_{01} = -p_1 \sin\theta + p_2 \cos\theta$, the only non-zero contribution comes from the $(\theta, p_3)$ pair:
 
 ```math
 H_{101} = \frac{\partial H_1}{\partial \theta} \frac{\partial H_{01}}{\partial p_3} - \frac{\partial H_1}{\partial p_3} \frac{\partial H_{01}}{\partial \theta} = 0 - 1 \cdot (-p_1 \cos\theta - p_2 \sin\theta) = p_1 \cos\theta + p_2 \sin\theta.
@@ -276,6 +272,7 @@ Define the shooting function. We have 5 unknowns: the initial costate $p_0 \in \
 t0 = 0
 
 function shoot!(s, p0, θ0, tf)
+
     q_t0, p_t0 = [0, 0, θ0], p0
     q_tf, p_tf = f(t0, q_t0, p_t0, tf)
     
@@ -289,6 +286,8 @@ function shoot!(s, p0, θ0, tf)
     pyf = p_tf[2]
     θf = q_tf[3]
     s[5] = pxf * cos(θf) + pyf * (sin(θf) + 1) - 1
+
+    return nothing
 end
 nothing # hide
 ```
