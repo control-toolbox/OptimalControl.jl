@@ -373,7 +373,7 @@ function test_ctflows()
                 t0 = 0
                 tf = 1
                 x0 = 1.0
-                
+
                 ocp = @def begin
                     λ ∈ R, variable
                     t ∈ [t0, tf], time
@@ -382,10 +382,10 @@ function test_ctflows()
                     ẋ(t) == λ * x(t)
                     ∫(x(t)^2) → min
                 end
-                
+
                 # Test: Flow(ocp) works for control-free problems
                 f = Flow(ocp)
-                
+
                 # Test: basic call returns 2 values (state, costate)
                 λ_val = 0.5
                 p0 = 1.0
@@ -400,7 +400,7 @@ function test_ctflows()
                 t0 = 0
                 tf = 1
                 x0 = 1.0
-                
+
                 ocp = @def begin
                     λ ∈ R, variable
                     t ∈ [t0, tf], time
@@ -409,11 +409,11 @@ function test_ctflows()
                     ẋ(t) == λ * x(t)
                     ∫(x(t)^2) → min
                 end
-                
+
                 f = Flow(ocp)
                 λ_val = 0.5
                 p0 = 1.0
-                
+
                 # Test: augment=true returns 3 values (state, costate, variable costate)
                 xf, pf, pλ = f(t0, x0, p0, tf, λ_val; augment=true)
                 Test.@test xf isa Real
@@ -428,7 +428,7 @@ function test_ctflows()
                 x0 = 1.0
                 λ_val = 0.5
                 p0 = 1.0
-                
+
                 ocp = @def begin
                     λ ∈ R, variable
                     t ∈ [t0, tf], time
@@ -437,7 +437,7 @@ function test_ctflows()
                     ẋ(t) == λ * x(t)
                     ∫(x(t)^2) → min
                 end
-                
+
                 # Manual Hamiltonian construction
                 H(x, p, λ) = p * λ * x - x^2
                 function H_aug(x_, p_)
@@ -446,14 +446,14 @@ function test_ctflows()
                     return H(x, p, λ)
                 end
                 f_manual = Flow(OptimalControl.Hamiltonian(H_aug))
-                
+
                 # Automatic Flow from OCP
                 f_auto = Flow(ocp)
-                
+
                 # Test: both give similar results
                 xf_manual, pf_manual = f_manual(t0, [x0, λ_val], [p0, 0.0], tf)
                 xf_auto, pf_auto = f_auto(t0, x0, p0, tf, λ_val)
-                
+
                 Test.@test xf_manual[1] ≈ xf_auto rtol=1e-6
                 Test.@test pf_manual[1] ≈ pf_auto rtol=1e-6
             end
@@ -463,7 +463,7 @@ function test_ctflows()
                 t0 = 0
                 tf = 1
                 x0 = 1.0
-                
+
                 ocp = @def begin
                     λ ∈ R, variable
                     t ∈ [t0, tf], time
@@ -472,11 +472,11 @@ function test_ctflows()
                     ẋ(t) == λ * x(t)
                     ∫(x(t)^2) → min
                 end
-                
+
                 f = Flow(ocp)
                 λ_zero = 0.0
                 p0 = 1.0
-                
+
                 xf, pf = f(t0, x0, p0, tf, λ_zero)
                 Test.@test xf ≈ x0 rtol=1e-10  # x remains constant
             end
