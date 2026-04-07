@@ -8,11 +8,16 @@ For basic CPU solving, see [Solve a problem](@ref manual-solve).
 
 You need to load the GPU-capable packages:
 
-```@example gpu
+```@setup gpu
 using OptimalControl
 using MadNLPGPU
 using CUDA
-nothing # hide
+```
+
+```julia
+using OptimalControl
+using MadNLPGPU
+using CUDA
 ```
 
 !!! note "Solver requirements"
