@@ -85,7 +85,7 @@ Use `route_to` to explicitly specify which **strategy** should receive the optio
 ```julia
 # Explicitly route to the :exa strategy
 sol = solve(ocp, :exa, :madnlp; 
-    common_option_name=route_to(exa=12),
+    common_option_name=route_to(:exa, 12),
     max_iter=500,
     print_level=MadNLP.ERROR
 )
@@ -93,14 +93,38 @@ sol = solve(ocp, :exa, :madnlp;
 
 The `route_to` function accepts keyword arguments with **strategy names**:
 
-- `route_to(collocation=value)` — route to the Collocation discretizer
-- `route_to(adnlp=value)` — route to the ADNLP modeler
-- `route_to(exa=value)` — route to the Exa modeler
-- `route_to(ipopt=value)` — route to the Ipopt solver
-- `route_to(madnlp=value)` — route to the MadNLP solver
-- `route_to(uno=value)` — route to the Uno solver
-- `route_to(madncl=value)` — route to the MadNCL solver
-- `route_to(knitro=value)` — route to the Knitro solver
+- `route_to(:collocation, value)` — route to the Collocation discretizer
+- `route_to(:adnlp, value)` — route to the ADNLP modeler
+- `route_to(:exa, value)` — route to the Exa modeler
+- `route_to(:ipopt, value)` — route to the Ipopt solver
+- `route_to(:madnlp, value)` — route to the MadNLP solver
+- `route_to(:uno, value)` — route to the Uno solver
+- `route_to(:madncl, value)` — route to the MadNCL solver
+- `route_to(:knitro, value)` — route to the Knitro solver
+
+### Routing the same option to multiple strategies
+
+You can also route the same option name to multiple strategies with different values by passing alternating strategy-value pairs:
+
+```julia
+# Route the same option to multiple strategies with different values
+sol = solve(ocp, :exa, :madnlp;
+    common_option_name=route_to(:exa, 12, :madnlp, true),
+    max_iter=500
+)
+```
+
+The syntax accepts multiple strategy-value pairs:
+
+```julia
+route_to(strategy_id_1, val_1, strategy_id_2, val_2, ...)
+```
+
+This is useful when:
+
+- Different strategies use the same option name for different purposes
+- You want to configure the same option differently across strategies
+- You need fine-grained control over option routing
 
 You can use `route_to` even for non-ambiguous options, and combine routed and non-routed options:
 
@@ -108,7 +132,7 @@ You can use `route_to` even for non-ambiguous options, and combine routed and no
 using MadNLP
 sol = solve(ocp, :madnlp;
     grid_size=50,                      # auto-routed to discretizer
-    max_iter=route_to(madnlp=1000),    # explicitly routed to solver
+    max_iter=route_to(:madnlp, 1000),    # explicitly routed to solver
     print_level=MadNLP.ERROR           # auto-routed to solver
 )
 nothing # hide
@@ -137,7 +161,7 @@ To pass undeclared options, combine `route_to` with `bypass`:
 ```@repl advanced
 sol = solve(ocp, :ipopt;
     max_iter=100,
-    mumps_print_level=route_to(ipopt=bypass(1)))
+    mumps_print_level=route_to(:ipopt, bypass(1)))
 ```
 
 You **must** combine `bypass` with `route_to` because:
@@ -146,7 +170,7 @@ You **must** combine `bypass` with `route_to` because:
 - `bypass` forces the option through without validation
 
 !!! note "Alias: force = bypass"
-    You can use `force` as an alias for `bypass`: `route_to(ipopt=force(1))`
+    You can use `force` as an alias for `bypass`: `route_to(:ipopt, force(1))`
 
 !!! warning "Use bypass sparingly"
 
