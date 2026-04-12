@@ -1087,17 +1087,35 @@ RoutedOption((solver = 100,))
 
 julia&gt; # Multiple strategies with different values
 julia&gt; route_to(solver=100, modeler=50)
+RoutedOption((solver = 100, modeler = 50))
+
+julia&gt; # Alternative positional syntax
+julia&gt; route_to(:solver, 100, :modeler, 50)
 RoutedOption((solver = 100, modeler = 50))</code></pre><p><strong>Usage in solve()</strong></p><pre><code class="language-julia hljs"># Without disambiguation - error if max_iter exists in multiple strategies
 solve(ocp, method; max_iter=100)  # ❌ Ambiguous!
 
-# With disambiguation - explicit routing
-solve(ocp, method; 
+# With disambiguation - explicit routing (keyword syntax)
+solve(ocp, method;
     max_iter = route_to(solver=100)              # Only solver gets 100
 )
 
-solve(ocp, method; 
+solve(ocp, method;
     max_iter = route_to(solver=100, modeler=50)  # Different values for each
-)</code></pre><p><strong>Notes</strong></p><ul><li>Strategy identifiers must match the actual strategy IDs in your method tuple</li><li>You can route to one or multiple strategies in a single call</li><li>This is the recommended way to disambiguate options</li><li>The orchestration layer will validate that the strategy IDs exist</li></ul><p>See also: <code>RoutedOption</code>, <code>route_all_options</code></p></div></section></details></article><article><details class="docstring" open="true"><summary id="CommonSolve.solve-Tuple{CTSolvers.Optimization.AbstractOptimizationProblem, Any, CTSolvers.Modelers.AbstractNLPModeler, CTSolvers.Solvers.AbstractNLPSolver}"><a class="docstring-binding" href="#CommonSolve.solve-Tuple{CTSolvers.Optimization.AbstractOptimizationProblem, Any, CTSolvers.Modelers.AbstractNLPModeler, CTSolvers.Solvers.AbstractNLPSolver}"><code>CommonSolve.solve</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">solve(
+)
+
+# With disambiguation - explicit routing (positional syntax)
+solve(ocp, method;
+    max_iter = route_to(:solver, 100, :modeler, 50)  # Different values for each
+)</code></pre><p><strong>Notes</strong></p><ul><li>Strategy identifiers must match the actual strategy IDs in your method tuple</li><li>You can route to one or multiple strategies in a single call</li><li>Alternative positional syntax: <code>route_to(:solver, 100, :modeler, 50)</code></li><li>Both syntaxes are equivalent; choose based on preference</li><li>This is the recommended way to disambiguate options</li><li>The orchestration layer will validate that the strategy IDs exist</li></ul><p>See also: <code>RoutedOption</code>, <code>route_all_options</code></p></div></section><section><div><pre><code class="language-julia hljs">route_to(args...)
+</code></pre><p>Create a disambiguated option value using positional arguments.</p><p>This is an alternative syntax to the keyword argument version. Accepts alternating strategy identifier (Symbol) and value pairs.</p><p><strong>Arguments</strong></p><ul><li><code>args::Vararg{Any}</code>: Alternating strategy_id (Symbol) and value pairs. Must have an even number of arguments. Odd-numbered arguments must be Symbols.</li></ul><p><strong>Returns</strong></p><ul><li><code>RoutedOption</code>: A routed option containing the strategy =&gt; value mappings</li></ul><p><strong>Throws</strong></p><ul><li><code>Exceptions.PreconditionError</code>: If no arguments provided, odd number of arguments, or odd-numbered arguments are not Symbols</li></ul><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using CTSolvers.Strategies
+
+julia&gt; # Single strategy
+julia&gt; route_to(:solver, 100)
+RoutedOption((solver = 100,))
+
+julia&gt; # Multiple strategies
+julia&gt; route_to(:solver, 100, :modeler, 50)
+RoutedOption((solver = 100, modeler = 50))</code></pre><p><strong>Notes</strong></p><ul><li>This is equivalent to the keyword syntax: <code>route_to(solver=100, modeler=50)</code></li><li>Strategy identifiers must be Symbols (e.g., <code>:solver</code>, not <code>&quot;solver&quot;</code>)</li><li>The number of arguments must be even (pairs of Symbol-value)</li></ul><p>See also: <code>route_to(; kwargs...)</code>, <code>RoutedOption</code></p></div></section></details></article><article><details class="docstring" open="true"><summary id="CommonSolve.solve-Tuple{CTSolvers.Optimization.AbstractOptimizationProblem, Any, CTSolvers.Modelers.AbstractNLPModeler, CTSolvers.Solvers.AbstractNLPSolver}"><a class="docstring-binding" href="#CommonSolve.solve-Tuple{CTSolvers.Optimization.AbstractOptimizationProblem, Any, CTSolvers.Modelers.AbstractNLPModeler, CTSolvers.Solvers.AbstractNLPSolver}"><code>CommonSolve.solve</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">solve(
     problem::CTSolvers.Optimization.AbstractOptimizationProblem,
     initial_guess,
     modeler::CTSolvers.Modelers.AbstractNLPModeler,
@@ -1263,4 +1281,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../manual-flow-others.html">« From Hamiltonians and others</a><a class="docs-footer-nextpage" href="private.html">Private »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Tuesday 7 April 2026 09:19">Tuesday 7 April 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../manual-flow-others.html">« From Hamiltonians and others</a><a class="docs-footer-nextpage" href="private.html">Private »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Sunday 12 April 2026 16:50">Sunday 12 April 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

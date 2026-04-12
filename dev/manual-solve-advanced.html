@@ -29,19 +29,19 @@ sol = solve(ocp;
    ├─ <span class="sgr1">Modeler</span>: <span class="sgr36"><span class="sgr1">adnlp</span></span> (show_time = true)
    └─ <span class="sgr1">Solver</span>: <span class="sgr36"><span class="sgr1">ipopt</span></span> (max_iter = 500, print_level = 0)
 
-gradient backend ADNLPModels.ReverseDiffADGradient: 0.645921648 seconds;
-hprod    backend ADNLPModels.EmptyADbackend: 4.468e-6 seconds;
-jprod    backend ADNLPModels.EmptyADbackend: 1.723e-6 seconds;
-jtprod   backend ADNLPModels.EmptyADbackend: 1.073e-6 seconds;
-  • Sparsity pattern detection of the Jacobian: 0.000106319 seconds.
-  • Coloring of the sparse Jacobian: 1.9236e-5 seconds.
-  • Allocation of the AD buffers for the sparse Jacobian: 1.202e-6 seconds.
-jacobian backend ADNLPModels.SparseADJacobian: 0.928482041 seconds;
-  • Sparsity pattern detection of the Hessian: 1.079167567 seconds.
-  • Coloring of the sparse Hessian: 2.152e-5 seconds.
-  • Allocation of the AD buffers for the sparse Hessian: 3.80098324 seconds.
-hessian  backend ADNLPModels.SparseReverseADHessian: 5.159465493 seconds;
-ghjvprod backend ADNLPModels.EmptyADbackend: 4.318e-6 seconds.</code></pre><h3 id="How-routing-works"><a class="docs-heading-anchor" href="#How-routing-works">How routing works</a><a id="How-routing-works-1"></a><a class="docs-heading-anchor-permalink" href="#How-routing-works" title="Permalink"></a></h3><p>Each strategy declares its available options via metadata. When you pass an option:</p><ol><li><strong>Lookup</strong>: The system checks which strategies recognize this option name</li><li><strong>Route</strong>: If exactly one strategy family (discretizer/modeler/solver) recognizes it, the option is routed there</li><li><strong>Validate</strong>: The option value is validated against the declared type and constraints</li><li><strong>Error</strong>: If no strategy recognizes the option, or if multiple families claim it, an error is raised</li></ol><p>You can inspect a strategy&#39;s declared options using <code>describe</code>:</p><pre><code class="language-julia hljs">using CUDA
+gradient backend ADNLPModels.ReverseDiffADGradient: 0.613865085 seconds;
+hprod    backend ADNLPModels.EmptyADbackend: 5.138e-6 seconds;
+jprod    backend ADNLPModels.EmptyADbackend: 1.272e-6 seconds;
+jtprod   backend ADNLPModels.EmptyADbackend: 1.573e-6 seconds;
+  • Sparsity pattern detection of the Jacobian: 9.6733e-5 seconds.
+  • Coloring of the sparse Jacobian: 1.7205e-5 seconds.
+  • Allocation of the AD buffers for the sparse Jacobian: 1.5002e-5 seconds.
+jacobian backend ADNLPModels.SparseADJacobian: 0.946444895 seconds;
+  • Sparsity pattern detection of the Hessian: 1.100009821 seconds.
+  • Coloring of the sparse Hessian: 2.5217e-5 seconds.
+  • Allocation of the AD buffers for the sparse Hessian: 3.789081351 seconds.
+hessian  backend ADNLPModels.SparseReverseADHessian: 5.173122954 seconds;
+ghjvprod backend ADNLPModels.EmptyADbackend: 5.138e-6 seconds.</code></pre><h3 id="How-routing-works"><a class="docs-heading-anchor" href="#How-routing-works">How routing works</a><a id="How-routing-works-1"></a><a class="docs-heading-anchor-permalink" href="#How-routing-works" title="Permalink"></a></h3><p>Each strategy declares its available options via metadata. When you pass an option:</p><ol><li><strong>Lookup</strong>: The system checks which strategies recognize this option name</li><li><strong>Route</strong>: If exactly one strategy family (discretizer/modeler/solver) recognizes it, the option is routed there</li><li><strong>Validate</strong>: The option value is validated against the declared type and constraints</li><li><strong>Error</strong>: If no strategy recognizes the option, or if multiple families claim it, an error is raised</li></ol><p>You can inspect a strategy&#39;s declared options using <code>describe</code>:</p><pre><code class="language-julia hljs">using CUDA
 describe(:exa)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr34"><span class="sgr1">Exa</span></span> (strategy)
 ├─ <span class="sgr90">id: </span><span class="sgr33">:exa</span>
 ├─ <span class="sgr90">hierarchy: </span><span class="sgr36">Exa</span> → <span class="sgr36">AbstractNLPModeler</span> → <span class="sgr36">AbstractStrategy</span>
@@ -50,7 +50,7 @@ describe(:exa)</code></pre><pre class="documenter-example-output"><code class="n
 ├─ <span class="sgr90">parameters: </span><span class="sgr36">CPU</span>, <span class="sgr36">GPU</span>
 │
 ┌ Warning: CUDA is loaded but not functional. GPU backend may not work properly.
-└ @ CTSolversCUDA ~/.julia/packages/CTSolvers/QlPJp/ext/CTSolversCUDA.jl:29
+└ @ CTSolversCUDA ~/.julia/packages/CTSolvers/XBcQ4/ext/CTSolversCUDA.jl:29
 ├─ <span class="sgr90">computed options for </span><span class="sgr36">CPU</span>:
 │  └─ <span class="sgr34"><span class="sgr1">backend</span></span> (<span class="sgr33">exa_backend</span>)::<span class="sgr36">Any</span> (<span class="sgr32">default: nothing</span> [<span class="sgr33">computed</span>])
 │     <span class="sgr90">description: </span>Execution backend for ExaModels (CPU, GPU, etc.)
@@ -65,13 +65,17 @@ describe(:exa)</code></pre><pre class="documenter-example-output"><code class="n
 solve(ocp, :exa, :madnlp; common_option_name=12)
 # ERROR: IncorrectArgument: Option &#39;common_option_name&#39; is ambiguous...</code></pre><h3 id="Using-route_to-for-disambiguation"><a class="docs-heading-anchor" href="#Using-route_to-for-disambiguation">Using <code>route_to</code> for disambiguation</a><a id="Using-route_to-for-disambiguation-1"></a><a class="docs-heading-anchor-permalink" href="#Using-route_to-for-disambiguation" title="Permalink"></a></h3><p>Use <code>route_to</code> to explicitly specify which <strong>strategy</strong> should receive the option:</p><pre><code class="language-julia hljs"># Explicitly route to the :exa strategy
 sol = solve(ocp, :exa, :madnlp; 
-    common_option_name=route_to(exa=12),
+    common_option_name=route_to(:exa, 12),
     max_iter=500,
     print_level=MadNLP.ERROR
-)</code></pre><p>The <code>route_to</code> function accepts keyword arguments with <strong>strategy names</strong>:</p><ul><li><code>route_to(collocation=value)</code> — route to the Collocation discretizer</li><li><code>route_to(adnlp=value)</code> — route to the ADNLP modeler</li><li><code>route_to(exa=value)</code> — route to the Exa modeler</li><li><code>route_to(ipopt=value)</code> — route to the Ipopt solver</li><li><code>route_to(madnlp=value)</code> — route to the MadNLP solver</li><li><code>route_to(uno=value)</code> — route to the Uno solver</li><li><code>route_to(madncl=value)</code> — route to the MadNCL solver</li><li><code>route_to(knitro=value)</code> — route to the Knitro solver</li></ul><p>You can use <code>route_to</code> even for non-ambiguous options, and combine routed and non-routed options:</p><pre><code class="language-julia hljs">using MadNLP
+)</code></pre><p>The <code>route_to</code> function accepts keyword arguments with <strong>strategy names</strong>:</p><ul><li><code>route_to(:collocation, value)</code> — route to the Collocation discretizer</li><li><code>route_to(:adnlp, value)</code> — route to the ADNLP modeler</li><li><code>route_to(:exa, value)</code> — route to the Exa modeler</li><li><code>route_to(:ipopt, value)</code> — route to the Ipopt solver</li><li><code>route_to(:madnlp, value)</code> — route to the MadNLP solver</li><li><code>route_to(:uno, value)</code> — route to the Uno solver</li><li><code>route_to(:madncl, value)</code> — route to the MadNCL solver</li><li><code>route_to(:knitro, value)</code> — route to the Knitro solver</li></ul><h3 id="Routing-the-same-option-to-multiple-strategies"><a class="docs-heading-anchor" href="#Routing-the-same-option-to-multiple-strategies">Routing the same option to multiple strategies</a><a id="Routing-the-same-option-to-multiple-strategies-1"></a><a class="docs-heading-anchor-permalink" href="#Routing-the-same-option-to-multiple-strategies" title="Permalink"></a></h3><p>You can also route the same option name to multiple strategies with different values by passing alternating strategy-value pairs:</p><pre><code class="language-julia hljs"># Route the same option to multiple strategies with different values
+sol = solve(ocp, :exa, :madnlp;
+    common_option_name=route_to(:exa, 12, :madnlp, true),
+    max_iter=500
+)</code></pre><p>The syntax accepts multiple strategy-value pairs:</p><pre><code class="language-julia hljs">route_to(strategy_id_1, val_1, strategy_id_2, val_2, ...)</code></pre><p>This is useful when:</p><ul><li>Different strategies use the same option name for different purposes</li><li>You want to configure the same option differently across strategies</li><li>You need fine-grained control over option routing</li></ul><p>You can use <code>route_to</code> even for non-ambiguous options, and combine routed and non-routed options:</p><pre><code class="language-julia hljs">using MadNLP
 sol = solve(ocp, :madnlp;
     grid_size=50,                      # auto-routed to discretizer
-    max_iter=route_to(madnlp=1000),    # explicitly routed to solver
+    max_iter=route_to(:madnlp, 1000),    # explicitly routed to solver
     print_level=MadNLP.ERROR           # auto-routed to solver
 )</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 2.0.0, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">madnlp</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
 
@@ -81,7 +85,9 @@ sol = solve(ocp, :madnlp;
    └─ <span class="sgr1">Solver</span>: <span class="sgr36"><span class="sgr1">madnlp</span></span>
      linear_solver = MumpsSolver [cpu-dependent], max_iter = 1000, print_level = ERROR</code></pre><h2 id="The-bypass-mechanism"><a class="docs-heading-anchor" href="#The-bypass-mechanism">The <code>bypass</code> mechanism</a><a id="The-bypass-mechanism-1"></a><a class="docs-heading-anchor-permalink" href="#The-bypass-mechanism" title="Permalink"></a></h2><p>By default, <code>solve</code> uses <strong>strict validation</strong>: any option not recognized by a registered strategy raises an error. This prevents typos and ensures you&#39;re using valid options.</p><p>However, NLP solvers have many options, and not all of them are declared in OptimalControl&#39;s strategy metadata. For example, Ipopt has an option <code>mumps_print_level</code> for controlling MUMPS debug output:</p><blockquote><p><code>mumps_print_level</code>: Debug printing level for the linear solver MUMPS  </p><p>0: no printing; 1: Error messages only; 2: Error, warning, and main statistic messages; 3: Error and warning messages and terse diagnostics; ≥4: All information.</p></blockquote><p>This option is not in the Ipopt strategy metadata. If you try to use it directly, you&#39;ll get an error:</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; sol = solve(ocp, :ipopt;
            max_iter=100,
-           mumps_print_level=1)</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: <span class="sgr31"><span class="sgr1">Control Toolbox Error
+           mumps_print_level=1)</code><code class="nohighlight hljs ansi" style="display:block;">┌ Warning: CUDA is loaded but not functional. GPU backend may not work properly.
+└ @ CTSolversCUDA ~/.julia/packages/CTSolvers/XBcQ4/ext/CTSolversCUDA.jl:29
+ERROR: <span class="sgr31"><span class="sgr1">Control Toolbox Error
 </span></span>
 ❌ Error: <span class="sgr31"><span class="sgr1">CTBase.Exceptions.IncorrectArgument</span></span>, Unknown option provided
 🔍 Got: option :mumps_print_level in method (:collocation, :adnlp, :ipopt, :cpu), Expected: valid option name for one of the strategies
@@ -93,7 +99,7 @@ sol = solve(ocp, :madnlp;
 If you&#39;re confident this option exists for a specific strategy, use bypass() to skip validation:
   custom_opt = route_to(&lt;strategy_id&gt;=bypass(&lt;value&gt;))</code></pre><p>To pass undeclared options, combine <code>route_to</code> with <code>bypass</code>:</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; sol = solve(ocp, :ipopt;
            max_iter=100,
-           mumps_print_level=route_to(ipopt=bypass(1)))</code><code class="nohighlight hljs ansi" style="display:block;">▫ This is OptimalControl 2.0.0, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">ipopt</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
+           mumps_print_level=route_to(:ipopt, bypass(1)))</code><code class="nohighlight hljs ansi" style="display:block;">▫ This is OptimalControl 2.0.0, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">ipopt</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
 
   📦 Configuration:
    ├─ <span class="sgr1">Discretizer</span>: <span class="sgr36"><span class="sgr1">collocation</span></span>
@@ -138,7 +144,7 @@ Number of inequality constraint evaluations          = 0
 Number of equality constraint Jacobian evaluations   = 2
 Number of inequality constraint Jacobian evaluations = 0
 Number of Lagrangian Hessian evaluations             = 1
-Total seconds in IPOPT                               = 0.006
+Total seconds in IPOPT                               = 0.110
 
 EXIT: Optimal Solution Found.
 • Solver:
@@ -149,7 +155,7 @@ EXIT: Optimal Solution Found.
   │  Objective  : 6.000096001536038
   └─ Constraints violation : 2.220446049250313e-16
 
-• Boundary duals: [12.000192003072058, 6.0000960015360265, -12.000192003072058, 6.000096001536031]</code></pre><p>You <strong>must</strong> combine <code>bypass</code> with <code>route_to</code> because:</p><ul><li>If the option is unknown, the system needs to know which strategy should receive it</li><li><code>bypass</code> forces the option through without validation</li></ul><div class="admonition is-info" id="Alias:-force-bypass-16d78a6fa27a43a0"><header class="admonition-header">Alias: force = bypass<a class="admonition-anchor" href="#Alias:-force-bypass-16d78a6fa27a43a0" title="Permalink"></a></header><div class="admonition-body"><p>You can use <code>force</code> as an alias for <code>bypass</code>: <code>route_to(ipopt=force(1))</code></p></div></div><div class="admonition is-warning" id="Use-bypass-sparingly-88bb5f96150874e4"><header class="admonition-header">Use bypass sparingly<a class="admonition-anchor" href="#Use-bypass-sparingly-88bb5f96150874e4" title="Permalink"></a></header><div class="admonition-body"><p>The <code>bypass</code> mechanism skips validation entirely. Use it only when:</p><ul><li>You need to pass an option to the underlying solver that isn&#39;t declared in the strategy metadata</li><li>You&#39;re certain the option name and value are correct</li></ul><p>Bypassed options are passed directly to the solver without type checking or validation.</p></div></div><h2 id="Parameter-token-(CPU/GPU)"><a class="docs-heading-anchor" href="#Parameter-token-(CPU/GPU)">Parameter token (CPU/GPU)</a><a id="Parameter-token-(CPU/GPU)-1"></a><a class="docs-heading-anchor-permalink" href="#Parameter-token-(CPU/GPU)" title="Permalink"></a></h2><p>The 4th token in a method description specifies the execution backend: <code>:cpu</code> (default) or <code>:gpu</code>.</p><pre><code class="language-julia hljs"># Explicitly request CPU execution (this is the default)
+• Boundary duals: [12.000192003072058, 6.0000960015360265, -12.000192003072058, 6.000096001536031]</code></pre><p>You <strong>must</strong> combine <code>bypass</code> with <code>route_to</code> because:</p><ul><li>If the option is unknown, the system needs to know which strategy should receive it</li><li><code>bypass</code> forces the option through without validation</li></ul><div class="admonition is-info" id="Alias:-force-bypass-37758646e906edfd"><header class="admonition-header">Alias: force = bypass<a class="admonition-anchor" href="#Alias:-force-bypass-37758646e906edfd" title="Permalink"></a></header><div class="admonition-body"><p>You can use <code>force</code> as an alias for <code>bypass</code>: <code>route_to(:ipopt, force(1))</code></p></div></div><div class="admonition is-warning" id="Use-bypass-sparingly-88bb5f96150874e4"><header class="admonition-header">Use bypass sparingly<a class="admonition-anchor" href="#Use-bypass-sparingly-88bb5f96150874e4" title="Permalink"></a></header><div class="admonition-body"><p>The <code>bypass</code> mechanism skips validation entirely. Use it only when:</p><ul><li>You need to pass an option to the underlying solver that isn&#39;t declared in the strategy metadata</li><li>You&#39;re certain the option name and value are correct</li></ul><p>Bypassed options are passed directly to the solver without type checking or validation.</p></div></div><h2 id="Parameter-token-(CPU/GPU)"><a class="docs-heading-anchor" href="#Parameter-token-(CPU/GPU)">Parameter token (CPU/GPU)</a><a id="Parameter-token-(CPU/GPU)-1"></a><a class="docs-heading-anchor-permalink" href="#Parameter-token-(CPU/GPU)" title="Permalink"></a></h2><p>The 4th token in a method description specifies the execution backend: <code>:cpu</code> (default) or <code>:gpu</code>.</p><pre><code class="language-julia hljs"># Explicitly request CPU execution (this is the default)
 sol = solve(ocp, :collocation, :adnlp, :ipopt, :cpu;
     grid_size=50,
     print_level=0
@@ -163,4 +169,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-solve.html">« Basic usage</a><a class="docs-footer-nextpage" href="manual-solve-explicit.html">Explicit mode »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Tuesday 7 April 2026 09:19">Tuesday 7 April 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-solve.html">« Basic usage</a><a class="docs-footer-nextpage" href="manual-solve-explicit.html">Explicit mode »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Sunday 12 April 2026 16:50">Sunday 12 April 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
