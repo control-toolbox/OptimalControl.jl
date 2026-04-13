@@ -22,26 +22,26 @@ sol = solve(ocp;
     show_time=true,   # → ADNLP (modeler)
     max_iter=500,     # → Ipopt (solver)
     print_level=0     # → Ipopt (solver)
-)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 2.0.0, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">ipopt</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
+)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 2.0.1, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">ipopt</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
 
   📦 Configuration:
    ├─ <span class="sgr1">Discretizer</span>: <span class="sgr36"><span class="sgr1">collocation</span></span> (grid_size = 100)
    ├─ <span class="sgr1">Modeler</span>: <span class="sgr36"><span class="sgr1">adnlp</span></span> (show_time = true)
    └─ <span class="sgr1">Solver</span>: <span class="sgr36"><span class="sgr1">ipopt</span></span> (max_iter = 500, print_level = 0)
 
-gradient backend ADNLPModels.ReverseDiffADGradient: 0.629786421 seconds;
-hprod    backend ADNLPModels.EmptyADbackend: 4.058e-6 seconds;
-jprod    backend ADNLPModels.EmptyADbackend: 1.142e-6 seconds;
-jtprod   backend ADNLPModels.EmptyADbackend: 1.151e-6 seconds;
-  • Sparsity pattern detection of the Jacobian: 8.6492e-5 seconds.
-  • Coloring of the sparse Jacobian: 1.8635e-5 seconds.
-  • Allocation of the AD buffers for the sparse Jacobian: 4.51e-7 seconds.
-jacobian backend ADNLPModels.SparseADJacobian: 0.830584992 seconds;
-  • Sparsity pattern detection of the Hessian: 1.026946473 seconds.
-  • Coloring of the sparse Hessian: 2.1841e-5 seconds.
-  • Allocation of the AD buffers for the sparse Hessian: 3.988432767 seconds.
-hessian  backend ADNLPModels.SparseReverseADHessian: 5.413347725 seconds;
-ghjvprod backend ADNLPModels.EmptyADbackend: 5.801e-6 seconds.</code></pre><h3 id="How-routing-works"><a class="docs-heading-anchor" href="#How-routing-works">How routing works</a><a id="How-routing-works-1"></a><a class="docs-heading-anchor-permalink" href="#How-routing-works" title="Permalink"></a></h3><p>Each strategy declares its available options via metadata. When you pass an option:</p><ol><li><strong>Lookup</strong>: The system checks which strategies recognize this option name</li><li><strong>Route</strong>: If exactly one strategy family (discretizer/modeler/solver) recognizes it, the option is routed there</li><li><strong>Validate</strong>: The option value is validated against the declared type and constraints</li><li><strong>Error</strong>: If no strategy recognizes the option, or if multiple families claim it, an error is raised</li></ol><p>You can inspect a strategy&#39;s declared options using <code>describe</code>:</p><pre><code class="language-julia hljs">using CUDA
+gradient backend ADNLPModels.ReverseDiffADGradient: 0.624082994 seconds;
+hprod    backend ADNLPModels.EmptyADbackend: 3.317e-6 seconds;
+jprod    backend ADNLPModels.EmptyADbackend: 1.363e-6 seconds;
+jtprod   backend ADNLPModels.EmptyADbackend: 1.182e-6 seconds;
+  • Sparsity pattern detection of the Jacobian: 9.103e-5 seconds.
+  • Coloring of the sparse Jacobian: 1.8525e-5 seconds.
+  • Allocation of the AD buffers for the sparse Jacobian: 2.104e-6 seconds.
+jacobian backend ADNLPModels.SparseADJacobian: 0.9108421 seconds;
+  • Sparsity pattern detection of the Hessian: 1.066828015 seconds.
+  • Coloring of the sparse Hessian: 2.2662e-5 seconds.
+  • Allocation of the AD buffers for the sparse Hessian: 3.772036652 seconds.
+hessian  backend ADNLPModels.SparseReverseADHessian: 5.112785423 seconds;
+ghjvprod backend ADNLPModels.EmptyADbackend: 3.416e-6 seconds.</code></pre><h3 id="How-routing-works"><a class="docs-heading-anchor" href="#How-routing-works">How routing works</a><a id="How-routing-works-1"></a><a class="docs-heading-anchor-permalink" href="#How-routing-works" title="Permalink"></a></h3><p>Each strategy declares its available options via metadata. When you pass an option:</p><ol><li><strong>Lookup</strong>: The system checks which strategies recognize this option name</li><li><strong>Route</strong>: If exactly one strategy family (discretizer/modeler/solver) recognizes it, the option is routed there</li><li><strong>Validate</strong>: The option value is validated against the declared type and constraints</li><li><strong>Error</strong>: If no strategy recognizes the option, or if multiple families claim it, an error is raised</li></ol><p>You can inspect a strategy&#39;s declared options using <code>describe</code>:</p><pre><code class="language-julia hljs">using CUDA
 describe(:exa)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr34"><span class="sgr1">Exa</span></span> (strategy)
 ├─ <span class="sgr90">id: </span><span class="sgr33">:exa</span>
 ├─ <span class="sgr90">hierarchy: </span><span class="sgr36">Exa</span> → <span class="sgr36">AbstractNLPModeler</span> → <span class="sgr36">AbstractStrategy</span>
@@ -77,7 +77,7 @@ sol = solve(ocp, :madnlp;
     grid_size=50,                      # auto-routed to discretizer
     max_iter=route_to(:madnlp, 1000),    # explicitly routed to solver
     print_level=MadNLP.ERROR           # auto-routed to solver
-)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 2.0.0, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">madnlp</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
+)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 2.0.1, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">madnlp</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
 
   📦 Configuration:
    ├─ <span class="sgr1">Discretizer</span>: <span class="sgr36"><span class="sgr1">collocation</span></span> (grid_size = 50)
@@ -99,7 +99,7 @@ ERROR: <span class="sgr31"><span class="sgr1">Control Toolbox Error
 If you&#39;re confident this option exists for a specific strategy, use bypass() to skip validation:
   custom_opt = route_to(&lt;strategy_id&gt;=bypass(&lt;value&gt;))</code></pre><p>To pass undeclared options, combine <code>route_to</code> with <code>bypass</code>:</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; sol = solve(ocp, :ipopt;
            max_iter=100,
-           mumps_print_level=route_to(:ipopt, bypass(1)))</code><code class="nohighlight hljs ansi" style="display:block;">▫ This is OptimalControl 2.0.0, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">ipopt</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
+           mumps_print_level=route_to(:ipopt, bypass(1)))</code><code class="nohighlight hljs ansi" style="display:block;">▫ This is OptimalControl 2.0.1, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">ipopt</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
 
   📦 Configuration:
    ├─ <span class="sgr1">Discretizer</span>: <span class="sgr36"><span class="sgr1">collocation</span></span>
@@ -144,7 +144,7 @@ Number of inequality constraint evaluations          = 0
 Number of equality constraint Jacobian evaluations   = 2
 Number of inequality constraint Jacobian evaluations = 0
 Number of Lagrangian Hessian evaluations             = 1
-Total seconds in IPOPT                               = 0.111
+Total seconds in IPOPT                               = 0.114
 
 EXIT: Optimal Solution Found.
 • Solver:
@@ -159,7 +159,7 @@ EXIT: Optimal Solution Found.
 sol = solve(ocp, :collocation, :adnlp, :ipopt, :cpu;
     grid_size=50,
     print_level=0
-)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 2.0.0, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">ipopt</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
+)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 2.0.1, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">ipopt</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
 
   📦 Configuration:
    ├─ <span class="sgr1">Discretizer</span>: <span class="sgr36"><span class="sgr1">collocation</span></span> (grid_size = 50)
@@ -169,4 +169,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-solve.html">« Basic usage</a><a class="docs-footer-nextpage" href="manual-solve-explicit.html">Explicit mode »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Monday 13 April 2026 14:33">Monday 13 April 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-solve.html">« Basic usage</a><a class="docs-footer-nextpage" href="manual-solve-explicit.html">Explicit mode »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Monday 13 April 2026 15:51">Monday 13 April 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

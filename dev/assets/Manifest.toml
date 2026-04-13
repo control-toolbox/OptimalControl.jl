@@ -226,9 +226,9 @@ version = "0.18.7"
 
 [[deps.CTDirect]]
 deps = ["ADNLPModels", "CTModels", "CTSolvers", "DocStringExtensions", "ExaModels", "SolverCore", "SparseArrays", "SparseConnectivityTracer"]
-git-tree-sha1 = "db1699ffab2f31aeda5dbb61dfa9015773cb70fc"
+git-tree-sha1 = "a4d812f60412f47bf29e685a921d0d675f581d55"
 uuid = "790bbbee-bee9-49ee-8912-a9de031322d5"
-version = "1.0.6"
+version = "1.0.7-beta"
 
 [[deps.CTFlows]]
 deps = ["CTBase", "CTModels", "DocStringExtensions", "ForwardDiff", "LinearAlgebra", "MLStyle", "MacroTools"]
@@ -1899,7 +1899,7 @@ version = "0.5.6+0"
 deps = ["ADNLPModels", "CTBase", "CTDirect", "CTFlows", "CTModels", "CTParser", "CTSolvers", "CommonSolve", "DocStringExtensions", "Documenter", "ExaModels", "LinearAlgebra", "NLPModels", "RecipesBase", "Reexport", "SolverCore"]
 path = "/home/runner/work/OptimalControl.jl/OptimalControl.jl"
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
-version = "2.0.0"
+version = "2.0.1"
 
 [[deps.Opus_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
