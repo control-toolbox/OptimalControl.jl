@@ -46,7 +46,7 @@ function test_ctmodels()
             for f in (:build_initial_guess,)
                 Test.@testset "$f" begin
                     Test.@test isdefined(OptimalControl, f)
-                    Test.@test !isdefined(CurrentModule, f)
+                    Test.@test isdefined(CurrentModule, f)
                     Test.@test getfield(OptimalControl, f) isa Function
                 end
             end

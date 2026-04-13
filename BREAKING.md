@@ -2,6 +2,9 @@
 
 This document describes the breaking changes when migrating from **OptimalControl.jl v1.1.6** (last stable release) to **v2.0.0**.
 
+!!! note "v2.0.1 Compatibility"
+    **v2.0.1** is fully backward compatible with v2.0.0. It contains documentation improvements and an export change (`build_initial_guess` is now explicitly reexported) with no breaking changes.
+
 ## Overview
 
 Version 2.0.0 represents a major architectural redesign of OptimalControl.jl, introducing:
