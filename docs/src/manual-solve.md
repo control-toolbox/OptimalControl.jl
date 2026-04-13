@@ -216,7 +216,7 @@ Notice the `📦 Configuration` box showing:
 - **Modeler**: `adnlp` (no custom options)
 - **Solver**: `ipopt` with `max_iter = 100, print_level = 0`
 
-## Strategy options
+## [Strategy options](@id manual-solve-strategy-options)
 
 Each strategy declares its available options. You can inspect them using `describe`.
 
