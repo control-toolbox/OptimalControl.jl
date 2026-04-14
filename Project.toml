@@ -1,6 +1,6 @@
 name = "OptimalControl"
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
-version = "2.0.1"
+version = "2.0.2"
 authors = ["Olivier Cots <olivier.cots@toulouse-inp.fr>"]
 
 [deps]
