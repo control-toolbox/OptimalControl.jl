@@ -7,6 +7,21 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.0.1] — 2026-04-13
+
+### Changed
+
+- **Exports**:
+  - `build_initial_guess` is now explicitly reexported with `@reexport import` for better visibility
+
+- **Documentation improvements**:
+  - Added anchor link to "Strategy options" section in manual-solve.md for better navigation
+  - Updated `route_to` documentation to support multi-strategy routing with positional syntax
+  - Changed `route_to` syntax examples from keyword arguments (`route_to(exa=12)`) to positional arguments (`route_to(:exa, 12)`)
+  - Added documentation for routing the same option to multiple strategies with different values using alternating strategy-value pairs
+
+---
+
 ## [2.0.0] — 2026-04-03
 
 **Major version release** with complete solve architecture redesign. This release introduces breaking changes from v1.1.6 (last stable release). See [BREAKING.md](BREAKING.md) for detailed migration guide.

@@ -10,7 +10,8 @@ using CTModels: CTModels
 @reexport import RecipesBase: plot, plot!
 
 # Initial guess
-import CTModels: AbstractInitialGuess, InitialGuess, build_initial_guess
+import CTModels: AbstractInitialGuess, InitialGuess
+@reexport import CTModels: build_initial_guess
 
 # Serialization
 @reexport import CTModels: export_ocp_solution, import_ocp_solution
