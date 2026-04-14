@@ -27,6 +27,9 @@ OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 UnoSolver = "1baa60ac-02f7-4b39-a7a8-2f4f58486b05"
 
+[sources]
+OptimalControl = {path = "/home/runner/work/OptimalControl.jl/OptimalControl.jl"}
+
 [compat]
 ADNLPModels = "0.8"
 CTBase = "0.18"
@@ -35,7 +38,7 @@ CTFlows = "0.8"
 CTModels = "0.9"
 CTParser = "0.8"
 CTSolvers = "0.4"
-CUDA = "5, 6"
+CUDA = "5"
 CommonSolve = "0.2"
 DataFrames = "1"
 Documenter = "1"
