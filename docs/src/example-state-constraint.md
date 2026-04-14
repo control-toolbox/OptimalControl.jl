@@ -1,9 +1,5 @@
 # [State constraint](@id example-state-constraint)
 
-```@meta
-Draft = false
-```
-
 This example illustrates how state constraints of different orders affect the structure of optimal solutions for the double integrator energy minimization problem. It demonstrates both direct and indirect solution approaches. Some examples with state constraints of different orders are solved analytically in Bryson et al.[^1] and Jacobson et al.[^2].
 
 Let us consider a wagon moving along a rail, whose acceleration can be controlled by a force $u$.
