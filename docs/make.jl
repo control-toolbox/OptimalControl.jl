@@ -151,7 +151,7 @@ cp(
 Draft = false
 ```
 =#
-draft = false  # Draft mode: if true, @example blocks in markdown are not executed
+draft = true  # Draft mode: if true, @example blocks in markdown are not executed
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Load extensions
@@ -207,6 +207,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "Time mininimisation" => "example-double-integrator-time.md",
                 "Control-free problems" => "example-control-free.md",
                 "Singular control" => "example-singular-control.md",
+                "State constraint" => "example-state-constraint.md",
             ],
             "Manual" => [
                 "Define a problem" => "manual-abstract.md",
