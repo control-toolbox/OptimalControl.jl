@@ -188,6 +188,7 @@ function shoot!(s, p0, t1, t2)
     s[1:2] = x_tf - xf
     s[3] = g(x_t1)
     s[4] = p_t1[2]
+    return nothing
 end
 nothing # hide
 ```
@@ -202,12 +203,10 @@ p = costate(direct_sol)   # the costate as a function of time
 # initial costate
 p0 = p(t0)
 
-# times where constraint is active
-t12 = t[ 0 .≤ (g ∘ x).(t) .≤ 1e-3 ]
-
-# entry and exit times
-t1 = minimum(t12) # entry time
-t2 = maximum(t12) # exit time
+# t1, t2: entry and exit of the constrained arc (v ≈ v_max)
+active = findall(t -> 0 ≤ g(x(t)) ≤ 1e-3, t)
+t1 = t[first(active)] # entry time
+t2 = t[last(active)]  # exit time
 nothing # hide
 ```
 
@@ -362,6 +361,7 @@ function shoot_touch!(s, p0, t1, Δpq)
     s[1:2]     = x_tf - xf_bd                       # reach target
     s[3]       = g_bd(x_t1)                         # touch: q(t1) = a
     s[4]       = x_t1[2]                            # tangency: v(t1) = 0
+    return nothing
 end
 nothing # hide
 ```
@@ -454,6 +454,7 @@ function shoot_arc!(s, p0, t1, t2, Δpq1, Δpq2)
     s[4]         = x_t1[2]                              # tangency: v(t1) = 0
     s[5]         = p_t1_plus[2]                         # switching: pv(t1+) = 0
     s[6]         = p_t1_plus[1]                         # arc condition: pq(t1+) = 0
+    return nothing
 end
 nothing # hide
 ```
@@ -468,7 +469,7 @@ p_sol_arc  = costate(sol_arc)
 p0_guess_arc  = p_sol_arc(t0)
 
 # t1, t2: entry and exit of the boundary arc (q ≈ a)
-active = findall(t -> g_arc(x_sol_arc(t)) ≤ 1e-3, t_grid_arc)
+active = findall(t -> 0 ≤ g_arc(x_sol_arc(t)) ≤ 1e-3, t_grid_arc)
 t1_guess_arc  = t_grid_arc[first(active)]
 t2_guess_arc  = t_grid_arc[last(active)]
 
