@@ -275,22 +275,22 @@ On a boundary arc where $g(x(t)) = 0$, both derivatives must vanish, forcing $v(
 
 ### Solution structure
 
-The unconstrained optimal trajectory for these boundary conditions is $q(t) = t - t^2$, which reaches its maximum $1/4$ at $t = 1/2$. The solution structure depends on $a$:
+The unconstrained optimal trajectory for these boundary conditions is $q(t) = t - t^2$, which reaches its maximum $1/4$ at $t = 1/2$. A characteristic feature of second-order state constraints is the existence of an intermediate regime between the unconstrained and boundary-arc cases[^3]. The solution structure depends on $a$:
 
-- For large values ($a \ge 1/4$): the constraint is never active (unconstrained solution)
-- **Touch point** ($a = 1/4$): the trajectory touches $q = a$ at a single instant $t = 1/2$
-- **Boundary arc** ($a < 1/4$): the trajectory remains on $q = a$ for a finite time interval
+- **Unconstrained** ($a \ge 1/4$): the constraint is never active
+- **Touch point** ($1/6 \le a \le 1/4$): the trajectory touches $q = a$ at a single instant, without sliding along the boundary
+- **Boundary arc** ($a < 1/6$): the trajectory remains on $q = a$ for a finite time interval, during which $v(t) = 0$ and $u(t) = 0$
 
 ### Direct method
 
-We compare the two constrained cases using the direct method.
+We compare the two constrained cases using the direct method, taking $a = 1/5$ (touch point) and $a = 1/7$ (boundary arc).
 
 ```@example main
 # new boundary conditions
 x0_bd = [0.0, 1.0]; xf_bd = [0.0, -1.0]
 
-# Case 1: touch point (a = 1/4)
-a_touch = 1/4
+# Case 1: touch point (a = 1/5, in range [1/6, 1/4])
+a_touch = 1/5
 
 ocp_touch = @def begin
     t ∈ [t0, tf], time
@@ -307,13 +307,13 @@ ocp_touch = @def begin
     0.5∫( u(t)^2 ) → min
 end
 
-sol_touch = solve(ocp_touch; grid_size=100)
+sol_touch = solve(ocp_touch; grid_size=100, display=false)
 nothing # hide
 ```
 
 ```@example main
-# Case 2: boundary arc (a = 1/9)
-a_arc = 1/9
+# Case 2: boundary arc (a = 1/7, below 1/6)
+a_arc = 1/7
 
 ocp_arc = @def begin
     t ∈ [t0, tf], time
@@ -330,15 +330,17 @@ ocp_arc = @def begin
     0.5∫( u(t)^2 ) → min
 end
 
-sol_arc = solve(ocp_arc; grid_size=100)
+sol_arc = solve(ocp_arc; grid_size=100, display=false)
 nothing # hide
 ```
 
 ```@example main
-plt_bd = plot(sol_touch; label="Touch point (a = 1/4)", size=(800, 600))
-plot!(plt_bd, sol_arc;  label="Boundary arc (a = 1/9)", color=2, linestyle=:dash)
+plt_bd = plot(sol_touch; label="Touch point (a = 1/5)", size=(800, 600))
+plot!(plt_bd, sol_arc;  label="Boundary arc (a = 1/7)", color=2, linestyle=:dash)
 ```
 
 [^1]: Bryson, A.E., Denham, W.F., & Dreyfus, S.E. (1963). *Optimal programming problems with inequality constraints I: necessary conditions for extremal solutions*. AIAA Journal, 1(11), 2544–2550. [doi.org/10.2514/3.2107](https://doi.org/10.2514/3.2107)
 
 [^2]: Jacobson, D.H., Lele, M.M., & Speyer, J.L. (1971). *New necessary conditions of optimality for control problems with state-variable inequality constraints*. Journal of Mathematical Analysis and Applications, 35, 255–284.
+
+[^3]: Bryson, A.E. & Ho, Y.-C. (1975). *Applied Optimal Control: Optimization, Estimation and Control*. CRC Press.
