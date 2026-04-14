@@ -309,6 +309,8 @@ end
 nothing # hide
 ```
 
+We now solve both cases using this parametric OCP definition.
+
 ```@example main
 sol_touch = solve(make_ocp(0.2); grid_size=100, display=false) # touch point
 sol_arc   = solve(make_ocp(0.1); grid_size=100, display=false) # boundary arc
