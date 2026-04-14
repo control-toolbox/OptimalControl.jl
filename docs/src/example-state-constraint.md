@@ -277,9 +277,9 @@ On a boundary arc where $g(x(t)) = 0$, both derivatives must vanish, forcing $v(
 
 The unconstrained optimal trajectory for these boundary conditions is $q(t) = t - t^2$, which reaches its maximum $1/4$ at $t = 1/2$. The solution structure depends on $a$:
 
-- $a \ge 1/4$: constraint never active (unconstrained solution)
-- $a = 1/4$: **touch point** — the trajectory touches $q = a$ at a single instant $t = 1/2$
-- $a < 1/4$: **boundary arc** — the trajectory remains on $q = a$ for a finite time interval
+- For large values ($a \ge 1/4$): the constraint is never active (unconstrained solution)
+- **Touch point** ($a = 1/4$): the trajectory touches $q = a$ at a single instant $t = 1/2$
+- **Boundary arc** ($a < 1/4$): the trajectory remains on $q = a$ for a finite time interval
 
 ### Direct method
 
