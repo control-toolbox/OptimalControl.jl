@@ -289,52 +289,30 @@ We compare the two constrained cases using the direct method, taking $a = 1/5$ (
 # new boundary conditions
 x0_bd = [0.0, 1.0]; xf_bd = [0.0, -1.0]
 
-# Case 1: touch point (a = 1/5, in range [1/6, 1/4])
-a_touch = 1/5
+# parametric OCP: double integrator with position constraint q(t) ≤ a
+function make_ocp(a)
+    @def begin
+        t ∈ [t0, tf], time
+        x = (q, v) ∈ R², state
+        u ∈ R, control
 
-ocp_touch = @def begin
-    t ∈ [t0, tf], time
-    x = (q, v) ∈ R², state
-    u ∈ R, control
+        q(t) ≤ a
 
-    q(t) ≤ a_touch
+        x(t0) == x0_bd
+        x(tf) == xf_bd
 
-    x(t0) == x0_bd
-    x(tf) == xf_bd
+        ẋ(t) == [v(t), u(t)]
 
-    ẋ(t) == [v(t), u(t)]
-
-    0.5∫( u(t)^2 ) → min
+        0.5∫( u(t)^2 ) → min
+    end
 end
-
-sol_touch = solve(ocp_touch; grid_size=100, display=false)
 nothing # hide
 ```
 
 ```@example main
-# Case 2: boundary arc (a = 1/7, below 1/6)
-a_arc = 1/7
+sol_touch = solve(make_ocp(1/5); grid_size=100, display=false) # touch point
+sol_arc   = solve(make_ocp(1/7); grid_size=100, display=false) # boundary arc
 
-ocp_arc = @def begin
-    t ∈ [t0, tf], time
-    x = (q, v) ∈ R², state
-    u ∈ R, control
-
-    q(t) ≤ a_arc
-
-    x(t0) == x0_bd
-    x(tf) == xf_bd
-
-    ẋ(t) == [v(t), u(t)]
-
-    0.5∫( u(t)^2 ) → min
-end
-
-sol_arc = solve(ocp_arc; grid_size=100, display=false)
-nothing # hide
-```
-
-```@example main
 plt_bd = plot(sol_touch; label="Touch point (a = 1/5)", size=(800, 600))
 plot!(plt_bd, sol_arc;  label="Boundary arc (a = 1/7)", color=2, linestyle=:dash)
 ```
