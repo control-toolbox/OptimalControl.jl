@@ -317,7 +317,7 @@ state_style = (legend=false, )
 costate_style = (legend=false, )
 plt_bd = plot(
     sol_touch; 
-    label="a = 0.2", 
+    label="a = 0.2",
     size=(800, 600), 
     state_style=state_style,
     costate_style=costate_style,
@@ -408,7 +408,101 @@ f_touch = fs_bd * (t1_touch, [Δpq_touch, 0.0], fs_bd)
 # reconstruct the indirect solution
 indirect_touch = f_touch((t0, tf), x0_bd, p0_touch; saveat=range(t0, tf, 100))
 
-plot(indirect_touch; label="Indirect", size=(800, 600),
+plot(indirect_touch; label="Indirect (a = 0.2)", size=(800, 600),
+     state_style=(legend=false,), costate_style=(legend=false,))
+```
+
+### Indirect method: boundary arc case
+
+For the boundary arc case ($a = 0.1$), the optimal solution consists of three arcs: two unconstrained arcs on $[t_0, t_1]$ and $[t_2, t_f]$, separated by a boundary arc on $[t_1, t_2]$ where $q(t) = a$ and $v(t) = 0$. Along the boundary arc, the control is $u = 0$, the costate satisfies $p_q = 0$ and $p_v = 0$, and the Lagrange multiplier $\mu = 0$. The costate has jumps $[\Delta p_q^1, 0]$ and $[\Delta p_q^2, 0]$ at $t_1$ and $t_2$ respectively.
+
+The six shooting unknowns are the initial costate $p_0 \in \mathbb{R}^2$, the entry and exit times $t_1$ and $t_2$, and the two jumps $\Delta p_q^1$ and $\Delta p_q^2$. The shooting conditions are:
+
+```math
+x(t_f) = x_f, \quad q(t_1) = a, \quad v(t_1) = 0, \quad p_v(t_1^+) = 0, \quad p_q(t_1^+) = 0.
+```
+
+```@example main
+a_arc = 0.1
+
+# interior (unconstrained) flow
+fs_arc = Flow(make_ocp(a_arc), (x, p) -> p[2])
+
+# boundary arc flow: u = 0, constraint g(x) = a - q ≥ 0, multiplier μ = 0
+fc_bd = Flow(make_ocp(a_arc), (x, p) -> 0, (x, u) -> a_arc - x[1], (x, p) -> 0)
+
+# constraint function
+g_arc(x) = a_arc - x[1]
+
+# shooting function: unknowns p0 (2D), t1, t2, Δpq1, Δpq2
+function shoot_arc!(s, p0, t1, t2, Δpq1, Δpq2)
+    x_t1, p_t1   = fs_arc(t0, x0_bd, p0, t1)           # arc 1: t0 → t1
+    p_t1_plus    = [p_t1[1] + Δpq1, p_t1[2]]            # costate jump at t1
+    x_t2, p_t2   = fc_bd(t1, x_t1, p_t1_plus, t2)      # arc 2: t1 → t2 (boundary)
+    p_t2_plus    = [p_t2[1] + Δpq2, p_t2[2]]            # costate jump at t2
+    x_tf, _      = fs_arc(t2, x_t2, p_t2_plus, tf)      # arc 3: t2 → tf
+    s[1:2]       = x_tf - xf_bd                          # reach target
+    s[3]         = g_arc(x_t1)                           # touch: q(t1) = a
+    s[4]         = x_t1[2]                               # tangency: v(t1) = 0
+    s[5]         = p_t1_plus[2]                          # switching: pv(t1+) = 0
+    s[6]         = p_t1_plus[1]                          # arc condition: pq(t1+) = 0
+end
+nothing # hide
+```
+
+We extract the initial guess from the direct solution `sol_arc`.
+
+```@example main
+t_grid_arc = time_grid(sol_arc)
+x_sol_arc  = state(sol_arc)
+p_sol_arc  = costate(sol_arc)
+
+p0_guess_arc  = p_sol_arc(t0)
+
+# t1, t2: entry and exit of the boundary arc (q ≈ a)
+active = findall(t -> g_arc(x_sol_arc(t)) ≤ 1e-3, t_grid_arc)
+t1_guess_arc  = t_grid_arc[first(active)]
+t2_guess_arc  = t_grid_arc[last(active)]
+
+# jumps: costate difference around t1 and t2
+ε_arc = 0.05 * (tf - t0)
+Δpq1_guess = p_sol_arc(t1_guess_arc + ε_arc)[1] - p_sol_arc(t1_guess_arc - ε_arc)[1]
+Δpq2_guess = p_sol_arc(t2_guess_arc + ε_arc)[1] - p_sol_arc(t2_guess_arc - ε_arc)[1]
+
+println("p0 guess   = ", p0_guess_arc)
+println("t1 guess   = ", t1_guess_arc)
+println("t2 guess   = ", t2_guess_arc)
+println("Δpq1 guess = ", Δpq1_guess)
+println("Δpq2 guess = ", Δpq2_guess)
+nothing # hide
+```
+
+```@example main
+nle_arc!(s, ξ, _) = shoot_arc!(s, ξ[1:2], ξ[3], ξ[4], ξ[5], ξ[6])
+
+ξ_guess_arc = [p0_guess_arc..., t1_guess_arc, t2_guess_arc, Δpq1_guess, Δpq2_guess]
+sol_shoot_arc = solve(NonlinearProblem(nle_arc!, ξ_guess_arc); show_trace=Val(true))
+
+p0_arc  = sol_shoot_arc.u[1:2]
+t1_arc  = sol_shoot_arc.u[3]
+t2_arc  = sol_shoot_arc.u[4]
+Δpq1    = sol_shoot_arc.u[5]
+Δpq2    = sol_shoot_arc.u[6]
+
+println("\np0  = ", p0_arc)
+println("t1  = ", t1_arc, "  (expect ", 3a_arc, ")")
+println("t2  = ", t2_arc, "  (expect ", 1 - 3a_arc, ")")
+println("Δpq1 = ", Δpq1, "  Δpq2 = ", Δpq2, "  (expect equal by symmetry)")
+```
+
+```@example main
+# concatenate: arc 1 → jump → boundary arc → jump → arc 3
+f_arc = fs_arc * (t1_arc, [Δpq1, 0.0], fc_bd) * (t2_arc, [Δpq2, 0.0], fs_arc)
+
+# reconstruct the indirect solution
+indirect_arc = f_arc((t0, tf), x0_bd, p0_arc; saveat=range(t0, tf, 100))
+
+plot(indirect_arc; label="Indirect (a = 0.1)", size=(800, 600),
      state_style=(legend=false,), costate_style=(legend=false,))
 ```
 
