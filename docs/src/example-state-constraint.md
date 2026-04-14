@@ -414,7 +414,7 @@ plot(indirect_touch; label="Indirect (a = 0.2)", size=(800, 600),
 
 ### Indirect method: boundary arc case
 
-For the boundary arc case ($a = 0.1$), the optimal solution consists of three arcs: two unconstrained arcs on $[t_0, t_1]$ and $[t_2, t_f]$, separated by a boundary arc on $[t_1, t_2]$ where $q(t) = a$ and $v(t) = 0$. Along the boundary arc, the control is $u = 0$, the costate satisfies $p_q = 0$ and $p_v = 0$, and the Lagrange multiplier $\mu = 0$. The costate has jumps $[\Delta p_q^1, 0]$ and $[\Delta p_q^2, 0]$ at $t_1$ and $t_2$ respectively.
+For the boundary arc case ($a = 0.1$), the optimal solution consists of three arcs: two unconstrained arcs on $[t_0, t_1]$ and $[t_2, t_f]$, separated by a boundary arc on $[t_1, t_2]$ where $q(t) = a$ and $v(t) = 0$. Along the boundary arc, the control is $u = 0$, since differentiating $g(x) = a - q \geq 0$ twice gives $\ddot{q} = u = 0$. From the maximisation condition, $p_v(t) = 0$ along the arc. Differentiating the adjoint equation $\dot{p}_v = -p_q$ and using $p_v = 0$ yields $p_q = 0$. Differentiating further gives $\mu = \dot{p}_q = 0$. The costate has jumps $[\Delta p_q^1, 0]$ and $[\Delta p_q^2, 0]$ at $t_1$ and $t_2$ respectively.
 
 The six shooting unknowns are the initial costate $p_0 \in \mathbb{R}^2$, the entry and exit times $t_1$ and $t_2$, and the two jumps $\Delta p_q^1$ and $\Delta p_q^2$. The shooting conditions are:
 
