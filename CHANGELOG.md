@@ -22,6 +22,15 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.0.2] — 2026-04-14
+
+### Changed
+
+- **Dependencies**:
+  - Updated UnoSolver from v0.2 to v0.3
+
+---
+
 ## [2.0.0] — 2026-04-03
 
 **Major version release** with complete solve architecture redesign. This release introduces breaking changes from v1.1.6 (last stable release). See [BREAKING.md](BREAKING.md) for detailed migration guide.

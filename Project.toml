@@ -1,6 +1,6 @@
 name = "OptimalControl"
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
-version = "2.0.1"
+version = "2.0.2"
 authors = ["Olivier Cots <olivier.cots@toulouse-inp.fr>"]
 
 [deps]
@@ -30,7 +30,7 @@ CTFlows = "0.8"
 CTModels = "0.9"
 CTParser = "0.8"
 CTSolvers = "0.4"
-CUDA = "5"
+CUDA = "5, 6"
 CommonSolve = "0.2"
 DifferentiationInterface = "0.7"
 DocStringExtensions = "0.9"
@@ -51,7 +51,7 @@ Reexport = "1"
 SolverCore = "0.3.9"
 SplitApplyCombine = "1"
 Test = "1"
-UnoSolver = "0.2"
+UnoSolver = "0.3"
 julia = "1.10"
 
 [extras]
