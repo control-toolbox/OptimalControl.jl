@@ -46,7 +46,7 @@ end
 direct_sol = solve(ocp; grid_size=50)
 
 # plot the solution
-plt = plot(direct_sol; label=&quot;Direct&quot;, size=(800, 600))</code></pre><img src="example-state-constraint-f8904862.svg" alt="Example block output"/><p>The solution has three phases (unconstrained-constrained-unconstrained arcs), requiring definition of Hamiltonian flows for each phase and a shooting function to enforce boundary and switching conditions.</p><h3 id="Indirect-method:-constrained-case"><a class="docs-heading-anchor" href="#Indirect-method:-constrained-case">Indirect method: constrained case</a><a id="Indirect-method:-constrained-case-1"></a><a class="docs-heading-anchor-permalink" href="#Indirect-method:-constrained-case" title="Permalink"></a></h3><p>Under the normal case, the pseudo-Hamiltonian reads:</p><p class="math-container">\[H(x, p, u, \mu) = p_1 v + p_2 u - \frac{u^2}{2} + \mu\, g(x),\]</p><p>where <span>$g(x) = v_{\max} - v$</span>. Along a boundary arc we have <span>$g(x(t)) = 0$</span>; differentiating gives:</p><p class="math-container">\[    \frac{\mathrm{d}}{\mathrm{d}t}g(x(t)) = -\dot{v}(t) = -u(t) = 0.\]</p><p>The zero control maximises the Hamiltonian, so <span>$p_2(t) = 0$</span> along that arc. From the adjoint equation we then have</p><p class="math-container">\[    \dot{p}_2(t) = -p_1(t) + \mu(t) = 0 \quad \Rightarrow \mu(t) = p_1(t).\]</p><p>Because the adjoint vector is continuous at both the entry time <span>$t_1$</span> and the exit time <span>$t_2$</span>, the unknowns are <span>$p_0 \in \mathbb{R}^2$</span> together with <span>$t_1$</span> and <span>$t_2$</span>. The target condition supplies two equations, <span>$g(x(t_1)) = 0$</span> enforces the state constraint, and <span>$p_2(t_1) = 0$</span> encodes the switching condition.</p><pre><code class="language-julia hljs">using OrdinaryDiffEq # Ordinary Differential Equations (ODE) solver
+plt = plot(direct_sol; label=&quot;Direct&quot;, size=(800, 600))</code></pre><img src="example-state-constraint-20fe83ba.svg" alt="Example block output"/><p>The solution has three phases (unconstrained-constrained-unconstrained arcs), requiring definition of Hamiltonian flows for each phase and a shooting function to enforce boundary and switching conditions.</p><h3 id="Indirect-method:-constrained-case"><a class="docs-heading-anchor" href="#Indirect-method:-constrained-case">Indirect method: constrained case</a><a id="Indirect-method:-constrained-case-1"></a><a class="docs-heading-anchor-permalink" href="#Indirect-method:-constrained-case" title="Permalink"></a></h3><p>Under the normal case, the pseudo-Hamiltonian reads:</p><p class="math-container">\[H(x, p, u, \mu) = p_1 v + p_2 u - \frac{u^2}{2} + \mu\, g(x),\]</p><p>where <span>$g(x) = v_{\max} - v$</span>. Along a boundary arc we have <span>$g(x(t)) = 0$</span>; differentiating gives:</p><p class="math-container">\[    \frac{\mathrm{d}}{\mathrm{d}t}g(x(t)) = -\dot{v}(t) = -u(t) = 0.\]</p><p>The zero control maximises the Hamiltonian, so <span>$p_2(t) = 0$</span> along that arc. From the adjoint equation we then have</p><p class="math-container">\[    \dot{p}_2(t) = -p_1(t) + \mu(t) = 0 \quad \Rightarrow \mu(t) = p_1(t).\]</p><p>Because the adjoint vector is continuous at both the entry time <span>$t_1$</span> and the exit time <span>$t_2$</span>, the unknowns are <span>$p_0 \in \mathbb{R}^2$</span> together with <span>$t_1$</span> and <span>$t_2$</span>. The target condition supplies two equations, <span>$g(x(t_1)) = 0$</span> enforces the state constraint, and <span>$p_2(t_1) = 0$</span> encodes the switching condition.</p><pre><code class="language-julia hljs">using OrdinaryDiffEq # Ordinary Differential Equations (ODE) solver
 using NonlinearSolve # Nonlinear Equations (NLE) solver
 
 # flow for unconstrained extremals
@@ -68,6 +68,7 @@ function shoot!(s, p0, t1, t2)
     s[1:2] = x_tf - xf
     s[3] = g(x_t1)
     s[4] = p_t1[2]
+    return nothing
 end</code></pre><p>We can derive an initial guess for the costate and the entry/exit times from the direct solution:</p><pre><code class="language-julia hljs">t = time_grid(direct_sol) # the time grid as a vector
 x = state(direct_sol)     # the state as a function of time
 p = costate(direct_sol)   # the costate as a function of time
@@ -75,12 +76,10 @@ p = costate(direct_sol)   # the costate as a function of time
 # initial costate
 p0 = p(t0)
 
-# times where constraint is active
-t12 = t[ 0 .≤ (g ∘ x).(t) .≤ 1e-3 ]
-
-# entry and exit times
-t1 = minimum(t12) # entry time
-t2 = maximum(t12) # exit time</code></pre><p>We can now solve the shooting equations.</p><pre><code class="language-julia hljs"># auxiliary in-place NLE function
+# t1, t2: entry and exit of the constrained arc (v ≈ v_max)
+active = findall(t -&gt; 0 ≤ g(x(t)) ≤ 1e-3, t)
+t1 = t[first(active)] # entry time
+t2 = t[last(active)]  # exit time</code></pre><p>We can now solve the shooting equations.</p><pre><code class="language-julia hljs"># auxiliary in-place NLE function
 nle!(s, ξ, _) = shoot!(s, ξ[1:2], ξ[3], ξ[4])
 
 # initial guess for the Newton solver
@@ -125,170 +124,214 @@ t2 = 0.7499999999999999</code></pre><p>To reconstruct the constrained trajectory
 indirect_sol = φ((t0, tf), x0, p0; saveat=range(t0, tf, 100))
 
 # plot the solution on the previous plot
-plot!(plt, indirect_sol; label=&quot;Indirect&quot;, color=2, linestyle=:dash)</code></pre><img src="example-state-constraint-d4cdc37c.svg" alt="Example block output"/><div class="admonition is-info" id="Note-3e50fde2fc69b5db"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-3e50fde2fc69b5db" title="Permalink"></a></header><div class="admonition-body"><ul><li>You can use <a href="https://control-toolbox.org/Tutorials.jl/stable/tutorial-iss.html#Resolution-of-the-shooting-equation">MINPACK.jl</a> instead of <a href="https://docs.sciml.ai/NonlinearSolve">NonlinearSolve.jl</a>.</li><li>For more details about the flow construction, visit the <a href="manual-flow-ocp.html#manual-flow-ocp">Compute flows from optimal control problems</a> page.</li><li>For the unconstrained version of this problem, see the <a href="example-double-integrator-energy.html#example-double-integrator-energy">Energy minimisation</a> example.</li></ul></div></div><h2 id="Second-order-state-constraint"><a class="docs-heading-anchor" href="#Second-order-state-constraint">Second-order state constraint</a><a id="Second-order-state-constraint-1"></a><a class="docs-heading-anchor-permalink" href="#Second-order-state-constraint" title="Permalink"></a></h2><p>We now consider the same double integrator with different boundary conditions and a constraint on the <strong>position</strong> <span>$x_1 = q$</span>:<sup class="footnote-reference"><a id="citeref-1" href="#footnote-1" class="footnote-ref">[1]</a><span class="footnote-preview" id="fn-1"></span></sup></p><p class="math-container">\[    q(t) \le a.\]</p><p>The boundary conditions are <span>$x(0) = (0, 1)$</span> and <span>$x(1) = (0, -1)$</span>.</p><p>This is a <strong>second-order state constraint</strong>: the control <span>$u$</span> appears only after differentiating <span>$g(x) = a - q$</span> twice,</p><p class="math-container">\[    \frac{\mathrm{d}}{\mathrm{d}t}g(x(t)) = -\dot{q}(t) = -v(t) \quad \text{(no control)},\]</p><p class="math-container">\[    \frac{\mathrm{d}^2}{\mathrm{d}t^2}g(x(t)) = -\dot{v}(t) = -u(t) \quad \text{(control appears)}.\]</p><p>On a boundary arc where <span>$g(x(t)) = 0$</span>, both derivatives must vanish, forcing <span>$v(t) = 0$</span> and <span>$u(t) = 0$</span>.</p><h3 id="Solution-structure"><a class="docs-heading-anchor" href="#Solution-structure">Solution structure</a><a id="Solution-structure-1"></a><a class="docs-heading-anchor-permalink" href="#Solution-structure" title="Permalink"></a></h3><p>The unconstrained optimal trajectory for these boundary conditions is <span>$q(t) = t - t^2$</span>, which reaches its maximum <span>$1/4$</span> at <span>$t = 1/2$</span>. The solution structure depends on <span>$a$</span>:</p><ul><li>For large values (<span>$a \ge 1/4$</span>): the constraint is never active (unconstrained solution)</li><li><strong>Touch point</strong> (<span>$a = 1/4$</span>): the trajectory touches <span>$q = a$</span> at a single instant <span>$t = 1/2$</span></li><li><strong>Boundary arc</strong> (<span>$a &lt; 1/4$</span>): the trajectory remains on <span>$q = a$</span> for a finite time interval</li></ul><h3 id="Direct-method"><a class="docs-heading-anchor" href="#Direct-method">Direct method</a><a id="Direct-method-1"></a><a class="docs-heading-anchor-permalink" href="#Direct-method" title="Permalink"></a></h3><p>We compare the two constrained cases using the direct method.</p><pre><code class="language-julia hljs"># new boundary conditions
+plot!(plt, indirect_sol; label=&quot;Indirect&quot;, color=2, linestyle=:dash)</code></pre><img src="example-state-constraint-7998a72c.svg" alt="Example block output"/><div class="admonition is-info" id="Note-3e50fde2fc69b5db"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-3e50fde2fc69b5db" title="Permalink"></a></header><div class="admonition-body"><ul><li>You can use <a href="https://control-toolbox.org/Tutorials.jl/stable/tutorial-iss.html#Resolution-of-the-shooting-equation">MINPACK.jl</a> instead of <a href="https://docs.sciml.ai/NonlinearSolve">NonlinearSolve.jl</a>.</li><li>For more details about the flow construction, visit the <a href="manual-flow-ocp.html#manual-flow-ocp">Compute flows from optimal control problems</a> page.</li><li>For the unconstrained version of this problem, see the <a href="example-double-integrator-energy.html#example-double-integrator-energy">Energy minimisation</a> example.</li></ul></div></div><h2 id="Second-order-state-constraint"><a class="docs-heading-anchor" href="#Second-order-state-constraint">Second-order state constraint</a><a id="Second-order-state-constraint-1"></a><a class="docs-heading-anchor-permalink" href="#Second-order-state-constraint" title="Permalink"></a></h2><p>We now consider the same double integrator with different boundary conditions and a constraint on the <strong>position</strong> <span>$x_1 = q$</span>:<sup class="footnote-reference"><a id="citeref-1" href="#footnote-1" class="footnote-ref">[1]</a><span class="footnote-preview" id="fn-1"></span></sup></p><p class="math-container">\[    q(t) \le a.\]</p><p>The boundary conditions are <span>$x(0) = (0, 1)$</span> and <span>$x(1) = (0, -1)$</span>.</p><p>This is a <strong>second-order state constraint</strong>: the control <span>$u$</span> appears only after differentiating <span>$g(x) = a - q$</span> twice,</p><p class="math-container">\[    \frac{\mathrm{d}}{\mathrm{d}t}g(x(t)) = -\dot{q}(t) = -v(t) \quad \text{(no control)},\]</p><p class="math-container">\[    \frac{\mathrm{d}^2}{\mathrm{d}t^2}g(x(t)) = -\dot{v}(t) = -u(t) \quad \text{(control appears)}.\]</p><p>On a boundary arc where <span>$g(x(t)) = 0$</span>, both derivatives must vanish, forcing <span>$v(t) = 0$</span> and <span>$u(t) = 0$</span>.</p><h3 id="Solution-structure"><a class="docs-heading-anchor" href="#Solution-structure">Solution structure</a><a id="Solution-structure-1"></a><a class="docs-heading-anchor-permalink" href="#Solution-structure" title="Permalink"></a></h3><p>The unconstrained optimal trajectory for these boundary conditions is <span>$q(t) = t - t^2$</span>, which reaches its maximum <span>$1/4$</span> at <span>$t = 1/2$</span>. A characteristic feature of second-order state constraints is the existence of an intermediate regime between the unconstrained and boundary-arc cases<sup class="footnote-reference"><a id="citeref-3" href="#footnote-3" class="footnote-ref">[3]</a><span class="footnote-preview" id="fn-3"></span></sup>. The solution structure depends on <span>$a$</span>:</p><ul><li><strong>Unconstrained</strong> (<span>$a \ge 1/4$</span>): the constraint is never active</li><li><strong>Touch point</strong> (<span>$1/6 \le a \le 1/4$</span>): the trajectory touches <span>$q = a$</span> at a single instant, without sliding along the boundary</li><li><strong>Boundary arc</strong> (<span>$a &lt; 1/6$</span>): the trajectory remains on <span>$q = a$</span> for a finite time interval, during which <span>$v(t) = 0$</span> and <span>$u(t) = 0$</span></li></ul><h3 id="Direct-method"><a class="docs-heading-anchor" href="#Direct-method">Direct method</a><a id="Direct-method-1"></a><a class="docs-heading-anchor-permalink" href="#Direct-method" title="Permalink"></a></h3><p>We compare the two constrained cases using the direct method, taking <span>$a = 0.2$</span> (touch point) and <span>$a = 0.1$</span> (boundary arc).</p><pre><code class="language-julia hljs"># new boundary conditions
 x0_bd = [0.0, 1.0]; xf_bd = [0.0, -1.0]
 
-# Case 1: touch point (a = 1/4)
-a_touch = 1/4
+# parametric OCP: double integrator with position constraint q(t) ≤ a
+function make_ocp(a)
+    @def begin
+        t ∈ [t0, tf], time
+        x = (q, v) ∈ R², state
+        u ∈ R, control
 
-ocp_touch = @def begin
-    t ∈ [t0, tf], time
-    x = (q, v) ∈ R², state
-    u ∈ R, control
+        q(t) ≤ a
 
-    q(t) ≤ a_touch
+        x(t0) == x0_bd
+        x(tf) == xf_bd
 
-    x(t0) == x0_bd
-    x(tf) == xf_bd
+        ẋ(t) == [v(t), u(t)]
 
-    ẋ(t) == [v(t), u(t)]
+        0.5∫( u(t)^2 ) → min
+    end
+end</code></pre><p>We now solve both cases using this parametric OCP definition.</p><pre><code class="language-julia hljs">sol_touch = solve(make_ocp(0.2); grid_size=100, display=false) # touch point
+sol_arc   = solve(make_ocp(0.1); grid_size=100, display=false) # boundary arc
 
-    0.5∫( u(t)^2 ) → min
-end
+state_style = (legend=false, )
+costate_style = (legend=false, )
+plt_bd = plot(
+    sol_touch;
+    label=&quot;a = 0.2&quot;,
+    size=(800, 600),
+    state_style=state_style,
+    costate_style=costate_style,
+)
+plot!(
+    plt_bd,
+    sol_arc;
+    label=&quot;a = 0.1&quot;,
+    color=2,
+    linestyle=:dash,
+    state_style=state_style,
+    costate_style=costate_style,
+)</code></pre><img src="example-state-constraint-4c6ed897.svg" alt="Example block output"/><h3 id="Indirect-method:-touch-point-case"><a class="docs-heading-anchor" href="#Indirect-method:-touch-point-case">Indirect method: touch point case</a><a id="Indirect-method:-touch-point-case-1"></a><a class="docs-heading-anchor-permalink" href="#Indirect-method:-touch-point-case" title="Permalink"></a></h3><p>For the touch point case (<span>$a = 0.2$</span>), the optimal solution consists of two unconstrained arcs on <span>$[t_0, t_1]$</span> and <span>$[t_1, t_f]$</span>, joined at the contact instant <span>$t_1$</span> where <span>$q(t_1) = a$</span> and <span>$v(t_1) = 0$</span>. The costate is discontinuous at <span>$t_1$</span>: the first component <span>$p_q$</span> undergoes a jump <span>$\Delta p_q$</span> while <span>$p_v$</span> remains continuous.</p><p>The shooting unknowns are therefore the initial costate <span>$p_0 \in \mathbb{R}^2$</span>, the contact time <span>$t_1$</span>, and the costate jump <span>$\Delta p_q$</span>. The four shooting conditions are:</p><p class="math-container">\[x(t_f) = x_f, \quad q(t_1) = a, \quad v(t_1) = 0.\]</p><pre><code class="language-julia hljs">a_touch = 0.2
 
-sol_touch = solve(ocp_touch; grid_size=100)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 2.0.2, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">ipopt</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
+# interior (unconstrained) flow
+fs_bd = Flow(make_ocp(a_touch), (x, p) -&gt; p[2])
 
-  📦 Configuration:
-   ├─ <span class="sgr1">Discretizer</span>: <span class="sgr36"><span class="sgr1">collocation</span></span> (grid_size = 100)
-   ├─ <span class="sgr1">Modeler</span>: <span class="sgr36"><span class="sgr1">adnlp</span></span>
-   └─ <span class="sgr1">Solver</span>: <span class="sgr36"><span class="sgr1">ipopt</span></span>
+# constraint: g(x) = a - q ≥ 0
+g_bd(x) = a_touch - x[1]
 
-▫ This is Ipopt version 3.14.19, running with linear solver MUMPS 5.8.2.
+# shooting function: unknowns p0 (2D), t1 (contact time), Δpq (costate jump)
+function shoot_touch!(s, p0, t1, Δpq)
+    x_t1, p_t1 = fs_bd(t0, x0_bd, p0, t1)           # arc 1: t0 → t1
+    p_t1_plus  = [p_t1[1] + Δpq, p_t1[2]]           # costate jump at t1
+    x_tf, _    = fs_bd(t1, x_t1, p_t1_plus, tf)     # arc 2: t1 → tf
+    s[1:2]     = x_tf - xf_bd                       # reach target
+    s[3]       = g_bd(x_t1)                         # touch: q(t1) = a
+    s[4]       = x_t1[2]                            # tangency: v(t1) = 0
+    return nothing
+end</code></pre><p>We extract the initial guess from the direct solution <code>sol_touch</code>.</p><pre><code class="language-julia hljs">t_grid = time_grid(sol_touch)
+x_sol  = state(sol_touch)
+p_sol  = costate(sol_touch)
 
-Number of nonzeros in equality constraint Jacobian...:      704
-Number of nonzeros in inequality constraint Jacobian.:        0
-Number of nonzeros in Lagrangian Hessian.............:      100
+p0_guess  = p_sol(t0)
 
-Total number of variables............................:      302
-                     variables with only lower bounds:        0
-                variables with lower and upper bounds:        0
-                     variables with only upper bounds:      101
-Total number of equality constraints.................:      204
-Total number of inequality constraints...............:        0
-        inequality constraints with only lower bounds:        0
-   inequality constraints with lower and upper bounds:        0
-        inequality constraints with only upper bounds:        0
+# t1: time where q(t) is closest to the constraint bound a
+t1_guess  = t_grid[argmin(abs.(g_bd.(x_sol.(t_grid))))]
 
-iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
-   0  5.0000000e-03 1.10e+00 7.94e-02   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
-   1  2.7482723e+00 2.22e-16 6.77e-01  -6.8 4.36e+00    -  5.94e-01 1.00e+00h  1
-   2  2.2512244e+00 1.11e-16 4.38e-09  -3.4 9.16e-01    -  1.00e+00 1.00e+00f  1
-   3  2.0476073e+00 2.22e-16 6.60e-10  -4.2 7.86e-01    -  1.00e+00 1.00e+00f  1
-   4  2.0084792e+00 1.11e-16 2.53e-04  -8.8 3.32e-01    -  9.96e-01 1.00e+00f  1
-   5  2.0014449e+00 1.11e-16 3.29e-15  -9.5 1.37e-01    -  1.00e+00 1.00e+00f  1
-   6  2.0002346e+00 1.11e-16 8.88e-16 -10.2 5.62e-02    -  1.00e+00 1.00e+00f  1
-   7  2.0000368e+00 1.11e-16 8.88e-16 -11.0 2.26e-02    -  1.00e+00 1.00e+00f  1
-   8  2.0000056e+00 1.11e-16 8.88e-16 -11.0 8.94e-03    -  1.00e+00 1.00e+00f  1
-   9  2.0000008e+00 1.11e-16 8.88e-16 -11.0 3.50e-03    -  1.00e+00 1.00e+00f  1
-iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
-  10  2.0000001e+00 1.11e-16 4.44e-16 -11.0 1.35e-03    -  1.00e+00 1.00e+00f  1
-  11  2.0000000e+00 1.11e-16 4.44e-16 -11.0 5.01e-04    -  1.00e+00 1.00e+00f  1
-  12  2.0000000e+00 1.11e-16 4.44e-16 -11.0 1.91e-04    -  1.00e+00 1.00e+00h  1
+# Δpq: estimated costate jump around t1
+ε = 0.05 * (tf - t0)
+Δpq_guess = p_sol(t1_guess + ε)[1] - p_sol(t1_guess - ε)[1]
 
-Number of Iterations....: 12
+println(&quot;p0 guess  = &quot;, p0_guess)
+println(&quot;t1 guess  = &quot;, t1_guess)
+println(&quot;Δpq guess = &quot;, Δpq_guess)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">p0 guess  = [-4.801919965702679, -3.1764703731542085]
+t1 guess  = 0.5
+Δpq guess = 9.603838330599181</code></pre><pre><code class="language-julia hljs">nle_touch!(s, ξ, _) = shoot_touch!(s, ξ[1:2], ξ[3], ξ[4])
 
-                                   (scaled)                 (unscaled)
-Objective...............:   2.0000000049759703e+00    2.0000000049759703e+00
-Dual infeasibility......:   4.4408920985006262e-16    4.4408920985006262e-16
-Constraint violation....:   1.1102230246251565e-16    1.1102230246251565e-16
-Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.7781346704361016e-09    9.7781346704361016e-09
-Overall NLP error.......:   9.7781346704361016e-09    9.7781346704361016e-09
+ξ_guess = [p0_guess..., t1_guess, Δpq_guess]
+sol_shoot_touch = solve(NonlinearProblem(nle_touch!, ξ_guess); show_trace=Val(true))
 
+p0_touch  = sol_shoot_touch.u[1:2]
+t1_touch  = sol_shoot_touch.u[3]
+Δpq_touch = sol_shoot_touch.u[4]
 
-Number of objective function evaluations             = 13
-Number of objective gradient evaluations             = 13
-Number of equality constraint evaluations            = 13
-Number of inequality constraint evaluations          = 0
-Number of equality constraint Jacobian evaluations   = 13
-Number of inequality constraint Jacobian evaluations = 0
-Number of Lagrangian Hessian evaluations             = 12
-Total seconds in IPOPT                               = 3.526
+println(&quot;\np0  = &quot;, p0_touch, &quot;\nt1  = &quot;, t1_touch, &quot;\nΔpq = &quot;, Δpq_touch)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+Algorithm: NewtonRaphson(
+    descent = NewtonDescent(),
+    autodiff = AutoForwardDiff(),
+    vjp_autodiff = AutoReverseDiff(
+        compile = false
+    ),
+    jvp_autodiff = AutoForwardDiff(),
+    concrete_jac = Val{false}()
+)
 
-EXIT: Optimal Solution Found.</code></pre><pre><code class="language-julia hljs"># Case 2: boundary arc (a = 1/9)
-a_arc = 1/9
+----    	-------------       	-----------
+Iter    	f(u) inf-norm       	Step 2-norm
+----    	-------------       	-----------
+0       	2.40098184e-02      	0.00000000e+00
+1       	7.23978838e-16      	2.39178258e-02
+Final   	7.23978838e-16
+----------------------
 
-ocp_arc = @def begin
-    t ∈ [t0, tf], time
-    x = (q, v) ∈ R², state
-    u ∈ R, control
+p0  = [-4.800000000000086, -3.200000000000021]
+t1  = 0.4999999999999979
+Δpq = 9.600000000000092</code></pre><p>The analytical solution gives <span>$t_1 = 1/2$</span>, <span>$p_q = -4.8$</span> on <span>$[t_0, t_1)$</span>, <span>$p_q = +4.8$</span> on <span>$(t_1, t_f]$</span>, with a jump of <span>$9.6$</span> and an optimal cost of <span>$2.24$</span>.</p><pre><code class="language-julia hljs"># concatenate: arc 1 → costate jump → arc 2
+f_touch = fs_bd * (t1_touch, [Δpq_touch, 0.0], fs_bd)
 
-    q(t) ≤ a_arc
+# reconstruct the indirect solution
+indirect_touch = f_touch((t0, tf), x0_bd, p0_touch; saveat=range(t0, tf, 100))
 
-    x(t0) == x0_bd
-    x(tf) == xf_bd
+plt_indirect = plot(indirect_touch; label=&quot;Indirect (a = 0.2)&quot;, size=(800, 600),
+                    state_style=(legend=false,), costate_style=(legend=false,))</code></pre><img src="example-state-constraint-b05eeb53.svg" alt="Example block output"/><h3 id="Indirect-method:-boundary-arc-case"><a class="docs-heading-anchor" href="#Indirect-method:-boundary-arc-case">Indirect method: boundary arc case</a><a id="Indirect-method:-boundary-arc-case-1"></a><a class="docs-heading-anchor-permalink" href="#Indirect-method:-boundary-arc-case" title="Permalink"></a></h3><p>For the boundary arc case (<span>$a = 0.1$</span>), the optimal solution consists of three arcs: two unconstrained arcs on <span>$[t_0, t_1]$</span> and <span>$[t_2, t_f]$</span>, separated by a boundary arc on <span>$[t_1, t_2]$</span> where <span>$q(t) = a$</span> and <span>$v(t) = 0$</span>. The pseudo-Hamiltonian is</p><p class="math-container">\[H(x, p, u, \mu) = p_q\, v + p_v\, u + 0.5\, p^0 u^2 + \mu\, g(x),\]</p><p>where <span>$p^0 = -1$</span> in the normal case and <span>$g(x) = a - q \geq 0$</span> is the constraint. Along the boundary arc, the control is <span>$u = 0$</span>, since differentiating <span>$g(x) = a - q \geq 0$</span> twice gives <span>$\ddot{q} = u = 0$</span>. From the maximisation condition, <span>$p_v(t) = 0$</span> along the arc. Differentiating the adjoint equation <span>$\dot{p}_v = -p_q$</span> and using <span>$p_v = 0$</span> yields <span>$p_q = 0$</span>. Differentiating further gives <span>$\mu = \dot{p}_q = 0$</span>. The costate has jumps <span>$(\Delta p_q^1, 0)$</span> and <span>$(\Delta p_q^2, 0)$</span> at <span>$t_1$</span> and <span>$t_2$</span> respectively.</p><p>The six shooting unknowns are the initial costate <span>$p_0 \in \mathbb{R}^2$</span>, the entry and exit times <span>$t_1$</span> and <span>$t_2$</span>, and the two jumps <span>$\Delta p_q^1$</span> and <span>$\Delta p_q^2$</span>. The shooting conditions are:</p><p class="math-container">\[x(t_f) = x_f, \quad q(t_1) = a, \quad v(t_1) = 0, \quad p_v(t_1^+) = 0, \quad p_q(t_1^+) = 0.\]</p><pre><code class="language-julia hljs">a_arc = 0.1
 
-    ẋ(t) == [v(t), u(t)]
+# interior (unconstrained) flow
+fs_arc = Flow(make_ocp(a_arc), (x, p) -&gt; p[2])
 
-    0.5∫( u(t)^2 ) → min
-end
+# boundary arc flow: u = 0, constraint g(x) = a - q ≥ 0, multiplier μ = 0
+fc_bd = Flow(make_ocp(a_arc), (x, p) -&gt; 0, (x, u) -&gt; a_arc - x[1], (x, p) -&gt; 0)
 
-sol_arc = solve(ocp_arc; grid_size=100)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">▫ This is OptimalControl 2.0.2, solving with: <span class="sgr36"><span class="sgr1">collocation</span></span> → <span class="sgr36"><span class="sgr1">adnlp</span></span> → <span class="sgr36"><span class="sgr1">ipopt</span></span> (<span class="sgr35"><span class="sgr1">cpu</span></span>)
+# constraint function
+g_arc(x) = a_arc - x[1]
 
-  📦 Configuration:
-   ├─ <span class="sgr1">Discretizer</span>: <span class="sgr36"><span class="sgr1">collocation</span></span> (grid_size = 100)
-   ├─ <span class="sgr1">Modeler</span>: <span class="sgr36"><span class="sgr1">adnlp</span></span>
-   └─ <span class="sgr1">Solver</span>: <span class="sgr36"><span class="sgr1">ipopt</span></span>
+# shooting function: unknowns p0 (2D), t1, t2, Δpq1, Δpq2
+function shoot_arc!(s, p0, t1, t2, Δpq1, Δpq2)
+    x_t1, p_t1   = fs_arc(t0, x0_bd, p0, t1)            # arc 1: t0 → t1
+    p_t1_plus    = [p_t1[1] + Δpq1, p_t1[2]]            # costate jump at t1
+    x_t2, p_t2   = fc_bd(t1, x_t1, p_t1_plus, t2)       # arc 2: t1 → t2 (boundary)
+    p_t2_plus    = [p_t2[1] + Δpq2, p_t2[2]]            # costate jump at t2
+    x_tf, _      = fs_arc(t2, x_t2, p_t2_plus, tf)      # arc 3: t2 → tf
+    s[1:2]       = x_tf - xf_bd                         # reach target
+    s[3]         = g_arc(x_t1)                          # touch: q(t1) = a
+    s[4]         = x_t1[2]                              # tangency: v(t1) = 0
+    s[5]         = p_t1_plus[2]                         # switching: pv(t1+) = 0
+    s[6]         = p_t1_plus[1]                         # arc condition: pq(t1+) = 0
+    return nothing
+end</code></pre><p>We extract the initial guess from the direct solution <code>sol_arc</code>.</p><pre><code class="language-julia hljs">t_grid_arc = time_grid(sol_arc)
+x_sol_arc  = state(sol_arc)
+p_sol_arc  = costate(sol_arc)
 
-▫ This is Ipopt version 3.14.19, running with linear solver MUMPS 5.8.2.
+p0_guess_arc  = p_sol_arc(t0)
 
-Number of nonzeros in equality constraint Jacobian...:      704
-Number of nonzeros in inequality constraint Jacobian.:        0
-Number of nonzeros in Lagrangian Hessian.............:      100
+# t1, t2: entry and exit of the boundary arc (q ≈ a)
+active = findall(t -&gt; 0 ≤ g_arc(x_sol_arc(t)) ≤ 1e-3, t_grid_arc)
+t1_guess_arc  = t_grid_arc[first(active)]
+t2_guess_arc  = t_grid_arc[last(active)]
 
-Total number of variables............................:      302
-                     variables with only lower bounds:        0
-                variables with lower and upper bounds:        0
-                     variables with only upper bounds:      101
-Total number of equality constraints.................:      204
-Total number of inequality constraints...............:        0
-        inequality constraints with only lower bounds:        0
-   inequality constraints with lower and upper bounds:        0
-        inequality constraints with only upper bounds:        0
+# jumps: costate difference around t1 and t2
+ε_arc = 0.1 * (tf - t0)
+Δpq1_guess = p_sol_arc(t1_guess_arc + ε_arc)[1] - p_sol_arc(t1_guess_arc - ε_arc)[1]
+Δpq2_guess = p_sol_arc(t2_guess_arc + ε_arc)[1] - p_sol_arc(t2_guess_arc - ε_arc)[1]
 
-iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
-   0  5.0000000e-03 1.10e+00 7.94e-02   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
-   1  4.1229450e+00 2.22e-16 9.01e+00  -8.0 5.25e+00    -  9.90e-02 1.00e+00h  1
-   2  4.1683251e+00 1.11e-16 4.08e-08  -2.4 1.62e+00    -  1.00e+00 1.00e+00f  1
-   3  4.1076985e+00 1.11e-16 2.17e-08  -2.7 7.30e-02    -  1.00e+00 1.00e+00f  1
-   4  4.0106880e+00 1.11e-16 5.43e-02  -8.7 2.01e-01    -  9.97e-01 7.89e-01f  1
-   5  4.0035446e+00 1.11e-16 4.38e-10  -4.4 1.70e-01    -  1.00e+00 1.00e+00f  1
-   6  4.0017034e+00 1.11e-16 1.09e-01  -4.6 6.51e-02    -  9.52e-01 1.00e+00f  1
-   7  4.0011349e+00 1.11e-16 1.38e-11  -5.9 7.30e-02    -  1.00e+00 1.00e+00f  1
-   8  4.0009598e+00 1.11e-16 2.02e+00  -6.9 3.18e-02    -  5.15e-01 1.00e+00f  1
-   9  4.0009161e+00 1.11e-16 9.93e-01  -6.6 7.77e-03    -  1.00e+00 5.44e-01f  1
-iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
-  10  4.0008934e+00 1.11e-16 9.13e-13  -7.0 1.59e-02    -  1.00e+00 1.00e+00f  1
-  11  4.0008880e+00 1.11e-16 2.17e-14  -8.7 8.04e-03    -  1.00e+00 1.00e+00f  1
-  12  4.0008870e+00 1.11e-16 6.54e-15  -9.4 3.73e-03    -  1.00e+00 1.00e+00f  1
-In iteration 12, 2 Slacks too small, adjusting variable bounds
-  13  4.0008869e+00 1.11e-16 9.00e-04 -11.0 1.53e-03    -  1.00e+00 9.96e-01f  1
-  14  4.0008869e+00 1.11e-16 3.48e-15 -11.0 4.42e-04    -  1.00e+00 1.00e+00h  1
+println(&quot;p0 guess   = &quot;, p0_guess_arc)
+println(&quot;t1 guess   = &quot;, t1_guess_arc)
+println(&quot;t2 guess   = &quot;, t2_guess_arc)
+println(&quot;Δpq1 guess = &quot;, Δpq1_guess)
+println(&quot;Δpq2 guess = &quot;, Δpq2_guess)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">p0 guess   = [-22.232212000213185, -6.557739478751586]
+t1 guess   = 0.24
+t2 guess   = 0.76
+Δpq1 guess = 22.22833257450409
+Δpq2 guess = 22.22796306210538</code></pre><pre><code class="language-julia hljs">nle_arc!(s, ξ, _) = shoot_arc!(s, ξ[1:2], ξ[3], ξ[4], ξ[5], ξ[6])
 
-Number of Iterations....: 14
+ξ_guess_arc = [p0_guess_arc..., t1_guess_arc, t2_guess_arc, Δpq1_guess, Δpq2_guess]
+sol_shoot_arc = solve(NonlinearProblem(nle_arc!, ξ_guess_arc); show_trace=Val(true))
 
-                                   (scaled)                 (unscaled)
-Objective...............:   4.0008868548092105e+00    4.0008868548092105e+00
-Dual infeasibility......:   3.4798305258328631e-15    3.4798305258328631e-15
-Constraint violation....:   1.1102230246251565e-16    1.1102230246251565e-16
-Variable bound violation:   1.0000083747185862e-08    1.0000083747185862e-08
-Complementarity.........:   8.3336435100557415e-10    8.3336435100557415e-10
-Overall NLP error.......:   8.3336435100557415e-10    8.3336435100557415e-10
+p0_arc  = sol_shoot_arc.u[1:2]
+t1_arc  = sol_shoot_arc.u[3]
+t2_arc  = sol_shoot_arc.u[4]
+Δpq1    = sol_shoot_arc.u[5]
+Δpq2    = sol_shoot_arc.u[6]
 
+println(&quot;\np0  = &quot;, p0_arc)
+println(&quot;t1  = &quot;, t1_arc, &quot;  (expect &quot;, 3a_arc, &quot;)&quot;)
+println(&quot;t2  = &quot;, t2_arc, &quot;  (expect &quot;, 1 - 3a_arc, &quot;)&quot;)
+println(&quot;Δpq1 = &quot;, Δpq1, &quot;  Δpq2 = &quot;, Δpq2, &quot;  (expect equal by symmetry)&quot;)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">
+Algorithm: NewtonRaphson(
+    descent = NewtonDescent(),
+    autodiff = AutoForwardDiff(),
+    vjp_autodiff = AutoReverseDiff(
+        compile = false
+    ),
+    jvp_autodiff = AutoForwardDiff(),
+    concrete_jac = Val{false}()
+)
 
-Number of objective function evaluations             = 15
-Number of objective gradient evaluations             = 15
-Number of equality constraint evaluations            = 15
-Number of inequality constraint evaluations          = 0
-Number of equality constraint Jacobian evaluations   = 15
-Number of inequality constraint Jacobian evaluations = 0
-Number of Lagrangian Hessian evaluations             = 14
-Total seconds in IPOPT                               = 3.525
+----    	-------------       	-----------
+Iter    	f(u) inf-norm       	Step 2-norm
+----    	-------------       	-----------
+0       	1.22200860e+00      	NaN
+1       	1.22442987e-01      	5.06007076e+00
+2       	5.27595420e-02      	5.27592760e+00
+3       	7.24011079e-05      	2.12070939e-01
+4       	3.37589512e-10      	2.66019902e-04
+5       	5.10702591e-15      	1.84069187e-08
+Final   	5.10702591e-15
+----------------------
 
-EXIT: Optimal Solution Found.</code></pre><pre><code class="language-julia hljs">plt_bd = plot(sol_touch; label=&quot;Touch point (a = 1/4)&quot;, size=(800, 600))
-plot!(plt_bd, sol_arc;  label=&quot;Boundary arc (a = 1/9)&quot;, color=2, linestyle=:dash)</code></pre><img src="example-state-constraint-7755354a.svg" alt="Example block output"/><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+p0  = [-22.222222222222403, -6.666666666666687]
+t1  = 0.2999999999999985  (expect 0.30000000000000004)
+t2  = 0.6999999999999991  (expect 0.7)
+Δpq1 = 22.222222222222403  Δpq2 = 22.222222222222133  (expect equal by symmetry)</code></pre><pre><code class="language-julia hljs"># concatenate: arc 1 → jump → boundary arc → jump → arc 3
+f_arc = fs_arc * (t1_arc, [Δpq1, 0.0], fc_bd) * (t2_arc, [Δpq2, 0.0], fs_arc)
+
+# reconstruct the indirect solution
+indirect_arc = f_arc((t0, tf), x0_bd, p0_arc; saveat=range(t0, tf, 100))
+
+plot!(plt_indirect, indirect_arc; label=&quot;Indirect (a = 0.1)&quot;, color=2, linestyle=:dash,
+      state_style=(legend=false,), costate_style=(legend=false,))</code></pre><img src="example-state-constraint-473ffda2.svg" alt="Example block output"/><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a>Bryson, A.E., Denham, W.F., &amp; Dreyfus, S.E. (1963). <em>Optimal programming problems with inequality constraints I: necessary conditions for extremal solutions</em>. AIAA Journal, 1(11), 2544–2550. <a href="https://doi.org/10.2514/3.2107">doi.org/10.2514/3.2107</a></li><li class="footnote" id="footnote-2"><a class="tag is-link" href="#citeref-2">2</a>Jacobson, D.H., Lele, M.M., &amp; Speyer, J.L. (1971). <em>New necessary conditions of optimality for control problems with state-variable inequality constraints</em>. Journal of Mathematical Analysis and Applications, 35, 255–284.</li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="example-singular-control.html">« Singular control</a><a class="docs-footer-nextpage" href="manual-abstract.html">Define a problem »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Tuesday 14 April 2026 16:41">Tuesday 14 April 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a>Bryson, A.E., Denham, W.F., &amp; Dreyfus, S.E. (1963). <em>Optimal programming problems with inequality constraints I: necessary conditions for extremal solutions</em>. AIAA Journal, 1(11), 2544–2550. <a href="https://doi.org/10.2514/3.2107">doi.org/10.2514/3.2107</a></li><li class="footnote" id="footnote-2"><a class="tag is-link" href="#citeref-2">2</a>Jacobson, D.H., Lele, M.M., &amp; Speyer, J.L. (1971). <em>New necessary conditions of optimality for control problems with state-variable inequality constraints</em>. Journal of Mathematical Analysis and Applications, 35, 255–284.</li><li class="footnote" id="footnote-3"><a class="tag is-link" href="#citeref-3">3</a>Bryson, A.E. &amp; Ho, Y.-C. (1975). <em>Applied Optimal Control: Optimization, Estimation and Control</em>. CRC Press.</li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="example-singular-control.html">« Singular control</a><a class="docs-footer-nextpage" href="manual-abstract.html">Define a problem »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Tuesday 14 April 2026 19:18">Tuesday 14 April 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
