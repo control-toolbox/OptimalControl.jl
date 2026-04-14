@@ -283,7 +283,7 @@ The unconstrained optimal trajectory for these boundary conditions is $q(t) = t 
 
 ### Direct method
 
-We compare the two constrained cases using the direct method, taking $a = 1/5$ (touch point) and $a = 1/7$ (boundary arc).
+We compare the two constrained cases using the direct method, taking $a = 0.2$ (touch point) and $a = 0.1$ (boundary arc).
 
 ```@example main
 # new boundary conditions
@@ -310,11 +310,106 @@ nothing # hide
 ```
 
 ```@example main
-sol_touch = solve(make_ocp(1/5); grid_size=100, display=false) # touch point
-sol_arc   = solve(make_ocp(1/7); grid_size=100, display=false) # boundary arc
+sol_touch = solve(make_ocp(0.2); grid_size=100, display=false) # touch point
+sol_arc   = solve(make_ocp(0.1); grid_size=100, display=false) # boundary arc
 
-plt_bd = plot(sol_touch; label="Touch point (a = 1/5)", size=(800, 600))
-plot!(plt_bd, sol_arc;  label="Boundary arc (a = 1/7)", color=2, linestyle=:dash)
+state_style = (legend=false, )
+costate_style = (legend=false, )
+plt_bd = plot(
+    sol_touch; 
+    label="a = 0.2", 
+    size=(800, 600), 
+    state_style=state_style,
+    costate_style=costate_style,
+)
+plot!(
+    plt_bd, 
+    sol_arc;  
+    label="a = 0.1", 
+    color=2, 
+    linestyle=:dash, 
+    state_style=state_style,
+    costate_style=costate_style,
+)
+```
+
+### Indirect method: touch point case
+
+For the touch point case ($a = 0.2$), the optimal solution consists of two unconstrained arcs on $[t_0, t_1]$ and $[t_1, t_f]$, joined at the contact instant $t_1$ where $q(t_1) = a$ and $v(t_1) = 0$. The costate is discontinuous at $t_1$: the first component $p_q$ undergoes a jump $\Delta p_q$ while $p_v$ remains continuous.
+
+The shooting unknowns are therefore the initial costate $p_0 \in \mathbb{R}^2$, the contact time $t_1$, and the costate jump $\Delta p_q$. The four shooting conditions are:
+
+```math
+x(t_f) = x_f, \quad q(t_1) = a, \quad v(t_1) = 0.
+```
+
+```@example main
+a_touch = 0.2
+
+# interior (unconstrained) flow
+fs_bd = Flow(make_ocp(a_touch), (x, p) -> p[2])
+
+# constraint: g(x) = a - q ≥ 0
+g_bd(x) = a_touch - x[1]
+
+# shooting function: unknowns p0 (2D), t1 (contact time), Δpq (costate jump)
+function shoot_touch!(s, p0, t1, Δpq)
+    x_t1, p_t1 = fs_bd(t0, x0_bd, p0, t1)          # arc 1: t0 → t1
+    p_t1_plus  = [p_t1[1] + Δpq, p_t1[2]]           # costate jump at t1
+    x_tf, p_tf = fs_bd(t1, x_t1, p_t1_plus, tf)     # arc 2: t1 → tf
+    s[1:2]     = x_tf - xf_bd                        # reach target
+    s[3]       = g_bd(x_t1)                          # touch: q(t1) = a
+    s[4]       = x_t1[2]                             # tangency: v(t1) = 0
+end
+nothing # hide
+```
+
+We extract the initial guess from the direct solution `sol_touch`.
+
+```@example main
+t_grid = time_grid(sol_touch)
+x_sol  = state(sol_touch)
+p_sol  = costate(sol_touch)
+
+p0_guess  = p_sol(t0)
+
+# t1: time where q(t) is closest to the constraint bound a
+t1_guess  = t_grid[argmin(abs.(g_bd.(x_sol.(t_grid))))]
+
+# Δpq: estimated costate jump around t1
+ε = 0.05 * (tf - t0)
+Δpq_guess = p_sol(t1_guess + ε)[1] - p_sol(t1_guess - ε)[1]
+
+println("p0 guess  = ", p0_guess)
+println("t1 guess  = ", t1_guess)
+println("Δpq guess = ", Δpq_guess)
+nothing # hide
+```
+
+```@example main
+nle_touch!(s, ξ, _) = shoot_touch!(s, ξ[1:2], ξ[3], ξ[4])
+
+ξ_guess = [p0_guess..., t1_guess, Δpq_guess]
+sol_shoot_touch = solve(NonlinearProblem(nle_touch!, ξ_guess); show_trace=Val(true))
+
+p0_touch  = sol_shoot_touch.u[1:2]
+t1_touch  = sol_shoot_touch.u[3]
+Δpq_touch = sol_shoot_touch.u[4]
+
+println("\np0  = ", p0_touch, "\nt1  = ", t1_touch, "\nΔpq = ", Δpq_touch)
+```
+
+The analytical solution gives $p_q = -4.8$ on $[t_0, t_1)$, $p_q = +4.8$ on $(t_1, t_f]$, with a jump of $9.6$ and an optimal cost of $2.24$.
+
+```@example main
+# concatenate: arc 1 → costate jump → arc 2
+f_touch = fs_bd * (t1_touch, [Δpq_touch, 0.0], fs_bd)
+
+# reconstruct the indirect solution
+indirect_touch = f_touch((t0, tf), x0_bd, p0_touch; saveat=range(t0, tf, 100))
+
+plot(indirect_touch; label="Indirect", size=(800, 600),
+     state_style=(legend=false,), costate_style=(legend=false,))
 ```
 
 [^1]: Bryson, A.E., Denham, W.F., & Dreyfus, S.E. (1963). *Optimal programming problems with inequality constraints I: necessary conditions for extremal solutions*. AIAA Journal, 1(11), 2544–2550. [doi.org/10.2514/3.2107](https://doi.org/10.2514/3.2107)
