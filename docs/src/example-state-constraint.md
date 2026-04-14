@@ -474,7 +474,7 @@ t1_guess_arc  = t_grid_arc[first(active)]
 t2_guess_arc  = t_grid_arc[last(active)]
 
 # jumps: costate difference around t1 and t2
-ε_arc = 0.05 * (tf - t0)
+ε_arc = 0.1 * (tf - t0)
 Δpq1_guess = p_sol_arc(t1_guess_arc + ε_arc)[1] - p_sol_arc(t1_guess_arc - ε_arc)[1]
 Δpq2_guess = p_sol_arc(t2_guess_arc + ε_arc)[1] - p_sol_arc(t2_guess_arc - ε_arc)[1]
 
