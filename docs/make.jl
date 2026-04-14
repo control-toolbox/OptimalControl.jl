@@ -1,7 +1,5 @@
 # to run the documentation generation:
-# julia --project=. docs/make.jl
-pushfirst!(LOAD_PATH, joinpath(@__DIR__, ".."))
-pushfirst!(LOAD_PATH, @__DIR__)
+# julia --project=docs docs/make.jl
 
 # control-toolbox packages
 using OptimalControl
