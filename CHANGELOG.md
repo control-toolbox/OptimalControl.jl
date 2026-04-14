@@ -7,6 +7,28 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.0.2] — 2026-04-14
+
+### Added
+
+- **Documentation examples**:
+  - New comprehensive state constraint example (`example-state-constraint.md`) demonstrating first-order and second-order (Bryson-Denham) state constraints
+  - Direct method implementation with parametric OCP for both touch point and boundary arc cases
+  - Indirect methods for touch point (2-arc) and boundary arc (3-arc) cases with shooting functions
+  - Theoretical references: Bryson et al. (1963), Jacobson et al. (1971), Bryson & Ho (1975)
+  - Hamiltonian-based adjoint chain explanations for boundary arc dynamics
+
+### Changed
+
+- **Documentation organization**:
+  - Extracted state constraint section from `example-double-integrator-energy.md` into dedicated example file
+  - Added cross-references between energy minimization and state constraint examples
+
+- **Dependencies**:
+  - Updated UnoSolver from v0.2 to v0.3
+
+---
+
 ## [2.0.1] — 2026-04-13
 
 ### Changed
@@ -19,15 +41,6 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   - Updated `route_to` documentation to support multi-strategy routing with positional syntax
   - Changed `route_to` syntax examples from keyword arguments (`route_to(exa=12)`) to positional arguments (`route_to(:exa, 12)`)
   - Added documentation for routing the same option to multiple strategies with different values using alternating strategy-value pairs
-
----
-
-## [2.0.2] — 2026-04-14
-
-### Changed
-
-- **Dependencies**:
-  - Updated UnoSolver from v0.2 to v0.3
 
 ---
 
