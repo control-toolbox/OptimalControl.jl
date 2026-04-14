@@ -408,8 +408,8 @@ f_touch = fs_bd * (t1_touch, [Δpq_touch, 0.0], fs_bd)
 # reconstruct the indirect solution
 indirect_touch = f_touch((t0, tf), x0_bd, p0_touch; saveat=range(t0, tf, 100))
 
-plot(indirect_touch; label="Indirect (a = 0.2)", size=(800, 600),
-     state_style=(legend=false,), costate_style=(legend=false,))
+plt_indirect = plot(indirect_touch; label="Indirect (a = 0.2)", size=(800, 600),
+                    state_style=(legend=false,), costate_style=(legend=false,))
 ```
 
 ### Indirect method: boundary arc case
@@ -420,7 +420,7 @@ For the boundary arc case ($a = 0.1$), the optimal solution consists of three ar
 H(x, p, u, \mu) = p_q\, v + p_v\, u + 0.5\, p^0 u^2 + \mu\, g(x),
 ```
 
-where $p^0 = -1$ in the normal case and $g(x) = a - q \geq 0$ is the constraint. Along the boundary arc, the control is $u = 0$, since differentiating $g(x) = a - q \geq 0$ twice gives $\ddot{q} = u = 0$. From the maximisation condition, $p_v(t) = 0$ along the arc. Differentiating the adjoint equation $\dot{p}_v = -p_q$ and using $p_v = 0$ yields $p_q = 0$. Differentiating further gives $\mu = \dot{p}_q = 0$. The costate has jumps $[\Delta p_q^1, 0]$ and $[\Delta p_q^2, 0]$ at $t_1$ and $t_2$ respectively.
+where $p^0 = -1$ in the normal case and $g(x) = a - q \geq 0$ is the constraint. Along the boundary arc, the control is $u = 0$, since differentiating $g(x) = a - q \geq 0$ twice gives $\ddot{q} = u = 0$. From the maximisation condition, $p_v(t) = 0$ along the arc. Differentiating the adjoint equation $\dot{p}_v = -p_q$ and using $p_v = 0$ yields $p_q = 0$. Differentiating further gives $\mu = \dot{p}_q = 0$. The costate has jumps $(\Delta p_q^1, 0)$ and $(\Delta p_q^2, 0)$ at $t_1$ and $t_2$ respectively.
 
 The six shooting unknowns are the initial costate $p_0 \in \mathbb{R}^2$, the entry and exit times $t_1$ and $t_2$, and the two jumps $\Delta p_q^1$ and $\Delta p_q^2$. The shooting conditions are:
 
@@ -442,16 +442,16 @@ g_arc(x) = a_arc - x[1]
 
 # shooting function: unknowns p0 (2D), t1, t2, Δpq1, Δpq2
 function shoot_arc!(s, p0, t1, t2, Δpq1, Δpq2)
-    x_t1, p_t1   = fs_arc(t0, x0_bd, p0, t1)           # arc 1: t0 → t1
+    x_t1, p_t1   = fs_arc(t0, x0_bd, p0, t1)            # arc 1: t0 → t1
     p_t1_plus    = [p_t1[1] + Δpq1, p_t1[2]]            # costate jump at t1
-    x_t2, p_t2   = fc_bd(t1, x_t1, p_t1_plus, t2)      # arc 2: t1 → t2 (boundary)
+    x_t2, p_t2   = fc_bd(t1, x_t1, p_t1_plus, t2)       # arc 2: t1 → t2 (boundary)
     p_t2_plus    = [p_t2[1] + Δpq2, p_t2[2]]            # costate jump at t2
     x_tf, _      = fs_arc(t2, x_t2, p_t2_plus, tf)      # arc 3: t2 → tf
-    s[1:2]       = x_tf - xf_bd                          # reach target
-    s[3]         = g_arc(x_t1)                           # touch: q(t1) = a
-    s[4]         = x_t1[2]                               # tangency: v(t1) = 0
-    s[5]         = p_t1_plus[2]                          # switching: pv(t1+) = 0
-    s[6]         = p_t1_plus[1]                          # arc condition: pq(t1+) = 0
+    s[1:2]       = x_tf - xf_bd                         # reach target
+    s[3]         = g_arc(x_t1)                          # touch: q(t1) = a
+    s[4]         = x_t1[2]                              # tangency: v(t1) = 0
+    s[5]         = p_t1_plus[2]                         # switching: pv(t1+) = 0
+    s[6]         = p_t1_plus[1]                         # arc condition: pq(t1+) = 0
 end
 nothing # hide
 ```
@@ -508,8 +508,8 @@ f_arc = fs_arc * (t1_arc, [Δpq1, 0.0], fc_bd) * (t2_arc, [Δpq2, 0.0], fs_arc)
 # reconstruct the indirect solution
 indirect_arc = f_arc((t0, tf), x0_bd, p0_arc; saveat=range(t0, tf, 100))
 
-plot(indirect_arc; label="Indirect (a = 0.1)", size=(800, 600),
-     state_style=(legend=false,), costate_style=(legend=false,))
+plot!(plt_indirect, indirect_arc; label="Indirect (a = 0.1)", color=2, linestyle=:dash,
+      state_style=(legend=false,), costate_style=(legend=false,))
 ```
 
 [^1]: Bryson, A.E., Denham, W.F., & Dreyfus, S.E. (1963). *Optimal programming problems with inequality constraints I: necessary conditions for extremal solutions*. AIAA Journal, 1(11), 2544–2550. [doi.org/10.2514/3.2107](https://doi.org/10.2514/3.2107)
