@@ -4,7 +4,7 @@
 Draft = false
 ```
 
-This example illustrates the energy minimization problem for the double integrator with a state constraint on the maximal velocity. It demonstrates both direct and indirect solution approaches, showing how to handle state constraints using practical strategies.
+This example illustrates how state constraints of different orders affect the structure of optimal solutions for the double integrator energy minimization problem. It demonstrates both direct and indirect solution approaches.
 
 Let us consider a wagon moving along a rail, whose acceleration can be controlled by a force $u$.
 We denote by $x = (q, v)$ the state of the wagon, where $q$ is the position and $v$ the velocity.
@@ -88,13 +88,21 @@ nothing # hide
 
     For a comprehensive introduction to the syntax used above to define the optimal control problem, see [this abstract syntax tutorial](@ref manual-abstract-syntax). In particular, non-Unicode alternatives are available for derivatives, integrals, *etc.*
 
-## Adding a state constraint
+## First-order state constraint
 
 We now add a path constraint on the maximal velocity:
 
 ```math
     v(t) \le 1.2.
 ```
+
+This is a **first-order state constraint**: differentiating $g(x) = v_{\max} - v$ once already makes the control appear,
+
+```math
+    \frac{\mathrm{d}}{\mathrm{d}t}g(x(t)) = -\dot{v}(t) = -u(t),
+```
+
+which fixes $u = 0$ on the boundary arc.
 
 The workflow demonstrates a practical strategy: a direct method on a coarse grid first identifies the problem structure and provides an initial guess for the indirect method, which then computes a precise solution via shooting based on Pontryagin's Maximum Principle.
 
@@ -242,3 +250,93 @@ plot!(plt, indirect_sol; label="Indirect", color=2, linestyle=:dash)
     - You can use [MINPACK.jl](@extref Tutorials Resolution-of-the-shooting-equation) instead of [NonlinearSolve.jl](https://docs.sciml.ai/NonlinearSolve).
     - For more details about the flow construction, visit the [Compute flows from optimal control problems](@ref manual-flow-ocp) page.
     - For the unconstrained version of this problem, see the [Energy minimisation](@ref example-double-integrator-energy) example.
+
+## Second-order state constraint
+
+We now consider the same double integrator with different boundary conditions and a constraint on the **position** $x_1 = q$:[^2]
+
+```math
+    q(t) \le a.
+```
+
+The boundary conditions are $x(0) = (0, 1)$ and $x(1) = (0, -1)$.
+
+This is a **second-order state constraint**: the control $u$ appears only after differentiating $g(x) = a - q$ twice,
+
+```math
+    \frac{\mathrm{d}}{\mathrm{d}t}g(x(t)) = -\dot{q}(t) = -v(t) \quad \text{(no control)},
+```
+
+```math
+    \frac{\mathrm{d}^2}{\mathrm{d}t^2}g(x(t)) = -\dot{v}(t) = -u(t) \quad \text{(control appears)}.
+```
+
+On a boundary arc where $g(x(t)) = 0$, both derivatives must vanish, forcing $v(t) = 0$ and $u(t) = 0$.
+
+### Solution structure
+
+The unconstrained optimal trajectory for these boundary conditions is $q(t) = t - t^2$, which reaches its maximum $1/4$ at $t = 1/2$. The solution structure depends on $a$:
+
+- $a \ge 1/4$: constraint never active (unconstrained solution)
+- $a = 1/4$: **touch point** — the trajectory touches $q = a$ at a single instant $t = 1/2$
+- $a < 1/4$: **boundary arc** — the trajectory remains on $q = a$ for a finite time interval
+
+### Direct method
+
+We compare the two constrained cases using the direct method.
+
+```@example main
+# new boundary conditions
+x0_bd = [0.0, 1.0]; xf_bd = [0.0, -1.0]
+
+# Case 1: touch point (a = 1/4)
+a_touch = 1/4
+
+ocp_touch = @def begin
+    t ∈ [t0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+
+    q(t) ≤ a_touch
+
+    x(t0) == x0_bd
+    x(tf) == xf_bd
+
+    ẋ(t) == [v(t), u(t)]
+
+    0.5∫( u(t)^2 ) → min
+end
+
+sol_touch = solve(ocp_touch; grid_size=100)
+nothing # hide
+```
+
+```@example main
+# Case 2: boundary arc (a = 1/9)
+a_arc = 1/9
+
+ocp_arc = @def begin
+    t ∈ [t0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+
+    q(t) ≤ a_arc
+
+    x(t0) == x0_bd
+    x(tf) == xf_bd
+
+    ẋ(t) == [v(t), u(t)]
+
+    0.5∫( u(t)^2 ) → min
+end
+
+sol_arc = solve(ocp_arc; grid_size=100)
+nothing # hide
+```
+
+```@example main
+plt_bd = plot(sol_touch; label="Touch point (a = 1/4)", size=(800, 600))
+plot!(plt_bd, sol_arc;  label="Boundary arc (a = 1/9)", color=2, linestyle=:dash)
+```
+
+[^2]: Bryson, A.E., Denham, W.F., & Dreyfus, S.E. (1963). *Optimal programming problems with inequality constraints I: necessary conditions for extremal solutions*. AIAA Journal. [doi.org/10.2514/3.2107](https://doi.org/10.2514/3.2107)
