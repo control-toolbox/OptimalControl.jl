@@ -354,12 +354,12 @@ g_bd(x) = a_touch - x[1]
 
 # shooting function: unknowns p0 (2D), t1 (contact time), Δpq (costate jump)
 function shoot_touch!(s, p0, t1, Δpq)
-    x_t1, p_t1 = fs_bd(t0, x0_bd, p0, t1)          # arc 1: t0 → t1
+    x_t1, p_t1 = fs_bd(t0, x0_bd, p0, t1)           # arc 1: t0 → t1
     p_t1_plus  = [p_t1[1] + Δpq, p_t1[2]]           # costate jump at t1
-    x_tf, p_tf = fs_bd(t1, x_t1, p_t1_plus, tf)     # arc 2: t1 → tf
-    s[1:2]     = x_tf - xf_bd                        # reach target
-    s[3]       = g_bd(x_t1)                          # touch: q(t1) = a
-    s[4]       = x_t1[2]                             # tangency: v(t1) = 0
+    x_tf, _    = fs_bd(t1, x_t1, p_t1_plus, tf)     # arc 2: t1 → tf
+    s[1:2]     = x_tf - xf_bd                       # reach target
+    s[3]       = g_bd(x_t1)                         # touch: q(t1) = a
+    s[4]       = x_t1[2]                            # tangency: v(t1) = 0
 end
 nothing # hide
 ```
@@ -399,7 +399,7 @@ t1_touch  = sol_shoot_touch.u[3]
 println("\np0  = ", p0_touch, "\nt1  = ", t1_touch, "\nΔpq = ", Δpq_touch)
 ```
 
-The analytical solution gives $p_q = -4.8$ on $[t_0, t_1)$, $p_q = +4.8$ on $(t_1, t_f]$, with a jump of $9.6$ and an optimal cost of $2.24$.
+The analytical solution gives $t_1 = 1/2$, $p_q = -4.8$ on $[t_0, t_1)$, $p_q = +4.8$ on $(t_1, t_f]$, with a jump of $9.6$ and an optimal cost of $2.24$.
 
 ```@example main
 # concatenate: arc 1 → costate jump → arc 2
