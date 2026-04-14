@@ -4,7 +4,7 @@
 Draft = false
 ```
 
-This example illustrates how state constraints of different orders affect the structure of optimal solutions for the double integrator energy minimization problem. It demonstrates both direct and indirect solution approaches.
+This example illustrates how state constraints of different orders affect the structure of optimal solutions for the double integrator energy minimization problem. It demonstrates both direct and indirect solution approaches. Some examples with state constraints of different orders are solved analytically in Bryson et al.[^1] and Jacobson et al.[^2].
 
 Let us consider a wagon moving along a rail, whose acceleration can be controlled by a force $u$.
 We denote by $x = (q, v)$ the state of the wagon, where $q$ is the position and $v$ the velocity.
@@ -253,7 +253,7 @@ plot!(plt, indirect_sol; label="Indirect", color=2, linestyle=:dash)
 
 ## Second-order state constraint
 
-We now consider the same double integrator with different boundary conditions and a constraint on the **position** $x_1 = q$:[^2]
+We now consider the same double integrator with different boundary conditions and a constraint on the **position** $x_1 = q$:[^1]
 
 ```math
     q(t) \le a.
@@ -339,4 +339,6 @@ plt_bd = plot(sol_touch; label="Touch point (a = 1/4)", size=(800, 600))
 plot!(plt_bd, sol_arc;  label="Boundary arc (a = 1/9)", color=2, linestyle=:dash)
 ```
 
-[^2]: Bryson, A.E., Denham, W.F., & Dreyfus, S.E. (1963). *Optimal programming problems with inequality constraints I: necessary conditions for extremal solutions*. AIAA Journal. [doi.org/10.2514/3.2107](https://doi.org/10.2514/3.2107)
+[^1]: Bryson, A.E., Denham, W.F., & Dreyfus, S.E. (1963). *Optimal programming problems with inequality constraints I: necessary conditions for extremal solutions*. AIAA Journal, 1(11), 2544–2550. [doi.org/10.2514/3.2107](https://doi.org/10.2514/3.2107)
+
+[^2]: Jacobson, D.H., Lele, M.M., & Speyer, J.L. (1971). *New necessary conditions of optimality for control problems with state-variable inequality constraints*. Journal of Mathematical Analysis and Applications, 35, 255–284.
