@@ -3,7 +3,7 @@ name: Compile JOSS paper
 on:
   push:
     paths:
-      - 'joss'  # Se déclenche uniquement pour les changements dans le dossier paper
+      - 'joss/**'  # Se déclenche uniquement pour les changements dans le dossier joss
 
 jobs:
   paper:
