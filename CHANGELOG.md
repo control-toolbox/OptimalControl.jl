@@ -23,6 +23,11 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   - Demonstrates optimal control problems with both control variables and constant parameters to optimize
   - Indirect methods with augmented Hamiltonian and maximising control laws
 
+- **Documentation improvements**:
+  - Added "Syntax rules" subsection to `@init` macro documentation explaining LHS/RHS rules, default component names (x₁, x₂), and prohibition of indexed syntax x[i](t)
+  - Added "Cross-spec substitution" section to `@init` macro documentation with examples: temporal→temporal, transitive chain, constant→temporal, constant→constant, and mixing with aliases
+  - Updated "Component labels and time variable" callout to mention default subscripted component names
+
 ### Changed
 
 - **Documentation organization**:
