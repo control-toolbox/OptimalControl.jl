@@ -244,6 +244,9 @@ nothing # hide
 
 ```@example main-harmonic-cv
 direct_sol = solve(ocp; grid_size=20, display=false)
+```
+
+```@example main-harmonic-cv
 println("Optimal pulsation: ω = ", variable(direct_sol))
 println("Objective value: ", objective(direct_sol))
 nothing # hide
