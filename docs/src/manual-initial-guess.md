@@ -1,5 +1,9 @@
 # [Initial guess (or iterate) for the resolution](@id manual-initial-guess)
 
+```@meta
+Draft = false
+```
+
 We present the different possibilities to provide an initial guess to solve an
 optimal control problem with the [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package.
 
@@ -388,7 +392,7 @@ ocp_var2 = @def begin
     x ∈ R, state
     u ∈ R, control
     x(0) == 0
-    x(1) == a
+    x(1) - a == 0
     ẋ(t) == u(t)
     ∫(0.5u(t)^2) → min
 end
