@@ -1,5 +1,9 @@
 # [Initial guess (or iterate) for the resolution](@id manual-initial-guess)
 
+```@meta
+Draft = false
+```
+
 We present the different possibilities to provide an initial guess to solve an
 optimal control problem with the [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) package.
 
@@ -56,6 +60,7 @@ nothing # hide
 
     - The `@init` macro uses the **labels** declared in the `@def` block. For `ocp1`, you can use `x`, `x₁`, `x₂`, and `u`. For `ocp2`, you can use `x`, `q`, `v`, `u`, and `tf`.
     - The `@init` macro uses the **time variable name** from the `@def` block. For `ocp1`, use `t` (e.g., `x(t) := ...`). For `ocp2`, use `s` (e.g., `q(s) := ...`).
+    - When components are **not explicitly named** in `@def` (as in `ocp1` with `x ∈ R²`), they receive **default labels with subscripted indices**: `x₁`, `x₂`, etc. These default names are usable in `@init` just like custom labels.
     - This allows for more readable initial guess specifications that match your problem definition.
 
 ## Default initial guess
@@ -155,6 +160,43 @@ where `T = [0.0, 0.5, 1.0]` is the time grid.
     - **2D**: vectors `[v1, v2]` or vector of vectors `[[v1, v2], ...]` or matrix
     - **Variables** and **aliases**: no time argument
     - **Constant functions**: use either `u(t) := 2` or the simplified `u := 2`
+
+### Syntax rules
+
+The left-hand side of `:=` and `=` follow strict rules.
+
+**Left-hand side of `:=`** : only **labels declared in the optimal control problem**:
+
+- the **time variable name** declared in `@def` (`t`, `s`, ...), used as the argument of state/control functions
+- the **state, control or variable** label, either its global name (`x`, `u`, `tf`) or the name of one of its **components** (`q`, `v`, `x₁`, `x₂`, ...)
+
+**Left-hand side of `=`** : arbitrary **alias names**, local to the `@init` block. Aliases are not labels of the problem; they are just convenient names to factor out constants or subexpressions.
+
+**Right-hand side** : any Julia expression, which may reference the time variable, previously defined aliases, and other labels defined earlier in the block (see [Cross-spec substitution](@ref cross-spec-substitution)).
+
+#### Default component names
+
+When components are not explicitly named in `@def`, they receive default labels with subscripted indices. For example, `ocp1` declares `x ∈ R²` without naming the components, so the default labels `x₁` and `x₂` are used:
+
+```@example main
+# use default component names x₁, x₂
+ig = @init ocp1 begin
+    x₁(t) := -1.0 + t/10
+    x₂(t) := 0.0
+    u(t)  := -0.2
+end
+
+sol = solve(ocp1; init=ig, display=false)
+println("Number of iterations: ", iterations(sol))
+nothing # hide
+```
+
+#### No indexed syntax
+
+The indexed syntax `x[i](t)` or `x[i:j](t)` is **not supported** on the left-hand side of `:=`. `@init` works at the level of labels, not array indices.
+
+- ❌ `x[1](t) := ...`, `x[1:2](t) := ...`
+- ✅ `x(t) := ...` (global) or `x₁(t) := ...`, `x₂(t) := ...`, `q(t) := ...`, `v(t) := ...` (per component)
 
 ### Constant initial guess
 
@@ -274,6 +316,118 @@ sol = solve(ocp2; init=ig, display=false)
 println("Number of iterations: ", iterations(sol))
 nothing # hide
 ```
+
+### [Cross-spec substitution](@id cross-spec-substitution)
+
+Specifications inside a single `@init` block can **reference each other**, from top to bottom. A label defined on an earlier line can be reused in the right-hand side of a later specification.
+
+Rules:
+
+- A reference only resolves to a label (or alias) defined **earlier** in the block.
+- Substitution happens by name: the referenced label is replaced by its definition when the later expression is evaluated.
+- References across different grid arguments are **not substituted** (see note at the end of this section).
+
+#### Temporal → temporal
+
+A time-dependent spec can reference another time-dependent spec:
+
+```@example main
+# v depends on q
+ig = @init ocp2 begin
+    q(s) := sin(s)
+    v(s) := 1.0 + q(s)
+    u(s) := 0.0
+    tf   := 2.0
+end
+
+sol = solve(ocp2; init=ig, display=false)
+println("Number of iterations: ", iterations(sol))
+nothing # hide
+```
+
+#### Transitive chain
+
+Substitutions chain transitively: `u` below references `v`, which itself references `q`.
+
+```@example main
+# q → v → u
+ig = @init ocp2 begin
+    q(s) := sin(s)
+    v(s) := 1.0 + q(s)
+    u(s) := s + v(s)^2
+    tf   := 2.0
+end
+
+sol = solve(ocp2; init=ig, display=false)
+println("Number of iterations: ", iterations(sol))
+nothing # hide
+```
+
+#### Constant → temporal
+
+A temporal spec can reference a constant-valued component defined earlier:
+
+```@example main
+# v(s) uses the constant value of q
+ig = @init ocp2 begin
+    q    := -1.0
+    v(s) := q + sin(s)
+    u(s) := 0.0
+    tf   := 2.0
+end
+
+sol = solve(ocp2; init=ig, display=false)
+println("Number of iterations: ", iterations(sol))
+nothing # hide
+```
+
+#### Constant → constant
+
+A constant spec can reference another constant, including for variable components. Here we define a small OCP whose variable has two components `(tf, a)`:
+
+```@example main
+ocp_var2 = @def begin
+    w = (tf, a) ∈ R², variable
+    t ∈ [0, 1], time
+    x ∈ R, state
+    u ∈ R, control
+    x(0) == 0
+    x(1) - a == 0
+    ẋ(t) == u(t)
+    ∫(0.5u(t)^2) → min
+end
+
+ig = @init ocp_var2 begin
+    tf := 1.0
+    a  := tf + 0.5
+end
+
+w = variable(ig)
+println("tf = ", w[1], ", a = ", w[2])
+nothing # hide
+```
+
+#### Mixing aliases and cross-spec references
+
+Aliases (with `=`) and cross-spec references (with `:=`) can be freely combined:
+
+```@example main
+ig = @init ocp2 begin
+    A    = 2.0             # alias
+    q(s) := A * sin(s)     # uses alias
+    v(s) := q(s) + 1.0     # references q
+    u(s) := 0.0
+    tf   := 2.0
+end
+
+sol = solve(ocp2; init=ig, display=false)
+println("Number of iterations: ", iterations(sol))
+nothing # hide
+```
+
+!!! note "No substitution across grid specs"
+
+    When a spec uses a **grid argument** (e.g. `q(T) := Dq` with `T` a time vector), it is not substituted into other temporal specs written with the time variable (`v(s) := ...`). The two live in different evaluation contexts. Use either temporal functions throughout, or grids throughout, when you need to chain references.
 
 ## Vector initial guess (interpolated)
 
