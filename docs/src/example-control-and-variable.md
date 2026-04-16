@@ -62,6 +62,9 @@ nothing # hide
 
 ```@example main-growth-cv
 direct_sol = solve(ocp; grid_size=20, display=false)
+```
+
+```@example main-growth-cv
 println("Estimated growth rate: λ = ", variable(direct_sol))
 println("Objective value: ", objective(direct_sol))
 nothing # hide
