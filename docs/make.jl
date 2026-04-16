@@ -208,6 +208,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "Energy minimisation" => "example-double-integrator-energy.md",
                 "Time mininimisation" => "example-double-integrator-time.md",
                 "Control-free problems" => "example-control-free.md",
+                "Control and variable" => "example-control-and-variable.md",
                 "Singular control" => "example-singular-control.md",
                 "State constraint" => "example-state-constraint.md",
             ],
