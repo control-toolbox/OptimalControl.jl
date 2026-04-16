@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Set an initial guess · OptimalControl.jl</title><meta name="title" content="Set an initial guess · OptimalControl.jl"/><meta property="og:title" content="Set an initial guess · OptimalControl.jl"/><meta property="twitter:title" content="Set an initial guess · OptimalControl.jl"/><meta name="description" content="Documentation for OptimalControl.jl."/><meta property="og:description" content="Documentation for OptimalControl.jl."/><meta property="twitter:description" content="Documentation for OptimalControl.jl."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script><link href="https://control-toolbox.org/assets/css/documentation.css" rel="stylesheet" type="text/css"/><script src="https://control-toolbox.org/assets/js/documentation.js"></script><link href="assets/custom.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="index.html">OptimalControl.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="index.html">Introduction</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="example-double-integrator-energy.html">Energy minimisation</a></li><li><a class="tocitem" href="example-double-integrator-time.html">Time mininimisation</a></li><li><a class="tocitem" href="example-control-free.html">Control-free problems</a></li><li><a class="tocitem" href="example-control-and-variable.html">Control and variable</a></li><li><a class="tocitem" href="example-singular-control.html">Singular control</a></li><li><a class="tocitem" href="example-state-constraint.html">State constraint</a></li></ul></li><li><span class="tocitem">Manual</span><ul><li><a class="tocitem" href="manual-abstract.html">Define a problem</a></li><li><a class="tocitem" href="manual-ai-llm.html">Use AI</a></li><li><a class="tocitem" href="manual-model.html">Problem characteristics</a></li><li class="is-active"><a class="tocitem" href="manual-initial-guess.html">Set an initial guess</a><ul class="internal"><li><a class="tocitem" href="#Default-initial-guess"><span>Default initial guess</span></a></li><li><a class="tocitem" href="#Initial-guess-with-@init"><span>Initial guess with <code>@init</code></span></a></li><li><a class="tocitem" href="#Vector-initial-guess-(interpolated)"><span>Vector initial guess (interpolated)</span></a></li><li><a class="tocitem" href="#Mixed-initial-guess"><span>Mixed initial guess</span></a></li><li><a class="tocitem" href="#Solution-as-initial-guess-(warm-start)"><span>Solution as initial guess (warm start)</span></a></li><li><a class="tocitem" href="#Costate-/-multipliers"><span>Costate / multipliers</span></a></li><li><a class="tocitem" href="#Legacy:-NamedTuple-construction"><span>Legacy: NamedTuple construction</span></a></li></ul></li><li><input class="collapse-toggle" id="menuitem-3-5" type="checkbox"/><label class="tocitem" for="menuitem-3-5"><span class="docs-label">Solve a problem</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="manual-solve.html">Basic usage</a></li><li><a class="tocitem" href="manual-solve-advanced.html">Advanced options</a></li><li><a class="tocitem" href="manual-solve-explicit.html">Explicit mode</a></li><li><a class="tocitem" href="manual-solve-gpu.html">GPU solving</a></li></ul></li><li><a class="tocitem" href="manual-solution.html">Solution characteristics</a></li><li><a class="tocitem" href="manual-plot.html">Plot a solution</a></li><li><a class="tocitem" href="manual-differential-geometry.html">Differential geometry tools</a></li><li><input class="collapse-toggle" id="menuitem-3-9" type="checkbox"/><label class="tocitem" for="menuitem-3-9"><span class="docs-label">Compute flows</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="manual-flow-ocp.html">From optimal control problems</a></li><li><a class="tocitem" href="manual-flow-others.html">From Hamiltonians and others</a></li></ul></li></ul></li><li><span class="tocitem">API Reference</span><ul><li><a class="tocitem" href="api/public.html">Public</a></li><li><a class="tocitem" href="api/private.html">Private</a></li><li><a class="tocitem" href="api/subpackages.html">Subpackages</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Manual</a></li><li class="is-active"><a href="manual-initial-guess.html">Set an initial guess</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="manual-initial-guess.html">Set an initial guess</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="manual-initial-guess"><a class="docs-heading-anchor" href="#manual-initial-guess">Initial guess (or iterate) for the resolution</a><a id="manual-initial-guess-1"></a><a class="docs-heading-anchor-permalink" href="#manual-initial-guess" title="Permalink"></a></h1><p>We present the different possibilities to provide an initial guess to solve an optimal control problem with the <a href="https://control-toolbox.org/OptimalControl.jl">OptimalControl.jl</a> package.</p><p>First, we need to import OptimalControl.jl to define the optimal control problem and <a href="https://jso.dev/NLPModelsIpopt.jl">NLPModelsIpopt.jl</a> to solve it. We also need to import <a href="https://docs.juliaplots.org">Plots.jl</a> to plot solutions.</p><pre><code class="language-julia hljs">using OptimalControl
+using NLPModelsIpopt
+using Plots</code></pre><p>For the illustrations, we define two optimal control problems to showcase the different ways to specify initial guesses.</p><p>The first problem uses default component labels (<code>x₁</code>, <code>x₂</code> for the state):</p><pre><code class="language-julia hljs">t0 = 0; tf = 10; α = 5
+
+ocp1 = @def begin
+    t ∈ [t0, tf], time
+    x ∈ R², state
+    u ∈ R, control
+    x(t0) == [ -1, 0 ]
+    x₁(tf) == 0
+    ẋ(t) == [ x₂(t), x₁(t) + α*x₁(t)^2 + u(t) ]
+    x₂(tf)^2 + ∫( 0.5u(t)^2 ) → min
+end</code></pre><p>The second problem uses custom component labels (<code>q</code>, <code>v</code> for the state, <code>tf</code> for the variable) and a different time variable name (<code>s</code> instead of <code>t</code>):</p><pre><code class="language-julia hljs">ocp2 = @def begin
+    tf ∈ R, variable
+    s ∈ [0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    -1 ≤ u(s) ≤ 1
+    tf ≥ 0
+    q(0) == -1
+    v(0) == 0
+    q(tf) == 0
+    v(tf) == 0
+    ẋ(s) == [v(s), u(s)]
+    tf → min
+end</code></pre><div class="admonition is-info" id="Component-labels-and-time-variable-in-@init-a512f68a917ca55d"><header class="admonition-header">Component labels and time variable in `@init`<a class="admonition-anchor" href="#Component-labels-and-time-variable-in-@init-a512f68a917ca55d" title="Permalink"></a></header><div class="admonition-body"><ul><li>The <code>@init</code> macro uses the <strong>labels</strong> declared in the <code>@def</code> block. For <code>ocp1</code>, you can use <code>x</code>, <code>x₁</code>, <code>x₂</code>, and <code>u</code>. For <code>ocp2</code>, you can use <code>x</code>, <code>q</code>, <code>v</code>, <code>u</code>, and <code>tf</code>.</li><li>The <code>@init</code> macro uses the <strong>time variable name</strong> from the <code>@def</code> block. For <code>ocp1</code>, use <code>t</code> (e.g., <code>x(t) := ...</code>). For <code>ocp2</code>, use <code>s</code> (e.g., <code>q(s) := ...</code>).</li><li>When components are <strong>not explicitly named</strong> in <code>@def</code> (as in <code>ocp1</code> with <code>x ∈ R²</code>), they receive <strong>default labels with subscripted indices</strong>: <code>x₁</code>, <code>x₂</code>, etc. These default names are usable in <code>@init</code> just like custom labels.</li><li>This allows for more readable initial guess specifications that match your problem definition.</li></ul></div></div><h2 id="Default-initial-guess"><a class="docs-heading-anchor" href="#Default-initial-guess">Default initial guess</a><a id="Default-initial-guess-1"></a><a class="docs-heading-anchor-permalink" href="#Default-initial-guess" title="Permalink"></a></h2><p>We first solve the problem without giving an initial guess. This will default to initialize all variables to 0.1.</p><p>To visualize the default initial guess before solving, we can run the solver with <code>max_iter=0</code>:</p><pre><code class="language-julia hljs"># visualize the default initial guess (no iterations)
+sol_init = solve(ocp1; init=nothing, max_iter=0, display=false)
+plot(sol_init; size=(600, 450))</code></pre><img src="manual-initial-guess-0bb64a02.svg" alt="Example block output"/><div class="admonition is-success" id="Visualizing-any-initial-guess-d42c9d7d6ccbf9c2"><header class="admonition-header">Visualizing any initial guess<a class="admonition-anchor" href="#Visualizing-any-initial-guess-d42c9d7d6ccbf9c2" title="Permalink"></a></header><div class="admonition-body"><p>This technique works with any initial guess specification. By setting <code>max_iter=0</code>, the solver stops immediately after initialization, allowing you to visualize the initial guess before the optimization process begins.</p></div></div><p>Now let us solve the problem completely:</p><pre><code class="language-julia hljs"># solve the optimal control problem without initial guess
+sol = solve(ocp1; display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 10</code></pre><p>Let us plot the solution of the optimal control problem.</p><pre><code class="language-julia hljs">plot(sol; size=(600, 450))</code></pre><img src="manual-initial-guess-37dc48dd.svg" alt="Example block output"/><p>Note that the following formulations are equivalent to not giving an initial guess.</p><pre><code class="language-julia hljs">sol = solve(ocp1; init=nothing, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))
+
+sol = solve(ocp1; init=(), display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 10
+Number of iterations: 10</code></pre><div class="admonition is-success" id="Interactions-with-an-optimal-control-solution-808eeeeebc8cae55"><header class="admonition-header">Interactions with an optimal control solution<a class="admonition-anchor" href="#Interactions-with-an-optimal-control-solution-808eeeeebc8cae55" title="Permalink"></a></header><div class="admonition-body"><p>To get the number of iterations of the solver, check the <a href="api/public.html#CTModels.OCP.iterations"><code>iterations</code></a> function.</p></div></div><p>To reduce the number of iterations and improve the convergence, we can give an initial guess to the solver. The recommended way is to use the <code>@init</code> macro, which provides a clean syntax for specifying initial values.</p><h2 id="Initial-guess-with-@init"><a class="docs-heading-anchor" href="#Initial-guess-with-@init">Initial guess with <code>@init</code></a><a id="Initial-guess-with-@init-1"></a><a class="docs-heading-anchor-permalink" href="#Initial-guess-with-@init" title="Permalink"></a></h2><p>The <code>@init</code> macro allows you to specify initial values for state and control using the syntax <code>label(t) := expression</code>. For optimization variables (like <code>tf</code>), use <code>label := value</code> since they are not functions of time.</p><h3 id="@init-at-a-Glance"><a class="docs-heading-anchor" href="#@init-at-a-Glance"><code>@init</code> at a Glance</a><a id="@init-at-a-Glance-1"></a><a class="docs-heading-anchor-permalink" href="#@init-at-a-Glance" title="Permalink"></a></h3><p><strong>Complete syntax:</strong></p><pre><code class="language-julia hljs">ig = @init ocp begin
+    # initial guess specifications
+end</code></pre><p>The <code>ocp</code> argument is required for label validation and context checking.</p><p><strong>Core syntax:</strong> <code>label(time_var) := expression</code></p><table><tr><th style="text-align: right">Component</th><th style="text-align: right">Has <code>(t)</code>?</th><th style="text-align: right">Uses <code>:=</code>?</th><th style="text-align: right">Example</th></tr><tr><td style="text-align: right">State/Control</td><td style="text-align: right">✅ Yes</td><td style="text-align: right">✅ Yes</td><td style="text-align: right"><code>u(t) := 2</code></td></tr><tr><td style="text-align: right">Variable</td><td style="text-align: right">❌ No</td><td style="text-align: right">✅ Yes</td><td style="text-align: right"><code>tf := 2.0</code></td></tr><tr><td style="text-align: right">Alias</td><td style="text-align: right">❌ No</td><td style="text-align: right">❌ No (use <code>=</code>)</td><td style="text-align: right"><code>a = 0.5</code></td></tr></table><p><strong>Dimensions:</strong></p><ul><li><strong>1D</strong> → scalar: <code>u(t) := 2</code></li><li><strong>2D</strong> → vector: <code>u(t) := [1, 2]</code></li></ul><p><strong>Initialization types:</strong></p><table><tr><th style="text-align: right">Type</th><th style="text-align: right">1D Example</th><th style="text-align: right">2D Example</th></tr><tr><td style="text-align: right"><strong>Constant</strong></td><td style="text-align: right"><code>u(t) := 2</code> or <code>u := 2</code></td><td style="text-align: right"><code>x(t) := [1, 2]</code> or <code>x := [1, 2]</code></td></tr><tr><td style="text-align: right"><strong>Function</strong></td><td style="text-align: right"><code>u(t) := sin(t)</code></td><td style="text-align: right"><code>x(t) := [sin(t), cos(t)]</code></td></tr><tr><td style="text-align: right"><strong>Grid</strong></td><td style="text-align: right"><code>u(T) := [0, 1, 2]</code></td><td style="text-align: right"><code>x(T) := [[0,0], [1,1], [2,2]]</code></td></tr><tr><td style="text-align: right"><strong>Grid (matrix)</strong></td><td style="text-align: right">—</td><td style="text-align: right"><code>x(T) := [0 0; 1 1; 2 2]</code></td></tr></table><p>where <code>T = [0.0, 0.5, 1.0]</code> is the time grid.</p><div class="admonition is-success" id="Key-rules-2c73f68a1525377e"><header class="admonition-header">Key rules<a class="admonition-anchor" href="#Key-rules-2c73f68a1525377e" title="Permalink"></a></header><div class="admonition-body"><ul><li>Use the <strong>same time variable</strong> as in your <code>@def</code> block (<code>t</code>, <code>s</code>, etc.)</li><li><strong>1D</strong>: scalar values (not <code>[value]</code>)</li><li><strong>2D</strong>: vectors <code>[v1, v2]</code> or vector of vectors <code>[[v1, v2], ...]</code> or matrix</li><li><strong>Variables</strong> and <strong>aliases</strong>: no time argument</li><li><strong>Constant functions</strong>: use either <code>u(t) := 2</code> or the simplified <code>u := 2</code></li></ul></div></div><h3 id="Syntax-rules"><a class="docs-heading-anchor" href="#Syntax-rules">Syntax rules</a><a id="Syntax-rules-1"></a><a class="docs-heading-anchor-permalink" href="#Syntax-rules" title="Permalink"></a></h3><p>The left-hand side of <code>:=</code> and <code>=</code> follow strict rules.</p><p><strong>Left-hand side of <code>:=</code></strong> : only <strong>labels declared in the optimal control problem</strong>:</p><ul><li>the <strong>time variable name</strong> declared in <code>@def</code> (<code>t</code>, <code>s</code>, ...), used as the argument of state/control functions</li><li>the <strong>state, control or variable</strong> label, either its global name (<code>x</code>, <code>u</code>, <code>tf</code>) or the name of one of its <strong>components</strong> (<code>q</code>, <code>v</code>, <code>x₁</code>, <code>x₂</code>, ...)</li></ul><p><strong>Left-hand side of <code>=</code></strong> : arbitrary <strong>alias names</strong>, local to the <code>@init</code> block. Aliases are not labels of the problem; they are just convenient names to factor out constants or subexpressions.</p><p><strong>Right-hand side</strong> : any Julia expression, which may reference the time variable, previously defined aliases, and other labels defined earlier in the block (see <a href="manual-initial-guess.html#cross-spec-substitution">Cross-spec substitution</a>).</p><h4 id="Default-component-names"><a class="docs-heading-anchor" href="#Default-component-names">Default component names</a><a id="Default-component-names-1"></a><a class="docs-heading-anchor-permalink" href="#Default-component-names" title="Permalink"></a></h4><p>When components are not explicitly named in <code>@def</code>, they receive default labels with subscripted indices. For example, <code>ocp1</code> declares <code>x ∈ R²</code> without naming the components, so the default labels <code>x₁</code> and <code>x₂</code> are used:</p><pre><code class="language-julia hljs"># use default component names x₁, x₂
+ig = @init ocp1 begin
+    x₁(t) := -1.0 + t/10
+    x₂(t) := 0.0
+    u(t)  := -0.2
+end
+
+sol = solve(ocp1; init=ig, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 14</code></pre><h4 id="No-indexed-syntax"><a class="docs-heading-anchor" href="#No-indexed-syntax">No indexed syntax</a><a id="No-indexed-syntax-1"></a><a class="docs-heading-anchor-permalink" href="#No-indexed-syntax" title="Permalink"></a></h4><p>The indexed syntax <code>x[i](t)</code> or <code>x[i:j](t)</code> is <strong>not supported</strong> on the left-hand side of <code>:=</code>. <code>@init</code> works at the level of labels, not array indices.</p><ul><li>❌ <code>x[1](t) := ...</code>, <code>x[1:2](t) := ...</code></li><li>✅ <code>x(t) := ...</code> (global) or <code>x₁(t) := ...</code>, <code>x₂(t) := ...</code>, <code>q(t) := ...</code>, <code>v(t) := ...</code> (per component)</li></ul><h3 id="Constant-initial-guess"><a class="docs-heading-anchor" href="#Constant-initial-guess">Constant initial guess</a><a id="Constant-initial-guess-1"></a><a class="docs-heading-anchor-permalink" href="#Constant-initial-guess" title="Permalink"></a></h3><p>To initialize with constant values, use constant expressions in the function syntax:</p><div class="admonition is-info" id="Alternative-syntax-for-constant-functions-69895d9cb8a4279f"><header class="admonition-header">Alternative syntax for constant functions<a class="admonition-anchor" href="#Alternative-syntax-for-constant-functions-69895d9cb8a4279f" title="Permalink"></a></header><div class="admonition-body"><p>For constant functions, you can also use the simplified syntax without the time argument:</p><ul><li><code>u(t) := 2</code> is equivalent to <code>u := 2</code></li><li><code>x(t) := [1, 2]</code> is equivalent to <code>x := [1, 2]</code></li></ul><p>This shorter syntax is only available for constant expressions.</p></div></div><pre><code class="language-julia hljs"># initialize with constant functions
+ig = @init ocp1 begin
+    x(t) := [-0.2, 0.1]  # constant vector function
+    u(t) := -0.2         # constant scalar function
+end
+
+sol = solve(ocp1; init=ig, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 9</code></pre><p>Using custom labels makes the initialization more readable:</p><pre><code class="language-julia hljs"># initialize individual components with constant values
+# note: use &#39;s&#39; as the time variable (matching ocp2 definition)
+ig = @init ocp2 begin
+    q(s) := -0.2   # constant function for q
+    v(s) := 0.0    # constant function for v
+    u(s) := 0.1    # constant function for u
+    tf := 2.0      # variable (not a function)
+end
+
+sol = solve(ocp2; init=ig, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 15</code></pre><h3 id="Partial-initialization"><a class="docs-heading-anchor" href="#Partial-initialization">Partial initialization</a><a id="Partial-initialization-1"></a><a class="docs-heading-anchor-permalink" href="#Partial-initialization" title="Permalink"></a></h3><p>You can initialize only some components; missing components will default to 0.1:</p><pre><code class="language-julia hljs"># initialize only the control
+ig = @init ocp1 begin
+    u(t) := -0.2
+end
+
+sol = solve(ocp1; init=ig, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 7</code></pre><pre><code class="language-julia hljs"># initialize only state components and variable
+ig = @init ocp2 begin
+    q(s) := -0.5
+    v(s) := 0.2
+    tf := 2.0
+end
+
+sol = solve(ocp2; init=ig, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 12</code></pre><h3 id="Time-dependent-functions"><a class="docs-heading-anchor" href="#Time-dependent-functions">Time-dependent functions</a><a id="Time-dependent-functions-1"></a><a class="docs-heading-anchor-permalink" href="#Time-dependent-functions" title="Permalink"></a></h3><p>For non-constant functions, use any expression involving <code>t</code>:</p><pre><code class="language-julia hljs"># initialize with time-dependent functions
+ig = @init ocp1 begin
+    x(t) := [-0.2t, 0.1t]  # time-dependent vector
+    u(t) := -0.2t          # time-dependent scalar
+end
+
+sol = solve(ocp1; init=ig, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 14</code></pre><pre><code class="language-julia hljs"># initialize individual components with time-dependent functions
+ig = @init ocp2 begin
+    q(s) := sin(s)   # time-dependent
+    v(s) := cos(s)   # time-dependent
+    u(s) := s        # time-dependent
+    tf := 2.0        # variable (constant)
+end
+
+sol = solve(ocp2; init=ig, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 32</code></pre><h3 id="Using-aliases"><a class="docs-heading-anchor" href="#Using-aliases">Using aliases</a><a id="Using-aliases-1"></a><a class="docs-heading-anchor-permalink" href="#Using-aliases" title="Permalink"></a></h3><p>You can define Julia aliases within the <code>@init</code> block using <code>=</code> (single equals, without time argument):</p><pre><code class="language-julia hljs"># use aliases for constants and expressions
+ig = @init ocp2 begin
+    amplitude = 0.5
+    phase = sin(amplitude)
+    φ = 2π * s
+    q(s) := amplitude * sin(φ)
+    v(s) := amplitude * cos(φ)
+    u(s) := phase      # constant function using alias
+    tf := 2.0          # variable
+end
+
+sol = solve(ocp2; init=ig, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 12</code></pre><h3 id="cross-spec-substitution"><a class="docs-heading-anchor" href="#cross-spec-substitution">Cross-spec substitution</a><a id="cross-spec-substitution-1"></a><a class="docs-heading-anchor-permalink" href="#cross-spec-substitution" title="Permalink"></a></h3><p>Specifications inside a single <code>@init</code> block can <strong>reference each other</strong>, from top to bottom. A label defined on an earlier line can be reused in the right-hand side of a later specification.</p><p>Rules:</p><ul><li>A reference only resolves to a label (or alias) defined <strong>earlier</strong> in the block.</li><li>Substitution happens by name: the referenced label is replaced by its definition when the later expression is evaluated.</li><li>References across different grid arguments are <strong>not substituted</strong> (see note at the end of this section).</li></ul><h4 id="Temporal-temporal"><a class="docs-heading-anchor" href="#Temporal-temporal">Temporal → temporal</a><a id="Temporal-temporal-1"></a><a class="docs-heading-anchor-permalink" href="#Temporal-temporal" title="Permalink"></a></h4><p>A time-dependent spec can reference another time-dependent spec:</p><pre><code class="language-julia hljs"># v depends on q
+ig = @init ocp2 begin
+    q(s) := sin(s)
+    v(s) := 1.0 + q(s)
+    u(s) := 0.0
+    tf   := 2.0
+end
+
+sol = solve(ocp2; init=ig, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 35</code></pre><h4 id="Transitive-chain"><a class="docs-heading-anchor" href="#Transitive-chain">Transitive chain</a><a id="Transitive-chain-1"></a><a class="docs-heading-anchor-permalink" href="#Transitive-chain" title="Permalink"></a></h4><p>Substitutions chain transitively: <code>u</code> below references <code>v</code>, which itself references <code>q</code>.</p><pre><code class="language-julia hljs"># q → v → u
+ig = @init ocp2 begin
+    q(s) := sin(s)
+    v(s) := 1.0 + q(s)
+    u(s) := s + v(s)^2
+    tf   := 2.0
+end
+
+sol = solve(ocp2; init=ig, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 26</code></pre><h4 id="Constant-temporal"><a class="docs-heading-anchor" href="#Constant-temporal">Constant → temporal</a><a id="Constant-temporal-1"></a><a class="docs-heading-anchor-permalink" href="#Constant-temporal" title="Permalink"></a></h4><p>A temporal spec can reference a constant-valued component defined earlier:</p><pre><code class="language-julia hljs"># v(s) uses the constant value of q
+ig = @init ocp2 begin
+    q    := -1.0
+    v(s) := q + sin(s)
+    u(s) := 0.0
+    tf   := 2.0
+end
+
+sol = solve(ocp2; init=ig, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 39</code></pre><h4 id="Constant-constant"><a class="docs-heading-anchor" href="#Constant-constant">Constant → constant</a><a id="Constant-constant-1"></a><a class="docs-heading-anchor-permalink" href="#Constant-constant" title="Permalink"></a></h4><p>A constant spec can reference another constant, including for variable components. Here we define a small OCP whose variable has two components <code>(tf, a)</code>:</p><pre><code class="language- hljs">ocp_var2 = @def begin
+    w = (tf, a) ∈ R², variable
+    t ∈ [0, 1], time
+    x ∈ R, state
+    u ∈ R, control
+    x(0) == 0
+    x(1) == a
+    ẋ(t) == u(t)
+    ∫(0.5u(t)^2) → min
+end
+
+ig = @init ocp_var2 begin
+    tf := 1.0
+    a  := tf + 0.5
+end
+
+w = variable(ig)
+println(&quot;tf = &quot;, w[1], &quot;, a = &quot;, w[2])
+nothing # hide</code></pre><h4 id="Mixing-aliases-and-cross-spec-references"><a class="docs-heading-anchor" href="#Mixing-aliases-and-cross-spec-references">Mixing aliases and cross-spec references</a><a id="Mixing-aliases-and-cross-spec-references-1"></a><a class="docs-heading-anchor-permalink" href="#Mixing-aliases-and-cross-spec-references" title="Permalink"></a></h4><p>Aliases (with <code>=</code>) and cross-spec references (with <code>:=</code>) can be freely combined:</p><pre><code class="language-julia hljs">ig = @init ocp2 begin
+    A    = 2.0             # alias
+    q(s) := A * sin(s)     # uses alias
+    v(s) := q(s) + 1.0     # references q
+    u(s) := 0.0
+    tf   := 2.0
+end
+
+sol = solve(ocp2; init=ig, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 21</code></pre><div class="admonition is-info" id="No-substitution-across-grid-specs-71d04f7af2cabfd5"><header class="admonition-header">No substitution across grid specs<a class="admonition-anchor" href="#No-substitution-across-grid-specs-71d04f7af2cabfd5" title="Permalink"></a></header><div class="admonition-body"><p>When a spec uses a <strong>grid argument</strong> (e.g. <code>q(T) := Dq</code> with <code>T</code> a time vector), it is not substituted into other temporal specs written with the time variable (<code>v(s) := ...</code>). The two live in different evaluation contexts. Use either temporal functions throughout, or grids throughout, when you need to chain references.</p></div></div><h2 id="Vector-initial-guess-(interpolated)"><a class="docs-heading-anchor" href="#Vector-initial-guess-(interpolated)">Vector initial guess (interpolated)</a><a id="Vector-initial-guess-(interpolated)-1"></a><a class="docs-heading-anchor-permalink" href="#Vector-initial-guess-(interpolated)" title="Permalink"></a></h2><p>You can provide initial values on a time grid using the syntax <code>label(T) := data</code>, where <code>T</code> is a time vector and <code>data</code> contains the corresponding values.</p><h3 id="Full-block-initialization-on-a-grid"><a class="docs-heading-anchor" href="#Full-block-initialization-on-a-grid">Full block initialization on a grid</a><a id="Full-block-initialization-on-a-grid-1"></a><a class="docs-heading-anchor-permalink" href="#Full-block-initialization-on-a-grid" title="Permalink"></a></h3><pre><code class="language-julia hljs"># define time grid and data
+T = [0.0, 5.0, 10.0]
+X = [[-1.0, 0.0], [-0.5, 0.5], [0.0, 0.0]]
+U = [0.0, -0.5, 0.0]
+
+ig = @init ocp1 begin
+    x(T) := X
+    u(T) := U
+end
+
+sol = solve(ocp1; init=ig, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 14</code></pre><h3 id="Per-component-grids"><a class="docs-heading-anchor" href="#Per-component-grids">Per-component grids</a><a id="Per-component-grids-1"></a><a class="docs-heading-anchor-permalink" href="#Per-component-grids" title="Permalink"></a></h3><p>Different components can use different time grids:</p><pre><code class="language-julia hljs"># different grids for different components
+Sq = [0.0, 1.0, 2.0]
+Dq = [-1.0, -0.5, 0.0]
+Sv = [0.0, 2.0]
+Dv = [0.0, 0.0]
+Su = [0.0, 1.0, 2.0]
+Du = [0.0, 0.5, 0.0]
+
+ig = @init ocp2 begin
+    q(Sq) := Dq
+    v(Sv) := Dv
+    u(Su) := Du
+    tf := 2.0
+end
+
+sol = solve(ocp2; init=ig, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 12</code></pre><h3 id="Matrix-format"><a class="docs-heading-anchor" href="#Matrix-format">Matrix format</a><a id="Matrix-format-1"></a><a class="docs-heading-anchor-permalink" href="#Matrix-format" title="Permalink"></a></h3><p>For state initialization, you can also use a matrix where each row corresponds to a time point:</p><pre><code class="language-julia hljs"># matrix format for state data
+T = [0.0, 5.0, 10.0]
+Xmat = [
+    -1.0  0.0;
+    -0.5  0.5;
+     0.0  0.0
+]
+U = [0.0, -0.5, 0.0]
+
+ig = @init ocp1 begin
+    x(T) := Xmat
+    u(T) := U
+end
+
+sol = solve(ocp1; init=ig, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 14</code></pre><h2 id="Mixed-initial-guess"><a class="docs-heading-anchor" href="#Mixed-initial-guess">Mixed initial guess</a><a id="Mixed-initial-guess-1"></a><a class="docs-heading-anchor-permalink" href="#Mixed-initial-guess" title="Permalink"></a></h2><p>You can freely mix constant functions, time-dependent functions, and grid-based initializations in a single <code>@init</code> block:</p><pre><code class="language-julia hljs"># mix different initialization types
+T = [0.0, 5.0, 10.0]
+X = [[-1.0, 0.0], [-0.5, 0.5], [0.0, 0.0]]
+
+ig = @init ocp1 begin
+    x(T) := X              # grid-based for state
+    u(t) := -0.2 * sin(t)  # time-dependent function for control
+end
+
+sol = solve(ocp1; init=ig, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 14</code></pre><pre><code class="language-julia hljs"># another mix: constant and time-dependent functions
+ig = @init ocp2 begin
+    q(s) := -1.0 + s/2.0  # time-dependent function
+    v(s) := 0.0           # constant function
+    u(s) := 0.1 * s       # time-dependent function
+    tf := 2.0             # variable
+end
+
+sol = solve(ocp2; init=ig, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 17</code></pre><h2 id="Solution-as-initial-guess-(warm-start)"><a class="docs-heading-anchor" href="#Solution-as-initial-guess-(warm-start)">Solution as initial guess (warm start)</a><a id="Solution-as-initial-guess-(warm-start)-1"></a><a class="docs-heading-anchor-permalink" href="#Solution-as-initial-guess-(warm-start)" title="Permalink"></a></h2><p>You can use an existing solution directly as an initial guess. The dimensions of the state, control and optimization variable must coincide. This particular feature allows an easy implementation of discrete continuations.</p><pre><code class="language-julia hljs"># generate an initial solution
+sol_init = solve(ocp1; display=false)
+
+# solve the problem using solution as initial guess
+sol = solve(ocp1; init=sol_init, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 0</code></pre><p>You can also manually extract data from a solution and use it within an <code>@init</code> block:</p><pre><code class="language-julia hljs"># extract functions from solution
+x_fun = state(sol_init)
+u_fun = control(sol_init)
+
+# use them in @init
+ig = @init ocp1 begin
+    x(t) := x_fun(t)
+    u(t) := u_fun(t)
+end
+
+sol = solve(ocp1; init=ig, display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 0</code></pre><div class="admonition is-success" id="Interactions-with-an-optimal-control-solution-e7e2d506eff752a8"><header class="admonition-header">Interactions with an optimal control solution<a class="admonition-anchor" href="#Interactions-with-an-optimal-control-solution-e7e2d506eff752a8" title="Permalink"></a></header><div class="admonition-body"><p>Please check <a href="api/public.html#CTModels.OCP.state"><code>state</code></a>, <a href="api/public.html#CTModels.OCP.costate"><code>costate</code></a>, <a href="api/public.html#CTModels.OCP.control"><code>control</code></a> and <a href="@ref variable(::Solution)"><code>variable</code></a> to get data from the solution. The functions <code>state</code>, <code>costate</code> and <code>control</code> return functions of time and <code>variable</code> returns a vector.</p></div></div><h2 id="Costate-/-multipliers"><a class="docs-heading-anchor" href="#Costate-/-multipliers">Costate / multipliers</a><a id="Costate-/-multipliers-1"></a><a class="docs-heading-anchor-permalink" href="#Costate-/-multipliers" title="Permalink"></a></h2><p>For the moment there is no option to provide an initial guess for the costate / multipliers.</p><h2 id="Legacy:-NamedTuple-construction"><a class="docs-heading-anchor" href="#Legacy:-NamedTuple-construction">Legacy: NamedTuple construction</a><a id="Legacy:-NamedTuple-construction-1"></a><a class="docs-heading-anchor-permalink" href="#Legacy:-NamedTuple-construction" title="Permalink"></a></h2><p>While the <code>@init</code> macro is the recommended approach, you can still construct initial guesses using direct <code>NamedTuple</code> syntax for backward compatibility.</p><h3 id="Basic-tuple-syntax"><a class="docs-heading-anchor" href="#Basic-tuple-syntax">Basic tuple syntax</a><a id="Basic-tuple-syntax-1"></a><a class="docs-heading-anchor-permalink" href="#Basic-tuple-syntax" title="Permalink"></a></h3><pre><code class="language-julia hljs"># direct tuple construction with constants
+sol = solve(ocp1; init=(state=[-0.2, 0.1], control=-0.2), display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 9</code></pre><h3 id="Using-component-labels"><a class="docs-heading-anchor" href="#Using-component-labels">Using component labels</a><a id="Using-component-labels-1"></a><a class="docs-heading-anchor-permalink" href="#Using-component-labels" title="Permalink"></a></h3><p>The tuple syntax now supports using component labels as keys:</p><pre><code class="language-julia hljs"># use component labels in the tuple
+sol = solve(ocp2; init=(q=-1.0, v=0.0, u=0.1, tf=2.0), display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 15</code></pre><h3 id="Grid-based-initialization-with-tuples"><a class="docs-heading-anchor" href="#Grid-based-initialization-with-tuples">Grid-based initialization with tuples</a><a id="Grid-based-initialization-with-tuples-1"></a><a class="docs-heading-anchor-permalink" href="#Grid-based-initialization-with-tuples" title="Permalink"></a></h3><p>For grid-based initialization, the syntax uses <code>(time_vector, data)</code> pairs:</p><pre><code class="language-julia hljs"># grid-based with tuple syntax
+T = [0.0, 5.0, 10.0]
+X = [[-1.0, 0.0], [-0.5, 0.5], [0.0, 0.0]]
+U = [0.0, -0.5, 0.0]
+
+sol = solve(ocp1; init=(state=(T, X), control=(T, U)), display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 14</code></pre><p>You can also mix component labels with grid syntax:</p><pre><code class="language-julia hljs"># per-component grids with tuple syntax
+Tq = [0.0, 1.0, 2.0]
+Dq = [-1.0, -0.5, 0.0]
+
+sol = solve(ocp2; init=(q=(Tq, Dq), v=0.0, u=0.1, tf=2.0), display=false)
+println(&quot;Number of iterations: &quot;, iterations(sol))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Number of iterations: 15</code></pre><div class="admonition is-info" id="Recommendation-d08ab63e1a712d37"><header class="admonition-header">Recommendation<a class="admonition-anchor" href="#Recommendation-d08ab63e1a712d37" title="Permalink"></a></header><div class="admonition-body"><p>While the direct tuple syntax is still supported, we recommend using the <code>@init</code> macro for better readability and maintainability, especially for complex initial guess specifications.</p></div></div><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-model.html">« Problem characteristics</a><a class="docs-footer-nextpage" href="manual-solve.html">Basic usage »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Thursday 16 April 2026 20:55">Thursday 16 April 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
