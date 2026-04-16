@@ -29,19 +29,19 @@ sol = solve(ocp;
    ├─ <span class="sgr1">Modeler</span>: <span class="sgr36"><span class="sgr1">adnlp</span></span> (show_time = true)
    └─ <span class="sgr1">Solver</span>: <span class="sgr36"><span class="sgr1">ipopt</span></span> (max_iter = 500, print_level = 0)
 
-gradient backend ADNLPModels.ReverseDiffADGradient: 0.531841231 seconds;
-hprod    backend ADNLPModels.EmptyADbackend: 4.217e-6 seconds;
-jprod    backend ADNLPModels.EmptyADbackend: 1.352e-6 seconds;
-jtprod   backend ADNLPModels.EmptyADbackend: 9.72e-7 seconds;
-  • Sparsity pattern detection of the Jacobian: 9.27e-5 seconds.
-  • Coloring of the sparse Jacobian: 1.5653e-5 seconds.
-  • Allocation of the AD buffers for the sparse Jacobian: 1.482e-6 seconds.
-jacobian backend ADNLPModels.SparseADJacobian: 0.673536033 seconds;
-  • Sparsity pattern detection of the Hessian: 0.945137377 seconds.
-  • Coloring of the sparse Hessian: 2.2014e-5 seconds.
-  • Allocation of the AD buffers for the sparse Hessian: 3.229343084 seconds.
-hessian  backend ADNLPModels.SparseReverseADHessian: 4.408847693 seconds;
-ghjvprod backend ADNLPModels.EmptyADbackend: 5.588e-6 seconds.</code></pre><h3 id="How-routing-works"><a class="docs-heading-anchor" href="#How-routing-works">How routing works</a><a id="How-routing-works-1"></a><a class="docs-heading-anchor-permalink" href="#How-routing-works" title="Permalink"></a></h3><p>Each strategy declares its available options via metadata. When you pass an option:</p><ol><li><strong>Lookup</strong>: The system checks which strategies recognize this option name</li><li><strong>Route</strong>: If exactly one strategy family (discretizer/modeler/solver) recognizes it, the option is routed there</li><li><strong>Validate</strong>: The option value is validated against the declared type and constraints</li><li><strong>Error</strong>: If no strategy recognizes the option, or if multiple families claim it, an error is raised</li></ol><p>You can inspect a strategy&#39;s declared options using <code>describe</code>:</p><pre><code class="language-julia hljs">using CUDA
+gradient backend ADNLPModels.ReverseDiffADGradient: 0.638804611 seconds;
+hprod    backend ADNLPModels.EmptyADbackend: 4.639e-6 seconds;
+jprod    backend ADNLPModels.EmptyADbackend: 1.243e-6 seconds;
+jtprod   backend ADNLPModels.EmptyADbackend: 1.062e-6 seconds;
+  • Sparsity pattern detection of the Jacobian: 0.00010683 seconds.
+  • Coloring of the sparse Jacobian: 1.7041e-5 seconds.
+  • Allocation of the AD buffers for the sparse Jacobian: 4.61e-7 seconds.
+jacobian backend ADNLPModels.SparseADJacobian: 0.831841039 seconds;
+  • Sparsity pattern detection of the Hessian: 1.144236892 seconds.
+  • Coloring of the sparse Hessian: 2.3254e-5 seconds.
+  • Allocation of the AD buffers for the sparse Hessian: 3.81648923 seconds.
+hessian  backend ADNLPModels.SparseReverseADHessian: 5.238687073 seconds;
+ghjvprod backend ADNLPModels.EmptyADbackend: 4.278e-6 seconds.</code></pre><h3 id="How-routing-works"><a class="docs-heading-anchor" href="#How-routing-works">How routing works</a><a id="How-routing-works-1"></a><a class="docs-heading-anchor-permalink" href="#How-routing-works" title="Permalink"></a></h3><p>Each strategy declares its available options via metadata. When you pass an option:</p><ol><li><strong>Lookup</strong>: The system checks which strategies recognize this option name</li><li><strong>Route</strong>: If exactly one strategy family (discretizer/modeler/solver) recognizes it, the option is routed there</li><li><strong>Validate</strong>: The option value is validated against the declared type and constraints</li><li><strong>Error</strong>: If no strategy recognizes the option, or if multiple families claim it, an error is raised</li></ol><p>You can inspect a strategy&#39;s declared options using <code>describe</code>:</p><pre><code class="language-julia hljs">using CUDA
 describe(:exa)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr34"><span class="sgr1">Exa</span></span> (strategy)
 ├─ <span class="sgr90">id: </span><span class="sgr33">:exa</span>
 ├─ <span class="sgr90">hierarchy: </span><span class="sgr36">Exa</span> → <span class="sgr36">AbstractNLPModeler</span> → <span class="sgr36">AbstractStrategy</span>
@@ -125,13 +125,13 @@ Total number of inequality constraints...............:        0
         inequality constraints with only upper bounds:        0
 
 iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
-   0  5.0000000e-03 1.10e+00 2.03e-14   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
+   0  5.0000000e-03 1.10e+00 2.24e-14   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
    1  6.0000960e+00 2.22e-16 1.78e-15 -11.0 6.08e+00    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 1
 
                                    (scaled)                 (unscaled)
-Objective...............:   6.0000960015360247e+00    6.0000960015360247e+00
+Objective...............:   6.0000960015360381e+00    6.0000960015360381e+00
 Dual infeasibility......:   1.7763568394002505e-15    1.7763568394002505e-15
 Constraint violation....:   2.2204460492503131e-16    2.2204460492503131e-16
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
@@ -146,7 +146,7 @@ Number of inequality constraint evaluations          = 0
 Number of equality constraint Jacobian evaluations   = 2
 Number of inequality constraint Jacobian evaluations = 0
 Number of Lagrangian Hessian evaluations             = 1
-Total seconds in IPOPT                               = 0.092
+Total seconds in IPOPT                               = 0.004
 
 EXIT: Optimal Solution Found.
 • Solver:
@@ -154,10 +154,10 @@ EXIT: Optimal Solution Found.
   │  Status     : first_order
   │  Message    : Ipopt/generic
   │  Iterations : 1
-  │  Objective  : 6.000096001536025
+  │  Objective  : 6.000096001536038
   └─ Constraints violation : 2.220446049250313e-16
 
-• Boundary duals: [12.000192003072046, 6.000096001536023, -12.000192003072046, 6.000096001536035]</code></pre><p>You <strong>must</strong> combine <code>bypass</code> with <code>route_to</code> because:</p><ul><li>If the option is unknown, the system needs to know which strategy should receive it</li><li><code>bypass</code> forces the option through without validation</li></ul><div class="admonition is-info" id="Alias:-force-bypass-37758646e906edfd"><header class="admonition-header">Alias: force = bypass<a class="admonition-anchor" href="#Alias:-force-bypass-37758646e906edfd" title="Permalink"></a></header><div class="admonition-body"><p>You can use <code>force</code> as an alias for <code>bypass</code>: <code>route_to(:ipopt, force(1))</code></p></div></div><div class="admonition is-warning" id="Use-bypass-sparingly-88bb5f96150874e4"><header class="admonition-header">Use bypass sparingly<a class="admonition-anchor" href="#Use-bypass-sparingly-88bb5f96150874e4" title="Permalink"></a></header><div class="admonition-body"><p>The <code>bypass</code> mechanism skips validation entirely. Use it only when:</p><ul><li>You need to pass an option to the underlying solver that isn&#39;t declared in the strategy metadata</li><li>You&#39;re certain the option name and value are correct</li></ul><p>Bypassed options are passed directly to the solver without type checking or validation.</p></div></div><h2 id="Parameter-token-(CPU/GPU)"><a class="docs-heading-anchor" href="#Parameter-token-(CPU/GPU)">Parameter token (CPU/GPU)</a><a id="Parameter-token-(CPU/GPU)-1"></a><a class="docs-heading-anchor-permalink" href="#Parameter-token-(CPU/GPU)" title="Permalink"></a></h2><p>The 4th token in a method description specifies the execution backend: <code>:cpu</code> (default) or <code>:gpu</code>.</p><pre><code class="language-julia hljs"># Explicitly request CPU execution (this is the default)
+• Boundary duals: [12.000192003072058, 6.0000960015360265, -12.000192003072058, 6.000096001536031]</code></pre><p>You <strong>must</strong> combine <code>bypass</code> with <code>route_to</code> because:</p><ul><li>If the option is unknown, the system needs to know which strategy should receive it</li><li><code>bypass</code> forces the option through without validation</li></ul><div class="admonition is-info" id="Alias:-force-bypass-37758646e906edfd"><header class="admonition-header">Alias: force = bypass<a class="admonition-anchor" href="#Alias:-force-bypass-37758646e906edfd" title="Permalink"></a></header><div class="admonition-body"><p>You can use <code>force</code> as an alias for <code>bypass</code>: <code>route_to(:ipopt, force(1))</code></p></div></div><div class="admonition is-warning" id="Use-bypass-sparingly-88bb5f96150874e4"><header class="admonition-header">Use bypass sparingly<a class="admonition-anchor" href="#Use-bypass-sparingly-88bb5f96150874e4" title="Permalink"></a></header><div class="admonition-body"><p>The <code>bypass</code> mechanism skips validation entirely. Use it only when:</p><ul><li>You need to pass an option to the underlying solver that isn&#39;t declared in the strategy metadata</li><li>You&#39;re certain the option name and value are correct</li></ul><p>Bypassed options are passed directly to the solver without type checking or validation.</p></div></div><h2 id="Parameter-token-(CPU/GPU)"><a class="docs-heading-anchor" href="#Parameter-token-(CPU/GPU)">Parameter token (CPU/GPU)</a><a id="Parameter-token-(CPU/GPU)-1"></a><a class="docs-heading-anchor-permalink" href="#Parameter-token-(CPU/GPU)" title="Permalink"></a></h2><p>The 4th token in a method description specifies the execution backend: <code>:cpu</code> (default) or <code>:gpu</code>.</p><pre><code class="language-julia hljs"># Explicitly request CPU execution (this is the default)
 sol = solve(ocp, :collocation, :adnlp, :ipopt, :cpu;
     grid_size=50,
     print_level=0
@@ -171,4 +171,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-solve.html">« Basic usage</a><a class="docs-footer-nextpage" href="manual-solve-explicit.html">Explicit mode »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Thursday 16 April 2026 17:08">Thursday 16 April 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-solve.html">« Basic usage</a><a class="docs-footer-nextpage" href="manual-solve-explicit.html">Explicit mode »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Thursday 16 April 2026 19:33">Thursday 16 April 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
