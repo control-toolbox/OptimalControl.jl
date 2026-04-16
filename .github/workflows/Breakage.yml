@@ -9,7 +9,7 @@ on:
 
 jobs:
   break-pkg:
-    if: ${{ ! contains(github.event.pull_request.labels.*.name, 'run breakage applications') }}
+    if: contains(github.event.pull_request.labels.*.name, 'run breakage')
     strategy:
       fail-fast: false
       matrix:

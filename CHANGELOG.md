@@ -17,12 +17,19 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   - Indirect methods for touch point (2-arc) and boundary arc (3-arc) cases with shooting functions
   - Theoretical references: Bryson et al. (1963), Jacobson et al. (1971), Bryson & Ho (1975)
   - Hamiltonian-based adjoint chain explanations for boundary arc dynamics
+  - New example for problems mixing control and variable (`example-control-and-variable.md`) with two examples:
+    - Exponential growth rate estimation with control (non-autonomous problem)
+    - Harmonic oscillator pulsation optimization with control (autonomous problem)
+  - Demonstrates optimal control problems with both control variables and constant parameters to optimize
+  - Indirect methods with augmented Hamiltonian and maximising control laws
 
 ### Changed
 
 - **Documentation organization**:
   - Extracted state constraint section from `example-double-integrator-energy.md` into dedicated example file
   - Added cross-references between energy minimization and state constraint examples
+  - Added "Control and variable" example to Basic Examples section in documentation navigation
+  - Fixed heading level in `example-control-free.md` (## -> ###) for proper hierarchy
 
 - **Dependencies**:
   - Updated UnoSolver from v0.2 to v0.3
