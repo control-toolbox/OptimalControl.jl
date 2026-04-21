@@ -2,6 +2,7 @@
 locale = "en"
 extend-ignore-re = [
     "ded",
+    "ois",
 ]
 
 [files]

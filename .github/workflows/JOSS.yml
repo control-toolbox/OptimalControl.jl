@@ -1,0 +1,35 @@
+name: Compile JOSS paper
+
+on:
+  push:
+    paths:
+      - 'joss/**'  # Se déclenche uniquement pour les changements dans le dossier joss
+
+jobs:
+  paper:
+    runs-on: ubuntu-latest
+    name: Paper Draft
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build draft PDF
+        uses: openjournals/openjournals-draft-action@master
+        with:
+          journal: joss
+          # This should be the path to the paper within your repo.
+          paper-path: joss/paper.md
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper
+          path: joss/paper.pdf
+          
+      - name: Commit PDF
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: 'joss/paper.pdf'
+          message: 'chore: update paper.pdf'
+          author_name: 'GitHub Actions'
+          author_email: 'actions@github.com'
+          committer_name: 'GitHub Actions'
+          committer_email: 'actions@github.com'
