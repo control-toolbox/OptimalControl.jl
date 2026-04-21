@@ -1,9 +1,5 @@
 # [The optimal control solution object: structure and usage](@id manual-solution)
 
-```@meta
-Draft = false
-```
-
 In this manual, we'll first recall the **main functionalities** you can use when working with a solution of an optimal control problem. This includes essential operations like:
 
 * **Plotting a solution**: How to plot the optimal solution for your defined problem.
@@ -13,11 +9,12 @@ After covering these core functionalities, we'll delve into the **structure of a
 
 ---
 
-## Content
+**Content**
 
-* [Main functionalities](@ref manual-solution-main-functionalities)
-* [Solution struct](@ref manual-solution-struct)
-* [API Reference by Component](@ref manual-solution-api)
+```@contents
+Pages = ["manual-solution.md"]
+Depth = 2
+```
 
 ---
 
@@ -103,15 +100,11 @@ You can also retrieve the original optimal control problem from the solution:
 model(sol)  # returns the original OCP model
 ```
 
-## [API Reference by Component](@id manual-solution-api)
-
-This section provides a comprehensive reference of all methods available for inspecting and querying optimal control solutions. Methods are organized by component for easy navigation.
-
-### Trajectories
+## Trajectories
 
 The trajectory component provides access to the state, control, variable, and costate trajectories.
 
-#### State trajectory
+### State trajectory
 
 Get the state trajectory as a function of time:
 
@@ -136,7 +129,7 @@ The state function can be evaluated at any time within the problem horizon, even
 x(0.25)  # still works: interpolated value
 ```
 
-#### Control trajectory
+### Control trajectory
 
 Get the control trajectory as a function of time:
 
@@ -148,7 +141,7 @@ u = control(sol)  # returns a function of time
 u(t)  # returns control value at t
 ```
 
-#### Variable values
+### Variable values
 
 Get the optimization variable values:
 
@@ -156,7 +149,7 @@ Get the optimization variable values:
 v = variable(sol)  # returns an empty vector if no variable
 ```
 
-#### Costate trajectory
+### Costate trajectory
 
 Get the costate (adjoint) trajectory as a function of time:
 
@@ -168,7 +161,7 @@ p = costate(sol)  # returns a function of time
 p(t)  # returns costate vector at t
 ```
 
-#### Time information
+### Time information
 
 Get time-related information from the solution:
 
@@ -199,7 +192,7 @@ times(sol)  # returns the TimesModel struct containing time information
 !!! note "Trajectory data formats"
     Trajectories (`state`, `control`, `costate`, `path_constraints_dual`) can be provided either as matrices (rows = time points, columns = components) or as functions `t -> vector` for interpolated or analytical data.
 
-#### [Summary table](@id manual-solution-summary-trajectories)
+### [Summary table](@id manual-solution-summary-trajectories)
 
 | Method | Returns | Description |
 | -------- | --------- | ------------- |
@@ -210,11 +203,11 @@ times(sol)  # returns the TimesModel struct containing time information
 | `time_grid(sol)` | `Vector{Float64}` | Discretization time grid |
 | `times(sol)` | `TimesModel` | TimesModel struct containing time information |
 
-### Objective
+## Objective
 
 The objective component provides access to the objective value.
 
-#### Objective value
+### Objective value
 
 Get the optimal objective value:
 
@@ -222,13 +215,13 @@ Get the optimal objective value:
 objective(sol)  # returns the objective value
 ```
 
-#### [Summary table](@id manual-solution-summary-objective)
+### [Summary table](@id manual-solution-summary-objective)
 
 | Method | Returns | Description |
 | -------- | --------- | ------------- |
 | `objective(sol)` | `Float64` | Objective value |
 
-### Dual variables
+## Dual variables
 
 The dual variables (Lagrange multipliers) provide sensitivity information about constraints.
 
@@ -253,7 +246,7 @@ sol = solve(ocp; display=false)
 nothing # hide
 ```
 
-#### Dual of labeled constraints
+### Dual of labeled constraints
 
 Get the dual variable for a specific labeled constraint:
 
@@ -299,7 +292,7 @@ plot(time_grid(sol), μ_v)
 
     The raw non-negative `*_lb_dual(sol)` / `*_ub_dual(sol)` accessors (see below) remain available if the unsigned components are needed separately.
 
-#### Box constraint duals
+### Box constraint duals
 
 Get dual variables for box constraints on state, control, and variable:
 
@@ -327,7 +320,7 @@ variable_constraints_lb_dual(sol)  # lower bound duals for variable
 variable_constraints_ub_dual(sol)  # upper bound duals for variable
 ```
 
-#### Box constraint dual dimensions
+### Box constraint dual dimensions
 
 Get the dimensions of the box-constraint dual vectors (one entry per primal component that is box-constrained):
 
@@ -343,7 +336,7 @@ dim_dual_control_constraints_box(sol)  # dimension of control box constraint dua
 dim_dual_variable_constraints_box(sol)  # dimension of variable box constraint duals
 ```
 
-#### Nonlinear constraint duals
+### Nonlinear constraint duals
 
 Get dual variables for nonlinear path and boundary constraints:
 
@@ -365,7 +358,7 @@ dim_path_constraints_nl(sol)  # number of nonlinear path constraints
 dim_boundary_constraints_nl(sol)  # number of nonlinear boundary constraints
 ```
 
-#### Summary table
+### Summary table
 
 | Method | Returns | Description |
 | -------- | --------- | ------------- |
@@ -384,11 +377,11 @@ dim_boundary_constraints_nl(sol)  # number of nonlinear boundary constraints
 | `dim_path_constraints_nl(sol)` | `Int` | Number of nonlinear path constraints |
 | `dim_boundary_constraints_nl(sol)` | `Int` | Number of nonlinear boundary constraints |
 
-### Solution metadata
+## Solution metadata
 
 The solution metadata provides information about the solver performance and status.
 
-#### Solver status
+### Solver status
 
 Check if the solution was successful:
 
@@ -408,7 +401,7 @@ Get the solver message:
 message(sol)  # returns solver message string
 ```
 
-#### Iteration count
+### Iteration count
 
 Get the number of solver iterations:
 
@@ -416,7 +409,7 @@ Get the number of solver iterations:
 iterations(sol)  # returns iteration count
 ```
 
-#### Constraints violation
+### Constraints violation
 
 Get the maximum constraint violation:
 
@@ -424,7 +417,7 @@ Get the maximum constraint violation:
 constraints_violation(sol)  # returns max violation
 ```
 
-#### Additional solver information
+### Additional solver information
 
 Get additional solver-specific information:
 
@@ -432,7 +425,7 @@ Get additional solver-specific information:
 infos(sol)  # returns dictionary of solver info
 ```
 
-#### [Summary table](@id manual-solution-summary-solver)
+### [Summary table](@id manual-solution-summary-solver)
 
 | Method | Returns | Description |
 | -------- | --------- | ------------- |

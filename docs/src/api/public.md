@@ -58,10 +58,13 @@ definition
 expression
 describe
 dim_boundary_constraints_nl
+dim_control_constraints_box
 dim_dual_control_constraints_box
 dim_dual_state_constraints_box
 dim_dual_variable_constraints_box
 dim_path_constraints_nl
+dim_state_constraints_box
+dim_variable_constraints_box
 dimension
 discretize
 dual

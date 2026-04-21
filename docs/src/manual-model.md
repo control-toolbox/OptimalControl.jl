@@ -1,9 +1,5 @@
 # [The optimal control problem object: structure and usage](@id manual-model)
 
-```@meta
-Draft = false
-```
-
 In this manual, we'll first recall the **main functionalities** you can use when working with an optimal control problem (OCP). This includes essential operations like:
 
 * **Solving an OCP**: How to find the optimal solution for your defined problem.
@@ -19,9 +15,10 @@ After covering these core functionalities, we'll delve into the **structure of a
 
 **Content**
 
-* [Main functionalities](@ref manual-model-main-functionalities)
-* [Model struct](@ref manual-model-struct)
-* [API Reference by Component](@ref manual-model-api)
+```@contents
+Pages = ["manual-model.md"]
+Depth = 2
+```
 
 ---
 
@@ -124,11 +121,7 @@ definition(ocp)
 
     We refer to the CTModels documentation for more details about this struct and its fields.
 
-## [API Reference by Component](@id manual-model-api)
-
-This section provides a comprehensive reference of all methods available for inspecting and querying optimal control problems. Methods are organized by component for easy navigation.
-
-To illustrate the various methods, we define a more complex optimal control problem with free final time, variables, and various types of constraints:
+To illustrate the various methods in the sections below, we define a more complex optimal control problem with free final time, variables, and various types of constraints:
 
 ```@example main
 ocp = @def begin
@@ -149,11 +142,11 @@ end
 nothing # hide
 ```
 
-### Times
+## Times
 
 The time component defines the temporal domain of the optimal control problem.
 
-#### Times model
+### Times model
 
 Get the times model:
 
@@ -180,7 +173,7 @@ If you try to get the final time without providing the variable when it's free, 
 final_time(ocp)  # error: tf is free, need variable
 ```
 
-#### Time variable names
+### Time variable names
 
 Get the names of the time variable and time bounds:
 
@@ -196,7 +189,7 @@ initial_time_name(ocp)  # returns "0" (initial time is fixed at 0)
 final_time_name(ocp)  # returns "tf" (final time is a variable)
 ```
 
-#### Time fixedness predicates
+### Time fixedness predicates
 
 Check whether initial or final times are fixed or free:
 
@@ -225,7 +218,7 @@ has_fixed_final_time(ocp)  # false (tf is free in this OCP)
 has_free_final_time(ocp)  # true (tf is part of variable v)
 ```
 
-#### Autonomy
+### Autonomy
 
 Check if the dynamics and Lagrange cost are autonomous (time-independent):
 
@@ -235,7 +228,7 @@ is_autonomous(ocp)  # false if dynamics or cost depend on time
 
 For more details on autonomy, see the [Time dependence](@ref manual-model-time-dependence) section below.
 
-#### [Summary table](@id manual-model-summary-time)
+### [Summary table](@id manual-model-summary-time)
 
 | Method | Returns | Description |
 | -------- | --------- | --------- |
@@ -252,11 +245,11 @@ For more details on autonomy, see the [Time dependence](@ref manual-model-time-d
 | `has_free_final_time(ocp)` | `Bool` | True if tf is free |
 | `is_autonomous(ocp)` | `Bool` | True if time-independent |
 
-### State
+## State
 
 The state component represents the state variables of the optimal control problem.
 
-#### State component information
+### State component information
 
 Get the name, dimension, and component names of the state:
 
@@ -276,7 +269,7 @@ state_components(ocp)  # returns ["x", "y"] (component names)
 
     The component names are used when plotting the solution. See the [plot manual](@ref manual-plot).
 
-#### State box constraints
+### State box constraints
 
 Get the box constraints on the state (lower and upper bounds):
 
@@ -298,7 +291,7 @@ Get the dimension of state box constraints:
 dim_state_constraints_box(ocp)  # returns number of box constraints on state
 ```
 
-#### [Summary table](@id manual-model-summary-state)
+### [Summary table](@id manual-model-summary-state)
 
 | Method | Returns | Description |
 | -------- | --------- | --------- |
@@ -308,11 +301,11 @@ dim_state_constraints_box(ocp)  # returns number of box constraints on state
 | `state_constraints_box(ocp)` | Box constraints | State box constraints |
 | `dim_state_constraints_box(ocp)` | `Int` | Number of state box constraints |
 
-### Control
+## Control
 
 The control component represents the control variables of the optimal control problem.
 
-#### Control component information
+### Control component information
 
 Get the name, dimension, and component names of the control:
 
@@ -328,7 +321,7 @@ control_dimension(ocp)  # returns 1 (dimension of control)
 control_components(ocp)  # returns ["u"] (component names)
 ```
 
-#### Control box constraints
+### Control box constraints
 
 Get the box constraints on the control:
 
@@ -350,7 +343,19 @@ Get the dimension of control box constraints:
 dim_control_constraints_box(ocp)  # returns number of box constraints on control
 ```
 
-#### [Summary table](@id manual-model-summary-control)
+### Control presence
+
+Check whether the problem has a control input:
+
+```@example main
+has_control(ocp)  # true if problem has a control input
+```
+
+!!! note "Variant method"
+
+    - `is_control_free(ocp)` ≡ `!has_control(ocp)`
+
+### [Summary table](@id manual-model-summary-control)
 
 | Method | Returns | Description |
 | -------- | --------- | --------- |
@@ -359,12 +364,14 @@ dim_control_constraints_box(ocp)  # returns number of box constraints on control
 | `control_components(ocp)` | `Vector{String}` | Control component names |
 | `control_constraints_box(ocp)` | Box constraints | Control box constraints |
 | `dim_control_constraints_box(ocp)` | `Int` | Number of control box constraints |
+| `has_control(ocp)` | `Bool` | True if problem has a control input |
+| `is_control_free(ocp)` | `Bool` | True if problem has no control (`≡ !has_control`) |
 
-### Variable
+## Variable
 
 The variable component represents the optimization variables (parameters) of the optimal control problem.
 
-#### Variable component information
+### Variable component information
 
 Get the name, dimension, and component names of the variable:
 
@@ -380,7 +387,7 @@ variable_dimension(ocp)  # returns 2 (dimension of variable)
 variable_components(ocp)  # returns ["w", "tf"] (component names)
 ```
 
-#### Variable box constraints
+### Variable box constraints
 
 Get the box constraints on the variable:
 
@@ -402,7 +409,20 @@ Get the dimension of variable box constraints:
 dim_variable_constraints_box(ocp)  # returns number of box constraints on variable
 ```
 
-#### [Summary table](@id manual-model-summary-variable)
+### Variable presence
+
+Check whether the problem has optimization variables:
+
+```@example main
+has_variable(ocp)  # true if problem has optimization variables
+```
+
+!!! note "Variant methods"
+
+    - `is_variable(ocp)` ≡ `has_variable(ocp)`
+    - `is_nonvariable(ocp)` ≡ `!has_variable(ocp)`
+
+### [Summary table](@id manual-model-summary-variable)
 
 | Method | Returns | Description |
 | -------- | --------- | --------- |
@@ -411,12 +431,15 @@ dim_variable_constraints_box(ocp)  # returns number of box constraints on variab
 | `variable_components(ocp)` | `Vector{String}` | Variable component names |
 | `variable_constraints_box(ocp)` | Box constraints | Variable box constraints |
 | `dim_variable_constraints_box(ocp)` | `Int` | Number of variable box constraints |
+| `has_variable(ocp)` | `Bool` | True if problem has optimization variables |
+| `is_variable(ocp)` | `Bool` | Alias for `has_variable` |
+| `is_nonvariable(ocp)` | `Bool` | True if problem has no variables (`≡ !has_variable`) |
 
-### Dynamics
+## Dynamics
 
 The dynamics component defines the differential equations governing the state evolution.
 
-#### Dynamics function
+### Dynamics function
 
 The dynamics are stored as an in-place function of the form `f!(dx, t, x, u, v)`:
 
@@ -438,17 +461,17 @@ The first argument `dx` is mutated upon call and contains the state derivative. 
 * `u`: control
 * `v`: variable
 
-#### [Summary table](@id manual-model-summary-dynamics)
+### [Summary table](@id manual-model-summary-dynamics)
 
 | Method | Returns | Description |
 | -------- | --------- | --------- |
 | `dynamics(ocp)` | `Function` | In-place dynamics function f!(dx, t, x, u, v) |
 
-### Objective
+## Objective
 
 The objective component defines the cost function to minimize or maximize.
 
-#### Criterion
+### Criterion
 
 The criterion indicates whether the problem is a minimization or maximization:
 
@@ -456,7 +479,7 @@ The criterion indicates whether the problem is a minimization or maximization:
 criterion(ocp)  # returns :min or :max
 ```
 
-#### Objective form
+### Objective form
 
 The objective function can be in Mayer form, Lagrange form, or Bolza form (combination of both):
 
@@ -479,7 +502,7 @@ has_lagrange_cost(ocp)  # true if Lagrange cost exists
     - `is_mayer_cost_defined(ocp)` ≡ `has_mayer_cost(ocp)`
     - `is_lagrange_cost_defined(ocp)` ≡ `has_lagrange_cost(ocp)`
 
-#### Mayer cost
+### Mayer cost
 
 Get the Mayer cost function with signature `g(x0, xf, v)`:
 
@@ -487,7 +510,7 @@ Get the Mayer cost function with signature `g(x0, xf, v)`:
 g = mayer(ocp)  # error if no Mayer cost
 ```
 
-#### Lagrange cost
+### Lagrange cost
 
 Get the Lagrange cost function with signature `f⁰(t, x, u, v)`:
 
@@ -500,7 +523,7 @@ v = [1.0, 2.0]
 f⁰(s, q, u, v)  # returns the integrand value
 ```
 
-#### [Summary table](@id manual-model-summary-objective)
+### [Summary table](@id manual-model-summary-objective)
 
 | Method | Returns | Description |
 | -------- | --------- | --------- |
@@ -510,11 +533,11 @@ f⁰(s, q, u, v)  # returns the integrand value
 | `mayer(ocp)` | `Function` | Mayer cost function g(x0, xf, v) |
 | `lagrange(ocp)` | `Function` | Lagrange cost function f⁰(t, x, u, v) |
 
-### Constraints
+## Constraints
 
 The constraints component defines the constraints on the optimal control problem.
 
-#### Individual constraints
+### Individual constraints
 
 Retrieve a specific constraint by its label using the `constraint` function. It returns a tuple `(type, f, lb, ub)`:
 
@@ -557,7 +580,7 @@ println("type: ", type)
 println("val: ", f(s, q, u, v))
 ```
 
-#### All constraints
+### All constraints
 
 Get all constraints as a collection:
 
@@ -565,7 +588,7 @@ Get all constraints as a collection:
 constraints(ocp)  # returns all constraints
 ```
 
-#### Nonlinear constraints
+### Nonlinear constraints
 
 Get nonlinear path and boundary constraints:
 
@@ -602,7 +625,7 @@ dim_boundary_constraints_nl(ocp)  # number of nonlinear boundary constraints
 
     To get the dual variable (or Lagrange multiplier) associated to a constraint, use the [`dual`](@ref) method on a solution.
 
-#### [Summary table](@id manual-model-summary-constraints)
+### [Summary table](@id manual-model-summary-constraints)
 
 | Method | Returns | Description |
 | -------- | --------- | --------- |
@@ -613,9 +636,7 @@ dim_boundary_constraints_nl(ocp)  # number of nonlinear boundary constraints
 | `dim_path_constraints_nl(ocp)` | `Int` | Number of nonlinear path constraints |
 | `dim_boundary_constraints_nl(ocp)` | `Int` | Number of nonlinear boundary constraints |
 
-### Other accessors
-
-#### Problem definition
+## Problem definition
 
 Get the problem definition as a string:
 
@@ -634,7 +655,19 @@ nothing # hide
 
     The definition is optional and can be `EmptyDefinition`. Use `has_abstract_definition(ocp)` to check if a definition is present.
 
-### [Time dependence](@id manual-model-time-dependence)
+### Definition presence
+
+Check whether the problem carries an abstract definition:
+
+```@example main
+has_abstract_definition(ocp)  # true if definition is present (not EmptyDefinition)
+```
+
+!!! note "Variant method"
+
+    - `is_abstractly_defined(ocp)` ≡ `has_abstract_definition(ocp)`
+
+## [Time dependence](@id manual-model-time-dependence)
 
 Optimal control problems can be **autonomous** or **non-autonomous**. In an autonomous problem, neither the dynamics nor the Lagrange cost explicitly depends on the time variable.
 
@@ -677,60 +710,12 @@ end
 is_autonomous(ocp)
 ```
 
-### Model predicates
-
-Check various properties of the optimal control problem model.
-
-#### Variable and control presence
-
-Check if the problem has optimization variables or control input:
-
-```@example main
-has_variable(ocp)  # true if problem has optimization variables
-```
-
-```@example main
-has_control(ocp)  # true if problem has control input
-```
-
-!!! note "Variant methods"
-
-    Alternative methods are also available:
-    - `is_variable(ocp)` ≡ `has_variable(ocp)`
-    - `is_nonvariable(ocp)` ≡ `!has_variable(ocp)`
-    - `is_control_free(ocp)` ≡ `!has_control(ocp)`
-
-#### Definition presence
-
-Check if the problem has an abstract definition:
-
-```@example main
-has_abstract_definition(ocp)  # true if definition is present (not EmptyDefinition)
-```
-
-!!! note "Variant methods"
-
-    - `is_abstractly_defined(ocp)` ≡ `has_abstract_definition(ocp)`
-
-#### Time dependence
-
-Check if the problem is non-autonomous (time-dependent):
+The variant predicate `is_nonautonomous` is also available and returns the opposite of `is_autonomous`:
 
 ```@example main
 is_nonautonomous(ocp)  # true if dynamics or cost depend on time
 ```
 
-!!! note "Variant methods"
+!!! note "Variant method"
 
     - `is_nonautonomous(ocp)` ≡ `!is_autonomous(ocp)`
-
-#### [Summary table](@id manual-model-summary-predicates)
-
-| Method | Returns | Description |
-| -------- | --------- | ------------- |
-| `has_variable(ocp)` | `Bool` | True if problem has optimization variables |
-| `has_control(ocp)` | `Bool` | True if problem has control input |
-| `has_abstract_definition(ocp)` | `Bool` | True if definition is present |
-| `is_abstractly_defined(ocp)` | `Bool` | Alias for has_abstract_definition |
-| `is_nonautonomous(ocp)` | `Bool` | True if time-dependent |
-| `is_nonvariable(ocp)` | `Bool` | True if no optimization variables |
