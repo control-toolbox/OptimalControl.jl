@@ -41,6 +41,7 @@ boundary_constraints_dual
 boundary_constraints_nl
 bypass
 components
+CTModels.OCP.constraint
 constraints
 constraints_violation
 control
@@ -65,7 +66,7 @@ dim_path_constraints_nl
 dim_state_constraints_box
 dim_variable_constraints_box
 dimension
-discretize
+CTDirect.discretize
 dual
 dynamics
 export_ocp_solution
@@ -111,10 +112,11 @@ lagrange
 mayer
 message
 metadata
-methods
+methods()
 model
 name
 nlp_model
+CTModels.OCP.objective
 ocp_model
 ocp_solution
 option_default
@@ -147,6 +149,7 @@ time
 time_grid
 time_name
 times
+CTModels.OCP.variable
 variable_components
 variable_constraints_box
 variable_constraints_lb_dual
