@@ -1,5 +1,9 @@
 # [The optimal control problem object: structure and usage](@id manual-model)
 
+```@meta
+Draft = false
+```
+
 In this manual, we'll first recall the **main functionalities** you can use when working with an optimal control problem (OCP). This includes essential operations like:
 
 * **Solving an OCP**: How to find the optimal solution for your defined problem.
@@ -281,11 +285,12 @@ state_constraints_box(ocp)  # returns box constraints if any
 ```
 
 !!! note "Tuple structure"
-    The returned tuple has the structure `(lb, indices, ub, labels)` where:
+    The returned tuple has the structure `(lb, indices, ub, labels, aliases)` where:
     - `lb`: vector of lower bounds
     - `indices`: vector of component indices (1-based)
     - `ub`: vector of upper bounds
     - `labels`: vector of constraint labels
+    - `aliases`: vector of vectors containing all labels that declared each component
 
 Get the dimension of state box constraints:
 
@@ -332,11 +337,12 @@ control_constraints_box(ocp)  # returns box constraints if any
 ```
 
 !!! note "Tuple structure"
-    The returned tuple has the structure `(lb, indices, ub, labels)` where:
+    The returned tuple has the structure `(lb, indices, ub, labels, aliases)` where:
     - `lb`: vector of lower bounds
     - `indices`: vector of component indices (1-based)
     - `ub`: vector of upper bounds
     - `labels`: vector of constraint labels
+    - `aliases`: vector of vectors containing all labels that declared each component
 
 Get the dimension of control box constraints:
 
@@ -383,11 +389,12 @@ variable_constraints_box(ocp)  # returns box constraints if any
 ```
 
 !!! note "Tuple structure"
-    The returned tuple has the structure `(lb, indices, ub, labels)` where:
+    The returned tuple has the structure `(lb, indices, ub, labels, aliases)` where:
     - `lb`: vector of lower bounds
     - `indices`: vector of component indices (1-based)
     - `ub`: vector of upper bounds
     - `labels`: vector of constraint labels
+    - `aliases`: vector of vectors containing all labels that declared each component
 
 Get the dimension of variable box constraints:
 
@@ -613,8 +620,19 @@ dim_boundary_constraints_nl(ocp)  # number of nonlinear boundary constraints
 Get the problem definition as a string:
 
 ```@example main
-definition(ocp)  # returns the OCP definition
+definition(ocp)  # returns the OCP definition as AbstractDefinition
 ```
+
+To extract the expression from the definition, use:
+
+```@example main
+expr = expression(ocp)  # returns the Expr from the definition
+nothing # hide
+```
+
+!!! note
+
+    The definition is optional and can be `EmptyDefinition`. Use `has_abstract_definition(ocp)` to check if a definition is present.
 
 ### [Time dependence](@id manual-model-time-dependence)
 
@@ -658,3 +676,61 @@ ocp = @def begin
 end
 is_autonomous(ocp)
 ```
+
+### Model predicates
+
+Check various properties of the optimal control problem model.
+
+#### Variable and control presence
+
+Check if the problem has optimization variables or control input:
+
+```@example main
+has_variable(ocp)  # true if problem has optimization variables
+```
+
+```@example main
+has_control(ocp)  # true if problem has control input
+```
+
+!!! note "Variant methods"
+
+    Alternative methods are also available:
+    - `is_variable(ocp)` ≡ `has_variable(ocp)`
+    - `is_nonvariable(ocp)` ≡ `!has_variable(ocp)`
+    - `is_control_free(ocp)` ≡ `!has_control(ocp)`
+
+#### Definition presence
+
+Check if the problem has an abstract definition:
+
+```@example main
+has_abstract_definition(ocp)  # true if definition is present (not EmptyDefinition)
+```
+
+!!! note "Variant methods"
+
+    - `is_abstractly_defined(ocp)` ≡ `has_abstract_definition(ocp)`
+
+#### Time dependence
+
+Check if the problem is non-autonomous (time-dependent):
+
+```@example main
+is_nonautonomous(ocp)  # true if dynamics or cost depend on time
+```
+
+!!! note "Variant methods"
+
+    - `is_nonautonomous(ocp)` ≡ `!is_autonomous(ocp)`
+
+#### [Summary table](@id manual-model-summary-predicates)
+
+| Method | Returns | Description |
+| -------- | --------- | ------------- |
+| `has_variable(ocp)` | `Bool` | True if problem has optimization variables |
+| `has_control(ocp)` | `Bool` | True if problem has control input |
+| `has_abstract_definition(ocp)` | `Bool` | True if definition is present |
+| `is_abstractly_defined(ocp)` | `Bool` | Alias for has_abstract_definition |
+| `is_nonautonomous(ocp)` | `Bool` | True if time-dependent |
+| `is_nonvariable(ocp)` | `Bool` | True if no optimization variables |

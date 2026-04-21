@@ -1,5 +1,9 @@
 # [The optimal control solution object: structure and usage](@id manual-solution)
 
+```@meta
+Draft = false
+```
+
 In this manual, we'll first recall the **main functionalities** you can use when working with a solution of an optimal control problem. This includes essential operations like:
 
 * **Plotting a solution**: How to plot the optimal solution for your defined problem.
@@ -273,6 +277,28 @@ plot(time_grid(sol), μ_u)
 plot(time_grid(sol), μ_v)
 ```
 
+!!! note "Signed multiplier convention"
+
+    In all cases, `dual(sol, ocp, :label)` returns a **signed multiplier** `μ` (scalar, vector, or function of time, depending on the constraint type). The sign convention is, component-wise:
+
+    - `μ > 0` ⇒ the lower-side constraint is active (e.g. `lb ≤ ...`),
+    - `μ < 0` ⇒ the upper-side constraint is active (e.g. `... ≤ ub`),
+    - `μ = 0` ⇒ the constraint is inactive (or the component is never constrained).
+
+    For **nonlinear path and boundary constraints**, the solver already returns a signed multiplier natively; CTModels simply forwards it via `path_constraints_dual(sol)` / `boundary_constraints_dual(sol)`.
+
+    For **box constraints** (state/control/variable components), the solver stores lower- and upper-bound multipliers *separately as non-negative quantities*. CTModels combines them into the signed multiplier explicitly:
+
+    ```
+    μ = μ_lb − μ_ub
+    ```
+
+    computed per targeted primal component. This is the value returned by `dual(sol, ocp, :label)` for a box-constraint label.
+
+    Rationale for box constraints: after intersection of duplicate box declarations, the solver only sees a single effective bound per component, hence a single signed multiplier per component. If several labels target the same component, each label returns the **same** per-component multiplier (via the `aliases` mechanism; see the [OCP manual](@ref manual-model) and [Duplicate box constraints](@ref manual-abstract-box-dedup)).
+
+    The raw non-negative `*_lb_dual(sol)` / `*_ub_dual(sol)` accessors (see below) remain available if the unsigned components are needed separately.
+
 #### Box constraint duals
 
 Get dual variables for box constraints on state, control, and variable:
@@ -301,6 +327,22 @@ variable_constraints_lb_dual(sol)  # lower bound duals for variable
 variable_constraints_ub_dual(sol)  # upper bound duals for variable
 ```
 
+#### Box constraint dual dimensions
+
+Get the dimensions of the box-constraint dual vectors (one entry per primal component that is box-constrained):
+
+```@example main
+dim_dual_state_constraints_box(sol)  # dimension of state box constraint duals
+```
+
+```@example main
+dim_dual_control_constraints_box(sol)  # dimension of control box constraint duals
+```
+
+```@example main
+dim_dual_variable_constraints_box(sol)  # dimension of variable box constraint duals
+```
+
 #### Nonlinear constraint duals
 
 Get dual variables for nonlinear path and boundary constraints:
@@ -313,19 +355,34 @@ path_constraints_dual(sol)  # duals for nonlinear path constraints
 boundary_constraints_dual(sol)  # duals for nonlinear boundary constraints
 ```
 
+Get the dimensions of the nonlinear constraints:
+
+```@example main
+dim_path_constraints_nl(sol)  # number of nonlinear path constraints
+```
+
+```@example main
+dim_boundary_constraints_nl(sol)  # number of nonlinear boundary constraints
+```
+
 #### Summary table
 
 | Method | Returns | Description |
 | -------- | --------- | ------------- |
-| `dual(sol, ocp, label)` | `Real` or `Function` | Dual for labeled constraint |
-| `state_constraints_lb_dual(sol)` | Dual values | State lower bound duals |
-| `state_constraints_ub_dual(sol)` | Dual values | State upper bound duals |
-| `control_constraints_lb_dual(sol)` | Dual values | Control lower bound duals |
-| `control_constraints_ub_dual(sol)` | Dual values | Control upper bound duals |
-| `variable_constraints_lb_dual(sol)` | Dual values | Variable lower bound duals |
-| `variable_constraints_ub_dual(sol)` | Dual values | Variable upper bound duals |
-| `path_constraints_dual(sol)` | Dual values | Nonlinear path constraint duals |
-| `boundary_constraints_dual(sol)` | Dual values | Nonlinear boundary constraint duals |
+| `dual(sol, ocp, label)` | `Real` or `Function` | Signed dual for labeled constraint |
+| `state_constraints_lb_dual(sol)` | Dual values | State lower bound duals (non-negative) |
+| `state_constraints_ub_dual(sol)` | Dual values | State upper bound duals (non-negative) |
+| `control_constraints_lb_dual(sol)` | Dual values | Control lower bound duals (non-negative) |
+| `control_constraints_ub_dual(sol)` | Dual values | Control upper bound duals (non-negative) |
+| `variable_constraints_lb_dual(sol)` | Dual values | Variable lower bound duals (non-negative) |
+| `variable_constraints_ub_dual(sol)` | Dual values | Variable upper bound duals (non-negative) |
+| `dim_dual_state_constraints_box(sol)` | `Int` | Dimension of state box constraint duals |
+| `dim_dual_control_constraints_box(sol)` | `Int` | Dimension of control box constraint duals |
+| `dim_dual_variable_constraints_box(sol)` | `Int` | Dimension of variable box constraint duals |
+| `path_constraints_dual(sol)` | Dual values | Nonlinear path constraint duals (signed) |
+| `boundary_constraints_dual(sol)` | Dual values | Nonlinear boundary constraint duals (signed) |
+| `dim_path_constraints_nl(sol)` | `Int` | Number of nonlinear path constraints |
+| `dim_boundary_constraints_nl(sol)` | `Int` | Number of nonlinear boundary constraints |
 
 ### Solution metadata
 

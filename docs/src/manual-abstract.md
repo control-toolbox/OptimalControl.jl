@@ -311,6 +311,9 @@ In the example below, there are
 end
 ```
 
+!!! note "Duplicate box constraints"
+    If the same scalar component of the state, control or variable appears in several **box** constraints (linear range constraints), the effective bounds are the **intersection** of all declared bounds: the effective lower bound is the maximum of declared lower bounds, and the effective upper bound is the minimum of declared upper bounds. A warning is emitted, and an error is thrown if the resulting interval is empty. See [Duplicate box constraints](@ref manual-abstract-box-dedup) below.
+
 !!! note
     Symbols like `<=` or `>=` are also authorised:
 
@@ -385,6 +388,48 @@ end
         ∫( 0.5u(t)^2 ) → min
     end
     ```
+
+### [Duplicate box constraints](@id manual-abstract-box-dedup)
+
+**Box constraints** are linear range constraints on a single scalar component of the state, control or variable — that is, constraints of the form `lb ≤ x_i(t) ≤ ub`, `u_i(t) ≤ ub`, `v_i ≥ lb`, etc. (nonlinear path constraints are *not* concerned by this section).
+
+When the **same scalar component** is targeted by several box-constraint declarations, OptimalControl does **not** keep them as separate constraints. Instead, it merges them by taking the **intersection** of all declared bounds:
+
+- the effective lower bound is `max` of all declared lower bounds,
+- the effective upper bound is `min` of all declared upper bounds,
+- a single `@warn` is emitted per duplicated component, listing every contributing label,
+- all labels that declared the component are preserved as **aliases** (accessible via the `aliases` field of [`state_constraints_box`](@ref), [`control_constraints_box`](@ref) and [`variable_constraints_box`](@ref); see the [manual on the OCP object](@ref manual-model)),
+- if the intersection is empty (`max(lbs) > min(ubs)`), an `IncorrectArgument` exception is thrown.
+
+For instance,
+
+```julia
+@def begin
+    t ∈ [0, 1], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    0 ≤ q(t) ≤ 2, (q_wide)
+    1 ≤ q(t) ≤ 3, (q_tight)
+    ẋ(t) == [v(t), u(t)]
+    ...
+end
+```
+
+yields the effective constraint `1 ≤ q(t) ≤ 2`, with `aliases = [:q_wide, :q_tight]` for that component, and a warning reporting both labels.
+
+Conversely, the following declares an empty feasible set and raises an error at build time:
+
+```julia
+@def begin
+    t ∈ [0, 1], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    0 ≤ q(t) ≤ 1, (low)
+    2 ≤ q(t) ≤ 3, (high) # max(lbs)=2 > min(ubs)=1 ⇒ IncorrectArgument
+    ẋ(t) == [v(t), u(t)]
+    ...
+end
+```
 
 ## [Mayer cost](@id manual-abstract-mayer)
 
