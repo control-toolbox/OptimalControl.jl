@@ -41,7 +41,6 @@ boundary_constraints_dual
 boundary_constraints_nl
 bypass
 components
-constraint
 constraints
 constraints_violation
 control
@@ -116,7 +115,6 @@ methods
 model
 name
 nlp_model
-objective
 ocp_model
 ocp_solution
 option_default
@@ -149,7 +147,6 @@ time
 time_grid
 time_name
 times
-variable
 variable_components
 variable_constraints_box
 variable_constraints_lb_dual

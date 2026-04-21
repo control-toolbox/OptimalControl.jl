@@ -22,7 +22,7 @@ using CUDA
 
 !!! note "Solver requirements"
 
-    For complete solver requirements including CPU solvers, see [Solver requirements](@ref manual-solve#solver-requirements) in the main solving manual.
+    For complete solver requirements including CPU solvers, see [Solver requirements](@ref manual-solve-solver-requirements) in the main solving manual.
 
 !!! warning "CUDA required"
 

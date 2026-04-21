@@ -101,9 +101,9 @@ Each field can be accessed directly (`ocp.times`, etc) or by a getter:
 * [`times`](@ref)
 * [`state`](@ref)
 * [`control`](@ref)
-* [`variable`](@ref)
+* `variable`
 * [`dynamics`](@ref)
-* [`objective`](@ref)
+* `objective`
 * [`constraints`](@ref)
 * [`definition`](@ref)
 
