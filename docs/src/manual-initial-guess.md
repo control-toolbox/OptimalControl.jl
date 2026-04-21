@@ -565,7 +565,7 @@ nothing # hide
 
 !!! tip "Interactions with an optimal control solution"
 
-    Please check [`state`](@ref), [`costate`](@ref), [`control`](@ref) and [`variable`](@ref variable(::Solution)) to get data from the solution. The functions `state`, `costate` and `control` return functions of time and `variable` returns a vector.
+    Please check [`state`](@ref), [`costate`](@ref), [`control`](@ref) and [`variable`](@ref CTModels.OCP.variable) to get data from the solution. The functions `state`, `costate` and `control` return functions of time and `variable` returns a vector.
 
 ## Costate / multipliers
 

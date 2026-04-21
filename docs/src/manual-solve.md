@@ -173,7 +173,7 @@ solve(ocp, :collocation, :ipopt)                # specify discretizer + solver
 solve(ocp, :collocation, :adnlp, :ipopt, :cpu)  # complete description
 ```
 
-## Solver requirements
+## [Solver requirements](@id manual-solve-solver-requirements)
 
 Each solver requires its package to be loaded to provide the solver implementation:
 

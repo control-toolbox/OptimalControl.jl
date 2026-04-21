@@ -193,6 +193,9 @@ with_api_reference(src_dir, ext_dir) do api_pages
         format=Documenter.HTML(;
             repolink="https://" * repo_url,
             prettyurls=false,
+            example_size_threshold=2_000_000,
+            size_threshold_warn=2_000_000,
+            size_threshold=2_000_000,
             assets=[
                 asset("https://control-toolbox.org/assets/css/documentation.css"),
                 asset("https://control-toolbox.org/assets/js/documentation.js"),
@@ -213,7 +216,10 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "State constraint" => "example-state-constraint.md",
             ],
             "Manual" => [
-                "Define a problem" => "manual-abstract.md",
+                "Define a problem" => [
+                    "Abstract syntax (@def)" => "manual-abstract.md",
+                    "Functional API (macro-free)" => "manual-macro-free.md",
+                ],
                 "Use AI" => "manual-ai-llm.md",
                 "Problem characteristics" => "manual-model.md",
                 "Set an initial guess" => "manual-initial-guess.md",
