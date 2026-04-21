@@ -193,6 +193,9 @@ with_api_reference(src_dir, ext_dir) do api_pages
         format=Documenter.HTML(;
             repolink="https://" * repo_url,
             prettyurls=false,
+            example_size_threshold=1_000_000,
+            size_threshold_warn=1_000_000,
+            size_threshold=1_000_000,
             assets=[
                 asset("https://control-toolbox.org/assets/css/documentation.css"),
                 asset("https://control-toolbox.org/assets/js/documentation.js"),
