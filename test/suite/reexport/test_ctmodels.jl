@@ -64,6 +64,7 @@ function test_ctmodels()
 
         Test.@testset "API Types" begin
             for T in (
+                OptimalControl.PreModel,
                 OptimalControl.Model,
                 OptimalControl.AbstractModel,
                 OptimalControl.AbstractModel,
@@ -75,6 +76,26 @@ function test_ctmodels()
                     Test.@test isdefined(OptimalControl, nameof(T))
                     Test.@test !isdefined(CurrentModule, nameof(T))
                     Test.@test T isa DataType || T isa UnionAll
+                end
+            end
+        end
+
+        Test.@testset "Builder Functions" begin
+            for f in (
+                :time!,
+                :state!,
+                :control!,
+                :variable!,
+                :dynamics!,
+                :objective!,
+                :constraint!,
+                :time_dependence!,
+                :build,
+            )
+                Test.@testset "$f" begin
+                    Test.@test isdefined(OptimalControl, f)
+                    Test.@test isdefined(CurrentModule, f)
+                    Test.@test getfield(OptimalControl, f) isa Function
                 end
             end
         end
@@ -204,6 +225,7 @@ function test_ctmodels()
             Test.@test OptimalControl.Model <: OptimalControl.AbstractModel
             Test.@test OptimalControl.Solution <: OptimalControl.AbstractSolution
             Test.@test OptimalControl.InitialGuess <: OptimalControl.AbstractInitialGuess
+            Test.@test OptimalControl.PreModel isa DataType
         end
 
         Test.@testset "Method Signatures" begin

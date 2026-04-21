@@ -213,7 +213,10 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "State constraint" => "example-state-constraint.md",
             ],
             "Manual" => [
-                "Define a problem" => "manual-abstract.md",
+                "Define a problem" => [
+                    "Abstract syntax (@def)" => "manual-abstract.md",
+                    "Functional API (macro-free)" => "manual-macro-free.md",
+                ],
                 "Use AI" => "manual-ai-llm.md",
                 "Problem characteristics" => "manual-model.md",
                 "Set an initial guess" => "manual-initial-guess.md",

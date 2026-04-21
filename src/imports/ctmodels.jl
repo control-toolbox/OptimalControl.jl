@@ -20,6 +20,7 @@ import CTModels: AbstractInitialGuess, InitialGuess
 import CTModels:
 
     # api types
+    PreModel,
     Model,
     AbstractModel,
     Solution,
@@ -120,3 +121,15 @@ import CTModels:
     control_constraints_ub_dual,
     variable_constraints_lb_dual,
     variable_constraints_ub_dual
+
+# OCP Builder functions (functional API)
+@reexport import CTModels:
+    time!,
+    state!,
+    control!,
+    variable!,
+    dynamics!,
+    objective!,
+    constraint!,
+    time_dependence!,
+    build
