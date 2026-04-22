@@ -1,5 +1,9 @@
 # [Functional API (macro-free)](@id manual-macro-free)
 
+```@meta
+Draft = false
+```
+
 The [`@def`](@ref manual-abstract-syntax) macro provides a concise DSL to define optimal control problems. An alternative is the **functional API**, which builds the same problem step by step using plain Julia functions. This approach is useful when:
 
 - generating problems **programmatically** from parameters, data, or loops,
@@ -11,6 +15,10 @@ The functional API uses [`OptimalControl.PreModel`](@ref CTModels.PreModel) as a
 !!! note
 
     When a problem is defined with the functional API, [`definition`](@ref)`(ocp)` returns an `EmptyDefinition` — no abstract expression is stored. This contrasts with `@def`, which records the full DSL expression for display and introspection.
+
+!!! warning "Modeler compatibility"
+
+    Problems built with the functional API can only be solved with the `:adnlp` modeler (the default). The `:exa` modeler (ExaModels, GPU-capable) requires the abstract syntax [`@def`](@ref manual-abstract-syntax). See the [solve manual](@ref manual-solve) for modeler details.
 
 ---
 
@@ -133,8 +141,6 @@ ocp = build(pre)
 
 For each problem below, the [`@def`](@ref) abstract syntax is shown on the left and the equivalent functional API on the right. After `build`, both formulations produce an equivalent model and can be passed directly to [`solve`](@ref manual-solve).
 
----
-
 ### [Double integrator: energy minimisation](@id manual-macro-free-energy)
 
 The simplest case: fixed time interval, boundary constraints, autonomous dynamics, Lagrange cost.
@@ -142,6 +148,7 @@ See the [full example](@ref example-double-integrator-energy) for solving and pl
 
 ```@example ex-energy
 using OptimalControl
+using NLPModelsIpopt
 t0 = 0.0; tf = 1.0; x0 = [-1.0, 0.0]; xf = [0.0, 0.0]
 nothing # hide
 ```
@@ -246,7 +253,33 @@ definition(ocp_macro)
 has_abstract_definition(ocp_func)
 ```
 
----
+#### Scalar vs vector: a subtlety of the functional API
+
+In the functional API definition above, the control is declared with `control!(pre, 1)` — it is of **dimension 1**. Yet, inside the callbacks `f_energy!` and `lagrange_energy`, we accessed it as `u[1]`, *not* as `u`. The same applies to the state and the variable: inside callbacks, dimension-1 components must always be indexed.
+
+This is because the functional API callbacks always receive `x`, `u`, and `v` as **vectors**, regardless of their dimension. This keeps the callback signatures uniform and lets the same code shape work for any dimension.
+
+However, once the problem is solved, accessing the control (or state, or variable) on the solution returns a **scalar** when the component is of dimension 1 — just like the [`@def`](@ref manual-abstract-syntax) macro convention:
+
+```@example ex-energy
+u_macro = control(sol_macro)
+u_func  = control(sol_func)
+# The callbacks used u[1], yet the solution returns a scalar:
+u_macro(t0), u_func(t0)
+```
+
+```@example ex-energy
+typeof(u_macro(t0)), typeof(u_func(t0))
+```
+
+!!! warning "Scalar vs vector conventions"
+
+    The functional API uses two different conventions depending on where you are:
+
+    - **Inside callbacks** (`dynamics!`, `objective!`, `constraint!`): `x`, `u`, `v` are **always vectors**. For a dimension-1 component, use `x[1]`, `u[1]`, `v[1]`.
+    - **On a solution**: `state(sol)(t)`, `control(sol)(t)`, `variable(sol)` return a **scalar** when the corresponding component is of dimension 1. This matches the [`@def`](@ref manual-abstract-syntax) convention (see the [solution manual](@ref manual-solution)).
+
+    This asymmetry is intentional: callbacks are written once for any dimension, while solutions expose the mathematical object (scalar or vector) directly.
 
 ### [Double integrator: time minimisation](@id manual-macro-free-time)
 
@@ -255,6 +288,7 @@ See the [full example](@ref example-double-integrator-time) for solving and plot
 
 ```@example ex-time
 using OptimalControl
+using NLPModelsIpopt
 t0 = 0.0; x0 = [-1.0, 0.0]; xf = [0.0, 0.0]
 nothing # hide
 ```
@@ -366,8 +400,6 @@ plot!(plt, sol_func; label="Functional API", color=2, linestyle=:dash)
 !!! note
     `variable!(pre, 1, "tf")` must be called **before** `time!(pre; indf=1)` so that the free-time index refers to a declared variable.
 
----
-
 ### [Control-free problems](@id manual-macro-free-control-free)
 
 No control variable: `control!` is simply omitted. The dynamics and objective still receive `u` as an argument, but it is a zero-dimensional vector.
@@ -375,6 +407,7 @@ See the [full example](@ref example-control-free) for solving and plotting.
 
 ```@example ex-cf
 using OptimalControl
+using NLPModelsIpopt
 λ_true = 0.5
 model_fn(t) = 2 * exp(λ_true * t)
 noise_fn(t) = 2e-1 * sin(4π * t)
@@ -475,8 +508,6 @@ plot!(plt, sol_func; label="Functional API", color=2, linestyle=:dash)
 !!! note
     `time_dependence!(pre; autonomous=false)` is required here because the Lagrange integrand `data_fn(t)` depends explicitly on time `t`.
 
----
-
 ### [Problems mixing control and variable](@id manual-macro-free-control-and-variable)
 
 A variable parameter and an explicit control are used simultaneously.
@@ -484,6 +515,7 @@ See the [full example](@ref example-control-and-variable) for solving and plotti
 
 ```@example ex-cv
 using OptimalControl
+using NLPModelsIpopt
 λ_true = 0.5
 model_fn2(t) = 2 * exp(λ_true * t)
 noise_fn2(t) = 2e-1 * sin(4π * t)
@@ -584,8 +616,6 @@ plt = plot(sol_macro; label="Macro", color=1, size=(800, 400))
 plot!(plt, sol_func; label="Functional API", color=2, linestyle=:dash)
 ```
 
----
-
 ### [Singular control](@id manual-macro-free-singular)
 
 Three-dimensional state, free final time, state and control box constraints, Mayer cost.
@@ -593,6 +623,7 @@ See the [full example](@ref example-singular-control) for solving and plotting.
 
 ```@example ex-singular
 using OptimalControl
+using NLPModelsIpopt
 nothing # hide
 ```
 
@@ -710,8 +741,6 @@ plt = plot(sol_macro; label="Macro", color=1, size=(800, 800))
 plot!(plt, sol_func; label="Functional API", color=2, linestyle=:dash)
 ```
 
----
-
 ### [State constraint](@id manual-macro-free-state-constraint)
 
 Same double integrator as the energy minimisation example, with an added upper bound on velocity.
@@ -719,6 +748,7 @@ See the [full example](@ref example-state-constraint) for solving and plotting.
 
 ```@example ex-state
 using OptimalControl
+using NLPModelsIpopt
 t0 = 0.0; tf = 1.0; x0 = [-1.0, 0.0]; xf = [0.0, 0.0]
 nothing # hide
 ```
@@ -824,8 +854,6 @@ plot!(plt, sol_func; label="Functional API", color=2, linestyle=:dash)
 
 !!! note
     The state box constraint `v(t) ≤ 1.2` is expressed as `constraint!(pre, :state; rg=2:2, lb=[-Inf], ub=[1.2], ...)`, where `rg=2:2` selects the second state component `v`.
-
----
 
 ## API Reference
 

@@ -153,7 +153,7 @@ cp(
 Draft = false
 ```
 =#
-draft = false  # Draft mode: if true, @example blocks in markdown are not executed
+draft = true  # Draft mode: if true, @example blocks in markdown are not executed
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Load extensions
@@ -175,6 +175,28 @@ ext_dir = abspath(joinpath(@__DIR__, "..", "ext"))
 include("api_reference.jl")
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# Logger: silence the informational warning about @example blocks whose HTML
+# representation exceeds `example_size_threshold`. The SVG fallback is used
+# automatically (which is what we want for plots), so this warning is harmless.
+# ═══════════════════════════════════════════════════════════════════════════════
+using Logging
+struct ExampleSizeThresholdFilter <: AbstractLogger
+    inner::AbstractLogger
+end
+Logging.min_enabled_level(l::ExampleSizeThresholdFilter) = Logging.min_enabled_level(l.inner)
+Logging.shouldlog(l::ExampleSizeThresholdFilter, level, _module, group, id) =
+    Logging.shouldlog(l.inner, level, _module, group, id)
+Logging.catch_exceptions(l::ExampleSizeThresholdFilter) = Logging.catch_exceptions(l.inner)
+function Logging.handle_message(l::ExampleSizeThresholdFilter, level, message, args...; kwargs...)
+    msg = string(message)
+    if level == Logging.Warn && occursin("example_size_threshold", msg)
+        return nothing
+    end
+    return Logging.handle_message(l.inner, level, message, args...; kwargs...)
+end
+global_logger(ExampleSizeThresholdFilter(global_logger()))
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # Build documentation
 # ═══════════════════════════════════════════════════════════════════════════════
 with_api_reference(src_dir, ext_dir) do api_pages
@@ -193,16 +215,15 @@ with_api_reference(src_dir, ext_dir) do api_pages
         format=Documenter.HTML(;
             repolink="https://" * repo_url,
             prettyurls=false,
-            example_size_threshold=2_000_000,
-            size_threshold_warn=2_000_000,
-            size_threshold=2_000_000,
             assets=[
                 asset("https://control-toolbox.org/assets/css/documentation.css"),
                 asset("https://control-toolbox.org/assets/js/documentation.js"),
                 "assets/custom.css",
             ],
             size_threshold_ignore=[
-                joinpath("api", "private.md"), joinpath("api", "public.md")
+                joinpath("api", "private.md"), 
+                joinpath("api", "public.md"),
+                "manual-macro-free.md",
             ],
         ),
         pages=[

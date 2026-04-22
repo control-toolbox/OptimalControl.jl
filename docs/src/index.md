@@ -70,7 +70,7 @@ b_{\mathrm{lower}} & \le & b(x(t_0), x(t_f)) & \le & b_{\mathrm{upper}}.
 
 If $g = 0$, the cost is said to be in **Lagrange form**; if $f^0 = 0$, it is in **Mayer form**.
 
-### Free times and extra variables
+**Free times and extra variables**
 
 The initial time $t_0$ and the final time $t_f$ may also be free, that is part of the optimisation variables:
 

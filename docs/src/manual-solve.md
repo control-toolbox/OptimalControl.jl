@@ -97,7 +97,7 @@ Each method is a **quadruplet** `(discretizer, modeler, solver, parameter)`:
 
 2. **Modeler** — how to build the NLP model:
    - `:adnlp`: uses [`ADNLPModels.ADNLPModel`](@extref) with automatic differentiation
-   - `:exa`: uses [`ExaModels.ExaModel`](@extref) with SIMD optimization (GPU-capable)
+   - `:exa`: uses [`ExaModels.ExaModel`](@extref) with SIMD optimization (GPU-capable). **Only compatible with problems built via [`@def`](@ref manual-abstract-syntax)**, not with the [functional API](@ref manual-macro-free)
 
 3. **Solver** — which NLP solver to use:
    - `:ipopt`: [Ipopt](https://coin-or.github.io/Ipopt/) interior point solver (CPU-only)
