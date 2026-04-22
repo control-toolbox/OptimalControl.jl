@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Functional API (macro-free) · OptimalControl.jl</title><meta name="title" content="Functional API (macro-free) · OptimalControl.jl"/><meta property="og:title" content="Functional API (macro-free) · OptimalControl.jl"/><meta property="twitter:title" content="Functional API (macro-free) · OptimalControl.jl"/><meta name="description" content="Documentation for OptimalControl.jl."/><meta property="og:description" content="Documentation for OptimalControl.jl."/><meta property="twitter:description" content="Documentation for OptimalControl.jl."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script><link href="https://control-toolbox.org/assets/css/documentation.css" rel="stylesheet" type="text/css"/><script src="https://control-toolbox.org/assets/js/documentation.js"></script><link href="assets/custom.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="index.html">OptimalControl.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="index.html">Introduction</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="example-double-integrator-energy.html">Energy minimisation</a></li><li><a class="tocitem" href="example-double-integrator-time.html">Time mininimisation</a></li><li><a class="tocitem" href="example-control-free.html">Control-free problems</a></li><li><a class="tocitem" href="example-control-and-variable.html">Control and variable</a></li><li><a class="tocitem" href="example-singular-control.html">Singular control</a></li><li><a class="tocitem" href="example-state-constraint.html">State constraint</a></li></ul></li><li><span class="tocitem">Manual</span><ul><li><input class="collapse-toggle" id="menuitem-3-1" type="checkbox" checked/><label class="tocitem" for="menuitem-3-1"><span class="docs-label">Define a problem</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="manual-abstract.html">Abstract syntax (@def)</a></li><li class="is-active"><a class="tocitem" href="manual-macro-free.html">Functional API (macro-free)</a><ul class="internal"><li><a class="tocitem" href="#Canvas"><span>Canvas</span></a></li><li><a class="tocitem" href="#Examples"><span>Examples</span></a></li><li><a class="tocitem" href="#API-Reference"><span>API Reference</span></a></li></ul></li></ul></li><li><a class="tocitem" href="manual-ai-llm.html">Use AI</a></li><li><a class="tocitem" href="manual-model.html">Problem characteristics</a></li><li><a class="tocitem" href="manual-initial-guess.html">Set an initial guess</a></li><li><input class="collapse-toggle" id="menuitem-3-5" type="checkbox"/><label class="tocitem" for="menuitem-3-5"><span class="docs-label">Solve a problem</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="manual-solve.html">Basic usage</a></li><li><a class="tocitem" href="manual-solve-advanced.html">Advanced options</a></li><li><a class="tocitem" href="manual-solve-explicit.html">Explicit mode</a></li><li><a class="tocitem" href="manual-solve-gpu.html">GPU solving</a></li></ul></li><li><a class="tocitem" href="manual-solution.html">Solution characteristics</a></li><li><a class="tocitem" href="manual-plot.html">Plot a solution</a></li><li><a class="tocitem" href="manual-differential-geometry.html">Differential geometry tools</a></li><li><input class="collapse-toggle" id="menuitem-3-9" type="checkbox"/><label class="tocitem" for="menuitem-3-9"><span class="docs-label">Compute flows</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="manual-flow-ocp.html">From optimal control problems</a></li><li><a class="tocitem" href="manual-flow-others.html">From Hamiltonians and others</a></li></ul></li></ul></li><li><span class="tocitem">API Reference</span><ul><li><a class="tocitem" href="api/public.html">Public</a></li><li><a class="tocitem" href="api/private.html">Private</a></li><li><a class="tocitem" href="api/subpackages.html">Subpackages</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Manual</a></li><li><a class="is-disabled">Define a problem</a></li><li class="is-active"><a href="manual-macro-free.html">Functional API (macro-free)</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="manual-macro-free.html">Functional API (macro-free)</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/control-toolbox/OptimalControl.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="manual-macro-free"><a class="docs-heading-anchor" href="#manual-macro-free">Functional API (macro-free)</a><a id="manual-macro-free-1"></a><a class="docs-heading-anchor-permalink" href="#manual-macro-free" title="Permalink"></a></h1><p>The <a href="manual-abstract.html#manual-abstract-syntax"><code>@def</code></a> macro provides a concise DSL to define optimal control problems. An alternative is the <strong>functional API</strong>, which builds the same problem step by step using plain Julia functions. This approach is useful when:</p><ul><li>generating problems <strong>programmatically</strong> from parameters, data, or loops,</li><li>building <strong>library code</strong> that must not rely on macros,</li><li>interfacing with external tools that process problem structures directly.</li></ul><p>The functional API uses <a href="manual-macro-free.html#CTModels.OCP.PreModel-manual-macro-free"><code>OptimalControl.PreModel</code></a> as a mutable builder, populated by setter calls, then frozen into an immutable <a href="manual-macro-free.html#CTModels.OCP.Model-manual-macro-free"><code>OptimalControl.Model</code></a> by <a href="manual-macro-free.html#CTModels.OCP.build-manual-macro-free"><code>build</code></a>.</p><div class="admonition is-info" id="Note-20c225ede2069350"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-20c225ede2069350" title="Permalink"></a></header><div class="admonition-body"><p>When a problem is defined with the functional API, <a href="api/public.html#CTModels.OCP.definition"><code>definition</code></a><code>(ocp)</code> returns an <code>EmptyDefinition</code> — no abstract expression is stored. This contrasts with <code>@def</code>, which records the full DSL expression for display and introspection.</p></div></div><div class="admonition is-warning" id="Modeler-compatibility-e0ee3d8a9dd23262"><header class="admonition-header">Modeler compatibility<a class="admonition-anchor" href="#Modeler-compatibility-e0ee3d8a9dd23262" title="Permalink"></a></header><div class="admonition-body"><p>Problems built with the functional API can only be solved with the <code>:adnlp</code> modeler (the default). The <code>:exa</code> modeler (ExaModels, GPU-capable) requires the abstract syntax <a href="manual-abstract.html#manual-abstract-syntax"><code>@def</code></a>. See the <a href="manual-solve.html#manual-solve">solve manual</a> for modeler details.</p></div></div><hr/><p><strong>Content</strong></p><ul><li><a href="manual-macro-free.html#manual-macro-free">Functional API (macro-free)</a></li><li class="no-marker"><ul><li><a href="manual-macro-free.html#Canvas">Canvas</a></li><li><a href="manual-macro-free.html#Examples">Examples</a></li><li class="no-marker"><ul><li><a href="manual-macro-free.html#manual-macro-free-energy">Double integrator: energy minimisation</a></li><li><a href="manual-macro-free.html#manual-macro-free-time">Double integrator: time minimisation</a></li><li><a href="manual-macro-free.html#manual-macro-free-control-free">Control-free problems</a></li><li><a href="manual-macro-free.html#manual-macro-free-control-and-variable">Problems mixing control and variable</a></li><li><a href="manual-macro-free.html#manual-macro-free-singular">Singular control</a></li><li><a href="manual-macro-free.html#manual-macro-free-state-constraint">State constraint</a></li></ul></li><li><a href="manual-macro-free.html#API-Reference">API Reference</a></li></ul></li></ul><hr/><h2 id="Canvas"><a class="docs-heading-anchor" href="#Canvas">Canvas</a><a id="Canvas-1"></a><a class="docs-heading-anchor-permalink" href="#Canvas" title="Permalink"></a></h2><p>The functional API mirrors the <a href="index.html#math-formulation">Mathematical formulation</a>. The correspondence is:</p><table><tr><th style="text-align: left">Math</th><th style="text-align: left">Functional API</th></tr><tr><td style="text-align: left">Dynamics <span>$f(t, x, u)$</span></td><td style="text-align: left"><code>dyn!</code> passed to <a href="manual-macro-free.html#CTModels.OCP.dynamics!-manual-macro-free"><code>dynamics!</code></a></td></tr><tr><td style="text-align: left">Lagrange integrand <span>$f^0(t, x, u)$</span></td><td style="text-align: left"><code>lag</code> passed to <a href="manual-macro-free.html#CTModels.OCP.objective!-manual-macro-free"><code>objective!</code></a></td></tr><tr><td style="text-align: left">Mayer terminal cost <span>$g(x_0, x_f)$</span></td><td style="text-align: left"><code>may</code> passed to <a href="manual-macro-free.html#CTModels.OCP.objective!-manual-macro-free"><code>objective!</code></a></td></tr><tr><td style="text-align: left">Path constraint <span>$c(t, x, u)$</span></td><td style="text-align: left"><code>p!</code> passed to <a href="@ref"><code>constraint!</code></a><code>(pre, :path; ...)</code></td></tr><tr><td style="text-align: left">Boundary constraint <span>$b(x_0, x_f)$</span></td><td style="text-align: left"><code>b!</code> passed to <a href="@ref"><code>constraint!</code></a><code>(pre, :boundary; ...)</code></td></tr><tr><td style="text-align: left">Extra variable <span>$v$</span></td><td style="text-align: left"><a href="manual-macro-free.html#CTModels.OCP.variable!-manual-macro-free"><code>variable!</code></a> (extra argument to all the callbacks above)</td></tr></table><pre><code class="language-julia hljs">using OptimalControl
+
+pre = OptimalControl.PreModel()
+
+# ─── Optional: must come before time! when using indf/ind0 ───────────────────
+variable!(pre, q)                         # q = variable dimension
+# ─────────────────────────────────────────────────────────────────────────────
+
+time!(pre; t0=..., tf=...)                # fixed times
+# or: time!(pre; t0=..., indf=i)          # free final time at variable index i
+
+state!(pre, n)                            # n = state dimension
+
+# ─── Optional: omit entirely for control-free problems ───────────────────────
+control!(pre, m)                          # m = control dimension
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Dynamics — in-place, signature: dyn!(dx, t, x, u, v)
+#   dx : output vector (modified in place), length n
+#   t  : current time  (scalar)
+#   x  : state         (vector of length n; scalar state ↦ x[1])
+#   u  : control       (vector of length m; scalar control ↦ u[1]; unused if control-free)
+#   v  : variable      (vector of length q; scalar variable ↦ v[1]; unused if no variable)
+function dyn!(dx, t, x, u, v)
+    dx[1] = ...
+    dx[2] = ...
+end
+dynamics!(pre, dyn!)
+
+# Lagrange integrand — out-of-place, signature: lag(t, x, u, v) → scalar
+lag(t, x, u, v) = ...
+# Mayer terminal cost — out-of-place, signature: may(x0, xf, v) → scalar
+#   x0 : initial state (vector of length n; scalar state ↦ x0[1])
+#   xf : final state   (vector of length n; scalar state ↦ xf[1])
+may(x0, xf, v) = ...
+
+objective!(pre, :min; lagrange=lag)                   # Lagrange cost
+# or: objective!(pre, :min; mayer=may)                # Mayer cost
+# or: objective!(pre, :min; mayer=may, lagrange=lag)  # Bolza cost
+
+# ─── Optional: one call per constraint ───────────────────────────────────────
+# Two families of constraints:
+#
+# (a) Box constraints on components — :state, :control, :variable
+#     rg selects the component range i:j, with lb ≤ x[rg] ≤ ub (resp. u, v).
+constraint!(pre, :state;    rg=i:j, lb=..., ub=..., label=:name)
+constraint!(pre, :control;  rg=i:j, lb=..., ub=..., label=:name)
+constraint!(pre, :variable; rg=i:j, lb=..., ub=..., label=:name)
+#
+# (b) Non-linear constraints defined by a function — :boundary, :path
+#     The constraint reads:  lb ≤ f(...) ≤ ub  (use lb=ub for equality).
+#
+#     Boundary — in-place, signature: b!(val, x0, xf, v)   (same shape as Mayer)
+#         val : output vector (modified in place), length = length(lb) = length(ub)
+#         x0  : initial state (vector of length n; scalar state ↦ x0[1])
+#         xf  : final   state (vector of length n; scalar state ↦ xf[1])
+#         v   : variable (vector of length q)
+function b!(val, x0, xf, v)
+    val[1] = ...
+end
+constraint!(pre, :boundary; f=b!, lb=..., ub=..., label=:name)
+#
+#     Path — in-place, signature: p!(val, t, x, u, v)      (same shape as dynamics)
+#         val : output vector (modified in place), length = length(lb) = length(ub)
+#         t   : current time  (scalar)
+#         x   : state         (vector of length n)
+#         u   : control       (vector of length m)
+#         v   : variable      (vector of length q)
+function p!(val, t, x, u, v)
+    val[1] = ...
+end
+constraint!(pre, :path; f=p!, lb=..., ub=..., label=:name)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# autonomous=true  ⟺  time t does NOT appear explicitly in the dynamics,
+#                     the Lagrange integrand, nor in any :path constraint.
+# autonomous=false ⟺  at least one of them depends explicitly on t.
+time_dependence!(pre; autonomous=true)
+
+ocp = build(pre)</code></pre><p><strong>Required:</strong> <code>time!</code> · <code>state!</code> · <code>dynamics!</code> · <code>objective!</code> · <code>time_dependence!</code> · <code>build</code></p><p><strong>Optional:</strong> <code>variable!</code> · <code>control!</code> · <code>constraint!</code> (repeatable)</p><p><strong>Ordering constraints:</strong></p><ul><li><code>variable!</code> → before <code>time!</code> when using free-time indices (<code>indf</code>, <code>ind0</code>)</li><li><code>variable!</code> → before <code>dynamics!</code> and <code>objective!</code></li><li><code>dynamics!</code> and <code>objective!</code> → after <code>time!</code> and <code>state!</code></li></ul><h2 id="Examples"><a class="docs-heading-anchor" href="#Examples">Examples</a><a id="Examples-1"></a><a class="docs-heading-anchor-permalink" href="#Examples" title="Permalink"></a></h2><p>For each problem below, the <a href="api/public.html#CTParser.@def"><code>@def</code></a> abstract syntax is shown on the left and the equivalent functional API on the right. After <code>build</code>, both formulations produce an equivalent model and can be passed directly to <a href="manual-solve.html#manual-solve"><code>solve</code></a>.</p><h3 id="manual-macro-free-energy"><a class="docs-heading-anchor" href="#manual-macro-free-energy">Double integrator: energy minimisation</a><a id="manual-macro-free-energy-1"></a><a class="docs-heading-anchor-permalink" href="#manual-macro-free-energy" title="Permalink"></a></h3><p>The simplest case: fixed time interval, boundary constraints, autonomous dynamics, Lagrange cost. See the <a href="example-double-integrator-energy.html#example-double-integrator-energy">full example</a> for solving and plotting.</p><pre><code class="language-julia hljs">using OptimalControl
+using NLPModelsIpopt
+t0 = 0.0; tf = 1.0; x0 = [-1.0, 0.0]; xf = [0.0, 0.0]</code></pre><div class="responsive-columns-30-70">
+<div><p><strong>Abstract syntax</strong></p><pre><code class="language-julia hljs">ocp_macro = @def begin
+
+t ∈ [t0, tf], time
+x = (q, v) ∈ R², state
+u ∈ R, control
+
+x(t0) == x0
+x(tf) == xf
+
+ẋ(t) == [v(t), u(t)]
+
+0.5∫( u(t)^2 ) → min
+
+end</code></pre></div>
+<div><p><strong>Functional API</strong></p><pre><code class="language-julia hljs">pre = OptimalControl.PreModel()
+
+time!(pre; t0=t0, tf=tf)
+# state &quot;x&quot; with components &quot;q&quot; (position) and &quot;v&quot; (velocity)
+state!(pre, 2, &quot;x&quot;, [&quot;q&quot;, &quot;v&quot;])
+control!(pre, 1)
+
+function f_energy!(dx, t, x, u, v)
+    dx[1] = x[2]
+    dx[2] = u[1]
+    return nothing
+end
+dynamics!(pre, f_energy!)
+
+function boundary_energy!(b, x0_, xf_, v)
+    b[1] = x0_[1] - x0[1]
+    b[2] = x0_[2] - x0[2]
+    b[3] = xf_[1] - xf[1]
+    b[4] = xf_[2] - xf[2]
+    return nothing
+end
+constraint!(pre,
+    :boundary;
+    f=boundary_energy!,
+    lb=zeros(4), ub=zeros(4),
+    label=:endpoint
+)
+
+lagrange_energy(t, x, u, v) = 0.5 * u[1]^2
+objective!(pre, :min; lagrange=lagrange_energy)
+
+time_dependence!(pre; autonomous=true)
+
+ocp_func = build(pre)</code></pre></div>
+</div><p>Both formulations produce identical solutions. We solve both and plot them together for verification:</p><pre><code class="language-julia hljs">sol_macro = solve(ocp_macro; display=false)
+sol_func = solve(ocp_func; display=false)
+
+println(&quot;Macro: objective = &quot;, objective(sol_macro), &quot;, iterations = &quot;, iterations(sol_macro))
+println(&quot;Functional API: objective = &quot;, objective(sol_func), &quot;, iterations = &quot;, iterations(sol_func))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Macro: objective = 6.000096001536038, iterations = 1
+Functional API: objective = 6.000096001536038, iterations = 1</code></pre><pre><code class="language-julia hljs">plt = plot(sol_macro; label=&quot;Macro&quot;, color=1, size=(800, 600))
+plot!(plt, sol_func; label=&quot;Functional API&quot;, color=2, linestyle=:dash)</code></pre><img src="manual-macro-free-dcd7c431.svg" alt="Example block output"/><p>The two models are functionally equivalent. The key difference is visible via <a href="api/public.html#CTModels.OCP.definition"><code>definition</code></a>: the macro records the full DSL expression, whereas the functional API stores an empty definition.</p><pre><code class="language-julia hljs">definition(ocp_macro)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr1">Abstract definition:
+
+</span>    t ∈ [t0, tf], time
+    x = ((q, v) ∈ R², state)
+    u ∈ R, control
+    x(t0) == x0
+    x(tf) == xf
+    ẋ(t) == [v(t), u(t)]
+    0.5 * ∫(u(t) ^ 2) → min
+</code></pre><pre><code class="language-julia hljs">has_abstract_definition(ocp_func)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">false</code></pre><h4 id="Scalar-vs-vector:-a-subtlety-of-the-functional-API"><a class="docs-heading-anchor" href="#Scalar-vs-vector:-a-subtlety-of-the-functional-API">Scalar vs vector: a subtlety of the functional API</a><a id="Scalar-vs-vector:-a-subtlety-of-the-functional-API-1"></a><a class="docs-heading-anchor-permalink" href="#Scalar-vs-vector:-a-subtlety-of-the-functional-API" title="Permalink"></a></h4><p>In the functional API definition above, the control is declared with <code>control!(pre, 1)</code> — it is of <strong>dimension 1</strong>. Yet, inside the callbacks <code>f_energy!</code> and <code>lagrange_energy</code>, we accessed it as <code>u[1]</code>, <em>not</em> as <code>u</code>. The same applies to the state and the variable: inside callbacks, dimension-1 components must always be indexed.</p><p>This is because the functional API callbacks always receive <code>x</code>, <code>u</code>, and <code>v</code> as <strong>vectors</strong>, regardless of their dimension. This keeps the callback signatures uniform and lets the same code shape work for any dimension.</p><p>However, once the problem is solved, accessing the control (or state, or variable) on the solution returns a <strong>scalar</strong> when the component is of dimension 1 — just like the <a href="manual-abstract.html#manual-abstract-syntax"><code>@def</code></a> macro convention:</p><pre><code class="language-julia hljs">u_macro = control(sol_macro)
+u_func  = control(sol_func)
+# The callbacks used u[1], yet the solution returns a scalar:
+u_macro(t0), u_func(t0)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(5.976095617529882, 5.976095617529882)</code></pre><pre><code class="language-julia hljs">typeof(u_macro(t0)), typeof(u_func(t0))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(Float64, Float64)</code></pre><div class="admonition is-warning" id="Scalar-vs-vector-conventions-c8404bcc5a4bca2a"><header class="admonition-header">Scalar vs vector conventions<a class="admonition-anchor" href="#Scalar-vs-vector-conventions-c8404bcc5a4bca2a" title="Permalink"></a></header><div class="admonition-body"><p>The functional API uses two different conventions depending on where you are:</p><ul><li><strong>Inside callbacks</strong> (<code>dynamics!</code>, <code>objective!</code>, <code>constraint!</code>): <code>x</code>, <code>u</code>, <code>v</code> are <strong>always vectors</strong>. For a dimension-1 component, use <code>x[1]</code>, <code>u[1]</code>, <code>v[1]</code>.</li><li><strong>On a solution</strong>: <code>state(sol)(t)</code>, <code>control(sol)(t)</code>, <code>variable(sol)</code> return a <strong>scalar</strong> when the corresponding component is of dimension 1. This matches the <a href="manual-abstract.html#manual-abstract-syntax"><code>@def</code></a> convention (see the <a href="manual-solution.html#manual-solution">solution manual</a>).</li></ul><p>This asymmetry is intentional: callbacks are written once for any dimension, while solutions expose the mathematical object (scalar or vector) directly.</p></div></div><h3 id="manual-macro-free-time"><a class="docs-heading-anchor" href="#manual-macro-free-time">Double integrator: time minimisation</a><a id="manual-macro-free-time-1"></a><a class="docs-heading-anchor-permalink" href="#manual-macro-free-time" title="Permalink"></a></h3><p>Free final time as a variable, Mayer cost, control box constraint. See the <a href="example-double-integrator-time.html#example-double-integrator-time">full example</a> for solving and plotting.</p><pre><code class="language-julia hljs">using OptimalControl
+using NLPModelsIpopt
+t0 = 0.0; x0 = [-1.0, 0.0]; xf = [0.0, 0.0]</code></pre><div class="responsive-columns-30-70">
+<div><p><strong>Abstract syntax</strong></p><pre><code class="language-julia hljs">ocp_macro = @def begin
+
+tf ∈ R,           variable
+t ∈ [t0, tf],     time
+x = (q, v) ∈ R²,  state
+u ∈ R,            control
+
+-1 ≤ u(t) ≤ 1
+
+x(t0) == x0
+x(tf) == xf
+
+ẋ(t) == [v(t), u(t)]
+
+tf → min
+
+end</code></pre></div>
+<div><p><strong>Functional API</strong></p><pre><code class="language-julia hljs">pre = OptimalControl.PreModel()
+
+# variable[1] = final time tf
+variable!(pre, 1, &quot;tf&quot;)
+# free final time: tf = variable[1]
+time!(pre; t0=t0, indf=1)
+# state &quot;x&quot; with components &quot;q&quot; (position) and &quot;v&quot; (velocity)
+state!(pre, 2, &quot;x&quot;, [&quot;q&quot;, &quot;v&quot;])
+control!(pre, 1)
+
+function f_time!(dx, t, x, u, v)
+    dx[1] = x[2]
+    dx[2] = u[1]
+    return nothing
+end
+dynamics!(pre, f_time!)
+
+# control box constraint: -1 ≤ u ≤ 1
+constraint!(pre,
+    :control;
+    rg=1:1, lb=[-1.0], ub=[1.0],
+    label=:u_bounds
+)
+
+function boundary_time!(b, x0_, xf_, v)
+    b[1] = x0_[1] - x0[1]
+    b[2] = x0_[2] - x0[2]
+    b[3] = xf_[1] - xf[1]
+    b[4] = xf_[2] - xf[2]
+    return nothing
+end
+constraint!(pre,
+    :boundary;
+    f=boundary_time!,
+    lb=zeros(4), ub=zeros(4),
+    label=:endpoint
+)
+
+# Mayer cost: minimise tf = variable[1]
+mayer_time(x0_, xf_, v) = v[1]
+objective!(pre, :min; mayer=mayer_time)
+
+time_dependence!(pre; autonomous=true)
+
+ocp_func = build(pre)</code></pre></div>
+</div><p>Both formulations produce identical solutions:</p><pre><code class="language-julia hljs">sol_macro = solve(ocp_macro; display=false)
+sol_func = solve(ocp_func; display=false)
+
+println(&quot;Macro: objective = &quot;, objective(sol_macro), &quot;, iterations = &quot;, iterations(sol_macro))
+println(&quot;Functional API: objective = &quot;, objective(sol_func), &quot;, iterations = &quot;, iterations(sol_func))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Macro: objective = 1.9999999927565821, iterations = 12
+Functional API: objective = 1.9999999927565821, iterations = 12</code></pre><pre><code class="language-julia hljs">plt = plot(sol_macro; label=&quot;Macro&quot;, color=1, size=(800, 600))
+plot!(plt, sol_func; label=&quot;Functional API&quot;, color=2, linestyle=:dash)</code></pre><img src="manual-macro-free-64f17576.svg" alt="Example block output"/><div class="admonition is-info" id="Note-3054c9bca5c32fee"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-3054c9bca5c32fee" title="Permalink"></a></header><div class="admonition-body"><p><code>variable!(pre, 1, &quot;tf&quot;)</code> must be called <strong>before</strong> <code>time!(pre; indf=1)</code> so that the free-time index refers to a declared variable.</p></div></div><h3 id="manual-macro-free-control-free"><a class="docs-heading-anchor" href="#manual-macro-free-control-free">Control-free problems</a><a id="manual-macro-free-control-free-1"></a><a class="docs-heading-anchor-permalink" href="#manual-macro-free-control-free" title="Permalink"></a></h3><p>No control variable: <code>control!</code> is simply omitted. The dynamics and objective still receive <code>u</code> as an argument, but it is a zero-dimensional vector. See the <a href="example-control-free.html#example-control-free">full example</a> for solving and plotting.</p><pre><code class="language-julia hljs">using OptimalControl
+using NLPModelsIpopt
+λ_true = 0.5
+model_fn(t) = 2 * exp(λ_true * t)
+noise_fn(t) = 2e-1 * sin(4π * t)
+data_fn(t) = model_fn(t) + noise_fn(t)
+t0 = 0.0; tf = 2.0; x0_cf = 2.0</code></pre><div class="responsive-columns-30-70">
+<div><p><strong>Abstract syntax</strong></p><pre><code class="language-julia hljs">ocp_macro = @def begin
+
+λ ∈ R, variable
+t ∈ [t0, tf], time
+x ∈ R, state
+
+x(t0) == x0_cf
+
+ẋ(t) == λ * x(t)
+
+∫( (x(t) - data_fn(t))^2 ) → min
+
+end</code></pre></div>
+<div><p><strong>Functional API</strong></p><pre><code class="language-julia hljs">pre = OptimalControl.PreModel()
+
+# variable[1] = parameter λ (growth rate)
+variable!(pre, 1, &quot;λ&quot;)
+time!(pre; t0=t0, tf=tf)
+# scalar state x
+state!(pre, 1, &quot;x&quot;)
+# no control! — control-free problem
+
+function f_cf!(dx, t, x, u, v)
+    # λ = v[1]; u is empty (control-free)
+    dx[1] = v[1] * x[1]
+    return nothing
+end
+dynamics!(pre, f_cf!)
+
+function boundary_cf!(b, x0_, xf_, v)
+    b[1] = x0_[1] - x0_cf
+    return nothing
+end
+constraint!(pre,
+    :boundary;
+    f=boundary_cf!,
+    lb=[0.0], ub=[0.0],
+    label=:ic
+)
+
+lagrange_cf(t, x, u, v) = (x[1] - data_fn(t))^2
+objective!(pre, :min; lagrange=lagrange_cf)
+
+# autonomous=false: data_fn(t) depends on t
+time_dependence!(pre; autonomous=false)
+
+ocp_func = build(pre)</code></pre></div>
+</div><p>Both formulations produce identical solutions:</p><pre><code class="language-julia hljs">sol_macro = solve(ocp_macro; display=false)
+sol_func = solve(ocp_func; display=false)
+
+println(&quot;Macro: objective = &quot;, objective(sol_macro), &quot;, iterations = &quot;, iterations(sol_macro))
+println(&quot;Functional API: objective = &quot;, objective(sol_func), &quot;, iterations = &quot;, iterations(sol_func))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Macro: objective = 0.039418264514532446, iterations = 13
+Functional API: objective = 0.039418264514532446, iterations = 13</code></pre><pre><code class="language-julia hljs">plt = plot(sol_macro; label=&quot;Macro&quot;, color=1, size=(800, 200))
+plot!(plt, sol_func; label=&quot;Functional API&quot;, color=2, linestyle=:dash)</code></pre><img src="manual-macro-free-f681dae2.svg" alt="Example block output"/><div class="admonition is-info" id="Note-d1f7413501d35810"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-d1f7413501d35810" title="Permalink"></a></header><div class="admonition-body"><p><code>time_dependence!(pre; autonomous=false)</code> is required here because the Lagrange integrand <code>data_fn(t)</code> depends explicitly on time <code>t</code>.</p></div></div><h3 id="manual-macro-free-control-and-variable"><a class="docs-heading-anchor" href="#manual-macro-free-control-and-variable">Problems mixing control and variable</a><a id="manual-macro-free-control-and-variable-1"></a><a class="docs-heading-anchor-permalink" href="#manual-macro-free-control-and-variable" title="Permalink"></a></h3><p>A variable parameter and an explicit control are used simultaneously. See the <a href="example-control-and-variable.html#example-control-and-variable">full example</a> for solving and plotting.</p><pre><code class="language-julia hljs">using OptimalControl
+using NLPModelsIpopt
+λ_true = 0.5
+model_fn2(t) = 2 * exp(λ_true * t)
+noise_fn2(t) = 2e-1 * sin(4π * t)
+data_fn2(t) = model_fn2(t) + noise_fn2(t)
+t0 = 0.0; tf = 2.0; x0_cv = 2.0</code></pre><div class="responsive-columns-30-70">
+<div><p><strong>Abstract syntax</strong></p><pre><code class="language-julia hljs">ocp_macro = @def begin
+
+λ ∈ R, variable
+t ∈ [t0, tf], time
+x ∈ R, state
+u ∈ R, control
+
+x(t0) == x0_cv
+
+ẋ(t) == λ * x(t) + u(t)
+
+∫( (x(t) - data_fn2(t))^2 + 0.5*u(t)^2 ) → min
+
+end</code></pre></div>
+<div><p><strong>Functional API</strong></p><pre><code class="language-julia hljs">pre = OptimalControl.PreModel()
+
+# variable[1] = parameter λ (growth rate)
+variable!(pre, 1, &quot;λ&quot;)
+time!(pre; t0=t0, tf=tf)
+# scalar state x
+state!(pre, 1, &quot;x&quot;)
+# scalar control u
+control!(pre, 1)
+
+function f_cv!(dx, t, x, u, v)
+    # λ = v[1]
+    dx[1] = v[1] * x[1] + u[1]
+    return nothing
+end
+dynamics!(pre, f_cv!)
+
+function boundary_cv!(b, x0_, xf_, v)
+    b[1] = x0_[1] - x0_cv
+    return nothing
+end
+constraint!(pre,
+    :boundary;
+    f=boundary_cv!,
+    lb=[0.0], ub=[0.0],
+    label=:ic
+)
+
+lagrange_cv(t, x, u, v) =
+    (x[1] - data_fn2(t))^2 + 0.5 * u[1]^2
+objective!(pre, :min; lagrange=lagrange_cv)
+
+# autonomous=false: data_fn2(t) depends on t
+time_dependence!(pre; autonomous=false)
+
+ocp_func = build(pre)</code></pre></div>
+</div><p>Both formulations produce identical solutions:</p><pre><code class="language-julia hljs">sol_macro = solve(ocp_macro; display=false)
+sol_func = solve(ocp_func; display=false)
+
+println(&quot;Macro: objective = &quot;, objective(sol_macro), &quot;, iterations = &quot;, iterations(sol_macro))
+println(&quot;Functional API: objective = &quot;, objective(sol_func), &quot;, iterations = &quot;, iterations(sol_func))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Macro: objective = 0.0387233419140724, iterations = 11
+Functional API: objective = 0.0387233419140724, iterations = 11</code></pre><pre><code class="language-julia hljs">plt = plot(sol_macro; label=&quot;Macro&quot;, color=1, size=(800, 400))
+plot!(plt, sol_func; label=&quot;Functional API&quot;, color=2, linestyle=:dash)</code></pre><img src="manual-macro-free-31b0b349.svg" alt="Example block output"/><h3 id="manual-macro-free-singular"><a class="docs-heading-anchor" href="#manual-macro-free-singular">Singular control</a><a id="manual-macro-free-singular-1"></a><a class="docs-heading-anchor-permalink" href="#manual-macro-free-singular" title="Permalink"></a></h3><p>Three-dimensional state, free final time, state and control box constraints, Mayer cost. See the <a href="example-singular-control.html#example-singular-control">full example</a> for solving and plotting.</p><pre><code class="language-julia hljs">using OptimalControl
+using NLPModelsIpopt</code></pre><div class="responsive-columns-30-70">
+<div><p><strong>Abstract syntax</strong></p><pre><code class="language-julia hljs">ocp_macro = @def begin
+
+tf ∈ R, variable
+t ∈ [0, tf], time
+q = (x, y, θ) ∈ R³, state
+u ∈ R, control
+
+-1 ≤ u(t) ≤ 1
+-π/2 ≤ θ(t) ≤ π/2
+
+x(0) == 0
+y(0) == 0
+x(tf) == 1
+y(tf) == 0
+
+∂(q)(t) == [cos(θ(t)), sin(θ(t)) + x(t), u(t)]
+
+tf → min
+
+end</code></pre></div>
+<div><p><strong>Functional API</strong></p><pre><code class="language-julia hljs">pre = OptimalControl.PreModel()
+
+# variable[1] = final time tf
+variable!(pre, 1, &quot;tf&quot;)
+# free final time: tf = variable[1]
+time!(pre; t0=0.0, indf=1)
+# state &quot;q&quot; with components &quot;x&quot;, &quot;y&quot;, &quot;θ&quot;
+state!(pre, 3, &quot;q&quot;, [&quot;x&quot;, &quot;y&quot;, &quot;θ&quot;])
+control!(pre, 1)
+
+function f_singular!(dq, t, q, u, v)
+    dq[1] = cos(q[3])
+    dq[2] = sin(q[3]) + q[1]
+    dq[3] = u[1]
+    return nothing
+end
+dynamics!(pre, f_singular!)
+
+# control box constraint: -1 ≤ u ≤ 1
+constraint!(pre,
+    :control;
+    rg=1:1, lb=[-1.0], ub=[1.0],
+    label=:u_bounds
+)
+# state box constraint on θ = q[3]: -π/2 ≤ θ ≤ π/2
+constraint!(pre,
+    :state;
+    rg=3:3, lb=[-π/2], ub=[π/2],
+    label=:theta_bounds
+)
+
+function boundary_singular!(b, q0, qf, v)
+    b[1] = q0[1]        # x(0) = 0
+    b[2] = q0[2]        # y(0) = 0
+    b[3] = qf[1] - 1.0  # x(tf) = 1
+    b[4] = qf[2]        # y(tf) = 0
+    return nothing
+end
+constraint!(pre,
+    :boundary;
+    f=boundary_singular!,
+    lb=zeros(4), ub=zeros(4),
+    label=:endpoint
+)
+
+# Mayer cost: minimise tf = variable[1]
+mayer_singular(q0, qf, v) = v[1]
+objective!(pre, :min; mayer=mayer_singular)
+
+time_dependence!(pre; autonomous=true)
+
+ocp_func = build(pre)</code></pre></div>
+</div><p>Both formulations produce identical solutions:</p><pre><code class="language-julia hljs">sol_macro = solve(ocp_macro; display=false)
+sol_func = solve(ocp_func; display=false)
+
+println(&quot;Macro: objective = &quot;, objective(sol_macro), &quot;, iterations = &quot;, iterations(sol_macro))
+println(&quot;Functional API: objective = &quot;, objective(sol_func), &quot;, iterations = &quot;, iterations(sol_func))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Macro: objective = 1.1497309627876084, iterations = 12
+Functional API: objective = 1.1497309627876084, iterations = 12</code></pre><pre><code class="language-julia hljs">plt = plot(sol_macro; label=&quot;Macro&quot;, color=1, size=(800, 800))
+plot!(plt, sol_func; label=&quot;Functional API&quot;, color=2, linestyle=:dash)</code></pre><img src="manual-macro-free-15175380.svg" alt="Example block output"/><h3 id="manual-macro-free-state-constraint"><a class="docs-heading-anchor" href="#manual-macro-free-state-constraint">State constraint</a><a id="manual-macro-free-state-constraint-1"></a><a class="docs-heading-anchor-permalink" href="#manual-macro-free-state-constraint" title="Permalink"></a></h3><p>Same double integrator as the energy minimisation example, with an added upper bound on velocity. See the <a href="example-state-constraint.html#example-state-constraint">full example</a> for solving and plotting.</p><pre><code class="language-julia hljs">using OptimalControl
+using NLPModelsIpopt
+t0 = 0.0; tf = 1.0; x0 = [-1.0, 0.0]; xf = [0.0, 0.0]</code></pre><div class="responsive-columns-30-70">
+<div><p><strong>Abstract syntax</strong></p><pre><code class="language-julia hljs">ocp_macro = @def begin
+
+t ∈ [t0, tf], time
+x = (q, v) ∈ R², state
+u ∈ R, control
+
+x(t0) == x0
+x(tf) == xf
+
+v(t) ≤ 1.2
+
+ẋ(t) == [v(t), u(t)]
+
+0.5∫( u(t)^2 ) → min
+
+end</code></pre></div>
+<div><p><strong>Functional API</strong></p><pre><code class="language-julia hljs">pre = OptimalControl.PreModel()
+
+time!(pre; t0=t0, tf=tf)
+# state &quot;x&quot; with components &quot;q&quot; (position) and &quot;v&quot; (velocity)
+state!(pre, 2, &quot;x&quot;, [&quot;q&quot;, &quot;v&quot;])
+control!(pre, 1)
+
+function f_state!(dx, t, x, u, v)
+    dx[1] = x[2]
+    dx[2] = u[1]
+    return nothing
+end
+dynamics!(pre, f_state!)
+
+function boundary_state!(b, x0_, xf_, v)
+    b[1] = x0_[1] - x0[1]
+    b[2] = x0_[2] - x0[2]
+    b[3] = xf_[1] - xf[1]
+    b[4] = xf_[2] - xf[2]
+    return nothing
+end
+constraint!(pre,
+    :boundary;
+    f=boundary_state!,
+    lb=zeros(4), ub=zeros(4),
+    label=:endpoint
+)
+
+# state box constraint: v(t) ≤ 1.2, i.e. x[2] ≤ 1.2
+constraint!(pre,
+    :state;
+    rg=2:2, lb=[-Inf], ub=[1.2],
+    label=:v_max
+)
+
+lagrange_state(t, x, u, v) = 0.5 * u[1]^2
+objective!(pre, :min; lagrange=lagrange_state)
+
+time_dependence!(pre; autonomous=true)
+
+ocp_func = build(pre)</code></pre></div>
+</div><p>Both formulations produce identical solutions:</p><pre><code class="language-julia hljs">sol_macro = solve(ocp_macro; display=false)
+sol_func = solve(ocp_func; display=false)
+
+println(&quot;Macro: objective = &quot;, objective(sol_macro), &quot;, iterations = &quot;, iterations(sol_macro))
+println(&quot;Functional API: objective = &quot;, objective(sol_func), &quot;, iterations = &quot;, iterations(sol_func))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Macro: objective = 7.68049132932235, iterations = 13
+Functional API: objective = 7.68049132932235, iterations = 13</code></pre><pre><code class="language-julia hljs">plt = plot(sol_macro; label=&quot;Macro&quot;, color=1, size=(800, 600))
+plot!(plt, sol_func; label=&quot;Functional API&quot;, color=2, linestyle=:dash)</code></pre><img src="manual-macro-free-c89c2318.svg" alt="Example block output"/><div class="admonition is-info" id="Note-a4b41a4560bb160f"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-a4b41a4560bb160f" title="Permalink"></a></header><div class="admonition-body"><p>The state box constraint <code>v(t) ≤ 1.2</code> is expressed as <code>constraint!(pre, :state; rg=2:2, lb=[-Inf], ub=[1.2], ...)</code>, where <code>rg=2:2</code> selects the second state component <code>v</code>.</p></div></div><h2 id="API-Reference"><a class="docs-heading-anchor" href="#API-Reference">API Reference</a><a id="API-Reference-1"></a><a class="docs-heading-anchor-permalink" href="#API-Reference" title="Permalink"></a></h2><article><details class="docstring" open="true"><summary id="CTModels.OCP.PreModel-manual-macro-free"><a class="docstring-binding" href="#CTModels.OCP.PreModel-manual-macro-free"><code>CTModels.OCP.PreModel</code></a> — <span class="docstring-category">Type</span></summary><section><div><pre><code class="language-julia hljs">mutable struct PreModel &lt;: CTModels.OCP.AbstractModel</code></pre><p>Mutable optimal control problem model under construction.</p><p>A <code>PreModel</code> is used to incrementally define an optimal control problem before building it into an immutable <a href="manual-macro-free.html#CTModels.OCP.Model-manual-macro-free"><code>Model</code></a>. Fields can be set in any order and the model is validated before building.</p><p><strong>Fields</strong></p><ul><li><code>times::Union{AbstractTimesModel,Nothing}</code>: Initial and final time specification.</li><li><code>state::Union{AbstractStateModel,Nothing}</code>: State variable structure.</li><li><code>control::AbstractControlModel</code>: Control variable structure (defaults to <code>EmptyControlModel()</code>, i.e. no control).</li><li><code>variable::AbstractVariableModel</code>: Optimisation variable (defaults to empty).</li><li><code>dynamics::Union{Function,Vector,Nothing}</code>: System dynamics (function or component-wise).</li><li><code>objective::Union{AbstractObjectiveModel,Nothing}</code>: Cost functional.</li><li><code>constraints::ConstraintsDictType</code>: Dictionary of constraints being built.</li><li><code>definition::AbstractDefinition</code>: Symbolic definition; defaults to <a href="@ref"><code>EmptyDefinition</code></a> and becomes a <a href="@ref"><code>Definition</code></a> when <a href="@ref"><code>definition!</code></a> is called with a real expression.</li><li><code>autonomous::Union{Bool,Nothing}</code>: Whether the system is autonomous.</li></ul><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using CTModels
+
+julia&gt; pre = CTModels.PreModel()
+julia&gt; # Set fields incrementally...</code></pre></div></section></details></article><article><details class="docstring" open="true"><summary id="CTModels.OCP.time!-manual-macro-free"><a class="docstring-binding" href="#CTModels.OCP.time!-manual-macro-free"><code>CTModels.OCP.time!</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">time!(
+    ocp::CTModels.OCP.PreModel;
+    t0,
+    tf,
+    ind0,
+    indf,
+    time_name
+)
+</code></pre><p>Set the initial and final times. We denote by t0 the initial time and tf the final time. The optimal control problem is denoted ocp. When a time is free, then, one must provide the corresponding index of the ocp variable.</p><div class="admonition is-info" id="Note-8491a71147ad36ad"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-8491a71147ad36ad" title="Permalink"></a></header><div class="admonition-body"><p>You must use time! only once to set either the initial or the final time, or both.</p></div></div><p><strong>Examples</strong></p><pre><code class="language- hljs">julia&gt; time!(ocp, t0=0,   tf=1  ) # Fixed t0 and fixed tf
+julia&gt; time!(ocp, t0=0,   indf=2) # Fixed t0 and free  tf
+julia&gt; time!(ocp, ind0=2, tf=1  ) # Free  t0 and fixed tf
+julia&gt; time!(ocp, ind0=2, indf=3) # Free  t0 and free  tf</code></pre><p>When you plot a solution of an optimal control problem, the name of the time variable appears. By default, the name is &quot;t&quot;. Consider you want to set the name of the time variable to &quot;s&quot;.</p><pre><code class="language- hljs">julia&gt; time!(ocp, t0=0, tf=1, time_name=&quot;s&quot;) # time_name is a String
+# or
+julia&gt; time!(ocp, t0=0, tf=1, time_name=:s ) # time_name is a Symbol  </code></pre><p><strong>Throws</strong></p><ul><li><code>Exceptions.PreconditionError</code>: If time has already been set</li><li><code>Exceptions.PreconditionError</code>: If variable must be set before (when t0 or tf is free)</li><li><code>Exceptions.IncorrectArgument</code>: If ind0 or indf is out of bounds</li><li><code>Exceptions.IncorrectArgument</code>: If both t0 and ind0 are provided</li><li><code>Exceptions.IncorrectArgument</code>: If neither t0 nor ind0 is provided</li><li><code>Exceptions.IncorrectArgument</code>: If both tf and indf are provided</li><li><code>Exceptions.IncorrectArgument</code>: If neither tf nor indf is provided</li><li><code>Exceptions.IncorrectArgument</code>: If time_name is empty</li><li><code>Exceptions.IncorrectArgument</code>: If time_name conflicts with existing names</li><li><code>Exceptions.IncorrectArgument</code>: If t0 ≥ tf (when both are fixed)</li></ul></div></section></details></article><article><details class="docstring" open="true"><summary id="CTModels.OCP.state!-manual-macro-free"><a class="docstring-binding" href="#CTModels.OCP.state!-manual-macro-free"><code>CTModels.OCP.state!</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">state!(ocp::CTModels.OCP.PreModel, n::Int64)
+state!(
+    ocp::CTModels.OCP.PreModel,
+    n::Int64,
+    name::Union{String, Symbol}
+)
+state!(
+    ocp::CTModels.OCP.PreModel,
+    n::Int64,
+    name::Union{String, Symbol},
+    components_names::Array{T2&lt;:Union{String, Symbol}, 1}
+)
+</code></pre><p>Define the state dimension and possibly the names of each component.</p><div class="admonition is-info" id="Note-41bb7a1c7c2e0c4f"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-41bb7a1c7c2e0c4f" title="Permalink"></a></header><div class="admonition-body"><p>You must use state! only once to set the state dimension.</p></div></div><p><strong>Examples</strong></p><pre><code class="language- hljs">julia&gt; state!(ocp, 1)
+julia&gt; state_dimension(ocp)
+1
+julia&gt; state_components(ocp)
+[&quot;x&quot;]
+
+julia&gt; state!(ocp, 1, &quot;y&quot;)
+julia&gt; state_dimension(ocp)
+1
+julia&gt; state_components(ocp)
+[&quot;y&quot;]
+
+julia&gt; state!(ocp, 2)
+julia&gt; state_dimension(ocp)
+2
+julia&gt; state_components(ocp)
+[&quot;x₁&quot;, &quot;x₂&quot;]
+
+julia&gt; state!(ocp, 2, :y)
+julia&gt; state_dimension(ocp)
+2
+julia&gt; state_components(ocp)
+[&quot;y₁&quot;, &quot;y₂&quot;]
+
+julia&gt; state!(ocp, 2, &quot;y&quot;)
+julia&gt; state_dimension(ocp)
+2
+julia&gt; state_components(ocp)
+[&quot;y₁&quot;, &quot;y₂&quot;]
+
+julia&gt; state!(ocp, 2, &quot;y&quot;, [&quot;u&quot;, &quot;v&quot;])
+julia&gt; state_dimension(ocp)
+2
+julia&gt; state_components(ocp)
+[&quot;u&quot;, &quot;v&quot;]
+
+julia&gt; state!(ocp, 2, &quot;y&quot;, [:u, :v])
+julia&gt; state_dimension(ocp)
+2
+julia&gt; state_components(ocp)
+[&quot;u&quot;, &quot;v&quot;]</code></pre><p><strong>Throws</strong></p><ul><li><code>Exceptions.PreconditionError</code>: If state has already been set</li><li><code>Exceptions.IncorrectArgument</code>: If n ≤ 0</li><li><code>Exceptions.IncorrectArgument</code>: If number of component names ≠ n</li><li><code>Exceptions.IncorrectArgument</code>: If name is empty</li><li><code>Exceptions.IncorrectArgument</code>: If any component name is empty</li><li><code>Exceptions.IncorrectArgument</code>: If name is one of the component names</li><li><code>Exceptions.IncorrectArgument</code>: If component names contain duplicates</li><li><code>Exceptions.IncorrectArgument</code>: If name conflicts with existing names in other components</li><li><code>Exceptions.IncorrectArgument</code>: If any component name conflicts with existing names</li></ul></div></section></details></article><article><details class="docstring" open="true"><summary id="CTModels.OCP.control!-manual-macro-free"><a class="docstring-binding" href="#CTModels.OCP.control!-manual-macro-free"><code>CTModels.OCP.control!</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">control!(ocp::CTModels.OCP.PreModel, m::Int64)
+control!(
+    ocp::CTModels.OCP.PreModel,
+    m::Int64,
+    name::Union{String, Symbol}
+)
+control!(
+    ocp::CTModels.OCP.PreModel,
+    m::Int64,
+    name::Union{String, Symbol},
+    components_names::Array{T2&lt;:Union{String, Symbol}, 1}
+)
+</code></pre><p>Define the control input for a given optimal control problem model.</p><p>This function sets the control dimension and optionally allows specifying the control name and the names of its components.</p><div class="admonition is-info" id="Note-5cedef581a3a2dee"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-5cedef581a3a2dee" title="Permalink"></a></header><div class="admonition-body"><p>This function should be called only once per model. Calling it again will raise an error.</p></div></div><p><strong>Arguments</strong></p><ul><li><code>ocp::PreModel</code>: The model to which the control will be added.</li><li><code>m::Dimension</code>: The control input dimension (must be greater than 0).</li><li><code>name::Union{String,Symbol}</code> (optional): The name of the control variable (default: <code>&quot;u&quot;</code>).</li><li><code>components_names::Vector{&lt;:Union{String,Symbol}}</code> (optional): Names of the control components (default: automatically generated).</li></ul><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; control!(ocp, 1)
+julia&gt; control_dimension(ocp)
+1
+julia&gt; control_components(ocp)
+[&quot;u&quot;]
+
+julia&gt; control!(ocp, 1, &quot;v&quot;)
+julia&gt; control_components(ocp)
+[&quot;v&quot;]
+
+julia&gt; control!(ocp, 2)
+julia&gt; control_components(ocp)
+[&quot;u₁&quot;, &quot;u₂&quot;]
+
+julia&gt; control!(ocp, 2, :v)
+julia&gt; control_components(ocp)
+[&quot;v₁&quot;, &quot;v₂&quot;]
+
+julia&gt; control!(ocp, 2, &quot;v&quot;, [&quot;a&quot;, &quot;b&quot;])
+julia&gt; control_components(ocp)
+[&quot;a&quot;, &quot;b&quot;]</code></pre><p><strong>Throws</strong></p><ul><li><code>Exceptions.PreconditionError</code>: If control has already been set</li><li><code>Exceptions.IncorrectArgument</code>: If m ≤ 0</li><li><code>Exceptions.IncorrectArgument</code>: If number of component names ≠ m</li><li><code>Exceptions.IncorrectArgument</code>: If name is empty</li><li><code>Exceptions.IncorrectArgument</code>: If any component name is empty</li><li><code>Exceptions.IncorrectArgument</code>: If name is one of the component names</li><li><code>Exceptions.IncorrectArgument</code>: If component names contain duplicates</li><li><code>Exceptions.IncorrectArgument</code>: If name conflicts with existing names in other components</li><li><code>Exceptions.IncorrectArgument</code>: If any component name conflicts with existing names</li></ul></div></section></details></article><article><details class="docstring" open="true"><summary id="CTModels.OCP.variable!-manual-macro-free"><a class="docstring-binding" href="#CTModels.OCP.variable!-manual-macro-free"><code>CTModels.OCP.variable!</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">variable!(ocp::CTModels.OCP.PreModel, q::Int64)
+variable!(
+    ocp::CTModels.OCP.PreModel,
+    q::Int64,
+    name::Union{String, Symbol}
+)
+variable!(
+    ocp::CTModels.OCP.PreModel,
+    q::Int64,
+    name::Union{String, Symbol},
+    components_names::Array{T2&lt;:Union{String, Symbol}, 1}
+)
+</code></pre><p>Define a new variable in the optimal control problem <code>ocp</code> with dimension <code>q</code>.</p><p>This function registers a named variable (e.g. &quot;state&quot;, &quot;control&quot;, or other) to be used in the problem definition. You may optionally specify a name and individual component names.</p><div class="admonition is-info" id="Note-91dcd6ac61d98d2f"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-91dcd6ac61d98d2f" title="Permalink"></a></header><div class="admonition-body"><p>You can call <code>variable!</code> only once. It must be called before setting the objective or dynamics.</p></div></div><p><strong>Arguments</strong></p><ul><li><code>ocp</code>: The <code>PreModel</code> where the variable is registered.</li><li><code>q</code>: The dimension of the variable (number of components).</li><li><code>name</code>: A name for the variable (default: auto-generated from <code>q</code>).</li><li><code>components_names</code>: A vector of strings or symbols for each component (default: <code>[&quot;v₁&quot;, &quot;v₂&quot;, ...]</code>).</li></ul><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; variable!(ocp, 1, &quot;v&quot;)
+julia&gt; variable!(ocp, 2, &quot;v&quot;, [&quot;v₁&quot;, &quot;v₂&quot;])</code></pre><p><strong>Throws</strong></p><ul><li><code>Exceptions.PreconditionError</code>: If variable has already been set</li><li><code>Exceptions.PreconditionError</code>: If objective has already been set</li><li><code>Exceptions.PreconditionError</code>: If dynamics has already been set</li><li><code>Exceptions.IncorrectArgument</code>: If number of component names ≠ q (when q &gt; 0)</li><li><code>Exceptions.IncorrectArgument</code>: If name is empty (when q &gt; 0)</li><li><code>Exceptions.IncorrectArgument</code>: If any component name is empty (when q &gt; 0)</li><li><code>Exceptions.IncorrectArgument</code>: If name is one of the component names (when q &gt; 0)</li><li><code>Exceptions.IncorrectArgument</code>: If component names contain duplicates (when q &gt; 0)</li><li><code>Exceptions.IncorrectArgument</code>: If name conflicts with existing names in other components (when q &gt; 0)</li><li><code>Exceptions.IncorrectArgument</code>: If any component name conflicts with existing names (when q &gt; 0)</li></ul></div></section></details></article><article><details class="docstring" open="true"><summary id="CTModels.OCP.dynamics!-manual-macro-free"><a class="docstring-binding" href="#CTModels.OCP.dynamics!-manual-macro-free"><code>CTModels.OCP.dynamics!</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">dynamics!(ocp::CTModels.OCP.PreModel, f::Function)
+</code></pre><p>Set the full dynamics of the optimal control problem <code>ocp</code> using the function <code>f</code>.</p><p><strong>Arguments</strong></p><ul><li><code>ocp::PreModel</code>: The optimal control problem being defined.</li><li><code>f::Function</code>: A function that defines the complete system dynamics.</li></ul><p><strong>Preconditions</strong></p><ul><li>The state and times must be set before calling this function.</li><li>Control is <strong>optional</strong>: problems without control input (dimension 0) are supported.</li><li>No dynamics must have been set previously.</li></ul><p><strong>Behavior</strong></p><p>This function assigns <code>f</code> as the complete dynamics of the system. It throws an error if the state or times are not yet set, or if dynamics have already been set.</p><p><strong>Errors</strong></p><p>Throws <code>Exceptions.PreconditionError</code> if called out of order or in an invalid state.</p></div></section><section><div><pre><code class="language-julia hljs">dynamics!(
+    ocp::CTModels.OCP.PreModel,
+    rg::AbstractRange{&lt;:Int64},
+    f::Function
+)
+</code></pre><p>Add a partial dynamics function <code>f</code> to the optimal control problem <code>ocp</code>, applying to the subset of state indices specified by the range <code>rg</code>.</p><p><strong>Arguments</strong></p><ul><li><code>ocp::PreModel</code>: The optimal control problem being defined.</li><li><code>rg::AbstractRange{&lt;:Int}</code>: Range of state indices to which <code>f</code> applies.</li><li><code>f::Function</code>: A function describing the dynamics over the specified state indices.</li></ul><p><strong>Preconditions</strong></p><ul><li>The state and times must be set before calling this function.</li><li>Control is <strong>optional</strong>: problems without control input (dimension 0) are supported.</li><li>The full dynamics must not yet be complete.</li><li>No overlap is allowed between <code>rg</code> and existing dynamics index ranges.</li></ul><p><strong>Behavior</strong></p><p>This function appends the tuple <code>(rg, f)</code> to the list of partial dynamics. It ensures that the specified indices are not already covered and that the system is in a valid configuration for adding partial dynamics.</p><p><strong>Errors</strong></p><p>Throws <code>Exceptions.PreconditionError</code> if:</p><ul><li>The state or times are not yet set.</li><li>The dynamics are already defined completely.</li><li>Any index in <code>rg</code> overlaps with an existing dynamics range.</li></ul><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; dynamics!(ocp, 1:2, (out, t, x, u, v) -&gt; out .= x[1:2] .+ u[1:2])
+julia&gt; dynamics!(ocp, 3:3, (out, t, x, u, v) -&gt; out .= x[3] * v[1])</code></pre></div></section><section><div><pre><code class="language-julia hljs">dynamics!(
+    ocp::CTModels.OCP.PreModel,
+    i::Integer,
+    f::Function
+)
+</code></pre><p>Define partial dynamics for a single state variable index in an optimal control problem.</p><p>This is a convenience method for defining dynamics affecting only one element of the state vector. It wraps the scalar index <code>i</code> into a range <code>i:i</code> and delegates to the general partial dynamics method.</p><p><strong>Arguments</strong></p><ul><li><code>ocp::PreModel</code>: The optimal control problem being defined.</li><li><code>i::Integer</code>: The index of the state variable to which the function <code>f</code> applies.</li><li><code>f::Function</code>: A function of the form <code>(out, t, x, u, v) -&gt; ...</code>, which updates the scalar output <code>out[1]</code> in-place.</li></ul><p><strong>Behavior</strong></p><p>This is equivalent to calling:</p><pre><code class="language-julia-repl hljs">julia&gt; dynamics!(ocp, i:i, f)</code></pre><p><strong>Errors</strong></p><p>Throws the same errors as the range-based method if:</p><ul><li>The model is not properly initialized.</li><li>The index <code>i</code> overlaps with existing dynamics.</li><li>A full dynamics function is already defined.</li></ul><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; dynamics!(ocp, 3, (out, t, x, u, v) -&gt; out[1] = x[3]^2 + u[1])</code></pre></div></section></details></article><article><details class="docstring" open="true"><summary id="CTModels.OCP.objective!-manual-macro-free"><a class="docstring-binding" href="#CTModels.OCP.objective!-manual-macro-free"><code>CTModels.OCP.objective!</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">objective!(ocp::CTModels.OCP.PreModel; ...)
+objective!(
+    ocp::CTModels.OCP.PreModel,
+    criterion::Symbol;
+    mayer,
+    lagrange
+)
+</code></pre><p>Set the objective of the optimal control problem.</p><p><strong>Arguments</strong></p><ul><li><code>ocp::PreModel</code>: the optimal control problem.</li><li><code>criterion::Symbol</code>: the type of criterion. Either :min, :max, :MIN, or :MAX (case-insensitive). Default is :min.</li><li><code>mayer::Union{Function, Nothing}</code>: the Mayer function (inplace). Default is nothing.</li><li><code>lagrange::Union{Function, Nothing}</code>: the Lagrange function (inplace). Default is nothing.</li></ul><div class="admonition is-info" id="Note-9f103408e02e5d41"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-9f103408e02e5d41" title="Permalink"></a></header><div class="admonition-body"><ul><li>The state and times must be set before the objective.</li><li>Control is <strong>optional</strong>: problems without control input (dimension 0) are fully supported.</li><li>The objective must not be set before.</li><li>At least one of the two functions must be given. Please provide a Mayer or a Lagrange function.</li></ul></div></div><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; function mayer(x0, xf, v)
+           return x0[1] + xf[1] + v[1]
+       end
+julia&gt; function lagrange(t, x, u, v)
+           return x[1] + u[1] + v[1]
+       end
+julia&gt; objective!(ocp, :min, mayer=mayer, lagrange=lagrange)</code></pre><p><strong>Throws</strong></p><ul><li><code>Exceptions.PreconditionError</code>: If state has not been set</li><li><code>Exceptions.PreconditionError</code>: If times has not been set</li><li><code>Exceptions.PreconditionError</code>: If objective has already been set</li><li><code>Exceptions.IncorrectArgument</code>: If criterion is not :min, :max, :MIN, or :MAX</li><li><code>Exceptions.IncorrectArgument</code>: If neither mayer nor lagrange function is provided</li></ul></div></section></details></article><article><details class="docstring" open="true"><summary id="CTModels.OCP.constraint!-manual-macro-free"><a class="docstring-binding" href="#CTModels.OCP.constraint!-manual-macro-free"><code>CTModels.OCP.constraint!</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">constraint!(
+    ocp::CTModels.OCP.PreModel,
+    type::Symbol;
+    rg,
+    f,
+    lb,
+    ub,
+    label,
+    codim_f
+)
+</code></pre><p>Add a constraint to a pre-model. See <a href="@ref">__constraint!</a> for more details.</p><p><strong>Arguments</strong></p><ul><li><code>ocp</code>: The pre-model to which the constraint will be added.</li><li><code>type</code>: The type of the constraint. It can be <code>:state</code>, <code>:control</code>, <code>:variable</code>, <code>:boundary</code>, or <code>:path</code>.</li><li><code>rg</code>: The range of the constraint. It can be an integer or a range of integers.</li><li><code>f</code>: The function that defines the constraint. It must return a vector of the same dimension as the constraint.</li><li><code>lb</code>: The lower bound of the constraint. It can be a number or a vector.</li><li><code>ub</code>: The upper bound of the constraint. It can be a number or a vector.</li><li><code>label</code>: The label of the constraint. It must be unique in the pre-model.</li></ul><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs"># Example of adding a control constraint to a pre-model
+julia&gt; ocp = PreModel()
+julia&gt; constraint!(ocp, :control, rg=1:2, lb=[0.0], ub=[1.0], label=:control_constraint)</code></pre><p><strong>Throws</strong></p><ul><li><code>Exceptions.PreconditionError</code>: If state has not been set</li><li><code>Exceptions.PreconditionError</code>: If times has not been set</li><li><code>Exceptions.PreconditionError</code>: If control has not been set <strong>and</strong> <code>type == :control</code></li><li><code>Exceptions.PreconditionError</code>: If variable has not been set (when type=:variable)</li><li><code>Exceptions.PreconditionError</code>: If constraint with same label already exists</li><li><code>Exceptions.PreconditionError</code>: If both lb and ub are nothing</li><li><code>Exceptions.IncorrectArgument</code>: If lb and ub have different lengths</li><li><code>Exceptions.IncorrectArgument</code>: If lb &gt; ub element-wise</li><li><code>Exceptions.IncorrectArgument</code>: If dimensions don&#39;t match expected sizes</li></ul><div class="admonition is-info" id="Note-862189f14584f848"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-862189f14584f848" title="Permalink"></a></header><div class="admonition-body"><p>Control is only required for <code>type == :control</code> constraints. All other types (<code>:state</code>, <code>:boundary</code>, <code>:path</code>, <code>:variable</code>) are valid even when no control is defined (control dimension 0).</p></div></div></div></section></details></article><article><details class="docstring" open="true"><summary id="CTModels.OCP.time_dependence!-manual-macro-free"><a class="docstring-binding" href="#CTModels.OCP.time_dependence!-manual-macro-free"><code>CTModels.OCP.time_dependence!</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">time_dependence!(ocp::CTModels.OCP.PreModel; autonomous)
+</code></pre><p>Set the time dependence of the optimal control problem <code>ocp</code>.</p><p><strong>Arguments</strong></p><ul><li><code>ocp::PreModel</code>: The optimal control problem being defined.</li><li><code>autonomous::Bool</code>: Indicates whether the system is autonomous (<code>true</code>) or time-dependent (<code>false</code>).</li></ul><p><strong>Preconditions</strong></p><ul><li>The time dependence must not have been set previously.</li></ul><p><strong>Behavior</strong></p><p>This function sets the <code>autonomous</code> field of the model to indicate whether the system&#39;s dynamics explicitly depend on time. It can only be called once.</p><p><strong>Errors</strong></p><p>Throws <code>Exceptions.PreconditionError</code> if the time dependence has already been set.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; ocp = PreModel(...)
+julia&gt; time_dependence!(ocp; autonomous=true)</code></pre></div></section></details></article><article><details class="docstring" open="true"><summary id="CTModels.OCP.build-manual-macro-free"><a class="docstring-binding" href="#CTModels.OCP.build-manual-macro-free"><code>CTModels.OCP.build</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">build(
+    constraints::OrderedCollections.OrderedDict{Symbol, Tuple{Symbol, Union{Function, OrdinalRange{&lt;:Int64}}, AbstractVector{&lt;:Real}, AbstractVector{&lt;:Real}}}
+) -&gt; CTModels.OCP.ConstraintsModel{TP, TB, Tuple{Vector{Float64}, Vector{Int64}, Vector{Float64}, Vector{Symbol}, Vector{Vector{Symbol}}}, Tuple{Vector{Float64}, Vector{Int64}, Vector{Float64}, Vector{Symbol}, Vector{Vector{Symbol}}}, Tuple{Vector{Float64}, Vector{Int64}, Vector{Float64}, Vector{Symbol}, Vector{Vector{Symbol}}}} where {TP&lt;:Tuple{Vector{Float64}, Any, Vector{Float64}, Vector{Symbol}}, TB&lt;:Tuple{Vector{Float64}, Any, Vector{Float64}, Vector{Symbol}}}
+</code></pre><p>Constructs a <code>ConstraintsModel</code> from a dictionary of constraints.</p><p>This function processes a dictionary where each entry defines a constraint with its type, function or index range, lower and upper bounds, and label. It categorizes constraints into path, boundary, state, control, and variable constraints, assembling them into a structured <code>ConstraintsModel</code>.</p><p><strong>Arguments</strong></p><ul><li><code>constraints::ConstraintsDictType</code>: A dictionary mapping constraint labels to tuples of the form <code>(type, function_or_range, lower_bound, upper_bound)</code>.</li></ul><p><strong>Returns</strong></p><ul><li><code>ConstraintsModel</code>: A structured model encapsulating all provided constraints.</li></ul><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; constraints = OrderedDict(
+    :c1 =&gt; (:path, f1, [0.0], [1.0]),
+    :c2 =&gt; (:state, 1:2, [-1.0, -1.0], [1.0, 1.0])
+)
+julia&gt; model = build(constraints)</code></pre></div></section><section><div><pre><code class="language-julia hljs">build(
+    pre_ocp::CTModels.OCP.PreModel;
+    build_examodel
+) -&gt; CTModels.OCP.Model{TD, var&quot;#s179&quot;, var&quot;#s1791&quot;, var&quot;#s1792&quot;, var&quot;#s1793&quot;, var&quot;#s1794&quot;, var&quot;#s1795&quot;, CTModels.OCP.ConstraintsModel{TP, TB, Tuple{Vector{Float64}, Vector{Int64}, Vector{Float64}, Vector{Symbol}, Vector{Vector{Symbol}}}, Tuple{Vector{Float64}, Vector{Int64}, Vector{Float64}, Vector{Symbol}, Vector{Vector{Symbol}}}, Tuple{Vector{Float64}, Vector{Int64}, Vector{Float64}, Vector{Symbol}, Vector{Vector{Symbol}}}}, &lt;:CTModels.OCP.AbstractDefinition, Nothing} where {TD&lt;:CTModels.OCP.TimeDependence, var&quot;#s179&quot;&lt;:CTModels.OCP.AbstractTimesModel, var&quot;#s1791&quot;&lt;:CTModels.OCP.AbstractStateModel, var&quot;#s1792&quot;&lt;:CTModels.OCP.AbstractControlModel, var&quot;#s1793&quot;&lt;:CTModels.OCP.AbstractVariableModel, var&quot;#s1794&quot;&lt;:Function, var&quot;#s1795&quot;&lt;:CTModels.OCP.AbstractObjectiveModel, TP&lt;:Tuple{Vector{Float64}, Any, Vector{Float64}, Vector{Symbol}}, TB&lt;:Tuple{Vector{Float64}, Any, Vector{Float64}, Vector{Symbol}}}
+</code></pre><p>Converts a mutable <code>PreModel</code> into an immutable <code>Model</code>.</p><p>This function finalizes a pre-defined optimal control problem (<code>PreModel</code>) by verifying that all necessary components (times, state, dynamics, objective) are set. It then constructs a <code>Model</code> instance, incorporating optional components like control, variable, and constraints.</p><div class="admonition is-info" id="Note-225bfba7adabb167"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-225bfba7adabb167" title="Permalink"></a></header><div class="admonition-body"><p>Control is <strong>optional</strong>: calling <code>control!</code> is not required. When omitted, the model is built with <code>control_dimension == 0</code> (an <code>EmptyControlModel</code>). This is useful for problems where the dynamics depend only on the state, such as pure state-space systems.</p></div></div><p><strong>Arguments</strong></p><ul><li><code>pre_ocp::PreModel</code>: The pre-defined optimal control problem to be finalized.</li></ul><p><strong>Returns</strong></p><ul><li><code>Model</code>: A fully constructed model ready for solving.</li></ul><p><strong>Example without control</strong></p><pre><code class="language-julia-repl hljs">julia&gt; pre_ocp = PreModel()
+julia&gt; times!(pre_ocp, 0.0, 1.0, 100)
+julia&gt; state!(pre_ocp, 2, &quot;x&quot;, [&quot;x1&quot;, &quot;x2&quot;])
+julia&gt; dynamics!(pre_ocp, (t, x, u) -&gt; [-x[2], x[1]])
+julia&gt; objective!(pre_ocp, :min, mayer=(x0, xf) -&gt; xf[1]^2)
+julia&gt; model = build(pre_ocp)
+julia&gt; control_dimension(model)  # 0</code></pre><p><strong>Example with control</strong></p><pre><code class="language-julia-repl hljs">julia&gt; pre_ocp = PreModel()
+julia&gt; times!(pre_ocp, 0.0, 1.0, 100)
+julia&gt; state!(pre_ocp, 2, &quot;x&quot;, [&quot;x1&quot;, &quot;x2&quot;])
+julia&gt; control!(pre_ocp, 1, &quot;u&quot;, [&quot;u1&quot;])
+julia&gt; dynamics!(pre_ocp, (dx, t, x, u, v) -&gt; dx .= x + u)
+julia&gt; model = build(pre_ocp)</code></pre></div></section></details></article><article><details class="docstring" open="true"><summary id="CTModels.OCP.Model-manual-macro-free"><a class="docstring-binding" href="#CTModels.OCP.Model-manual-macro-free"><code>CTModels.OCP.Model</code></a> — <span class="docstring-category">Type</span></summary><section><div><pre><code class="language-julia hljs">struct Model{TD&lt;:CTModels.OCP.TimeDependence, TimesModelType&lt;:CTModels.OCP.AbstractTimesModel, StateModelType&lt;:CTModels.OCP.AbstractStateModel, ControlModelType&lt;:CTModels.OCP.AbstractControlModel, VariableModelType&lt;:CTModels.OCP.AbstractVariableModel, DynamicsModelType&lt;:Function, ObjectiveModelType&lt;:CTModels.OCP.AbstractObjectiveModel, ConstraintsModelType&lt;:CTModels.OCP.AbstractConstraintsModel, DefinitionType&lt;:CTModels.OCP.AbstractDefinition, BuildExaModelType&lt;:Union{Nothing, Function}} &lt;: CTModels.OCP.AbstractModel</code></pre><p>Immutable optimal control problem model containing all problem components.</p><p>A <code>Model</code> is created from a <code>PreModel</code> once all required fields have been set. It is parameterised by the time dependence type (<code>Autonomous</code> or <code>NonAutonomous</code>) and the types of all its components.</p><p><strong>Fields</strong></p><ul><li><code>times::TimesModelType</code>: Initial and final time specification.</li><li><code>state::StateModelType</code>: State variable structure (name, components).</li><li><code>control::ControlModelType</code>: Control variable structure (name, components).</li><li><code>variable::VariableModelType</code>: Optimisation variable structure (may be empty).</li><li><code>dynamics::DynamicsModelType</code>: System dynamics function <code>(t, x, u, v) -&gt; ẋ</code>.</li><li><code>objective::ObjectiveModelType</code>: Cost functional (Mayer, Lagrange, or Bolza).</li><li><code>constraints::ConstraintsModelType</code>: All problem constraints. Box constraints satisfy the per-component uniqueness invariant: each component appears at most once in the stored tuples, bounds are the intersection of all declared bounds, and every declared label is preserved in the <code>aliases</code> field of the box tuples (see <code>ConstraintsModel</code>).</li><li><code>definition::DefinitionType</code>: Original symbolic definition of the problem, stored as a subtype of <a href="@ref"><code>AbstractDefinition</code></a> (<a href="@ref"><code>Definition</code></a> when set, <a href="@ref"><code>EmptyDefinition</code></a> otherwise).</li><li><code>build_examodel::BuildExaModelType</code>: Optional ExaModels builder function.</li></ul><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using CTModels
+
+julia&gt; # Models are typically created via the @def macro or PreModel
+julia&gt; ocp = CTModels.Model  # Type reference</code></pre></div></section></details></article><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="manual-abstract.html">« Abstract syntax (@def)</a><a class="docs-footer-nextpage" href="manual-ai-llm.html">Use AI »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Wednesday 22 April 2026 21:27">Wednesday 22 April 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
