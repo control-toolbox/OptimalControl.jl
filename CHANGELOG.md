@@ -7,6 +7,55 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.0.4] — 2026-04-22
+
+### Added
+
+- **Documentation improvements**:
+  - Added scalar vs vector convention warning in functional API documentation explaining that callbacks always receive vectors (use x[1], u[1], v[1] for dim 1), while solution access returns scalars for dim 1 components (consistent with @def)
+  - Added example demonstrating scalar return from control(sol)(t) after solving dim-1 control problem
+  - Added modeler compatibility warning in functional API documentation: :exa modeler requires @def, only :adnlp is compatible with functional API
+  - Updated solve manual :exa description to mention incompatibility with functional API
+
+### Changed
+
+- **Documentation**:
+  - Added ExampleSizeThresholdFilter logger in make.jl to silence harmless warning about @example blocks exceeding example_size_threshold (SVG fallback is used automatically)
+  - Added manual-macro-free.md to size_threshold_ignore in HTML configuration
+  - Removed redundant section separators (---) between examples in manual-macro-free.md
+  - Fixed heading level in index.md (### -> **) for "Free times and extra variables" section
+
+---
+
+## [2.0.3] — 2026-04-18
+
+### Added
+
+- **Functional API**:
+  - New macro-free functional API for defining optimal control problems programmatically
+  - Uses `OptimalControl.PreModel` as a mutable builder with setter functions: `time!`, `state!`, `control!`, `variable!`, `dynamics!`, `objective!`, `constraint!`, `time_dependence!`, `build`
+  - Complete mathematical formulation correspondence table between math and functional API
+  - Six comprehensive examples comparing @def syntax with functional API:
+    - Double integrator: energy minimisation
+    - Double integrator: time minimisation (free final time)
+    - Control-free problems (parameter estimation)
+    - Problems mixing control and variable
+    - Singular control (three-dimensional state, state and control box constraints)
+    - State constraint (velocity upper bound)
+  - API Reference section documenting all functional API functions
+
+### Changed
+
+- **Documentation**:
+  - Restructured documentation TOC with "Define a problem" section containing both abstract syntax and functional API
+  - Fixed constraint dimension functions in CTModels v0.9.15-beta API compatibility
+  - Updated CTModels dependency to v0.10 (widening support)
+
+- **Dependencies**:
+  - Updated CTModels from v0.9.15-beta to v0.10
+
+---
+
 ## [2.0.2] — 2026-04-14
 
 ### Added

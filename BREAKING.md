@@ -2,6 +2,12 @@
 
 This document describes the breaking changes when migrating from **OptimalControl.jl v1.1.6** (last stable release) to **v2.0.0**.
 
+!!! note "v2.0.4 Compatibility"
+    **v2.0.4** is fully backward compatible with v2.0.3. It contains documentation improvements (scalar/vector convention warning, :exa modeler incompatibility note) and build system changes (logger filter) with no breaking changes.
+
+!!! note "v2.0.3 Compatibility"
+    **v2.0.3** is fully backward compatible with v2.0.2. It adds the functional API (macro-free) for defining optimal control problems programmatically and updates CTModels to v0.10, with no breaking changes to existing code.
+
 !!! note "v2.0.2 Compatibility"
     **v2.0.2** is fully backward compatible with v2.0.1. It contains a dependency update (UnoSolver v0.2 → v0.3) with no breaking changes.
 
