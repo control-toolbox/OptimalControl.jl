@@ -1,9 +1,5 @@
 # [Functional API (macro-free)](@id manual-macro-free)
 
-```@meta
-Draft = false
-```
-
 The [`@def`](@ref manual-abstract-syntax) macro provides a concise DSL to define optimal control problems. An alternative is the **functional API**, which builds the same problem step by step using plain Julia functions. This approach is useful when:
 
 - generating problems **programmatically** from parameters, data, or loops,
