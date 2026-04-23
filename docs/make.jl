@@ -183,11 +183,16 @@ using Logging
 struct ExampleSizeThresholdFilter <: AbstractLogger
     inner::AbstractLogger
 end
-Logging.min_enabled_level(l::ExampleSizeThresholdFilter) = Logging.min_enabled_level(l.inner)
-Logging.shouldlog(l::ExampleSizeThresholdFilter, level, _module, group, id) =
+function Logging.min_enabled_level(l::ExampleSizeThresholdFilter)
+    Logging.min_enabled_level(l.inner)
+end
+function Logging.shouldlog(l::ExampleSizeThresholdFilter, level, _module, group, id)
     Logging.shouldlog(l.inner, level, _module, group, id)
+end
 Logging.catch_exceptions(l::ExampleSizeThresholdFilter) = Logging.catch_exceptions(l.inner)
-function Logging.handle_message(l::ExampleSizeThresholdFilter, level, message, args...; kwargs...)
+function Logging.handle_message(
+    l::ExampleSizeThresholdFilter, level, message, args...; kwargs...
+)
     msg = string(message)
     if level == Logging.Warn && occursin("example_size_threshold", msg)
         return nothing
@@ -221,7 +226,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "assets/custom.css",
             ],
             size_threshold_ignore=[
-                joinpath("api", "private.md"), 
+                joinpath("api", "private.md"),
                 joinpath("api", "public.md"),
                 "manual-macro-free.md",
             ],
