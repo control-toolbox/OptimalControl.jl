@@ -150,7 +150,7 @@ nothing # hide
 ```
 
 ```@raw html
-<div class="responsive-columns-30-70">
+<div class="responsive-columns-40-60">
 <div>
 ```
 
@@ -290,7 +290,7 @@ nothing # hide
 ```
 
 ```@raw html
-<div class="responsive-columns-30-70">
+<div class="responsive-columns-40-60">
 <div>
 ```
 
@@ -413,7 +413,7 @@ nothing # hide
 ```
 
 ```@raw html
-<div class="responsive-columns-30-70">
+<div class="responsive-columns-40-60">
 <div>
 ```
 
@@ -521,7 +521,7 @@ nothing # hide
 ```
 
 ```@raw html
-<div class="responsive-columns-30-70">
+<div class="responsive-columns-40-60">
 <div>
 ```
 
@@ -624,7 +624,7 @@ nothing # hide
 ```
 
 ```@raw html
-<div class="responsive-columns-30-70">
+<div class="responsive-columns-40-60">
 <div>
 ```
 
@@ -750,7 +750,7 @@ nothing # hide
 ```
 
 ```@raw html
-<div class="responsive-columns-30-70">
+<div class="responsive-columns-40-60">
 <div>
 ```
 
