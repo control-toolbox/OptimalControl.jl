@@ -48,6 +48,8 @@ jobs:
           - Kepler
           - PWLdynamics
           - SIRcontrol
+          - DiauxicGrowth
+          - CTMembraneFiltration
         pkgversion: 
           - latest
           - stable
@@ -60,6 +62,10 @@ jobs:
             pkgname: PWLdynamics
           - pkgpath: AnasXbouali
             pkgname: SIRcontrol
+          - pkgpath: agustinyabo
+            pkgname: DiauxicGrowth
+          - pkgpath: remydutto
+            pkgname: CTMembraneFiltration
     uses: control-toolbox/CTActions/.github/workflows/breakage.yml@main
     with:
       pkgname: ${{ matrix.pkgname }}
