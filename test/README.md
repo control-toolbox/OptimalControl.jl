@@ -14,30 +14,49 @@ For detailed guidelines on testing and coverage, please refer to:
 
 Tests are executed using the standard Julia Test interface, enhanced by `CTBase.TestRunner`.
 
+### Convenience Command: `jtest`
+
+If the `jtest` command is available (custom script), you can use it for quick test execution:
+
+```bash
+# Run all tests
+jtest
+
+# Run specific test file(s)
+jtest test_ctbase test_ctmodels
+
+# Run test directory
+jtest reexport
+```
+
+If `jtest` is not available, use the manual commands below.
+
 ### Default Run (All Enabled Tests)
 
 ```bash
-julia --project=@. -e 'using Pkg; Pkg.test()'
+julia --project=@. -e 'using Pkg; Pkg.test()' 2>&1 | tee /tmp/test_output.txt
 ```
+
+**Note:** Always use `tee` to capture output to `/tmp/test_output.txt` for later inspection with `grep`.
 
 ### Running Specific Test Groups
 
 To run only specific test groups (e.g., `reexport`):
 
 ```bash
-julia --project=@. -e 'using Pkg; Pkg.test(; test_args=["suite/reexport/*"])'
+julia --project=@. -e 'using Pkg; Pkg.test(; test_args=["suite/reexport/*"])' 2>&1 | tee /tmp/test_output.txt
 ```
 
 Multiple groups can be specified:
 
 ```bash
-julia --project=@. -e 'using Pkg; Pkg.test(; test_args=["suite/reexport/*", "suite/other/*"])'
+julia --project=@. -e 'using Pkg; Pkg.test(; test_args=["suite/reexport/*", "suite/other/*"])' 2>&1 | tee /tmp/test_output.txt
 ```
 
 ### Running All Tests (Including Optional/Long Tests)
 
 ```bash
-julia --project=@. -e 'using Pkg; Pkg.test(; test_args=["all"])'
+julia --project=@. -e 'using Pkg; Pkg.test(; test_args=["all"])' 2>&1 | tee /tmp/test_output.txt
 ```
 
 ---
@@ -47,7 +66,7 @@ julia --project=@. -e 'using Pkg; Pkg.test(; test_args=["all"])'
 To run tests with coverage and generate a report:
 
 ```bash
-julia --project=@. -e 'using Pkg; Pkg.test("OptimalControl"; coverage=true); include("test/coverage.jl")'
+julia --project=@. -e 'using Pkg; Pkg.test("OptimalControl"; coverage=true); include("test/coverage.jl")' 2>&1 | tee /tmp/test_coverage_output.txt
 ```
 
 This will:

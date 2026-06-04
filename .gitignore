@@ -43,5 +43,5 @@ Manifest.toml
 .tmp/
 .extras/
 .save/
-.windsurf/
+.devin/
 .reports/

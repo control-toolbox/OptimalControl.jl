@@ -1,6 +1,6 @@
 name = "OptimalControl"
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
-version = "2.0.2"
+version = "2.0.4"
 authors = ["Olivier Cots <olivier.cots@toulouse-inp.fr>"]
 
 [deps]
@@ -27,7 +27,7 @@ BenchmarkTools = "1"
 CTBase = "0.18"
 CTDirect = "1"
 CTFlows = "0.8"
-CTModels = "0.9"
+CTModels = "0.10"
 CTParser = "0.8"
 CTSolvers = "0.4"
 CUDA = "5"

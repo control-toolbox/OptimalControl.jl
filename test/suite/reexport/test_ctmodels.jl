@@ -64,6 +64,7 @@ function test_ctmodels()
 
         Test.@testset "API Types" begin
             for T in (
+                OptimalControl.PreModel,
                 OptimalControl.Model,
                 OptimalControl.AbstractModel,
                 OptimalControl.AbstractModel,
@@ -75,6 +76,26 @@ function test_ctmodels()
                     Test.@test isdefined(OptimalControl, nameof(T))
                     Test.@test !isdefined(CurrentModule, nameof(T))
                     Test.@test T isa DataType || T isa UnionAll
+                end
+            end
+        end
+
+        Test.@testset "Builder Functions" begin
+            for f in (
+                :time!,
+                :state!,
+                :control!,
+                :variable!,
+                :dynamics!,
+                :objective!,
+                :constraint!,
+                :time_dependence!,
+                :build,
+            )
+                Test.@testset "$f" begin
+                    Test.@test isdefined(OptimalControl, f)
+                    Test.@test isdefined(CurrentModule, f)
+                    Test.@test getfield(OptimalControl, f) isa Function
                 end
             end
         end
@@ -107,6 +128,14 @@ function test_ctmodels()
                 :is_initial_time_free,
                 :is_final_time_fixed,
                 :is_final_time_free,
+                :has_variable,
+                :is_variable,
+                :has_control,
+                :is_control_free,
+                :has_abstract_definition,
+                :is_abstractly_defined,
+                :is_nonautonomous,
+                :is_nonvariable,
                 :state_dimension,
                 :control_dimension,
                 :variable_dimension,
@@ -137,6 +166,9 @@ function test_ctmodels()
                 :dim_state_constraints_box,
                 :dim_control_constraints_box,
                 :dim_variable_constraints_box,
+                :dim_dual_state_constraints_box,
+                :dim_dual_control_constraints_box,
+                :dim_dual_variable_constraints_box,
                 :state,
                 :control,
                 :variable,
@@ -146,6 +178,7 @@ function test_ctmodels()
                 :mayer,
                 :lagrange,
                 :definition,
+                :expression,
                 :dual,
                 :iterations,
                 :status,
@@ -192,6 +225,7 @@ function test_ctmodels()
             Test.@test OptimalControl.Model <: OptimalControl.AbstractModel
             Test.@test OptimalControl.Solution <: OptimalControl.AbstractSolution
             Test.@test OptimalControl.InitialGuess <: OptimalControl.AbstractInitialGuess
+            Test.@test OptimalControl.PreModel isa DataType
         end
 
         Test.@testset "Method Signatures" begin

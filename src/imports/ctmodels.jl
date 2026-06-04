@@ -20,6 +20,7 @@ import CTModels: AbstractInitialGuess, InitialGuess
 import CTModels:
 
     # api types
+    PreModel,
     Model,
     AbstractModel,
     Solution,
@@ -54,6 +55,14 @@ import CTModels:
     is_initial_time_free,
     is_final_time_fixed,
     is_final_time_free,
+    has_variable,
+    is_variable,
+    has_control,
+    is_control_free,
+    has_abstract_definition,
+    is_abstractly_defined,
+    is_nonautonomous,
+    is_nonvariable,
     state_dimension,
     control_dimension,
     variable_dimension,
@@ -75,6 +84,9 @@ import CTModels:
     dim_state_constraints_box,
     dim_control_constraints_box,
     dim_variable_constraints_box,
+    dim_dual_state_constraints_box,
+    dim_dual_control_constraints_box,
+    dim_dual_variable_constraints_box,
     state,
     control,
     variable,
@@ -84,6 +96,7 @@ import CTModels:
     mayer,
     lagrange,
     definition,
+    expression,
     dual,
     iterations,
     status,
@@ -108,3 +121,15 @@ import CTModels:
     control_constraints_ub_dual,
     variable_constraints_lb_dual,
     variable_constraints_ub_dual
+
+# OCP Builder functions (functional API)
+@reexport import CTModels:
+    time!,
+    state!,
+    control!,
+    variable!,
+    dynamics!,
+    objective!,
+    constraint!,
+    time_dependence!,
+    build

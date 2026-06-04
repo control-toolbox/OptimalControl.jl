@@ -1,0 +1,13 @@
+name: Add to Project
+
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened]
+
+jobs:
+  call:
+    uses: control-toolbox/CTActions/.github/workflows/add-to-project.yml@main
+    secrets:
+      project_token: ${{ secrets.PROJECT_TOKEN }}

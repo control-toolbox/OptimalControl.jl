@@ -175,6 +175,33 @@ ext_dir = abspath(joinpath(@__DIR__, "..", "ext"))
 include("api_reference.jl")
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# Logger: silence the informational warning about @example blocks whose HTML
+# representation exceeds `example_size_threshold`. The SVG fallback is used
+# automatically (which is what we want for plots), so this warning is harmless.
+# ═══════════════════════════════════════════════════════════════════════════════
+using Logging
+struct ExampleSizeThresholdFilter <: AbstractLogger
+    inner::AbstractLogger
+end
+function Logging.min_enabled_level(l::ExampleSizeThresholdFilter)
+    Logging.min_enabled_level(l.inner)
+end
+function Logging.shouldlog(l::ExampleSizeThresholdFilter, level, _module, group, id)
+    Logging.shouldlog(l.inner, level, _module, group, id)
+end
+Logging.catch_exceptions(l::ExampleSizeThresholdFilter) = Logging.catch_exceptions(l.inner)
+function Logging.handle_message(
+    l::ExampleSizeThresholdFilter, level, message, args...; kwargs...
+)
+    msg = string(message)
+    if level == Logging.Warn && occursin("example_size_threshold", msg)
+        return nothing
+    end
+    return Logging.handle_message(l.inner, level, message, args...; kwargs...)
+end
+global_logger(ExampleSizeThresholdFilter(global_logger()))
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # Build documentation
 # ═══════════════════════════════════════════════════════════════════════════════
 with_api_reference(src_dir, ext_dir) do api_pages
@@ -199,7 +226,9 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "assets/custom.css",
             ],
             size_threshold_ignore=[
-                joinpath("api", "private.md"), joinpath("api", "public.md")
+                joinpath("api", "private.md"),
+                joinpath("api", "public.md"),
+                "manual-macro-free.md",
             ],
         ),
         pages=[
@@ -208,11 +237,15 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "Energy minimisation" => "example-double-integrator-energy.md",
                 "Time mininimisation" => "example-double-integrator-time.md",
                 "Control-free problems" => "example-control-free.md",
+                "Control and variable" => "example-control-and-variable.md",
                 "Singular control" => "example-singular-control.md",
                 "State constraint" => "example-state-constraint.md",
             ],
             "Manual" => [
-                "Define a problem" => "manual-abstract.md",
+                "Define a problem" => [
+                    "Abstract syntax (@def)" => "manual-abstract.md",
+                    "Functional API (macro-free)" => "manual-macro-free.md",
+                ],
                 "Use AI" => "manual-ai-llm.md",
                 "Problem characteristics" => "manual-model.md",
                 "Set an initial guess" => "manual-initial-guess.md",

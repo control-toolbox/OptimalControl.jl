@@ -10,7 +10,7 @@ on:
     
 jobs:
   test-cpu-github:
-    if: contains(github.event.pull_request.labels.*.name, 'run ci cpu')
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run ci cpu')
     uses: control-toolbox/CTActions/.github/workflows/ci.yml@main
     with:
       versions: '["1.12"]'
@@ -22,7 +22,7 @@ jobs:
 
   # Job pour le runner self-hosted kkt (GPU/CUDA)
   test-gpu-kkt:
-    if: contains(github.event.pull_request.labels.*.name, 'run ci gpu')
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run ci gpu')
     uses: control-toolbox/CTActions/.github/workflows/ci.yml@main
     with:
       versions: '["1"]'
