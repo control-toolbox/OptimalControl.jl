@@ -132,9 +132,14 @@ struct MockSolution2 <: CTModels.AbstractSolution
     solver
 end
 
-CommonSolve.solve(::MockOCP2, ::CTModels.AbstractInitialGuess, d::RoutingMockDiscretizer, m::RoutingMockModeler, s::RoutingMockSolver; display::Bool)::MockSolution2 = MockSolution2(
-    d, m, s
-)
+CommonSolve.solve(
+    ::MockOCP2,
+    ::CTModels.AbstractInitialGuess,
+    d::RoutingMockDiscretizer,
+    m::RoutingMockModeler,
+    s::RoutingMockSolver;
+    display::Bool,
+)::MockSolution2 = MockSolution2(d, m, s)
 
 # ============================================================================
 # Test function
