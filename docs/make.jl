@@ -184,10 +184,10 @@ struct ExampleSizeThresholdFilter <: AbstractLogger
     inner::AbstractLogger
 end
 function Logging.min_enabled_level(l::ExampleSizeThresholdFilter)
-    Logging.min_enabled_level(l.inner)
+    return Logging.min_enabled_level(l.inner)
 end
 function Logging.shouldlog(l::ExampleSizeThresholdFilter, level, _module, group, id)
-    Logging.shouldlog(l.inner, level, _module, group, id)
+    return Logging.shouldlog(l.inner, level, _module, group, id)
 end
 Logging.catch_exceptions(l::ExampleSizeThresholdFilter) = Logging.catch_exceptions(l.inner)
 function Logging.handle_message(
@@ -212,7 +212,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
     push!(api_pages_final, "Subpackages" => joinpath("api", "subpackages.md"))
 
     # build documentation
-    makedocs(;
+    return makedocs(;
         draft=draft,
         remotes=nothing, # Disable remote links. Needed for DocumenterReference
         warnonly=true,

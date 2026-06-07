@@ -96,7 +96,7 @@ function test_double_integrator_energy()
                 x_tf, p_tf = f_interior(t2, x_t2, p_t2, tf)
                 s[1:2] = x_tf - xf      # target conditions
                 s[3] = g(x_t1)          # constraint activation at entry
-                s[4] = p_t1[2]          # switching condition
+                return s[4] = p_t1[2]          # switching condition
             end
 
             # Known solution (from documentation)

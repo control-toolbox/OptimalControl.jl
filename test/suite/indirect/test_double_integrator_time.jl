@@ -51,7 +51,7 @@ function test_double_integrator_time()
                 x_tf, p_tf = f_min(t1, x_t1, p_t1, tf)
                 s[1:2] = x_tf - xf                    # target conditions
                 s[3] = p_t1[2]                        # switching condition
-                s[4] = H(x_tf, p_tf, u_min)           # free final time
+                return s[4] = H(x_tf, p_tf, u_min)           # free final time
             end
 
             # Known solution (from documentation)
