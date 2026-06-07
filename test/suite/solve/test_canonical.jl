@@ -128,7 +128,7 @@ end
 function run_cpu_test(
     pb, pname, dname, disc, mname, mod, sname, sol, total_tests_ref, passed_tests_ref
 )
-    run_test(
+    return run_test(
         pb,
         pname,
         dname,
@@ -146,7 +146,7 @@ end
 function run_gpu_test(
     pb, pname, dname, disc, mname, mod, sname, sol, total_tests_ref, passed_tests_ref
 )
-    run_test(
+    return run_test(
         pb,
         pname,
         dname,
