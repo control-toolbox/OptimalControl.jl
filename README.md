@@ -9,7 +9,7 @@ The OptimalControl.jl package is part of the [control-toolbox ecosystem](https:/
 
 | **Category** | **Badge** |
 |-----------------------|-----------|
-| **Documentation** | [![Stable Docs](https://img.shields.io/badge/docs-stable-blue.svg)](https://control-toolbox.org/OptimalControl.jl/stable/) [![Dev Docs](https://img.shields.io/badge/docs-dev-8A2BE2.svg)](https://control-toolbox.org/OptimalControl.jl/dev/) |
+| **Documentation** | [![Stable Docs](https://img.shields.io/badge/docs-stable-blue.svg)](https://control-toolbox.org/OptimalControl.jl/stable/) [![Dev Docs](https://img.shields.io/badge/docs-dev-8A2BE2.svg)](https://control-toolbox.org/OptimalControl.jl/dev/) [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/control-toolbox/OptimalControl.jl) |
 | **CI / Build** | [![Build Status](https://github.com/control-toolbox/OptimalControl.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/control-toolbox/OptimalControl.jl/actions/workflows/CI.yml?query=branch%3Amain) |
 | **Test Coverage** | [![Coverage](https://codecov.io/gh/control-toolbox/OptimalControl.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/control-toolbox/OptimalControl.jl) |
 | **Package Evaluation** | [![PkgEval](https://img.shields.io/badge/Julia-package-purple)](https://juliahub.com/ui/Packages/General/OptimalControl) [![Dependencies](https://juliahub.com/docs/General/OptimalControl/stable/deps.svg)](https://juliahub.com/ui/Packages/General/OptimalControl?t=2) |
