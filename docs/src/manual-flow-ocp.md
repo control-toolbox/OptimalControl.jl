@@ -2,6 +2,9 @@
 
 In this tutorial, we explain the `Flow` function, in particular to compute flows from an optimal control problem.
 
+!!! note "Current limitation"
+    Currently, from an optimal control problem, only **Hamiltonian flows** can be constructed, i.e. the control law must be provided in **feedback form depending on both state and costate**: `u(x, p)`. An active refactoring is under way to extend support to non-Hamiltonian flows, in particular open-loop control laws `u(t)` and state feedback control laws `u(x)`.
+
 ## Basic usage
 
 Les us define a basic optimal control problem.
