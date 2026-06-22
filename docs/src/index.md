@@ -2,6 +2,10 @@
 
 The OptimalControl.jl package is the root package of the [control-toolbox ecosystem](https://github.com/control-toolbox). The control-toolbox ecosystem gathers Julia packages for mathematical control and applications. It aims to provide tools to model and solve optimal control problems with ordinary differential equations by direct and indirect methods, both on CPU and GPU.
 
+## Motivation
+
+The guiding philosophy of OptimalControl.jl is to offer, to our knowledge, the only Julia package that unifies both direct and indirect methods for optimal control within a single, coherent framework. This fills a gap in a landscape where existing tools are fragmented across programming languages and paradigms, and are usually restricted to a single family of methods. The package provides a domain-specific language that closely matches mathematical notation, together with multiple discretization schemes and shooting methods, and planned support for homotopy continuation methods. Its modeler–solver separation makes it agnostic to the underlying NLP modeling backend and optimization solver, and enables seamless execution on both CPU and GPU with minimal user intervention. Combined with an ecosystem of domain-specific applications, tutorials, and benchmarking tools, this design targets researchers and engineers working in optimal control, control theorists developing new algorithms, and students learning the field through interactive tutorials.
+
 ## Installation
 
 To install OptimalControl.jl, please [open Julia's interactive session (known as REPL)](https://docs.julialang.org/en/v1/manual/getting-started) and use the Julia package manager:
@@ -123,6 +127,10 @@ If you want to ask a question, feel free to start a discussion [here](https://gi
 !!! note
 
     If you want to add an application or a package to the control-toolbox ecosystem, please follow this [set up tutorial](https://github.com/orgs/control-toolbox/discussions/65).
+
+## Testing
+
+OptimalControl.jl is the umbrella package of a multi-repository ecosystem, and testing is organized in layers. Each sub-package (`CTBase`, `CTParser`, `CTModels`, `CTDirect`, `CTSolvers`, `CTFlows`) has its own test suite combining unit tests, integration tests, and code-quality checks (e.g. with [Aqua.jl](https://github.com/JuliaTesting/Aqua.jl)). At the umbrella level, OptimalControl.jl adds strong end-to-end integration tests that solve complete optimal control problems with both direct and indirect methods. Continuous integration runs on Linux, macOS, and Windows, on both CPU and GPU (via a self-hosted CUDA runner), through reusable workflows centralized in [CTActions](https://github.com/control-toolbox/CTActions). Code coverage is tracked on [Codecov](https://codecov.io), downstream packages are guarded against regressions through dedicated breakage tests, and beta versions are distributed during development via a local registry, [ct-registry](https://github.com/control-toolbox/ct-registry). Part of the test code is written with the help of AI agents, always under human review.
 
 ## Reproducibility
 

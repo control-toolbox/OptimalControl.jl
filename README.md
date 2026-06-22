@@ -59,6 +59,10 @@ pkg> add OptimalControl
 >[!NOTE]
 >The package requires Julia version 1.10 or later.
 
+## Motivation
+
+The guiding philosophy of OptimalControl.jl is to offer, to our knowledge, the only Julia package that unifies both direct and indirect methods for optimal control within a single, coherent framework. This fills a gap in a landscape where existing tools are fragmented across programming languages and paradigms, and are usually restricted to a single family of methods. The package provides a domain-specific language that closely matches mathematical notation, together with multiple discretization schemes and shooting methods, and planned support for homotopy continuation methods. Its modeler–solver separation makes it agnostic to the underlying NLP modeling backend and optimization solver, and enables seamless execution on both CPU and GPU with minimal user intervention. Combined with an ecosystem of domain-specific applications, tutorials, and benchmarking tools, this design targets researchers and engineers working in optimal control, control theorists developing new algorithms, and students learning the field through interactive tutorials.
+
 ## Basic usage
 
 Let us model and solve a simple optimal control problem, then plot the solution:
@@ -84,6 +88,10 @@ plot(sol)
 ```
 
 For more details about this problem, please check the basic example presented in the [documentation](https://control-toolbox.org/OptimalControl.jl).
+
+## Testing
+
+OptimalControl.jl is the umbrella package of a multi-repository ecosystem with a layered testing strategy: each sub-package has its own suite combining unit tests, integration tests, and code-quality checks, while the umbrella package adds strong end-to-end tests solving complete problems by both direct and indirect methods. Continuous integration runs on Linux, macOS, and Windows, on both CPU and GPU, through reusable workflows centralized in [CTActions](https://github.com/control-toolbox/CTActions), with code coverage tracked on Codecov and downstream packages guarded against regressions through breakage tests. Part of the test code is written with AI assistance, always under human review.
 
 ## Citing us
 
