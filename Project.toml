@@ -59,7 +59,6 @@ BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
 DifferentiationInterface = "a0c0ee7d-e4b9-4e03-894e-1c5f64a51d63"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
-LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MadNCL = "434a0bcb-5a7c-42b2-a9d3-9e3f760e7af0"
 MadNLP = "2621e9c9-9eb4-46b1-8089-e8c72242dfb6"
 MadNLPGPU = "d72a61cc-809d-412f-99be-fd81f4b8a598"
@@ -72,4 +71,4 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 UnoSolver = "1baa60ac-02f7-4b39-a7a8-2f4f58486b05"
 
 [targets]
-test = ["BenchmarkTools", "CUDA", "DifferentiationInterface", "ForwardDiff", "LinearAlgebra", "MadNCL", "MadNLP", "MadNLPGPU", "NLPModelsIpopt", "NonlinearSolve", "OrdinaryDiffEq", "Printf", "SplitApplyCombine", "Test", "UnoSolver"]
+test = ["BenchmarkTools", "CUDA", "DifferentiationInterface", "ForwardDiff", "MadNCL", "MadNLP", "MadNLPGPU", "NLPModelsIpopt", "NonlinearSolve", "OrdinaryDiffEq", "Printf", "SplitApplyCombine", "Test", "UnoSolver"]
