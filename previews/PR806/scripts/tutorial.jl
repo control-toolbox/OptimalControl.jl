@@ -199,6 +199,7 @@ println("costate p0 = ", p0_sol)
 println("shoot S(p0) = ", S(p0_sol))
 
 indirect_sol = φ((t0, tf), x0, p0_sol; saveat=range(t0, tf, 100))
+
 plt_compare = plot(direct_sol; label="direct", size=(800, 600))
 plot!(plt_compare, indirect_sol; label="indirect")
 
