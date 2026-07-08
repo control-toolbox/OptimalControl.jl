@@ -333,7 +333,7 @@ r_bang = [sol_bang1[1, :]; sol_bang2[1, :]]
 
 plt_bang = plot(sol_cold; label="optimal")
 plot!(plt_bang[1], t_bang, r_bang; label="bang-bang (altitude)", linestyle=:dash)
-plot!(plt_bang[1]; legend=:bottomright)
+plot(plt_bang[1]; legend=:bottomright)
 ````
 
 ## Solving on a GPU
@@ -347,7 +347,7 @@ using MadNLPGPU
 using CUDA
 
 try
-    global sol_gpu = solve(goddard, :gpu; grid_size=1000)
+    global sol_gpu = solve(goddard, :gpu; grid_size=1000, display=false)
     println("GPU solve succeeded — a functional GPU is available.")
 catch e
     println("GPU solve failed, as expected without a functional GPU.")
@@ -358,19 +358,51 @@ end
 
 For the full GPU setup, see [Solve on GPU](@ref manual-solve-gpu).
 
-## The indirect method, revisited
+## The indirect method
 
 We now return to the **double integrator** `ocp` from the earlier sections. Its shooting has just two unknowns and is initialised by the direct costate above, which makes it ideal to *see* the indirect method. (The Goddard shooting is a *structured multi-arc* problem — see the links in the last section.)
 
-In control-toolbox we systematically pair the direct method with the **indirect** one, based on Pontryagin's Maximum Principle (PMP). With pseudo-Hamiltonian $H(x,p,u) = p\,f(x,u) + p^0 f^0(x,u)$ (normal case $p^0 = -1$), the PMP gives the maximising control in feedback form $u(x,p) = \arg\max_u H$, and the optimal trajectory solves a boundary value problem that we recast as a **shooting equation** $S(p_0) = 0$.
+In control-toolbox we systematically pair the direct method with the **indirect** one, based on Pontryagin's Maximum Principle (PMP), with pseudo-Hamiltonian
+
+```math
+H(x,p,u) = p\,f(x,u) + p^0 f^0(x,u) \qquad (\text{normal case } p^0 = -1).
+```
+
+The PMP gives the maximising control in feedback form
+
+```math
+u(x,p) = \arg\max_u H,
+```
+
+and the optimal trajectory solves a boundary value problem that we recast as a **shooting equation**
+
+```math
+S(p_0) = 0.
+```
 
 The indirect method proceeds in three steps:
 
-1. **Maximising control.** The PMP yields the control in feedback form $u(x, p) = \arg\max_u H(x, p, u)$. Substituting back gives the maximised Hamiltonian $\mathbf{H}(x, p) = H(x, p, u(x, p))$.
+1. **Maximising control.** The PMP yields the control in feedback form $u(x, p) = \arg\max_u H(x, p, u)$. Substituting back gives the maximised Hamiltonian
 
-2. **Boundary value problem.** The optimal trajectory satisfies the Hamiltonian system $\dot{x} = \nabla_p \mathbf{H}$, $\dot{p} = -\nabla_x \mathbf{H}$, with boundary conditions $x(t_0) = x_0$, $x(t_f) = x_f$.
+   ```math
+   \mathbf{H}(x, p) = H(x, p, u(x, p)).
+   ```
 
-3. **Shooting function.** Let $\varphi_{t_0, x_0, p_0}(\cdot)$ denote the flow of the Hamiltonian vector field from $(x_0, p_0)$. The shooting function $S(p_0) = \pi(\varphi_{t_0, x_0, p_0}(t_f)) - x_f$ — where $\pi(x, p) = x$ projects onto the state — measures the miss at $t_f$. Solving the BVP reduces to finding $p_0$ such that $S(p_0) = 0$.
+2. **Boundary value problem.** The optimal trajectory satisfies the Hamiltonian system
+
+   ```math
+   \dot{x} = \nabla_p \mathbf{H}, \qquad \dot{p} = -\nabla_x \mathbf{H},
+   ```
+
+   with boundary conditions $x(t_0) = x_0$, $x(t_f) = x_f$.
+
+3. **Shooting function.** Let $\varphi_{t_0, x_0, p_0}(\cdot)$ denote the flow of the Hamiltonian vector field from $(x_0, p_0)$. The shooting function
+
+   ```math
+   S(p_0) = \pi(\varphi_{t_0, x_0, p_0}(t_f)) - x_f, \qquad \pi(x, p) = x,
+   ```
+
+   measures the miss at $t_f$: solving the BVP reduces to finding $p_0$ such that $S(p_0) = 0$.
 
 For the energy problem, $H = p_1 v + p_2 u - u^2/2$, so the maximiser is $u = p_2$.
 
@@ -411,21 +443,19 @@ Reconstruct and plot the indirect solution from the flow:
 
 ````@example tutorial
 indirect_sol = φ((t0, tf), x0, p0_sol; saveat=range(t0, tf, 100))
-plot(indirect_sol)
+plot(indirect_sol; size=(800, 600))
 ````
 
 Overlaying the direct and indirect solutions confirms they match:
 
 ````@example tutorial
-plt_compare = plot(direct_sol; label="direct")
+plt_compare = plot(direct_sol; label="direct", size=(800, 600))
 plot!(plt_compare, indirect_sol; label="indirect")
 ````
 
 See [Compute flows from optimal control problems](@ref manual-flow-ocp) for the flow construction, and the [indirect simple shooting tutorial](@extref tutorial-indirect-simple-shooting).
 
-## Going further (end of the socle)
-
-This is the natural stopping point. From here, the tour branches out — we point to the detailed pages rather than coding them live.
+## Going further
 
 **Variables & parameters.** Beyond the control, one can optimise **parameters** naturally, both in an OCP (the `variable` keyword of the DSL) and in a differential-constraint optimisation problem **without any control** (a *control-free* problem).
 See [control-free problems](@ref example-control-free).

@@ -157,13 +157,13 @@ r_bang = [sol_bang1[1, :]; sol_bang2[1, :]]
 
 plt_bang = plot(sol_cold; label="optimal")
 plot!(plt_bang[1], t_bang, r_bang; label="bang-bang (altitude)", linestyle=:dash)
-plot!(plt_bang[1]; legend=:bottomright)
+plot(plt_bang[1]; legend=:bottomright)
 
 using MadNLPGPU
 using CUDA
 
 try
-    global sol_gpu = solve(goddard, :gpu; grid_size=1000)
+    global sol_gpu = solve(goddard, :gpu; grid_size=1000, display=false)
     println("GPU solve succeeded — a functional GPU is available.")
 catch e
     println("GPU solve failed, as expected without a functional GPU.")
@@ -199,9 +199,9 @@ println("costate p0 = ", p0_sol)
 println("shoot S(p0) = ", S(p0_sol))
 
 indirect_sol = φ((t0, tf), x0, p0_sol; saveat=range(t0, tf, 100))
-plot(indirect_sol)
+plot(indirect_sol; size=(800, 600))
 
-plt_compare = plot(direct_sol; label="direct")
+plt_compare = plot(direct_sol; label="direct", size=(800, 600))
 plot!(plt_compare, indirect_sol; label="indirect")
 
 # This file was generated using Literate.jl, https://github.com/fredrikekre/Literate.jl

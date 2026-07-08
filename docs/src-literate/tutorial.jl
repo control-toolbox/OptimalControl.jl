@@ -328,7 +328,7 @@ r_bang = [sol_bang1[1, :]; sol_bang2[1, :]]
 
 plt_bang = plot(sol_cold; label="optimal")
 plot!(plt_bang[1], t_bang, r_bang; label="bang-bang (altitude)", linestyle=:dash)
-plot!(plt_bang[1]; legend=:bottomright)
+plot(plt_bang[1]; legend=:bottomright)
 
 #src ============================================================================
 # ## Solving on a GPU
