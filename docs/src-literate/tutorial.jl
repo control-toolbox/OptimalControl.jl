@@ -24,8 +24,10 @@
 # the **direct** method, initialisation, grid continuation, GPU, and finally the **indirect**
 # (Pontryagin) method. Advanced topics are linked at the end.
 #
-#src TODO(prose): 2–3 sentence hook. Who it is for (control/ODE/optim background, not Julia
-#src   experts). What they will be able to do after (define + solve + plot in a few lines).
+# It is written for readers with a background in optimal control, ODEs or optimisation — no
+# prior Julia expertise is assumed. By the end you will be able to define an optimal control
+# problem, solve it by both the direct and indirect methods, and visualise the result — all
+# in a few lines of code.
 
 #src ============================================================================
 # ## The problem, and installing the tools
@@ -40,10 +42,22 @@
 # subject to the dynamics $\dot{x}(t) = f(t, x(t), u(t))$ and, possibly, box / path / boundary
 # constraints. When $g = 0$ the cost is of **Lagrange** form; when $f^0 = 0$, of **Mayer** form.
 #
-#src TODO(prose): recall constraints block + free-time / extra-variable v (copy the math from
-#src   the brainstorming "Formulation mathématique"). Keep it short: 1 slide of math.
-#src TODO(prose): one sentence + (optional) one figure on the modular ecosystem
-#src   (CTBase / CTParser / CTModels / CTDirect / CTFlows / CTSolvers).
+# More generally, the times $t_0$ and $t_f$ may be free (optimisation variables), and a vector
+# $v$ of additional parameters can enter the cost, dynamics and constraints. The full problem
+# then reads
+#
+# ```math
+# \min_{x,u,v}\; g(x(t_0), x(t_f), v) + \int_{t_0}^{t_f} f^{0}(t, x(t), u(t), v)\,\mathrm{d}t,
+# ```
+#
+# subject to $\dot{x}(t) = f(t, x(t), u(t), v)$, box / path / boundary constraints, and
+# $v_{\mathrm{lower}} \le v \le v_{\mathrm{upper}}$.
+#
+# OptimalControl.jl is the core of the [control-toolbox](https://control-toolbox.org) ecosystem,
+# a modular suite of Julia packages — CTBase (base types & exceptions), CTParser (DSL parsing),
+# CTModels (problem data structures), CTDirect (discretisation & NLP transcription), CTFlows
+# (Hamiltonian flows for indirect methods), and CTSolvers (solver orchestration) — that can also
+# be used individually.
 #
 # Installation is a single package:
 #
@@ -88,11 +102,11 @@ ocp = @def begin
     0.5∫( u(t)^2 ) → min
 end
 
-#src TODO(prose): optionally build it piece by piece (time → state → control → dynamics →
-#src   boundary → cost) to show proximity with the math. Mention non-Unicode alternatives.
-#src TODO(optional): show 1 pedagogical error (incomplete def / undeclared variable) → CTBase
-#src   exception. Do NOT execute an erroring block in the built doc; guard with try/catch or
-#src   present it as a non-run ```julia fenced block.
+# Each line of the `@def` block mirrors a piece of the mathematical formulation — time, state,
+# control, dynamics, boundary conditions, then cost — in the same order one would write them
+# on paper. Unicode symbols (`∈`, `R²`, `ẋ`, `∫`, `→`) make the code read like the maths; plain
+# ASCII alternatives (`in`, `R2`, `der`, `integral`, `to`) are available for keyboards or
+# workflows that prefer them.
 
 # ### The same problem with the macro-free (functional) API
 #
@@ -141,10 +155,12 @@ definition(ocp)          # the macro records the full DSL expression
 
 has_abstract_definition(ocp_func)   # false: functional API stores no abstract definition
 
-#src TODO(prose): remarks to drop here —
-#src   (a) scalar vs vector in callbacks: `u[1]` even in dim 1 (see manual-macro-free).
-#src   (b) the functional API only works with the `:adnlp` modeler, NOT `:exa`/GPU — this
-#src       motivates the GPU section. Forward-reference it.
+# Two remarks are in order. First, in the functional API callbacks every quantity is vector-valued:
+# even when the control is scalar, one writes `u[1]` — not `u` — inside `f_energy!` or
+# `lagrange_energy`. Second, the functional API currently works only with the `:adnlp` modeler;
+# it does **not** support the `:exa` modeler needed for GPU solving. This is one reason to prefer
+# the `@def` macro when GPU execution is contemplated — we will come back to this in the GPU
+# section.
 
 #src ============================================================================
 # ## First solve, initial guess, and the costate
@@ -189,7 +205,9 @@ println("iterations, @init guess:   ", iterations(sol))
 
 #md # For all the ways to specify an initial guess, see [Set an initial guess](@ref manual-initial-guess).
 #nb # For all the ways to specify an initial guess, see [Set an initial guess](https://control-toolbox.org/OptimalControl.jl/stable/manual-initial-guess.html).
-#src TODO(prose): note there is no costate init yet (documented limitation).
+# Note that there is currently no way to initialise the costate directly — only state, control
+# and variable can be provided through `@init`. The solver initialises the adjoint internally
+# (as we saw above). Costate initialisation is a planned feature.
 
 #src ============================================================================
 # ## The direct method in depth: the Goddard problem
@@ -199,8 +217,19 @@ println("iterations, @init guess:   ", iterations(sol))
 # program (NLP) by discretising time (Runge–Kutta / collocation) on a grid, then hands the NLP
 # to a solver. It is robust and easy to use.
 #
-#src TODO(prose): recall the trapezoidal discretisation → NLP (copy from brainstorming
-#src   "Principe de la méthode directe"). Keep to one slide.
+# Concretely, time is discretised on a uniform grid $t_0 < t_1 < \dots < t_N = t_f$ with step
+# $h = (t_f - t_0)/N$. The trapezoidal scheme, for instance, replaces the dynamics by
+#
+# ```math
+# x_{i} = x_{i-1} + \tfrac{h}{2}\bigl(f(t_i, x_i, u_i) + f(t_{i-1}, x_{i-1}, u_{i-1})\bigr),
+# \quad i = 1, \dots, N,
+# ```
+#
+# and the integral cost by the corresponding trapezoidal sum. The continuous OCP thus becomes a
+# finite-dimensional NLP in the variables $X = (x_0, \dots, x_N, u_0, \dots, u_N)$, which is passed
+# to an NLP solver such as [Ipopt](https://coin-or.github.io/Ipopt). Higher-order schemes
+# (midpoint, Gauss–Legendre collocation) follow the same principle with different quadrature
+# and interpolation formulas.
 #
 # The double integrator is *linear-quadratic*: the solver nails it in a **single iteration**, so
 # there is nothing to show about convergence or warm-starting. We switch to a genuinely
@@ -251,7 +280,8 @@ sol_madnlp = solve(goddard, :madnlp; grid_size=250, display=false)
 println("Ipopt  : r(tf) = ", -objective(sol_ipopt),  ", ", iterations(sol_ipopt),  " iters")
 println("MadNLP : r(tf) = ", -objective(sol_madnlp), ", ", iterations(sol_madnlp), " iters")
 
-#src TODO(prose): briefly mention `methods()` and `describe(:collocation)`. Do not dwell.
+# The available methods and their options can be inspected with `methods()` and
+# `describe(:collocation)`; we will not dwell on them here.
 
 # ### Options: grid size and scheme
 #
@@ -348,8 +378,21 @@ end
 # control in feedback form $u(x,p) = \arg\max_u H$, and the optimal trajectory solves a
 # boundary value problem that we recast as a **shooting equation** $S(p_0) = 0$.
 #
-#src TODO(prose): recall the 3 steps (maximising control → BVP → shooting function) from the
-#src   brainstorming "Principe de la méthode indirecte". One slide of math.
+# The indirect method proceeds in three steps:
+#
+# 1. **Maximising control.** The PMP yields the control in feedback form
+#    $u(x, p) = \arg\max_u H(x, p, u)$. Substituting back gives the maximised Hamiltonian
+#    $\mathbf{H}(x, p) = H(x, p, u(x, p))$.
+#
+# 2. **Boundary value problem.** The optimal trajectory satisfies the Hamiltonian system
+#    $\dot{x} = \nabla_p \mathbf{H}$, $\dot{p} = -\nabla_x \mathbf{H}$, with boundary conditions
+#    $x(t_0) = x_0$, $x(t_f) = x_f$.
+#
+# 3. **Shooting function.** Let $\varphi_{t_0, x_0, p_0}(\cdot)$ denote the flow of the Hamiltonian
+#    vector field from $(x_0, p_0)$. The shooting function
+#    $S(p_0) = \pi(\varphi_{t_0, x_0, p_0}(t_f)) - x_f$ — where $\pi(x, p) = x$ projects onto the
+#    state — measures the miss at $t_f$. Solving the BVP reduces to finding $p_0$ such that
+#    $S(p_0) = 0$.
 #
 # For the energy problem, $H = p_1 v + p_2 u - u^2/2$, so the maximiser is $u = p_2$.
 
@@ -369,7 +412,7 @@ proj((x, p)) = x
 S(p0) = proj(φ(t0, x0, p0, tf)) - xf
 
 # **The shooting is initialised with the costate of the direct solution** — the very adjoint we
-# highlighted in §2:
+# highlighted above:
 
 nle!(s, p0, _) = (s[:] = S(p0))
 
@@ -388,7 +431,10 @@ println("shoot S(p0) = ", S(p0_sol))
 indirect_sol = φ((t0, tf), x0, p0_sol; saveat=range(t0, tf, 100))
 plot(indirect_sol)
 
-#src TODO(prose): overlay direct vs indirect on one plot to show they match.
+# Overlaying the direct and indirect solutions confirms they match:
+
+plt_compare = plot(direct_sol; label="direct")
+plot!(plt_compare, indirect_sol; label="indirect")
 #md # See [Compute flows from optimal control problems](@ref manual-flow-ocp) for the flow
 #md # construction, and the [indirect simple shooting tutorial](@extref tutorial-indirect-simple-shooting).
 #nb # See [Compute flows from optimal control problems](https://control-toolbox.org/OptimalControl.jl/stable/manual-flow-ocp.html)
