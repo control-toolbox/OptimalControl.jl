@@ -52,10 +52,10 @@ has_abstract_definition(ocp_func)   # false: functional API stores no abstract d
 
 direct_sol = solve(ocp)
 
-plot(direct_sol)
+plot(direct_sol; size=(800, 600))
 
 sol_init = solve(ocp; init=nothing, max_iter=0, display=false)
-plot(sol_init; size=(600, 450))
+plot(sol_init; size=(800, 600))
 
 ig = @init ocp begin
     q(t) := -1 + t
@@ -68,8 +68,14 @@ println("iterations, default guess: ", iterations(direct_sol))
 println("iterations, @init guess:   ", iterations(sol))
 
 # Goddard data and dynamics (F0: drift, F1: thrust)
-const r0 = 1; v0 = 0; m0 = 1; mf = 0.6
-Cd = 310; Tmax = 3.5; β = 500; b = 2
+const r0 = 1
+const v0 = 0
+const m0 = 1
+const mf = 0.6
+const Cd = 310
+const Tmax = 3.5
+const β = 500
+const b = 2
 
 F0(x) = begin
     r, v, m = x
@@ -98,8 +104,10 @@ goddard = @def begin
 end
 
 using MadNLP
+
 sol_ipopt  = solve(goddard;          grid_size=250, display=false)
 sol_madnlp = solve(goddard, :madnlp; grid_size=250, display=false)
+
 println("Ipopt  : r(tf) = ", objective(sol_ipopt),  ", ", iterations(sol_ipopt),  " iters")
 println("MadNLP : r(tf) = ", objective(sol_madnlp), ", ", iterations(sol_madnlp), " iters")
 
@@ -107,6 +115,8 @@ using BenchmarkTools
 
 # solutions computed once, reused for iteration counts and the overlay plot
 sol_cold = solve(goddard; grid_size=1000, display=false)
+
+# warm cascade: grid 50 first, then grid 1000 initialised from it
 s50   = solve(goddard; grid_size=50, display=false)
 s1000 = solve(goddard; grid_size=1000, init=s50, display=false)
 
@@ -117,11 +127,11 @@ t_cascade = @belapsed begin
     solve($goddard; grid_size=1000, init=a, display=false)
 end samples=3 seconds=10
 
-println("cold  grid 1000          : ", iterations(sol_cold), " iters, ", round(t_cold;    digits=3), " s")
+println("cold    grid 1000        : ", iterations(sol_cold), " iters, ", round(t_cold;    digits=3), " s")
 println("cascade grid 50 (warm-up): ", iterations(s50),      " iters")
 println("cascade grid 1000 (warm) : ", iterations(s1000),    " iters, ", round(t_cascade; digits=3), " s total")
 
-plt = plot(s50;  label="50")
+plt = plot(s50;  label="50", size=(800, 800))
 plot!(plt, s1000; label="1000")
 
 using OrdinaryDiffEq   # ODE solver (callbacks for the bang-bang simulation)
@@ -138,22 +148,22 @@ cb_apogee = ContinuousCallback((u, t, int) -> u[2], terminate!)
 sol_bang2 = solve(ODEProblem(bang2!, x1_bang, (t1_bang, 1000.0)), Tsit5(); callback=cb_apogee, reltol=1e-8, abstol=1e-8)
 tf_bang, rf_bang = sol_bang2.t[end], sol_bang2[1, end]
 
-println("Optimal:   r(tf) = ", round(objective(sol_cold), digits=4))
-println("Bang-bang: r(tf) = ", round(rf_bang, digits=4), "  (t1=", round(t1_bang, digits=2), ", tf=", round(tf_bang, digits=2), ")")
+println("Optimal:   r(tf) = ", round(objective(sol_cold), digits=6), "  (tf=", round(variable(sol_cold), digits=4), ")")
+println("Bang-bang: r(tf) = ", round(rf_bang, digits=6), "  (t1=", round(t1_bang, digits=4), ", tf=", round(tf_bang, digits=4), ")")
 
 # assemble the bang-bang trajectory as (t, r, v, m) for plotting
 t_bang = [sol_bang1.t; sol_bang2.t]
 r_bang = [sol_bang1[1, :]; sol_bang2[1, :]]
-v_bang = [sol_bang1[2, :]; sol_bang2[2, :]]
 
 plt_bang = plot(sol_cold; label="optimal")
-plot!(plt_bang, t_bang, r_bang; label="bang-bang (altitude)", linestyle=:dash)
+plot!(plt_bang[1], t_bang, r_bang; label="bang-bang (altitude)", linestyle=:dash)
+plot!(plt_bang[1]; legend=:bottomright)
 
 using MadNLPGPU
 using CUDA
 
 try
-    global sol_gpu = solve(goddard, :gpu; grid_size=1000)
+    global sol_gpu = solve(goddard, :gpu; grid_size=1000, display=false)
     println("GPU solve succeeded — a functional GPU is available.")
 catch e
     println("GPU solve failed, as expected without a functional GPU.")
@@ -189,9 +199,9 @@ println("costate p0 = ", p0_sol)
 println("shoot S(p0) = ", S(p0_sol))
 
 indirect_sol = φ((t0, tf), x0, p0_sol; saveat=range(t0, tf, 100))
-plot(indirect_sol)
+plot(indirect_sol; size=(800, 600))
 
-plt_compare = plot(direct_sol; label="direct")
+plt_compare = plot(direct_sol; label="direct", size=(800, 600))
 plot!(plt_compare, indirect_sol; label="indirect")
 
 # This file was generated using Literate.jl, https://github.com/fredrikekre/Literate.jl
