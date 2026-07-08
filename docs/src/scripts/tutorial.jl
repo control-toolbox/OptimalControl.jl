@@ -156,8 +156,8 @@ t_bang = [sol_bang1.t; sol_bang2.t]
 r_bang = [sol_bang1[1, :]; sol_bang2[1, :]]
 
 plt_bang = plot(sol_cold; label="optimal")
-plot!(plt_bang[1], t_bang, r_bang; label="bang-bang (altitude)", linestyle=:dash)
-plot(plt_bang[1]; legend=:bottomright)
+plot!(plt_bang[1], t_bang, r_bang; label="bang-bang", linestyle=:dash)
+plot(plt_bang[1]; legend=:bottomright, xlabel="time", ylabel="altitude")
 
 using MadNLPGPU
 using CUDA
@@ -199,7 +199,6 @@ println("costate p0 = ", p0_sol)
 println("shoot S(p0) = ", S(p0_sol))
 
 indirect_sol = φ((t0, tf), x0, p0_sol; saveat=range(t0, tf, 100))
-plot(indirect_sol; size=(800, 600))
 
 plt_compare = plot(direct_sol; label="direct", size=(800, 600))
 plot!(plt_compare, indirect_sol; label="indirect")
