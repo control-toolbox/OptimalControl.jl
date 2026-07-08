@@ -172,4 +172,7 @@ println("shoot S(p0) = ", S(p0_sol))
 indirect_sol = φ((t0, tf), x0, p0_sol; saveat=range(t0, tf, 100))
 plot(indirect_sol)
 
+plt_compare = plot(direct_sol; label="direct")
+plot!(plt_compare, indirect_sol; label="indirect")
+
 # This file was generated using Literate.jl, https://github.com/fredrikekre/Literate.jl
