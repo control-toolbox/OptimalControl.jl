@@ -2,7 +2,7 @@ using OptimalControl
 using NLPModelsIpopt
 using Plots
 
-t0 = 0; tf = 1; x0 = [-1, 0]; xf = [0, 0]
+t0 = 0; tf = 1; x0 = [-1, 0]; xf = [0, 0];
 
 ocp = @def begin
     t ∈ [t0, tf], time
@@ -68,7 +68,7 @@ println("iterations, default guess: ", iterations(direct_sol))
 println("iterations, @init guess:   ", iterations(sol))
 
 # Goddard data and dynamics (F0: drift, F1: thrust)
-const r0 = 1; v0 = 0; m0 = 1; vmax = 0.1; mf = 0.6
+const r0 = 1; v0 = 0; m0 = 1; mf = 0.6
 Cd = 310; Tmax = 3.5; β = 500; b = 2
 
 F0(x) = begin
@@ -91,7 +91,6 @@ goddard = @def begin
     m(tf) == mf
     0 ≤ u(t) ≤ 1
     r(t) ≥ r0
-    0 ≤ v(t) ≤ vmax
 
     ẋ(t) == F0(x(t)) + u(t) * F1(x(t))
 
