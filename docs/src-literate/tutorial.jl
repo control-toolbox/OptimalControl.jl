@@ -436,8 +436,10 @@ println("shoot S(p0) = ", S(p0_sol))
 # Reconstruct the indirect solution from the flow and overlay it with the direct solution:
 
 indirect_sol = φ((t0, tf), x0, p0_sol; saveat=range(t0, tf, 100))
+
 plt_compare = plot(direct_sol; label="direct", size=(800, 600))
 plot!(plt_compare, indirect_sol; label="indirect")
+
 #md # See [Compute flows from optimal control problems](@ref manual-flow-ocp) for the flow construction, and the [indirect simple shooting tutorial](@extref tutorial-indirect-simple-shooting).
 #nb # See [Compute flows from optimal control problems](https://control-toolbox.org/OptimalControl.jl/stable/manual-flow-ocp.html) for the flow construction, and the [indirect simple shooting tutorial](https://control-toolbox.org/Tutorials.jl/stable/).
 
