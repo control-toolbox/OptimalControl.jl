@@ -220,7 +220,7 @@ for file in ["tutorial.jl"]
         return "```@meta\nDraft = false\n```\n\n" * content
     end
     Literate.markdown(INPUT, MD_OUTPUT; documenter=true, postprocess=tutorial_postprocess)
-    Literate.notebook(INPUT, NB_OUTPUT; execute=true)
+    Literate.notebook(INPUT, NB_OUTPUT; execute=false)
     Literate.script(INPUT, JL_OUTPUT)
 end
 

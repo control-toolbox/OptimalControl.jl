@@ -4,7 +4,7 @@
 #
 #src ============================================================================
 #src SKELETON — v1 "socle" (~45 min). See .reports/tutorial-brainstorming.md.
-#src Sections §0→§6 form the self-contained socle. Extensions are out of v1.
+#src Sections form the self-contained socle. Extensions are out of v1.
 #src
 #src Literate conventions used here:
 #src   `# text`   → markdown line (rendered in .md and .ipynb)
@@ -28,7 +28,7 @@
 #src   experts). What they will be able to do after (define + solve + plot in a few lines).
 
 #src ============================================================================
-# ## 0. The problem, and installing the tools
+# ## The problem, and installing the tools
 #src ============================================================================
 #
 # An **optimal control problem** (OCP) in Bolza form reads
@@ -60,7 +60,7 @@ using NLPModelsIpopt
 using Plots
 
 #src ============================================================================
-# ## 1. Defining a problem: `@def` and the macro-free API
+# ## Defining a problem: `@def` and the macro-free API
 #src ============================================================================
 #
 # Our running example: a wagon of unit mass on a frictionless rail, state $x = (q, v)$
@@ -144,10 +144,10 @@ has_abstract_definition(ocp_func)   # false: functional API stores no abstract d
 #src TODO(prose): remarks to drop here —
 #src   (a) scalar vs vector in callbacks: `u[1]` even in dim 1 (see manual-macro-free).
 #src   (b) the functional API only works with the `:adnlp` modeler, NOT `:exa`/GPU — this
-#src       motivates §4. Forward-reference it.
+#src       motivates the GPU section. Forward-reference it.
 
 #src ============================================================================
-# ## 2. First solve, initial guess, and the costate
+# ## First solve, initial guess, and the costate
 #src ============================================================================
 #
 # Solving is one call, plotting another.
@@ -170,7 +170,7 @@ plot(sol_init; size=(600, 450))
 # provide the state, control and (optional) variable, the solver initialises the **adjoint**
 # internally. After optimisation, this right-column costate is exactly the **adjoint $p$ of
 # Pontryagin's Maximum Principle** — the same $p$ we will reuse to start the indirect method
-# in §5. This closes the loop between the direct and indirect methods.
+# in the indirect section. This closes the loop between the direct and indirect methods.
 
 # ### Providing our own initial guess
 #
@@ -192,7 +192,7 @@ println("iterations, @init guess:   ", iterations(sol))
 #src TODO(prose): note there is no costate init yet (documented limitation).
 
 #src ============================================================================
-# ## 3. The direct method in depth: the Goddard problem
+# ## The direct method in depth: the Goddard problem
 #src ============================================================================
 #
 # The **direct** method turns the infinite-dimensional OCP into a finite-dimensional nonlinear
@@ -265,7 +265,7 @@ nothing #hide
 #
 # A solution can be passed **directly** as the initial guess of another solve — it is
 # interpolated onto the new grid. This makes discrete continuation trivial and ties back to the
-# initialisation of §2. On this nonlinear problem it genuinely **pays**: we compare reaching a
+# initialisation above. On this nonlinear problem it genuinely **pays**: we compare reaching a
 # fine grid of 1000 two ways —
 #
 # 1. **cold start** — solve `grid_size=1000` directly;
@@ -304,12 +304,12 @@ plot!(plt, s1000; label="1000")
 #src TODO(links): convert the continuation link to @extref once the Documenter anchor is known.
 
 #src ============================================================================
-# ## 4. Solving on a GPU (optional in live — expected error here)
+# ## Solving on a GPU (optional in live — expected error here)
 #src ============================================================================
 #
 # Moving to the GPU is a single token, `:gpu`, which auto-completes to
 # `(:collocation, :exa, :madnlp, :gpu)`. It requires the `:exa` modeler (hence `@def`, not the
-# macro-free API — cf. §1) plus a CUDA-capable GPU.
+# macro-free API — cf. the definition section) plus a CUDA-capable GPU.
 #
 # In a seminar or on Binder there is usually **no functional GPU**, so the call is *expected to
 # fail* — that is the pedagogical point: the `:gpu` token needs a specific setup. We wrap it in
@@ -335,12 +335,12 @@ end
 #nb # For the full GPU setup, see [Solve on GPU](https://control-toolbox.org/OptimalControl.jl/stable/manual-solve-gpu.html).
 
 #src ============================================================================
-# ## 5. The indirect method — back to the simple problem
+# ## The indirect method — back to the simple problem
 #src ============================================================================
 #
-# We now return to the **double integrator** `ocp` of §§1–2. Its shooting has just two unknowns
-# and is initialised by the direct costate of §2, which makes it ideal to *see* the indirect
-# method. (The Goddard shooting is a *structured multi-arc* problem — see the links in §6.)
+# We now return to the **double integrator** `ocp` from the earlier sections. Its shooting has just two unknowns
+# and is initialised by the direct costate above, which makes it ideal to *see* the indirect
+# method. (The Goddard shooting is a *structured multi-arc* problem — see the links in the last section.)
 #
 # In control-toolbox we systematically pair the direct method with the **indirect** one, based
 # on Pontryagin's Maximum Principle (PMP). With pseudo-Hamiltonian
@@ -395,7 +395,7 @@ plot(indirect_sol)
 #nb # for the flow construction, and the [indirect simple shooting tutorial](https://control-toolbox.org/Tutorials.jl/stable/).
 
 #src ============================================================================
-# ## 6. Going further (end of the socle)
+# ## Going further (end of the socle)
 #src ============================================================================
 #
 # This is the natural stopping point. From here, the tour branches out — we point to the
@@ -421,7 +421,7 @@ plot(indirect_sol)
 #nb #   shooting all at once — <https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html>
 #
 # **Discrete continuation** — warm-starting across a family of problems (homotopy on a physical
-# parameter), the grown-up version of the grid continuation of §3:
+# parameter), the grown-up version of the grid continuation above:
 # <https://control-toolbox.org/Tutorials.jl/stable/tutorial-continuation.html>.
 #
 #src ============================================================================
