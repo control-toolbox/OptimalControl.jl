@@ -61,10 +61,14 @@ using NLPModelsIpopt
 using Plots
 
 #src ============================================================================
-# ## Defining a problem: `@def` and the macro-free API
+# ## Defining a problem: `@def` vs macro-free
 #src ============================================================================
 #
-# Our running example: a wagon of unit mass on a frictionless rail, state $x = (q, v)$ (position, velocity), acceleration controlled by a force $u$. We start at $(-1, 0)$, must reach $(0, 0)$ at $t_f = 1$, and minimise the transfer energy $\tfrac12\int_0^1 u^2$.
+# Our running example: a wagon of unit mass on a frictionless rail, state $x = (q, v)$ (position, velocity), acceleration controlled by a force $u$. We start at $(-1, 0)$, must reach $(0, 0)$ at $t_f = 1$, and minimise the transfer energy
+#
+# ```math
+# \frac{1}{2}\int_0^1 u(t)^2\,\mathrm{d}t.
+# ```
 
 t0 = 0; tf = 1; x0 = [-1, 0]; xf = [0, 0];
 
@@ -72,6 +76,8 @@ t0 = 0; tf = 1; x0 = [-1, 0]; xf = [0, 0];
 #
 #md # The [`@def`](@ref manual-abstract-syntax) macro lets us write the problem almost exactly as the mathematics:
 #nb # The [`@def`](https://control-toolbox.org/OptimalControl.jl/stable/manual-abstract.html) macro lets us write the problem almost exactly as the mathematics:
+#
+# Each line of the `@def` block mirrors a piece of the mathematical formulation — time, state, control, dynamics, boundary conditions, then cost — in the same order one would write them on paper. Unicode symbols (`∈`, `R²`, `ẋ`, `∫`, `→`) make the code read like the maths; plain ASCII alternatives (`in`, `R2`, `der`, `integral`, `to`) are available for keyboards or workflows that prefer them.
 
 ocp = @def begin
     t ∈ [t0, tf], time
@@ -85,8 +91,6 @@ ocp = @def begin
 
     0.5∫( u(t)^2 ) → min
 end
-
-# Each line of the `@def` block mirrors a piece of the mathematical formulation — time, state, control, dynamics, boundary conditions, then cost — in the same order one would write them on paper. Unicode symbols (`∈`, `R²`, `ẋ`, `∫`, `→`) make the code read like the maths; plain ASCII alternatives (`in`, `R2`, `der`, `integral`, `to`) are available for keyboards or workflows that prefer them.
 
 # ### The same problem with the macro-free (functional) API
 #
@@ -132,7 +136,10 @@ definition(ocp)          # the macro records the full DSL expression
 
 has_abstract_definition(ocp_func)   # false: functional API stores no abstract definition
 
-# Two remarks are in order. First, in the functional API callbacks every quantity is vector-valued: even when the control is scalar, one writes `u[1]` — not `u` — inside `f_energy!` or `lagrange_energy`. Second, the functional API currently works only with the `:adnlp` modeler; it does **not** support the `:exa` modeler needed for GPU solving. This is one reason to prefer the `@def` macro when GPU execution is contemplated — we will come back to this in the GPU section.
+#md # !!! warning "Two things to keep in mind"
+#md #     - In the functional API, callbacks are **always vector-valued**: even when the control is scalar, one writes `u[1]` — not `u` — inside `f_energy!` or `lagrange_energy`.
+#md #     - The functional API currently works only with the `:adnlp` modeler; it does **not** support the `:exa` modeler needed for GPU solving — one more reason to prefer `@def` when GPU execution is contemplated (more in the GPU section).
+#nb # **Two things to keep in mind:** (1) in the functional API, callbacks are always vector-valued — even when the control is scalar, one writes `u[1]` — not `u` — inside `f_energy!` or `lagrange_energy`; (2) the functional API currently works only with the `:adnlp` modeler, **not** `:exa` (needed for GPU solving) — one more reason to prefer `@def` when GPU execution is contemplated (more in the GPU section).
 
 #src ============================================================================
 # ## First solve, initial guess, and the costate
@@ -141,19 +148,25 @@ has_abstract_definition(ocp_func)   # false: functional API stores no abstract d
 # Solving is one call, plotting another.
 
 direct_sol = solve(ocp)
+#md nothing # hide
+
+#md #-
+#md direct_sol # hide
 
 #-
 
-plot(direct_sol)
+plot(direct_sol; size=(800, 600))
 
 # ### The default initial guess
 #
 # With no initial guess, every variable is initialised to `0.1`. We can *see* the initial guess without optimising, by stopping the solver immediately with `max_iter=0`:
 
 sol_init = solve(ocp; init=nothing, max_iter=0, display=false)
-plot(sol_init; size=(600, 450))
+plot(sol_init; size=(800, 600))
 
-# **Notice the right-hand column: the costate is already there.** Even though we only ever provide the state, control and (optional) variable, the solver initialises the **adjoint** internally. After optimisation, this right-column costate is exactly the **adjoint $p$ of Pontryagin's Maximum Principle** — the same $p$ we will reuse to start the indirect method in the indirect section. This closes the loop between the direct and indirect methods.
+#md # !!! note "Notice the right-hand column: the costate is already there"
+#md #     Even though we only ever provide the state, control and (optional) variable, the solver initialises the **adjoint** internally. After optimisation, this right-column costate is exactly the **adjoint $p$ of Pontryagin's Maximum Principle** — the same $p$ we will reuse to start the indirect method in the indirect section. This closes the loop between the direct and indirect methods.
+#nb # **Notice the right-hand column: the costate is already there.** Even though we only ever provide the state, control and (optional) variable, the solver initialises the **adjoint** internally. After optimisation, this right-column costate is exactly the **adjoint $p$ of Pontryagin's Maximum Principle** — the same $p$ we will reuse to start the indirect method in the indirect section. This closes the loop between the direct and indirect methods.
 
 # ### Providing our own initial guess
 #
@@ -173,10 +186,12 @@ println("iterations, @init guess:   ", iterations(sol))
 
 #md # For all the ways to specify an initial guess, see [Set an initial guess](@ref manual-initial-guess).
 #nb # For all the ways to specify an initial guess, see [Set an initial guess](https://control-toolbox.org/OptimalControl.jl/stable/manual-initial-guess.html).
-# Note that there is currently no way to initialise the costate directly — only state, control and variable can be provided through `@init`. The solver initialises the adjoint internally (as we saw above). Costate initialisation is a planned feature.
+#md # !!! note
+#md #     There is currently no way to initialise the costate directly — only state, control and variable can be provided through `@init`. The solver initialises the adjoint internally (as we saw above). Costate initialisation is a planned feature.
+#nb # **Note:** there is currently no way to initialise the costate directly — only state, control and variable can be provided through `@init`. The solver initialises the adjoint internally (as we saw above). Costate initialisation is a planned feature.
 
 #src ============================================================================
-# ## The direct method in depth: the Goddard problem
+# ## Direct method in depth: Goddard
 #src ============================================================================
 #
 # The **direct** method turns the infinite-dimensional OCP into a finite-dimensional nonlinear program (NLP) by discretising time (Runge–Kutta / collocation) on a grid, then hands the NLP to a solver. It is robust and easy to use.
@@ -187,13 +202,25 @@ println("iterations, @init guess:   ", iterations(sol))
 # x_{i} = x_{i-1} + h\,f(t_{i-1}, x_{i-1}, u_{i-1}), \quad i = 1, \dots, N,
 # ```
 #
-# and the integral cost by the corresponding rectangle sum $h\sum_{i=0}^{N-1} f^{0}(t_i, x_i, u_i)$. The continuous OCP thus becomes a finite-dimensional NLP in the variables $X = (x_0, \dots, x_N, u_0, \dots, u_N)$, which is passed to an NLP solver such as [Ipopt](https://coin-or.github.io/Ipopt). Higher-order schemes (midpoint, Gauss–Legendre collocation) follow the same principle with different quadrature and interpolation formulas — `solve` defaults to the second-order `:midpoint` scheme, not Euler.
+# and the integral cost by the corresponding rectangle sum
+#
+# ```math
+# h\sum_{i=0}^{N-1} f^{0}(t_i, x_i, u_i).
+# ```
+#
+# The continuous OCP thus becomes a finite-dimensional NLP in the variables $X = (x_0, \dots, x_N, u_0, \dots, u_N)$, which is passed to an NLP solver such as [Ipopt](https://coin-or.github.io/Ipopt). Higher-order schemes (midpoint, Gauss–Legendre collocation) follow the same principle with different quadrature and interpolation formulas — `solve` defaults to the second-order `:midpoint` scheme, not Euler.
 #
 # To demonstrate convergence behaviour and warm-starting, we need a genuinely nonlinear problem. The **Goddard rocket** — maximise the final altitude, with free final time and a singular arc — is a classic test case.
 
 ## Goddard data and dynamics (F0: drift, F1: thrust)
-const r0 = 1; v0 = 0; m0 = 1; mf = 0.6
-Cd = 310; Tmax = 3.5; β = 500; b = 2
+const r0 = 1
+const v0 = 0
+const m0 = 1
+const mf = 0.6
+const Cd = 310
+const Tmax = 3.5
+const β = 500
+const b = 2
 
 F0(x) = begin
     r, v, m = x
@@ -227,8 +254,10 @@ end
 #nb # `solve` uses the defaults (collocation, ADNLP modeler, Ipopt, CPU). Switching solver is just loading a package and passing a token (see [Solve a problem](https://control-toolbox.org/OptimalControl.jl/stable/manual-solve.html)):
 
 using MadNLP
+
 sol_ipopt  = solve(goddard;          grid_size=250, display=false)
 sol_madnlp = solve(goddard, :madnlp; grid_size=250, display=false)
+
 println("Ipopt  : r(tf) = ", objective(sol_ipopt),  ", ", iterations(sol_ipopt),  " iters")
 println("MadNLP : r(tf) = ", objective(sol_madnlp), ", ", iterations(sol_madnlp), " iters")
 
@@ -236,7 +265,7 @@ println("MadNLP : r(tf) = ", objective(sol_madnlp), ", ", iterations(sol_madnlp)
 
 # ### Grid continuation by warm-starting
 #
-# A solution can be passed **directly** as the initial guess of another solve — it is interpolated onto the new grid. This makes discrete continuation trivial and ties back to the initialisation above. On this nonlinear problem it genuinely **pays**: we compare reaching a fine grid of 1000 two ways —
+# A solution can be passed **directly** as the initial guess of another solve — it is interpolated onto the new grid. This makes discrete continuation trivial and ties back to the initialisation above. On this nonlinear problem it genuinely **pays**: we compare reaching a fine grid of 1000 two ways:
 #
 # 1. **cold start** — solve `grid_size=1000` directly;
 # 2. **cascade** — solve `grid_size=50` first, then `grid_size=1000` warm-started with that solution.
@@ -245,6 +274,8 @@ using BenchmarkTools
 
 ## solutions computed once, reused for iteration counts and the overlay plot
 sol_cold = solve(goddard; grid_size=1000, display=false)
+
+## warm cascade: grid 50 first, then grid 1000 initialised from it
 s50   = solve(goddard; grid_size=50, display=false)
 s1000 = solve(goddard; grid_size=1000, init=s50, display=false)
 
@@ -256,13 +287,13 @@ t_cascade = @belapsed begin
     solve($goddard; grid_size=1000, init=a, display=false)
 end samples=3 seconds=10
 
-println("cold  grid 1000          : ", iterations(sol_cold), " iters, ", round(t_cold;    digits=3), " s")
+println("cold    grid 1000        : ", iterations(sol_cold), " iters, ", round(t_cold;    digits=3), " s")
 println("cascade grid 50 (warm-up): ", iterations(s50),      " iters")
 println("cascade grid 1000 (warm) : ", iterations(s1000),    " iters, ", round(t_cascade; digits=3), " s total")
 
 # **Message:** what matters is the iteration count *at the expensive grid* — the warm-started `iterations(s1000)` is well below the cold `iterations(sol_cold)`, even though the cheap `grid_size=50` warm-up adds iterations of its own to the running total; since a grid-50 iteration is far cheaper than a grid-1000 iteration, the cascade still wins on wall-clock time. Overlay the successive solutions to watch convergence:
 
-plt = plot(s50;  label="50")
+plt = plot(s50;  label="50", size=(800, 800))
 plot!(plt, s1000; label="1000")
 
 #md # This is grid-refinement warm-starting. The very same mechanism drives **parametric** continuation (homotopy on a physical parameter, e.g. maximum thrust): [Discrete continuation](@extref Tutorials tutorial-continuation).
@@ -286,21 +317,21 @@ cb_apogee = ContinuousCallback((u, t, int) -> u[2], terminate!)
 sol_bang2 = solve(ODEProblem(bang2!, x1_bang, (t1_bang, 1000.0)), Tsit5(); callback=cb_apogee, reltol=1e-8, abstol=1e-8)
 tf_bang, rf_bang = sol_bang2.t[end], sol_bang2[1, end]
 
-println("Optimal:   r(tf) = ", round(objective(sol_cold), digits=4))
-println("Bang-bang: r(tf) = ", round(rf_bang, digits=4), "  (t1=", round(t1_bang, digits=2), ", tf=", round(tf_bang, digits=2), ")")
+println("Optimal:   r(tf) = ", round(objective(sol_cold), digits=6), "  (tf=", round(variable(sol_cold), digits=4), ")")
+println("Bang-bang: r(tf) = ", round(rf_bang, digits=6), "  (t1=", round(t1_bang, digits=4), ", tf=", round(tf_bang, digits=4), ")")
 
 # The optimal thrust profile uses a **singular arc** — it does not simply push at the maximum. Overlaying the two trajectories on the altitude–velocity plane makes the difference visible:
 
 ## assemble the bang-bang trajectory as (t, r, v, m) for plotting
 t_bang = [sol_bang1.t; sol_bang2.t]
 r_bang = [sol_bang1[1, :]; sol_bang2[1, :]]
-v_bang = [sol_bang1[2, :]; sol_bang2[2, :]]
 
 plt_bang = plot(sol_cold; label="optimal")
-plot!(plt_bang, t_bang, r_bang; label="bang-bang (altitude)", linestyle=:dash)
+plot!(plt_bang[1], t_bang, r_bang; label="bang-bang (altitude)", linestyle=:dash)
+plot!(plt_bang[1]; legend=:bottomright)
 
 #src ============================================================================
-# ## Solving on a GPU (optional in live — expected error here)
+# ## Solving on a GPU
 #src ============================================================================
 #
 # Moving to the GPU is a single token, `:gpu`, which auto-completes to `(:collocation, :exa, :madnlp, :gpu)`. It requires the `:exa` modeler (hence `@def`, not the macro-free API — cf. the definition section) plus a CUDA-capable GPU.
@@ -311,7 +342,7 @@ using MadNLPGPU
 using CUDA
 
 try
-    global sol_gpu = solve(goddard, :gpu; grid_size=1000)
+    global sol_gpu = solve(goddard, :gpu; grid_size=1000, display=false)
     println("GPU solve succeeded — a functional GPU is available.")
 catch e
     println("GPU solve failed, as expected without a functional GPU.")
@@ -323,20 +354,52 @@ end
 #nb # For the full GPU setup, see [Solve on GPU](https://control-toolbox.org/OptimalControl.jl/stable/manual-solve-gpu.html).
 
 #src ============================================================================
-# ## The indirect method — back to the simple problem
+# ## The indirect method
 #src ============================================================================
 #
 # We now return to the **double integrator** `ocp` from the earlier sections. Its shooting has just two unknowns and is initialised by the direct costate above, which makes it ideal to *see* the indirect method. (The Goddard shooting is a *structured multi-arc* problem — see the links in the last section.)
 #
-# In control-toolbox we systematically pair the direct method with the **indirect** one, based on Pontryagin's Maximum Principle (PMP). With pseudo-Hamiltonian $H(x,p,u) = p\,f(x,u) + p^0 f^0(x,u)$ (normal case $p^0 = -1$), the PMP gives the maximising control in feedback form $u(x,p) = \arg\max_u H$, and the optimal trajectory solves a boundary value problem that we recast as a **shooting equation** $S(p_0) = 0$.
+# In control-toolbox we systematically pair the direct method with the **indirect** one, based on Pontryagin's Maximum Principle (PMP), with pseudo-Hamiltonian
+#
+# ```math
+# H(x,p,u) = p\,f(x,u) + p^0 f^0(x,u) \qquad (\text{normal case } p^0 = -1).
+# ```
+#
+# The PMP gives the maximising control in feedback form
+#
+# ```math
+# u(x,p) = \arg\max_u H,
+# ```
+#
+# and the optimal trajectory solves a boundary value problem that we recast as a **shooting equation**
+#
+# ```math
+# S(p_0) = 0.
+# ```
 #
 # The indirect method proceeds in three steps:
 #
-# 1. **Maximising control.** The PMP yields the control in feedback form $u(x, p) = \arg\max_u H(x, p, u)$. Substituting back gives the maximised Hamiltonian $\mathbf{H}(x, p) = H(x, p, u(x, p))$.
+# 1. **Maximising control.** The PMP yields the control in feedback form $u(x, p) = \arg\max_u H(x, p, u)$. Substituting back gives the maximised Hamiltonian
 #
-# 2. **Boundary value problem.** The optimal trajectory satisfies the Hamiltonian system $\dot{x} = \nabla_p \mathbf{H}$, $\dot{p} = -\nabla_x \mathbf{H}$, with boundary conditions $x(t_0) = x_0$, $x(t_f) = x_f$.
+#    ```math
+#    \mathbf{H}(x, p) = H(x, p, u(x, p)).
+#    ```
 #
-# 3. **Shooting function.** Let $\varphi_{t_0, x_0, p_0}(\cdot)$ denote the flow of the Hamiltonian vector field from $(x_0, p_0)$. The shooting function $S(p_0) = \pi(\varphi_{t_0, x_0, p_0}(t_f)) - x_f$ — where $\pi(x, p) = x$ projects onto the state — measures the miss at $t_f$. Solving the BVP reduces to finding $p_0$ such that $S(p_0) = 0$.
+# 2. **Boundary value problem.** The optimal trajectory satisfies the Hamiltonian system
+#
+#    ```math
+#    \dot{x} = \nabla_p \mathbf{H}, \qquad \dot{p} = -\nabla_x \mathbf{H},
+#    ```
+#
+#    with boundary conditions $x(t_0) = x_0$, $x(t_f) = x_f$.
+#
+# 3. **Shooting function.** Let $\varphi_{t_0, x_0, p_0}(\cdot)$ denote the flow of the Hamiltonian vector field from $(x_0, p_0)$. The shooting function
+#
+#    ```math
+#    S(p_0) = \pi(\varphi_{t_0, x_0, p_0}(t_f)) - x_f, \qquad \pi(x, p) = x,
+#    ```
+#
+#    measures the miss at $t_f$: solving the BVP reduces to finding $p_0$ such that $S(p_0) = 0$.
 #
 # For the energy problem, $H = p_1 v + p_2 u - u^2/2$, so the maximiser is $u = p_2$.
 
@@ -372,20 +435,18 @@ println("shoot S(p0) = ", S(p0_sol))
 # Reconstruct and plot the indirect solution from the flow:
 
 indirect_sol = φ((t0, tf), x0, p0_sol; saveat=range(t0, tf, 100))
-plot(indirect_sol)
+plot(indirect_sol; size=(800, 600))
 
 # Overlaying the direct and indirect solutions confirms they match:
 
-plt_compare = plot(direct_sol; label="direct")
+plt_compare = plot(direct_sol; label="direct", size=(800, 600))
 plot!(plt_compare, indirect_sol; label="indirect")
 #md # See [Compute flows from optimal control problems](@ref manual-flow-ocp) for the flow construction, and the [indirect simple shooting tutorial](@extref tutorial-indirect-simple-shooting).
 #nb # See [Compute flows from optimal control problems](https://control-toolbox.org/OptimalControl.jl/stable/manual-flow-ocp.html) for the flow construction, and the [indirect simple shooting tutorial](https://control-toolbox.org/Tutorials.jl/stable/).
 
 #src ============================================================================
-# ## Going further (end of the socle)
+# ## Going further
 #src ============================================================================
-#
-# This is the natural stopping point. From here, the tour branches out — we point to the detailed pages rather than coding them live.
 #
 # **Variables & parameters.** Beyond the control, one can optimise **parameters** naturally, both in an OCP (the `variable` keyword of the DSL) and in a differential-constraint optimisation problem **without any control** (a *control-free* problem).
 #md # See [control-free problems](@ref example-control-free).
