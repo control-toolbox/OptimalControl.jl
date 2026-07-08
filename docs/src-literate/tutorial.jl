@@ -281,11 +281,11 @@ s1000 = solve(goddard; grid_size=1000, init=s50, display=false)
 
 #src TODO(build-time): @belapsed runs several samples; capped here to keep the doc build fast.
 ## timings — BenchmarkTools handles JIT warm-up and reports the minimum
-t_cold = @belapsed solve($goddard; grid_size=1000, display=false) samples=3 seconds=10
+t_cold = @belapsed solve($goddard; grid_size=1000, display=false) samples=3 seconds=30
 t_cascade = @belapsed begin
     a = solve($goddard; grid_size=50, display=false)
     solve($goddard; grid_size=1000, init=a, display=false)
-end samples=3 seconds=10
+end samples=3 seconds=30
 
 println("cold    grid 1000        : ", iterations(sol_cold), " iters, ", round(t_cold;    digits=3), " s")
 println("cascade grid 50 (warm-up): ", iterations(s50),      " iters")
@@ -327,8 +327,8 @@ t_bang = [sol_bang1.t; sol_bang2.t]
 r_bang = [sol_bang1[1, :]; sol_bang2[1, :]]
 
 plt_bang = plot(sol_cold; label="optimal")
-plot!(plt_bang[1], t_bang, r_bang; label="bang-bang (altitude)", linestyle=:dash)
-plot(plt_bang[1]; legend=:bottomright)
+plot!(plt_bang[1], t_bang, r_bang; label="bang-bang", linestyle=:dash)
+plot(plt_bang[1]; legend=:bottomright, xlabel="time", ylabel="altitude")
 
 #src ============================================================================
 # ## Solving on a GPU
@@ -417,6 +417,7 @@ proj((x, p)) = x
 
 ## shooting function
 S(p0) = proj(φ(t0, x0, p0, tf)) - xf
+#md nothing # hide
 
 # **The shooting is initialised with the costate of the direct solution** — the very adjoint we highlighted above:
 
@@ -432,13 +433,9 @@ p0_sol = shooting_sol.u
 println("costate p0 = ", p0_sol)
 println("shoot S(p0) = ", S(p0_sol))
 
-# Reconstruct and plot the indirect solution from the flow:
+# Reconstruct the indirect solution from the flow and overlay it with the direct solution:
 
 indirect_sol = φ((t0, tf), x0, p0_sol; saveat=range(t0, tf, 100))
-plot(indirect_sol; size=(800, 600))
-
-# Overlaying the direct and indirect solutions confirms they match:
-
 plt_compare = plot(direct_sol; label="direct", size=(800, 600))
 plot!(plt_compare, indirect_sol; label="indirect")
 #md # See [Compute flows from optimal control problems](@ref manual-flow-ocp) for the flow construction, and the [indirect simple shooting tutorial](@extref tutorial-indirect-simple-shooting).

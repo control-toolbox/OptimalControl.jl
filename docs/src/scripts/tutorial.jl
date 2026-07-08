@@ -121,11 +121,11 @@ s50   = solve(goddard; grid_size=50, display=false)
 s1000 = solve(goddard; grid_size=1000, init=s50, display=false)
 
 # timings — BenchmarkTools handles JIT warm-up and reports the minimum
-t_cold = @belapsed solve($goddard; grid_size=1000, display=false) samples=3 seconds=10
+t_cold = @belapsed solve($goddard; grid_size=1000, display=false) samples=3 seconds=30
 t_cascade = @belapsed begin
     a = solve($goddard; grid_size=50, display=false)
     solve($goddard; grid_size=1000, init=a, display=false)
-end samples=3 seconds=10
+end samples=3 seconds=30
 
 println("cold    grid 1000        : ", iterations(sol_cold), " iters, ", round(t_cold;    digits=3), " s")
 println("cascade grid 50 (warm-up): ", iterations(s50),      " iters")
