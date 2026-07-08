@@ -66,7 +66,7 @@ using Plots
 #
 # Our running example: a wagon of unit mass on a frictionless rail, state $x = (q, v)$ (position, velocity), acceleration controlled by a force $u$. We start at $(-1, 0)$, must reach $(0, 0)$ at $t_f = 1$, and minimise the transfer energy $\tfrac12\int_0^1 u^2$.
 
-t0 = 0; tf = 1; x0 = [-1, 0]; xf = [0, 0]
+t0 = 0; tf = 1; x0 = [-1, 0]; xf = [0, 0];
 
 # ### The `@def` macro
 #
@@ -189,10 +189,10 @@ println("iterations, @init guess:   ", iterations(sol))
 #
 # and the integral cost by the corresponding rectangle sum $h\sum_{i=0}^{N-1} f^{0}(t_i, x_i, u_i)$. The continuous OCP thus becomes a finite-dimensional NLP in the variables $X = (x_0, \dots, x_N, u_0, \dots, u_N)$, which is passed to an NLP solver such as [Ipopt](https://coin-or.github.io/Ipopt). Higher-order schemes (midpoint, Gauss–Legendre collocation) follow the same principle with different quadrature and interpolation formulas — `solve` defaults to the second-order `:midpoint` scheme, not Euler.
 #
-# To demonstrate convergence behaviour and warm-starting, we need a genuinely nonlinear problem. The **Goddard rocket** — maximise the final altitude, with free final time, a velocity state constraint and a singular arc — is a classic test case.
+# To demonstrate convergence behaviour and warm-starting, we need a genuinely nonlinear problem. The **Goddard rocket** — maximise the final altitude, with free final time and a singular arc — is a classic test case.
 
 ## Goddard data and dynamics (F0: drift, F1: thrust)
-const r0 = 1; v0 = 0; m0 = 1; vmax = 0.1; mf = 0.6
+const r0 = 1; v0 = 0; m0 = 1; mf = 0.6
 Cd = 310; Tmax = 3.5; β = 500; b = 2
 
 F0(x) = begin
@@ -215,7 +215,6 @@ goddard = @def begin
     m(tf) == mf
     0 ≤ u(t) ≤ 1
     r(t) ≥ r0
-    0 ≤ v(t) ≤ vmax
 
     ẋ(t) == F0(x(t)) + u(t) * F1(x(t))
 

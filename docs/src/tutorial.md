@@ -270,7 +270,7 @@ plt = plot(s50;  label="50")
 plot!(plt, s1000; label="1000")
 ````
 
-This is grid-refinement warm-starting. The very same mechanism drives **parametric** continuation (homotopy on a physical parameter, e.g. maximum thrust): <https://control-toolbox.org/Tutorials.jl/stable/tutorial-continuation.html>.
+This is grid-refinement warm-starting. The very same mechanism drives **parametric** continuation (homotopy on a physical parameter, e.g. maximum thrust): [Discrete continuation](@extref Tutorials tutorial-continuation).
 
 ### Comparison with a bang-bang strategy
 
@@ -407,7 +407,7 @@ See [control-free problems](@ref example-control-free).
 - State constraint — [state constraint](@ref example-state-constraint)
 - Goddard problem — free final time, a singular arc, a state constraint and a structured shooting all at once — [Goddard tutorial](@extref Tutorials tutorial-goddard)
 
-**Discrete continuation** — warm-starting across a family of problems (homotopy on a physical parameter), the grown-up version of the grid continuation above: <https://control-toolbox.org/Tutorials.jl/stable/tutorial-continuation.html>.
+**Discrete continuation** — warm-starting across a family of problems (homotopy on a physical parameter), the grown-up version of the grid continuation above: [Discrete continuation](@extref Tutorials tutorial-continuation).
 
 ---
 
