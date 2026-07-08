@@ -95,27 +95,21 @@ goddard = @def begin
 
     ẋ(t) == F0(x(t)) + u(t) * F1(x(t))
 
-    -r(tf) → min
+    r(tf) → max
 end
 
 using MadNLP
 sol_ipopt  = solve(goddard;          grid_size=250, display=false)
 sol_madnlp = solve(goddard, :madnlp; grid_size=250, display=false)
-println("Ipopt  : r(tf) = ", -objective(sol_ipopt),  ", ", iterations(sol_ipopt),  " iters")
-println("MadNLP : r(tf) = ", -objective(sol_madnlp), ", ", iterations(sol_madnlp), " iters")
-
-sol_gl2 = solve(goddard; grid_size=250, scheme=:gauss_legendre_2, display=false)
-nothing #hide
+println("Ipopt  : r(tf) = ", objective(sol_ipopt),  ", ", iterations(sol_ipopt),  " iters")
+println("MadNLP : r(tf) = ", objective(sol_madnlp), ", ", iterations(sol_madnlp), " iters")
 
 using BenchmarkTools
 
 # solutions computed once, reused for iteration counts and the overlay plot
 sol_cold = solve(goddard; grid_size=1000, display=false)
-s50  = solve(goddard; grid_size=50, display=false)
+s50   = solve(goddard; grid_size=50, display=false)
 s1000 = solve(goddard; grid_size=1000, init=s50, display=false)
-
-iter_cold    = iterations(sol_cold)
-iter_cascade = iterations(s50) + iterations(s1000)
 
 # timings — BenchmarkTools handles JIT warm-up and reports the minimum
 t_cold = @belapsed solve($goddard; grid_size=1000, display=false) samples=3 seconds=10
@@ -124,11 +118,37 @@ t_cascade = @belapsed begin
     solve($goddard; grid_size=1000, init=a, display=false)
 end samples=3 seconds=10
 
-println("cold 1000       : ", iter_cold,    " iters, ", round(t_cold;    digits=3), " s")
-println("cascade 50→1000 : ", iter_cascade, " iters, ", round(t_cascade; digits=3), " s")
+println("cold  grid 1000          : ", iterations(sol_cold), " iters, ", round(t_cold;    digits=3), " s")
+println("cascade grid 50 (warm-up): ", iterations(s50),      " iters")
+println("cascade grid 1000 (warm) : ", iterations(s1000),    " iters, ", round(t_cascade; digits=3), " s total")
 
 plt = plot(s50;  label="50")
 plot!(plt, s1000; label="1000")
+
+using OrdinaryDiffEq   # ODE solver (callbacks for the bang-bang simulation)
+
+# Phase 1: u = 1, stop when m = mf (fuel depleted)
+bang1!(dx, x, p, t) = (dx[:] = F0(x) + F1(x))
+cb_fuel = ContinuousCallback((u, t, int) -> u[3] - mf, terminate!)
+sol_bang1 = solve(ODEProblem(bang1!, [r0, v0, m0], (t0, 100.0)), Tsit5(); callback=cb_fuel, reltol=1e-8, abstol=1e-8)
+t1_bang, x1_bang = sol_bang1.t[end], sol_bang1[:, end]
+
+# Phase 2: u = 0, stop when v = 0 (apogee)
+bang2!(dx, x, p, t) = (dx[:] = F0(x))
+cb_apogee = ContinuousCallback((u, t, int) -> u[2], terminate!)
+sol_bang2 = solve(ODEProblem(bang2!, x1_bang, (t1_bang, 1000.0)), Tsit5(); callback=cb_apogee, reltol=1e-8, abstol=1e-8)
+tf_bang, rf_bang = sol_bang2.t[end], sol_bang2[1, end]
+
+println("Optimal:   r(tf) = ", round(objective(sol_cold), digits=4))
+println("Bang-bang: r(tf) = ", round(rf_bang, digits=4), "  (t1=", round(t1_bang, digits=2), ", tf=", round(tf_bang, digits=2), ")")
+
+# assemble the bang-bang trajectory as (t, r, v, m) for plotting
+t_bang = [sol_bang1.t; sol_bang2.t]
+r_bang = [sol_bang1[1, :]; sol_bang2[1, :]]
+v_bang = [sol_bang1[2, :]; sol_bang2[2, :]]
+
+plt_bang = plot(sol_cold; label="optimal")
+plot!(plt_bang, t_bang, r_bang; label="bang-bang (altitude)", linestyle=:dash)
 
 using MadNLPGPU
 using CUDA
