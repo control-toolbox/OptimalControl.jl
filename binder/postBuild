@@ -2,4 +2,4 @@
 set -e
 
 # Install OptimalControl.jl from the repo root into the Binder environment
-julia --project=@. -e 'using Pkg; Pkg.develop(path="."); Pkg.precompile()'
+julia --project=binder -e 'using Pkg; Pkg.develop(path="."); Pkg.precompile()'
