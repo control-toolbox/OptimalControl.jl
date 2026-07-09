@@ -1083,9 +1083,9 @@ version = "0.2.0"
 
 [[deps.HiGHS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "Zlib_jll", "libblastrampoline_jll"]
-git-tree-sha1 = "5b9e398d6e4ed7e1f9a801a6f50ecca92dab0e10"
+git-tree-sha1 = "5814a4409f49e8430c184cbe4bc19fa2957bbf0a"
 uuid = "8fd58aa0-07eb-5a78-9b36-339c94fd15ea"
-version = "1.15.0+0"
+version = "1.15.1+0"
 
 [[deps.Hwloc_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "XML2_jll", "Xorg_libpciaccess_jll"]
@@ -2490,9 +2490,9 @@ weakdeps = ["Tracy"]
 
 [[deps.SciMLOperators]]
 deps = ["Accessors", "Adapt", "ArrayInterface", "DocStringExtensions", "LinearAlgebra"]
-git-tree-sha1 = "da2b6aeedd65761a5a8bb6667acfb9c22069bee6"
+git-tree-sha1 = "54ac780e1be8c12ad39295b5d4dfd4b1af3685ba"
 uuid = "c0aeaf25-5076-4817-a8d5-81caf7dfa961"
-version = "1.23.0"
+version = "1.24.0"
 
     [deps.SciMLOperators.extensions]
     SciMLOperatorsLoopVectorizationExt = "LoopVectorization"
