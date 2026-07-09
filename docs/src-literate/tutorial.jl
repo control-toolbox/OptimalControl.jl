@@ -67,7 +67,13 @@ using Plots
 # Our running example: a wagon of unit mass on a frictionless rail, state $x = (q, v)$ (position, velocity), acceleration controlled by a force $u$. We start at $(-1, 0)$, must reach $(0, 0)$ at $t_f = 1$, and minimise the transfer energy
 #
 # ```math
-# \frac{1}{2}\int_0^1 u(t)^2\,\mathrm{d}t.
+# \frac{1}{2}\int_0^1 u^2(t)\,\mathrm{d}t,
+# ```
+#
+# subject to the dynamics
+#
+# ```math
+# \dot{q}(t) = v(t), \qquad \dot{v}(t) = u(t).
 # ```
 
 t0 = 0; tf = 1; x0 = [-1, 0]; xf = [0, 0];
