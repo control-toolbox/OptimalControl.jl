@@ -111,8 +111,6 @@ sol_madnlp = solve(goddard, :madnlp; grid_size=250, display=false)
 println("Ipopt  : r(tf) = ", objective(sol_ipopt),  ", ", iterations(sol_ipopt),  " iters")
 println("MadNLP : r(tf) = ", objective(sol_madnlp), ", ", iterations(sol_madnlp), " iters")
 
-using BenchmarkTools
-
 # solutions computed once, reused for iteration counts and the overlay plot
 sol_cold = solve(goddard; grid_size=1000, display=false)
 
@@ -120,16 +118,9 @@ sol_cold = solve(goddard; grid_size=1000, display=false)
 s50   = solve(goddard; grid_size=50, display=false)
 s1000 = solve(goddard; grid_size=1000, init=s50, display=false)
 
-# timings — BenchmarkTools handles JIT warm-up and reports the minimum
-t_cold = @belapsed solve($goddard; grid_size=1000, display=false) samples=3 seconds=30
-t_cascade = @belapsed begin
-    a = solve($goddard; grid_size=50, display=false)
-    solve($goddard; grid_size=1000, init=a, display=false)
-end samples=3 seconds=30
-
-println("cold    grid 1000        : ", iterations(sol_cold), " iters, ", round(t_cold;    digits=3), " s")
+println("cold    grid 1000        : ", iterations(sol_cold), " iters")
 println("cascade grid 50 (warm-up): ", iterations(s50),      " iters")
-println("cascade grid 1000 (warm) : ", iterations(s1000),    " iters, ", round(t_cascade; digits=3), " s total")
+println("cascade grid 1000 (warm) : ", iterations(s1000),    " iters")
 
 plt = plot(s50;  label="50", size=(800, 800))
 plot!(plt, s1000; label="1000")
@@ -148,15 +139,15 @@ cb_apogee = ContinuousCallback((u, t, int) -> u[2], terminate!)
 sol_bang2 = solve(ODEProblem(bang2!, x1_bang, (t1_bang, 1000.0)), Tsit5(); callback=cb_apogee, reltol=1e-8, abstol=1e-8)
 tf_bang, rf_bang = sol_bang2.t[end], sol_bang2[1, end]
 
-println("Optimal:   r(tf) = ", round(objective(sol_cold), digits=6), "  (tf=", round(variable(sol_cold), digits=4), ")")
 println("Bang-bang: r(tf) = ", round(rf_bang, digits=6), "  (t1=", round(t1_bang, digits=4), ", tf=", round(tf_bang, digits=4), ")")
+println("Optimal:   r(tf) = ", round(objective(sol_cold), digits=6), "  (           tf=", round(variable(sol_cold), digits=4), ")")
 
 # assemble the bang-bang trajectory as (t, r, v, m) for plotting
 t_bang = [sol_bang1.t; sol_bang2.t]
 r_bang = [sol_bang1[1, :]; sol_bang2[1, :]]
 
-plt_bang = plot(sol_cold; label="optimal")
-plot!(plt_bang[1], t_bang, r_bang; label="bang-bang", linestyle=:dash)
+plt_bang = plot(sol_cold; label="optimal", linewidth=2, color=1)
+plot!(plt_bang[1], t_bang, r_bang; label="bang-bang", linestyle=:dash, linewidth=2, color=2)
 plot(plt_bang[1]; legend=:bottomright, xlabel="time", ylabel="altitude")
 
 using MadNLPGPU
