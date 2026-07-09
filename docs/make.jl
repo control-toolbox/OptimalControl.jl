@@ -153,7 +153,7 @@ cp(
 Draft = false
 ```
 =#
-draft = true  # Draft mode: skip @example execution globally; tutorial overrides below
+draft = false  # Draft mode: skip @example execution globally; tutorial overrides below
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Load extensions
