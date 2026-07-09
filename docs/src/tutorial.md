@@ -58,7 +58,13 @@ using Plots
 Our running example: a wagon of unit mass on a frictionless rail, state $x = (q, v)$ (position, velocity), acceleration controlled by a force $u$. We start at $(-1, 0)$, must reach $(0, 0)$ at $t_f = 1$, and minimise the transfer energy
 
 ```math
-\frac{1}{2}\int_0^1 u(t)^2\,\mathrm{d}t.
+\frac{1}{2}\int_0^1 u^2(t)\,\mathrm{d}t,
+```
+
+subject to the dynamics
+
+```math
+\dot{q}(t) = v(t), \qquad \dot{v}(t) = u(t).
 ```
 
 ````@example tutorial
@@ -70,7 +76,7 @@ nothing #hide
 
 The [`@def`](@ref manual-abstract-syntax) macro lets us write the problem almost exactly as the mathematics:
 
-Each line of the `@def` block mirrors a piece of the mathematical formulation — time, state, control, dynamics, boundary conditions, then cost — in the same order one would write them on paper. Unicode symbols (`∈`, `R²`, `ẋ`, `∫`, `→`) make the code read like the maths; plain ASCII alternatives (`in`, `R2`, `der`, `integral`, `to`) are available for keyboards or workflows that prefer them.
+Each line of the `@def` block mirrors a piece of the mathematical formulation — time, state, control, dynamics, boundary conditions, then cost — in the same order one would write them on paper. Unicode symbols (`∈`, `R²`, `ẋ`, `∫`, `→`) make the code read like the maths; plain ASCII alternatives (`R^2`, `derivative`, `integral`, `=>`) are available for keyboards or workflows that prefer them.
 
 ````@example tutorial
 ocp = @def begin
@@ -85,6 +91,7 @@ ocp = @def begin
 
     0.5∫( u(t)^2 ) → min
 end
+nothing # hide
 ````
 
 ### The same problem with the macro-free (functional) API
@@ -120,6 +127,7 @@ objective!(pre, :min; lagrange=lagrange_energy)
 time_dependence!(pre; autonomous=true)
 
 ocp_func = build(pre)
+nothing # hide
 ````
 
 ### What the macro actually does
@@ -191,6 +199,8 @@ For all the ways to specify an initial guess, see [Set an initial guess](@ref ma
 
 ## Direct method in depth: Goddard
 
+### Discretise optimal control problems
+
 The **direct** method turns the infinite-dimensional OCP into a finite-dimensional nonlinear program (NLP) by discretising time (Runge–Kutta / collocation) on a grid, then hands the NLP to a solver. It is robust and easy to use.
 
 Concretely, time is discretised on a uniform grid $t_0 < t_1 < \dots < t_N = t_f$ with step $h = (t_f - t_0)/N$. The (explicit) Euler scheme, for instance, replaces the dynamics by
@@ -206,6 +216,8 @@ h\sum_{i=0}^{N-1} f^{0}(t_i, x_i, u_i).
 ```
 
 The continuous OCP thus becomes a finite-dimensional NLP in the variables $X = (x_0, \dots, x_N, u_0, \dots, u_N)$, which is passed to an NLP solver such as [Ipopt](https://coin-or.github.io/Ipopt). Higher-order schemes (midpoint, Gauss–Legendre collocation) follow the same principle with different quadrature and interpolation formulas — `solve` defaults to the second-order `:midpoint` scheme, not Euler.
+
+### The Goddard rocket problem
 
 To demonstrate convergence behaviour and warm-starting, we need a genuinely nonlinear problem. The **Goddard rocket** — maximise the final altitude, with free final time and a singular arc — is a classic test case.
 
@@ -245,6 +257,7 @@ goddard = @def begin
 
     r(tf) → max
 end
+nothing # hide
 ````
 
 ### Choosing a solver is trivial
@@ -271,8 +284,6 @@ A solution can be passed **directly** as the initial guess of another solve — 
 2. **cascade** — solve `grid_size=50` first, then `grid_size=1000` warm-started with that solution.
 
 ````@example tutorial
-using BenchmarkTools
-
 # solutions computed once, reused for iteration counts and the overlay plot
 sol_cold = solve(goddard; grid_size=1000, display=false)
 
@@ -280,16 +291,9 @@ sol_cold = solve(goddard; grid_size=1000, display=false)
 s50   = solve(goddard; grid_size=50, display=false)
 s1000 = solve(goddard; grid_size=1000, init=s50, display=false)
 
-# timings — BenchmarkTools handles JIT warm-up and reports the minimum
-t_cold = @belapsed solve($goddard; grid_size=1000, display=false) samples=3 seconds=30
-t_cascade = @belapsed begin
-    a = solve($goddard; grid_size=50, display=false)
-    solve($goddard; grid_size=1000, init=a, display=false)
-end samples=3 seconds=30
-
-println("cold    grid 1000        : ", iterations(sol_cold), " iters, ", round(t_cold;    digits=3), " s")
+println("cold    grid 1000        : ", iterations(sol_cold), " iters")
 println("cascade grid 50 (warm-up): ", iterations(s50),      " iters")
-println("cascade grid 1000 (warm) : ", iterations(s1000),    " iters, ", round(t_cascade; digits=3), " s total")
+println("cascade grid 1000 (warm) : ", iterations(s1000),    " iters")
 ````
 
 **Message:** what matters is the iteration count *at the expensive grid* — the warm-started `iterations(s1000)` is well below the cold `iterations(sol_cold)`, even though the cheap `grid_size=50` warm-up adds iterations of its own to the running total; since a grid-50 iteration is far cheaper than a grid-1000 iteration, the cascade still wins on wall-clock time. Overlay the successive solutions to watch convergence:
@@ -320,8 +324,8 @@ cb_apogee = ContinuousCallback((u, t, int) -> u[2], terminate!)
 sol_bang2 = solve(ODEProblem(bang2!, x1_bang, (t1_bang, 1000.0)), Tsit5(); callback=cb_apogee, reltol=1e-8, abstol=1e-8)
 tf_bang, rf_bang = sol_bang2.t[end], sol_bang2[1, end]
 
-println("Optimal:   r(tf) = ", round(objective(sol_cold), digits=6), "  (tf=", round(variable(sol_cold), digits=4), ")")
 println("Bang-bang: r(tf) = ", round(rf_bang, digits=6), "  (t1=", round(t1_bang, digits=4), ", tf=", round(tf_bang, digits=4), ")")
+println("Optimal:   r(tf) = ", round(objective(sol_cold), digits=6), "  (           tf=", round(variable(sol_cold), digits=4), ")")
 ````
 
 The optimal thrust profile uses a **singular arc** — it does not simply push at the maximum. Overlaying the two trajectories on the altitude–velocity plane makes the difference visible:
@@ -331,8 +335,8 @@ The optimal thrust profile uses a **singular arc** — it does not simply push a
 t_bang = [sol_bang1.t; sol_bang2.t]
 r_bang = [sol_bang1[1, :]; sol_bang2[1, :]]
 
-plt_bang = plot(sol_cold; label="optimal")
-plot!(plt_bang[1], t_bang, r_bang; label="bang-bang", linestyle=:dash)
+plt_bang = plot(sol_cold; label="optimal", linewidth=2, color=1)
+plot!(plt_bang[1], t_bang, r_bang; label="bang-bang", linestyle=:dash, linewidth=2, color=2)
 plot(plt_bang[1]; legend=:bottomright, xlabel="time", ylabel="altitude")
 ````
 
