@@ -1,6 +1,6 @@
 name = "OptimalControl"
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
-version = "2.0.4"
+version = "2.0.5-beta"
 authors = ["Olivier Cots <olivier.cots@toulouse-inp.fr>"]
 
 [deps]
@@ -24,10 +24,10 @@ SolverCore = "ff4d7338-4cf1-434d-91df-b86cb86fb843"
 [compat]
 ADNLPModels = "0.8"
 BenchmarkTools = "1"
-CTBase = "0.18"
+CTBase = "=0.18.8"
 CTDirect = "1"
 CTFlows = "0.8"
-CTModels = "0.10"
+CTModels = "=0.10.1"
 CTParser = "0.8"
 CTSolvers = "0.4"
 CUDA = "5"
