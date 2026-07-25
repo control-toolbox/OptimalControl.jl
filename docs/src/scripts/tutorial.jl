@@ -2,7 +2,10 @@ using OptimalControl
 using NLPModelsIpopt
 using Plots
 
-t0 = 0; tf = 1; x0 = [-1, 0]; xf = [0, 0];
+t0 = 0;
+tf = 1;
+x0 = [-1, 0];
+xf = [0, 0];
 
 ocp = @def begin
     t ∈ [t0, tf], time
@@ -14,7 +17,7 @@ ocp = @def begin
 
     ẋ(t) == [v(t), u(t)]
 
-    0.5∫( u(t)^2 ) → min
+    0.5∫(u(t)^2) → min
 end
 
 pre = OptimalControl.PreModel()
@@ -105,24 +108,24 @@ end
 
 using MadNLP
 
-sol_ipopt  = solve(goddard;          grid_size=250, display=false)
+sol_ipopt = solve(goddard; grid_size=250, display=false)
 sol_madnlp = solve(goddard, :madnlp; grid_size=250, display=false)
 
-println("Ipopt  : r(tf) = ", objective(sol_ipopt),  ", ", iterations(sol_ipopt),  " iters")
+println("Ipopt  : r(tf) = ", objective(sol_ipopt), ", ", iterations(sol_ipopt), " iters")
 println("MadNLP : r(tf) = ", objective(sol_madnlp), ", ", iterations(sol_madnlp), " iters")
 
 # solutions computed once, reused for iteration counts and the overlay plot
 sol_cold = solve(goddard; grid_size=1000, display=false)
 
 # warm cascade: grid 50 first, then grid 1000 initialised from it
-s50   = solve(goddard; grid_size=50, display=false)
+s50 = solve(goddard; grid_size=50, display=false)
 s1000 = solve(goddard; grid_size=1000, init=s50, display=false)
 
 println("cold    grid 1000        : ", iterations(sol_cold), " iters")
-println("cascade grid 50 (warm-up): ", iterations(s50),      " iters")
-println("cascade grid 1000 (warm) : ", iterations(s1000),    " iters")
+println("cascade grid 50 (warm-up): ", iterations(s50), " iters")
+println("cascade grid 1000 (warm) : ", iterations(s1000), " iters")
 
-plt = plot(s50;  label="50", size=(800, 800))
+plt = plot(s50; label="50", size=(800, 800))
 plot!(plt, s1000; label="1000")
 
 using OrdinaryDiffEq   # ODE solver (callbacks for the bang-bang simulation)
@@ -130,17 +133,43 @@ using OrdinaryDiffEq   # ODE solver (callbacks for the bang-bang simulation)
 # Phase 1: u = 1, stop when m = mf (fuel depleted)
 bang1!(dx, x, p, t) = (dx[:] = F0(x) + F1(x))
 cb_fuel = ContinuousCallback((u, t, int) -> u[3] - mf, terminate!)
-sol_bang1 = solve(ODEProblem(bang1!, [r0, v0, m0], (t0, 100.0)), Tsit5(); callback=cb_fuel, reltol=1e-8, abstol=1e-8)
+sol_bang1 = solve(
+    ODEProblem(bang1!, [r0, v0, m0], (t0, 100.0)),
+    Tsit5();
+    callback=cb_fuel,
+    reltol=1e-8,
+    abstol=1e-8,
+)
 t1_bang, x1_bang = sol_bang1.t[end], sol_bang1[:, end]
 
 # Phase 2: u = 0, stop when v = 0 (apogee)
 bang2!(dx, x, p, t) = (dx[:] = F0(x))
 cb_apogee = ContinuousCallback((u, t, int) -> u[2], terminate!)
-sol_bang2 = solve(ODEProblem(bang2!, x1_bang, (t1_bang, 1000.0)), Tsit5(); callback=cb_apogee, reltol=1e-8, abstol=1e-8)
+sol_bang2 = solve(
+    ODEProblem(bang2!, x1_bang, (t1_bang, 1000.0)),
+    Tsit5();
+    callback=cb_apogee,
+    reltol=1e-8,
+    abstol=1e-8,
+)
 tf_bang, rf_bang = sol_bang2.t[end], sol_bang2[1, end]
 
-println("Bang-bang: r(tf) = ", round(rf_bang, digits=6), "  (t1=", round(t1_bang, digits=4), ", tf=", round(tf_bang, digits=4), ")")
-println("Optimal:   r(tf) = ", round(objective(sol_cold), digits=6), "  (           tf=", round(variable(sol_cold), digits=4), ")")
+println(
+    "Bang-bang: r(tf) = ",
+    round(rf_bang; digits=6),
+    "  (t1=",
+    round(t1_bang; digits=4),
+    ", tf=",
+    round(tf_bang; digits=4),
+    ")",
+)
+println(
+    "Optimal:   r(tf) = ",
+    round(objective(sol_cold); digits=6),
+    "  (           tf=",
+    round(variable(sol_cold); digits=4),
+    ")",
+)
 
 # assemble the bang-bang trajectory as (t, r, v, m) for plotting
 t_bang = [sol_bang1.t; sol_bang2.t]
@@ -179,7 +208,7 @@ S(p0) = proj(φ(t0, x0, p0, tf)) - xf
 
 nle!(s, p0, _) = (s[:] = S(p0))
 
-p_of_t   = costate(direct_sol)     # costate as a function of time
+p_of_t = costate(direct_sol)     # costate as a function of time
 p0_guess = p_of_t(t0)              # initial costate from the direct method
 
 prob = NonlinearProblem(nle!, p0_guess)
