@@ -9,7 +9,14 @@ on:
 
 jobs:
   break-pkg:
-    if: contains(github.event.pull_request.labels.*.name, 'run breakage')
+    # A 'labeled' event fires once per label added, and re-evaluates against the PR's
+    # *current* full label set — so adding several labels in a row would otherwise
+    # re-run this job on every subsequent label add. Only react to 'labeled' when it's
+    # this specific label; for other trigger types (opened/synchronize/reopened), fall
+    # back to checking the current label set as before.
+    if: >
+      (github.event.action == 'labeled' && github.event.label.name == 'run breakage') ||
+      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run breakage'))
     strategy:
       fail-fast: false
       matrix:
@@ -34,7 +41,10 @@ jobs:
     secrets:
       SSH_KEY: ${{ secrets.SSH_KEY }}
   break-pkg-app:
-    if: contains(github.event.pull_request.labels.*.name, 'run breakage applications')
+    # See the comment on break-pkg above.
+    if: >
+      (github.event.action == 'labeled' && github.event.label.name == 'run breakage applications') ||
+      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run breakage applications'))
     strategy:
       fail-fast: false
       matrix:
