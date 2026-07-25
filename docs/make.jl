@@ -207,9 +207,9 @@ global_logger(ExampleSizeThresholdFilter(global_logger()))
 using Literate
 
 LITERATE_DIR = joinpath(@__DIR__, "src-literate")
-MD_OUTPUT    = joinpath(@__DIR__, "src")
-NB_OUTPUT    = joinpath(@__DIR__, "src", "notebooks")
-JL_OUTPUT    = joinpath(@__DIR__, "src", "scripts")
+MD_OUTPUT = joinpath(@__DIR__, "src")
+NB_OUTPUT = joinpath(@__DIR__, "src", "notebooks")
+JL_OUTPUT = joinpath(@__DIR__, "src", "scripts")
 mkpath(NB_OUTPUT)
 mkpath(JL_OUTPUT)
 
