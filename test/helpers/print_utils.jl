@@ -166,7 +166,7 @@ function print_test_header(show_memory::Bool=false)
     end
 
     println()
-    flush(stdout)
+    return flush(stdout)
 end
 
 """
@@ -343,7 +343,7 @@ function print_test_line(
     end
 
     println()
-    flush(stdout)  # Real-time display
+    return flush(stdout)  # Real-time display
 end
 
 """
@@ -378,7 +378,7 @@ function print_summary(total::Int, passed::Int, total_time::Real)
     println(
         "$passed/$total tests passed ($(round(success_rate, digits=1))% success rate) in $(prettytime(total_time))",
     )
-    println()
+    return println()
 end
 
 end # module TestPrintUtils

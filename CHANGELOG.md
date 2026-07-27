@@ -7,6 +7,27 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.0.5-beta] — 2026-07-24
+
+### Added
+
+- **Paderborn tutorial**: New tutorial with Literate + Binder setup for interactive execution
+  - Double integrator and Goddard problem examples with direct and indirect methods
+  - Bang-bang comparison plots, LQR remark, Euler scheme demonstration
+  - Binder integration for running tutorial in the browser without local installation
+
+- **CI improvements**: GitHub Actions workflow for project integration
+
+### Changed
+
+- **Dependencies**: Narrowed compat for **CTBase** to `=0.18.8` (was `0.18`) and **CTModels** to `=0.10.1` (was `0.10`) for stricter version pinning
+
+- **Documentation**: Updated README with latest ABOUT.md, INSTALL.md, CONTRIBUTING.md and badges; updated DOI in citation
+
+- **Code formatting**: Applied JuliaFormatter to all `.jl` files
+
+---
+
 ## [2.0.4] — 2026-04-22
 
 ### Added
@@ -612,6 +633,12 @@ multiple versions.
   keyword arguments to any OptimalControl function, rename to the new keyword (see
   CTBase changelog for details).
 
+[2.0.5-beta]: https://github.com/control-toolbox/OptimalControl.jl/compare/v2.0.4...v2.0.5-beta
+[2.0.4]: https://github.com/control-toolbox/OptimalControl.jl/compare/v2.0.3...v2.0.4
+[2.0.3]: https://github.com/control-toolbox/OptimalControl.jl/compare/v2.0.2...v2.0.3
+[2.0.2]: https://github.com/control-toolbox/OptimalControl.jl/compare/v2.0.1...v2.0.2
+[2.0.1]: https://github.com/control-toolbox/OptimalControl.jl/compare/v2.0.0...v2.0.1
+[2.0.0]: https://github.com/control-toolbox/OptimalControl.jl/releases/tag/v2.0.0
 [Unreleased]: https://github.com/control-toolbox/OptimalControl.jl/compare/v1.1.8-beta...HEAD
 [1.1.8-beta]: https://github.com/control-toolbox/OptimalControl.jl/compare/v1.1.7-beta...v1.1.8-beta
 [1.1.7-beta]: https://github.com/control-toolbox/OptimalControl.jl/compare/v1.1.6...v1.1.7-beta

@@ -63,7 +63,7 @@ Print text with ANSI color formatting for Documenter compatibility.
 - `bold::Bool`: Whether to use bold formatting
 """
 function _print_ansi_styled(io, text::Union{String,Symbol}, color::Symbol, bold::Bool=false)
-    print(io, _ansi_color(color, bold), text, _ansi_reset())
+    return print(io, _ansi_color(color, bold), text, _ansi_reset())
 end
 
 # ============================================================================
@@ -586,7 +586,7 @@ function display_ocp_configuration(
                 end
             end
         end
-        println(io)
+        return println(io)
     end
 
     print_component("   ├─ ", "Discretizer", discretizer_pkg, disc_opts)

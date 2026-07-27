@@ -35,5 +35,5 @@ See also: [`methods`](@ref), [`get_strategy_registry`](@ref), [`solve`](@ref)
 """
 function CTSolvers.describe(strategy_id::Symbol)
     registry = get_strategy_registry()
-    CTSolvers.describe(strategy_id, registry)
+    return CTSolvers.describe(strategy_id, registry)
 end

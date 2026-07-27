@@ -64,19 +64,19 @@ CTSolvers.Strategies.id(::Type{MockSolverParam{ID,PARAM}}) where {ID,PARAM} = ID
 
 # Metadata (required by registry)
 function CTSolvers.Strategies.metadata(::Type{<:MockDiscretizer})
-    CTSolvers.Strategies.StrategyMetadata()
+    return CTSolvers.Strategies.StrategyMetadata()
 end
 function CTSolvers.Strategies.metadata(::Type{<:MockModeler})
-    CTSolvers.Strategies.StrategyMetadata()
+    return CTSolvers.Strategies.StrategyMetadata()
 end
 function CTSolvers.Strategies.metadata(::Type{<:MockSolver})
-    CTSolvers.Strategies.StrategyMetadata()
+    return CTSolvers.Strategies.StrategyMetadata()
 end
 function CTSolvers.Strategies.metadata(::Type{<:MockModelerParam})
-    CTSolvers.Strategies.StrategyMetadata()
+    return CTSolvers.Strategies.StrategyMetadata()
 end
 function CTSolvers.Strategies.metadata(::Type{<:MockSolverParam})
-    CTSolvers.Strategies.StrategyMetadata()
+    return CTSolvers.Strategies.StrategyMetadata()
 end
 
 # Options accessors
