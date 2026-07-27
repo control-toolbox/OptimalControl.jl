@@ -106,7 +106,7 @@ or in bibtex format:
 @software{OptimalControl_jl,
 author = {Caillau, Jean-Baptiste and Cots, Olivier and Gergaud, Joseph and Martinon, Pierre and Sed, Sophia},
 doi = {10.5281/zenodo.13336563},
-license = {["MIT"]},
+license = {MIT},
 title = {{OptimalControl.jl: a Julia package to model and solve optimal control problems with ODE's}},
 url = {https://control-toolbox.org/OptimalControl.jl}
 }
