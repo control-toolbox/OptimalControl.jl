@@ -50,15 +50,11 @@ The ecosystem includes extensive [tutorial resources](https://control-toolbox.or
 
 # Problem Class
 
-For a broad readership, we make explicit the class of problems currently handled. OptimalControl.jl targets single-phase problems governed by explicit ODEs, written in Bolza form,
+The package currently targets single-phase problems governed by explicit ODEs, written in Bolza form,
 
 $$g(t_0, x(t_0), t_f, x(t_f), v) + \int_{t_0}^{t_f} f^0(t, x(t), u(t), v)\, \mathrm{d}t \longrightarrow \min,$$
 
-subject to the dynamics $\dot{x}(t) = f(t, x(t), u(t), v)$, where $x(t) \in \mathbb{R}^n$ is the state, $u(t) \in \mathbb{R}^m$ the control, and $v \in \mathbb{R}^q$ an optimisation variable, that is a finite-dimensional parameter optimised together with the trajectory. Mayer ($f^0 = 0$) and Lagrange ($g = 0$) costs are the corresponding special cases, and maximisation is supported by minimising the opposite cost. Both autonomous and non-autonomous dynamics are handled, the dependences being detected by the parser.
-
-The time bounds $t_0$ and $t_f$ may be fixed or be components of $v$, which covers free initial and / or final time, in particular minimum time problems. Admissible constraints are of five types — boundary, variable, control, state, and mixed (control and state), the last three being *path* constraints, imposed at all times — and may be equalities or one- or two-sided inequalities, either linear (in particular box constraints on state, control and variable, for which dedicated bounds are passed to the NLP solver) or nonlinear. The variable may appear in any of them.
-
-Conversely, the current implementation is restricted to *single-phase* problems with *explicit* ODE dynamics: multiphase problems, differential-algebraic equations, and hybrid or nonsmooth systems are not supported. Optimization of PDE or stochastic systems is out of scope as well (see the design trade-offs below).
+subject to the dynamics $\dot{x}(t) = f(t, x(t), u(t), v)$, where $x(t) \in \mathbb{R}^n$ is the state, $u(t) \in \mathbb{R}^m$ the control, and $v \in \mathbb{R}^q$ an optimisation variable, that is a finite-dimensional parameter optimised together with the trajectory. Mayer ($f^0 = 0$) and Lagrange ($g = 0$) costs are the corresponding special cases, and maximisation is also supported. Both autonomous and non-autonomous dynamics are handled, the dependences being detected by the parser. The time bounds $t_0$ and $t_f$ may be fixed or be components of $v$, which covers free initial and / or final time, in particular minimum time problems. Admissible constraints are of five types — boundary, variable, control, state, and mixed (control and state), the last three being *path* constraints, imposed at all times — and may be equalities or one- or two-sided inequalities, either box constraints on state, control and variable (for which dedicated bounds are passed to the NLP solver) or nonlinear. The variable may appear in any of them. The current implementation is restricted to *single-phase* problems with *explicit* ODE dynamics: multiphase problems, differential-algebraic equations, and hybrid or nonsmooth systems are not supported. Optimization of PDE or stochastic systems is out of scope as well (see the design trade-offs below).
 
 # Statement of Need
 
