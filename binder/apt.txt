@@ -1,0 +1,4 @@
+build-essential
+libgmp-dev
+libblas-dev
+liblapack-dev

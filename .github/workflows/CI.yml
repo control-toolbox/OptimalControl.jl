@@ -10,7 +10,15 @@ on:
     
 jobs:
   test-cpu-github:
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run ci cpu')
+    # A 'labeled' event fires once per label added, and re-evaluates against the PR's
+    # *current* full label set — so adding several labels in a row would otherwise
+    # re-run this job on every subsequent label add. Only react to 'labeled' when it's
+    # this specific label; for other trigger types (opened/synchronize/reopened), fall
+    # back to checking the current label set as before.
+    if: >
+      github.event_name != 'pull_request' ||
+      (github.event.action == 'labeled' && github.event.label.name == 'run ci cpu') ||
+      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run ci cpu'))
     uses: control-toolbox/CTActions/.github/workflows/ci.yml@main
     with:
       versions: '["1.12"]'
@@ -22,7 +30,11 @@ jobs:
 
   # Job pour le runner self-hosted kkt (GPU/CUDA)
   test-gpu-kkt:
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run ci gpu')
+    # See the comment on test-cpu-github above.
+    if: >
+      github.event_name != 'pull_request' ||
+      (github.event.action == 'labeled' && github.event.label.name == 'run ci gpu') ||
+      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run ci gpu'))
     uses: control-toolbox/CTActions/.github/workflows/ci.yml@main
     with:
       versions: '["1"]'
