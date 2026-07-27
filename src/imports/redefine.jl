@@ -5,7 +5,7 @@ $(TYPEDSIGNATURES)
 See CTDirect.discretize.
 """
 function discretize(ocp::AbstractModel, discretizer::AbstractDiscretizer)
-    CTDirect.discretize(ocp, discretizer)
+    return CTDirect.discretize(ocp, discretizer)
 end
 
 """
@@ -16,7 +16,7 @@ See CTDirect.discretize.
 function discretize(
     ocp::AbstractModel; discretizer::AbstractDiscretizer=CTDirect.__discretizer()
 )
-    CTDirect.discretize(ocp, discretizer)
+    return CTDirect.discretize(ocp, discretizer)
 end
 
 """

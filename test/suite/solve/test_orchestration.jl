@@ -42,12 +42,21 @@ struct MockSolver <: CTSolvers.AbstractNLPSolver
 end
 
 # Short-circuit Layer 3 for mocks (explicit mode: typed mock components)
-CommonSolve.solve(::MockOCP, ::MockInit, ::MockDiscretizer, ::MockModeler, ::MockSolver; display::Bool)::MockSolution = MockSolution()
+CommonSolve.solve(
+    ::MockOCP, ::MockInit, ::MockDiscretizer, ::MockModeler, ::MockSolver; display::Bool
+)::MockSolution = MockSolution()
 
 # Short-circuit Layer 3 for mocks (descriptive mode: real abstract component types)
 # solve_descriptive builds real CTDirect.Collocation, CTSolvers.ADNLP, etc.
 # This override catches those calls for MockOCP without running a real solver.
-CommonSolve.solve(::MockOCP, ::CTModels.AbstractInitialGuess, ::CTDirect.AbstractDiscretizer, ::CTSolvers.AbstractNLPModeler, ::CTSolvers.AbstractNLPSolver; display::Bool)::MockSolution = MockSolution()
+CommonSolve.solve(
+    ::MockOCP,
+    ::CTModels.AbstractInitialGuess,
+    ::CTDirect.AbstractDiscretizer,
+    ::CTSolvers.AbstractNLPModeler,
+    ::CTSolvers.AbstractNLPSolver;
+    display::Bool,
+)::MockSolution = MockSolution()
 
 # ============================================================================
 # TOP-LEVEL: Real test problems for integration tests

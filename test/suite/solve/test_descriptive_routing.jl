@@ -40,7 +40,7 @@ end
 
 CTSolvers.Strategies.id(::Type{MockCollocation}) = :collocation
 function CTSolvers.Strategies.metadata(::Type{MockCollocation})
-    CTSolvers.Strategies.StrategyMetadata(
+    return CTSolvers.Strategies.StrategyMetadata(
         CTSolvers.Options.OptionDefinition(;
             name=:grid_size, type=Int, default=100, description="Number of grid points"
         ),
@@ -63,7 +63,7 @@ end
 
 CTSolvers.Strategies.id(::Type{MockADNLP}) = :adnlp
 function CTSolvers.Strategies.metadata(::Type{MockADNLP})
-    CTSolvers.Strategies.StrategyMetadata(
+    return CTSolvers.Strategies.StrategyMetadata(
         CTSolvers.Options.OptionDefinition(;
             name=:backend,
             type=Symbol,
@@ -88,7 +88,7 @@ end
 
 CTSolvers.Strategies.id(::Type{MockIpopt}) = :ipopt
 function CTSolvers.Strategies.metadata(::Type{MockIpopt})
-    CTSolvers.Strategies.StrategyMetadata(
+    return CTSolvers.Strategies.StrategyMetadata(
         CTSolvers.Options.OptionDefinition(;
             name=:max_iter, type=Int, default=1000, description="Maximum iterations"
         ),
@@ -132,9 +132,14 @@ struct MockSolution2 <: CTModels.AbstractSolution
     solver
 end
 
-CommonSolve.solve(::MockOCP2, ::CTModels.AbstractInitialGuess, d::RoutingMockDiscretizer, m::RoutingMockModeler, s::RoutingMockSolver; display::Bool)::MockSolution2 = MockSolution2(
-    d, m, s
-)
+CommonSolve.solve(
+    ::MockOCP2,
+    ::CTModels.AbstractInitialGuess,
+    d::RoutingMockDiscretizer,
+    m::RoutingMockModeler,
+    s::RoutingMockSolver;
+    display::Bool,
+)::MockSolution2 = MockSolution2(d, m, s)
 
 # ============================================================================
 # Test function

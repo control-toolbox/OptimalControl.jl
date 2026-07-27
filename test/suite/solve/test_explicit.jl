@@ -55,7 +55,9 @@ struct MockSolver <: CTSolvers.AbstractNLPSolver
     options::CTSolvers.StrategyOptions
 end
 
-CommonSolve.solve(::MockOCP, ::MockInit, ::MockDiscretizer, ::MockModeler, ::MockSolver; display::Bool)::MockSolution = MockSolution()
+CommonSolve.solve(
+    ::MockOCP, ::MockInit, ::MockDiscretizer, ::MockModeler, ::MockSolver; display::Bool
+)::MockSolution = MockSolution()
 
 function test_explicit()
     Test.@testset "solve_explicit (contract tests with mocks)" verbose=VERBOSE showtiming=SHOWTIMING begin

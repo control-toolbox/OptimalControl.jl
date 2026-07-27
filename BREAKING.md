@@ -2,6 +2,9 @@
 
 This document describes the breaking changes when migrating from **OptimalControl.jl v1.1.6** (last stable release) to **v2.0.0**.
 
+!!! note "v2.0.5-beta Compatibility"
+    **v2.0.5-beta** is fully backward compatible with v2.0.4. It adds a Paderborn tutorial with Literate + Binder setup, narrows CTBase to `=0.18.8` and CTModels to `=0.10.1` for stricter version pinning, and includes README updates and code formatting, with no breaking changes.
+
 !!! note "v2.0.4 Compatibility"
     **v2.0.4** is fully backward compatible with v2.0.3. It contains documentation improvements (scalar/vector convention warning, :exa modeler incompatibility note) and build system changes (logger filter) with no breaking changes.
 

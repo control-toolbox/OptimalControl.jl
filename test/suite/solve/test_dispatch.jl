@@ -34,7 +34,7 @@ struct MockDiscretizer <: CTDirect.AbstractDiscretizer
 end
 CTSolvers.Strategies.id(::Type{<:MockDiscretizer}) = :collocation
 function CTSolvers.Strategies.metadata(::Type{<:MockDiscretizer})
-    CTSolvers.Strategies.StrategyMetadata()
+    return CTSolvers.Strategies.StrategyMetadata()
 end
 CTSolvers.Strategies.options(d::MockDiscretizer) = d.options
 function MockDiscretizer(; mode::Symbol=:strict, kwargs...)
@@ -49,7 +49,7 @@ struct MockModeler <: CTSolvers.AbstractNLPModeler
 end
 CTSolvers.Strategies.id(::Type{<:MockModeler}) = :adnlp
 function CTSolvers.Strategies.metadata(::Type{<:MockModeler})
-    CTSolvers.Strategies.StrategyMetadata()
+    return CTSolvers.Strategies.StrategyMetadata()
 end
 CTSolvers.Strategies.options(m::MockModeler) = m.options
 function MockModeler(; mode::Symbol=:strict, kwargs...)
@@ -62,7 +62,7 @@ struct MockSolver <: CTSolvers.AbstractNLPSolver
 end
 CTSolvers.Strategies.id(::Type{<:MockSolver}) = :ipopt
 function CTSolvers.Strategies.metadata(::Type{<:MockSolver})
-    CTSolvers.Strategies.StrategyMetadata()
+    return CTSolvers.Strategies.StrategyMetadata()
 end
 CTSolvers.Strategies.options(s::MockSolver) = s.options
 function MockSolver(; mode::Symbol=:strict, kwargs...)

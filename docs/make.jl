@@ -153,7 +153,7 @@ cp(
 Draft = false
 ```
 =#
-draft = false  # Draft mode: if true, @example blocks in markdown are not executed
+draft = false  # Draft mode: skip @example execution globally; tutorial overrides below
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Load extensions
@@ -184,10 +184,10 @@ struct ExampleSizeThresholdFilter <: AbstractLogger
     inner::AbstractLogger
 end
 function Logging.min_enabled_level(l::ExampleSizeThresholdFilter)
-    Logging.min_enabled_level(l.inner)
+    return Logging.min_enabled_level(l.inner)
 end
 function Logging.shouldlog(l::ExampleSizeThresholdFilter, level, _module, group, id)
-    Logging.shouldlog(l.inner, level, _module, group, id)
+    return Logging.shouldlog(l.inner, level, _module, group, id)
 end
 Logging.catch_exceptions(l::ExampleSizeThresholdFilter) = Logging.catch_exceptions(l.inner)
 function Logging.handle_message(
@@ -202,6 +202,29 @@ end
 global_logger(ExampleSizeThresholdFilter(global_logger()))
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# Literate: generate tutorial.md, tutorial.ipynb, tutorial.jl
+# ═══════════════════════════════════════════════════════════════════════════════
+using Literate
+
+LITERATE_DIR = joinpath(@__DIR__, "src-literate")
+MD_OUTPUT = joinpath(@__DIR__, "src")
+NB_OUTPUT = joinpath(@__DIR__, "src", "notebooks")
+JL_OUTPUT = joinpath(@__DIR__, "src", "scripts")
+mkpath(NB_OUTPUT)
+mkpath(JL_OUTPUT)
+
+for file in ["tutorial.jl"]
+    INPUT = joinpath(LITERATE_DIR, file)
+    # Inject @meta Draft=false so the tutorial executes even with global draft=true
+    function tutorial_postprocess(content)
+        return "```@meta\nDraft = false\n```\n\n" * content
+    end
+    Literate.markdown(INPUT, MD_OUTPUT; documenter=true, postprocess=tutorial_postprocess)
+    Literate.notebook(INPUT, NB_OUTPUT; execute=false)
+    Literate.script(INPUT, JL_OUTPUT)
+end
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # Build documentation
 # ═══════════════════════════════════════════════════════════════════════════════
 with_api_reference(src_dir, ext_dir) do api_pages
@@ -212,7 +235,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
     push!(api_pages_final, "Subpackages" => joinpath("api", "subpackages.md"))
 
     # build documentation
-    makedocs(;
+    return makedocs(;
         draft=draft,
         remotes=nothing, # Disable remote links. Needed for DocumenterReference
         warnonly=true,
@@ -229,11 +252,13 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 joinpath("api", "private.md"),
                 joinpath("api", "public.md"),
                 "manual-macro-free.md",
+                "tutorial.md",
             ],
         ),
         pages=[
             "Introduction" => "index.md",
-            "Basic Examples" => [
+            "Guided tour" => "tutorial.md",
+            "Examples" => [
                 "Energy minimisation" => "example-double-integrator-energy.md",
                 "Time mininimisation" => "example-double-integrator-time.md",
                 "Control-free problems" => "example-control-free.md",
