@@ -25,8 +25,8 @@ Let us model, solve and plot a simple optimal control problem.
 
 ```julia
 using OptimalControl
-using NLPModelsIpopt
-using Plots
+using NLPModelsIpopt  # activates the Ipopt solver extension (required for solve)
+using Plots           # activates the plotting extension (required for plot)
 
 ocp = @def begin
     t ∈ [0, 1], time

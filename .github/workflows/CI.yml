@@ -6,7 +6,7 @@ on:
       - main
     tags: '*'
   pull_request:
-    types: [labeled, opened, synchronize, reopened]
+    types: [labeled, synchronize, reopened]
     
 jobs:
   test-cpu-github:
@@ -21,7 +21,6 @@ jobs:
       (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run ci cpu'))
     uses: control-toolbox/CTActions/.github/workflows/ci.yml@main
     with:
-      versions: '["1.12"]'
       runs_on: '["ubuntu-latest", "macos-latest"]'
       runner_type: 'github'
       use_ct_registry: false
@@ -37,7 +36,6 @@ jobs:
       (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run ci gpu'))
     uses: control-toolbox/CTActions/.github/workflows/ci.yml@main
     with:
-      versions: '["1"]'
       runs_on: '[["kkt"]]'
       runner_type: 'self-hosted'
       use_ct_registry: false
