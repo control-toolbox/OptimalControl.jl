@@ -326,8 +326,15 @@ Display must not be the thing that crashes on a third-party strategy which
 simply chose not to be parameterized, so the exception is absorbed here. Every
 in-tree strategy implements the contract, so this path is only ever taken by
 external ones.
+
+⚠️ The `T<:AbstractStrategy` bound rules out passing something that is not a
+strategy at all; it does *not* make the catch below dead code. `parameter` is
+optional-to-override on any `AbstractStrategy` subtype — Julia has no way to
+require an interface method at the abstract type's definition site — so a
+third-party discretizer/modeler/solver that forgets the override still throws
+`NotImplemented` regardless of how tightly `T` is bounded here.
 """
-function _strategy_parameter(::Type{T}) where {T}
+function _strategy_parameter(::Type{T}) where {T<:CTBase.Strategies.AbstractStrategy}
     return try
         CTBase.Strategies.parameter(T)
     catch e
