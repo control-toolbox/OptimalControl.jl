@@ -333,12 +333,22 @@ optional-to-override on any `AbstractStrategy` subtype — Julia has no way to
 require an interface method at the abstract type's definition site — so a
 third-party discretizer/modeler/solver that forgets the override still throws
 `NotImplemented` regardless of how tightly `T` is bounded here.
+
+The `NotImplemented` case is not a defect — `nothing` is the documented, valid
+answer for a non-parameterized strategy, and this is the one place CTBase's
+contract cannot itself distinguish "explicitly declared `= nothing`" from
+"never overridden": both must resolve to the same `nothing` here. But since
+the second case is genuinely missing an implementation, it is worth a `@warn`
+rather than perfect silence — capped at one per strategy *type* (`maxlog=1`,
+keyed on `T`) so a solve loop over the same third-party strategy does not spam.
 """
 function _strategy_parameter(::Type{T}) where {T<:CTBase.Strategies.AbstractStrategy}
     return try
         CTBase.Strategies.parameter(T)
     catch e
         e isa CTBase.Exceptions.NotImplemented || rethrow()
+        @warn "Strategy $T does not implement `CTBase.Strategies.parameter`; treating it as non-parameterized." maxlog =
+            1 _id = Symbol(:strategy_parameter_not_implemented, T)
         nothing
     end
 end
