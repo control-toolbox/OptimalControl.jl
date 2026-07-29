@@ -19,9 +19,7 @@ using CommonSolve: CommonSolve
 #
 using NLPModelsIpopt: NLPModelsIpopt
 using MadNLP: MadNLP
-using MadNLPGPU: MadNLPGPU
 using MadNCL: MadNCL
-using CUDA: CUDA
 
 #
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
@@ -43,16 +41,16 @@ struct MockSolution <: CTModels.AbstractSolution end
 include(joinpath(@__DIR__, "..", "..", "problems", "TestProblems.jl"))
 import .TestProblems
 
-struct MockDiscretizer <: CTDirect.AbstractDiscretizer
-    options::CTSolvers.StrategyOptions
+struct MockDiscretizer <: CTSolvers.DOCP.AbstractDiscretizer
+    options::CTBase.Strategies.StrategyOptions
 end
 
-struct MockModeler <: CTSolvers.AbstractNLPModeler
-    options::CTSolvers.StrategyOptions
+struct MockModeler <: CTSolvers.Modelers.AbstractNLPModeler
+    options::CTBase.Strategies.StrategyOptions
 end
 
-struct MockSolver <: CTSolvers.AbstractNLPSolver
-    options::CTSolvers.StrategyOptions
+struct MockSolver <: CTSolvers.Solvers.AbstractNLPSolver
+    options::CTBase.Strategies.StrategyOptions
 end
 
 CommonSolve.solve(
@@ -63,9 +61,9 @@ function test_explicit()
     Test.@testset "solve_explicit (contract tests with mocks)" verbose=VERBOSE showtiming=SHOWTIMING begin
         ocp = MockOCP()
         init = MockInit()
-        disc = MockDiscretizer(CTSolvers.StrategyOptions())
-        mod = MockModeler(CTSolvers.StrategyOptions())
-        sol = MockSolver(CTSolvers.StrategyOptions())
+        disc = MockDiscretizer(CTBase.Strategies.StrategyOptions())
+        mod = MockModeler(CTBase.Strategies.StrategyOptions())
+        sol = MockSolver(CTBase.Strategies.StrategyOptions())
         registry = OptimalControl.get_strategy_registry()
 
         # ================================================================
@@ -103,8 +101,8 @@ function test_explicit()
                             pb.ocp;
                             initial_guess=init,
                             discretizer=CTDirect.Collocation(),
-                            modeler=CTSolvers.ADNLP(),
-                            solver=CTSolvers.Ipopt(),
+                            modeler=CTSolvers.Modelers.ADNLP(),
+                            solver=CTSolvers.Solvers.Ipopt(),
                             display=false,
                             registry=registry,
                         )

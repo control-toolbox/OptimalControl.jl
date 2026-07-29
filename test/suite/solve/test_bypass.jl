@@ -29,85 +29,100 @@ struct MockBypassInit <: CTModels.AbstractInitialGuess end
 CTModels.build_initial_guess(::MockBypassOCP, ::Nothing) = MockBypassInit()
 
 # Mock Strategies
-struct MockBypassDiscretizer <: CTDirect.AbstractDiscretizer
-    options::CTSolvers.StrategyOptions
+struct MockBypassDiscretizer <: CTSolvers.DOCP.AbstractDiscretizer
+    options::CTBase.Strategies.StrategyOptions
 end
 
-CTSolvers.id(::Type{MockBypassDiscretizer}) = :collocation
-function CTSolvers.metadata(::Type{MockBypassDiscretizer})
-    return CTSolvers.StrategyMetadata(
-        CTSolvers.OptionDefinition(;
+CTBase.Strategies.id(::Type{MockBypassDiscretizer}) = :collocation
+function CTBase.Strategies.metadata(::Type{MockBypassDiscretizer})
+    return CTBase.Strategies.StrategyMetadata(
+        CTBase.Options.OptionDefinition(;
             name=:grid_size, type=Int, default=100, description="Grid size"
         ),
     )
 end
-CTSolvers.options(s::MockBypassDiscretizer) = s.options
+CTBase.Strategies.options(s::MockBypassDiscretizer) = s.options
+# ⚠️ v2.1.0-beta contract: every strategy must implement `parameter`. The old
+# `CTSolvers.Strategies.get_parameter_type` defaulted to `nothing`; the CTBase
+# generic throws `NotImplemented` instead, so a mock that omits it makes option
+# routing fail rather than treating the strategy as non-parameterized.
+CTBase.Strategies.parameter(::Type{<:MockBypassDiscretizer}) = nothing
 
 function MockBypassDiscretizer(; kwargs...)
-    opts = CTSolvers.build_strategy_options(MockBypassDiscretizer; kwargs...)
+    opts = CTBase.Strategies.build_strategy_options(MockBypassDiscretizer; kwargs...)
     return MockBypassDiscretizer(opts)
 end
 
-struct MockBypassModeler <: CTSolvers.AbstractNLPModeler
-    options::CTSolvers.StrategyOptions
+struct MockBypassModeler <: CTSolvers.Modelers.AbstractNLPModeler
+    options::CTBase.Strategies.StrategyOptions
 end
 
-CTSolvers.id(::Type{MockBypassModeler}) = :adnlp
-function CTSolvers.metadata(::Type{MockBypassModeler})
-    return CTSolvers.StrategyMetadata(
-        CTSolvers.OptionDefinition(;
+CTBase.Strategies.id(::Type{MockBypassModeler}) = :adnlp
+function CTBase.Strategies.metadata(::Type{MockBypassModeler})
+    return CTBase.Strategies.StrategyMetadata(
+        CTBase.Options.OptionDefinition(;
             name=:backend, type=Symbol, default=:dense, description="Backend"
         ),
     )
 end
-CTSolvers.options(s::MockBypassModeler) = s.options
+CTBase.Strategies.options(s::MockBypassModeler) = s.options
+# ⚠️ v2.1.0-beta contract: every strategy must implement `parameter`. The old
+# `CTSolvers.Strategies.get_parameter_type` defaulted to `nothing`; the CTBase
+# generic throws `NotImplemented` instead, so a mock that omits it makes option
+# routing fail rather than treating the strategy as non-parameterized.
+CTBase.Strategies.parameter(::Type{<:MockBypassModeler}) = nothing
 
 function MockBypassModeler(; kwargs...)
-    opts = CTSolvers.build_strategy_options(MockBypassModeler; kwargs...)
+    opts = CTBase.Strategies.build_strategy_options(MockBypassModeler; kwargs...)
     return MockBypassModeler(opts)
 end
 
-struct MockBypassSolver <: CTSolvers.AbstractNLPSolver
-    options::CTSolvers.StrategyOptions
+struct MockBypassSolver <: CTSolvers.Solvers.AbstractNLPSolver
+    options::CTBase.Strategies.StrategyOptions
 end
 
-CTSolvers.id(::Type{MockBypassSolver}) = :ipopt
-function CTSolvers.metadata(::Type{MockBypassSolver})
-    return CTSolvers.StrategyMetadata(
-        CTSolvers.OptionDefinition(;
+CTBase.Strategies.id(::Type{MockBypassSolver}) = :ipopt
+function CTBase.Strategies.metadata(::Type{MockBypassSolver})
+    return CTBase.Strategies.StrategyMetadata(
+        CTBase.Options.OptionDefinition(;
             name=:max_iter, type=Int, default=1000, description="Max iterations"
         ),
     )
 end
-CTSolvers.options(s::MockBypassSolver) = s.options
+CTBase.Strategies.options(s::MockBypassSolver) = s.options
+# ⚠️ v2.1.0-beta contract: every strategy must implement `parameter`. The old
+# `CTSolvers.Strategies.get_parameter_type` defaulted to `nothing`; the CTBase
+# generic throws `NotImplemented` instead, so a mock that omits it makes option
+# routing fail rather than treating the strategy as non-parameterized.
+CTBase.Strategies.parameter(::Type{<:MockBypassSolver}) = nothing
 
 function MockBypassSolver(; kwargs...)
-    opts = CTSolvers.build_strategy_options(MockBypassSolver; kwargs...)
+    opts = CTBase.Strategies.build_strategy_options(MockBypassSolver; kwargs...)
     return MockBypassSolver(opts)
 end
 
 # Registry builder for tests
 function build_bypass_mock_registry()
-    return CTSolvers.create_registry(
-        CTDirect.AbstractDiscretizer => (MockBypassDiscretizer,),
-        CTSolvers.AbstractNLPModeler => (MockBypassModeler,),
-        CTSolvers.AbstractNLPSolver => (MockBypassSolver,),
+    return CTBase.Strategies.create_registry(
+        CTSolvers.DOCP.AbstractDiscretizer => (MockBypassDiscretizer,),
+        CTSolvers.Modelers.AbstractNLPModeler => (MockBypassModeler,),
+        CTSolvers.Solvers.AbstractNLPSolver => (MockBypassSolver,),
     )
 end
 
 # Layer 3 override to intercept options
 struct MockBypassSolution <: CTModels.AbstractSolution
-    discretizer::CTDirect.AbstractDiscretizer
-    modeler::CTSolvers.AbstractNLPModeler
-    solver::CTSolvers.AbstractNLPSolver
+    discretizer::CTSolvers.DOCP.AbstractDiscretizer
+    modeler::CTSolvers.Modelers.AbstractNLPModeler
+    solver::CTSolvers.Solvers.AbstractNLPSolver
 end
 
 function CommonSolve.solve(
     ocp::MockBypassOCP,
     init::CTModels.AbstractInitialGuess,
-    discretizer::CTDirect.AbstractDiscretizer,
-    modeler::CTSolvers.AbstractNLPModeler,
-    solver::CTSolvers.AbstractNLPSolver;
+    discretizer::CTSolvers.DOCP.AbstractDiscretizer,
+    modeler::CTSolvers.Modelers.AbstractNLPModeler,
+    solver::CTSolvers.Solvers.AbstractNLPSolver;
     display::Bool,
 )::MockBypassSolution
     return MockBypassSolution(discretizer, modeler, solver)
@@ -149,14 +164,14 @@ function test_bypass()
                     initial_guess=init,
                     display=false,
                     registry=registry,
-                    unknown_opt=CTSolvers.route_to(ipopt=CTSolvers.bypass(42)),
+                    unknown_opt=CTBase.Strategies.route_to(ipopt=CTBase.Strategies.bypass(42)),
                 )
                 Test.@test sol isa MockBypassSolution
                 # The bypassed option should be inside the solver's options
                 # CTSolvers `build_strategy_options` strips the `BypassValue` 
                 # and returns the raw value in the options.
-                Test.@test CTSolvers.has_option(sol.solver, :unknown_opt)
-                Test.@test CTSolvers.option_value(sol.solver, :unknown_opt) == 42
+                Test.@test CTBase.Strategies.has_option(sol.solver, :unknown_opt)
+                Test.@test CTBase.Strategies.option_value(sol.solver, :unknown_opt) == 42
             end
 
             Test.@testset "Bypass on discretizer" begin
@@ -168,11 +183,11 @@ function test_bypass()
                     initial_guess=init,
                     display=false,
                     registry=registry,
-                    disc_custom=CTSolvers.route_to(collocation=CTSolvers.bypass(:fine)),
+                    disc_custom=CTBase.Strategies.route_to(collocation=CTBase.Strategies.bypass(:fine)),
                 )
                 Test.@test sol isa MockBypassSolution
-                Test.@test CTSolvers.has_option(sol.discretizer, :disc_custom)
-                Test.@test CTSolvers.option_value(sol.discretizer, :disc_custom) == :fine
+                Test.@test CTBase.Strategies.has_option(sol.discretizer, :disc_custom)
+                Test.@test CTBase.Strategies.option_value(sol.discretizer, :disc_custom) == :fine
             end
 
             Test.@testset "Bypass on modeler" begin
@@ -184,11 +199,11 @@ function test_bypass()
                     initial_guess=init,
                     display=false,
                     registry=registry,
-                    mod_custom=CTSolvers.route_to(adnlp=CTSolvers.bypass("sparse_mode")),
+                    mod_custom=CTBase.Strategies.route_to(adnlp=CTBase.Strategies.bypass("sparse_mode")),
                 )
                 Test.@test sol isa MockBypassSolution
-                Test.@test CTSolvers.has_option(sol.modeler, :mod_custom)
-                Test.@test CTSolvers.option_value(sol.modeler, :mod_custom) == "sparse_mode"
+                Test.@test CTBase.Strategies.has_option(sol.modeler, :mod_custom)
+                Test.@test CTBase.Strategies.option_value(sol.modeler, :mod_custom) == "sparse_mode"
             end
 
             Test.@testset "Multi-bypass: two strategies simultaneously" begin
@@ -200,15 +215,15 @@ function test_bypass()
                     initial_guess=init,
                     display=false,
                     registry=registry,
-                    shared_opt=CTSolvers.route_to(
-                        ipopt=CTSolvers.bypass(100), adnlp=CTSolvers.bypass(:dense)
+                    shared_opt=CTBase.Strategies.route_to(
+                        ipopt=CTBase.Strategies.bypass(100), adnlp=CTBase.Strategies.bypass(:dense)
                     ),
                 )
                 Test.@test sol isa MockBypassSolution
-                Test.@test CTSolvers.has_option(sol.solver, :shared_opt)
-                Test.@test CTSolvers.option_value(sol.solver, :shared_opt) == 100
-                Test.@test CTSolvers.has_option(sol.modeler, :shared_opt)
-                Test.@test CTSolvers.option_value(sol.modeler, :shared_opt) == :dense
+                Test.@test CTBase.Strategies.has_option(sol.solver, :shared_opt)
+                Test.@test CTBase.Strategies.option_value(sol.solver, :shared_opt) == 100
+                Test.@test CTBase.Strategies.has_option(sol.modeler, :shared_opt)
+                Test.@test CTBase.Strategies.option_value(sol.modeler, :shared_opt) == :dense
             end
 
             Test.@testset "Bypass with nothing value" begin
@@ -220,11 +235,11 @@ function test_bypass()
                     initial_guess=init,
                     display=false,
                     registry=registry,
-                    nullable_opt=CTSolvers.route_to(ipopt=CTSolvers.bypass(nothing)),
+                    nullable_opt=CTBase.Strategies.route_to(ipopt=CTBase.Strategies.bypass(nothing)),
                 )
                 Test.@test sol isa MockBypassSolution
-                Test.@test CTSolvers.has_option(sol.solver, :nullable_opt)
-                Test.@test isnothing(CTSolvers.option_value(sol.solver, :nullable_opt))
+                Test.@test CTBase.Strategies.has_option(sol.solver, :nullable_opt)
+                Test.@test isnothing(CTBase.Strategies.option_value(sol.solver, :nullable_opt))
             end
         end
 
@@ -233,7 +248,7 @@ function test_bypass()
         # ====================================================================
         Test.@testset "Explicit Mode" begin
             Test.@testset "Success with manually bypassed option" begin
-                solver = MockBypassSolver(unknown_opt=CTSolvers.bypass("passed"))
+                solver = MockBypassSolver(unknown_opt=CTBase.Strategies.bypass("passed"))
                 sol = OptimalControl.solve_explicit(
                     ocp;
                     initial_guess=init,
@@ -244,8 +259,8 @@ function test_bypass()
                     solver=solver,
                 )
                 Test.@test sol isa MockBypassSolution
-                Test.@test CTSolvers.has_option(sol.solver, :unknown_opt)
-                Test.@test CTSolvers.option_value(sol.solver, :unknown_opt) == "passed"
+                Test.@test CTBase.Strategies.has_option(sol.solver, :unknown_opt)
+                Test.@test CTBase.Strategies.option_value(sol.solver, :unknown_opt) == "passed"
             end
         end
 
@@ -261,15 +276,15 @@ function test_bypass()
                     :ipopt;
                     display=false,
                     registry=registry,
-                    custom_backend_opt=CTSolvers.route_to(ipopt=CTSolvers.bypass(99)),
+                    custom_backend_opt=CTBase.Strategies.route_to(ipopt=CTBase.Strategies.bypass(99)),
                 )
                 Test.@test sol isa MockBypassSolution
-                Test.@test CTSolvers.has_option(sol.solver, :custom_backend_opt)
-                Test.@test CTSolvers.option_value(sol.solver, :custom_backend_opt) == 99
+                Test.@test CTBase.Strategies.has_option(sol.solver, :custom_backend_opt)
+                Test.@test CTBase.Strategies.option_value(sol.solver, :custom_backend_opt) == 99
             end
 
             Test.@testset "Explicit via solve" begin
-                solver = MockBypassSolver(custom_backend_opt=CTSolvers.bypass(99))
+                solver = MockBypassSolver(custom_backend_opt=CTBase.Strategies.bypass(99))
                 sol = OptimalControl.solve(
                     ocp;
                     display=false,
@@ -279,8 +294,8 @@ function test_bypass()
                     solver=solver,
                 )
                 Test.@test sol isa MockBypassSolution
-                Test.@test CTSolvers.has_option(sol.solver, :custom_backend_opt)
-                Test.@test CTSolvers.option_value(sol.solver, :custom_backend_opt) == 99
+                Test.@test CTBase.Strategies.has_option(sol.solver, :custom_backend_opt)
+                Test.@test CTBase.Strategies.option_value(sol.solver, :custom_backend_opt) == 99
             end
         end
     end

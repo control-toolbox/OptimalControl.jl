@@ -30,25 +30,25 @@ struct MockSolution <: CTModels.AbstractSolution
 end
 
 # Parametric mocks to simulate ANY strategy ID found in methods.jl
-struct MockDiscretizer{ID} <: CTDirect.AbstractDiscretizer
-    options::CTSolvers.StrategyOptions
+struct MockDiscretizer{ID} <: CTSolvers.DOCP.AbstractDiscretizer
+    options::CTBase.Strategies.StrategyOptions
 end
 
-struct MockModeler{ID} <: CTSolvers.AbstractNLPModeler
-    options::CTSolvers.StrategyOptions
+struct MockModeler{ID} <: CTSolvers.Modelers.AbstractNLPModeler
+    options::CTBase.Strategies.StrategyOptions
 end
 
-struct MockSolver{ID} <: CTSolvers.AbstractNLPSolver
-    options::CTSolvers.StrategyOptions
+struct MockSolver{ID} <: CTSolvers.Solvers.AbstractNLPSolver
+    options::CTBase.Strategies.StrategyOptions
 end
 
 # Parametric mocks for parameterized strategies (CPU/GPU)
-struct MockModelerParam{ID,PARAM} <: CTSolvers.AbstractNLPModeler
-    options::CTSolvers.StrategyOptions
+struct MockModelerParam{ID,PARAM} <: CTSolvers.Modelers.AbstractNLPModeler
+    options::CTBase.Strategies.StrategyOptions
 end
 
-struct MockSolverParam{ID,PARAM} <: CTSolvers.AbstractNLPSolver
-    options::CTSolvers.StrategyOptions
+struct MockSolverParam{ID,PARAM} <: CTSolvers.Solvers.AbstractNLPSolver
+    options::CTBase.Strategies.StrategyOptions
 end
 
 # ----------------------------------------------------------------------------
@@ -56,65 +56,77 @@ end
 # ----------------------------------------------------------------------------
 
 # ID accessors
-CTSolvers.Strategies.id(::Type{MockDiscretizer{ID}}) where {ID} = ID
-CTSolvers.Strategies.id(::Type{MockModeler{ID}}) where {ID} = ID
-CTSolvers.Strategies.id(::Type{MockSolver{ID}}) where {ID} = ID
-CTSolvers.Strategies.id(::Type{MockModelerParam{ID,PARAM}}) where {ID,PARAM} = ID
-CTSolvers.Strategies.id(::Type{MockSolverParam{ID,PARAM}}) where {ID,PARAM} = ID
+CTBase.Strategies.id(::Type{MockDiscretizer{ID}}) where {ID} = ID
+CTBase.Strategies.id(::Type{MockModeler{ID}}) where {ID} = ID
+CTBase.Strategies.id(::Type{MockSolver{ID}}) where {ID} = ID
+CTBase.Strategies.id(::Type{MockModelerParam{ID,PARAM}}) where {ID,PARAM} = ID
+CTBase.Strategies.id(::Type{MockSolverParam{ID,PARAM}}) where {ID,PARAM} = ID
 
 # Metadata (required by registry)
-function CTSolvers.Strategies.metadata(::Type{<:MockDiscretizer})
-    return CTSolvers.Strategies.StrategyMetadata()
+function CTBase.Strategies.metadata(::Type{<:MockDiscretizer})
+    return CTBase.Strategies.StrategyMetadata()
 end
-function CTSolvers.Strategies.metadata(::Type{<:MockModeler})
-    return CTSolvers.Strategies.StrategyMetadata()
+function CTBase.Strategies.metadata(::Type{<:MockModeler})
+    return CTBase.Strategies.StrategyMetadata()
 end
-function CTSolvers.Strategies.metadata(::Type{<:MockSolver})
-    return CTSolvers.Strategies.StrategyMetadata()
+function CTBase.Strategies.metadata(::Type{<:MockSolver})
+    return CTBase.Strategies.StrategyMetadata()
 end
-function CTSolvers.Strategies.metadata(::Type{<:MockModelerParam})
-    return CTSolvers.Strategies.StrategyMetadata()
+function CTBase.Strategies.metadata(::Type{<:MockModelerParam})
+    return CTBase.Strategies.StrategyMetadata()
 end
-function CTSolvers.Strategies.metadata(::Type{<:MockSolverParam})
-    return CTSolvers.Strategies.StrategyMetadata()
+function CTBase.Strategies.metadata(::Type{<:MockSolverParam})
+    return CTBase.Strategies.StrategyMetadata()
 end
 
 # Options accessors
-CTSolvers.Strategies.options(d::MockDiscretizer) = d.options
-CTSolvers.Strategies.options(m::MockModeler) = m.options
-CTSolvers.Strategies.options(s::MockSolver) = s.options
-CTSolvers.Strategies.options(m::MockModelerParam) = m.options
-CTSolvers.Strategies.options(s::MockSolverParam) = s.options
+CTBase.Strategies.options(d::MockDiscretizer) = d.options
+CTBase.Strategies.options(m::MockModeler) = m.options
+CTBase.Strategies.options(s::MockSolver) = s.options
+CTBase.Strategies.options(m::MockModelerParam) = m.options
+CTBase.Strategies.options(s::MockSolverParam) = s.options
+
+# Parameter accessors
+#
+# ⚠️ v2.1.0-beta contract: every strategy must implement `parameter`. The old
+# `CTSolvers.Strategies.get_parameter_type` returned `nothing` by default; the
+# CTBase generic throws `NotImplemented` instead, so a mock that omits it makes
+# option routing fail rather than being treated as non-parameterized.
+CTBase.Strategies.parameter(::Type{<:MockDiscretizer}) = nothing
+CTBase.Strategies.parameter(::Type{<:MockModeler}) = nothing
+CTBase.Strategies.parameter(::Type{<:MockSolver}) = nothing
+CTBase.Strategies.parameter(::Type{MockModelerParam{ID,PARAM}}) where {ID,PARAM} = PARAM
+CTBase.Strategies.parameter(::Type{MockSolverParam{ID,PARAM}}) where {ID,PARAM} = PARAM
 
 # Constructors (required by _build_or_use_strategy)
 function MockDiscretizer{ID}(; mode::Symbol=:strict, kwargs...) where {ID}
-    opts = CTSolvers.Strategies.build_strategy_options(
+    opts = CTBase.Strategies.build_strategy_options(
         MockDiscretizer{ID}; mode=mode, kwargs...
     )
     return MockDiscretizer{ID}(opts)
 end
 
 function MockModeler{ID}(; mode::Symbol=:strict, kwargs...) where {ID}
-    opts = CTSolvers.Strategies.build_strategy_options(
+    opts = CTBase.Strategies.build_strategy_options(
         MockModeler{ID}; mode=mode, kwargs...
     )
     return MockModeler{ID}(opts)
 end
 
 function MockSolver{ID}(; mode::Symbol=:strict, kwargs...) where {ID}
-    opts = CTSolvers.Strategies.build_strategy_options(MockSolver{ID}; mode=mode, kwargs...)
+    opts = CTBase.Strategies.build_strategy_options(MockSolver{ID}; mode=mode, kwargs...)
     return MockSolver{ID}(opts)
 end
 
 function MockModelerParam{ID,PARAM}(; mode::Symbol=:strict, kwargs...) where {ID,PARAM}
-    opts = CTSolvers.Strategies.build_strategy_options(
+    opts = CTBase.Strategies.build_strategy_options(
         MockModelerParam{ID,PARAM}; mode=mode, kwargs...
     )
     return MockModelerParam{ID,PARAM}(opts)
 end
 
 function MockSolverParam{ID,PARAM}(; mode::Symbol=:strict, kwargs...) where {ID,PARAM}
-    opts = CTSolvers.Strategies.build_strategy_options(
+    opts = CTBase.Strategies.build_strategy_options(
         MockSolverParam{ID,PARAM}; mode=mode, kwargs...
     )
     return MockSolverParam{ID,PARAM}(opts)
@@ -124,7 +136,7 @@ end
 # Mock Registry Builder
 # ----------------------------------------------------------------------------
 
-function build_mock_registry_from_methods()::CTSolvers.StrategyRegistry
+function build_mock_registry_from_methods()::CTBase.Strategies.StrategyRegistry
     # 1. Get all valid triplets from methods()
     #    e.g. ((:collocation, :adnlp, :ipopt), ...)
     valid_methods = OptimalControl.methods()
@@ -141,10 +153,10 @@ function build_mock_registry_from_methods()::CTSolvers.StrategyRegistry
     sol_types = Tuple(MockSolver{id} for id in sol_ids)
 
     # 4. Create registry
-    return CTSolvers.create_registry(
-        CTDirect.AbstractDiscretizer => disc_types,
-        CTSolvers.AbstractNLPModeler => mod_types,
-        CTSolvers.AbstractNLPSolver => sol_types,
+    return CTBase.Strategies.create_registry(
+        CTSolvers.DOCP.AbstractDiscretizer => disc_types,
+        CTSolvers.Modelers.AbstractNLPModeler => mod_types,
+        CTSolvers.Solvers.AbstractNLPSolver => sol_types,
     )
 end
 
@@ -167,7 +179,7 @@ function OptimalControl.solve_descriptive(
     description::Symbol...;
     initial_guess,
     display::Bool,
-    registry::CTSolvers.StrategyRegistry,
+    registry::CTBase.Strategies.StrategyRegistry,
     kwargs...,
 )::MockSolution
     # For testing purposes, we return a MockSolution containing the description symbols
@@ -196,9 +208,9 @@ function test_dispatch_logic()
             # Verify that we can explicitly target EVERY method supported.
 
             Test.@testset "Explicit Full: $method_str" begin
-                d_instance = MockDiscretizer{d_id}(CTSolvers.StrategyOptions())
-                m_instance = MockModeler{m_id}(CTSolvers.StrategyOptions())
-                s_instance = MockSolver{s_id}(CTSolvers.StrategyOptions())
+                d_instance = MockDiscretizer{d_id}(CTBase.Strategies.StrategyOptions())
+                m_instance = MockModeler{m_id}(CTBase.Strategies.StrategyOptions())
+                s_instance = MockSolver{s_id}(CTBase.Strategies.StrategyOptions())
 
                 sol = OptimalControl.solve(
                     ocp;
@@ -256,7 +268,7 @@ function test_dispatch_logic()
             # Case: Only Discretizer(:collocation) provided
             # Expectation: Defaults to :adnlp, :ipopt (based on methods order)
 
-            d_instance = MockDiscretizer{:collocation}(CTSolvers.StrategyOptions())
+            d_instance = MockDiscretizer{:collocation}(CTBase.Strategies.StrategyOptions())
 
             sol = OptimalControl.solve(
                 ocp;
@@ -282,33 +294,35 @@ function test_dispatch_logic()
 
         Test.@testset "Parameter Type Validation" begin
             # Test parameter type identification
-            Test.@test CTSolvers.Strategies.is_parameter_type(CTSolvers.CPU)
-            Test.@test CTSolvers.Strategies.is_parameter_type(CTSolvers.GPU)
-            Test.@test !CTSolvers.Strategies.is_parameter_type(Int)
+            Test.@test CTBase.Strategies.is_a_parameter(CTBase.Strategies.CPU)
+            Test.@test CTBase.Strategies.is_a_parameter(CTBase.Strategies.GPU)
+            Test.@test !CTBase.Strategies.is_a_parameter(Int)
 
-            # Test parameter extraction from non-parameterized mocks
-            # Our mocks don't have type parameters in the way CTSolvers expects
-            # so get_parameter_type should return nothing
-            Test.@test CTSolvers.Strategies.get_parameter_type(MockModeler{:adnlp}) ===
-                nothing
-            Test.@test CTSolvers.Strategies.get_parameter_type(MockSolver{:ipopt}) ===
-                nothing
+            # Parameter extraction from non-parameterized mocks.
+            # `MockModeler{ID}`'s type parameter is its *id*, not a strategy
+            # parameter, so it declares `parameter(...) = nothing`.
+            Test.@test CTBase.Strategies.parameter(MockModeler{:adnlp}) === nothing
+            Test.@test CTBase.Strategies.parameter(MockSolver{:ipopt}) === nothing
 
-            # Test parameter extraction from parameterized mocks
-            # Even with parameters, our mocks don't follow the CTSolvers convention
-            # so get_parameter_type should still return nothing
-            Test.@test CTSolvers.Strategies.get_parameter_type(
-                MockModelerParam{:exa,CTSolvers.CPU}
-            ) === nothing
-            Test.@test CTSolvers.Strategies.get_parameter_type(
-                MockSolverParam{:madnlp,CTSolvers.GPU}
-            ) === nothing
+            # Parameter extraction from parameterized mocks.
+            # ⚠️ Changed in v2.1.0-beta: `parameter` is a contract every
+            # strategy must implement (the CTBase generic throws
+            # `NotImplemented` by default, where the old
+            # `CTSolvers.Strategies.get_parameter_type` silently returned
+            # `nothing`). Now that `MockXParam` declares it, it reports the
+            # parameter it actually carries.
+            Test.@test CTBase.Strategies.parameter(
+                MockModelerParam{:exa,CTBase.Strategies.CPU}
+            ) === CTBase.Strategies.CPU
+            Test.@test CTBase.Strategies.parameter(
+                MockSolverParam{:madnlp,CTBase.Strategies.GPU}
+            ) === CTBase.Strategies.GPU
 
-            # Test that is_parameter_type works correctly for real CTSolvers types
-            Test.@test CTSolvers.Strategies.is_parameter_type(CTSolvers.CPU)
-            Test.@test CTSolvers.Strategies.is_parameter_type(CTSolvers.GPU)
-            Test.@test !CTSolvers.Strategies.is_parameter_type(CTSolvers.ADNLP)
-            Test.@test !CTSolvers.Strategies.is_parameter_type(CTSolvers.Ipopt)
+            # Test that is_a_parameter works correctly for real CTSolvers types
+            Test.@test CTBase.Strategies.is_a_parameter(CTBase.Strategies.CPU)
+            Test.@test CTBase.Strategies.is_a_parameter(CTBase.Strategies.GPU)
+            Test.@test !CTBase.Strategies.is_a_parameter(CTSolvers.Modelers.ADNLP)
+            Test.@test !CTBase.Strategies.is_a_parameter(CTSolvers.Solvers.Ipopt)
         end
 
         # ----------------------------------------------------------------
@@ -324,10 +338,10 @@ function test_dispatch_logic()
             Test.@test reg_res !== mock_registry
 
             # It should look like the real registry (checking internal families)
-            # Real registry has CTDirect.AbstractDiscretizer, etc.
+            # Real registry has CTSolvers.DOCP.AbstractDiscretizer, etc.
             families = reg_res.families
-            Test.@test haskey(families, CTDirect.AbstractDiscretizer)
-            Test.@test haskey(families, CTSolvers.AbstractNLPModeler)
+            Test.@test haskey(families, CTSolvers.DOCP.AbstractDiscretizer)
+            Test.@test haskey(families, CTSolvers.Modelers.AbstractNLPModeler)
         end
     end
 end

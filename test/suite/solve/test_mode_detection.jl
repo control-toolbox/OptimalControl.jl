@@ -18,9 +18,9 @@ const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 # TOP-LEVEL: mock instances for testing (avoid external dependencies)
-struct MockDiscretizer <: CTDirect.AbstractDiscretizer end
-struct MockModeler <: CTSolvers.AbstractNLPModeler end
-struct MockSolver <: CTSolvers.AbstractNLPSolver end
+struct MockDiscretizer <: CTSolvers.DOCP.AbstractDiscretizer end
+struct MockModeler <: CTSolvers.Modelers.AbstractNLPModeler end
+struct MockSolver <: CTSolvers.Solvers.AbstractNLPSolver end
 
 const DISC = MockDiscretizer()
 const MOD = MockModeler()
