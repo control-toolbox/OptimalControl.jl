@@ -41,7 +41,7 @@ using ExaModels: ExaModels
 import OrdinaryDiffEqTsit5: OrdinaryDiffEqTsit5 # `Flow` needs an integrator
 
 include(joinpath(@__DIR__, "..", "..", "helpers", "capabilities.jl"))
-using .TestCapabilities: is_cuda_on, gpu_extension_armed
+using .TestCapabilities: is_cuda_on, gpu_extension_armed, on_gpu_runner
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
@@ -184,6 +184,15 @@ function test_gpu_routing()
                     linear_solver=MadNLPGPU.CUDSSSolver,
                 )
                 successful(sol)
+            end
+
+            # ⚠️ A skip is honest on a laptop and a lie on the GPU runner. The
+            # `kkt` runner exists to have a device; if CUDA is not functional
+            # *there*, skipping turns the whole GPU job green with nothing run
+            # — the failure class CTSolvers#189/#190 was about, one level up.
+            # So on that runner the device itself is asserted, not assumed.
+            if on_gpu_runner()
+                Test.@test is_cuda_on()
             end
 
             if is_cuda_on()
