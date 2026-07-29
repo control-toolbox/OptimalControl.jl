@@ -31,8 +31,8 @@ sol = solve(ocp, :collocation, :adnlp, :ipopt)
 # Or solve using explicit mode (typed components)
 sol = solve(ocp; 
     discretizer=CTDirect.Collocation(),
-    modeler=CTSolvers.ADNLP(),
-    solver=CTSolvers.Ipopt()
+    modeler=CTSolvers.Modelers.ADNLP(),
+    solver=CTSolvers.Solvers.Ipopt()
 )
 ```
 
@@ -57,17 +57,27 @@ using CommonSolve: CommonSolve
 @reexport import CommonSolve: solve
 using CTBase: CTBase
 using CTModels: CTModels
+using CTLie: CTLie
 using CTDirect: CTDirect
 using CTSolvers: CTSolvers
+using CTFlows: CTFlows
 
 # Imports
+#
+# Order follows the dependency graph: CTBase, then CTModels / CTLie, then
+# CTSolvers, then CTFlows, then CTDirect / CTParser.
 include(joinpath(@__DIR__, "imports", "ctbase.jl"))
-include(joinpath(@__DIR__, "imports", "ctdirect.jl"))
-include(joinpath(@__DIR__, "imports", "ctflows.jl"))
 include(joinpath(@__DIR__, "imports", "ctmodels.jl"))
-include(joinpath(@__DIR__, "imports", "ctparser.jl"))
+include(joinpath(@__DIR__, "imports", "ctlie.jl"))
 include(joinpath(@__DIR__, "imports", "ctsolvers.jl"))
+include(joinpath(@__DIR__, "imports", "ctflows.jl"))
+include(joinpath(@__DIR__, "imports", "ctdirect.jl"))
+include(joinpath(@__DIR__, "imports", "ctparser.jl"))
+
+# Extension triggers — a `[deps]` entry arms nothing, the load is what counts.
+include(joinpath(@__DIR__, "imports", "adnlpmodels.jl"))
 include(joinpath(@__DIR__, "imports", "examodels.jl"))
+include(joinpath(@__DIR__, "imports", "ad.jl"))
 # include(joinpath(@__DIR__, "imports", "redefine.jl"))
 
 # helpers

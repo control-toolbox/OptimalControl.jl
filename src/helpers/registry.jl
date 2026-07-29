@@ -5,33 +5,33 @@ Create and return the strategy registry for the solve system.
 
 The registry maps abstract strategy families to their concrete implementations
 with their supported parameters:
-- `CTDirect.AbstractDiscretizer` → Discretization strategies
-- `CTSolvers.AbstractNLPModeler` → NLP modeling strategies (with CPU/GPU support)
-- `CTSolvers.AbstractNLPSolver` → NLP solver strategies (with CPU/GPU support)
+- `CTSolvers.DOCP.AbstractDiscretizer` → Discretization strategies
+- `CTSolvers.Modelers.AbstractNLPModeler` → NLP modeling strategies (with CPU/GPU support)
+- `CTSolvers.Solvers.AbstractNLPSolver` → NLP solver strategies (with CPU/GPU support)
 
 Each strategy entry specifies which parameters it supports:
 - `CPU`: All strategies support CPU execution
 - `GPU`: Only GPU-capable strategies support GPU execution (Exa, MadNLP, MadNCL)
 
 # Returns
-- `CTSolvers.StrategyRegistry`: Registry with all available strategies and their parameters
+- `CTBase.Strategies.StrategyRegistry`: Registry with all available strategies and their parameters
 
 # Examples
 ```julia
 julia> registry = OptimalControl.get_strategy_registry()
 StrategyRegistry with 3 families
 
-julia> CTSolvers.strategy_ids(CTSolvers.AbstractNLPModeler, registry)
+julia> CTBase.Strategies.strategy_ids(CTSolvers.Modelers.AbstractNLPModeler, registry)
 (:adnlp, :exa)
 
-julia> CTSolvers.strategy_ids(CTSolvers.AbstractNLPSolver, registry)  
+julia> CTBase.Strategies.strategy_ids(CTSolvers.Solvers.AbstractNLPSolver, registry)  
 (:ipopt, :madnlp, :uno, :madncl, :knitro)
 
 julia> # Check which parameters a strategy supports
-julia> CTSolvers.available_parameters(:modeler, CTSolvers.Exa, registry)
+julia> CTBase.Strategies.available_parameters(:modeler, CTSolvers.Modelers.Exa, registry)
 (CPU, GPU)
 
-julia> CTSolvers.available_parameters(:solver, CTSolvers.Ipopt, registry)
+julia> CTBase.Strategies.available_parameters(:solver, CTSolvers.Solvers.Ipopt, registry)
 (CPU,)
 ```
 
@@ -45,22 +45,22 @@ julia> CTSolvers.available_parameters(:solver, CTSolvers.Ipopt, registry)
 
 See also: [`methods`](@ref), [`_complete_components`](@ref), [`solve`](@ref)
 """
-function get_strategy_registry()::CTSolvers.StrategyRegistry
-    return CTSolvers.create_registry(
-        CTDirect.AbstractDiscretizer => (
+function get_strategy_registry()::CTBase.Strategies.StrategyRegistry
+    return CTBase.Strategies.create_registry(
+        CTSolvers.DOCP.AbstractDiscretizer => (
             CTDirect.Collocation,
             # Add other discretizers as they become available
         ),
-        CTSolvers.AbstractNLPModeler => (
-            (CTSolvers.ADNLP, [CTSolvers.CPU]),
-            (CTSolvers.Exa, [CTSolvers.CPU, CTSolvers.GPU]),
+        CTSolvers.Modelers.AbstractNLPModeler => (
+            (CTSolvers.Modelers.ADNLP, [CTBase.Strategies.CPU]),
+            (CTSolvers.Modelers.Exa, [CTBase.Strategies.CPU, CTBase.Strategies.GPU]),
         ),
-        CTSolvers.AbstractNLPSolver => (
-            (CTSolvers.Ipopt, [CTSolvers.CPU]),
-            (CTSolvers.MadNLP, [CTSolvers.CPU, CTSolvers.GPU]),
-            (CTSolvers.Uno, [CTSolvers.CPU]),
-            (CTSolvers.MadNCL, [CTSolvers.CPU, CTSolvers.GPU]),
-            (CTSolvers.Knitro, [CTSolvers.CPU]),
+        CTSolvers.Solvers.AbstractNLPSolver => (
+            (CTSolvers.Solvers.Ipopt, [CTBase.Strategies.CPU]),
+            (CTSolvers.Solvers.MadNLP, [CTBase.Strategies.CPU, CTBase.Strategies.GPU]),
+            (CTSolvers.Solvers.Uno, [CTBase.Strategies.CPU]),
+            (CTSolvers.Solvers.MadNCL, [CTBase.Strategies.CPU, CTBase.Strategies.GPU]),
+            (CTSolvers.Solvers.Knitro, [CTBase.Strategies.CPU]),
         ),
     )
 end

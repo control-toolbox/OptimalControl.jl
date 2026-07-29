@@ -3,7 +3,7 @@ $(TYPEDSIGNATURES)
 
 Display detailed information about a strategy identified by its symbol.
 
-This is a convenience wrapper around `CTSolvers.describe` that uses OptimalControl's
+This is a convenience wrapper around `CTBase.Strategies.describe` that uses OptimalControl's
 strategy registry. It shows the strategy's available options, their types, defaults,
 and descriptions.
 
@@ -33,7 +33,11 @@ For complete option lists, see the official documentation:
 
 See also: [`methods`](@ref), [`get_strategy_registry`](@ref), [`solve`](@ref)
 """
-function CTSolvers.describe(strategy_id::Symbol)
+# NOTE: this is deliberate type piracy on `::Symbol` — pre-existing, and the
+# whole point of the convenience wrapper. `describe` moved from CTSolvers to
+# CTBase.Strategies in v2.1.0-beta, hence the qualified path; do not "fix" it
+# into a local `describe`, that would shadow the two-argument method.
+function CTBase.Strategies.describe(strategy_id::Symbol)
     registry = get_strategy_registry()
-    return CTSolvers.describe(strategy_id, registry)
+    return CTBase.Strategies.describe(strategy_id, registry)
 end

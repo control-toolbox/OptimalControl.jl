@@ -6,14 +6,14 @@ Complete missing resolution components using the registry.
 This function orchestrates the component completion workflow:
 1. Extract symbols from provided components using `_build_partial_description`
 2. Complete the method description using `_complete_description`
-3. Resolve method with parameter information using `CTSolvers.resolve_method`
+3. Resolve method with parameter information using `CTBase.Orchestration.resolve_method`
 4. Build or use strategies for each family using `_build_or_use_strategy`
 
 # Arguments
-- `discretizer::Union{CTDirect.AbstractDiscretizer, Nothing}`: Discretization strategy or `nothing`
-- `modeler::Union{CTSolvers.AbstractNLPModeler, Nothing}`: NLP modeling strategy or `nothing`
-- `solver::Union{CTSolvers.AbstractNLPSolver, Nothing}`: NLP solver strategy or `nothing`
-- `registry::CTSolvers.StrategyRegistry`: Strategy registry for building missing components
+- `discretizer::Union{CTSolvers.DOCP.AbstractDiscretizer, Nothing}`: Discretization strategy or `nothing`
+- `modeler::Union{CTSolvers.Modelers.AbstractNLPModeler, Nothing}`: NLP modeling strategy or `nothing`
+- `solver::Union{CTSolvers.Solvers.AbstractNLPSolver, Nothing}`: NLP solver strategy or `nothing`
+- `registry::CTBase.Strategies.StrategyRegistry`: Strategy registry for building missing components
 
 # Returns
 - `NamedTuple{(:discretizer, :modeler, :solver)}`: Complete component triplet
@@ -22,16 +22,16 @@ This function orchestrates the component completion workflow:
 ```julia
 # Complete from scratch
 result = OptimalControl._complete_components(nothing, nothing, nothing, registry)
-@test result.discretizer isa CTDirect.AbstractDiscretizer
-@test result.modeler isa CTSolvers.AbstractNLPModeler
-@test result.solver isa CTSolvers.AbstractNLPSolver
+@test result.discretizer isa CTSolvers.DOCP.AbstractDiscretizer
+@test result.modeler isa CTSolvers.Modelers.AbstractNLPModeler
+@test result.solver isa CTSolvers.Solvers.AbstractNLPSolver
 
 # Partial completion
 disc = CTDirect.Collocation()
 result = OptimalControl._complete_components(disc, nothing, nothing, registry)
 @test result.discretizer === disc
-@test result.modeler isa CTSolvers.AbstractNLPModeler
-@test result.solver isa CTSolvers.AbstractNLPSolver
+@test result.modeler isa CTSolvers.Modelers.AbstractNLPModeler
+@test result.solver isa CTSolvers.Solvers.AbstractNLPSolver
 ```
 
 # Notes
@@ -43,10 +43,10 @@ result = OptimalControl._complete_components(disc, nothing, nothing, registry)
 See also: [`_build_partial_description`](@ref), [`_complete_description`](@ref), [`_build_or_use_strategy`](@ref), [`get_strategy_registry`](@ref), [`solve_explicit`](@ref)
 """
 function _complete_components(
-    discretizer::Union{CTDirect.AbstractDiscretizer,Nothing},
-    modeler::Union{CTSolvers.AbstractNLPModeler,Nothing},
-    solver::Union{CTSolvers.AbstractNLPSolver,Nothing},
-    registry::CTSolvers.StrategyRegistry,
+    discretizer::Union{CTSolvers.DOCP.AbstractDiscretizer,Nothing},
+    modeler::Union{CTSolvers.Modelers.AbstractNLPModeler,Nothing},
+    solver::Union{CTSolvers.Solvers.AbstractNLPSolver,Nothing},
+    registry::CTBase.Strategies.StrategyRegistry,
 )::NamedTuple{(:discretizer, :modeler, :solver)}
 
     # Step 1: Extract symbols from provided components
@@ -57,7 +57,7 @@ function _complete_components(
 
     # Step 3: Resolve method with parameter information
     families = _descriptive_families()
-    resolved = CTSolvers.resolve_method(complete_description, families, registry)
+    resolved = CTBase.Orchestration.resolve_method(complete_description, families, registry)
 
     # Step 4: Build or use strategies for each family
     final_discretizer = _build_or_use_strategy(
