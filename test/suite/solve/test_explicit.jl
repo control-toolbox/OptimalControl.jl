@@ -108,7 +108,7 @@ function test_explicit()
                         )
                         Test.@test result isa CTModels.AbstractSolution
                         Test.@test OptimalControl.successful(result)
-                        Test.@test OptimalControl.objective(result) ≈ pb.obj rtol=1e-2
+                        Test.@test OptimalControl.objective(result) ≈ pb.objective rtol=1e-2
                     end
 
                     Test.@testset "Partial components - completion" begin

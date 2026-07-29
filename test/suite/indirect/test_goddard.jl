@@ -69,8 +69,8 @@ function test_goddard()
             # Get problem from TestProblems
             prob_data = TestProblems.Goddard()
             ocp = prob_data.ocp
-            F0 = prob_data.F0
-            F1 = prob_data.F1
+            F0 = prob_data.data.F0
+            F1 = prob_data.data.F1
 
             # Constraint function
             g(x) = vmax - x[2]
@@ -118,12 +118,12 @@ function test_goddard()
                 return s[7] = H0(xf, pf)
             end
 
-            # Known solution
-            p0 = [3.9457646586891744, 0.15039559623165552, 0.05371271293970545]
-            t1 = 0.023509684041879215
-            t2 = 0.059737380899876
-            t3 = 0.10157134842432228
-            tf = 0.20204744057100849
+            # Known solution — carried by the problem, not restated here.
+            # `TestProblem` rejects an `:indirect` fixture with no `p0`, so
+            # these cannot silently drift apart from the model.
+            p0 = prob_data.data.p0
+            t1, t2, t3 = prob_data.data.switching_times
+            tf = prob_data.data.tf_ref
 
             # Test shooting function with known solution
             s = zeros(eltype(p0), 7)

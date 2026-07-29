@@ -34,12 +34,12 @@ function test_double_integrator_time()
             # Get problem from TestProblems
             prob_data = TestProblems.DoubleIntegratorTime()
             ocp = prob_data.ocp
-            x0 = prob_data.x0
-            xf = prob_data.xf
-            t0 = prob_data.t0
-            u_max = prob_data.u_max
-            u_min = prob_data.u_min
-            obj_ref = prob_data.obj
+            x0 = prob_data.data.x0
+            xf = prob_data.data.xf
+            t0 = prob_data.data.t0
+            u_max = prob_data.data.u_max
+            u_min = prob_data.data.u_min
+            obj_ref = prob_data.objective
 
             # Pseudo-Hamiltonian: H(x, p, u) = p₁v + p₂u - 1
             H(x, p, u) = p[1] * x[2] + p[2] * u - 1
@@ -59,10 +59,10 @@ function test_double_integrator_time()
                 return s[4] = H(x_tf, p_tf, u_min)           # free final time
             end
 
-            # Known solution (from documentation)
-            p0_ref = [1.0, 1.0]
-            t1_ref = 1.0
-            tf_ref = 2.0
+            # Known solution — carried by the problem (see `TestProblem`).
+            p0_ref = prob_data.data.p0
+            (t1_ref,) = prob_data.data.switching_times
+            tf_ref = prob_data.data.tf
 
             # Test shooting function with known solution
             s = zeros(4)

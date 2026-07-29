@@ -1,21 +1,35 @@
-# Goddard rocket optimal control problem used by CTSolvers tests.
+# Goddard rocket ascent, in both front-end forms.
+#
+# Maximise the final altitude r(tf). Free final time, three-dimensional state,
+# box constraints on state and control — the reference case for the indirect
+# suite (B+ S C B0 structure).
 
 """
-    Goddard(; vmax=0.1, Tmax=3.5)
+    Goddard(form::Symbol=:abstract; vmax=0.1, Tmax=3.5)
 
-Return data for the classical Goddard rocket ascent, formulated as a
-*maximization* of the final altitude `r(tf)`.
+Return the Goddard rocket problem as a [`TestProblem`](@ref).
 
-The function returns a NamedTuple with fields:
+`data` carries the two dynamics fields the indirect method needs:
 
-  * `ocp`  – CTParser/@def optimal control problem
-  * `obj`  – reference optimal objective value
-  * `name` – short problem name (`"goddard"`)
-  * `init` – NamedTuple of components for `CTSolvers.initial_guess`, similar
-             in spirit to `Beam()`.
+  * `F0` – drift
+  * `F1` – control field
+
+plus the constants the shooting function is written against (`vmax`, `mf`,
+`x0`, …).
 """
-function Goddard(; vmax=0.1, Tmax=3.5)
-    # constants
+function Goddard(form::Symbol=:abstract; vmax=0.1, Tmax=3.5)
+    check_form(form)
+    return cached(:goddard, form, (vmax, Tmax)) do
+        form === :abstract ? _goddard_abstract(; vmax, Tmax) :
+        _goddard_functional(; vmax, Tmax)
+    end
+end
+
+const _GODDARD_OBJ = 1.01257
+
+# Shared constants and dynamics fields — identical for both forms, which is
+# what makes the two models comparable.
+function _goddard_constants(; vmax, Tmax)
     Cd = 310
     β = 500
     b = 2
@@ -24,6 +38,37 @@ function Goddard(; vmax=0.1, Tmax=3.5)
     m0 = 1
     mf = 0.6
     x0 = [r0, v0, m0]
+
+    function F0(x)
+        r, v, m = x
+        D = Cd * v^2 * exp(-β * (r - r0))
+        return [v, -D / m - 1 / r^2, 0]
+    end
+
+    function F1(x)
+        r, v, m = x
+        return [0, Tmax / m, -b * Tmax]
+    end
+
+    # Reference solution of the B+ S C B0 shooting problem. Carried here so
+    # the indirect fixture is self-describing: declaring `:indirect` without a
+    # `p0` is rejected by the `TestProblem` constructor.
+    p0 = [3.9457646586891744, 0.15039559623165552, 0.05371271293970545]
+    switching_times = (
+        0.023509684041879215,   # t1 — end of the B+ arc
+        0.059737380899876,      # t2 — end of the singular arc
+        0.10157134842432228,    # t3 — end of the boundary arc
+    )
+    tf_ref = 0.20204744057100849
+
+    return (;
+        Cd, β, b, r0, v0, m0, mf, vmax, Tmax, x0, F0, F1, p0, switching_times, tf_ref
+    )
+end
+
+function _goddard_abstract(; vmax, Tmax)
+    c = _goddard_constants(; vmax, Tmax)
+    Cd, β, b, r0, v0, m0, mf, x0 = c.Cd, c.β, c.b, c.r0, c.v0, c.m0, c.mf, c.x0
 
     @def goddard begin
         tf ∈ R, variable
@@ -63,17 +108,73 @@ function Goddard(; vmax=0.1, Tmax=3.5)
         u(t) := 0.5
         tf := 0.1
     end
-    # Dynamics functions for indirect methods
-    function F0(x)
-        r, v, m = x
-        D = Cd * v^2 * exp(-β * (r - r0))
-        return [v, -D / m - 1 / r^2, 0]
-    end
 
-    function F1(x)
-        r, v, m = x
-        return [0, Tmax / m, -b * Tmax]
-    end
+    return TestProblem(
+        :goddard, :abstract, goddard, _GODDARD_OBJ, init, c; methods=(:direct, :indirect)
+    )
+end
 
-    return (ocp=goddard, obj=1.01257, name="goddard", init=init, F0=F0, F1=F1)
+function _goddard_functional(; vmax, Tmax)
+    c = _goddard_constants(; vmax, Tmax)
+    Cd, β, b, r0, v0, m0, mf, x0 = c.Cd, c.β, c.b, c.r0, c.v0, c.m0, c.mf, c.x0
+
+    pre = CTModels.PreModel()
+
+    CTModels.Building.variable!(pre, 1, :tf)
+    # Free final time: the horizon end is variable component 1.
+    CTModels.Building.time!(pre; t0=0.0, indf=1)
+    CTModels.Building.state!(pre, 3, :x, [:r, :v, :m])
+    CTModels.Building.control!(pre, 1)
+
+    function dyn!(dx, t, x, u, v)
+        r, vv, m = x[1], x[2], x[3]
+        D = Cd * vv^2 * exp(-β * (r - r0))
+        g = 1 / r^2
+        T = Tmax * u[1]
+        dx[1] = vv
+        dx[2] = (T - D - m * g) / m
+        dx[3] = -b * T
+        return nothing
+    end
+    CTModels.Building.dynamics!(pre, dyn!)
+
+    # Maximise the final altitude — a Mayer cost read off the final state.
+    CTModels.Building.objective!(pre, :max; mayer=(x0_, xf, v) -> xf[1])
+
+    # x(0) == x0  and  m(tf) == mf
+    function f_boundary(res, x0_, xf, v)
+        res[1] = x0_[1] - x0[1]
+        res[2] = x0_[2] - x0[2]
+        res[3] = x0_[3] - x0[3]
+        res[4] = xf[3] - mf
+        return nothing
+    end
+    CTModels.Building.constraint!(
+        pre, :boundary; f=f_boundary, lb=zeros(4), ub=zeros(4), label=:goddard_boundary
+    )
+
+    CTModels.Building.constraint!(
+        pre,
+        :state;
+        rg=1:3,
+        lb=[r0, v0, mf],
+        ub=[r0 + 0.1, vmax, m0],
+        label=:goddard_state_box,
+    )
+    CTModels.Building.constraint!(
+        pre, :control; rg=1:1, lb=[0.0], ub=[1.0], label=:goddard_control_box
+    )
+    CTModels.Building.constraint!(
+        pre, :variable; rg=1:1, lb=[0.01], ub=[Inf], label=:goddard_tf_box
+    )
+
+    CTModels.Building.time_dependence!(pre; autonomous=true)
+
+    ocp = CTModels.Building.build(pre)
+
+    init = (state=[1.01, 0.05, 0.8], control=0.5, variable=0.1)
+
+    return TestProblem(
+        :goddard, :functional, ocp, _GODDARD_OBJ, init, c; methods=(:direct, :indirect)
+    )
 end

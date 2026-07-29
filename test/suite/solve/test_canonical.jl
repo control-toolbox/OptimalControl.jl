@@ -102,7 +102,7 @@ function run_test(
             success,
             solve_time,
             obj,
-            pb.obj,
+            pb.objective,
             iters,
             memory_bytes > 0 ? memory_bytes : nothing,
             false,  # show_memory = false
@@ -123,10 +123,10 @@ function run_test(
         if success
             Test.@test solve_result isa OptimalControl.AbstractSolution
             # Use absolute tolerance when reference objective is near zero
-            if abs(pb.obj) < 1e-6
-                Test.@test OptimalControl.objective(solve_result) ≈ pb.obj atol = OBJ_ATOL
+            if abs(pb.objective) < 1e-6
+                Test.@test OptimalControl.objective(solve_result) ≈ pb.objective atol = OBJ_ATOL
             else
-                Test.@test OptimalControl.objective(solve_result) ≈ pb.obj rtol = OBJ_RTOL
+                Test.@test OptimalControl.objective(solve_result) ≈ pb.objective rtol = OBJ_RTOL
             end
         end
     end

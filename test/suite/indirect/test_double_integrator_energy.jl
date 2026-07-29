@@ -36,10 +36,10 @@ function test_double_integrator_energy()
             # Get problem from TestProblems
             prob_data = TestProblems.DoubleIntegratorEnergy()
             ocp = prob_data.ocp
-            x0 = prob_data.x0
-            xf = prob_data.xf
-            t0 = prob_data.t0
-            tf = prob_data.tf
+            x0 = prob_data.data.x0
+            xf = prob_data.data.xf
+            t0 = prob_data.data.t0
+            tf = prob_data.data.tf
 
             # Singular control: u(x, p) = p₂
             u(x, p) = p[2]
@@ -53,8 +53,8 @@ function test_double_integrator_energy()
             # Shooting function
             S(p0) = π(f(t0, x0, p0, tf)) - xf
 
-            # Known solution (from documentation)
-            p0_ref = [12.0, 6.0]
+            # Known solution — carried by the problem (see `TestProblem`).
+            p0_ref = prob_data.data.p0
 
             # Test shooting function with known solution
             s = S(p0_ref)
@@ -74,11 +74,11 @@ function test_double_integrator_energy()
             # Get problem from TestProblems
             prob_data = TestProblems.DoubleIntegratorEnergyConstrained()
             ocp = prob_data.ocp
-            x0 = prob_data.x0
-            xf = prob_data.xf
-            t0 = prob_data.t0
-            tf = prob_data.tf
-            v_max = prob_data.v_max
+            x0 = prob_data.data.x0
+            xf = prob_data.data.xf
+            t0 = prob_data.data.t0
+            tf = prob_data.data.tf
+            v_max = prob_data.data.v_max
 
             # Flow for unconstrained extremals (singular control u = p₂)
             f_interior = OptimalControl.Flow(ocp, (x, p) -> p[2])
@@ -105,10 +105,9 @@ function test_double_integrator_energy()
                 return s[4] = p_t1[2]          # switching condition
             end
 
-            # Known solution (from documentation)
-            p0_ref = [38.4, 9.6]
-            t1_ref = 0.25
-            t2_ref = 0.75
+            # Known solution — carried by the problem (see `TestProblem`).
+            p0_ref = prob_data.data.p0
+            t1_ref, t2_ref = prob_data.data.switching_times
 
             # Test shooting function with known solution
             s = zeros(4)
