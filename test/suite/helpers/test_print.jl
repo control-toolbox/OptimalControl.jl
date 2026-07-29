@@ -20,9 +20,9 @@ const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING :
 # ====================================================================
 
 # TOP-LEVEL: Fake strategies for testing parameter extraction
-struct FakeDiscretizerNoParam <: OptimalControl.CTDirect.AbstractDiscretizer end
-struct FakeModelerNoParam <: OptimalControl.CTSolvers.AbstractNLPModeler end
-struct FakeSolverNoParam <: OptimalControl.CTSolvers.AbstractNLPSolver end
+struct FakeDiscretizerNoParam <: OptimalControl.CTSolvers.DOCP.AbstractDiscretizer end
+struct FakeModelerNoParam <: OptimalControl.CTSolvers.Modelers.AbstractNLPModeler end
+struct FakeSolverNoParam <: OptimalControl.CTSolvers.Solvers.AbstractNLPSolver end
 
 # Entry point
 function test_print()

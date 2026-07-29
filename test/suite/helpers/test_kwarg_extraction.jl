@@ -18,9 +18,9 @@ const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 # TOP-LEVEL: mock instances for testing (avoid external dependencies)
-struct MockDiscretizer <: CTDirect.AbstractDiscretizer end
-struct MockModeler <: CTSolvers.AbstractNLPModeler end
-struct MockSolver <: CTSolvers.AbstractNLPSolver end
+struct MockDiscretizer <: CTSolvers.DOCP.AbstractDiscretizer end
+struct MockModeler <: CTSolvers.Modelers.AbstractNLPModeler end
+struct MockSolver <: CTSolvers.Solvers.AbstractNLPSolver end
 
 const DISC = MockDiscretizer()
 const MOD = MockModeler()
@@ -35,26 +35,26 @@ function test_kwarg_extraction()
 
         Test.@testset "Extracts matching type" begin
             kw = pairs((; discretizer=DISC, print_level=0))
-            result = OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
+            result = OptimalControl._extract_kwarg(kw, CTSolvers.DOCP.AbstractDiscretizer)
             Test.@test result === DISC
         end
 
         Test.@testset "Returns nothing when absent" begin
             kw = pairs((; print_level=0, max_iter=100))
-            result = OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
+            result = OptimalControl._extract_kwarg(kw, CTSolvers.DOCP.AbstractDiscretizer)
             Test.@test isnothing(result)
         end
 
         Test.@testset "Returns nothing for empty kwargs" begin
             kw = pairs(NamedTuple())
             Test.@test isnothing(
-                OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
+                OptimalControl._extract_kwarg(kw, CTSolvers.DOCP.AbstractDiscretizer)
             )
             Test.@test isnothing(
-                OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPModeler)
+                OptimalControl._extract_kwarg(kw, CTSolvers.Modelers.AbstractNLPModeler)
             )
             Test.@test isnothing(
-                OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPSolver)
+                OptimalControl._extract_kwarg(kw, CTSolvers.Solvers.AbstractNLPSolver)
             )
         end
 
@@ -64,11 +64,11 @@ function test_kwarg_extraction()
 
         Test.@testset "Extracts all three component types" begin
             kw = pairs((; discretizer=DISC, modeler=MOD, solver=SOL, print_level=0))
-            Test.@test OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer) ===
+            Test.@test OptimalControl._extract_kwarg(kw, CTSolvers.DOCP.AbstractDiscretizer) ===
                 DISC
-            Test.@test OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPModeler) ===
+            Test.@test OptimalControl._extract_kwarg(kw, CTSolvers.Modelers.AbstractNLPModeler) ===
                 MOD
-            Test.@test OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPSolver) ===
+            Test.@test OptimalControl._extract_kwarg(kw, CTSolvers.Solvers.AbstractNLPSolver) ===
                 SOL
         end
 
@@ -79,17 +79,17 @@ function test_kwarg_extraction()
         Test.@testset "Name-independent extraction" begin
             # The key is found by TYPE, not by name
             kw = pairs((; my_custom_key=DISC, another_key=42))
-            result = OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
+            result = OptimalControl._extract_kwarg(kw, CTSolvers.DOCP.AbstractDiscretizer)
             Test.@test result === DISC
         end
 
         Test.@testset "Non-matching types ignored" begin
             kw = pairs((; x=42, y="hello", z=3.14))
             Test.@test isnothing(
-                OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
+                OptimalControl._extract_kwarg(kw, CTSolvers.DOCP.AbstractDiscretizer)
             )
             Test.@test isnothing(
-                OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPModeler)
+                OptimalControl._extract_kwarg(kw, CTSolvers.Modelers.AbstractNLPModeler)
             )
         end
 
@@ -99,13 +99,13 @@ function test_kwarg_extraction()
 
         Test.@testset "Return type correctness" begin
             kw = pairs((; discretizer=DISC))
-            result = OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
-            Test.@test result isa Union{CTDirect.AbstractDiscretizer,Nothing}
+            result = OptimalControl._extract_kwarg(kw, CTSolvers.DOCP.AbstractDiscretizer)
+            Test.@test result isa Union{CTSolvers.DOCP.AbstractDiscretizer,Nothing}
         end
 
         Test.@testset "Nothing return type" begin
             kw = pairs(NamedTuple())
-            result = OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
+            result = OptimalControl._extract_kwarg(kw, CTSolvers.DOCP.AbstractDiscretizer)
             Test.@test result isa Nothing
         end
         # ====================================================================
@@ -171,13 +171,13 @@ function test_kwarg_extraction()
 
                 # Should be allocation-free for simple cases
                 allocs = Test.@allocated OptimalControl._extract_kwarg(
-                    kw, CTDirect.AbstractDiscretizer
+                    kw, CTSolvers.DOCP.AbstractDiscretizer
                 )
                 Test.@test allocs == 0
 
                 # Type stability
                 Test.@test_nowarn Test.@inferred OptimalControl._extract_kwarg(
-                    kw, CTDirect.AbstractDiscretizer
+                    kw, CTSolvers.DOCP.AbstractDiscretizer
                 )
             end
 
@@ -187,13 +187,13 @@ function test_kwarg_extraction()
 
                 # Should be allocation-free
                 allocs = Test.@allocated OptimalControl._extract_kwarg(
-                    kw, CTDirect.AbstractDiscretizer
+                    kw, CTSolvers.DOCP.AbstractDiscretizer
                 )
                 Test.@test allocs == 0
 
                 # Type stability
                 Test.@test_nowarn Test.@inferred OptimalControl._extract_kwarg(
-                    kw, CTDirect.AbstractDiscretizer
+                    kw, CTSolvers.DOCP.AbstractDiscretizer
                 )
             end
 
@@ -217,13 +217,13 @@ function test_kwarg_extraction()
 
                 # Should still be efficient
                 allocs = Test.@allocated OptimalControl._extract_kwarg(
-                    large_kw, CTDirect.AbstractDiscretizer
+                    large_kw, CTSolvers.DOCP.AbstractDiscretizer
                 )
                 Test.@test allocs < 1000  # Small allocation acceptable for large kwargs
 
                 # Type stability
                 Test.@test_nowarn Test.@inferred OptimalControl._extract_kwarg(
-                    large_kw, CTDirect.AbstractDiscretizer
+                    large_kw, CTSolvers.DOCP.AbstractDiscretizer
                 )
             end
 
@@ -281,7 +281,7 @@ function test_kwarg_extraction()
             Test.@testset "Multiple matching types in kwargs" begin
                 # Test when multiple instances of the same type are present
                 kw = pairs((; discretizer=DISC, another_disc=DISC))
-                result = OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
+                result = OptimalControl._extract_kwarg(kw, CTSolvers.DOCP.AbstractDiscretizer)
                 Test.@test result === DISC  # Should return the first match
             end
 
@@ -289,7 +289,7 @@ function test_kwarg_extraction()
                 # Test with more complex types
                 kw = pairs((; discretizer=DISC, some_string="hello", some_number=42))
 
-                result1 = OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
+                result1 = OptimalControl._extract_kwarg(kw, CTSolvers.DOCP.AbstractDiscretizer)
                 result2 = OptimalControl._extract_kwarg(kw, String)
                 result3 = OptimalControl._extract_kwarg(kw, Int)
 
@@ -310,13 +310,13 @@ function test_kwarg_extraction()
 
                 # Should still find the type efficiently
                 result = OptimalControl._extract_kwarg(
-                    large_kw, CTDirect.AbstractDiscretizer
+                    large_kw, CTSolvers.DOCP.AbstractDiscretizer
                 )
                 Test.@test result === DISC
 
                 # Reasonable allocation limit
                 allocs = Test.@allocated OptimalControl._extract_kwarg(
-                    large_kw, CTDirect.AbstractDiscretizer
+                    large_kw, CTSolvers.DOCP.AbstractDiscretizer
                 )
                 Test.@test allocs < 50000  # Adjusted from 10000 (38352 observed)
             end
@@ -341,9 +341,9 @@ function test_kwarg_extraction()
                 ))
 
                 # Extract components
-                disc = OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
-                mod = OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPModeler)
-                sol = OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPSolver)
+                disc = OptimalControl._extract_kwarg(kw, CTSolvers.DOCP.AbstractDiscretizer)
+                mod = OptimalControl._extract_kwarg(kw, CTSolvers.Modelers.AbstractNLPModeler)
+                sol = OptimalControl._extract_kwarg(kw, CTSolvers.Solvers.AbstractNLPSolver)
 
                 Test.@test disc === DISC
                 Test.@test mod === MOD
@@ -370,9 +370,9 @@ function test_kwarg_extraction()
                     initial_guess=:random, display=true, grid_size=50, max_iter=500
                 ))
 
-                disc = OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
-                mod = OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPModeler)
-                sol = OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPSolver)
+                disc = OptimalControl._extract_kwarg(kw, CTSolvers.DOCP.AbstractDiscretizer)
+                mod = OptimalControl._extract_kwarg(kw, CTSolvers.Modelers.AbstractNLPModeler)
+                sol = OptimalControl._extract_kwarg(kw, CTSolvers.Solvers.AbstractNLPSolver)
 
                 Test.@test isnothing(disc)
                 Test.@test isnothing(mod)
