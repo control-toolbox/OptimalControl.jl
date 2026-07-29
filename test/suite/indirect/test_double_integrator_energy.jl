@@ -1,16 +1,21 @@
 # ============================================================================
 # Double Integrator Energy Minimization - Indirect Method Tests
 # ============================================================================
-# This file tests the indirect shooting method for the double integrator
-# energy minimization problem, both unconstrained and with state constraint.
+# Indirect shooting for the double integrator, energy cost, unconstrained and
+# with a state constraint.
+#
+# ⚠️ Both problems here are `Fixed` (no `variable` declared), so the flows take
+# two-argument laws and need no `variable=` at call time — unlike Goddard and
+# the time-minimal twin. What did change is the constrained constructor:
+# `constraint`/`multiplier` are now paired *keywords*, not positional
+# arguments.
 
 module TestDoubleIntegratorEnergy
 
 using Test: Test
 using OptimalControl: OptimalControl
-import NonlinearSolve: NonlinearProblem, solve
 import LinearAlgebra: norm
-import OrdinaryDiffEq: OrdinaryDiffEq
+import OrdinaryDiffEqTsit5: OrdinaryDiffEqTsit5 # `Flow` needs an integrator
 
 # Include shared test problems via TestProblems module
 include(joinpath(@__DIR__, "..", "..", "problems", "TestProblems.jl"))
@@ -20,7 +25,8 @@ const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 function test_double_integrator_energy()
-    Test.@testset "Double Integrator Energy Minimization" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "Double Integrator Energy Minimization" verbose = VERBOSE showtiming =
+        SHOWTIMING begin
 
         # ====================================================================
         # INTEGRATION TEST - Unconstrained Energy Minimization
@@ -34,7 +40,6 @@ function test_double_integrator_energy()
             xf = prob_data.xf
             t0 = prob_data.t0
             tf = prob_data.tf
-            obj_ref = prob_data.obj
 
             # Singular control: u(x, p) = p₂
             u(x, p) = p[2]
@@ -83,9 +88,10 @@ function test_double_integrator_energy()
             g(x) = v_max - x[2]         # constraint: g(x) ≥ 0
             μ(p) = p[1]                 # dual variable
 
-            # Flow for boundary extremals
+            # Flow for boundary extremals — keyword pair, formerly three
+            # positional arguments.
             f_boundary = OptimalControl.Flow(
-                ocp, (x, p) -> ub, (x, u) -> g(x), (x, p) -> μ(p)
+                ocp, (x, p) -> ub; constraint=(x, u) -> g(x), multiplier=(x, p) -> μ(p)
             )
 
             # Shooting function
@@ -111,7 +117,13 @@ function test_double_integrator_energy()
             # Verify solution (should be close to zero)
             Test.@test norm(s) < 1e-6
 
-            # Note: obj_ref is nothing for this problem (no reference value available)
+            Test.@testset "no variable on a Fixed flow" begin
+                # The mirror of the Goddard guard rail: this OCP declares no
+                # variable, so passing one must be rejected rather than ignored.
+                Test.@test_throws OptimalControl.PreconditionError f_interior(
+                    t0, x0, p0_ref, tf; variable=1.0
+                )
+            end
         end
     end
 end
