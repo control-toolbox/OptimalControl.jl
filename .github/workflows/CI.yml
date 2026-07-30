@@ -19,7 +19,7 @@ jobs:
       github.event_name != 'pull_request' ||
       (github.event.action == 'labeled' && github.event.label.name == 'run ci cpu') ||
       (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run ci cpu'))
-    uses: control-toolbox/CTActions/.github/workflows/ci.yml@fix/windows-pkg-cli-git
+    uses: control-toolbox/CTActions/.github/workflows/ci.yml@main
     with:
       runs_on: '["ubuntu-latest", "macos-latest", "windows-latest"]'
       runner_type: 'github'
