@@ -4,8 +4,8 @@ $(TYPEDSIGNATURES)
 Detect the resolution mode from `description` and `kwargs`, and validate consistency.
 
 Returns an instance of [`ExplicitMode`](@ref) if at least one explicit resolution
-component (of type `CTDirect.AbstractDiscretizer`, `CTSolvers.AbstractNLPModeler`, or
-`CTSolvers.AbstractNLPSolver`) is found in `kwargs`. Returns [`DescriptiveMode`](@ref)
+component (of type `CTSolvers.DOCP.AbstractDiscretizer`, `CTSolvers.Modelers.AbstractNLPModeler`, or
+`CTSolvers.Solvers.AbstractNLPSolver`) is found in `kwargs`. Returns [`DescriptiveMode`](@ref)
 otherwise.
 
 Raises [`CTBase.Exceptions.IncorrectArgument`](@extref) if both explicit components and a symbolic
@@ -49,9 +49,9 @@ See also: [`_extract_kwarg`](@ref), [`ExplicitMode`](@ref), [`DescriptiveMode`](
 function _explicit_or_descriptive(
     description::Tuple{Vararg{Symbol}}, kwargs::Base.Pairs
 )::SolveMode
-    discretizer = _extract_kwarg(kwargs, CTDirect.AbstractDiscretizer)
-    modeler = _extract_kwarg(kwargs, CTSolvers.AbstractNLPModeler)
-    solver = _extract_kwarg(kwargs, CTSolvers.AbstractNLPSolver)
+    discretizer = _extract_kwarg(kwargs, CTSolvers.DOCP.AbstractDiscretizer)
+    modeler = _extract_kwarg(kwargs, CTSolvers.Modelers.AbstractNLPModeler)
+    solver = _extract_kwarg(kwargs, CTSolvers.Solvers.AbstractNLPSolver)
 
     has_explicit = !isnothing(discretizer) || !isnothing(modeler) || !isnothing(solver)
     has_description = !isempty(description)

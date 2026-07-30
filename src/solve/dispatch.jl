@@ -29,7 +29,7 @@ solve(ocp, :collocation; init=x0, display=false)
 
 # Explicit mode (typed components)
 solve(ocp; discretizer=CTDirect.Collocation(),
-           modeler=CTSolvers.ADNLP(), solver=CTSolvers.Ipopt())
+           modeler=CTSolvers.Modelers.ADNLP(), solver=CTSolvers.Solvers.Ipopt())
 ```
 
 # Throws
@@ -51,7 +51,7 @@ function CommonSolve.solve(
     mode = _explicit_or_descriptive(description, kwargs)
 
     # 2. Get registry for component completion
-    registry = _extract_kwarg(kwargs, CTSolvers.StrategyRegistry)
+    registry = _extract_kwarg(kwargs, CTBase.Strategies.StrategyRegistry)
     if isnothing(registry)
         registry = get_strategy_registry()
     end

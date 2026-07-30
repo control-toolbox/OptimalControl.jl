@@ -10,6 +10,7 @@ module TestComponentChecks
 using Test: Test
 using OptimalControl: OptimalControl
 using CTDirect: CTDirect
+using CTBase: CTBase
 using CTSolvers: CTSolvers
 using BenchmarkTools: BenchmarkTools
 
@@ -20,25 +21,25 @@ const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING :
 # TOP-LEVEL: Mock strategies for testing (no side effects)
 # ====================================================================
 
-struct MockDiscretizer <: CTDirect.AbstractDiscretizer
-    options::CTSolvers.StrategyOptions
+struct MockDiscretizer <: CTSolvers.DOCP.AbstractDiscretizer
+    options::CTBase.Strategies.StrategyOptions
 end
 
-struct MockModeler <: CTSolvers.AbstractNLPModeler
-    options::CTSolvers.StrategyOptions
+struct MockModeler <: CTSolvers.Modelers.AbstractNLPModeler
+    options::CTBase.Strategies.StrategyOptions
 end
 
-struct MockSolver <: CTSolvers.AbstractNLPSolver
-    options::CTSolvers.StrategyOptions
+struct MockSolver <: CTSolvers.Solvers.AbstractNLPSolver
+    options::CTBase.Strategies.StrategyOptions
 end
 
 function test_component_checks()
     Test.@testset "Component Checks Tests" verbose=VERBOSE showtiming=SHOWTIMING begin
 
         # Create mock instances
-        disc = MockDiscretizer(CTSolvers.StrategyOptions())
-        mod = MockModeler(CTSolvers.StrategyOptions())
-        sol = MockSolver(CTSolvers.StrategyOptions())
+        disc = MockDiscretizer(CTBase.Strategies.StrategyOptions())
+        mod = MockModeler(CTBase.Strategies.StrategyOptions())
+        sol = MockSolver(CTBase.Strategies.StrategyOptions())
 
         # ================================================================
         # UNIT TESTS - _has_complete_components
@@ -91,9 +92,9 @@ function test_component_checks()
 
         Test.@testset "Edge Cases" begin
             # Test with different concrete strategy types
-            disc2 = MockDiscretizer(CTSolvers.StrategyOptions())
-            mod2 = MockModeler(CTSolvers.StrategyOptions())
-            sol2 = MockSolver(CTSolvers.StrategyOptions())
+            disc2 = MockDiscretizer(CTBase.Strategies.StrategyOptions())
+            mod2 = MockModeler(CTBase.Strategies.StrategyOptions())
+            sol2 = MockSolver(CTBase.Strategies.StrategyOptions())
 
             # Should still return true with different instances
             Test.@test OptimalControl._has_complete_components(disc2, mod2, sol2) == true

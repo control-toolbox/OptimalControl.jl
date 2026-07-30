@@ -29,53 +29,62 @@ struct MockSolution <: CTModels.AbstractSolution end
 CTModels.build_initial_guess(::MockOCP, ::Nothing) = MockInit()
 CTModels.build_initial_guess(::MockOCP, i::MockInit) = i
 
-struct MockDiscretizer <: CTDirect.AbstractDiscretizer
-    options::CTSolvers.StrategyOptions
+struct MockDiscretizer <: CTSolvers.DOCP.AbstractDiscretizer
+    options::CTBase.Strategies.StrategyOptions
 end
-CTSolvers.Strategies.id(::Type{<:MockDiscretizer}) = :collocation
-function CTSolvers.Strategies.metadata(::Type{<:MockDiscretizer})
-    return CTSolvers.Strategies.StrategyMetadata()
+CTBase.Strategies.id(::Type{<:MockDiscretizer}) = :collocation
+function CTBase.Strategies.metadata(::Type{<:MockDiscretizer})
+    return CTBase.Strategies.StrategyMetadata()
 end
-CTSolvers.Strategies.options(d::MockDiscretizer) = d.options
+CTBase.Strategies.options(d::MockDiscretizer) = d.options
+# ⚠️ v2.1.0-beta contract: every strategy must implement `parameter` (the CTBase
+# generic throws `NotImplemented` by default, unlike the old `get_parameter_type`).
+CTBase.Strategies.parameter(::Type{<:MockDiscretizer}) = nothing
 function MockDiscretizer(; mode::Symbol=:strict, kwargs...)
-    opts = CTSolvers.Strategies.build_strategy_options(
+    opts = CTBase.Strategies.build_strategy_options(
         MockDiscretizer; mode=mode, kwargs...
     )
     return MockDiscretizer(opts)
 end
 
-struct MockModeler <: CTSolvers.AbstractNLPModeler
-    options::CTSolvers.StrategyOptions
+struct MockModeler <: CTSolvers.Modelers.AbstractNLPModeler
+    options::CTBase.Strategies.StrategyOptions
 end
-CTSolvers.Strategies.id(::Type{<:MockModeler}) = :adnlp
-function CTSolvers.Strategies.metadata(::Type{<:MockModeler})
-    return CTSolvers.Strategies.StrategyMetadata()
+CTBase.Strategies.id(::Type{<:MockModeler}) = :adnlp
+function CTBase.Strategies.metadata(::Type{<:MockModeler})
+    return CTBase.Strategies.StrategyMetadata()
 end
-CTSolvers.Strategies.options(m::MockModeler) = m.options
+CTBase.Strategies.options(m::MockModeler) = m.options
+# ⚠️ v2.1.0-beta contract: every strategy must implement `parameter` (the CTBase
+# generic throws `NotImplemented` by default, unlike the old `get_parameter_type`).
+CTBase.Strategies.parameter(::Type{<:MockModeler}) = nothing
 function MockModeler(; mode::Symbol=:strict, kwargs...)
-    opts = CTSolvers.Strategies.build_strategy_options(MockModeler; mode=mode, kwargs...)
+    opts = CTBase.Strategies.build_strategy_options(MockModeler; mode=mode, kwargs...)
     return MockModeler(opts)
 end
 
-struct MockSolver <: CTSolvers.AbstractNLPSolver
-    options::CTSolvers.StrategyOptions
+struct MockSolver <: CTSolvers.Solvers.AbstractNLPSolver
+    options::CTBase.Strategies.StrategyOptions
 end
-CTSolvers.Strategies.id(::Type{<:MockSolver}) = :ipopt
-function CTSolvers.Strategies.metadata(::Type{<:MockSolver})
-    return CTSolvers.Strategies.StrategyMetadata()
+CTBase.Strategies.id(::Type{<:MockSolver}) = :ipopt
+function CTBase.Strategies.metadata(::Type{<:MockSolver})
+    return CTBase.Strategies.StrategyMetadata()
 end
-CTSolvers.Strategies.options(s::MockSolver) = s.options
+CTBase.Strategies.options(s::MockSolver) = s.options
+# ⚠️ v2.1.0-beta contract: every strategy must implement `parameter` (the CTBase
+# generic throws `NotImplemented` by default, unlike the old `get_parameter_type`).
+CTBase.Strategies.parameter(::Type{<:MockSolver}) = nothing
 function MockSolver(; mode::Symbol=:strict, kwargs...)
-    opts = CTSolvers.Strategies.build_strategy_options(MockSolver; mode=mode, kwargs...)
+    opts = CTBase.Strategies.build_strategy_options(MockSolver; mode=mode, kwargs...)
     return MockSolver(opts)
 end
 
 # Mock registry: maps mock types so _complete_components builds mocks, not real solvers
-function mock_strategy_registry()::CTSolvers.StrategyRegistry
-    return CTSolvers.create_registry(
-        CTDirect.AbstractDiscretizer => (MockDiscretizer,),
-        CTSolvers.AbstractNLPModeler => (MockModeler,),
-        CTSolvers.AbstractNLPSolver => (MockSolver,),
+function mock_strategy_registry()::CTBase.Strategies.StrategyRegistry
+    return CTBase.Strategies.create_registry(
+        CTSolvers.DOCP.AbstractDiscretizer => (MockDiscretizer,),
+        CTSolvers.Modelers.AbstractNLPModeler => (MockModeler,),
+        CTSolvers.Solvers.AbstractNLPSolver => (MockSolver,),
     )
 end
 
@@ -91,9 +100,9 @@ end
 function CommonSolve.solve(
     ::MockOCP,
     ::CTModels.AbstractInitialGuess,
-    ::CTDirect.AbstractDiscretizer,
-    ::CTSolvers.AbstractNLPModeler,
-    ::CTSolvers.AbstractNLPSolver;
+    ::CTSolvers.DOCP.AbstractDiscretizer,
+    ::CTSolvers.Modelers.AbstractNLPModeler,
+    ::CTSolvers.Solvers.AbstractNLPSolver;
     display::Bool,
 )::MockSolution
     return MockSolution()
@@ -103,9 +112,9 @@ function test_solve_dispatch()
     Test.@testset "Solve Dispatch" verbose=VERBOSE showtiming=SHOWTIMING begin
         ocp = MockOCP()
         init = MockInit()
-        disc = MockDiscretizer(CTSolvers.StrategyOptions())
-        mod = MockModeler(CTSolvers.StrategyOptions())
-        sol = MockSolver(CTSolvers.StrategyOptions())
+        disc = MockDiscretizer(CTBase.Strategies.StrategyOptions())
+        mod = MockModeler(CTBase.Strategies.StrategyOptions())
+        sol = MockSolver(CTBase.Strategies.StrategyOptions())
         registry = mock_strategy_registry()
 
         # ====================================================================

@@ -11,9 +11,9 @@ builds concrete components, and calls the canonical Layer 3 solver.
 - `ocp::CTModels.AbstractModel`: The optimal control problem to solve
 - `description::Symbol...`: Symbolic description tokens (e.g., `:collocation`, `:adnlp`, `:ipopt`).
   May be empty, partial, or complete — completed via [`_complete_description`](@ref).
-- `registry::CTSolvers.StrategyRegistry`: Strategy registry for building strategies
+- `registry::CTBase.Strategies.StrategyRegistry`: Strategy registry for building strategies
 - `kwargs...`: All keyword arguments, including action options (`initial_guess`/`init`,
-  `display`) and strategy-specific options, optionally disambiguated with [`CTSolvers.Strategies.route_to`](@extref)
+  `display`) and strategy-specific options, optionally disambiguated with [`CTBase.Strategies.route_to`](@extref)
 
 # Returns
 - `CTModels.AbstractSolution`: Solution to the optimal control problem
@@ -46,7 +46,7 @@ See also: [`solve`](@ref), [`solve_explicit`](@ref), [`_complete_description`](@
 function solve_descriptive(
     ocp::CTModels.AbstractModel,
     description::Symbol...;
-    registry::CTSolvers.StrategyRegistry,
+    registry::CTBase.Strategies.StrategyRegistry,
     kwargs...,
 )::CTModels.AbstractSolution
 

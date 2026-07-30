@@ -1,16 +1,26 @@
 # ============================================================================
 # CTFlows Reexports Tests
 # ============================================================================
-# This file tests the reexport of symbols from `CTFlows`. It verifies that
-# the expected types and functions for Hamiltonian flows and dynamics
-# are properly exported by `OptimalControl`.
+# Almost everything this file used to cover has moved:
+#
+#   the type vocabulary (`Hamiltonian`, `VectorField`, …) → CTBase.Data
+#                                                            (test_ctbase.jl)
+#   the differential geometry (`Lie`, `Lift`, `@Lie`, …)   → CTLie
+#                                                            (test_ctlie.jl)
+#
+# What is left here is what genuinely belongs to CTFlows: `Flow`, the
+# `Systems` accessors, and the multi-phase vocabulary. The flow *call*
+# convention and the `Flow` constructor grid are exercised in suite/flows/.
 
 module TestCtflows
 
 using Test: Test
 using OptimalControl # using is mandatory since we test exported symbols
-using CTFlows: CTFlows # needed for abstract type checks
-using OrdinaryDiffEq
+using CTFlows: CTFlows
+using OrdinaryDiffEqTsit5 # `Flow` needs an integrator loaded — the user's call now
+
+include(joinpath(@__DIR__, "..", "..", "helpers", "reexport.jl"))
+using .ReexportUtils: reexports, is_exported
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
@@ -19,387 +29,101 @@ const CurrentModule = TestCtflows
 
 function test_ctflows()
     Test.@testset "CTFlows reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
-        Test.@testset "Types" begin
-            for T in (
-                OptimalControl.Hamiltonian,
-                OptimalControl.HamiltonianLift,
-                OptimalControl.HamiltonianVectorField,
-                OptimalControl.VectorField,
+        Test.@testset "Generated Code Prefix" begin
+            Test.@test isdefined(OptimalControl, :CTFlows)
+            Test.@test isdefined(CurrentModule, :CTFlows)
+            Test.@test CTFlows isa Module
+        end
+
+        Test.@testset "Flows" begin
+            Test.@test reexports(OptimalControl, :Flow, CTFlows.Flows)
+            Test.@test isdefined(CurrentModule, :Flow)
+            # `Flow` is a parametric *type*, not a function — the constructor
+            # grid is 9 methods over it.
+            Test.@test Flow isa UnionAll
+        end
+
+        Test.@testset "Systems accessors" begin
+            # ⚠️ `control_law` and `pseudo_hamiltonian` also exist in
+            # `CTBase.Data` as *distinct* objects. The CTFlows ones are the
+            # exported pair — siblings of `hamiltonian(sys)`. `isdefined` would
+            # not tell the two apart.
+            for f in (:control_law, :pseudo_hamiltonian)
+                Test.@testset "$f" begin
+                    Test.@test reexports(OptimalControl, f, CTFlows.Systems)
+                    Test.@test getfield(OptimalControl, f) === getfield(CTFlows.Systems, f)
+                    Test.@test getfield(OptimalControl, f) !==
+                        getfield(OptimalControl.CTBase.Data, f)
+                end
+            end
+        end
+
+        Test.@testset "MultiPhase" begin
+            for f in (
+                :n_phases,
+                :get_flow,
+                :get_flows,
+                :get_jump,
+                :get_jumps,
+                :get_switching_time,
+                :get_switching_times,
             )
-                Test.@test isdefined(OptimalControl, nameof(T))
-                Test.@test !isdefined(CurrentModule, nameof(T))
-                Test.@test T isa DataType || T isa UnionAll
+                Test.@testset "$f" begin
+                    Test.@test reexports(OptimalControl, f, CTFlows.MultiPhase)
+                    Test.@test isdefined(CurrentModule, f)
+                end
             end
-        end
-        Test.@testset "Functions" begin
-            for f in (:Lift, :Flow)
-                Test.@test isdefined(OptimalControl, f)
-                Test.@test isdefined(CurrentModule, f)
-                Test.@test getfield(OptimalControl, f) isa Function
+            for T in (
+                :AnyMultiPhaseFlow,
+                :MultiPhaseFlow,
+                :MultiPhaseStateFlow,
+                :MultiPhaseHamiltonianFlow,
+            )
+                Test.@testset "$T" begin
+                    Test.@test isdefined(OptimalControl, T)
+                    Test.@test is_exported(OptimalControl, T)
+                    Test.@test getfield(OptimalControl, T) === getfield(CTFlows.MultiPhase, T)
+                end
             end
-        end
-        Test.@testset "Operators" begin
-            for op in (:⋅, :Lie, :Poisson, :*, :∂ₜ)
-                Test.@test isdefined(OptimalControl, op)
-                Test.@test isdefined(CurrentModule, op)
-            end
-        end
-        Test.@testset "Macros" begin
-            Test.@test isdefined(OptimalControl, Symbol("@Lie"))
-            Test.@test isdefined(CurrentModule, Symbol("@Lie"))
-        end
-
-        Test.@testset "Type Hierarchy" begin
-            Test.@test OptimalControl.Hamiltonian <: CTFlows.AbstractHamiltonian
-            Test.@test OptimalControl.HamiltonianLift <: CTFlows.AbstractHamiltonian
-            Test.@test OptimalControl.HamiltonianVectorField <: CTFlows.AbstractVectorField
+            # `*` concatenates flows. It is `Base.:*`, extended by MultiPhase,
+            # so it needs no re-export of its own — but the method must exist.
+            Test.@test any(
+                m -> parentmodule(m) === CTFlows.MultiPhase, methods(*)
+            )
         end
 
-        Test.@testset "Method Signatures" begin
-            Test.@testset "Lift" begin
-                Test.@test hasmethod(Lift, Tuple{CTFlows.VectorField})
-                Test.@test hasmethod(Lift, Tuple{Function})
-            end
-            Test.@testset "Flow" begin
-                Test.@test hasmethod(Flow, Tuple{Vararg{Any}})
-            end
+        Test.@testset "Moved away from CTFlows" begin
+            # These used to be re-exported from CTFlows. They must now resolve
+            # to their new owners — the point of the whole migration.
+            Test.@test reexports(OptimalControl, :Hamiltonian, OptimalControl.CTBase.Data)
+            Test.@test reexports(OptimalControl, :VectorField, OptimalControl.CTBase.Data)
+            Test.@test reexports(OptimalControl, :Lift, OptimalControl.CTLie)
+            Test.@test reexports(OptimalControl, :Poisson, OptimalControl.CTLie)
         end
 
         # ====================================================================
-        # SIGNATURE FREEZING TESTS
+        # SIGNATURE FREEZING
         # ====================================================================
-        # These tests make simple calls to exported methods to freeze their signatures.
-        # They are not meant to verify correct functionality but to ensure the
-        # API remains stable and catch breaking changes early.
+        # Simple calls that pin the API down. Not functional verification —
+        # the real behaviour lives in suite/flows/ and suite/indirect/.
 
         Test.@testset "Signature Freezing" begin
-            Test.@testset "Hamiltonian Types" begin
-                # Test basic construction patterns
-                H = OptimalControl.Hamiltonian((x, p) -> x[1]^2 + p[1]^2)
-                Test.@test H isa OptimalControl.Hamiltonian
-
-                HL = OptimalControl.HamiltonianLift(x -> [x[1], x[2]])
-                Test.@test HL isa OptimalControl.HamiltonianLift
-
-                HV = OptimalControl.HamiltonianVectorField((x, p) -> [p[1], -x[1]])
-                Test.@test HV isa OptimalControl.HamiltonianVectorField
+            Test.@testset "Flow from a Hamiltonian" begin
+                H = Hamiltonian((x, p) -> p[1] * x[2] - x[1] * p[2])
+                f = Flow(H)
+                xf, pf = f(0.0, [1.0, 0.0], [0.0, 1.0], 1.0)
+                Test.@test xf isa AbstractVector
+                Test.@test pf isa AbstractVector
             end
 
-            Test.@testset "Lift Function" begin
-                # Lift from VectorField
-                X = CTFlows.VectorField(x -> [x[1]^2, x[2]^2])
-                H = Lift(X)
-                Test.@test H isa CTFlows.HamiltonianLift
-
-                # Lift from Function
-                f = x -> [x[1]^2, x[2]^2]
-                H2 = Lift(f)
-                Test.@test H2 isa Function
-
-                # Test basic evaluation (signature verification)
-                Test.@test H([1, 2], [3, 4]) isa Real
-                Test.@test H2([1, 2], [3, 4]) isa Real
+            Test.@testset "Flow from a VectorField" begin
+                X = VectorField(x -> [x[2], -x[1]])
+                f = Flow(X)
+                Test.@test f(0.0, [1.0, 0.0], 1.0) isa AbstractVector
             end
 
-            Test.@testset "Flow Function" begin
-                # Basic Flow call - just verify it doesn't error
-                # The exact signature may vary, so we just test it exists
-                Test.@test Flow isa Function
-            end
-
-            Test.@testset "Operators" begin
-                # Set up simple test objects
-                X = CTFlows.VectorField(x -> [x[2], -x[1]])
-                f = x -> x[1]^2 + x[2]^2
-
-                # Test dot operator (directional derivative)
-                dot_result = X ⋅ f
-                Test.@test dot_result isa Function
-
-                # Test Lie function
-                lie_result = Lie(X, f)
-                Test.@test lie_result isa Function
-
-                # Test Poisson bracket
-                g = (x, p) -> x[1]*p[1] + x[2]*p[2]
-                poisson_result = Poisson(f, g)
-                Test.@test poisson_result isa CTFlows.Hamiltonian
-
-                # Note: * operator is not defined for VectorField * Function combinations
-                # This is expected behavior based on CTFlows API
-            end
-
-            Test.@testset "@Lie Macro" begin
-                # Test basic macro usage with VectorField
-                X1 = CTFlows.VectorField(x -> [x[2], -x[1]])
-                X2 = CTFlows.VectorField(x -> [x[1], x[2]])
-
-                # Simple Lie bracket with macro
-                lie_macro_result = @Lie [X1, X2]
-                Test.@test lie_macro_result isa CTFlows.VectorField
-
-                # Test evaluation
-                Test.@test lie_macro_result([1, 2]) isa Vector
-            end
-
-            Test.@testset "@Lie Macro with Plain Functions" begin
-                # ================================================================
-                # Autonomous plain functions
-                # ================================================================
-                Test.@testset "Autonomous plain functions" begin
-                    X(x) = [x[2], -x[1]]
-                    Y(x) = [x[1], x[2]]
-
-                    # Lie bracket with macro
-                    Z = @Lie [X, Y]
-                    Test.@test Z isa CTFlows.VectorField
-                    Test.@test Z([1, 2]) isa Vector
-
-                    # Should give same result as with VectorField objects
-                    X_vf = CTFlows.VectorField(X)
-                    Y_vf = CTFlows.VectorField(Y)
-                    Z_vf = @Lie [X_vf, Y_vf]
-                    Test.@test Z([1, 2]) ≈ Z_vf([1, 2])
-                end
-
-                # ================================================================
-                # Non-autonomous plain functions
-                # ================================================================
-                Test.@testset "Non-autonomous plain functions" begin
-                    X(t, x) = [t + x[2], -x[1]]
-                    Y(t, x) = [x[1], t * x[2]]
-
-                    Z = @Lie [X, Y] autonomous = false
-                    Test.@test Z isa CTFlows.VectorField
-                    Test.@test Z(1, [1, 2]) isa Vector
-
-                    # Verify against VectorField version
-                    X_vf = CTFlows.VectorField(X; autonomous=false)
-                    Y_vf = CTFlows.VectorField(Y; autonomous=false)
-                    Z_vf = @Lie [X_vf, Y_vf]
-                    Test.@test Z(1, [1, 2]) ≈ Z_vf(1, [1, 2])
-                end
-
-                # ================================================================
-                # Variable plain functions
-                # ================================================================
-                Test.@testset "Variable plain functions" begin
-                    X(x, v) = [x[2] + v, -x[1]]
-                    Y(x, v) = [x[1], x[2] + v]
-
-                    Z = @Lie [X, Y] variable = true
-                    Test.@test Z isa CTFlows.VectorField
-                    Test.@test Z([1, 2], 1) isa Vector
-
-                    # Verify against VectorField version
-                    X_vf = CTFlows.VectorField(X; variable=true)
-                    Y_vf = CTFlows.VectorField(Y; variable=true)
-                    Z_vf = @Lie [X_vf, Y_vf]
-                    Test.@test Z([1, 2], 1) ≈ Z_vf([1, 2], 1)
-                end
-
-                # ================================================================
-                # Non-autonomous + variable plain functions
-                # ================================================================
-                Test.@testset "Non-autonomous variable plain functions" begin
-                    X(t, x, v) = [t + x[2] + v, -x[1]]
-                    Y(t, x, v) = [x[1], t * x[2] + v]
-
-                    Z = @Lie [X, Y] autonomous = false variable = true
-                    Test.@test Z isa CTFlows.VectorField
-                    Test.@test Z(1, [1, 2], 1) isa Vector
-
-                    # Verify against VectorField version
-                    X_vf = CTFlows.VectorField(X; autonomous=false, variable=true)
-                    Y_vf = CTFlows.VectorField(Y; autonomous=false, variable=true)
-                    Z_vf = @Lie [X_vf, Y_vf]
-                    Test.@test Z(1, [1, 2], 1) ≈ Z_vf(1, [1, 2], 1)
-                end
-
-                # ================================================================
-                # Nested Lie brackets with plain functions
-                # ================================================================
-                Test.@testset "Nested brackets with plain functions" begin
-                    X(x) = [x[2], -x[1]]
-                    Y(x) = [x[1], x[2]]
-                    Z_func(x) = [0, x[1]]
-
-                    # [[X, Y], Z]
-                    nested = @Lie [[X, Y], Z_func]
-                    Test.@test nested isa CTFlows.VectorField
-                    Test.@test nested([1, 2]) isa Vector
-                end
-
-                # ================================================================
-                # Mixed: plain function + VectorField
-                # ================================================================
-                Test.@testset "Mixed plain function and VectorField" begin
-                    X(x) = [x[2], -x[1]]
-                    Y_vf = CTFlows.VectorField(x -> [x[1], x[2]])
-
-                    # Should work with one plain function and one VectorField
-                    Z = @Lie [X, Y_vf]
-                    Test.@test Z isa CTFlows.VectorField
-                    Test.@test Z([1, 2]) isa Vector
-                end
-            end
-
-            Test.@testset "Complex Signature Tests" begin
-                # Test with different arities and keyword arguments
-
-                # Non-autonomous VectorField - needs correct signature
-                X_nonauto = CTFlows.VectorField(
-                    (t, x) -> [t + x[1], x[2]]; autonomous=false
-                )
-                H_nonauto = Lift(X_nonauto)
-                Test.@test H_nonauto(1, [1, 2], [3, 4]) isa Real
-
-                # Variable VectorField - needs correct signature
-                X_var = CTFlows.VectorField((x, v) -> [x[1] + v, x[2]]; variable=true)
-                H_var = Lift(X_var)
-                Test.@test H_var([1, 2], [3, 4], 1) isa Real
-
-                # Non-autonomous variable VectorField - needs correct signature
-                X_both = CTFlows.VectorField(
-                    (t, x, v) -> [t + x[1] + v, x[2]]; autonomous=false, variable=true
-                )
-                H_both = Lift(X_both)
-                Test.@test H_both(1, [1, 2], [3, 4], 1) isa Real
-
-                # Hamiltonian with different signatures
-                H_auto = OptimalControl.Hamiltonian((x, p) -> x[1]*p[1])
-                Test.@test H_auto([1, 2], [3, 4]) isa Real
-
-                H_nonauto_ham = OptimalControl.Hamiltonian(
-                    (t, x, p) -> t + x[1]*p[1]; autonomous=false
-                )
-                Test.@test H_nonauto_ham(1, [1, 2], [3, 4]) isa Real
-
-                H_var_ham = OptimalControl.Hamiltonian(
-                    (x, p, v) -> v + x[1]*p[1]; variable=true
-                )
-                Test.@test H_var_ham([1, 2], [3, 4], 1) isa Real
-            end
-
-            Test.@testset "Operator Combinations" begin
-                # Test combinations of operators to ensure they work together
-                X1 = CTFlows.VectorField(x -> [x[2], -x[1]])
-                X2 = CTFlows.VectorField(x -> [x[1], x[2]])
-                f = x -> x[1]^2 + x[2]^2
-                g = (x, p) -> x[1]*p[1] + x[2]*p[2]
-
-                # Lie bracket of VectorFields
-                lie_vf = Lie(X1, X2)
-                Test.@test lie_vf isa CTFlows.VectorField
-                Test.@test lie_vf([1, 2]) isa Vector
-
-                # Multiple operator combinations
-                Test.@test (X1 ⋅ f)([1, 2]) isa Real
-
-                # Test Poisson bracket with ForwardDiff-compatible functions
-                h = (x, p) -> x[1]*p[1] + x[2]*p[2]  # Simple polynomial function
-                poisson_result = Poisson(h, g)
-                Test.@test poisson_result isa CTFlows.Hamiltonian
-                Test.@test poisson_result([1, 2], [3, 4]) isa Real
-
-                # Note: * operator is not defined for VectorField * Function
-                # This is expected behavior based on CTFlows API
-            end
-
-            Test.@testset "Macro with Different Contexts" begin
-                # Test @Lie macro in different contexts
-
-                # Simple case
-                X1 = CTFlows.VectorField(x -> [x[2], -x[1]])
-                X2 = CTFlows.VectorField(x -> [x[1], x[2]])
-                result1 = @Lie [X1, X2]
-                Test.@test result1 isa CTFlows.VectorField
-
-                # Nested case
-                X3 = CTFlows.VectorField(x -> [2*x[1], 3*x[2]])
-                result2 = @Lie [[X1, X2], X3]
-                Test.@test result2 isa CTFlows.VectorField
-
-                # With Hamiltonians (Poisson bracket) - returns Hamiltonian
-                H1 = OptimalControl.Hamiltonian((x, p) -> x[1]*p[1])
-                H2 = OptimalControl.Hamiltonian((x, p) -> x[2]*p[2])
-                result3 = @Lie {H1, H2}
-                Test.@test result3 isa CTFlows.Hamiltonian
-            end
-
-            Test.@testset "VectorField Construction" begin
-                # Test VectorField construction patterns
-                X1 = OptimalControl.VectorField(x -> [x[2], -x[1]])
-                Test.@test X1 isa OptimalControl.VectorField
-                Test.@test X1([1, 2]) isa Vector
-
-                # Non-autonomous
-                X2 = OptimalControl.VectorField(
-                    (t, x) -> [t + x[2], -x[1]]; autonomous=false
-                )
-                Test.@test X2 isa OptimalControl.VectorField
-                Test.@test X2(1.0, [1, 2]) isa Vector
-
-                # Variable
-                X3 = OptimalControl.VectorField((x, v) -> [x[2] + v, -x[1]]; variable=true)
-                Test.@test X3 isa OptimalControl.VectorField
-                Test.@test X3([1, 2], 1.0) isa Vector
-            end
-
-            Test.@testset "∂ₜ Operator" begin
-                # Test partial time derivative
-                f = (t, x) -> t * x
-                df = ∂ₜ(f)
-                Test.@test df isa Function
-                Test.@test df(0, 8) ≈ 8
-                Test.@test df(2, 3) ≈ 3
-
-                # More complex function
-                g = (t, x, p) -> t^2 + x[1]*p[1]
-                dg = ∂ₜ(g)
-                Test.@test dg(3, [1, 2], [4, 5]) ≈ 6
-            end
-        end
-
-        # ====================================================================
-        # FLOW FROM OCP AND AUGMENT TESTS
-        # ====================================================================
-        # These tests verify the Flow(ocp) construction for control-free problems
-        # and the augment=true feature for automatic costate computation.
-
-        Test.@testset "Flow from OCP and augment" begin
-            Test.@testset "Flow from Control-Free OCP" begin
-                # Define a simple control-free OCP (exponential growth)
-                t0 = 0
-                tf = 1
-                x0 = 1.0
-
-                ocp = @def begin
-                    λ ∈ R, variable
-                    t ∈ [t0, tf], time
-                    x ∈ R, state
-                    x(t0) == x0
-                    ẋ(t) == λ * x(t)
-                    ∫(x(t)^2) → min
-                end
-
-                # Test: Flow(ocp) works for control-free problems
-                f = Flow(ocp)
-
-                # Test: basic call returns 2 values (state, costate)
-                λ_val = 0.5
-                p0 = 1.0
-                Test.@test applicable(f, t0, x0, p0, tf, λ_val)
-                xf, pf = f(t0, x0, p0, tf, λ_val)
-                Test.@test xf isa Real
-                Test.@test pf isa Real
-            end
-
-            Test.@testset "Flow with augment=true" begin
-                # Same OCP as above
-                t0 = 0
-                tf = 1
-                x0 = 1.0
+            Test.@testset "Flow from a control-free OCP" begin
+                t0, tf, x0 = 0, 1, 1.0
 
                 ocp = @def begin
                     λ ∈ R, variable
@@ -411,23 +135,26 @@ function test_ctflows()
                 end
 
                 f = Flow(ocp)
-                λ_val = 0.5
-                p0 = 1.0
 
-                # Test: augment=true returns 3 values (state, costate, variable costate)
-                xf, pf, pλ = f(t0, x0, p0, tf, λ_val; augment=true)
-                Test.@test xf isa Real
+                # ⚠️ `variable=` is now a mandatory *keyword* on NonFixed flows.
+                # The old positional slot `f(t0, x0, p0, tf, λ)` is gone.
+                xf, pf = f(t0, x0, 1.0, tf; variable=0.5)
+                Test.@test xf isa Real   # 1-D state → scalar, not a 1-vector
                 Test.@test pf isa Real
-                Test.@test pλ isa Real  # The new one: costate of λ
+
+                # `variable_costate=true` (formerly `augment=true`) integrates
+                # the augmented adjoint and returns a 3-tuple.
+                xf2, pf2, pλ = f(t0, x0, 1.0, tf; variable=0.5, variable_costate=true)
+                Test.@test xf2 ≈ xf rtol = 1e-6
+                Test.@test pf2 ≈ pf rtol = 1e-6
+                Test.@test pλ isa Real
+
+                # Omitting the variable is a PreconditionError, not a silent default.
+                Test.@test_throws OptimalControl.PreconditionError f(t0, x0, 1.0, tf)
             end
 
-            Test.@testset "Manual vs Automatic Hamiltonian" begin
-                # Define OCP
-                t0 = 0
-                tf = 1
-                x0 = 1.0
-                λ_val = 0.5
-                p0 = 1.0
+            Test.@testset "Trajectory form" begin
+                t0, tf, x0 = 0, 1, 1.0
 
                 ocp = @def begin
                     λ ∈ R, variable
@@ -438,47 +165,33 @@ function test_ctflows()
                     ∫(x(t)^2) → min
                 end
 
-                # Manual Hamiltonian construction
-                H(x, p, λ) = p * λ * x - x^2
-                function H_aug(x_, p_)
-                    x, λ = x_
-                    p, _ = p_
-                    return H(x, p, λ)
-                end
-                f_manual = Flow(OptimalControl.Hamiltonian(H_aug))
+                traj = Flow(ocp)((t0, tf), x0, 1.0; variable=0.0)
+                # λ = 0 ⟹ x stays constant.
+                Test.@test state(traj)(tf) ≈ x0 rtol = 1e-10
+            end
 
-                # Automatic Flow from OCP
+            Test.@testset "Manual vs automatic Hamiltonian" begin
+                t0, tf, x0, λ, p0 = 0, 1, 1.0, 0.5, 1.0
+
+                ocp = @def begin
+                    λ ∈ R, variable
+                    t ∈ [t0, tf], time
+                    x ∈ R, state
+                    x(t0) == x0
+                    ẋ(t) == λ * x(t)
+                    ∫(x(t)^2) → min
+                end
+
+                H(x, p, v) = p * v * x - x^2
+                H_aug(x_, p_) = H(x_[1], p_[1], x_[2])
+                f_manual = Flow(Hamiltonian(H_aug))
                 f_auto = Flow(ocp)
 
-                # Test: both give similar results
-                xf_manual, pf_manual = f_manual(t0, [x0, λ_val], [p0, 0.0], tf)
-                xf_auto, pf_auto = f_auto(t0, x0, p0, tf, λ_val)
+                xf_manual, pf_manual = f_manual(t0, [x0, λ], [p0, 0.0], tf)
+                xf_auto, pf_auto = f_auto(t0, x0, p0, tf; variable=λ)
 
-                Test.@test xf_manual[1] ≈ xf_auto rtol=1e-6
-                Test.@test pf_manual[1] ≈ pf_auto rtol=1e-6
-            end
-
-            Test.@testset "Analytical Solution Check" begin
-                # For λ=0, x(t) = x0 (constant)
-                t0 = 0
-                tf = 1
-                x0 = 1.0
-
-                ocp = @def begin
-                    λ ∈ R, variable
-                    t ∈ [t0, tf], time
-                    x ∈ R, state
-                    x(t0) == x0
-                    ẋ(t) == λ * x(t)
-                    ∫(x(t)^2) → min
-                end
-
-                f = Flow(ocp)
-                λ_zero = 0.0
-                p0 = 1.0
-
-                xf, pf = f(t0, x0, p0, tf, λ_zero)
-                Test.@test xf ≈ x0 rtol=1e-10  # x remains constant
+                Test.@test xf_manual[1] ≈ xf_auto rtol = 1e-6
+                Test.@test pf_manual[1] ≈ pf_auto rtol = 1e-6
             end
         end
     end

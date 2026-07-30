@@ -4,13 +4,13 @@ $(TYPEDSIGNATURES)
 Extract strategy symbols from provided components to build a partial method description.
 
 This function extracts the symbolic IDs from concrete strategy instances using
-`CTSolvers.id(typeof(component))`. It returns a tuple containing
+`CTBase.Strategies.id(typeof(component))`. It returns a tuple containing
 the symbols of all non-`nothing` components in the order: discretizer, modeler, solver.
 
 # Arguments
-- `discretizer::Union{CTDirect.AbstractDiscretizer, Nothing}`: Discretization strategy or `nothing`
-- `modeler::Union{CTSolvers.AbstractNLPModeler, Nothing}`: NLP modeling strategy or `nothing`
-- `solver::Union{CTSolvers.AbstractNLPSolver, Nothing}`: NLP solver strategy or `nothing`
+- `discretizer::Union{CTSolvers.DOCP.AbstractDiscretizer, Nothing}`: Discretization strategy or `nothing`
+- `modeler::Union{CTSolvers.Modelers.AbstractNLPModeler, Nothing}`: NLP modeling strategy or `nothing`
+- `solver::Union{CTSolvers.Solvers.AbstractNLPSolver, Nothing}`: NLP solver strategy or `nothing`
 
 # Returns
 - `Tuple{Vararg{Symbol}}`: Tuple of strategy symbols (empty if all `nothing`)
@@ -21,8 +21,8 @@ julia> disc = CTDirect.Collocation()
 julia> _build_partial_description(disc, nothing, nothing)
 (:collocation,)
 
-julia> mod = CTSolvers.ADNLP()
-julia> sol = CTSolvers.Ipopt()
+julia> mod = CTSolvers.Modelers.ADNLP()
+julia> sol = CTSolvers.Solvers.Ipopt()
 julia> _build_partial_description(nothing, mod, sol)
 (:adnlp, :ipopt)
 
@@ -31,13 +31,13 @@ julia> _build_partial_description(nothing, nothing, nothing)
 ```
 
 # See Also
-- [`CTSolvers.Strategies.id`](@extref): Extracts symbolic ID from strategy types
+- [`CTBase.Strategies.id`](@extref): Extracts symbolic ID from strategy types
 - [`_complete_description`](@ref): Completes partial description via registry
 """
 function _build_partial_description(
-    discretizer::Union{CTDirect.AbstractDiscretizer,Nothing},
-    modeler::Union{CTSolvers.AbstractNLPModeler,Nothing},
-    solver::Union{CTSolvers.AbstractNLPSolver,Nothing},
+    discretizer::Union{CTSolvers.DOCP.AbstractDiscretizer,Nothing},
+    modeler::Union{CTSolvers.Modelers.AbstractNLPModeler,Nothing},
+    solver::Union{CTSolvers.Solvers.AbstractNLPSolver,Nothing},
 )::Tuple{Vararg{Symbol}}
     return _build_partial_tuple(discretizer, modeler, solver)
 end
@@ -73,24 +73,24 @@ extracts its symbolic ID, and recursively processes the remaining
 modeler and solver components.
 
 # Arguments
-- `discretizer::CTDirect.AbstractDiscretizer`: Concrete discretization strategy
-- `modeler::Union{CTSolvers.AbstractNLPModeler, Nothing}`: NLP modeling strategy or `nothing`
-- `solver::Union{CTSolvers.AbstractNLPSolver, Nothing}`: NLP solver strategy or `nothing`
+- `discretizer::CTSolvers.DOCP.AbstractDiscretizer`: Concrete discretization strategy
+- `modeler::Union{CTSolvers.Modelers.AbstractNLPModeler, Nothing}`: NLP modeling strategy or `nothing`
+- `solver::Union{CTSolvers.Solvers.AbstractNLPSolver, Nothing}`: NLP solver strategy or `nothing`
 
 # Returns
 - `Tuple{Vararg{Symbol}}`: Tuple containing discretizer symbol followed by remaining symbols
 
 # Notes
-- Uses `CTSolvers.id` to extract symbolic ID
+- Uses `CTBase.Strategies.id` to extract symbolic ID
 - Recursive call to process remaining components
 - Allocation-free implementation through tuple concatenation
 """
 function _build_partial_tuple(
-    discretizer::CTDirect.AbstractDiscretizer,
-    modeler::Union{CTSolvers.AbstractNLPModeler,Nothing},
-    solver::Union{CTSolvers.AbstractNLPSolver,Nothing},
+    discretizer::CTSolvers.DOCP.AbstractDiscretizer,
+    modeler::Union{CTSolvers.Modelers.AbstractNLPModeler,Nothing},
+    solver::Union{CTSolvers.Solvers.AbstractNLPSolver,Nothing},
 )
-    disc_symbol = (CTSolvers.id(typeof(discretizer)),)
+    disc_symbol = (CTBase.Strategies.id(typeof(discretizer)),)
     rest_symbols = _build_partial_tuple(modeler, solver)
     return (disc_symbol..., rest_symbols...)
 end
@@ -117,8 +117,8 @@ skipping directly to processing the modeler and solver components.
 """
 function _build_partial_tuple(
     ::Nothing,
-    modeler::Union{CTSolvers.AbstractNLPModeler,Nothing},
-    solver::Union{CTSolvers.AbstractNLPSolver,Nothing},
+    modeler::Union{CTSolvers.Modelers.AbstractNLPModeler,Nothing},
+    solver::Union{CTSolvers.Solvers.AbstractNLPSolver,Nothing},
 )
     return _build_partial_tuple(modeler, solver)
 end
@@ -132,22 +132,22 @@ This method handles the case where a modeler is provided,
 extracts its symbolic ID, and recursively processes the solver.
 
 # Arguments
-- `modeler::CTSolvers.AbstractNLPModeler`: Concrete NLP modeling strategy
-- `solver::Union{CTSolvers.AbstractNLPSolver, Nothing}`: NLP solver strategy or `nothing`
+- `modeler::CTSolvers.Modelers.AbstractNLPModeler`: Concrete NLP modeling strategy
+- `solver::Union{CTSolvers.Solvers.AbstractNLPSolver, Nothing}`: NLP solver strategy or `nothing`
 
 # Returns
 - `Tuple{Vararg{Symbol}}`: Tuple containing modeler symbol followed by solver symbol (if any)
 
 # Notes
-- Uses `CTSolvers.id` to extract symbolic ID
+- Uses `CTBase.Strategies.id` to extract symbolic ID
 - Recursive call to process solver component
 - Allocation-free implementation
 """
 function _build_partial_tuple(
-    modeler::CTSolvers.AbstractNLPModeler,
-    solver::Union{CTSolvers.AbstractNLPSolver,Nothing},
+    modeler::CTSolvers.Modelers.AbstractNLPModeler,
+    solver::Union{CTSolvers.Solvers.AbstractNLPSolver,Nothing},
 )
-    mod_symbol = (CTSolvers.id(typeof(modeler)),)
+    mod_symbol = (CTBase.Strategies.id(typeof(modeler)),)
     rest_symbols = _build_partial_tuple(solver)
     return (mod_symbol..., rest_symbols...)
 end
@@ -171,7 +171,7 @@ skipping directly to processing the solver component.
 - Delegates to solver processing
 - Terminal case in the recursion chain
 """
-function _build_partial_tuple(::Nothing, solver::Union{CTSolvers.AbstractNLPSolver,Nothing})
+function _build_partial_tuple(::Nothing, solver::Union{CTSolvers.Solvers.AbstractNLPSolver,Nothing})
     return _build_partial_tuple(solver)
 end
 
@@ -184,18 +184,18 @@ This method handles the case where a solver is provided,
 extracts its symbolic ID, and returns it as a single-element tuple.
 
 # Arguments
-- `solver::CTSolvers.AbstractNLPSolver`: Concrete NLP solver strategy
+- `solver::CTSolvers.Solvers.AbstractNLPSolver`: Concrete NLP solver strategy
 
 # Returns
 - `Tuple{Symbol}`: Single-element tuple containing solver symbol
 
 # Notes
-- Uses `CTSolvers.id` to extract symbolic ID
+- Uses `CTBase.Strategies.id` to extract symbolic ID
 - Terminal case in the recursion
 - Allocation-free implementation
 """
-function _build_partial_tuple(solver::CTSolvers.AbstractNLPSolver)
-    return (CTSolvers.id(typeof(solver)),)
+function _build_partial_tuple(solver::CTSolvers.Solvers.AbstractNLPSolver)
+    return (CTBase.Strategies.id(typeof(solver)),)
 end
 
 """
@@ -267,11 +267,11 @@ This function works for any strategy family (discretizer, modeler, or solver) us
 multiple dispatch to handle the two cases: provided strategy vs. building from registry.
 
 # Arguments
-- `resolved::CTSolvers.ResolvedMethod`: Resolved method information with parameter data
+- `resolved::CTBase.Orchestration.ResolvedMethod`: Resolved method information with parameter data
 - `provided`: Strategy instance or `nothing`
 - `family_name::Symbol`: Family name (e.g., `:discretizer`, `:modeler`, `:solver`)
 - `families::NamedTuple`: NamedTuple mapping family names to abstract types
-- `registry::CTSolvers.StrategyRegistry`: Strategy registry for building new strategies
+- `registry::CTBase.Strategies.StrategyRegistry`: Strategy registry for building new strategies
 
 # Returns
 - `T`: Strategy instance (provided or built)
@@ -283,15 +283,15 @@ multiple dispatch to handle the two cases: provided strategy vs. building from r
 - Allocation-free implementation
 - Uses ResolvedMethod for parameter-aware validation and construction
 
-See also: [`CTSolvers.Orchestration.build_strategy_from_resolved`](@extref), [`get_strategy_registry`](@ref), [`_complete_description`](@ref)
+See also: [`CTBase.Orchestration.build_strategy_from_resolved`](@extref), [`get_strategy_registry`](@ref), [`_complete_description`](@ref)
 """
 function _build_or_use_strategy(
-    resolved::CTSolvers.ResolvedMethod,
+    resolved::CTBase.Orchestration.ResolvedMethod,
     provided::T,
     family_name::Symbol,
     families::NamedTuple,
-    registry::CTSolvers.StrategyRegistry,
-)::T where {T<:CTSolvers.AbstractStrategy}
+    registry::CTBase.Strategies.StrategyRegistry,
+)::T where {T<:CTBase.Strategies.AbstractStrategy}
     # Fast path: strategy already provided
     return provided
 end
@@ -305,30 +305,30 @@ This method handles the case where no strategy is provided (`nothing`),
 building a new strategy from the complete method description using the registry.
 
 # Arguments
-- `resolved::CTSolvers.ResolvedMethod`: Resolved method information
+- `resolved::CTBase.Orchestration.ResolvedMethod`: Resolved method information
 - `::Nothing`: Indicates no strategy provided
 - `family_name::Symbol`: Family name (e.g., `:discretizer`, `:modeler`, `:solver`)
 - `families::NamedTuple`: NamedTuple mapping family names to abstract types
-- `registry::CTSolvers.StrategyRegistry`: Strategy registry for building new strategies
+- `registry::CTBase.Strategies.StrategyRegistry`: Strategy registry for building new strategies
 
 # Returns
 - `T`: Newly built strategy instance
 
 # Notes
-- Uses `CTSolvers.build_strategy_from_resolved` for construction
+- Uses `CTBase.Orchestration.build_strategy_from_resolved` for construction
 - Registry lookup determines the concrete strategy type
 - Type-safe through Julia's dispatch system
 - Allocation-free when possible (depends on registry implementation)
 
-See also: [`CTSolvers.Orchestration.build_strategy_from_resolved`](@extref), [`get_strategy_registry`](@ref)
+See also: [`CTBase.Orchestration.build_strategy_from_resolved`](@extref), [`get_strategy_registry`](@ref)
 """
 function _build_or_use_strategy(
-    resolved::CTSolvers.ResolvedMethod,
+    resolved::CTBase.Orchestration.ResolvedMethod,
     ::Nothing,
     family_name::Symbol,
     families::NamedTuple,
-    registry::CTSolvers.StrategyRegistry,
+    registry::CTBase.Strategies.StrategyRegistry,
 )
     # Build path: construct from resolved method
-    return CTSolvers.build_strategy_from_resolved(resolved, family_name, families, registry)
+    return CTBase.Orchestration.build_strategy_from_resolved(resolved, family_name, families, registry)
 end

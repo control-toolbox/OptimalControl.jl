@@ -20,10 +20,10 @@ that might share the same keyword names.
 julia> using CTDirect
 julia> disc = CTDirect.Collocation()
 julia> kw = pairs((; discretizer=disc, print_level=0))
-julia> OptimalControl._extract_kwarg(kw, CTDirect.AbstractDiscretizer)
+julia> OptimalControl._extract_kwarg(kw, CTSolvers.DOCP.AbstractDiscretizer)
 Collocation(...)
 
-julia> OptimalControl._extract_kwarg(kw, CTSolvers.AbstractNLPModeler)
+julia> OptimalControl._extract_kwarg(kw, CTSolvers.Modelers.AbstractNLPModeler)
 nothing
 ```
 

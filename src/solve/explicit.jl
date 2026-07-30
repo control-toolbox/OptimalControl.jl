@@ -8,7 +8,7 @@ then completes missing components via the registry before calling Layer 3.
 
 # Arguments
 - `ocp::CTModels.AbstractModel`: The optimal control problem to solve
-- `registry::CTSolvers.StrategyRegistry`: Strategy registry for completing partial components
+- `registry::CTBase.Strategies.StrategyRegistry`: Strategy registry for completing partial components
 - `kwargs...`: All keyword arguments. Action options extracted here:
   - `initial_guess` (alias: `init`): Initial guess, default `nothing`
   - `display`: Whether to display configuration information, default `true`
@@ -27,7 +27,7 @@ then completes missing components via the registry before calling Layer 3.
 See also: [`solve`](@ref), [`solve_descriptive`](@ref), [`_has_complete_components`](@ref), [`_complete_components`](@ref), [`_explicit_or_descriptive`](@ref)
 """
 function solve_explicit(
-    ocp::CTModels.AbstractModel; registry::CTSolvers.StrategyRegistry, kwargs...
+    ocp::CTModels.AbstractModel; registry::CTBase.Strategies.StrategyRegistry, kwargs...
 )::CTModels.AbstractSolution
 
     # Extract action options with alias support
@@ -40,9 +40,9 @@ function solve_explicit(
     normalized_init = CTModels.build_initial_guess(ocp, init_raw)
 
     # Extract typed components by abstract type
-    discretizer = _extract_kwarg(kwargs, CTDirect.AbstractDiscretizer)
-    modeler = _extract_kwarg(kwargs, CTSolvers.AbstractNLPModeler)
-    solver = _extract_kwarg(kwargs, CTSolvers.AbstractNLPSolver)
+    discretizer = _extract_kwarg(kwargs, CTSolvers.DOCP.AbstractDiscretizer)
+    modeler = _extract_kwarg(kwargs, CTSolvers.Modelers.AbstractNLPModeler)
+    solver = _extract_kwarg(kwargs, CTSolvers.Solvers.AbstractNLPSolver)
 
     # Resolve components: use provided ones or complete via registry
     components = if _has_complete_components(discretizer, modeler, solver)
