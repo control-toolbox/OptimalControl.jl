@@ -103,6 +103,19 @@ The full `CTBase.Data` type vocabulary is now available without reaching into th
 
 Also new: `CTLie.dg_ad_backend` / `dg_ad_backend!` (global AD-backend control), `CTFlows.MultiPhase` (`n_phases`, `get_flow`, `get_switching_time`, …), and `CTSolvers.Integrators` (`SciML`, `final_state`, `evaluate_at`).
 
+## `OpenLoop` is unconditionally non-autonomous
+
+An open-loop control depends only on time — `u(t)` (or `u(t, v)`) — never on the state or costate, and autonomy is a property of the OCP, not of the control law itself. `OpenLoop` therefore does not offer `is_autonomous` as a real choice, unlike `ClosedLoop`/`DynClosedLoop`:
+
+```julia
+OpenLoop(t -> 1.0)              # the only spelling — always u(t), or u(t, v) with is_variable=true
+OpenLoop(() -> 1.0)             # wrong: constructs silently, MethodError once the flow is run
+```
+
+`is_autonomous` is kept as a misuse-detector keyword only: passing it (`true` or `false`) emits a `@warn` explaining that it has no effect, rather than silently doing nothing or being treated as a real choice. `ClosedLoop` and `DynClosedLoop` are unaffected — `is_autonomous` still governs their arity exactly as before.
+
+See [control-toolbox/CTBase.jl#515](https://github.com/control-toolbox/CTBase.jl/issues/515).
+
 ## For package authors: the strategy contract
 
 If you define your own `AbstractStrategy`, you must now implement `parameter`:
@@ -113,6 +126,12 @@ CTBase.Strategies.parameter(::Type{MyStrategy{P}}) where {P} = P          # para
 ```
 
 This is **not** a rename of `CTSolvers.Strategies.get_parameter_type`, which returned `nothing` by default. The CTBase generic throws `NotImplemented` instead, and option routing calls it — so a strategy that omits it fails at `solve` time rather than being treated as non-parameterized.
+
+A caller that cannot guarantee a third-party strategy implements the contract should reach for the non-throwing `CTBase.Strategies.parameter(strategy_type, default)` — the `get(dict, key, default)`-style 2-arg accessor (CTBase ≥ 0.28.8-beta) — rather than writing its own `try`/`catch` around `NotImplemented`. OptimalControl's own display code does exactly this, and warns once per strategy type when the fallback is taken.
+
+## `describe` now covers every strategy
+
+`describe(:id)` previously only knew the *solve* registry (discretizer, NLP modeler, NLP solver). The AD backend and the ODE integrator are strategies in the same sense — `describe(:di)` and `describe(:sciml)` now work from the same single entry point, which merges the solve registry with CTFlows' flow registry (`Base.merge(::CTBase.Strategies.StrategyRegistry...)`, CTBase ≥ 0.28.8-beta).
 
 ---
 

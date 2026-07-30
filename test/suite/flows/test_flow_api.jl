@@ -120,13 +120,11 @@ function test_flow_api()
             # which is the point of naming them.
             f_dyn = Flow(ocp, DynClosedLoop((x, p) -> p[2]))
             f_closed = Flow(ocp, ClosedLoop(x -> 0.0))
-            # ⚠️ `is_autonomous=false` is not optional here, and the reason is
-            # a genuine trap: the trait strips the time argument *uniformly*
-            # across law kinds, and an open loop has nothing but time. So an
-            # autonomous `OpenLoop` is called with **no arguments at all** —
-            # `OpenLoop(t -> 0.0)` looks right and is a `MethodError` at
-            # integration time, not at construction.
-            f_open = Flow(ocp, OpenLoop(t -> 0.0; is_autonomous=false))
+            # OpenLoop is unconditionally `NonAutonomous` (CTBase#515) — an
+            # open-loop control has nothing but time, so autonomy is not a
+            # real choice for it the way it is for ClosedLoop/DynClosedLoop.
+            # No `is_autonomous` keyword to pass here any more.
+            f_open = Flow(ocp, OpenLoop(t -> 0.0))
 
             Test.@test f_dyn(T0, X0, P0, TF) isa Tuple      # (xf, pf)
             Test.@test f_closed(T0, X0, TF) isa AbstractVector
@@ -141,20 +139,36 @@ function test_flow_api()
             # alone, and getting one wrong fails only when the flow is *run*.
             #
             #                     autonomous      non-autonomous
-            #   OpenLoop          u()             u(t)
+            #   OpenLoop          — (CTBase#515: unconditionally NonAutonomous,
+            #                        no autonomous spelling — see below)
             #   ClosedLoop        u(x)            u(t, x)
             #   DynClosedLoop     u(x, p)         u(t, x, p)
-            Test.@test Flow(ocp, OpenLoop(() -> 0.0))(T0, X0, TF) isa AbstractVector
-            Test.@test Flow(ocp, OpenLoop(t -> 0.0; is_autonomous=false))(T0, X0, TF) isa
-                AbstractVector
+            Test.@test Flow(ocp, OpenLoop(t -> 0.0))(T0, X0, TF) isa AbstractVector
             Test.@test Flow(ocp, ClosedLoop(x -> 0.0))(T0, X0, TF) isa AbstractVector
             Test.@test Flow(ocp, ClosedLoop((t, x) -> 0.0; is_autonomous=false))(
                 T0, X0, TF
             ) isa AbstractVector
 
             # The mismatched spellings must fail rather than quietly coerce.
-            Test.@test_throws MethodError Flow(ocp, OpenLoop(t -> 0.0))(T0, X0, TF)
             Test.@test_throws MethodError Flow(ocp, ClosedLoop((t, x) -> 0.0))(T0, X0, TF)
+
+            Test.@testset "OpenLoop has no autonomous spelling (CTBase#515)" begin
+                # Before the fix, `is_autonomous` defaulted to `true` for
+                # OpenLoop too, and the uniform-call trait stripped `t`
+                # *uniformly* across law kinds — so an "autonomous" OpenLoop
+                # was called with **no arguments at all**. A zero-argument
+                # closure like `() -> 0.0` therefore constructed silently and
+                # only failed once the flow was integrated, with a bare
+                # `MethodError` far from the mistake.
+                #
+                # OpenLoop is now unconditionally `NonAutonomous`, so there is
+                # no autonomous spelling to reach for by mistake — only the
+                # wrong number of arguments, still a `MethodError` (Julia does
+                # not check a closure's arity at construction), but no longer
+                # a *trap*: `OpenLoop(t -> 0.0)` above is the only correct
+                # spelling, full stop.
+                Test.@test_throws MethodError Flow(ocp, OpenLoop(() -> 0.0))(T0, X0, TF)
+            end
         end
 
         Test.@testset "Flow(ocp, ::Function) wraps in DynClosedLoop" begin

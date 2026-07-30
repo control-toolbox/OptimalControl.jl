@@ -27,6 +27,8 @@ Dependency upgrade onto the restructured control-toolbox stack, CTLie integratio
 
 - **For package authors**: a custom `AbstractStrategy` must now implement `CTBase.Strategies.parameter`. This is not a rename of `get_parameter_type`, which defaulted to `nothing`; the CTBase generic throws `NotImplemented`, and option routing calls it
 
+- **`OpenLoop` is unconditionally non-autonomous.** An open-loop control depends only on time, `u(t)` (or `u(t, v)`) — autonomy is a property of the OCP, not of the control, so `is_autonomous` is not a real choice for `OpenLoop` the way it is for `ClosedLoop`/`DynClosedLoop`. `is_autonomous` is kept as a misuse-detector keyword that warns rather than doing nothing. See [CTBase.jl#515](https://github.com/control-toolbox/CTBase.jl/issues/515)
+
 ### Added
 
 - **CTLie** as a dependency: `ad`, `Lift`, `Poisson`, `∂ₜ`, `@Lie`, and `dg_ad_backend` / `dg_ad_backend!` for global AD-backend control
@@ -35,9 +37,13 @@ Dependency upgrade onto the restructured control-toolbox stack, CTLie integratio
 
 - `CTFlows.MultiPhase` (`n_phases`, `get_flow`, `get_switching_time`, …) and `CTSolvers.Integrators` (`SciML`, `final_state`, `evaluate_at`)
 
+- **`describe` now covers the full strategy surface.** `describe(:di)` and `describe(:sciml)` work from the same entry point as `describe(:ipopt)`, merging the solve registry with CTFlows' flow registry via `Base.merge` (CTBase ≥ 0.28.8-beta)
+
 - **Test problems are available in two front-end forms**, `:abstract` (the `@def` DSL) and `:functional` (the `CTModels.Building` API), and declare which solution methods they are fixtures for
 
-- New test groups: extension arming, front-end equivalence, `hamiltonian_type`, the `Flow` API surface, the 1-D = scalar contract across both the direct and indirect paths, and CPU/GPU routing
+- **Indirect test fixtures carry their own shooting derivation** (`TestProblem.shoot_builder`, next to the problem itself), consumed generically by a single shooting sweep instead of being re-derived per problem and per test file
+
+- New test groups: extension arming, front-end equivalence, `hamiltonian_type`, the `Flow` API surface, the 1-D = scalar contract across both the direct and indirect paths, `describe` over the full strategy surface, and CPU/GPU routing — the device tier now *requires* a functional GPU on the self-hosted `kkt` runner rather than skipping unconditionally, so a degraded runner fails loudly instead of reporting green having run nothing
 
 ### Changed
 
@@ -49,7 +55,7 @@ Dependency upgrade onto the restructured control-toolbox stack, CTLie integratio
 
 ### Fixed
 
-- `_extract_strategy_parameters` no longer crashes on a strategy that has not implemented the optional parameter contract; display code should not be what fails on a third-party strategy
+- `_extract_strategy_parameters` no longer crashes on a strategy that has not implemented the optional parameter contract — display code should not be what fails on a third-party strategy. It now warns once per strategy type instead of staying silent, forwarding to CTBase's non-throwing `parameter(T, default)` accessor (CTBase ≥ 0.28.8-beta) rather than rolling its own `try`/`catch`
 
 ---
 
