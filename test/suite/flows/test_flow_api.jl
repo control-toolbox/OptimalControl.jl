@@ -56,6 +56,27 @@ function build_labelled()
     return CTModels.Building.build(pre)
 end
 
+"""
+    build_nonfixed()
+
+The same dynamics as [`build_labelled`](@ref), on a `NonFixed` horizon: `tf` is
+the OCP's own `variable` rather than a constant. Exists solely so "`variable=`
+is mandatory when omitted" has a fixture to omit it *on* — `build_labelled`'s
+OCP is `Fixed` and can only test the mirror-image guard rail (passing a
+`variable` where there is none).
+"""
+function build_nonfixed()
+    pre = CTModels.PreModel()
+    CTModels.Building.variable!(pre, 1, :tf)
+    CTModels.Building.time!(pre; t0=T0, indf=1)
+    CTModels.Building.state!(pre, 2)
+    CTModels.Building.control!(pre, 1)
+    CTModels.Building.dynamics!(pre, (r, t, x, u, v) -> (r[1] = x[2]; r[2] = u[1]; nothing))
+    CTModels.Building.objective!(pre, :min; mayer=(x0, xf, v) -> v[1])
+    CTModels.Building.time_dependence!(pre; autonomous=true)
+    return CTModels.Building.build(pre)
+end
+
 function test_flow_api()
     Test.@testset "Flow API" verbose = VERBOSE showtiming = SHOWTIMING begin
         ocp = build_labelled()
@@ -220,6 +241,18 @@ function test_flow_api()
             Test.@test_throws OptimalControl.PreconditionError f(
                 T0, X0, P0, TF; variable=1.0
             )
+        end
+
+        Test.@testset "variable is mandatory on a NonFixed flow" begin
+            # The mirror image of the guard rail above. Ported from what used
+            # to be a per-problem check in `suite/indirect/test_goddard.jl`
+            # and `test_double_integrator_time.jl` (both `NonFixed`, both
+            # deleted now that shooting itself lives in
+            # `suite/indirect/test_shooting_sweep.jl`) — this is the one
+            # assertion from those files that was not already covered
+            # generically here, so it moved rather than vanished.
+            f = Flow(build_nonfixed(), (x, p, v) -> p[2])
+            Test.@test_throws OptimalControl.PreconditionError f(T0, X0, P0, TF)
         end
     end
 end

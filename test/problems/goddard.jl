@@ -66,6 +66,70 @@ function _goddard_constants(; vmax, Tmax)
     )
 end
 
+"""
+    _goddard_shoot_builder(ocp, c)
+
+The B+ S C B0 shooting derivation for Goddard, as a [`TestProblem.shoot_builder`](@ref
+TestProblem) closure. Ported from what used to be written independently in
+`suite/indirect/test_goddard.jl` and, a second time, in
+`suite/problems/test_hamiltonian_type.jl` — this is now the single copy both consume.
+
+Flat shooting vector: `ξ = [p0 (3); t1; t2; t3; tf]`, 7 unknowns for 7 residuals — mass at
+`tf`, transversality on `(p_r, p_v)`, and the four switching/boundary conditions between arcs.
+"""
+function _goddard_shoot_builder(ocp, c)
+    return function (; hamiltonian_type::Symbol=:total)
+        t0 = 0.0
+        vmax, mf, x0, F0, F1 = c.vmax, c.mf, c.x0, c.F0, c.F1
+
+        g(x) = vmax - x[2]
+
+        H0 = OptimalControl.Lift(F0)
+        H1 = OptimalControl.Lift(F1)
+        H01 = OptimalControl.@Lie {H0, H1}
+        H001 = OptimalControl.@Lie {H0, H01}
+        H101 = OptimalControl.@Lie {H1, H01}
+        us(x, p) = -H001(x, p) / H101(x, p)
+
+        # `Lie(X, f)` is `ad(X, f)` since v2.1.0-beta; `⋅` was dropped with no
+        # replacement.
+        ub(x) = -OptimalControl.ad(F0, g)(x) / OptimalControl.ad(F1, g)(x)
+        μ(x, p) = H01(x, p) / OptimalControl.ad(F1, g)(x)
+
+        f0 = OptimalControl.Flow(ocp, (x, p, v) -> 0.0; hamiltonian_type)
+        f1 = OptimalControl.Flow(ocp, (x, p, v) -> 1.0; hamiltonian_type)
+        fs = OptimalControl.Flow(ocp, (x, p, v) -> us(x, p); hamiltonian_type)
+        fb = OptimalControl.Flow(
+            ocp,
+            (x, p, v) -> ub(x);
+            constraint=(x, u, v) -> g(x),
+            multiplier=(x, p, v) -> μ(x, p),
+            hamiltonian_type,
+        )
+
+        function shoot!(s, ξ)
+            p0 = ξ[1:3]
+            τ1, τ2, τ3, τf = ξ[4], ξ[5], ξ[6], ξ[7]
+            x1, p1 = f1(t0, x0, p0, τ1; variable=τf)
+            x2, p2 = fs(τ1, x1, p1, τ2; variable=τf)
+            x3, p3 = fb(τ2, x2, p2, τ3; variable=τf)
+            xf, pf = f0(τ3, x3, p3, τf; variable=τf)
+            s[1] = xf[3] - mf
+            s[2:3] = pf[1:2] - [1, 0]
+            s[4] = H1(x1, p1)
+            s[5] = H01(x1, p1)
+            s[6] = g(x2)
+            s[7] = H0(xf, pf)
+            return nothing
+        end
+
+        ξ_exact = [c.p0; collect(c.switching_times); c.tf_ref]
+        ξ_guess = ξ_exact .* 1.1
+
+        return shoot!, ξ_exact, ξ_guess
+    end
+end
+
 function _goddard_abstract(; vmax, Tmax)
     c = _goddard_constants(; vmax, Tmax)
     Cd, β, b, r0, v0, m0, mf, x0 = c.Cd, c.β, c.b, c.r0, c.v0, c.m0, c.mf, c.x0
@@ -110,7 +174,14 @@ function _goddard_abstract(; vmax, Tmax)
     end
 
     return TestProblem(
-        :goddard, :abstract, goddard, _GODDARD_OBJ, init, c; methods=(:direct, :indirect)
+        :goddard,
+        :abstract,
+        goddard,
+        _GODDARD_OBJ,
+        init,
+        c;
+        methods=(:direct, :indirect),
+        shoot_builder=_goddard_shoot_builder(goddard, c),
     )
 end
 
@@ -175,6 +246,13 @@ function _goddard_functional(; vmax, Tmax)
     init = (state=[1.01, 0.05, 0.8], control=0.5, variable=0.1)
 
     return TestProblem(
-        :goddard, :functional, ocp, _GODDARD_OBJ, init, c; methods=(:direct, :indirect)
+        :goddard,
+        :functional,
+        ocp,
+        _GODDARD_OBJ,
+        init,
+        c;
+        methods=(:direct, :indirect),
+        shoot_builder=_goddard_shoot_builder(ocp, c),
     )
 end

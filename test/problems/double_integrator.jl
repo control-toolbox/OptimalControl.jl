@@ -6,6 +6,107 @@
 #   DoubleIntegratorEnergy            singular arc                (Fixed)
 #   DoubleIntegratorEnergyConstrained three-arc, state constraint (Fixed)
 
+"""
+    _di_time_shoot_builder(ocp, d)
+
+Bang-bang shooting derivation for [`DoubleIntegratorTime`](@ref). Flat vector
+`ξ = [p0 (2); t1; tf]` — one switch, one free final time, 4 unknowns for 4
+residuals (target state, switching condition, free-time transversality).
+"""
+function _di_time_shoot_builder(ocp, d)
+    return function (; hamiltonian_type::Symbol=:total)
+        t0, x0, xf = d.t0, d.x0, d.xf
+        u_max, u_min = d.u_max, d.u_min
+
+        H(x, p, u) = p[1] * x[2] + p[2] * u - 1
+
+        f_max = OptimalControl.Flow(ocp, (x, p, v) -> u_max; hamiltonian_type)
+        f_min = OptimalControl.Flow(ocp, (x, p, v) -> u_min; hamiltonian_type)
+
+        function shoot!(s, ξ)
+            p0 = ξ[1:2]
+            τ1, τf = ξ[3], ξ[4]
+            x1, p1 = f_max(t0, x0, p0, τ1; variable=τf)
+            xf_, pf = f_min(τ1, x1, p1, τf; variable=τf)
+            s[1:2] = xf_ - xf
+            s[3] = p1[2]
+            s[4] = H(xf_, pf, u_min)
+            return nothing
+        end
+
+        ξ_exact = [d.p0; collect(d.switching_times); d.tf]
+        ξ_guess = ξ_exact .* 1.05
+
+        return shoot!, ξ_exact, ξ_guess
+    end
+end
+
+"""
+    _di_energy_shoot_builder(ocp, d)
+
+Singular-arc shooting derivation for [`DoubleIntegratorEnergy`](@ref). Flat
+vector `ξ = p0 (2)` — the cheapest fixture in the library: one arc, no
+switching times, so the whole target-state residual is the shooting function.
+"""
+function _di_energy_shoot_builder(ocp, d)
+    return function (; hamiltonian_type::Symbol=:total)
+        t0, tf, x0, xf = d.t0, d.tf, d.x0, d.xf
+
+        f = OptimalControl.Flow(ocp, (x, p) -> p[2]; hamiltonian_type)
+
+        function shoot!(s, ξ)
+            xf_, _ = f(t0, x0, ξ, tf)
+            s .= xf_ .- xf
+            return nothing
+        end
+
+        ξ_exact = collect(d.p0)
+        ξ_guess = ξ_exact .* 1.1
+
+        return shoot!, ξ_exact, ξ_guess
+    end
+end
+
+"""
+    _di_energy_cons_shoot_builder(ocp, d)
+
+Three-arc shooting derivation for [`DoubleIntegratorEnergyConstrained`](@ref).
+Flat vector `ξ = [p0 (2); t1; t2]` — entry/exit of the boundary arc where
+`v = v_max`, 4 unknowns for 4 residuals (target state, constraint activation
+at entry, switching condition).
+"""
+function _di_energy_cons_shoot_builder(ocp, d)
+    return function (; hamiltonian_type::Symbol=:total)
+        t0, tf, x0, xf, v_max = d.t0, d.tf, d.x0, d.xf, d.v_max
+
+        g(x) = v_max - x[2]
+        μ(p) = p[1]
+
+        f_interior = OptimalControl.Flow(ocp, (x, p) -> p[2]; hamiltonian_type)
+        f_boundary = OptimalControl.Flow(
+            ocp, (x, p) -> 0.0; constraint=(x, u) -> g(x), multiplier=(x, p) -> μ(p),
+            hamiltonian_type,
+        )
+
+        function shoot!(s, ξ)
+            p0 = ξ[1:2]
+            τ1, τ2 = ξ[3], ξ[4]
+            x1, p1 = f_interior(t0, x0, p0, τ1)
+            x2, p2 = f_boundary(τ1, x1, p1, τ2)
+            xf_, _ = f_interior(τ2, x2, p2, tf)
+            s[1:2] = xf_ - xf
+            s[3] = g(x1)
+            s[4] = p1[2]
+            return nothing
+        end
+
+        ξ_exact = [d.p0; collect(d.switching_times)]
+        ξ_guess = ξ_exact .* 1.05
+
+        return shoot!, ξ_exact, ξ_guess
+    end
+end
+
 # ----------------------------------------------------------------------------
 # Time minimisation — bang-bang, free final time
 # ----------------------------------------------------------------------------
@@ -58,7 +159,14 @@ function _di_time_abstract()
     end
 
     return TestProblem(
-        :double_integrator_time, :abstract, ocp, _DI_TIME_OBJ, nothing, _DI_TIME_DATA; methods=(:direct, :indirect)
+        :double_integrator_time,
+        :abstract,
+        ocp,
+        _DI_TIME_OBJ,
+        nothing,
+        _DI_TIME_DATA;
+        methods=(:direct, :indirect),
+        shoot_builder=_di_time_shoot_builder(ocp, _DI_TIME_DATA),
     )
 end
 
@@ -99,7 +207,14 @@ function _di_time_functional()
     ocp = CTModels.Building.build(pre)
 
     return TestProblem(
-        :double_integrator_time, :functional, ocp, _DI_TIME_OBJ, nothing, _DI_TIME_DATA; methods=(:direct, :indirect)
+        :double_integrator_time,
+        :functional,
+        ocp,
+        _DI_TIME_OBJ,
+        nothing,
+        _DI_TIME_DATA;
+        methods=(:direct, :indirect),
+        shoot_builder=_di_time_shoot_builder(ocp, _DI_TIME_DATA),
     )
 end
 
@@ -144,7 +259,14 @@ function _di_energy_abstract()
     end
 
     return TestProblem(
-        :double_integrator_energy, :abstract, ocp, _DI_ENERGY_OBJ, nothing, _DI_ENERGY_DATA; methods=(:direct, :indirect)
+        :double_integrator_energy,
+        :abstract,
+        ocp,
+        _DI_ENERGY_OBJ,
+        nothing,
+        _DI_ENERGY_DATA;
+        methods=(:direct, :indirect),
+        shoot_builder=_di_energy_shoot_builder(ocp, _DI_ENERGY_DATA),
     )
 end
 
@@ -188,6 +310,7 @@ function _di_energy_functional()
         nothing,
         _DI_ENERGY_DATA;
         methods=(:direct, :indirect),
+        shoot_builder=_di_energy_shoot_builder(ocp, _DI_ENERGY_DATA),
     )
 end
 
@@ -246,6 +369,7 @@ function _di_energy_cons_abstract()
         nothing,
         _DI_ENERGY_CONS_DATA;
         methods=(:direct, :indirect),
+        shoot_builder=_di_energy_cons_shoot_builder(ocp, _DI_ENERGY_CONS_DATA),
     )
 end
 
@@ -297,5 +421,6 @@ function _di_energy_cons_functional()
         nothing,
         _DI_ENERGY_CONS_DATA;
         methods=(:direct, :indirect),
+        shoot_builder=_di_energy_cons_shoot_builder(ocp, _DI_ENERGY_CONS_DATA),
     )
 end

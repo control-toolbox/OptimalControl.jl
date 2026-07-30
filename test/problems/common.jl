@@ -35,6 +35,27 @@ A test problem in one of its two front-end forms.
   `x0`/`xf`/`t0`/`tf`, expected parameters, switching times, …
 - `methods::Tuple{Vararg{Symbol}}`: which solution methods this problem is a
   fixture for — see [`METHODS`](@ref)
+- `shoot_builder::Union{Function,Nothing}`: `nothing`, or a function of
+  signature `(; hamiltonian_type::Symbol=:total) -> (shoot!, ξ_exact, ξ_guess)`
+  — see below
+
+# `shoot_builder`
+
+The indirect fixture's shooting derivation, kept next to the problem rather
+than re-derived in every test file that needs it. `shoot!` has the flat-vector
+signature [`test_shooting`](@ref) expects — `shoot!(s, ξ) → nothing` — and
+`ξ_exact`/`ξ_guess` are the reference solution and a perturbed starting guess,
+both in that same flattened shape (typically `[p0; switching_times...; tf]`,
+whichever subset the problem's own structure actually has unknowns for).
+
+`hamiltonian_type` is a keyword rather than baked in because the same
+derivation is the vehicle for `suite/problems/test_hamiltonian_type.jl`, which
+needs both `:total` and `:partial` from the identical control laws — hence a
+function returning `(shoot!, ξ_exact, ξ_guess)` rather than a precomputed
+triple.
+
+`nothing` when the problem has no exploitable extremal structure — the
+quadrotor, for one.
 
 # Why `methods` exists
 
@@ -63,6 +84,7 @@ struct TestProblem
     init::Any
     data::NamedTuple
     methods::Tuple{Vararg{Symbol}}
+    shoot_builder::Union{Function,Nothing}
 end
 
 """
@@ -76,8 +98,8 @@ The solution methods a problem can declare itself a fixture for.
 """
 const METHODS = (:direct, :indirect)
 
-# Default: direct only. A problem opts into `:indirect` explicitly, at the
-# point where it also supplies the shooting data that makes the claim true.
+# Default: direct only, no shooting derivation. A problem opts into
+# `:indirect` explicitly, at the point where it also supplies `shoot_builder`.
 function TestProblem(
     name::Symbol,
     form::Symbol,
@@ -86,23 +108,24 @@ function TestProblem(
     init,
     data::NamedTuple;
     methods::Tuple{Vararg{Symbol}}=(:direct,),
+    shoot_builder::Union{Function,Nothing}=nothing,
 )
     for m in methods
         m in METHODS ||
             throw(ArgumentError("unknown method $(repr(m)); expected one of $(METHODS)"))
     end
     # Make the claim self-enforcing rather than a comment: a problem that says
-    # it is an indirect fixture must actually carry a reference costate, or a
-    # shooting sweep would pick it up and then fail on missing data.
-    if :indirect in methods && !haskey(data, :p0)
+    # it is an indirect fixture must actually carry a shooting derivation, or
+    # a generic shooting sweep would pick it up and then fail on `nothing`.
+    if :indirect in methods && shoot_builder === nothing
         throw(
             ArgumentError(
-                "problem $(repr(name)) declares :indirect but carries no `p0` in `data`; " *
-                "an indirect fixture needs a reference costate to shoot from",
+                "problem $(repr(name)) declares :indirect but carries no `shoot_builder`; " *
+                "an indirect fixture needs a shooting derivation to shoot from",
             ),
         )
     end
-    return TestProblem(name, form, ocp, objective, init, data, methods)
+    return TestProblem(name, form, ocp, objective, init, data, methods, shoot_builder)
 end
 
 """

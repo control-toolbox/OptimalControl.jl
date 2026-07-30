@@ -37,6 +37,13 @@ using .TestProblems
 
 include(joinpath(@__DIR__, "..", "..", "helpers", "shooting.jl"))
 
+# The three shooting derivations below used to be written out here a second
+# time — once per problem, independently of `suite/indirect/test_shooting_sweep.jl`.
+# They now come from `pb.shoot_builder(; hamiltonian_type=ht)`, the single copy
+# both files consume (see `test/problems/common.jl`). What stays genuinely
+# specific to *this* file is the `ht` sweep itself: `shoot_builder` only fixes
+# the derivation, not which mode it is checked under.
+
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
@@ -53,23 +60,17 @@ function test_hamiltonian_type()
             for form in TestProblems.FORMS, ht in HAMILTONIAN_TYPES
                 Test.@testset "$form / $ht" begin
                     pb = TestProblems.build(:double_integrator_energy, form)
-                    t0, tf = pb.data.t0, pb.data.tf
-                    x0, xf, p0 = pb.data.x0, pb.data.xf, pb.data.p0
+                    shoot!, ξ_exact, ξ_guess = pb.shoot_builder(; hamiltonian_type=ht)
 
-                    # u*(x,p) = p₂ — the smooth interior optimum, so
-                    # ∂H̃/∂u = 0 on the whole arc.
+                    ξ_opt = test_shooting(shoot!, ξ_exact, ξ_guess)
+                    Test.@test ξ_opt ≈ ξ_exact atol = 1e-6
+
+                    # Reconstruction reaches the reference objective — the one
+                    # assertion `shoot_builder` itself has no reason to carry,
+                    # since it is specific to this file's purpose, not to the
+                    # derivation.
+                    t0, tf, x0 = pb.data.t0, pb.data.tf, pb.data.x0
                     f = Flow(pb.ocp, (x, p) -> p[2]; hamiltonian_type=ht)
-
-                    function shoot!(s, ξ)
-                        x_f, _ = f(t0, x0, ξ, tf)
-                        s .= x_f .- xf
-                        return nothing
-                    end
-
-                    ξ_opt = test_shooting(shoot!, p0, perturb(p0))
-                    Test.@test ξ_opt ≈ p0 atol = 1e-6
-
-                    # Reconstruction reaches the reference objective.
                     sol = f((t0, tf), x0, ξ_opt)
                     Test.@test objective(sol) ≈ pb.objective rtol = 1e-8
                 end
@@ -82,32 +83,10 @@ function test_hamiltonian_type()
             for form in TestProblems.FORMS, ht in HAMILTONIAN_TYPES
                 Test.@testset "$form / $ht" begin
                     pb = TestProblems.build(:double_integrator_time, form)
-                    t0, x0, xf = pb.data.t0, pb.data.x0, pb.data.xf
-                    u_max, u_min = pb.data.u_max, pb.data.u_min
-                    p0 = pb.data.p0
-                    (t1,) = pb.data.switching_times
-                    tf = pb.data.tf
+                    shoot!, ξ_exact, ξ_guess = pb.shoot_builder(; hamiltonian_type=ht)
 
-                    H(x, p, u) = p[1] * x[2] + p[2] * u - 1
-
-                    f_max = Flow(pb.ocp, (x, p, v) -> u_max; hamiltonian_type=ht)
-                    f_min = Flow(pb.ocp, (x, p, v) -> u_min; hamiltonian_type=ht)
-
-                    # Flat shooting vector: [p0 (2); t1; tf].
-                    function shoot!(s, ξ)
-                        p_0 = ξ[1:2]
-                        τ1, τf = ξ[3], ξ[4]
-                        x_1, p_1 = f_max(t0, x0, p_0, τ1; variable=τf)
-                        x_f, p_f = f_min(τ1, x_1, p_1, τf; variable=τf)
-                        s[1:2] = x_f - xf
-                        s[3] = p_1[2]                    # switching condition
-                        s[4] = H(x_f, p_f, u_min)        # free final time
-                        return nothing
-                    end
-
-                    ξ_ref = [p0; t1; tf]
-                    ξ_opt = test_shooting(shoot!, ξ_ref, perturb(ξ_ref, 0.05))
-                    Test.@test ξ_opt ≈ ξ_ref atol = 1e-6
+                    ξ_opt = test_shooting(shoot!, ξ_exact, ξ_guess)
+                    Test.@test ξ_opt ≈ ξ_exact atol = 1e-6
                 end
             end
         end
@@ -116,54 +95,20 @@ function test_hamiltonian_type()
             # The full workout: four arcs, one of them constrained, free final
             # time. Every law here is the PMP minimiser, so again the modes
             # must agree — this time through a `constraint`/`multiplier` pair.
+            #
+            # Residual at the reference only, no Newton: the `:total`
+            # convergence sweep already lives in
+            # `suite/indirect/test_shooting_sweep.jl`, and redoing it here for
+            # both `ht` values would be the fixture's ~90 s cost paid twice for
+            # the same conclusion. What is unique to this file — that `:total`
+            # and `:partial` agree — only needs the reference point.
             for form in TestProblems.FORMS, ht in HAMILTONIAN_TYPES
                 Test.@testset "$form / $ht" begin
                     pb = TestProblems.build(:goddard, form)
-                    d = pb.data
-                    t0, x0, vmax, mf = 0.0, d.x0, d.vmax, d.mf
+                    shoot!, ξ_exact, _ = pb.shoot_builder(; hamiltonian_type=ht)
 
-                    H0 = Lift(d.F0)
-                    H1 = Lift(d.F1)
-                    H01 = @Lie {H0, H1}
-                    H001 = @Lie {H0, H01}
-                    H101 = @Lie {H1, H01}
-
-                    g(x) = vmax - x[2]
-                    us(x, p) = -H001(x, p) / H101(x, p)
-                    ub(x) = -ad(d.F0, g)(x) / ad(d.F1, g)(x)
-                    μ(x, p) = H01(x, p) / ad(d.F1, g)(x)
-
-                    f0 = Flow(pb.ocp, (x, p, v) -> 0.0; hamiltonian_type=ht)
-                    f1 = Flow(pb.ocp, (x, p, v) -> 1.0; hamiltonian_type=ht)
-                    fs = Flow(pb.ocp, (x, p, v) -> us(x, p); hamiltonian_type=ht)
-                    fb = Flow(
-                        pb.ocp,
-                        (x, p, v) -> ub(x);
-                        constraint=(x, u, v) -> g(x),
-                        multiplier=(x, p, v) -> μ(x, p),
-                        hamiltonian_type=ht,
-                    )
-
-                    # Flat shooting vector: [p0 (3); t1; t2; t3; tf].
-                    function shoot!(s, ξ)
-                        p_0 = ξ[1:3]
-                        τ1, τ2, τ3, τf = ξ[4], ξ[5], ξ[6], ξ[7]
-                        x1, p1 = f1(t0, x0, p_0, τ1; variable=τf)
-                        x2, p2 = fs(τ1, x1, p1, τ2; variable=τf)
-                        x3, p3 = fb(τ2, x2, p2, τ3; variable=τf)
-                        x_f, p_f = f0(τ3, x3, p3, τf; variable=τf)
-                        s[1] = x_f[3] - mf
-                        s[2:3] = p_f[1:2] - [1, 0]
-                        s[4] = H1(x1, p1)
-                        s[5] = H01(x1, p1)
-                        s[6] = g(x2)
-                        s[7] = H0(x_f, p_f)
-                        return nothing
-                    end
-
-                    ξ_ref = [d.p0; collect(d.switching_times); d.tf_ref]
-                    s = zeros(7)
-                    shoot!(s, ξ_ref)
+                    s = zeros(length(ξ_exact))
+                    shoot!(s, ξ_exact)
                     Test.@test sqrt(sum(abs2, s)) < 1e-6
                 end
             end
