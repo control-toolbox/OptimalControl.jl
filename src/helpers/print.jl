@@ -312,45 +312,47 @@ function _extract_strategy_parameters(discretizer, modeler, solver)
 end
 
 """
+Sentinel passed as the `default` to `CTBase.Strategies.parameter(T, default)`, so this file
+can tell "the strategy legitimately declares no parameter" (`parameter(T) === nothing`) apart
+from "the strategy never implemented the contract at all" (`parameter(T)` threw
+`NotImplemented`, and `parameter(T, ::sentinel)` fell back to it). Neither case is a plain
+`nothing`, `CPU`, `GPU`, nor any third-party `AbstractStrategyParameter` could ever collide
+with it.
+"""
+struct _ParameterNotImplemented end
+const _PARAMETER_NOT_IMPLEMENTED = _ParameterNotImplemented()
+
+"""
 $(TYPEDSIGNATURES)
 
 Parameter type of a strategy, or `nothing` when it declares none.
 
-⚠️ Not a plain forward to [`CTBase.Strategies.parameter`](@extref). Since
-v2.1.0-beta that generic replaces the old `CTSolvers.Strategies.get_parameter_type`,
-and the two differ where it matters here: `get_parameter_type` returned
-`nothing` for a strategy that never implemented the (optional) parameter
-contract, whereas `parameter` throws `NotImplemented`.
+Since CTBase 0.28.8-beta this is a thin wrapper around
+[`CTBase.Strategies.parameter(T, default)`](@extref) — the non-throwing counterpart to
+[`CTBase.Strategies.parameter(T)`](@extref) requested as
+[CTBase#518](https://github.com/control-toolbox/CTBase.jl/issues/518), so display no longer
+needs its own `try`/`catch` around `NotImplemented`.
 
-Display must not be the thing that crashes on a third-party strategy which
-simply chose not to be parameterized, so the exception is absorbed here. Every
-in-tree strategy implements the contract, so this path is only ever taken by
-external ones.
+Display must not be the thing that crashes on a third-party strategy which simply chose not to
+be parameterized. Every in-tree strategy implements the contract, so the fallback path below is
+only ever taken by external ones.
 
-⚠️ The `T<:AbstractStrategy` bound rules out passing something that is not a
-strategy at all; it does *not* make the catch below dead code. `parameter` is
-optional-to-override on any `AbstractStrategy` subtype — Julia has no way to
-require an interface method at the abstract type's definition site — so a
-third-party discretizer/modeler/solver that forgets the override still throws
-`NotImplemented` regardless of how tightly `T` is bounded here.
-
-The `NotImplemented` case is not a defect — `nothing` is the documented, valid
-answer for a non-parameterized strategy, and this is the one place CTBase's
-contract cannot itself distinguish "explicitly declared `= nothing`" from
-"never overridden": both must resolve to the same `nothing` here. But since
-the second case is genuinely missing an implementation, it is worth a `@warn`
-rather than perfect silence — capped at one per strategy *type* (`maxlog=1`,
-keyed on `T`) so a solve loop over the same third-party strategy does not spam.
+The two cases where a plain forward to `parameter(T, nothing)` would not do: `nothing` is the
+documented, valid answer for a non-parameterized strategy, and CTBase's `default` parameter
+cannot itself distinguish "explicitly declared `= nothing`" from "never overridden" — both
+would collapse onto the same `nothing`. Passing the dedicated `_PARAMETER_NOT_IMPLEMENTED`
+sentinel as `default` recovers that distinction, so the second case can still get a `@warn`
+rather than perfect silence — capped at one per strategy *type* (`maxlog=1`, keyed on `T`) so a
+solve loop over the same third-party strategy does not spam.
 """
 function _strategy_parameter(::Type{T}) where {T<:CTBase.Strategies.AbstractStrategy}
-    return try
-        CTBase.Strategies.parameter(T)
-    catch e
-        e isa CTBase.Exceptions.NotImplemented || rethrow()
+    result = CTBase.Strategies.parameter(T, _PARAMETER_NOT_IMPLEMENTED)
+    if result === _PARAMETER_NOT_IMPLEMENTED
         @warn "Strategy $T does not implement `CTBase.Strategies.parameter`; treating it as non-parameterized." maxlog =
             1 _id = Symbol(:strategy_parameter_not_implemented, T)
-        nothing
+        return nothing
     end
+    return result
 end
 
 """

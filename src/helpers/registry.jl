@@ -79,25 +79,17 @@ user to know which registry a strategy lives in.
 - `CTBase.Strategies.StrategyRegistry`: 5 families, `:cpu`/`:gpu` parameters.
 
 # Notes
-A `StrategyRegistry` carries nothing but `families` and `parameters`, so the union is a plain
-`merge` of the two dictionaries. It is total here because the two registries are disjoint —
-no shared strategy id, no shared family, and `:cpu`/`:gpu` bound to the same types on both
-sides. That disjointness is an ecosystem property rather than a guarantee, so it is asserted
-in `test/suite/helpers/test_describe.jl` rather than assumed silently.
-
-⚠️ Reaching into the two struct fields is deliberate but temporary: it skips the validation
-`CTBase.Strategies.create_registry` performs within a single registry, which is exactly what a
-cross-registry union should re-check. Requested upstream as
-[CTBase#517](https://github.com/control-toolbox/CTBase.jl/issues/517) (`Base.merge` for
-`StrategyRegistry`); switch to it once released and drop this function's body.
+`Base.merge(a::StrategyRegistry, bs::StrategyRegistry...)` (CTBase ≥ 0.28.8-beta) runs the
+same cross-registry checks `create_registry` performs within a single registry — global
+strategy-ID uniqueness, parameter-ID/type agreement, and strategy/parameter-ID disjointness —
+rather than a raw merge of the two structs' internal `Dict`s, which is what this function did
+before that release ([CTBase#517](https://github.com/control-toolbox/CTBase.jl/issues/517)).
+The two registries are measurably disjoint (no shared id, no shared family, `:cpu`/`:gpu`
+bound to the same types on both sides), which is why the merge succeeds rather than throwing —
+asserted in `test/suite/helpers/test_describe.jl`, not assumed silently.
 
 See also: [`get_strategy_registry`](@ref), [`describe`](@ref)
 """
 function get_full_strategy_registry()::CTBase.Strategies.StrategyRegistry
-    solve_registry = get_strategy_registry()
-    flow_registry = CTFlows.Flows.flow_registry()
-    return CTBase.Strategies.StrategyRegistry(
-        merge(solve_registry.families, flow_registry.families),
-        merge(solve_registry.parameters, flow_registry.parameters),
-    )
+    return merge(get_strategy_registry(), CTFlows.Flows.flow_registry())
 end

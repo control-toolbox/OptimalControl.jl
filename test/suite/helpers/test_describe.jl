@@ -16,14 +16,14 @@
 # whatever the second registry raised instead. The merge keeps one registry,
 # one error path.
 #
-# ⚠️ `:sciml` is expected to FAIL today, and the `@test_broken` below is not a
-# workaround — it is the tracker. `CTBase.Strategies._strategy_base_name`
-# unwraps exactly one `UnionAll` layer, which only works for strategies with at
-# most two type parameters; `CTSolvers.Integrators.SciML` has four. See
-# control-toolbox/CTBase.jl#516 (root cause, one-line fix) and
-# control-toolbox/CTSolvers.jl#191 (the missing upstream coverage that let it
-# through). When CTBase ships the fix, these flip to *unexpected passes* and
-# fail the suite — which is the reminder to promote them to `@test`.
+# `:sciml` used to be expected to FAIL here — `CTBase.Strategies._strategy_base_name`
+# unwrapped exactly one `UnionAll` layer, which only worked for strategies with at most
+# two type parameters, and `CTSolvers.Integrators.SciML` has four
+# (control-toolbox/CTBase.jl#516). Fixed and released in CTBase 0.28.8-beta; the
+# `@test_broken` markers this file carried while waiting are gone, and so is the
+# `WORKING`/`BROKEN` split — every registered strategy now describes cleanly.
+# control-toolbox/CTSolvers.jl#191 (the missing upstream coverage that let #516 through) is
+# still open.
 
 module TestDescribe
 
@@ -38,16 +38,14 @@ const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING :
 
 const S = CTBase.Strategies
 
-# Strategies whose `describe` works today, by family.
-const WORKING = (
+# Every strategy id OptimalControl registers, across both registries.
+const ALL_STRATEGIES = (
     :collocation,                                   # discretizer
     :adnlp, :exa,                                   # NLP modelers
     :ipopt, :madnlp, :madncl, :uno, :knitro,        # NLP solvers
     :di,                                            # AD backend
+    :sciml,                                         # ODE integrator
 )
-
-# Blocked on CTBase#516 — see the header.
-const BROKEN = (:sciml,)
 
 """
     describes(id) -> Bool
@@ -114,12 +112,12 @@ function test_describe()
         # Every registered strategy is reachable — no id left behind
         # ====================================================================
 
-        Test.@testset "the working/broken split covers the registry" begin
-            # Guards the lists above against drift: a strategy registered
-            # upstream tomorrow must be classified here rather than silently
-            # escape both lists and go untested.
+        Test.@testset "ALL_STRATEGIES covers the registry" begin
+            # Guards the list above against drift: a strategy registered
+            # upstream tomorrow must be added here rather than silently escape
+            # coverage.
             registered = ids(OptimalControl.get_full_strategy_registry())
-            Test.@test registered == Set([WORKING..., BROKEN...])
+            Test.@test registered == Set(ALL_STRATEGIES)
         end
 
         # ====================================================================
@@ -160,14 +158,13 @@ function test_describe()
         end
 
         Test.@testset "ODE integrator" begin
-            # See the header: blocked on CTBase#516, and deliberately recorded
-            # as broken rather than skipped, so the fix landing is visible.
-            Test.@test_broken describes(:sciml)
+            # `:sciml` — CTBase#516, fixed in 0.28.8-beta.
+            Test.@test describes(:sciml)
 
-            # What *does* work is the routing that put it in the registry —
-            # the token resolves and carries both parameters. This is the part
-            # CTBase#516 does not affect, and it is worth pinning separately so
-            # a regression here is not masked by the known-broken assertion.
+            # The routing that put it in the registry — the token resolves
+            # and carries both parameters — is independent of #516 and worth
+            # pinning separately, so a routing regression isn't masked by a
+            # describe-only assertion.
             full = OptimalControl.get_full_strategy_registry()
             params = S.available_parameters(
                 :sciml, CTSolvers.Integrators.AbstractIntegrator, full
@@ -177,22 +174,18 @@ function test_describe()
         end
 
         # ====================================================================
-        # Parameters, and the failure mode
+        # Parameters
         # ====================================================================
 
         Test.@testset "strategy parameters" begin
-            # `describe(:cpu)` walks every registered strategy to report which
-            # ones support the parameter — so it inherits :sciml's breakage.
-            # That contagion is the real cost of CTBase#516 and deserves to be
-            # stated, not left implicit.
-            Test.@test_broken describes(:cpu)
-            Test.@test_broken describes(:gpu)
-
-            # …and it is genuinely the merge that exposes it: on the solve
-            # registry alone, which has no strategy above two type parameters,
-            # the same call is fine.
-            solve_only = OptimalControl.get_strategy_registry()
-            Test.@test (S.describe(devnull, :cpu, solve_only); true)
+            # `describe(:cpu)`/`describe(:gpu)` walk every registered strategy
+            # to report which ones support the parameter — including `:sciml`,
+            # whose four type parameters used to break exactly this walk
+            # (CTBase#516). Both directions matter: this must work on the full
+            # registry, not only on the solve registry that has nothing above
+            # two type parameters.
+            Test.@test describes(:cpu)
+            Test.@test describes(:gpu)
         end
 
         Test.@testset "an unknown id is rejected" begin
