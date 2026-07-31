@@ -27,7 +27,7 @@ using OrdinaryDiffEq
 # documentation
 using DocumenterInterLinks
 using Documenter
-using DocumenterMermaid
+using DocumenterVitepress
 using Markdown
 using MarkdownAST: MarkdownAST
 
@@ -175,33 +175,6 @@ ext_dir = abspath(joinpath(@__DIR__, "..", "ext"))
 include("api_reference.jl")
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# Logger: silence the informational warning about @example blocks whose HTML
-# representation exceeds `example_size_threshold`. The SVG fallback is used
-# automatically (which is what we want for plots), so this warning is harmless.
-# ═══════════════════════════════════════════════════════════════════════════════
-using Logging
-struct ExampleSizeThresholdFilter <: AbstractLogger
-    inner::AbstractLogger
-end
-function Logging.min_enabled_level(l::ExampleSizeThresholdFilter)
-    return Logging.min_enabled_level(l.inner)
-end
-function Logging.shouldlog(l::ExampleSizeThresholdFilter, level, _module, group, id)
-    return Logging.shouldlog(l.inner, level, _module, group, id)
-end
-Logging.catch_exceptions(l::ExampleSizeThresholdFilter) = Logging.catch_exceptions(l.inner)
-function Logging.handle_message(
-    l::ExampleSizeThresholdFilter, level, message, args...; kwargs...
-)
-    msg = string(message)
-    if level == Logging.Warn && occursin("example_size_threshold", msg)
-        return nothing
-    end
-    return Logging.handle_message(l.inner, level, message, args...; kwargs...)
-end
-global_logger(ExampleSizeThresholdFilter(global_logger()))
-
-# ═══════════════════════════════════════════════════════════════════════════════
 # Literate: generate tutorial.md, tutorial.ipynb, tutorial.jl
 # ═══════════════════════════════════════════════════════════════════════════════
 using Literate
@@ -217,7 +190,8 @@ for file in ["tutorial.jl"]
     INPUT = joinpath(LITERATE_DIR, file)
     # Inject @meta Draft=false so the tutorial executes even with global draft=true
     function tutorial_postprocess(content)
-        return "```@meta\nDraft = false\n```\n\n" * content
+        # return "```@meta\nDraft = false\n```\n\n" * content
+        return content
     end
     Literate.markdown(INPUT, MD_OUTPUT; documenter=true, postprocess=tutorial_postprocess)
     Literate.notebook(INPUT, NB_OUTPUT; execute=false)
@@ -240,27 +214,15 @@ with_api_reference(src_dir, ext_dir) do api_pages
         remotes=nothing, # Disable remote links. Needed for DocumenterReference
         warnonly=true,
         sitename="OptimalControl.jl",
-        format=Documenter.HTML(;
-            repolink="https://" * repo_url,
-            prettyurls=false,
-            assets=[
-                asset("https://control-toolbox.org/assets/css/documentation.css"),
-                asset("https://control-toolbox.org/assets/js/documentation.js"),
-                "assets/custom.css",
-            ],
-            size_threshold_ignore=[
-                joinpath("api", "private.md"),
-                joinpath("api", "public.md"),
-                "manual-macro-free.md",
-                "tutorial.md",
-            ],
+        format=DocumenterVitepress.MarkdownVitepress(;
+            repo=repo_url, devbranch="main", devurl="dev", sidebar_drawer=true
         ),
         pages=[
-            "Introduction" => "index.md",
+            # index.md is the VitePress root — not listed here
             "Guided tour" => "tutorial.md",
             "Examples" => [
                 "Energy minimisation" => "example-double-integrator-energy.md",
-                "Time mininimisation" => "example-double-integrator-time.md",
+                "Time minimisation" => "example-double-integrator-time.md",
                 "Control-free problems" => "example-control-free.md",
                 "Control and variable" => "example-control-and-variable.md",
                 "Singular control" => "example-singular-control.md",
@@ -295,4 +257,13 @@ with_api_reference(src_dir, ext_dir) do api_pages
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════
-deploydocs(; repo=repo_url * ".git", devbranch="main", push_preview=true)
+# Deploy documentation to GitHub Pages
+# ═══════════════════════════════════════════════════════════════════════════════
+bases_file = joinpath(@__DIR__, "build", "bases.txt")
+if isfile(bases_file)
+    DocumenterVitepress.deploydocs(;
+        repo=repo_url * ".git", devbranch="main", push_preview=true
+    )
+else
+    @info "Skipping deployment: no bases were built (prerelease with existing higher stable release)."
+end

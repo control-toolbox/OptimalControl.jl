@@ -18,14 +18,25 @@ using .TestPrintUtils
 # Load solver extensions (import only to trigger extensions, avoid name conflicts)
 using NLPModelsIpopt: NLPModelsIpopt
 using MadNLP: MadNLP
-using MadNLPGPU: MadNLPGPU
 using MadNCL: MadNCL
 using UnoSolver: UnoSolver
+
+# ⚠️ The GPU extension trigger is `["MadNLPGPU", "CUDA", "CUDSS"]` — all three.
+# Dropping `CUDSS` leaves `CTSolversMadNLPGPU` inactive and `MadNLP{GPU}`
+# unregistered as a strategy, with no error anywhere. CUDSS loads fine on macOS
+# despite its artifacts being linux/windows-only: the artifact is lazy and only
+# needed for actual device calls.
+using MadNLPGPU: MadNLPGPU
 using CUDA: CUDA
+using CUDSS: CUDSS
 
 # Include shared test problems via TestProblems module
 include(joinpath(@__DIR__, "..", "..", "problems", "TestProblems.jl"))
 using .TestProblems
+
+# Shared CUDA/GPU capability checks — one definition for the whole suite.
+include(joinpath(@__DIR__, "..", "..", "helpers", "capabilities.jl"))
+using .TestCapabilities: is_cuda_on, gpu_extension_armed
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
@@ -33,9 +44,6 @@ const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING :
 # Objective tolerance for comparison with reference values
 const OBJ_RTOL = 1e-2
 const OBJ_ATOL = 1e-3  # Absolute tolerance for small objectives
-
-# CUDA availability check
-is_cuda_on() = CUDA.functional()
 
 # Generic helper function for test execution (CPU or GPU)
 function run_test(
@@ -94,7 +102,7 @@ function run_test(
             success,
             solve_time,
             obj,
-            pb.obj,
+            pb.objective,
             iters,
             memory_bytes > 0 ? memory_bytes : nothing,
             false,  # show_memory = false
@@ -115,10 +123,10 @@ function run_test(
         if success
             Test.@test solve_result isa OptimalControl.AbstractSolution
             # Use absolute tolerance when reference objective is near zero
-            if abs(pb.obj) < 1e-6
-                Test.@test OptimalControl.objective(solve_result) ≈ pb.obj atol = OBJ_ATOL
+            if abs(pb.objective) < 1e-6
+                Test.@test OptimalControl.objective(solve_result) ≈ pb.objective atol = OBJ_ATOL
             else
-                Test.@test OptimalControl.objective(solve_result) ≈ pb.obj rtol = OBJ_RTOL
+                Test.@test OptimalControl.objective(solve_result) ≈ pb.objective rtol = OBJ_RTOL
             end
         end
     end

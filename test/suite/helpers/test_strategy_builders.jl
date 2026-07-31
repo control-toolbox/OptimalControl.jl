@@ -11,6 +11,7 @@ module TestStrategyBuilders
 using Test: Test
 using OptimalControl: OptimalControl
 using CTDirect: CTDirect
+using CTBase: CTBase
 using CTSolvers: CTSolvers
 using NLPModelsIpopt: NLPModelsIpopt  # Add for Ipopt strategy building
 using MadNLP: MadNLP          # Add for MadNLP strategy building
@@ -23,29 +24,29 @@ const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING :
 # TOP-LEVEL MOCKS
 # ====================================================================
 
-struct MockDiscretizer <: CTDirect.AbstractDiscretizer
-    options::CTSolvers.StrategyOptions
+struct MockDiscretizer <: CTSolvers.DOCP.AbstractDiscretizer
+    options::CTBase.Strategies.StrategyOptions
 end
 
-struct MockModeler <: CTSolvers.AbstractNLPModeler
-    options::CTSolvers.StrategyOptions
+struct MockModeler <: CTSolvers.Modelers.AbstractNLPModeler
+    options::CTBase.Strategies.StrategyOptions
 end
 
-struct MockSolver <: CTSolvers.AbstractNLPSolver
-    options::CTSolvers.StrategyOptions
+struct MockSolver <: CTSolvers.Solvers.AbstractNLPSolver
+    options::CTBase.Strategies.StrategyOptions
 end
 
-CTSolvers.id(::Type{MockDiscretizer}) = :mock_disc
-CTSolvers.id(::Type{MockModeler}) = :mock_mod
-CTSolvers.id(::Type{MockSolver}) = :mock_sol
+CTBase.Strategies.id(::Type{MockDiscretizer}) = :mock_disc
+CTBase.Strategies.id(::Type{MockModeler}) = :mock_mod
+CTBase.Strategies.id(::Type{MockSolver}) = :mock_sol
 
 function test_strategy_builders()
     Test.@testset "Strategy Builders Tests" verbose=VERBOSE showtiming=SHOWTIMING begin
 
         # Create mock instances
-        disc = MockDiscretizer(CTSolvers.StrategyOptions())
-        mod = MockModeler(CTSolvers.StrategyOptions())
-        sol = MockSolver(CTSolvers.StrategyOptions())
+        disc = MockDiscretizer(CTBase.Strategies.StrategyOptions())
+        mod = MockModeler(CTBase.Strategies.StrategyOptions())
+        sol = MockSolver(CTBase.Strategies.StrategyOptions())
 
         # ================================================================
         # UNIT TESTS - _build_partial_description
@@ -192,26 +193,26 @@ function test_strategy_builders()
 
         Test.@testset "Build or Use Strategy - Provided Path" begin
             # Create a resolved method using real strategy IDs from registry
-            resolved = CTSolvers.Orchestration.resolve_method(
+            resolved = CTBase.Orchestration.resolve_method(
                 (:collocation, :adnlp, :ipopt, :cpu),  # Use real strategy IDs
                 (
-                    discretizer=CTDirect.AbstractDiscretizer,
-                    modeler=CTSolvers.AbstractNLPModeler,
-                    solver=CTSolvers.AbstractNLPSolver,
+                    discretizer=CTSolvers.DOCP.AbstractDiscretizer,
+                    modeler=CTSolvers.Modelers.AbstractNLPModeler,
+                    solver=CTSolvers.Solvers.AbstractNLPSolver,
                 ),
                 registry,
             )
 
             # Test discretizer (should return provided mock regardless of resolved method)
-            disc = MockDiscretizer(CTSolvers.StrategyOptions())
+            disc = MockDiscretizer(CTBase.Strategies.StrategyOptions())
             result = OptimalControl._build_or_use_strategy(
                 resolved,
                 disc,
                 :discretizer,
                 (
-                    discretizer=CTDirect.AbstractDiscretizer,
-                    modeler=CTSolvers.AbstractNLPModeler,
-                    solver=CTSolvers.AbstractNLPSolver,
+                    discretizer=CTSolvers.DOCP.AbstractDiscretizer,
+                    modeler=CTSolvers.Modelers.AbstractNLPModeler,
+                    solver=CTSolvers.Solvers.AbstractNLPSolver,
                 ),
                 registry,
             )
@@ -219,15 +220,15 @@ function test_strategy_builders()
             Test.@test result isa MockDiscretizer
 
             # Test modeler
-            mod = MockModeler(CTSolvers.StrategyOptions())
+            mod = MockModeler(CTBase.Strategies.StrategyOptions())
             result = OptimalControl._build_or_use_strategy(
                 resolved,
                 mod,
                 :modeler,
                 (
-                    discretizer=CTDirect.AbstractDiscretizer,
-                    modeler=CTSolvers.AbstractNLPModeler,
-                    solver=CTSolvers.AbstractNLPSolver,
+                    discretizer=CTSolvers.DOCP.AbstractDiscretizer,
+                    modeler=CTSolvers.Modelers.AbstractNLPModeler,
+                    solver=CTSolvers.Solvers.AbstractNLPSolver,
                 ),
                 registry,
             )
@@ -235,15 +236,15 @@ function test_strategy_builders()
             Test.@test result isa MockModeler
 
             # Test solver
-            sol = MockSolver(CTSolvers.StrategyOptions())
+            sol = MockSolver(CTBase.Strategies.StrategyOptions())
             result = OptimalControl._build_or_use_strategy(
                 resolved,
                 sol,
                 :solver,
                 (
-                    discretizer=CTDirect.AbstractDiscretizer,
-                    modeler=CTSolvers.AbstractNLPModeler,
-                    solver=CTSolvers.AbstractNLPSolver,
+                    discretizer=CTSolvers.DOCP.AbstractDiscretizer,
+                    modeler=CTSolvers.Modelers.AbstractNLPModeler,
+                    solver=CTSolvers.Solvers.AbstractNLPSolver,
                 ),
                 registry,
             )
@@ -252,24 +253,24 @@ function test_strategy_builders()
         end
 
         Test.@testset "Build or Use Strategy - Type Stability" begin
-            resolved = CTSolvers.Orchestration.resolve_method(
+            resolved = CTBase.Orchestration.resolve_method(
                 (:collocation, :adnlp, :ipopt, :cpu),  # Use real strategy IDs
                 (
-                    discretizer=CTDirect.AbstractDiscretizer,
-                    modeler=CTSolvers.AbstractNLPModeler,
-                    solver=CTSolvers.AbstractNLPSolver,
+                    discretizer=CTSolvers.DOCP.AbstractDiscretizer,
+                    modeler=CTSolvers.Modelers.AbstractNLPModeler,
+                    solver=CTSolvers.Solvers.AbstractNLPSolver,
                 ),
                 registry,
             )
-            disc = MockDiscretizer(CTSolvers.StrategyOptions())
+            disc = MockDiscretizer(CTBase.Strategies.StrategyOptions())
             Test.@test_nowarn Test.@inferred OptimalControl._build_or_use_strategy(
                 resolved,
                 disc,
                 :discretizer,
                 (
-                    discretizer=CTDirect.AbstractDiscretizer,
-                    modeler=CTSolvers.AbstractNLPModeler,
-                    solver=CTSolvers.AbstractNLPSolver,
+                    discretizer=CTSolvers.DOCP.AbstractDiscretizer,
+                    modeler=CTSolvers.Modelers.AbstractNLPModeler,
+                    solver=CTSolvers.Solvers.AbstractNLPSolver,
                 ),
                 registry,
             )
@@ -277,12 +278,12 @@ function test_strategy_builders()
 
         Test.@testset "Build or Use Strategy - Build Path" begin
             # Test building strategies when nothing is provided
-            resolved = CTSolvers.Orchestration.resolve_method(
+            resolved = CTBase.Orchestration.resolve_method(
                 (:collocation, :adnlp, :ipopt, :cpu),
                 (
-                    discretizer=CTDirect.AbstractDiscretizer,
-                    modeler=CTSolvers.AbstractNLPModeler,
-                    solver=CTSolvers.AbstractNLPSolver,
+                    discretizer=CTSolvers.DOCP.AbstractDiscretizer,
+                    modeler=CTSolvers.Modelers.AbstractNLPModeler,
+                    solver=CTSolvers.Solvers.AbstractNLPSolver,
                 ),
                 registry,
             )
@@ -293,14 +294,14 @@ function test_strategy_builders()
                 nothing,
                 :discretizer,
                 (
-                    discretizer=CTDirect.AbstractDiscretizer,
-                    modeler=CTSolvers.AbstractNLPModeler,
-                    solver=CTSolvers.AbstractNLPSolver,
+                    discretizer=CTSolvers.DOCP.AbstractDiscretizer,
+                    modeler=CTSolvers.Modelers.AbstractNLPModeler,
+                    solver=CTSolvers.Solvers.AbstractNLPSolver,
                 ),
                 registry,
             )
-            Test.@test disc_result isa CTDirect.AbstractDiscretizer
-            Test.@test CTSolvers.id(typeof(disc_result)) == :collocation
+            Test.@test disc_result isa CTSolvers.DOCP.AbstractDiscretizer
+            Test.@test CTBase.Strategies.id(typeof(disc_result)) == :collocation
 
             # Test modeler building (should work without extra deps)
             mod_result = OptimalControl._build_or_use_strategy(
@@ -308,14 +309,14 @@ function test_strategy_builders()
                 nothing,
                 :modeler,
                 (
-                    discretizer=CTDirect.AbstractDiscretizer,
-                    modeler=CTSolvers.AbstractNLPModeler,
-                    solver=CTSolvers.AbstractNLPSolver,
+                    discretizer=CTSolvers.DOCP.AbstractDiscretizer,
+                    modeler=CTSolvers.Modelers.AbstractNLPModeler,
+                    solver=CTSolvers.Solvers.AbstractNLPSolver,
                 ),
                 registry,
             )
-            Test.@test mod_result isa CTSolvers.AbstractNLPModeler
-            Test.@test CTSolvers.id(typeof(mod_result)) == :adnlp
+            Test.@test mod_result isa CTSolvers.Modelers.AbstractNLPModeler
+            Test.@test CTBase.Strategies.id(typeof(mod_result)) == :adnlp
 
             # Test solver building (may fail due to dependencies, so we test the error handling)
             try
@@ -324,14 +325,14 @@ function test_strategy_builders()
                     nothing,
                     :solver,
                     (
-                        discretizer=CTDirect.AbstractDiscretizer,
-                        modeler=CTSolvers.AbstractNLPModeler,
-                        solver=CTSolvers.AbstractNLPSolver,
+                        discretizer=CTSolvers.DOCP.AbstractDiscretizer,
+                        modeler=CTSolvers.Modelers.AbstractNLPModeler,
+                        solver=CTSolvers.Solvers.AbstractNLPSolver,
                     ),
                     registry,
                 )
-                Test.@test sol_result isa CTSolvers.AbstractNLPSolver
-                Test.@test CTSolvers.id(typeof(sol_result)) == :ipopt
+                Test.@test sol_result isa CTSolvers.Solvers.AbstractNLPSolver
+                Test.@test CTBase.Strategies.id(typeof(sol_result)) == :ipopt
             catch e
                 # If dependencies are missing, that's expected in test environment
                 Test.@test e isa Exception
@@ -345,12 +346,12 @@ function test_strategy_builders()
             ]
 
             for method_tuple in methods_to_test
-                resolved = CTSolvers.Orchestration.resolve_method(
+                resolved = CTBase.Orchestration.resolve_method(
                     method_tuple,
                     (
-                        discretizer=CTDirect.AbstractDiscretizer,
-                        modeler=CTSolvers.AbstractNLPModeler,
-                        solver=CTSolvers.AbstractNLPSolver,
+                        discretizer=CTSolvers.DOCP.AbstractDiscretizer,
+                        modeler=CTSolvers.Modelers.AbstractNLPModeler,
+                        solver=CTSolvers.Solvers.AbstractNLPSolver,
                     ),
                     registry,
                 )
@@ -361,14 +362,14 @@ function test_strategy_builders()
                     nothing,
                     :discretizer,
                     (
-                        discretizer=CTDirect.AbstractDiscretizer,
-                        modeler=CTSolvers.AbstractNLPModeler,
-                        solver=CTSolvers.AbstractNLPSolver,
+                        discretizer=CTSolvers.DOCP.AbstractDiscretizer,
+                        modeler=CTSolvers.Modelers.AbstractNLPModeler,
+                        solver=CTSolvers.Solvers.AbstractNLPSolver,
                     ),
                     registry,
                 )
-                Test.@test disc isa CTDirect.AbstractDiscretizer
-                Test.@test CTSolvers.id(typeof(disc)) == method_tuple[1]
+                Test.@test disc isa CTSolvers.DOCP.AbstractDiscretizer
+                Test.@test CTBase.Strategies.id(typeof(disc)) == method_tuple[1]
 
                 # Test modeler building (may fail for some dependencies)
                 try
@@ -377,14 +378,14 @@ function test_strategy_builders()
                         nothing,
                         :modeler,
                         (
-                            discretizer=CTDirect.AbstractDiscretizer,
-                            modeler=CTSolvers.AbstractNLPModeler,
-                            solver=CTSolvers.AbstractNLPSolver,
+                            discretizer=CTSolvers.DOCP.AbstractDiscretizer,
+                            modeler=CTSolvers.Modelers.AbstractNLPModeler,
+                            solver=CTSolvers.Solvers.AbstractNLPSolver,
                         ),
                         registry,
                     )
-                    Test.@test mod isa CTSolvers.AbstractNLPModeler
-                    Test.@test CTSolvers.id(typeof(mod)) == method_tuple[2]
+                    Test.@test mod isa CTSolvers.Modelers.AbstractNLPModeler
+                    Test.@test CTBase.Strategies.id(typeof(mod)) == method_tuple[2]
                 catch e
                     # Expected for some combinations due to missing dependencies
                     Test.@test e isa Exception

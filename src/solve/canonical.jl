@@ -22,9 +22,9 @@ normalized. It discretizes the problem and passes it to the underlying `solve` p
 # Arguments
 - `ocp::CTModels.AbstractModel`: The optimal control problem to solve
 - `initial_guess::CTModels.AbstractInitialGuess`: Normalized initial guess for the solution
-- `discretizer::CTDirect.AbstractDiscretizer`: Concrete discretization strategy
-- `modeler::CTSolvers.AbstractNLPModeler`: Concrete NLP modeling strategy
-- `solver::CTSolvers.AbstractNLPSolver`: Concrete NLP solver strategy
+- `discretizer::CTSolvers.DOCP.AbstractDiscretizer`: Concrete discretization strategy
+- `modeler::CTSolvers.Modelers.AbstractNLPModeler`: Concrete NLP modeling strategy
+- `solver::CTSolvers.Solvers.AbstractNLPSolver`: Concrete NLP solver strategy
 - `display::Bool`: Whether to display the OCP configuration before solving
 
 # Returns
@@ -37,8 +37,8 @@ ocp = Model(time=:final)
 # ... define OCP ...
 init = CTModels.build_initial_guess(ocp, nothing)
 disc = CTDirect.Collocation(grid_size=100)
-mod  = CTSolvers.ADNLP()
-sol  = CTSolvers.Ipopt()
+mod  = CTSolvers.Modelers.ADNLP()
+sol  = CTSolvers.Solvers.Ipopt()
 
 solution = solve(ocp, init, disc, mod, sol; display=true)
 ```
@@ -54,9 +54,9 @@ See also: [`solve_explicit`](@ref), [`solve_descriptive`](@ref)
 function CommonSolve.solve(
     ocp::CTModels.AbstractModel,
     initial_guess::CTModels.AbstractInitialGuess,   # Already normalized by Layer 1
-    discretizer::CTDirect.AbstractDiscretizer,      # Concrete type (no Nothing)
-    modeler::CTSolvers.AbstractNLPModeler,          # Concrete type (no Nothing)
-    solver::CTSolvers.AbstractNLPSolver;            # Concrete type (no Nothing)
+    discretizer::CTSolvers.DOCP.AbstractDiscretizer,      # Concrete type (no Nothing)
+    modeler::CTSolvers.Modelers.AbstractNLPModeler,          # Concrete type (no Nothing)
+    solver::CTSolvers.Solvers.AbstractNLPSolver;            # Concrete type (no Nothing)
     display::Bool,                                   # Explicit value (no default)
 )::CTModels.AbstractSolution
 
@@ -73,7 +73,7 @@ function CommonSolve.solve(
     end
 
     # 2. Discretize the optimal control problem
-    discrete_problem = CTDirect.discretize(ocp, discretizer)
+    discrete_problem = CTSolvers.DOCP.discretize(ocp, discretizer)
 
     # 3. Solve the discretized optimal control problem
     return CommonSolve.solve(
