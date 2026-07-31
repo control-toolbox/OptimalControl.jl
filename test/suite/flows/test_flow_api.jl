@@ -42,12 +42,12 @@ function build_labelled()
     CTModels.Building.time!(pre; t0=T0, tf=TF)
     CTModels.Building.state!(pre, 2)
     CTModels.Building.control!(pre, 1)
-    CTModels.Building.dynamics!(pre, (r, t, x, u, v) -> (r[1] = x[2]; r[2] = u[1]; nothing))
+    CTModels.Building.dynamics!(pre, (r, t, x, u, v) -> (r[1]=x[2]; r[2]=u[1]; nothing))
     CTModels.Building.objective!(pre, :min; lagrange=(t, x, u, v) -> 0.5 * u[1]^2)
     CTModels.Building.constraint!(
         pre,
         :path;
-        f=(r, t, x, u, v) -> (r[1] = x[2]; nothing),
+        f=(r, t, x, u, v) -> (r[1]=x[2]; nothing),
         lb=[-Inf],
         ub=[VMAX],
         label=:vmax,
@@ -71,7 +71,7 @@ function build_nonfixed()
     CTModels.Building.time!(pre; t0=T0, indf=1)
     CTModels.Building.state!(pre, 2)
     CTModels.Building.control!(pre, 1)
-    CTModels.Building.dynamics!(pre, (r, t, x, u, v) -> (r[1] = x[2]; r[2] = u[1]; nothing))
+    CTModels.Building.dynamics!(pre, (r, t, x, u, v) -> (r[1]=x[2]; r[2]=u[1]; nothing))
     CTModels.Building.objective!(pre, :min; mayer=(x0, xf, v) -> v[1])
     CTModels.Building.time_dependence!(pre; autonomous=true)
     return CTModels.Building.build(pre)
@@ -206,7 +206,9 @@ function test_flow_api()
         end
 
         Test.@testset "multiplier accepts a Data object" begin
-            f = Flow(ocp, (x, p) -> 0.0; constraint=:vmax, multiplier=Multiplier((x, p) -> p[1]))
+            f = Flow(
+                ocp, (x, p) -> 0.0; constraint=:vmax, multiplier=Multiplier((x, p) -> p[1])
+            )
             Test.@test f(T0, X0, P0, TF) isa Tuple
         end
 

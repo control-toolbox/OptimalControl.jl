@@ -140,7 +140,8 @@ function test_ctlie()
                 X1 = VectorField(x -> [x[2], -x[1]])
                 X2 = VectorField(x -> [x[1], x[2]])
                 Test.@test (@Lie [X1, X2]) isa VectorField
-                Test.@test (@Lie [[X1, X2], VectorField(x -> [2x[1], 3x[2]])]) isa VectorField
+                Test.@test (@Lie [[X1, X2], VectorField(x -> [2x[1], 3x[2]])]) isa
+                    VectorField
 
                 H1 = Hamiltonian((x, p) -> x[1] * p[1])
                 H2 = Hamiltonian((x, p) -> x[2] * p[2])
@@ -196,7 +197,8 @@ function test_ctlie()
                 # deferred through `Core.eval` — writing it inline would break
                 # the whole file at load.
                 Test.@test_throws OptimalControl.IncorrectArgument Core.eval(
-                    CurrentModule, :(OptimalControl.@Lie [LIE_X1, LIE_X2] autonomous = false)
+                    CurrentModule,
+                    :(OptimalControl.@Lie [LIE_X1, LIE_X2] autonomous = false),
                 )
             end
         end

@@ -327,7 +327,8 @@ function test_ctbase()
                 # `value` and `name` are genuine homonyms across CTBase.Options
                 # and CTModels.Components. `name` goes to CTModels (§8);
                 # `value` is internal on both sides and exported by neither.
-                Test.@test getfield(OptimalControl, :name) !== getfield(CTBase.Options, :name)
+                Test.@test getfield(OptimalControl, :name) !==
+                    getfield(CTBase.Options, :name)
                 Test.@test !is_exported(OptimalControl, :value)
                 # `description` is a homonym across Options and Strategies.
                 Test.@test !is_exported(OptimalControl, :description)

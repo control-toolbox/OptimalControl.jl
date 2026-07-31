@@ -20,7 +20,7 @@ Growth-rate estimation: fit `ẋ = p·x`, `x(0) = 2` to the analytical data
 function ExponentialGrowth(form::Symbol=:abstract)
     check_form(form)
     return cached(:exponential_growth, form, ()) do
-        form === :abstract ? _exp_growth_abstract() : _exp_growth_functional()
+        return form === :abstract ? _exp_growth_abstract() : _exp_growth_functional()
     end
 end
 
@@ -101,7 +101,7 @@ minimising `ω²`. The analytical solution is `ω = π/2`, so the objective is
 function HarmonicOscillator(form::Symbol=:abstract)
     check_form(form)
     return cached(:harmonic_oscillator, form, ()) do
-        form === :abstract ? _harmonic_abstract() : _harmonic_functional()
+        return form === :abstract ? _harmonic_abstract() : _harmonic_functional()
     end
 end
 

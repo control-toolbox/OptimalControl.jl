@@ -14,7 +14,11 @@ Return the quadrotor tracking problem as a [`TestProblem`](@ref).
 function Quadrotor(form::Symbol=:abstract; T=1, g=9.8, r=0.1)
     check_form(form)
     return cached(:quadrotor, form, (T, g, r)) do
-        form === :abstract ? _quadrotor_abstract(; T, g, r) : _quadrotor_functional(; T, g, r)
+        return if form === :abstract
+            _quadrotor_abstract(; T, g, r)
+        else
+            _quadrotor_functional(; T, g, r)
+        end
     end
 end
 

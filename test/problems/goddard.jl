@@ -20,8 +20,11 @@ plus the constants the shooting function is written against (`vmax`, `mf`,
 function Goddard(form::Symbol=:abstract; vmax=0.1, Tmax=3.5)
     check_form(form)
     return cached(:goddard, form, (vmax, Tmax)) do
-        form === :abstract ? _goddard_abstract(; vmax, Tmax) :
-        _goddard_functional(; vmax, Tmax)
+        return if form === :abstract
+            _goddard_abstract(; vmax, Tmax)
+        else
+            _goddard_functional(; vmax, Tmax)
+        end
     end
 end
 
@@ -61,9 +64,7 @@ function _goddard_constants(; vmax, Tmax)
     )
     tf_ref = 0.20204744057100849
 
-    return (;
-        Cd, β, b, r0, v0, m0, mf, vmax, Tmax, x0, F0, F1, p0, switching_times, tf_ref
-    )
+    return (; Cd, β, b, r0, v0, m0, mf, vmax, Tmax, x0, F0, F1, p0, switching_times, tf_ref)
 end
 
 """
