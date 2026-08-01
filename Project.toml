@@ -77,4 +77,4 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 UnoSolver = "1baa60ac-02f7-4b39-a7a8-2f4f58486b05"
 
 [targets]
-test = ["ADNLPModels", "BenchmarkTools", "CUDA", "CUDSS", "DiffEqBase", "MadNCL", "MadNLP", "MadNLPGPU", "NLPModelsIpopt", "NonlinearSolve", "OrdinaryDiffEq", "OrdinaryDiffEqTsit5", "Printf", "SciMLBase", "SolverCore", "SplitApplyCombine", "Test", "UnoSolver"]
+test = ["BenchmarkTools", "CUDA", "CUDSS", "DiffEqBase", "MadNCL", "MadNLP", "MadNLPGPU", "NLPModelsIpopt", "NonlinearSolve", "OrdinaryDiffEq", "OrdinaryDiffEqTsit5", "Printf", "SciMLBase", "SolverCore", "SplitApplyCombine", "Test", "UnoSolver"]
