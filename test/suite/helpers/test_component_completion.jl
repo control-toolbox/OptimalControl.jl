@@ -33,16 +33,16 @@ function test_component_completion()
                 nothing, nothing, nothing, registry
             )
             Test.@test result isa NamedTuple{(:discretizer, :modeler, :solver)}
-            Test.@test result.discretizer isa CTDirect.AbstractDiscretizer
-            Test.@test result.modeler isa CTSolvers.AbstractNLPModeler
-            Test.@test result.solver isa CTSolvers.AbstractNLPSolver
+            Test.@test result.discretizer isa CTSolvers.DOCP.AbstractDiscretizer
+            Test.@test result.modeler isa CTSolvers.Modelers.AbstractNLPModeler
+            Test.@test result.solver isa CTSolvers.Solvers.AbstractNLPSolver
         end
 
         Test.@testset "All Components Provided - No Change" begin
             # Use real strategies from the registry
             disc = CTDirect.Collocation()
-            mod = CTSolvers.ADNLP()
-            sol = CTSolvers.Ipopt()
+            mod = CTSolvers.Modelers.ADNLP()
+            sol = CTSolvers.Solvers.Ipopt()
 
             result = OptimalControl._complete_components(disc, mod, sol, registry)
             Test.@test result.discretizer === disc
@@ -54,16 +54,16 @@ function test_component_completion()
             disc = CTDirect.Collocation()
             result = OptimalControl._complete_components(disc, nothing, nothing, registry)
             Test.@test result.discretizer === disc
-            Test.@test result.modeler isa CTSolvers.AbstractNLPModeler
-            Test.@test result.solver isa CTSolvers.AbstractNLPSolver
+            Test.@test result.modeler isa CTSolvers.Modelers.AbstractNLPModeler
+            Test.@test result.solver isa CTSolvers.Solvers.AbstractNLPSolver
         end
 
         Test.@testset "Partial Completion - Two Components Provided" begin
             disc = CTDirect.Collocation()
-            sol = CTSolvers.Ipopt()
+            sol = CTSolvers.Solvers.Ipopt()
             result = OptimalControl._complete_components(disc, nothing, sol, registry)
             Test.@test result.discretizer === disc
-            Test.@test result.modeler isa CTSolvers.AbstractNLPModeler
+            Test.@test result.modeler isa CTSolvers.Modelers.AbstractNLPModeler
             Test.@test result.solver === sol
         end
 
@@ -75,8 +75,8 @@ function test_component_completion()
             Test.@test result isa NamedTuple{(:discretizer, :modeler, :solver)}
 
             disc = CTDirect.Collocation()
-            mod = CTSolvers.ADNLP()
-            sol = CTSolvers.Ipopt()
+            mod = CTSolvers.Modelers.ADNLP()
+            sol = CTSolvers.Solvers.Ipopt()
             result = OptimalControl._complete_components(disc, mod, sol, registry)
             Test.@test result isa NamedTuple{(:discretizer, :modeler, :solver)}
         end
@@ -86,23 +86,23 @@ function test_component_completion()
             result = OptimalControl._complete_components(
                 nothing, nothing, nothing, registry
             )
-            Test.@test result.discretizer isa CTDirect.AbstractDiscretizer
-            Test.@test result.modeler isa CTSolvers.AbstractNLPModeler
-            Test.@test result.solver isa CTSolvers.AbstractNLPSolver
+            Test.@test result.discretizer isa CTSolvers.DOCP.AbstractDiscretizer
+            Test.@test result.modeler isa CTSolvers.Modelers.AbstractNLPModeler
+            Test.@test result.solver isa CTSolvers.Solvers.AbstractNLPSolver
 
             # Test with specific CPU method
             disc = CTDirect.Collocation()
             result = OptimalControl._complete_components(disc, nothing, nothing, registry)
             Test.@test result.discretizer === disc
-            Test.@test result.modeler isa CTSolvers.AbstractNLPModeler
-            Test.@test result.solver isa CTSolvers.AbstractNLPSolver
+            Test.@test result.modeler isa CTSolvers.Modelers.AbstractNLPModeler
+            Test.@test result.solver isa CTSolvers.Solvers.AbstractNLPSolver
         end
 
         Test.@testset "Mixed Strategy Types" begin
             # Test with different strategy combinations
             disc = CTDirect.Collocation()
-            mod = CTSolvers.ADNLP()  # Use ADNLP instead of Exa to avoid potential issues
-            sol = CTSolvers.Ipopt()  # Use Ipopt instead of MadNLP
+            mod = CTSolvers.Modelers.ADNLP()  # Use ADNLP instead of Exa to avoid potential issues
+            sol = CTSolvers.Solvers.Ipopt()  # Use Ipopt instead of MadNLP
 
             result = OptimalControl._complete_components(disc, mod, sol, registry)
             Test.@test result.discretizer === disc
@@ -136,8 +136,8 @@ function test_component_completion()
 
             # Test with provided components (should be fewer allocations)
             disc = CTDirect.Collocation()
-            mod = CTSolvers.ADNLP()
-            sol = CTSolvers.Ipopt()
+            mod = CTSolvers.Modelers.ADNLP()
+            sol = CTSolvers.Solvers.Ipopt()
             allocs_provided = Test.@allocated OptimalControl._complete_components(
                 disc, mod, sol, registry
             )

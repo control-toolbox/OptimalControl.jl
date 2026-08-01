@@ -31,14 +31,14 @@ struct MockSolution <: CTModels.AbstractSolution end
 CTModels.build_initial_guess(::MockOCP, ::Nothing) = MockInit()
 CTModels.build_initial_guess(::MockOCP, i::MockInit) = i
 
-struct MockDiscretizer <: CTDirect.AbstractDiscretizer
-    options::CTSolvers.StrategyOptions
+struct MockDiscretizer <: CTSolvers.DOCP.AbstractDiscretizer
+    options::CTBase.Strategies.StrategyOptions
 end
-struct MockModeler <: CTSolvers.AbstractNLPModeler
-    options::CTSolvers.StrategyOptions
+struct MockModeler <: CTSolvers.Modelers.AbstractNLPModeler
+    options::CTBase.Strategies.StrategyOptions
 end
-struct MockSolver <: CTSolvers.AbstractNLPSolver
-    options::CTSolvers.StrategyOptions
+struct MockSolver <: CTSolvers.Solvers.AbstractNLPSolver
+    options::CTBase.Strategies.StrategyOptions
 end
 
 # Short-circuit Layer 3 for mocks (explicit mode: typed mock components)
@@ -47,14 +47,14 @@ CommonSolve.solve(
 )::MockSolution = MockSolution()
 
 # Short-circuit Layer 3 for mocks (descriptive mode: real abstract component types)
-# solve_descriptive builds real CTDirect.Collocation, CTSolvers.ADNLP, etc.
+# solve_descriptive builds real CTDirect.Collocation, CTSolvers.Modelers.ADNLP, etc.
 # This override catches those calls for MockOCP without running a real solver.
 CommonSolve.solve(
     ::MockOCP,
     ::CTModels.AbstractInitialGuess,
-    ::CTDirect.AbstractDiscretizer,
-    ::CTSolvers.AbstractNLPModeler,
-    ::CTSolvers.AbstractNLPSolver;
+    ::CTSolvers.DOCP.AbstractDiscretizer,
+    ::CTSolvers.Modelers.AbstractNLPModeler,
+    ::CTSolvers.Solvers.AbstractNLPSolver;
     display::Bool,
 )::MockSolution = MockSolution()
 
@@ -73,7 +73,7 @@ function test_orchestration()
         # ====================================================================
 
         Test.@testset "ExplicitMode detection" begin
-            disc = MockDiscretizer(CTSolvers.StrategyOptions())
+            disc = MockDiscretizer(CTBase.Strategies.StrategyOptions())
             kw = pairs((; discretizer=disc))
             Test.@test OptimalControl._explicit_or_descriptive((), kw) isa
                 OptimalControl.ExplicitMode
@@ -87,7 +87,7 @@ function test_orchestration()
 
         Test.@testset "Conflict: explicit + description raises IncorrectArgument" begin
             ocp = MockOCP()
-            disc = MockDiscretizer(CTSolvers.StrategyOptions())
+            disc = MockDiscretizer(CTBase.Strategies.StrategyOptions())
             Test.@test_throws CTBase.IncorrectArgument begin
                 CommonSolve.solve(ocp, :adnlp, :ipopt; discretizer=disc, display=false)
             end
@@ -100,9 +100,9 @@ function test_orchestration()
         Test.@testset "solve_explicit - complete components" begin
             ocp = MockOCP()
             init = MockInit()
-            disc = MockDiscretizer(CTSolvers.StrategyOptions())
-            mod = MockModeler(CTSolvers.StrategyOptions())
-            sol = MockSolver(CTSolvers.StrategyOptions())
+            disc = MockDiscretizer(CTBase.Strategies.StrategyOptions())
+            mod = MockModeler(CTBase.Strategies.StrategyOptions())
+            sol = MockSolver(CTBase.Strategies.StrategyOptions())
 
             result = CommonSolve.solve(
                 ocp;
@@ -170,9 +170,9 @@ function test_orchestration()
 
         Test.@testset "initial_guess=nothing → default MockInit" begin
             ocp = MockOCP()
-            disc = MockDiscretizer(CTSolvers.StrategyOptions())
-            mod = MockModeler(CTSolvers.StrategyOptions())
-            sol = MockSolver(CTSolvers.StrategyOptions())
+            disc = MockDiscretizer(CTBase.Strategies.StrategyOptions())
+            mod = MockModeler(CTBase.Strategies.StrategyOptions())
+            sol = MockSolver(CTBase.Strategies.StrategyOptions())
             result = CommonSolve.solve(
                 ocp; discretizer=disc, modeler=mod, solver=sol, display=false
             )
@@ -182,9 +182,9 @@ function test_orchestration()
         Test.@testset "initial_guess as AbstractInitialGuess is forwarded" begin
             ocp = MockOCP()
             init = MockInit()
-            disc = MockDiscretizer(CTSolvers.StrategyOptions())
-            mod = MockModeler(CTSolvers.StrategyOptions())
-            sol = MockSolver(CTSolvers.StrategyOptions())
+            disc = MockDiscretizer(CTBase.Strategies.StrategyOptions())
+            mod = MockModeler(CTBase.Strategies.StrategyOptions())
+            sol = MockSolver(CTBase.Strategies.StrategyOptions())
             result = CommonSolve.solve(
                 ocp;
                 initial_guess=init,
@@ -203,8 +203,8 @@ function test_orchestration()
         Test.@testset "Integration - ExplicitMode complete components" begin
             pb = TestProblems.Beam()
             disc = CTDirect.Collocation(grid_size=10, scheme=:midpoint)
-            mod = CTSolvers.ADNLP()
-            sol = CTSolvers.Ipopt(print_level=0, max_iter=0)
+            mod = CTSolvers.Modelers.ADNLP()
+            sol = CTSolvers.Solvers.Ipopt(print_level=0, max_iter=0)
 
             result = CommonSolve.solve(
                 pb.ocp;

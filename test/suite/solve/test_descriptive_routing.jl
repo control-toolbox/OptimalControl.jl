@@ -28,28 +28,33 @@ const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING :
 
 # --- Abstract families (isolated from real CTDirect/CTSolvers families) ---
 
-abstract type RoutingMockDiscretizer <: CTDirect.AbstractDiscretizer end
-abstract type RoutingMockModeler <: CTSolvers.AbstractNLPModeler end
-abstract type RoutingMockSolver <: CTSolvers.AbstractNLPSolver end
+abstract type RoutingMockDiscretizer <: CTSolvers.DOCP.AbstractDiscretizer end
+abstract type RoutingMockModeler <: CTSolvers.Modelers.AbstractNLPModeler end
+abstract type RoutingMockSolver <: CTSolvers.Solvers.AbstractNLPSolver end
 
 # --- Concrete mock: Collocation-like discretizer ---
 
 struct MockCollocation <: RoutingMockDiscretizer
-    options::CTSolvers.StrategyOptions
+    options::CTBase.Strategies.StrategyOptions
 end
 
-CTSolvers.Strategies.id(::Type{MockCollocation}) = :collocation
-function CTSolvers.Strategies.metadata(::Type{MockCollocation})
-    return CTSolvers.Strategies.StrategyMetadata(
-        CTSolvers.Options.OptionDefinition(;
+CTBase.Strategies.id(::Type{MockCollocation}) = :collocation
+function CTBase.Strategies.metadata(::Type{MockCollocation})
+    return CTBase.Strategies.StrategyMetadata(
+        CTBase.Options.OptionDefinition(;
             name=:grid_size, type=Int, default=100, description="Number of grid points"
         ),
     )
 end
-CTSolvers.Strategies.options(s::MockCollocation) = s.options
+CTBase.Strategies.options(s::MockCollocation) = s.options
+# ⚠️ v2.1.0-beta contract: every strategy must implement `parameter`. The old
+# `CTSolvers.Strategies.get_parameter_type` defaulted to `nothing`; the CTBase
+# generic throws `NotImplemented` instead, so a mock that omits it makes option
+# routing fail rather than treating the strategy as non-parameterized.
+CTBase.Strategies.parameter(::Type{<:MockCollocation}) = nothing
 
 function MockCollocation(; mode::Symbol=:strict, kwargs...)
-    opts = CTSolvers.Strategies.build_strategy_options(
+    opts = CTBase.Strategies.build_strategy_options(
         MockCollocation; mode=mode, kwargs...
     )
     return MockCollocation(opts)
@@ -58,13 +63,13 @@ end
 # --- Concrete mock: ADNLP-like modeler (with ambiguous :backend option) ---
 
 struct MockADNLP <: RoutingMockModeler
-    options::CTSolvers.StrategyOptions
+    options::CTBase.Strategies.StrategyOptions
 end
 
-CTSolvers.Strategies.id(::Type{MockADNLP}) = :adnlp
-function CTSolvers.Strategies.metadata(::Type{MockADNLP})
-    return CTSolvers.Strategies.StrategyMetadata(
-        CTSolvers.Options.OptionDefinition(;
+CTBase.Strategies.id(::Type{MockADNLP}) = :adnlp
+function CTBase.Strategies.metadata(::Type{MockADNLP})
+    return CTBase.Strategies.StrategyMetadata(
+        CTBase.Options.OptionDefinition(;
             name=:backend,
             type=Symbol,
             default=:dense,
@@ -73,26 +78,31 @@ function CTSolvers.Strategies.metadata(::Type{MockADNLP})
         ),
     )
 end
-CTSolvers.Strategies.options(s::MockADNLP) = s.options
+CTBase.Strategies.options(s::MockADNLP) = s.options
+# ⚠️ v2.1.0-beta contract: every strategy must implement `parameter`. The old
+# `CTSolvers.Strategies.get_parameter_type` defaulted to `nothing`; the CTBase
+# generic throws `NotImplemented` instead, so a mock that omits it makes option
+# routing fail rather than treating the strategy as non-parameterized.
+CTBase.Strategies.parameter(::Type{<:MockADNLP}) = nothing
 
 function MockADNLP(; mode::Symbol=:strict, kwargs...)
-    opts = CTSolvers.Strategies.build_strategy_options(MockADNLP; mode=mode, kwargs...)
+    opts = CTBase.Strategies.build_strategy_options(MockADNLP; mode=mode, kwargs...)
     return MockADNLP(opts)
 end
 
 # --- Concrete mock: Ipopt-like solver (with ambiguous :backend + :max_iter) ---
 
 struct MockIpopt <: RoutingMockSolver
-    options::CTSolvers.StrategyOptions
+    options::CTBase.Strategies.StrategyOptions
 end
 
-CTSolvers.Strategies.id(::Type{MockIpopt}) = :ipopt
-function CTSolvers.Strategies.metadata(::Type{MockIpopt})
-    return CTSolvers.Strategies.StrategyMetadata(
-        CTSolvers.Options.OptionDefinition(;
+CTBase.Strategies.id(::Type{MockIpopt}) = :ipopt
+function CTBase.Strategies.metadata(::Type{MockIpopt})
+    return CTBase.Strategies.StrategyMetadata(
+        CTBase.Options.OptionDefinition(;
             name=:max_iter, type=Int, default=1000, description="Maximum iterations"
         ),
-        CTSolvers.Options.OptionDefinition(;
+        CTBase.Options.OptionDefinition(;
             name=:backend,
             type=Symbol,
             default=:cpu,
@@ -101,19 +111,24 @@ function CTSolvers.Strategies.metadata(::Type{MockIpopt})
         ),
     )
 end
-CTSolvers.Strategies.options(s::MockIpopt) = s.options
+CTBase.Strategies.options(s::MockIpopt) = s.options
+# ⚠️ v2.1.0-beta contract: every strategy must implement `parameter`. The old
+# `CTSolvers.Strategies.get_parameter_type` defaulted to `nothing`; the CTBase
+# generic throws `NotImplemented` instead, so a mock that omits it makes option
+# routing fail rather than treating the strategy as non-parameterized.
+CTBase.Strategies.parameter(::Type{<:MockIpopt}) = nothing
 
 function MockIpopt(; mode::Symbol=:strict, kwargs...)
-    opts = CTSolvers.Strategies.build_strategy_options(MockIpopt; mode=mode, kwargs...)
+    opts = CTBase.Strategies.build_strategy_options(MockIpopt; mode=mode, kwargs...)
     return MockIpopt(opts)
 end
 
 # --- Registry and method ---
 
-const MOCK_REGISTRY = CTSolvers.create_registry(
-    CTDirect.AbstractDiscretizer => (MockCollocation,),
-    CTSolvers.AbstractNLPModeler => (MockADNLP,),
-    CTSolvers.AbstractNLPSolver => (MockIpopt,),
+const MOCK_REGISTRY = CTBase.Strategies.create_registry(
+    CTSolvers.DOCP.AbstractDiscretizer => (MockCollocation,),
+    CTSolvers.Modelers.AbstractNLPModeler => (MockADNLP,),
+    CTSolvers.Solvers.AbstractNLPSolver => (MockIpopt,),
 )
 
 const MOCK_METHOD = (:collocation, :adnlp, :ipopt, :cpu)
@@ -159,9 +174,9 @@ function test_descriptive_routing()
             Test.@test haskey(fam, :discretizer)
             Test.@test haskey(fam, :modeler)
             Test.@test haskey(fam, :solver)
-            Test.@test fam.discretizer === CTDirect.AbstractDiscretizer
-            Test.@test fam.modeler === CTSolvers.AbstractNLPModeler
-            Test.@test fam.solver === CTSolvers.AbstractNLPSolver
+            Test.@test fam.discretizer === CTSolvers.DOCP.AbstractDiscretizer
+            Test.@test fam.modeler === CTSolvers.Modelers.AbstractNLPModeler
+            Test.@test fam.solver === CTSolvers.Solvers.AbstractNLPSolver
         end
 
         # ====================================================================
@@ -171,7 +186,7 @@ function test_descriptive_routing()
         Test.@testset "_descriptive_action_defs" begin
             defs = OptimalControl._descriptive_action_defs()
 
-            Test.@test defs isa Vector{CTSolvers.Options.OptionDefinition}
+            Test.@test defs isa Vector{CTBase.Options.OptionDefinition}
             Test.@test length(defs) == 2
             Test.@test defs[1].name == :initial_guess
             Test.@test defs[1].aliases == OptimalControl._INITIAL_GUESS_ALIASES_ONLY
@@ -208,7 +223,7 @@ function test_descriptive_routing()
             routed = OptimalControl._route_descriptive_options(
                 MOCK_METHOD,
                 MOCK_REGISTRY,
-                pairs((; backend=CTSolvers.route_to(adnlp=:sparse))),
+                pairs((; backend=CTBase.Strategies.route_to(adnlp=:sparse))),
             )
 
             Test.@test routed.strategies.modeler[:backend] === :sparse
@@ -219,7 +234,7 @@ function test_descriptive_routing()
             routed = OptimalControl._route_descriptive_options(
                 MOCK_METHOD,
                 MOCK_REGISTRY,
-                pairs((; backend=CTSolvers.route_to(adnlp=:sparse, ipopt=:gpu))),
+                pairs((; backend=CTBase.Strategies.route_to(adnlp=:sparse, ipopt=:gpu))),
             )
 
             Test.@test routed.strategies.modeler[:backend] === :sparse
@@ -279,8 +294,8 @@ function test_descriptive_routing()
                 ocp, MOCK_METHOD, MOCK_REGISTRY, routed
             )
 
-            Test.@test CTSolvers.option_value(components.discretizer, :grid_size) == 42
-            Test.@test CTSolvers.option_value(components.solver, :max_iter) == 7
+            Test.@test CTBase.Strategies.option_value(components.discretizer, :grid_size) == 42
+            Test.@test CTBase.Strategies.option_value(components.solver, :max_iter) == 7
         end
 
         Test.@testset "_build_components_from_routed - disambiguation passed through" begin
@@ -288,14 +303,14 @@ function test_descriptive_routing()
             routed = OptimalControl._route_descriptive_options(
                 MOCK_METHOD,
                 MOCK_REGISTRY,
-                pairs((; backend=CTSolvers.route_to(adnlp=:sparse, ipopt=:gpu))),
+                pairs((; backend=CTBase.Strategies.route_to(adnlp=:sparse, ipopt=:gpu))),
             )
             components = OptimalControl._build_components_from_routed(
                 ocp, MOCK_METHOD, MOCK_REGISTRY, routed
             )
 
-            Test.@test CTSolvers.option_value(components.modeler, :backend) === :sparse
-            Test.@test CTSolvers.option_value(components.solver, :backend) === :gpu
+            Test.@test CTBase.Strategies.option_value(components.modeler, :backend) === :sparse
+            Test.@test CTBase.Strategies.option_value(components.solver, :backend) === :gpu
         end
 
         # ====================================================================
@@ -337,11 +352,15 @@ function test_descriptive_routing()
                     MOCK_METHOD, MOCK_REGISTRY, pairs((; grid_size=50))
                 )
 
-                # # Test allocation characteristics
-                # allocs = Test.@allocated OptimalControl._build_components_from_routed(
-                #     ocp, MOCK_METHOD, MOCK_REGISTRY, routed
-                # )
-                # Test.@test allocs < 100000  # Reasonable upper bound for strategy creation
+                # Test allocation characteristics
+                # Julia 1.10 allocates more here (468k observed vs <100k on 1.11+);
+                # the higher allocation is due to less aggressive inference optimization.
+                if VERSION >= v"1.11"
+                    allocs = Test.@allocated OptimalControl._build_components_from_routed(
+                        ocp, MOCK_METHOD, MOCK_REGISTRY, routed
+                    )
+                    Test.@test allocs < 100000  # Reasonable upper bound for strategy creation
+                end
             end
         end
 
@@ -352,7 +371,7 @@ function test_descriptive_routing()
         Test.@testset "Edge Cases" begin
             Test.@testset "Empty Registry Handling" begin
                 # Test with empty registry (should error gracefully)
-                empty_registry = CTSolvers.create_registry()
+                empty_registry = CTBase.Strategies.create_registry()
 
                 Test.@test_throws Exception OptimalControl._route_descriptive_options(
                     MOCK_METHOD, empty_registry, pairs(NamedTuple())
@@ -374,7 +393,7 @@ function test_descriptive_routing()
                     max_iter=10000,
                     display=false,
                     initial_guess=:random,
-                    backend=CTSolvers.route_to(adnlp=:sparse),  # Properly disambiguated
+                    backend=CTBase.Strategies.route_to(adnlp=:sparse),  # Properly disambiguated
                     # Add more valid options as needed
                 ))
 
@@ -384,8 +403,8 @@ function test_descriptive_routing()
 
                 Test.@test haskey(routed, :action)
                 Test.@test haskey(routed, :strategies)
-                Test.@test routed.action.display isa CTSolvers.OptionValue
-                Test.@test routed.action.initial_guess isa CTSolvers.OptionValue
+                Test.@test routed.action.display isa CTBase.Options.OptionValue
+                Test.@test routed.action.initial_guess isa CTBase.Options.OptionValue
                 Test.@test routed.strategies.modeler[:backend] === :sparse
             end
         end
@@ -426,9 +445,9 @@ function test_descriptive_routing()
             Test.@testset "Parameter Resolution" begin
                 # Test that parameter information is correctly resolved
                 families = OptimalControl._descriptive_families()
-                resolved = CTSolvers.resolve_method(MOCK_METHOD, families, MOCK_REGISTRY)
+                resolved = CTBase.Orchestration.resolve_method(MOCK_METHOD, families, MOCK_REGISTRY)
 
-                Test.@test resolved isa CTSolvers.ResolvedMethod
+                Test.@test resolved isa CTBase.Orchestration.ResolvedMethod
                 # Parameter might be nothing if not explicitly supported by mocks
                 Test.@test resolved.parameter === :cpu || resolved.parameter === nothing
                 Test.@test length(resolved.strategy_ids) == 3
@@ -479,8 +498,8 @@ function test_descriptive_routing()
                 max_iter=7,
             )
 
-            Test.@test CTSolvers.option_value(sol.discretizer, :grid_size) == 42
-            Test.@test CTSolvers.option_value(sol.solver, :max_iter) == 7
+            Test.@test CTBase.Strategies.option_value(sol.discretizer, :grid_size) == 42
+            Test.@test CTBase.Strategies.option_value(sol.solver, :max_iter) == 7
         end
 
         Test.@testset "solve_descriptive - disambiguation via route_to" begin
@@ -493,11 +512,11 @@ function test_descriptive_routing()
                 :ipopt;
                 display=false,
                 registry=MOCK_REGISTRY,
-                backend=CTSolvers.route_to(adnlp=:sparse, ipopt=:gpu),
+                backend=CTBase.Strategies.route_to(adnlp=:sparse, ipopt=:gpu),
             )
 
-            Test.@test CTSolvers.option_value(sol.modeler, :backend) === :sparse
-            Test.@test CTSolvers.option_value(sol.solver, :backend) === :gpu
+            Test.@test CTBase.Strategies.option_value(sol.modeler, :backend) === :sparse
+            Test.@test CTBase.Strategies.option_value(sol.solver, :backend) === :gpu
         end
 
         Test.@testset "solve_descriptive - error on unknown option" begin

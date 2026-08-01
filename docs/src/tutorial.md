@@ -1,8 +1,4 @@
 ```@meta
-Draft = false
-```
-
-```@meta
 EditURL = "../src-literate/tutorial.jl"
 ```
 

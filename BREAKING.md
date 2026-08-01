@@ -1,3 +1,140 @@
+# Breaking Changes: v2.0 → v2.1.0-beta
+
+This section describes the breaking changes when migrating from **OptimalControl.jl v2.0.5-beta** to **v2.1.0-beta**. For the v1.x → v2.0 migration, see [the section below](#breaking-changes-v1x--v20).
+
+Three symbol families physically changed package in this release, as the ecosystem was reorganised so that each name has exactly one owner. Most of the fallout is mechanical, but three items are semantic and will not announce themselves as import errors.
+
+## Start here: `Flow` needs an integrator
+
+Every example's preamble changes. SciML is no longer a hard dependency of the stack — the user chooses and loads an integrator:
+
+```julia
+using OptimalControl
+using OrdinaryDiffEqTsit5   # ← new, and required before any Flow(...)
+
+f = Flow(ocp, (x, p) -> p[2])
+```
+
+Without it, `Flow` fails with a bare `MethodError`. This is by design: it keeps the install cost of the direct path off users who never write a flow.
+
+## Differential geometry moved to CTLie
+
+`Lift`, `Poisson`, `∂ₜ` and `@Lie` are re-exported from the same names as before, so most code is unaffected. Two changes are not cosmetic:
+
+| v2.0 | v2.1.0-beta | Notes |
+| --- | --- | --- |
+| `Lie(X, f)` | `ad(X, f)` | renamed |
+| `X ⋅ f` | `ad(X, f)` | **removed**, no alias |
+| `HamiltonianLift` | `CTLie.LiftedHamiltonianFunction` | renamed **and** re-parented |
+
+`LiftedHamiltonianFunction` is `<: Function`, no longer `<: AbstractHamiltonian`. Any `isa` or `<:` test against the old hierarchy is now wrong:
+
+```julia
+H = Lift(F)          # F::Function
+H isa AbstractHamiltonian   # false in v2.1.0-beta, true in v2.0
+```
+
+Note that `Lift` is overloaded on its input: `Lift(X::AbstractVectorField)` still returns a `Hamiltonian`. Only the plain-`Function` overload changed.
+
+## Flow call convention
+
+The signature changed, not just the spelling.
+
+```julia
+# before
+f(t0, x0, p0, tf, λ)
+f(t0, x0, p0, tf; augment=true)
+
+# after
+f(t0, x0, p0, tf; variable=λ)
+f(t0, x0, p0, tf; variable=λ, variable_costate=true)
+```
+
+1. **There is no positional slot for the variable any more**, and `variable=` is **mandatory** on a `NonFixed` problem. Omitting it raises a `PreconditionError` whose suggestion is literally *"Pass `variable=v` when calling the flow"* — it does not silently default.
+2. **`augment=true` → `variable_costate=true`.** It integrates the augmented adjoint `ṗᵥ = -∂H/∂v` and returns `(xf, pf, pvf)` instead of `(xf, pf)`.
+3. **New `unsafe=false`.** With `unsafe=true` the ODE retcode is not checked and failures do not throw — useful inside a shooting loop, where an intermediate failure should surface through the residual.
+
+## Constrained flows: keywords replace positional arguments
+
+```julia
+# before
+fb = Flow(ocp, u, g, μ)                            # 3 positional
+
+# after
+fb = Flow(ocp, u; constraint=g, multiplier=μ)      # paired keywords
+```
+
+The two are a pair: one without the other is an `IncorrectArgument`.
+
+`constraint` now accepts three spellings, which is a capability gain rather than a rename — a plain `Function`, a `Data.PathConstraint`, **or a `Symbol` naming a `:path` constraint already declared in the OCP**:
+
+```julia
+fb = Flow(ocp, u; constraint=:vmax, multiplier=μ)  # reuse the model's own constraint
+```
+
+## Constructor keywords take an `is_` prefix
+
+```julia
+# before
+VectorField(f; autonomous=false, variable=true)
+@Lie [X, Y] autonomous=false
+
+# after
+VectorField(f; is_autonomous=false, is_variable=true)
+@Lie [X, Y] is_autonomous=false
+```
+
+The old spelling on `@Lie` raises an `IncorrectArgument` at macro-expansion time rather than being ignored.
+
+## Two names are no longer re-exported
+
+| Name | Why |
+| --- | --- |
+| `time` | It is `Base.time`, extended but not exported by `CTModels.Components`. Get it from `Base`. |
+| `success` | `CTModels.Solutions` exports the name but defines no method for it, so `success(sol)` was always a `MethodError`. **Use `successful(sol)`**, which is the real accessor and is unchanged. |
+
+## Newly re-exported
+
+The full `CTBase.Data` type vocabulary is now available without reaching into the package by hand — `Flow` dispatches on these, so building a flow explicitly needed them:
+
+`VectorField`, `Hamiltonian`, `HamiltonianVectorField`, `ComposedHamiltonian`, `PseudoHamiltonian`, `ControlLaw`, `OpenLoop`, `ClosedLoop`, `DynClosedLoop`, `PathConstraint`, `StateConstraint`, `ControlConstraint`, `MixedConstraint`, `Multiplier`, and their abstract supertypes.
+
+⚠️ `OpenLoop`, `ClosedLoop`, `DynClosedLoop` and the constraint kinds are **factory functions, not types**. They all build a `ControlLaw{F,Kind,…}` / `PathConstraint{F,Kind,…}`; the kind is a trait parameter, so `OpenLoop <: AbstractControlLaw` is a `TypeError`. Dispatch on the trait.
+
+Also new: `CTLie.dg_ad_backend` / `dg_ad_backend!` (global AD-backend control), `CTFlows.MultiPhase` (`n_phases`, `get_flow`, `get_switching_time`, …), and `CTSolvers.Integrators` (`SciML`, `final_state`, `evaluate_at`).
+
+## `OpenLoop` is unconditionally non-autonomous
+
+An open-loop control depends only on time — `u(t)` (or `u(t, v)`) — never on the state or costate, and autonomy is a property of the OCP, not of the control law itself. `OpenLoop` therefore does not offer `is_autonomous` as a real choice, unlike `ClosedLoop`/`DynClosedLoop`:
+
+```julia
+OpenLoop(t -> 1.0)              # the only spelling — always u(t), or u(t, v) with is_variable=true
+OpenLoop(() -> 1.0)             # wrong: constructs silently, MethodError once the flow is run
+```
+
+`is_autonomous` is kept as a misuse-detector keyword only: passing it (`true` or `false`) emits a `@warn` explaining that it has no effect, rather than silently doing nothing or being treated as a real choice. `ClosedLoop` and `DynClosedLoop` are unaffected — `is_autonomous` still governs their arity exactly as before.
+
+See [control-toolbox/CTBase.jl#515](https://github.com/control-toolbox/CTBase.jl/issues/515).
+
+## For package authors: the strategy contract
+
+If you define your own `AbstractStrategy`, you must now implement `parameter`:
+
+```julia
+CTBase.Strategies.parameter(::Type{<:MyStrategy}) = nothing               # non-parameterized
+CTBase.Strategies.parameter(::Type{MyStrategy{P}}) where {P} = P          # parameterized
+```
+
+This is **not** a rename of `CTSolvers.Strategies.get_parameter_type`, which returned `nothing` by default. The CTBase generic throws `NotImplemented` instead, and option routing calls it — so a strategy that omits it fails at `solve` time rather than being treated as non-parameterized.
+
+A caller that cannot guarantee a third-party strategy implements the contract should reach for the non-throwing `CTBase.Strategies.parameter(strategy_type, default)` — the `get(dict, key, default)`-style 2-arg accessor (CTBase ≥ 0.28.8-beta) — rather than writing its own `try`/`catch` around `NotImplemented`. OptimalControl's own display code does exactly this, and warns once per strategy type when the fallback is taken.
+
+## `describe` now covers every strategy
+
+`describe(:id)` previously only knew the *solve* registry (discretizer, NLP modeler, NLP solver). The AD backend and the ODE integrator are strategies in the same sense — `describe(:di)` and `describe(:sciml)` now work from the same single entry point, which merges the solve registry with CTFlows' flow registry (`Base.merge(::CTBase.Strategies.StrategyRegistry...)`, CTBase ≥ 0.28.8-beta).
+
+---
+
 # Breaking Changes: v1.x → v2.0
 
 This document describes the breaking changes when migrating from **OptimalControl.jl v1.1.6** (last stable release) to **v2.0.0**.

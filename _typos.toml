@@ -4,6 +4,7 @@ extend-ignore-re = [
     "ded",
     "ois",
     "Mor",
+    "mis-",
 ]
 
 [files]

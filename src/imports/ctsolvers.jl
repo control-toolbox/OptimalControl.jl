@@ -1,58 +1,41 @@
 # CTSolvers reexports
+#
+# The strategy/option layer this file used to own now lives in
+# `CTBase.{Strategies,Options}` — see imports/ctbase.jl. What is left is the
+# direct-method plumbing: modelers, solvers, the DOCP layer and integrators.
 
 # For internal use
 using CTSolvers: CTSolvers
 
+# ---------------------------------------------------------------------------
 # DOCP
-import CTSolvers: DiscretizedModel
+#
+# `AbstractDiscretizer` and `discretize` are *owned* by CTSolvers now;
+# CTDirect only implements them.
+# ---------------------------------------------------------------------------
+import CTSolvers.DOCP: AbstractDiscretizer, DiscretizedModel
 
-@reexport import CTSolvers: ocp_model, nlp_model, ocp_solution
+@reexport import CTSolvers.DOCP: discretize, ocp_model, nlp_model, ocp_solution
 
+# ---------------------------------------------------------------------------
 # Modelers
-import CTSolvers: AbstractNLPModeler, ADNLP, Exa
+# ---------------------------------------------------------------------------
+import CTSolvers.Modelers: AbstractNLPModeler, ADNLP, Exa
 
+# ---------------------------------------------------------------------------
 # Solvers
-import CTSolvers: AbstractNLPSolver, Ipopt, MadNLP, MadNCL, Knitro, Uno
+# ---------------------------------------------------------------------------
+import CTSolvers.Solvers: AbstractNLPSolver, Ipopt, MadNLP, MadNCL, Knitro, Uno
 
-# Strategies
-import CTSolvers:
-
-    # Types
-    AbstractStrategy,
-    StrategyRegistry,
-    StrategyMetadata,
-    StrategyOptions,
-    OptionDefinition,
-    OptionValue,
-    RoutedOption,
-    BypassValue,
-
-    # Parameter types (imported only, not reexported)
-    AbstractStrategyParameter
-
-@reexport import CTSolvers: CPU, GPU
-
-@reexport import CTSolvers:
-
-    # Metadata
-    id,
-    metadata,
-
-    # Display and introspection functions
-    describe,
-    options,
-    option_names,
-    option_type,
-    option_description,
-    option_default,
-    option_defaults,
-    option_value,
-    option_source,
-    has_option,
-    is_user,
-    is_default,
-    is_computed,
-
-    # Utility functions
-    route_to,
-    bypass
+# ---------------------------------------------------------------------------
+# Integrators
+#
+# ⚠️ Explicit list, deliberately not `@reexport using`: that would also pull
+# `times` — which must stay `CTModels.Components.times`, the model component,
+# not the integration grid (that one already has a name, `time_grid`) — and
+# `merge`, which would shadow `Base.merge`.
+# `status` and `successful` are the same objects as CTModels.Solutions', so
+# they are re-exported from there (imports/ctmodels.jl).
+# ---------------------------------------------------------------------------
+@reexport import CTSolvers.Integrators:
+    AbstractIntegrator, AbstractIntegrationResult, SciML, final_state, evaluate_at

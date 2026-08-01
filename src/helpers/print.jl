@@ -80,18 +80,18 @@ output verbosity. It is used to conditionally print a `▫` symbol before the so
 starts printing.
 
 # Arguments
-- `solver::CTSolvers.AbstractNLPSolver`: The solver instance to check
+- `solver::CTSolvers.Solvers.AbstractNLPSolver`: The solver instance to check
 
 # Returns
 - `Bool`: `true` if the solver will print output, `false` otherwise
 
 # Examples
 ```julia
-julia> sol = CTSolvers.Ipopt(print_level=0)
+julia> sol = CTSolvers.Solvers.Ipopt(print_level=0)
 julia> OptimalControl.will_solver_print(sol)
 false
 
-julia> sol = CTSolvers.Ipopt(print_level=5)
+julia> sol = CTSolvers.Solvers.Ipopt(print_level=5)
 julia> OptimalControl.will_solver_print(sol)
 true
 ```
@@ -103,7 +103,7 @@ true
 
 See also: [`display_ocp_configuration`](@ref)
 """
-function will_solver_print(solver::CTSolvers.AbstractNLPSolver)
+function will_solver_print(solver::CTSolvers.Solvers.AbstractNLPSolver)
     # Default: assume solver will print
     return true
 end
@@ -116,7 +116,7 @@ Check if Ipopt will produce output based on `print_level` option.
 Ipopt is silent when `print_level = 0`, verbose otherwise.
 
 # Arguments
-- `solver::CTSolvers.Ipopt`: The Ipopt solver instance to check
+- `solver::CTSolvers.Solvers.Ipopt`: The Ipopt solver instance to check
 
 # Returns
 - `Bool`: `true` if Ipopt will print output, `false` otherwise
@@ -125,12 +125,12 @@ Ipopt is silent when `print_level = 0`, verbose otherwise.
 - When `print_level` is not specified, Ipopt defaults to verbose output
 - This method allows the display system to conditionally show the `▫` symbol
 
-See also: [`will_solver_print(::CTSolvers.AbstractNLPSolver)`](@ref)
+See also: [`will_solver_print(::CTSolvers.Solvers.AbstractNLPSolver)`](@ref)
 """
-function will_solver_print(solver::CTSolvers.Ipopt)
-    opts = CTSolvers.options(solver)
+function will_solver_print(solver::CTSolvers.Solvers.Ipopt)
+    opts = CTBase.Strategies.options(solver)
     print_level = get(opts.options, :print_level, nothing)
-    return print_level === nothing || CTSolvers.value(print_level) > 0
+    return print_level === nothing || CTBase.Options.value(print_level) > 0
 end
 
 """
@@ -141,7 +141,7 @@ Check if Knitro will produce output based on `outlev` option.
 Knitro is silent when `outlev = 0`, verbose otherwise.
 
 # Arguments
-- `solver::CTSolvers.Knitro`: The Knitro solver instance to check
+- `solver::CTSolvers.Solvers.Knitro`: The Knitro solver instance to check
 
 # Returns
 - `Bool`: `true` if Knitro will print output, `false` otherwise
@@ -150,12 +150,12 @@ Knitro is silent when `outlev = 0`, verbose otherwise.
 - When `outlev` is not specified, Knitro defaults to verbose output
 - This method allows the display system to conditionally show the `▫` symbol
 
-See also: [`will_solver_print(::CTSolvers.AbstractNLPSolver)`](@ref)
+See also: [`will_solver_print(::CTSolvers.Solvers.AbstractNLPSolver)`](@ref)
 """
-function will_solver_print(solver::CTSolvers.Knitro)
-    opts = CTSolvers.options(solver)
+function will_solver_print(solver::CTSolvers.Solvers.Knitro)
+    opts = CTBase.Strategies.options(solver)
     outlev = get(opts.options, :outlev, nothing)
-    return outlev === nothing || CTSolvers.value(outlev) > 0
+    return outlev === nothing || CTBase.Options.value(outlev) > 0
 end
 
 """
@@ -167,7 +167,7 @@ MadNLP is silent when `print_level = MadNLP.ERROR`, verbose otherwise.
 Default is `MadNLP.INFO` which prints output.
 
 # Arguments
-- `solver::CTSolvers.MadNLP`: The MadNLP solver instance to check
+- `solver::CTSolvers.Solvers.MadNLP`: The MadNLP solver instance to check
 
 # Returns
 - `Bool`: `true` if MadNLP will print output, `false` otherwise
@@ -177,10 +177,10 @@ Default is `MadNLP.INFO` which prints output.
 - Default print level is `MadNLP.INFO` which produces output
 - Only `MadNLP.ERROR` level suppresses output
 
-See also: [`will_solver_print(::CTSolvers.AbstractNLPSolver)`](@ref)
+See also: [`will_solver_print(::CTSolvers.Solvers.AbstractNLPSolver)`](@ref)
 """
-function will_solver_print(solver::CTSolvers.MadNLP)
-    opts = CTSolvers.options(solver)
+function will_solver_print(solver::CTSolvers.Solvers.MadNLP)
+    opts = CTBase.Strategies.options(solver)
     print_level = get(opts.options, :print_level, nothing)
     # Default is INFO, which prints. ERROR is silent.
     if print_level === nothing
@@ -188,7 +188,7 @@ function will_solver_print(solver::CTSolvers.MadNLP)
     end
     # Need to check against MadNLP.ERROR
     # We use string comparison to avoid requiring MadNLP to be loaded
-    pl_val = CTSolvers.value(print_level)
+    pl_val = CTBase.Options.value(print_level)
     return string(pl_val) != "ERROR"
 end
 
@@ -202,7 +202,7 @@ MadNCL is silent when either:
 - `ncl_options.verbose = false`
 
 # Arguments
-- `solver::CTSolvers.MadNCL`: The MadNCL solver instance to check
+- `solver::CTSolvers.Solvers.MadNCL`: The MadNCL solver instance to check
 
 # Returns
 - `Bool`: `true` if MadNCL will print output, `false` otherwise
@@ -212,15 +212,15 @@ MadNCL is silent when either:
 - Uses string comparison to avoid requiring MadNLP to be loaded
 - Either condition being false will suppress output
 
-See also: [`will_solver_print(::CTSolvers.AbstractNLPSolver)`](@ref)
+See also: [`will_solver_print(::CTSolvers.Solvers.AbstractNLPSolver)`](@ref)
 """
-function will_solver_print(solver::CTSolvers.MadNCL)
-    opts = CTSolvers.options(solver)
+function will_solver_print(solver::CTSolvers.Solvers.MadNCL)
+    opts = CTBase.Strategies.options(solver)
 
     # Check print_level
     print_level = get(opts.options, :print_level, nothing)
     if print_level !== nothing
-        pl_val = CTSolvers.value(print_level)
+        pl_val = CTBase.Options.value(print_level)
         if string(pl_val) == "ERROR"
             return false
         end
@@ -229,7 +229,7 @@ function will_solver_print(solver::CTSolvers.MadNCL)
     # Check ncl_options.verbose
     ncl_options = get(opts.options, :ncl_options, nothing)
     if ncl_options !== nothing
-        ncl_opts_val = CTSolvers.value(ncl_options)
+        ncl_opts_val = CTBase.Options.value(ncl_options)
         if hasfield(typeof(ncl_opts_val), :verbose) && !ncl_opts_val.verbose
             return false
         end
@@ -247,7 +247,7 @@ Uno is silent when `logger = "SILENT"`, verbose otherwise.
 Default is `"INFO"` which prints output.
 
 # Arguments
-- `solver::CTSolvers.Uno`: The Uno solver instance to check
+- `solver::CTSolvers.Solvers.Uno`: The Uno solver instance to check
 
 # Returns
 - `Bool`: `true` if Uno will print output, `false` otherwise
@@ -257,10 +257,10 @@ Default is `"INFO"` which prints output.
 - Only `"SILENT"` suppresses output, other levels print
 - This method allows the display system to conditionally show the `▫` symbol
 
-See also: [`will_solver_print(::CTSolvers.AbstractNLPSolver)`](@ref)
+See also: [`will_solver_print(::CTSolvers.Solvers.AbstractNLPSolver)`](@ref)
 """
-function will_solver_print(solver::CTSolvers.Uno)
-    opts = CTSolvers.options(solver)
+function will_solver_print(solver::CTSolvers.Solvers.Uno)
+    opts = CTBase.Strategies.options(solver)
     logger = get(opts.options, :logger, nothing)
     return logger === nothing || logger != "SILENT"
 end
@@ -291,24 +291,68 @@ for display purposes.
   - `params`: Vector of non-nothing parameter symbols
 
 # Notes
-- Uses `CTSolvers.Strategies.get_parameter_type()` to extract parameter types
-- Converts parameter types to symbols using `CTSolvers.id()`
+- Uses `CTBase.Strategies.parameter()` to extract parameter types
+- Converts parameter types to symbols using `CTBase.Strategies.id()`
 - Filters out `nothing` values from the parameters vector
 
 See also: [`_determine_parameter_display_strategy`](@ref)
 """
 function _extract_strategy_parameters(discretizer, modeler, solver)
-    disc_param = CTSolvers.Strategies.get_parameter_type(typeof(discretizer))
-    mod_param = CTSolvers.Strategies.get_parameter_type(typeof(modeler))
-    sol_param = CTSolvers.Strategies.get_parameter_type(typeof(solver))
+    disc_param = _strategy_parameter(typeof(discretizer))
+    mod_param = _strategy_parameter(typeof(modeler))
+    sol_param = _strategy_parameter(typeof(solver))
 
-    disc_param_sym = disc_param === nothing ? nothing : CTSolvers.id(disc_param)
-    mod_param_sym = mod_param === nothing ? nothing : CTSolvers.id(mod_param)
-    sol_param_sym = sol_param === nothing ? nothing : CTSolvers.id(sol_param)
+    disc_param_sym = disc_param === nothing ? nothing : CTBase.Strategies.id(disc_param)
+    mod_param_sym = mod_param === nothing ? nothing : CTBase.Strategies.id(mod_param)
+    sol_param_sym = sol_param === nothing ? nothing : CTBase.Strategies.id(sol_param)
 
     params = filter(!isnothing, [disc_param_sym, mod_param_sym, sol_param_sym])
 
     return (disc=disc_param_sym, mod=mod_param_sym, sol=sol_param_sym, params=params)
+end
+
+"""
+Sentinel passed as the `default` to `CTBase.Strategies.parameter(T, default)`, so this file
+can tell "the strategy legitimately declares no parameter" (`parameter(T) === nothing`) apart
+from "the strategy never implemented the contract at all" (`parameter(T)` threw
+`NotImplemented`, and `parameter(T, ::sentinel)` fell back to it). Neither case is a plain
+`nothing`, `CPU`, `GPU`, nor any third-party `AbstractStrategyParameter` could ever collide
+with it.
+"""
+struct _ParameterNotImplemented end
+const _PARAMETER_NOT_IMPLEMENTED = _ParameterNotImplemented()
+
+"""
+$(TYPEDSIGNATURES)
+
+Parameter type of a strategy, or `nothing` when it declares none.
+
+Since CTBase 0.28.8-beta this is a thin wrapper around
+[`CTBase.Strategies.parameter(T, default)`](@extref) — the non-throwing counterpart to
+[`CTBase.Strategies.parameter(T)`](@extref) requested as
+[CTBase#518](https://github.com/control-toolbox/CTBase.jl/issues/518), so display no longer
+needs its own `try`/`catch` around `NotImplemented`.
+
+Display must not be the thing that crashes on a third-party strategy which simply chose not to
+be parameterized. Every in-tree strategy implements the contract, so the fallback path below is
+only ever taken by external ones.
+
+The two cases where a plain forward to `parameter(T, nothing)` would not do: `nothing` is the
+documented, valid answer for a non-parameterized strategy, and CTBase's `default` parameter
+cannot itself distinguish "explicitly declared `= nothing`" from "never overridden" — both
+would collapse onto the same `nothing`. Passing the dedicated `_PARAMETER_NOT_IMPLEMENTED`
+sentinel as `default` recovers that distinction, so the second case can still get a `@warn`
+rather than perfect silence — capped at one per strategy *type* (`maxlog=1`, keyed on `T`) so a
+solve loop over the same third-party strategy does not spam.
+"""
+function _strategy_parameter(::Type{T}) where {T<:CTBase.Strategies.AbstractStrategy}
+    result = CTBase.Strategies.parameter(T, _PARAMETER_NOT_IMPLEMENTED)
+    if result === _PARAMETER_NOT_IMPLEMENTED
+        @warn "Strategy $T does not implement `CTBase.Strategies.parameter`; treating it as non-parameterized." maxlog =
+            1 _id = Symbol(:strategy_parameter_not_implemented, T)
+        return nothing
+    end
+    return result
 end
 
 """
@@ -440,9 +484,9 @@ user-specified options.
 
 # Arguments
 - `io::IO`: Output stream for printing
-- `discretizer::CTDirect.AbstractDiscretizer`: Discretization strategy
-- `modeler::CTSolvers.AbstractNLPModeler`: NLP modeling strategy  
-- `solver::CTSolvers.AbstractNLPSolver`: NLP solver strategy
+- `discretizer::CTSolvers.DOCP.AbstractDiscretizer`: Discretization strategy
+- `modeler::CTSolvers.Modelers.AbstractNLPModeler`: NLP modeling strategy  
+- `solver::CTSolvers.Solvers.AbstractNLPSolver`: NLP solver strategy
 - `display::Bool`: Whether to print the configuration (default: `true`)
 - `show_options::Bool`: Whether to show component options (default: `true`)
 - `show_sources::Bool`: Whether to show option sources (default: `false`)
@@ -450,8 +494,8 @@ user-specified options.
 # Examples
 ```julia
 julia> disc = CTDirect.Collocation()
-julia> mod = CTSolvers.ADNLP()
-julia> sol = CTSolvers.Ipopt()
+julia> mod = CTSolvers.Modelers.ADNLP()
+julia> sol = CTSolvers.Solvers.Ipopt()
 julia> OptimalControl.display_ocp_configuration(stdout, disc, mod, sol)
 ▫ OptimalControl v1.1.8-beta solving with: collocation → adnlp → ipopt
 
@@ -464,8 +508,8 @@ julia> OptimalControl.display_ocp_configuration(stdout, disc, mod, sol)
 With parameterized strategies (parameter extracted automatically):
 ```julia
 julia> disc = CTDirect.Collocation()
-julia> mod = CTSolvers.Exa()  # GPU-optimized
-julia> sol = CTSolvers.MadNLP()
+julia> mod = CTSolvers.Modelers.Exa()  # GPU-optimized
+julia> sol = CTSolvers.Solvers.MadNLP()
 julia> OptimalControl.display_ocp_configuration(stdout, disc, mod, sol)
 ▫ OptimalControl v1.1.8-beta solving with: collocation → exa (gpu) → madnlp
 
@@ -486,9 +530,9 @@ See also: [`solve_explicit`](@ref), [`get_strategy_registry`](@ref)
 """
 function display_ocp_configuration(
     io::IO,
-    discretizer::CTDirect.AbstractDiscretizer,
-    modeler::CTSolvers.AbstractNLPModeler,
-    solver::CTSolvers.AbstractNLPSolver;
+    discretizer::CTSolvers.DOCP.AbstractDiscretizer,
+    modeler::CTSolvers.Modelers.AbstractNLPModeler,
+    solver::CTSolvers.Solvers.AbstractNLPSolver;
     display::Bool=true,
     show_options::Bool=true,
     show_sources::Bool=false,
@@ -566,7 +610,7 @@ function display_ocp_configuration(
                     src_tag = _build_source_tag(
                         source, display_strategy.common, param_info.params, show_sources
                     )
-                    print(io, string(key), " = ", CTSolvers.value(opt), src_tag, sep)
+                    print(io, string(key), " = ", CTBase.Options.value(opt), src_tag, sep)
                 end
                 print(io, ")")
             else
@@ -578,7 +622,7 @@ function display_ocp_configuration(
                     src_tag = _build_source_tag(
                         source, display_strategy.common, param_info.params, show_sources
                     )
-                    print(io, string(key), " = ", CTSolvers.value(opt), src_tag, sep)
+                    print(io, string(key), " = ", CTBase.Options.value(opt), src_tag, sep)
                 end
                 remaining = n - length(shown)
                 if remaining > 0
@@ -612,9 +656,9 @@ This is a convenience method that prints to `stdout` by default. See the main me
 for full documentation of all parameters and behavior.
 
 # Arguments
-- `discretizer::CTDirect.AbstractDiscretizer`: Discretization strategy
-- `modeler::CTSolvers.AbstractNLPModeler`: NLP modeling strategy  
-- `solver::CTSolvers.AbstractNLPSolver`: NLP solver strategy
+- `discretizer::CTSolvers.DOCP.AbstractDiscretizer`: Discretization strategy
+- `modeler::CTSolvers.Modelers.AbstractNLPModeler`: NLP modeling strategy  
+- `solver::CTSolvers.Solvers.AbstractNLPSolver`: NLP solver strategy
 - `display::Bool`: Whether to print the configuration (default: `true`)
 - `show_options::Bool`: Whether to show component options (default: `true`)
 - `show_sources::Bool`: Whether to show option sources (default: `false`)
@@ -622,8 +666,8 @@ for full documentation of all parameters and behavior.
 # Examples
 ```julia
 julia> disc = CTDirect.Collocation()
-julia> mod = CTSolvers.ADNLP()
-julia> sol = CTSolvers.Ipopt()
+julia> mod = CTSolvers.Modelers.ADNLP()
+julia> sol = CTSolvers.Solvers.Ipopt()
 julia> OptimalControl.display_ocp_configuration(disc, mod, sol)
 ▫ OptimalControl v1.1.8-beta solving with: collocation → adnlp → ipopt
 
@@ -634,9 +678,9 @@ julia> OptimalControl.display_ocp_configuration(disc, mod, sol)
 ```
 """
 function display_ocp_configuration(
-    discretizer::CTDirect.AbstractDiscretizer,
-    modeler::CTSolvers.AbstractNLPModeler,
-    solver::CTSolvers.AbstractNLPSolver;
+    discretizer::CTSolvers.DOCP.AbstractDiscretizer,
+    modeler::CTSolvers.Modelers.AbstractNLPModeler,
+    solver::CTSolvers.Solvers.AbstractNLPSolver;
     display::Bool=true,
     show_options::Bool=true,
     show_sources::Bool=false,

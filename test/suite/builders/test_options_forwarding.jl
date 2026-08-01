@@ -14,12 +14,13 @@ using ADNLPModels: ADNLPModels
 using ExaModels: ExaModels
 using CUDA: CUDA
 
-# CUDA availability check
-is_cuda_on() = CUDA.functional()
-
 # Include shared test problems via TestProblems module
 include(joinpath(@__DIR__, "..", "..", "problems", "TestProblems.jl"))
 import .TestProblems
+
+# Shared CUDA/GPU capability checks — one definition for the whole suite.
+include(joinpath(@__DIR__, "..", "..", "helpers", "capabilities.jl"))
+using .TestCapabilities: is_cuda_on
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
@@ -50,17 +51,22 @@ function test_options_forwarding()
                 end
             end
 
-            # --- backend: CUDA backend if available ---
-            if is_cuda_on()
-                Test.@testset "backend (CUDA)" begin
-                    Test.@test begin
-                        modeler = OptimalControl.Exa{OptimalControl.GPU}(
-                            backend=CUDA.CUDABackend()
-                        )
-                        nlp = OptimalControl.nlp_model(docp, normalized_init, modeler)
-                        # With CUDA backend, x0 should be CUDA array
-                        nlp.meta.x0 isa CUDA.CuArray
-                    end
+            # --- backend: CUDA backend, device tier ---
+            # `Test.@test_skip` rather than a silent `if is_cuda_on()`: a skip
+            # shows up in the summary, a missing branch does not.
+            Test.@testset "backend (CUDA)" begin
+                gpu_x0_is_cuarray() = begin
+                    modeler = OptimalControl.Exa{OptimalControl.GPU}(
+                        backend=CUDA.CUDABackend()
+                    )
+                    nlp = OptimalControl.nlp_model(docp, normalized_init, modeler)
+                    # With CUDA backend, x0 should be a CUDA array
+                    nlp.meta.x0 isa CUDA.CuArray
+                end
+                if is_cuda_on()
+                    Test.@test gpu_x0_is_cuarray()
+                else
+                    Test.@test_skip gpu_x0_is_cuarray()
                 end
             end
         end
