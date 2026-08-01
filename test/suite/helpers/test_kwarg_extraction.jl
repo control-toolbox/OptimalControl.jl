@@ -10,7 +10,6 @@ module TestKwargExtraction
 
 using Test: Test
 using OptimalControl: OptimalControl
-using CTDirect: CTDirect
 using CTSolvers: CTSolvers
 using CTBase: CTBase
 
@@ -181,7 +180,7 @@ function test_kwarg_extraction()
                 # difference, not a logic bug; the strict check only holds from 1.11 on.
                 if VERSION >= v"1.11"
                     Test.@test_nowarn Test.@inferred OptimalControl._extract_kwarg(
-                        kw, CTDirect.AbstractDiscretizer
+                        kw, CTSolvers.DOCP.AbstractDiscretizer
                     )
                 end
             end
@@ -199,7 +198,7 @@ function test_kwarg_extraction()
                 # Type stability — see comment above, strict check only holds from 1.11 on.
                 if VERSION >= v"1.11"
                     Test.@test_nowarn Test.@inferred OptimalControl._extract_kwarg(
-                        kw, CTDirect.AbstractDiscretizer
+                        kw, CTSolvers.DOCP.AbstractDiscretizer
                     )
                 end
             end
@@ -231,7 +230,7 @@ function test_kwarg_extraction()
                 # Type stability — see comment above, strict check only holds from 1.11 on.
                 if VERSION >= v"1.11"
                     Test.@test_nowarn Test.@inferred OptimalControl._extract_kwarg(
-                        large_kw, CTDirect.AbstractDiscretizer
+                        large_kw, CTSolvers.DOCP.AbstractDiscretizer
                     )
                 end
             end
