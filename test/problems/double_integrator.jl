@@ -84,7 +84,10 @@ function _di_energy_cons_shoot_builder(ocp, d)
 
         f_interior = OptimalControl.Flow(ocp, (x, p) -> p[2]; hamiltonian_type)
         f_boundary = OptimalControl.Flow(
-            ocp, (x, p) -> 0.0; constraint=(x, u) -> g(x), multiplier=(x, p) -> μ(p),
+            ocp,
+            (x, p) -> 0.0;
+            constraint=(x, u) -> g(x),
+            multiplier=(x, p) -> μ(p),
             hamiltonian_type,
         )
 
@@ -122,7 +125,7 @@ Minimise the final time for `ẋ = (x₂, u)`, `u ∈ [-1, 1]`, from `(-1, 0)` t
 function DoubleIntegratorTime(form::Symbol=:abstract)
     check_form(form)
     return cached(:double_integrator_time, form, ()) do
-        form === :abstract ? _di_time_abstract() : _di_time_functional()
+        return form === :abstract ? _di_time_abstract() : _di_time_functional()
     end
 end
 
@@ -234,14 +237,12 @@ which makes this the cheapest shooting fixture in the library.
 function DoubleIntegratorEnergy(form::Symbol=:abstract)
     check_form(form)
     return cached(:double_integrator_energy, form, ()) do
-        form === :abstract ? _di_energy_abstract() : _di_energy_functional()
+        return form === :abstract ? _di_energy_abstract() : _di_energy_functional()
     end
 end
 
 const _DI_ENERGY_OBJ = 6.0
-const _DI_ENERGY_DATA = (
-    x0=[-1.0, 0.0], xf=[0.0, 0.0], t0=0.0, tf=1.0, p0=[12.0, 6.0]
-)
+const _DI_ENERGY_DATA = (x0=[-1.0, 0.0], xf=[0.0, 0.0], t0=0.0, tf=1.0, p0=[12.0, 6.0])
 
 function _di_energy_abstract()
     @def ocp begin
@@ -329,7 +330,11 @@ boundary arc between `t₁ = 0.25` and `t₂ = 0.75`.
 function DoubleIntegratorEnergyConstrained(form::Symbol=:abstract)
     check_form(form)
     return cached(:double_integrator_energy_constrained, form, ()) do
-        form === :abstract ? _di_energy_cons_abstract() : _di_energy_cons_functional()
+        return if form === :abstract
+            _di_energy_cons_abstract()
+        else
+            _di_energy_cons_functional()
+        end
     end
 end
 

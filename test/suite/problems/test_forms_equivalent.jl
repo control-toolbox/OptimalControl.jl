@@ -109,8 +109,7 @@ function test_forms_equivalent()
 
                     t, x, u, v = sample_point(a)
                     if is_lagrange_cost_defined(a.ocp)
-                        Test.@test lagrange(a.ocp)(t, x, u, v) ≈
-                            lagrange(f.ocp)(t, x, u, v)
+                        Test.@test lagrange(a.ocp)(t, x, u, v) ≈ lagrange(f.ocp)(t, x, u, v)
                     end
                     if is_mayer_cost_defined(a.ocp)
                         Test.@test mayer(a.ocp)(x, x, v) ≈ mayer(f.ocp)(x, x, v)

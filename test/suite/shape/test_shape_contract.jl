@@ -44,18 +44,20 @@ const SEEN = Dict{Symbol,Any}()
 # Written with `[1]`-indexing so the fakes are valid whether the caller hands a
 # Number or a length-1 vector — only the *assertions* below distinguish the
 # two. Writing them scalar-style would beg the question.
-rec_dyn!(r, t, x, u, v) = (
-    SEEN[:dyn] = (x, u, v);
-    for i in eachindex(r)
-        r[i] = -x[i] + u[min(i, length(u))]
-    end;
-    nothing
-)
+function rec_dyn!(r, t, x, u, v)
+    return (
+        SEEN[:dyn]=(x, u, v);
+        for i in eachindex(r)
+            r[i] = -x[i] + u[min(i, length(u))]
+        end;
+        nothing
+    )
+end
 
-rec_lagrange(t, x, u, v) = (SEEN[:lag] = (x, u, v); sum(abs2, u))
+rec_lagrange(t, x, u, v) = (SEEN[:lag]=(x, u, v); sum(abs2, u))
 
 rec_boundary!(r, x0, xf, v) = (
-    SEEN[:bnd] = (x0, xf, v);
+    SEEN[:bnd]=(x0, xf, v);
     for i in eachindex(r)
         r[i] = x0[i] - 1.0
     end;

@@ -151,9 +151,8 @@ Throw a readable `ArgumentError` on an unknown form rather than letting it
 fall through to a `MethodError` three frames down.
 """
 function check_form(form::Symbol)
-    form in FORMS || throw(
-        ArgumentError("unknown form $(repr(form)); expected one of $(FORMS)")
-    )
+    form in FORMS ||
+        throw(ArgumentError("unknown form $(repr(form)); expected one of $(FORMS)"))
     return form
 end
 
