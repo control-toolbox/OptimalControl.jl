@@ -48,7 +48,8 @@ const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 function test_shooting_sweep()
-    Test.@testset "Shooting sweep (indirect fixtures)" verbose = VERBOSE showtiming = SHOWTIMING begin
+    Test.@testset "Shooting sweep (indirect fixtures)" verbose = VERBOSE showtiming =
+        SHOWTIMING begin
         for form in TestProblems.FORMS
             Test.@testset "$form" begin
                 for pb in TestProblems.problems_for(:indirect, form)

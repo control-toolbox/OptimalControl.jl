@@ -107,9 +107,7 @@ function MockDiscretizer{ID}(; mode::Symbol=:strict, kwargs...) where {ID}
 end
 
 function MockModeler{ID}(; mode::Symbol=:strict, kwargs...) where {ID}
-    opts = CTBase.Strategies.build_strategy_options(
-        MockModeler{ID}; mode=mode, kwargs...
-    )
+    opts = CTBase.Strategies.build_strategy_options(MockModeler{ID}; mode=mode, kwargs...)
     return MockModeler{ID}(opts)
 end
 

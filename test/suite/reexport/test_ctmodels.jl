@@ -251,9 +251,7 @@ function test_ctmodels()
             Test.@test !isdefined(CTModels, :time) ||
                 getfield(CTModels, :time) === Base.time
             # The extension itself must still be there.
-            Test.@test any(
-                m -> parentmodule(m) === CTModels.Components, methods(Base.time)
-            )
+            Test.@test any(m -> parentmodule(m) === CTModels.Components, methods(Base.time))
         end
 
         Test.@testset "traits live in CTBase now" begin
@@ -277,7 +275,9 @@ function test_ctmodels()
                 )
             end
             Test.@testset "import_ocp_solution" begin
-                Test.@test hasmethod(import_ocp_solution, Tuple{OptimalControl.AbstractModel})
+                Test.@test hasmethod(
+                    import_ocp_solution, Tuple{OptimalControl.AbstractModel}
+                )
             end
         end
     end

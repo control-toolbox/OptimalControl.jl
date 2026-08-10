@@ -114,7 +114,8 @@ function test_descriptive()
                 )
                 Test.@test result isa CTModels.AbstractSolution
                 Test.@test OptimalControl.successful(result)
-                Test.@test OptimalControl.objective(result) ≈ TestProblems.Goddard().objective rtol=1e-2
+                Test.@test OptimalControl.objective(result) ≈
+                    TestProblems.Goddard().objective rtol=1e-2
             end
 
             Test.@testset "Partial description - Goddard" begin
@@ -137,7 +138,8 @@ function test_descriptive()
                 )
                 Test.@test result isa CTModels.AbstractSolution
                 Test.@test OptimalControl.successful(result)
-                Test.@test OptimalControl.objective(result) ≈ TestProblems.Goddard().objective rtol=1e-2
+                Test.@test OptimalControl.objective(result) ≈
+                    TestProblems.Goddard().objective rtol=1e-2
             end
         end
 

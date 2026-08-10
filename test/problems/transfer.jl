@@ -63,7 +63,11 @@ Return the orbital transfer problem as a [`TestProblem`](@ref).
 function Transfer(form::Symbol=:abstract; Tmax=60)
     check_form(form)
     return cached(:transfer, form, (Tmax,)) do
-        form === :abstract ? _transfer_abstract(; Tmax) : _transfer_functional(; Tmax)
+        return if form === :abstract
+            _transfer_abstract(; Tmax)
+        else
+            _transfer_functional(; Tmax)
+        end
     end
 end
 
@@ -168,9 +172,7 @@ function _transfer_functional(; Tmax)
     ocp = CTModels.Building.build(pre)
 
     tf_i = 15
-    init = (
-        state=t -> x0 + (xf - x0) * t / tf_i, control=[0.1, 0.5, 0.0], variable=tf_i
-    )
+    init = (state=t -> x0 + (xf - x0) * t / tf_i, control=[0.1, 0.5, 0.0], variable=tf_i)
 
     return TestProblem(:transfer, :functional, ocp, _TRANSFER_OBJ, init, c)
 end

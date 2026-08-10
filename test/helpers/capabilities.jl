@@ -44,8 +44,7 @@ is_cuda_on() = CUDA.functional()
 `CUDSS` are all in the session. CPU-runnable: it says nothing about whether a
 device exists.
 """
-gpu_extension_armed() =
-    Base.get_extension(CTSolvers, :CTSolversMadNLPGPU) !== nothing
+gpu_extension_armed() = Base.get_extension(CTSolvers, :CTSolversMadNLPGPU) !== nothing
 
 """
     on_gpu_runner()

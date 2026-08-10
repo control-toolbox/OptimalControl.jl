@@ -314,9 +314,7 @@ function _build_components_from_routed(
 )
     # Resolve method with parameter information as early as possible
     families = _descriptive_families()
-    resolved = CTBase.Orchestration.resolve_method(
-        complete_description, families, registry
-    )
+    resolved = CTBase.Orchestration.resolve_method(complete_description, families, registry)
 
     # Build strategies using resolved method
     discretizer = CTBase.Orchestration.build_strategy_from_resolved(

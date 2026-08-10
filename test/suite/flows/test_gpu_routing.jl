@@ -83,8 +83,13 @@ function test_gpu_routing()
             )
 
             for (id, family) in (
-                (:adnlp, M), (:exa, M),
-                (:ipopt, N), (:madnlp, N), (:uno, N), (:madncl, N), (:knitro, N),
+                (:adnlp, M),
+                (:exa, M),
+                (:ipopt, N),
+                (:madnlp, N),
+                (:uno, N),
+                (:madncl, N),
+                (:knitro, N),
             )
                 Test.@testset "$id" begin
                     params = S.available_parameters(id, family, registry)
@@ -149,9 +154,7 @@ function test_gpu_routing()
             end
 
             Test.@testset "an unknown method is rejected" begin
-                Test.@test_throws CTBase.Exceptions.CTException Flow(
-                    vf(); method=:quantum
-                )
+                Test.@test_throws CTBase.Exceptions.CTException Flow(vf(); method=:quantum)
             end
         end
 
