@@ -26,7 +26,7 @@ SolverCore = "ff4d7338-4cf1-434d-91df-b86cb86fb843"
 [compat]
 ADNLPModels = "0.8"
 BenchmarkTools = "1"
-CTBase = "0.28"
+CTBase = "0.28, 0.29"
 CTDirect = "1"
 CTFlows = "0.16"
 CTLie = "0.1"
