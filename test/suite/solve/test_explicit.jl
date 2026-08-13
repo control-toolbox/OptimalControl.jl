@@ -32,6 +32,8 @@ const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING :
 struct MockOCP <: CTModels.AbstractModel end
 struct MockInit <: CTModels.AbstractInitialGuess end
 struct MockSolution <: CTModels.AbstractSolution end
+CTModels.build_initial_guess(::MockOCP, ::Nothing) = MockInit()
+CTModels.build_initial_guess(::MockOCP, init::MockInit) = init
 
 # ====================================================================
 # TEST PROBLEMS FOR INTEGRATION TESTS
@@ -52,6 +54,50 @@ end
 struct MockSolver <: CTSolvers.Solvers.AbstractNLPSolver
     options::CTBase.Strategies.StrategyOptions
 end
+
+function CTBase.Strategies.metadata(::Type{MockDiscretizer})
+    return CTBase.Strategies.StrategyMetadata(
+        CTBase.Options.OptionDefinition(;
+            name=:grid_size, type=Int, default=100, description="Grid size"
+        ),
+    )
+end
+
+function CTBase.Strategies.metadata(::Type{MockModeler})
+    return CTBase.Strategies.StrategyMetadata(
+        CTBase.Options.OptionDefinition(;
+            name=:backend, type=Symbol, default=:dense, description="Backend"
+        ),
+        CTBase.Options.OptionDefinition(;
+            name=:modeler_only, type=Bool, default=false, description="Modeler-only option"
+        ),
+    )
+end
+
+function CTBase.Strategies.metadata(::Type{MockSolver})
+    return CTBase.Strategies.StrategyMetadata(
+        CTBase.Options.OptionDefinition(;
+            name=:backend, type=Symbol, default=:cpu, description="Backend"
+        ),
+        CTBase.Options.OptionDefinition(;
+            name=:solver_only, type=Bool, default=false, description="Solver-only option"
+        ),
+    )
+end
+
+CTBase.Strategies.options(strategy::MockDiscretizer) = strategy.options
+CTBase.Strategies.options(strategy::MockModeler) = strategy.options
+CTBase.Strategies.options(strategy::MockSolver) = strategy.options
+
+MockDiscretizer(; kwargs...) = MockDiscretizer(
+    CTBase.Strategies.build_strategy_options(MockDiscretizer; kwargs...)
+)
+MockModeler(; kwargs...) = MockModeler(
+    CTBase.Strategies.build_strategy_options(MockModeler; kwargs...)
+)
+MockSolver(; kwargs...) = MockSolver(
+    CTBase.Strategies.build_strategy_options(MockSolver; kwargs...)
+)
 
 CommonSolve.solve(
     ::MockOCP, ::MockInit, ::MockDiscretizer, ::MockModeler, ::MockSolver; display::Bool
@@ -80,6 +126,129 @@ function test_explicit()
                 registry=registry,
             )
             Test.@test result isa MockSolution
+        end
+
+        # ================================================================
+        # EXPLICIT OPTION VALIDATION
+        # ================================================================
+        Test.@testset "Action options remain valid" begin
+            result = OptimalControl.solve_explicit(
+                ocp;
+                init=init,
+                discretizer=disc,
+                modeler=mod,
+                solver=sol,
+                display=false,
+                registry=registry,
+            )
+            Test.@test result isa MockSolution
+        end
+
+        Test.@testset "Dispatcher validates explicit options" begin
+            err = try
+                CommonSolve.solve(
+                    ocp;
+                    initial_guess=init,
+                    disc=MockDiscretizer(),
+                    modeler=MockModeler(),
+                    solver=MockSolver(),
+                    backend=:generic,
+                    display=false,
+                )
+                nothing
+            catch exception
+                exception
+            end
+            Test.@test err isa CTBase.IncorrectArgument
+            Test.@test occursin("backend", sprint(showerror, err))
+        end
+
+        Test.@testset "Strategy option suggests construction" begin
+            configured_disc = MockDiscretizer()
+            configured_mod = MockModeler()
+            configured_sol = MockSolver()
+            err = try
+                OptimalControl.solve_explicit(
+                    ocp;
+                    initial_guess=init,
+                    discretizer=configured_disc,
+                    modeler=configured_mod,
+                    solver=configured_sol,
+                    modeler_only=true,
+                    registry=registry,
+                )
+                nothing
+            catch exception
+                exception
+            end
+            Test.@test err isa CTBase.IncorrectArgument
+            message = sprint(showerror, err)
+            Test.@test occursin("modeler_only", message)
+            Test.@test occursin("MockModeler", message)
+            Test.@test occursin("Construct", message)
+        end
+
+        Test.@testset "Ambiguous strategy option is rejected" begin
+            err = try
+                OptimalControl.solve_explicit(
+                    ocp;
+                    initial_guess=init,
+                    discretizer=MockDiscretizer(),
+                    modeler=MockModeler(),
+                    solver=MockSolver(),
+                    backend=:generic,
+                    registry=registry,
+                )
+                nothing
+            catch exception
+                exception
+            end
+            Test.@test err isa CTBase.IncorrectArgument
+            message = sprint(showerror, err)
+            Test.@test occursin("backend", message)
+            Test.@test occursin("modeler", message)
+            Test.@test occursin("solver", message)
+        end
+
+        Test.@testset "Unknown explicit option is rejected" begin
+            err = try
+                OptimalControl.solve_explicit(
+                    ocp;
+                    initial_guess=init,
+                    discretizer=disc,
+                    modeler=mod,
+                    solver=sol,
+                    beep=:beep,
+                    registry=registry,
+                )
+                nothing
+            catch exception
+                exception
+            end
+            Test.@test err isa CTBase.IncorrectArgument
+            message = sprint(showerror, err)
+            Test.@test occursin("beep", message)
+            Test.@test occursin("initial_guess", message)
+            Test.@test occursin("display", message)
+        end
+
+        Test.@testset "bypass does not change explicit mode validation" begin
+            err = try
+                OptimalControl.solve_explicit(
+                    ocp;
+                    initial_guess=init,
+                    discretizer=MockDiscretizer(),
+                    modeler=MockModeler(),
+                    solver=MockSolver(),
+                    backend=CTBase.Strategies.bypass(:generic),
+                    registry=registry,
+                )
+                nothing
+            catch exception
+                exception
+            end
+            Test.@test err isa CTBase.IncorrectArgument
+            Test.@test occursin("backend", sprint(showerror, err))
         end
 
         # ================================================================

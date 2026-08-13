@@ -34,15 +34,15 @@ function solve_explicit(
     init_raw, kwargs1 = _extract_action_kwarg(
         kwargs, _INITIAL_GUESS_ALIASES, _DEFAULT_INITIAL_GUESS
     )
-    display_val, _ = _extract_action_kwarg(kwargs1, (:display,), _DEFAULT_DISPLAY)
+    display_val, kwargs2 = _extract_action_kwarg(kwargs1, (:display,), _DEFAULT_DISPLAY)
 
     # Normalize initial guess
     normalized_init = CTModels.build_initial_guess(ocp, init_raw)
 
     # Extract typed components by abstract type
-    discretizer = _extract_kwarg(kwargs, CTSolvers.DOCP.AbstractDiscretizer)
-    modeler = _extract_kwarg(kwargs, CTSolvers.Modelers.AbstractNLPModeler)
-    solver = _extract_kwarg(kwargs, CTSolvers.Solvers.AbstractNLPSolver)
+    discretizer = _extract_kwarg(kwargs2, CTSolvers.DOCP.AbstractDiscretizer)
+    modeler = _extract_kwarg(kwargs2, CTSolvers.Modelers.AbstractNLPModeler)
+    solver = _extract_kwarg(kwargs2, CTSolvers.Solvers.AbstractNLPSolver)
 
     # Resolve components: use provided ones or complete via registry
     components = if _has_complete_components(discretizer, modeler, solver)
@@ -50,6 +50,10 @@ function solve_explicit(
     else
         _complete_components(discretizer, modeler, solver, registry)
     end
+
+    # Explicit mode does not route strategy-specific options.
+    remaining_kwargs = _extract_explicit_component_kwargs(kwargs2)
+    _validate_explicit_options(remaining_kwargs, components)
 
     # Single solve call with resolved components
     return CommonSolve.solve(
