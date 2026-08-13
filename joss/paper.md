@@ -44,7 +44,7 @@ archive_doi: 10.5281/zenodo.13336563
 
 [OptimalControl.jl](https://control-toolbox.org/OptimalControl.jl) [@OptimalControl_jl] is a Julia [@Bezanson2017] package for modeling and solving optimal control problems governed by ordinary differential equations (ODEs). As the core of the [control-toolbox ecosystem](https://control-toolbox.org), it provides a unified framework that supports both direct and indirect solution methods with applications spanning aerospace, medical imaging, epidemiology, and quantum control.
 
-![Logo of OptimalControl.jl.](figures/logo-oc.svg){#fig:logo width=30%}
+![Logo of OptimalControl.jl.](figures/logo-oc.svg){#fig:logo width=25%}
 
 The package features an expressive domain-specific language (DSL) built around the `@def` macro, enabling users to define control problems using notation that closely resembles standard mathematical formulations. Problems are solved through direct transcription, converting the continuous problem into a nonlinear program (NLP) using discretization schemes including Euler, trapezoidal, midpoint, and high-order Gauss-Legendre collocation. Alternatively, indirect shooting methods based on Pontryagin's Maximum Principle can be employed. The architecture relies on a modeler-solver separation that provides a modular and extensible foundation, enabling GPU execution (currently limited to NVIDIA hardware) with minimal user intervention alongside standard CPU solvers.
 
