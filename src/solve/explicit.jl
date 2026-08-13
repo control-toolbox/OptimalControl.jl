@@ -53,7 +53,7 @@ function solve_explicit(
 
     # Explicit mode does not route strategy-specific options.
     remaining_kwargs = _extract_explicit_component_kwargs(kwargs2)
-    _validate_explicit_options(remaining_kwargs, components...)
+    _validate_explicit_options(remaining_kwargs, components)
 
     # Single solve call with resolved components
     return CommonSolve.solve(
