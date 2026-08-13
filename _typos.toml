@@ -3,6 +3,12 @@ locale = "en"
 extend-ignore-re = [
     "ded",
     "mis-",
+    "directes",
+    "exemple",
+    "exemples",
+    "choses",
+    "certains",
+    "remplace"
 ]
 
 [files]
