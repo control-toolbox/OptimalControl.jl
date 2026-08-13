@@ -10,7 +10,9 @@ extend-ignore-re = [
     "exemples",
     "choses",
     "certains",
-    "remplace"
+    "remplace",
+    "construit",
+    "maintenant"
 ]
 
 [files]
