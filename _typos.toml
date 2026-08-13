@@ -5,6 +5,12 @@ extend-ignore-re = [
     "ois",
     "Mor",
     "mis-",
+    "directes",
+    "exemple",
+    "exemples",
+    "choses",
+    "certains",
+    "remplace"
 ]
 
 [files]
