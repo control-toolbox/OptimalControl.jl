@@ -16,8 +16,9 @@ function _extract_explicit_component_kwargs(kwargs::Base.Pairs)
     return Base.pairs(remaining)
 end
 
-_is_explicit_component(value, families=_descriptive_families()) =
-    any(T -> value isa T, values(families))
+function _is_explicit_component(value, families=_descriptive_families())
+    return any(T -> value isa T, values(families))
+end
 
 """
 $(TYPEDSIGNATURES)
@@ -66,7 +67,7 @@ end
 function _throw_strategy_explicit_option(option, owner, components::NamedTuple)
     strategy = components[owner]
     strategy_name = nameof(typeof(strategy))
-    throw(
+    return throw(
         CTBase.IncorrectArgument(
             "Strategy option cannot be passed directly to solve in explicit mode";
             got="option `$(option)` for $(owner)",
@@ -79,7 +80,7 @@ end
 
 function _throw_ambiguous_explicit_option(option, owners)
     owner_names = join(string.(owners), ", ")
-    throw(
+    return throw(
         CTBase.IncorrectArgument(
             "Ambiguous strategy option in explicit mode";
             got="option `$(option)` for $(owner_names)",
@@ -92,7 +93,7 @@ end
 
 function _throw_unknown_explicit_option(option)
     action_options = join(_explicit_option_names(), ", ")
-    throw(
+    return throw(
         CTBase.IncorrectArgument(
             "Unknown option for solve in explicit mode";
             got="option `$(option)`",

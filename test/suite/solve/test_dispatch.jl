@@ -41,9 +41,7 @@ CTBase.Strategies.options(d::MockDiscretizer) = d.options
 # generic throws `NotImplemented` by default, unlike the old `get_parameter_type`).
 CTBase.Strategies.parameter(::Type{<:MockDiscretizer}) = nothing
 function MockDiscretizer(; mode::Symbol=:strict, kwargs...)
-    opts = CTBase.Strategies.build_strategy_options(
-        MockDiscretizer; mode=mode, kwargs...
-    )
+    opts = CTBase.Strategies.build_strategy_options(MockDiscretizer; mode=mode, kwargs...)
     return MockDiscretizer(opts)
 end
 

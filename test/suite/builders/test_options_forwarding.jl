@@ -56,9 +56,7 @@ function test_options_forwarding()
             # shows up in the summary, a missing branch does not.
             Test.@testset "backend (CUDA)" begin
                 gpu_x0_is_cuarray() = begin
-                    modeler = OptimalControl.Exa{OptimalControl.GPU}(
-                        backend=CUDA.CUDABackend()
-                    )
+                    modeler = OptimalControl.Exa{OptimalControl.GPU}(backend=CUDA.CUDABackend())
                     nlp = OptimalControl.nlp_model(docp, normalized_init, modeler)
                     # With CUDA backend, x0 should be a CUDA array
                     nlp.meta.x0 isa CUDA.CuArray

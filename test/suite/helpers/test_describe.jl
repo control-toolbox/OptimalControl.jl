@@ -41,8 +41,13 @@ const S = CTBase.Strategies
 # Every strategy id OptimalControl registers, across both registries.
 const ALL_STRATEGIES = (
     :collocation,                                   # discretizer
-    :adnlp, :exa,                                   # NLP modelers
-    :ipopt, :madnlp, :madncl, :uno, :knitro,        # NLP solvers
+    :adnlp,
+    :exa,                                   # NLP modelers
+    :ipopt,
+    :madnlp,
+    :madncl,
+    :uno,
+    :knitro,        # NLP solvers
     :di,                                            # AD backend
     :sciml,                                         # ODE integrator
 )
@@ -82,9 +87,7 @@ function test_describe()
             flow_reg = CTFlows.Flows.flow_registry()
 
             Test.@test isempty(intersect(ids(solve_reg), ids(flow_reg)))
-            Test.@test isempty(
-                intersect(keys(solve_reg.families), keys(flow_reg.families))
-            )
+            Test.@test isempty(intersect(keys(solve_reg.families), keys(flow_reg.families)))
 
             # `:cpu`/`:gpu` exist on both sides; they must be the same types,
             # or the merge would silently pick one binding over the other.
