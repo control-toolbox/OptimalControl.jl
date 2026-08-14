@@ -80,6 +80,9 @@ include(joinpath(@__DIR__, "imports", "examodels.jl"))
 include(joinpath(@__DIR__, "imports", "ad.jl"))
 # include(joinpath(@__DIR__, "imports", "redefine.jl"))
 
+# v2.0 deprecation shims
+include(joinpath(@__DIR__, "deprecated.jl"))
+
 # helpers
 include(joinpath(@__DIR__, "helpers", "kwarg_extraction.jl"))
 include(joinpath(@__DIR__, "helpers", "print.jl"))

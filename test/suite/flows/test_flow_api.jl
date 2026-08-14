@@ -270,6 +270,57 @@ function test_flow_api()
             f = Flow(build_nonfixed(), (x, p, v) -> p[2])
             Test.@test_throws OptimalControl.PreconditionError f(T0, X0, P0, TF)
         end
+
+        Test.@testset "deprecated v2.0 flow shims" begin
+            # The old Flow(f::Function) constructor.
+            e = try
+                Flow(x -> [x[2], -x[1]])
+            catch err
+                err
+            end
+            Test.@test e isa OptimalControl.PreconditionError
+            Test.@test occursin("Flow(f::Function)", e.msg)
+            Test.@test occursin("Flow(VectorField", e.suggestion)
+
+            # 5-positional Hamiltonian flow call.
+            f = Flow(ocp, (x, p) -> p[2])
+            e = try
+                f(T0, X0, P0, TF, 0.0)
+            catch err
+                err
+            end
+            Test.@test e isa OptimalControl.PreconditionError
+            Test.@test occursin("f(t0, x0, p0, tf, lambda)", e.msg)
+            Test.@test occursin("f(t0, x0, p0, tf; variable=lambda)", e.suggestion)
+
+            # 4-positional State flow call.
+            f_closed = Flow(ocp, ClosedLoop(x -> 0.0))
+            e = try
+                f_closed(T0, X0, TF, 0.0)
+            catch err
+                err
+            end
+            Test.@test e isa OptimalControl.PreconditionError
+            Test.@test occursin("f(t0, x0, tf, lambda)", e.msg)
+            Test.@test occursin("f(t0, x0, tf; variable=lambda)", e.suggestion)
+
+            # time and success on the OCP and on a Solution.
+            traj = f((T0, TF), X0, P0)
+            for (thunk, expected, suggestion) in (
+                (() -> Base.time(ocp), "time(ocp)", "times(ocp)"),
+                (() -> Base.time(traj), "time(sol)", "time_grid(sol)"),
+                (() -> Base.success(traj), "success(sol)", "successful(sol)"),
+            )
+                e = try
+                    thunk()
+                catch err
+                    err
+                end
+                Test.@test e isa OptimalControl.PreconditionError
+                Test.@test occursin(expected, e.msg)
+                Test.@test occursin(suggestion, e.suggestion)
+            end
+        end
     end
 end
 

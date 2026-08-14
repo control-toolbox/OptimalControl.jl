@@ -23,9 +23,9 @@ Without it, `Flow` fails with a bare `MethodError`. This is by design: it keeps 
 
 | v2.0 | v2.1.0-beta | Notes |
 | --- | --- | --- |
-| `Lie(X, f)` | `ad(X, f)` | renamed |
-| `X ⋅ f` | `ad(X, f)` | **removed**, no alias |
-| `HamiltonianLift` | `CTLie.LiftedHamiltonianFunction` | renamed **and** re-parented |
+| `Lie(X, f)` | `ad(X, f)` | renamed; `Lie(...)` now throws `PreconditionError` |
+| `X ⋅ f` | `ad(X, f)` | removed; `X ⋅ f` now throws `PreconditionError` |
+| `HamiltonianLift` | `CTLie.LiftedHamiltonianFunction` | renamed; `HamiltonianLift(...)` now throws `PreconditionError` |
 
 `LiftedHamiltonianFunction` is `<: Function`, no longer `<: AbstractHamiltonian`. Any `isa` or `<:` test against the old hierarchy is now wrong:
 
@@ -50,7 +50,7 @@ f(t0, x0, p0, tf; variable=λ)
 f(t0, x0, p0, tf; variable=λ, variable_costate=true)
 ```
 
-1. **There is no positional slot for the variable any more**, and `variable=` is **mandatory** on a `NonFixed` problem. Omitting it raises a `PreconditionError` whose suggestion is literally *"Pass `variable=v` when calling the flow"* — it does not silently default.
+1. **There is no positional slot for the variable any more**, and `variable=` is **mandatory** on a `NonFixed` problem. The old positional spellings `f(t0, x0, p0, tf, λ)` and `f(t0, x0, tf, λ)` raise a `PreconditionError` suggesting `variable=λ`; omitting it raises a `PreconditionError` whose suggestion is literally *"Pass `variable=v` when calling the flow"* — it does not silently default.
 2. **`augment=true` → `variable_costate=true`.** It integrates the augmented adjoint `ṗᵥ = -∂H/∂v` and returns `(xf, pf, pvf)` instead of `(xf, pf)`.
 3. **New `unsafe=false`.** With `unsafe=true` the ODE retcode is not checked and failures do not throw — useful inside a shooting loop, where an intermediate failure should surface through the residual.
 
@@ -90,8 +90,8 @@ The old spelling on `@Lie` raises an `IncorrectArgument` at macro-expansion time
 
 | Name | Why |
 | --- | --- |
-| `time` | It is `Base.time`, extended but not exported by `CTModels.Components`. Get it from `Base`. |
-| `success` | `CTModels.Solutions` exports the name but defines no method for it, so `success(sol)` was always a `MethodError`. **Use `successful(sol)`**, which is the real accessor and is unchanged. |
+| `time` | It is `Base.time`. `time(ocp)` and `time(sol)` now throw `PreconditionError`; use `times(ocp)` or `time_grid(sol)`. |
+| `success` | `Base.success` is the name. `success(sol)` now throws `PreconditionError`; use `successful(sol)`. |
 
 ## Newly re-exported
 
