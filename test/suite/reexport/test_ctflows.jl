@@ -82,14 +82,13 @@ function test_ctflows()
                 Test.@testset "$T" begin
                     Test.@test isdefined(OptimalControl, T)
                     Test.@test is_exported(OptimalControl, T)
-                    Test.@test getfield(OptimalControl, T) === getfield(CTFlows.MultiPhase, T)
+                    Test.@test getfield(OptimalControl, T) ===
+                        getfield(CTFlows.MultiPhase, T)
                 end
             end
             # `*` concatenates flows. It is `Base.:*`, extended by MultiPhase,
             # so it needs no re-export of its own — but the method must exist.
-            Test.@test any(
-                m -> parentmodule(m) === CTFlows.MultiPhase, methods(*)
-            )
+            Test.@test any(m -> parentmodule(m) === CTFlows.MultiPhase, methods(*))
         end
 
         Test.@testset "Moved away from CTFlows" begin

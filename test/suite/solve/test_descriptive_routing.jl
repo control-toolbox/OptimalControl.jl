@@ -54,9 +54,7 @@ CTBase.Strategies.options(s::MockCollocation) = s.options
 CTBase.Strategies.parameter(::Type{<:MockCollocation}) = nothing
 
 function MockCollocation(; mode::Symbol=:strict, kwargs...)
-    opts = CTBase.Strategies.build_strategy_options(
-        MockCollocation; mode=mode, kwargs...
-    )
+    opts = CTBase.Strategies.build_strategy_options(MockCollocation; mode=mode, kwargs...)
     return MockCollocation(opts)
 end
 
@@ -294,7 +292,8 @@ function test_descriptive_routing()
                 ocp, MOCK_METHOD, MOCK_REGISTRY, routed
             )
 
-            Test.@test CTBase.Strategies.option_value(components.discretizer, :grid_size) == 42
+            Test.@test CTBase.Strategies.option_value(components.discretizer, :grid_size) ==
+                42
             Test.@test CTBase.Strategies.option_value(components.solver, :max_iter) == 7
         end
 
@@ -309,7 +308,8 @@ function test_descriptive_routing()
                 ocp, MOCK_METHOD, MOCK_REGISTRY, routed
             )
 
-            Test.@test CTBase.Strategies.option_value(components.modeler, :backend) === :sparse
+            Test.@test CTBase.Strategies.option_value(components.modeler, :backend) ===
+                :sparse
             Test.@test CTBase.Strategies.option_value(components.solver, :backend) === :gpu
         end
 
@@ -445,7 +445,9 @@ function test_descriptive_routing()
             Test.@testset "Parameter Resolution" begin
                 # Test that parameter information is correctly resolved
                 families = OptimalControl._descriptive_families()
-                resolved = CTBase.Orchestration.resolve_method(MOCK_METHOD, families, MOCK_REGISTRY)
+                resolved = CTBase.Orchestration.resolve_method(
+                    MOCK_METHOD, families, MOCK_REGISTRY
+                )
 
                 Test.@test resolved isa CTBase.Orchestration.ResolvedMethod
                 # Parameter might be nothing if not explicitly supported by mocks

@@ -89,15 +89,17 @@ CTBase.Strategies.options(strategy::MockDiscretizer) = strategy.options
 CTBase.Strategies.options(strategy::MockModeler) = strategy.options
 CTBase.Strategies.options(strategy::MockSolver) = strategy.options
 
-MockDiscretizer(; kwargs...) = MockDiscretizer(
-    CTBase.Strategies.build_strategy_options(MockDiscretizer; kwargs...)
-)
-MockModeler(; kwargs...) = MockModeler(
-    CTBase.Strategies.build_strategy_options(MockModeler; kwargs...)
-)
-MockSolver(; kwargs...) = MockSolver(
-    CTBase.Strategies.build_strategy_options(MockSolver; kwargs...)
-)
+function MockDiscretizer(; kwargs...)
+    return MockDiscretizer(
+        CTBase.Strategies.build_strategy_options(MockDiscretizer; kwargs...)
+    )
+end
+function MockModeler(; kwargs...)
+    return MockModeler(CTBase.Strategies.build_strategy_options(MockModeler; kwargs...))
+end
+function MockSolver(; kwargs...)
+    return MockSolver(CTBase.Strategies.build_strategy_options(MockSolver; kwargs...))
+end
 
 CommonSolve.solve(
     ::MockOCP, ::MockInit, ::MockDiscretizer, ::MockModeler, ::MockSolver; display::Bool

@@ -31,14 +31,18 @@ function test_registry()
 
         Test.@testset "Discretizer Family" begin
             registry = OptimalControl.get_strategy_registry()
-            ids = CTBase.Strategies.strategy_ids(CTSolvers.DOCP.AbstractDiscretizer, registry)
+            ids = CTBase.Strategies.strategy_ids(
+                CTSolvers.DOCP.AbstractDiscretizer, registry
+            )
             Test.@test :collocation in ids
             Test.@test length(ids) >= 1
         end
 
         Test.@testset "Modeler Family" begin
             registry = OptimalControl.get_strategy_registry()
-            ids = CTBase.Strategies.strategy_ids(CTSolvers.Modelers.AbstractNLPModeler, registry)
+            ids = CTBase.Strategies.strategy_ids(
+                CTSolvers.Modelers.AbstractNLPModeler, registry
+            )
             Test.@test :adnlp in ids
             Test.@test :exa in ids
             Test.@test length(ids) == 2
@@ -46,7 +50,9 @@ function test_registry()
 
         Test.@testset "Solver Family" begin
             registry = OptimalControl.get_strategy_registry()
-            ids = CTBase.Strategies.strategy_ids(CTSolvers.Solvers.AbstractNLPSolver, registry)
+            ids = CTBase.Strategies.strategy_ids(
+                CTSolvers.Solvers.AbstractNLPSolver, registry
+            )
             Test.@test :ipopt in ids
             Test.@test :madnlp in ids
             Test.@test :uno in ids
@@ -218,12 +224,16 @@ function test_registry()
                 Test.@test :collocation in discretizer_ids
 
                 # Test modeler parameter support
-                modeler_ids = CTBase.Strategies.strategy_ids(CTSolvers.Modelers.AbstractNLPModeler, registry)
+                modeler_ids = CTBase.Strategies.strategy_ids(
+                    CTSolvers.Modelers.AbstractNLPModeler, registry
+                )
                 Test.@test :adnlp in modeler_ids  # CPU-only
                 Test.@test :exa in modeler_ids     # CPU+GPU
 
                 # Test solver parameter support  
-                solver_ids = CTBase.Strategies.strategy_ids(CTSolvers.Solvers.AbstractNLPSolver, registry)
+                solver_ids = CTBase.Strategies.strategy_ids(
+                    CTSolvers.Solvers.AbstractNLPSolver, registry
+                )
                 Test.@test :ipopt in solver_ids    # CPU-only
                 Test.@test :madnlp in solver_ids   # CPU+GPU
                 Test.@test :uno in solver_ids      # CPU-only
@@ -238,8 +248,12 @@ function test_registry()
                 discretizer_ids = CTBase.Strategies.strategy_ids(
                     CTSolvers.DOCP.AbstractDiscretizer, registry
                 )
-                modeler_ids = CTBase.Strategies.strategy_ids(CTSolvers.Modelers.AbstractNLPModeler, registry)
-                solver_ids = CTBase.Strategies.strategy_ids(CTSolvers.Solvers.AbstractNLPSolver, registry)
+                modeler_ids = CTBase.Strategies.strategy_ids(
+                    CTSolvers.Modelers.AbstractNLPModeler, registry
+                )
+                solver_ids = CTBase.Strategies.strategy_ids(
+                    CTSolvers.Solvers.AbstractNLPSolver, registry
+                )
 
                 # Test that each family has strategies
                 Test.@test length(discretizer_ids) >= 1
@@ -333,8 +347,12 @@ function test_registry()
                 )
                 Test.@test modeler_ids1 == modeler_ids2
 
-                solver_ids1 = CTBase.Strategies.strategy_ids(CTSolvers.Solvers.AbstractNLPSolver, registry1)
-                solver_ids2 = CTBase.Strategies.strategy_ids(CTSolvers.Solvers.AbstractNLPSolver, registry2)
+                solver_ids1 = CTBase.Strategies.strategy_ids(
+                    CTSolvers.Solvers.AbstractNLPSolver, registry1
+                )
+                solver_ids2 = CTBase.Strategies.strategy_ids(
+                    CTSolvers.Solvers.AbstractNLPSolver, registry2
+                )
                 Test.@test solver_ids1 == solver_ids2
             end
 
@@ -381,8 +399,12 @@ function test_registry()
                 discretizer_ids = CTBase.Strategies.strategy_ids(
                     CTSolvers.DOCP.AbstractDiscretizer, registry
                 )
-                modeler_ids = CTBase.Strategies.strategy_ids(CTSolvers.Modelers.AbstractNLPModeler, registry)
-                solver_ids = CTBase.Strategies.strategy_ids(CTSolvers.Solvers.AbstractNLPSolver, registry)
+                modeler_ids = CTBase.Strategies.strategy_ids(
+                    CTSolvers.Modelers.AbstractNLPModeler, registry
+                )
+                solver_ids = CTBase.Strategies.strategy_ids(
+                    CTSolvers.Solvers.AbstractNLPSolver, registry
+                )
 
                 Test.@test length(discretizer_ids) >= 1
                 Test.@test length(modeler_ids) >= 1

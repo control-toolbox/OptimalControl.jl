@@ -50,9 +50,8 @@ rather than a `KeyError`.
 """
 function build(name::Symbol, form::Symbol=:abstract; kwargs...)
     check_form(form)
-    haskey(_CONSTRUCTORS, name) || throw(
-        ArgumentError("unknown problem $(repr(name)); expected one of $(PROBLEMS)")
-    )
+    haskey(_CONSTRUCTORS, name) ||
+        throw(ArgumentError("unknown problem $(repr(name)); expected one of $(PROBLEMS)"))
     return _CONSTRUCTORS[name](form; kwargs...)
 end
 
@@ -85,5 +84,4 @@ end
 Names only — cheaper than [`problems_for`](@ref) when the problems themselves
 are not needed (building them expands `@def`).
 """
-problem_names_for(method::Symbol) =
-    [pb.name for pb in problems_for(method)]
+problem_names_for(method::Symbol) = [pb.name for pb in problems_for(method)]
