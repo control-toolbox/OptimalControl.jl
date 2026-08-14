@@ -30,6 +30,7 @@ function generate_api_reference(src_dir::String, ext_dir::String)
                     joinpath("helpers", "component_checks.jl"),
                     joinpath("helpers", "component_completion.jl"),
                     joinpath("helpers", "descriptive_routing.jl"),
+                    joinpath("helpers", "describe.jl"),
                     joinpath("helpers", "kwarg_extraction.jl"),
                     joinpath("helpers", "methods.jl"),
                     joinpath("helpers", "print.jl"),

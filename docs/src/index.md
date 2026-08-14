@@ -38,10 +38,10 @@ sol = solve(ocp)
 plot(sol)
 ```
 
-- For more details, see the [basic example tutorial](@ref example-double-integrator-energy).  
-- The [`@def`](@ref) macro defines the problem. See the [abstract syntax tutorial](@ref manual-abstract-syntax).  
-- The [`solve`](@ref) function has many options. See the [solve tutorial](@ref manual-solve).  
-- The [`plot`](@ref) function is flexible. See the [plot tutorial](@ref manual-plot).
+- For more details, see the [example gallery](@ref examples-gallery).  
+- The `@def` macro defines the problem. See the [abstract syntax guide](@ref modelling-abstract-syntax).  
+- The `solve` function has many options. See the [solve overview](@ref solve-overview).  
+- The `plot` function is flexible. See the [plot guide](@ref results-plot).
 
 ## [Mathematical formulation](@id math-formulation)
 

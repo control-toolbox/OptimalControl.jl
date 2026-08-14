@@ -2,3 +2,7 @@ build/
 node_modules/
 package-lock.json
 Manifest.toml
+src/notebooks/
+src/scripts/
+src/getting-started/guided-tour.md
+!src/assets/Manifest.toml
