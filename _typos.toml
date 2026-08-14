@@ -2,13 +2,17 @@
 locale = "en"
 extend-ignore-re = [
     "ded",
+    "ois",
+    "Mor",
     "mis-",
     "directes",
     "exemple",
     "exemples",
     "choses",
     "certains",
-    "remplace"
+    "remplace",
+    "construit",
+    "maintenant"
 ]
 
 [files]
