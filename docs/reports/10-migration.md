@@ -61,6 +61,7 @@ already in the repo: `src/helpers/describe.jl:51-55` pirates
 | flow call `f(t0,x0,tf,λ)` (state flow) | yes — same pattern on `AbstractStateFlow` | no | **do it**, for symmetry |
 | `Flow(ocp, u, g, μ)` | only as a 4-arity specialisation; the exact signature would **overwrite** upstream | **yes** — `PreconditionError` at `CTFlows/…/src/Flows/building.jl:1019` | **skip**; open a CTFlows issue (its `suggestion` string is wrong for this case) |
 | flow call `augment=true` | **no** — Julia cannot dispatch on a keyword name | no | **skip**; CTFlows issue |
+| flow call `f(...; saveat=, abstol=, reltol=, alg=, ...)` (per-call integrator option override) | **no** — same reason as `Flow(ocp, u, g, μ)`: the call signature is closed (`variable`/`unsafe`/`variable_costate` only), so a shim would overwrite CTFlows' own call method | no — bare `MethodError`, not caught anywhere | **skip**; document in `BREAKING.md` (§"Flow call convention" point 4). Construction-time options (`Flow(ocp, u; abstol=...)`) are unaffected and still work. Not filed upstream: this looks like a deliberate CTFlows design choice (options are baked into the flow's type at construction), not a bug — unlike the two rows above. |
 | `@Lie … autonomous=false` | n/a | **yes** — `IncorrectArgument` at `CTLie/src/lie_macro.jl:381` | **skip** |
 | `autonomous=` / `variable=` / `inplace=` on the `Data` constructors | **no** — 14 entry points, and the workaround duplicates CTBase's trait detection | no | **skip**; optional CTBase issue |
 
