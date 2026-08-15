@@ -1,0 +1,8 @@
+# DocInventory version 1
+project = "ExaModels"
+
+# Placeholder: exanauts.github.io/ExaModels.jl/stable/objects.inv currently 404s
+# (checked 2026-08-15), so there is no reachable source to harvest real entries
+# from. This empty inventory keeps the build green; @extref ExaModels ... will
+# report "not found" (not a build Error) until either the upstream site comes
+# back or this file is populated with real entries.
