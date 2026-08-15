@@ -51,7 +51,7 @@ f(t0, x0, p0, tf; variable=λ, variable_costate=true)
 ```
 
 1. **There is no positional slot for the variable any more**, and `variable=` is **mandatory** on a `NonFixed` problem. The old positional spellings `f(t0, x0, p0, tf, λ)` and `f(t0, x0, tf, λ)` raise a `PreconditionError` suggesting `variable=λ`; omitting it raises a `PreconditionError` whose suggestion is literally *"Pass `variable=v` when calling the flow"* — it does not silently default.
-2. **`augment=true` → `variable_costate=true`.** It integrates the augmented adjoint `ṗᵥ = -∂H/∂v` and returns `(xf, pf, pvf)` instead of `(xf, pf)`.
+2. **`augment=true` → `variable_costate=true`.** It integrates the augmented adjoint `ṗᵥ = -∂H/∂v` and returns `(xf, pf, pvf)` instead of `(xf, pf)`. The old spelling is not shimmed — it fails with a bare `MethodError` today, not a `PreconditionError` — because a shim here would mean overwriting CTFlows' own method; filed as [CTFlows#402](https://github.com/control-toolbox/CTFlows.jl/issues/402) instead.
 3. **New `unsafe=false`.** With `unsafe=true` the ODE retcode is not checked and failures do not throw — useful inside a shooting loop, where an intermediate failure should surface through the residual.
 4. **Integrator options can no longer be overridden per call.** In v2.0, keywords like `saveat=`, `abstol=`, `reltol=`, `alg=` were forwarded straight through to OrdinaryDiffEq.jl at *call* time:
 
@@ -78,6 +78,8 @@ fb = Flow(ocp, u, g, μ)                            # 3 positional
 # after
 fb = Flow(ocp, u; constraint=g, multiplier=μ)      # paired keywords
 ```
+
+The old positional form already raises a `PreconditionError` today, but with a misleading suggestion — fix filed as [CTFlows#401](https://github.com/control-toolbox/CTFlows.jl/issues/401).
 
 The two are a pair: one without the other is an `IncorrectArgument`.
 
