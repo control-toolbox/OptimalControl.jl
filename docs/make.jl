@@ -137,9 +137,9 @@ include("api_reference.jl")
 # ═══════════════════════════════════════════════════════════════════════════════
 links = InterLinks(
     "CTBase" => (
-        "https://control-toolbox.org/CTBase/stable/",
+        "https://control-toolbox.org/CTBase.jl/stable/",
         joinpath(@__DIR__, "..", "..", "CTBase", "docs", "build", "1", "objects.inv"),
-        "https://control-toolbox.org/CTBase/stable/objects.inv",
+        "https://control-toolbox.org/CTBase.jl/stable/objects.inv",
     ),
     "CTDirect" => (
         "https://control-toolbox.org/CTDirect.jl/stable/",
@@ -152,9 +152,9 @@ links = InterLinks(
         "https://control-toolbox.org/CTFlows.jl/stable/objects.inv",
     ),
     "CTLie" => (
-        "https://control-toolbox.org/CTLie/stable/",
+        "https://control-toolbox.org/CTLie.jl/stable/",
         joinpath(@__DIR__, "..", "..", "CTLie", "docs", "build", "1", "objects.inv"),
-        "https://control-toolbox.org/CTLie/stable/objects.inv",
+        "https://control-toolbox.org/CTLie.jl/stable/objects.inv",
     ),
     "CTModels" => (
         "https://control-toolbox.org/CTModels.jl/stable/",
@@ -167,9 +167,9 @@ links = InterLinks(
         "https://control-toolbox.org/CTParser.jl/stable/objects.inv",
     ),
     "CTSolvers" => (
-        "https://control-toolbox.org/CTSolvers/stable/",
+        "https://control-toolbox.org/CTSolvers.jl/stable/",
         joinpath(@__DIR__, "..", "..", "CTSolvers", "docs", "build", "1", "objects.inv"),
-        "https://control-toolbox.org/CTSolvers/stable/objects.inv",
+        "https://control-toolbox.org/CTSolvers.jl/stable/objects.inv",
     ),
     "ADNLPModels" => (
         "https://jso.dev/ADNLPModels.jl/stable/",
