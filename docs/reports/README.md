@@ -49,9 +49,9 @@ Status legend: ⬜ not started · 🟡 in progress · ✅ merged
 | # | PR | Section | Spec | Depends on | Status |
 | --- | --- | --- | --- | --- | --- |
 | 1 | `docs: specification reports` | — | all of this directory | — | ✅ |
-| 2 | `docs: infrastructure` | build + skeleton | [`01`](01-infrastructure.md) | 1 | ⬜ |
-| 3 | `feat: deprecation shims` | `src/deprecated.jl` | [`10`](10-migration.md) §1 | 1 | ⬜ |
-| 4 | `docs: API reference` | API reference | [`09`](09-api-reference.md) | 2 | ⬜ |
+| 2 | [`docs: infrastructure`](https://github.com/control-toolbox/OptimalControl.jl/pull/854) | build + skeleton | [`01`](01-infrastructure.md) | 1 | 🟡 open, build verified green |
+| 3 | [`feat: deprecation shims`](https://github.com/control-toolbox/OptimalControl.jl/pull/855) | `src/deprecated.jl` | [`10`](10-migration.md) §1 | 1 | 🟡 open, all acceptance criteria met |
+| 4 | [`docs: API reference`](https://github.com/control-toolbox/OptimalControl.jl/pull/856) | API reference | [`09`](09-api-reference.md) | 2 | 🟡 open, all acceptance criteria met |
 | 5 | `docs: modelling` | Modelling | [`03`](03-modelling.md) | 2 | ⬜ |
 | 6 | `docs: solve` | Solve (direct) | [`04`](04-solve-direct.md) | 5 | ⬜ |
 | 7 | `docs: results` | Results | [`07`](07-results.md) | 6 | ⬜ |

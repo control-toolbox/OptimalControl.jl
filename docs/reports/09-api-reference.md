@@ -170,16 +170,26 @@ Judgement calls, recorded so they are not re-argued:
 
 ## Acceptance criteria
 
-- [ ] `docs/src/api/public.md` and `api/subpackages.md` are deleted.
-- [ ] Every theme page is generated at build time and removed by `_cleanup_pages`.
-- [ ] The completeness check runs and reports **zero** missing and **zero** stale symbols.
-- [ ] `api/ecosystem.md` lists all seven packages including **CTLie**, and every link
+- [x] `docs/src/api/public.md` and `api/subpackages.md` are deleted.
+- [x] Every theme page is generated at build time and removed by `_cleanup_pages`.
+- [x] The completeness check runs and reports **zero** missing and **zero** stale symbols.
+- [x] `api/ecosystem.md` lists all seven packages including **CTLie**, and every link
       resolves through `InterLinks`.
-- [ ] The Internals page is titled "Internals" and includes `describe`.
-- [ ] No `@docs` block anywhere under `docs/src/` outside `api/` — the guides link to the
+- [x] The Internals page is titled "Internals" and includes `describe`.
+- [x] No `@docs` block anywhere under `docs/src/` outside `api/` — the guides link to the
       reference, they do not inline it (this deletes the inline block currently at the end of
       `attic/manual-macro-free.md`).
-- [ ] `docs/make.jl`'s API node is built from the manifest, not from a literal list.
+- [x] `docs/make.jl`'s API node is built from the manifest, not from a literal list.
+
+Verified by an independent full rebuild (`julia --project=docs docs/make.jl` +
+`npx vitepress build build/1`), not just re-checked against the diff: all seven criteria hold,
+and this rework also fixes the 10 unresolved self-`@ref`s for `solve`/`methods`/`describe` on
+the old `api/private.md` found while auditing PR 2's build. Not fixed here, and out of scope
+(structural, not a regression from this PR — `external_modules_to_document` is unchanged from
+`main`): a large number of "cannot resolve `@ref`" warnings on the generated theme pages, from
+sibling-package docstrings whose own "See also" cross-references use bare `@ref` (correct only
+within their own doc build, not when the docstring is reused here). `warnonly=true` already
+tolerates these; fixing them would mean rewriting docstrings across several sibling repos.
 
 ## Outgoing links
 
