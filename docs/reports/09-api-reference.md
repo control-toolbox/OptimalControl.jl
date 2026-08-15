@@ -184,12 +184,35 @@ Judgement calls, recorded so they are not re-argued:
 Verified by an independent full rebuild (`julia --project=docs docs/make.jl` +
 `npx vitepress build build/1`), not just re-checked against the diff: all seven criteria hold,
 and this rework also fixes the 10 unresolved self-`@ref`s for `solve`/`methods`/`describe` on
-the old `api/private.md` found while auditing PR 2's build. Not fixed here, and out of scope
-(structural, not a regression from this PR — `external_modules_to_document` is unchanged from
-`main`): a large number of "cannot resolve `@ref`" warnings on the generated theme pages, from
-sibling-package docstrings whose own "See also" cross-references use bare `@ref` (correct only
-within their own doc build, not when the docstring is reused here). `warnonly=true` already
-tolerates these; fixing them would mean rewriting docstrings across several sibling repos.
+the old `api/private.md` found while auditing PR 2's build.
+
+The manifest itself was rewritten as a literal, hand-maintained `API_THEMES` array (per this
+report's own example) rather than parsed from `99-api-coverage.md` at build time — an earlier
+draft scraped that file's prose and picked up 46 symbols that don't actually resolve in
+`@docs` (bare `constraint`/`objective`/`variable`/`parameter` etc. need module qualification;
+six others — `solve_explicit`, `solve_descriptive`, `SolveMode`, `display_ocp_configuration`,
+`get_full_strategy_registry`, `will_solver_print` — are explicitly listed in
+`99-api-coverage.md` §12 as **not** documented as available, but the scraper picked them up
+from the sentence saying so anyway, since it does not understand negation in prose). All of
+these are fixed now: zero "undefined binding" / "no docs found" / "duplicate docs found"
+warnings on a full rebuild, one genuine upstream gap found and filed
+([`CTDirect.jl#623`](https://github.com/control-toolbox/CTDirect.jl/issues/623):
+`Collocation` has no docstring at all), and the six module aliases (`CTBase`, `CTLie`,
+`CTFlows`, `CTModels`, `ADNLPModels`, `ExaModels`) moved from `@docs` to prose on
+`api/qualified.md`, since `@doc` on a bare module without its own docstring only returns
+Julia's generic "here are its exports" filler.
+
+Not fixed here, and out of scope for this PR: a large number of "cannot resolve `@ref`"
+warnings on the generated theme pages, from sibling-package docstrings whose own "See also"
+cross-references use bare `@ref` (correct only within their own doc build, not when the
+docstring is reused here). This is **not** permanent upstream debt: CTBase 0.29, CTModels
+0.16, CTFlows 0.17, CTLie and CTSolvers 0.5 have already migrated these to self-referencing
+`@extref` (verified — zero bare `@ref` left in CTBase/CTModels/CTLie/CTSolvers `src/`, 15
+residual in CTFlows). The warnings persist only because `docs/Project.toml` is pinned to
+older versions (`CTBase = "0.28"`, `CTModels = "0.15"`, …) — itself blocked on CTDirect and
+CTParser not yet accepting the newer sibling releases, the same blocker tracked in
+`.reports/upgrade-v2.1.0-beta.md`. Once that unblocks and the compat pins move, most of these
+warnings should disappear on their own. `warnonly=true` tolerates them in the meantime.
 
 ## Outgoing links
 
