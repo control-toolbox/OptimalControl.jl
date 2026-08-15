@@ -22,6 +22,7 @@ using Test: Test
 using OptimalControl # using is mandatory since we test exported symbols
 using CTLie: CTLie
 using CTBase: CTBase
+using LinearAlgebra: LinearAlgebra
 
 include(joinpath(@__DIR__, "..", "..", "helpers", "reexport.jl"))
 using .ReexportUtils: reexports, imports, is_exported
@@ -76,12 +77,13 @@ function test_ctlie()
             Test.@test imports(OptimalControl, :LiftedHamiltonianFunction, CTLie)
         end
 
-        Test.@testset "Removed API" begin
-            # `Lie` was renamed to `ad`; `⋅` was dropped with no replacement.
-            # Both must be gone from the public surface.
-            Test.@test !is_exported(OptimalControl, :Lie)
-            Test.@test !is_exported(OptimalControl, :⋅)
-            Test.@test !isdefined(OptimalControl, :HamiltonianLift)
+        Test.@testset "Removed API is now shimmed" begin
+            # `Lie` was renamed to `ad`; `⋅` and `HamiltonianLift` were removed.
+            # All three now throw PreconditionErrors naming their replacement.
+            Test.@test is_exported(OptimalControl, :Lie)
+            Test.@test is_exported(OptimalControl, :⋅)
+            Test.@test isdefined(OptimalControl, :HamiltonianLift)
+            Test.@test getfield(OptimalControl, :⋅) === LinearAlgebra.dot
         end
 
         # ====================================================================

@@ -23,9 +23,9 @@ Without it, `Flow` fails with a bare `MethodError`. This is by design: it keeps 
 
 | v2.0 | v2.1.0-beta | Notes |
 | --- | --- | --- |
-| `Lie(X, f)` | `ad(X, f)` | renamed |
-| `X ⋅ f` | `ad(X, f)` | **removed**, no alias |
-| `HamiltonianLift` | `CTLie.LiftedHamiltonianFunction` | renamed **and** re-parented |
+| `Lie(X, f)` | `ad(X, f)` | renamed; `Lie(...)` now throws `PreconditionError` |
+| `X ⋅ f` | `ad(X, f)` | removed; `X ⋅ f` now throws `PreconditionError` |
+| `HamiltonianLift` | `CTLie.LiftedHamiltonianFunction` | renamed; `HamiltonianLift(...)` now throws `PreconditionError` |
 
 `LiftedHamiltonianFunction` is `<: Function`, no longer `<: AbstractHamiltonian`. Any `isa` or `<:` test against the old hierarchy is now wrong:
 
@@ -50,9 +50,24 @@ f(t0, x0, p0, tf; variable=λ)
 f(t0, x0, p0, tf; variable=λ, variable_costate=true)
 ```
 
-1. **There is no positional slot for the variable any more**, and `variable=` is **mandatory** on a `NonFixed` problem. Omitting it raises a `PreconditionError` whose suggestion is literally *"Pass `variable=v` when calling the flow"* — it does not silently default.
-2. **`augment=true` → `variable_costate=true`.** It integrates the augmented adjoint `ṗᵥ = -∂H/∂v` and returns `(xf, pf, pvf)` instead of `(xf, pf)`.
+1. **There is no positional slot for the variable any more**, and `variable=` is **mandatory** on a `NonFixed` problem. The old positional spellings `f(t0, x0, p0, tf, λ)` and `f(t0, x0, tf, λ)` raise a `PreconditionError` suggesting `variable=λ`; omitting it raises a `PreconditionError` whose suggestion is literally *"Pass `variable=v` when calling the flow"* — it does not silently default.
+2. **`augment=true` → `variable_costate=true`.** It integrates the augmented adjoint `ṗᵥ = -∂H/∂v` and returns `(xf, pf, pvf)` instead of `(xf, pf)`. The old spelling is not shimmed — it fails with a bare `MethodError` today, not a `PreconditionError` — because a shim here would mean overwriting CTFlows' own method; filed as [CTFlows#402](https://github.com/control-toolbox/CTFlows.jl/issues/402) instead.
 3. **New `unsafe=false`.** With `unsafe=true` the ODE retcode is not checked and failures do not throw — useful inside a shooting loop, where an intermediate failure should surface through the residual.
+4. **Integrator options can no longer be overridden per call.** In v2.0, keywords like `saveat=`, `abstol=`, `reltol=`, `alg=` were forwarded straight through to OrdinaryDiffEq.jl at *call* time:
+
+   ```julia
+   # before — worked at call time
+   f(t0, x0, p0, tf; abstol=1e-8)
+   f((t0, tf), x0, p0; saveat=range(t0, tf, 100))
+   ```
+
+   The call signature now only accepts `variable`, `unsafe` and `variable_costate`; anything else is a bare `MethodError`, not a `PreconditionError` — this spelling is **not shimmed** (it would mean overwriting CTFlows' own call method, the same reason `Flow(ocp, u, g, μ)` above and `augment=` are not shimmed either). Pass integrator options at **construction** time instead, where they still work exactly as before:
+
+   ```julia
+   # after — set once, at construction
+   f = Flow(ocp, (x, p) -> p[2]; abstol=1e-8)
+   f(t0, x0, p0, tf)
+   ```
 
 ## Constrained flows: keywords replace positional arguments
 
@@ -63,6 +78,8 @@ fb = Flow(ocp, u, g, μ)                            # 3 positional
 # after
 fb = Flow(ocp, u; constraint=g, multiplier=μ)      # paired keywords
 ```
+
+The old positional form already raises a `PreconditionError` today, but with a misleading suggestion — fix filed as [CTFlows#401](https://github.com/control-toolbox/CTFlows.jl/issues/401).
 
 The two are a pair: one without the other is an `IncorrectArgument`.
 
@@ -90,8 +107,8 @@ The old spelling on `@Lie` raises an `IncorrectArgument` at macro-expansion time
 
 | Name | Why |
 | --- | --- |
-| `time` | It is `Base.time`, extended but not exported by `CTModels.Components`. Get it from `Base`. |
-| `success` | `CTModels.Solutions` exports the name but defines no method for it, so `success(sol)` was always a `MethodError`. **Use `successful(sol)`**, which is the real accessor and is unchanged. |
+| `time` | It is `Base.time`. `time(ocp)` and `time(sol)` now throw `PreconditionError`; use `times(ocp)` or `time_grid(sol)`. |
+| `success` | `Base.success` is the name. `success(sol)` now throws `PreconditionError`; use `successful(sol)`. |
 
 ## Newly re-exported
 
