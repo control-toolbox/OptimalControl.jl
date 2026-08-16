@@ -21,62 +21,61 @@ using LinearAlgebra: ⋅
 
 export Lie, ⋅, HamiltonianLift
 
-function _deprecated(old, new, ctx = nothing)
+function _deprecated(old, new, ctx=nothing)
     return PreconditionError(
         "`$old` is deprecated";
-        reason = "this spelling was removed in v2.1.0-beta",
-        suggestion = "use $new",
-        context = ctx,
+        reason="this spelling was removed in v2.1.0-beta",
+        suggestion="use $new",
+        context=ctx,
     )
 end
 
 # Differential geometry -------------------------------------------------------
 
 function Lie(X, f)
-    throw(_deprecated("Lie(X, f) / Lie(X, Y)", "ad(X, f) or ad(X, Y)"))
+    return throw(_deprecated("Lie(X, f) / Lie(X, Y)", "ad(X, f) or ad(X, Y)"))
 end
 
-LinearAlgebra.dot(X::AbstractVectorField, f::Function) =
-    throw(_deprecated("X \\cdot f", "ad(X, f)"))
+function LinearAlgebra.dot(X::AbstractVectorField, f::Function)
+    return throw(_deprecated("X \\cdot f", "ad(X, f)"))
+end
 
 function HamiltonianLift(args...)
-    throw(_deprecated(
-        "HamiltonianLift",
-        "Lift(f) for a plain function, or CTLie.LiftedHamiltonianFunction",
-    ))
+    return throw(
+        _deprecated(
+            "HamiltonianLift",
+            "Lift(f) for a plain function, or CTLie.LiftedHamiltonianFunction",
+        ),
+    )
 end
 
 # Removed accessors -----------------------------------------------------------
 
-Base.time(m::Model) =
-    throw(_deprecated("time(ocp)", "times(ocp)"))
+Base.time(m::Model) = throw(_deprecated("time(ocp)", "times(ocp)"))
 
-Base.time(sol::AbstractSolution) =
-    throw(_deprecated("time(sol)", "time_grid(sol)"))
+Base.time(sol::AbstractSolution) = throw(_deprecated("time(sol)", "time_grid(sol)"))
 
-Base.success(sol::AbstractSolution) =
-    throw(_deprecated("success(sol)", "successful(sol)"))
+Base.success(sol::AbstractSolution) = throw(_deprecated("success(sol)", "successful(sol)"))
 
 # Flow constructor ------------------------------------------------------------
 
-CTFlows.Flows.Flow(f::Function) =
-    throw(_deprecated(
-        "Flow(f::Function)",
-        "Flow(VectorField(f)), Flow(Hamiltonian(f)), or Flow(HamiltonianVectorField(f))",
-    ))
+function CTFlows.Flows.Flow(f::Function)
+    return throw(
+        _deprecated(
+            "Flow(f::Function)",
+            "Flow(VectorField(f)), Flow(Hamiltonian(f)), or Flow(HamiltonianVectorField(f))",
+        ),
+    )
+end
 
 # Flow calling convention -----------------------------------------------------
 
 function (f::CTFlows.Flows.AbstractHamiltonianFlow)(t0::Real, x0, p0, tf::Real, variable)
-    throw(_deprecated(
-        "f(t0, x0, p0, tf, lambda)",
-        "f(t0, x0, p0, tf; variable=lambda)",
-    ))
+    return throw(
+        _deprecated("f(t0, x0, p0, tf, lambda)", "f(t0, x0, p0, tf; variable=lambda)")
+    )
 end
 
 function (f::CTFlows.Flows.AbstractStateFlow)(t0::Real, x0, tf::Real, variable)
-    throw(_deprecated(
-        "f(t0, x0, tf, lambda)",
-        "f(t0, x0, tf; variable=lambda)",
-    ))
+    return throw(_deprecated("f(t0, x0, tf, lambda)", "f(t0, x0, tf; variable=lambda)"))
 end
