@@ -54,7 +54,7 @@ Status legend: ⬜ not started · 🟡 in progress · ✅ merged
 | 4 | [`docs: API reference`](https://github.com/control-toolbox/OptimalControl.jl/pull/856) | API reference | [`09`](09-api-reference.md) | 2 | ✅ |
 | 5 | [`docs: modelling`](https://github.com/control-toolbox/OptimalControl.jl/pull/865) | Modelling | [`03`](03-modelling.md) | 2 | 🟡 in review |
 | 6 | [`docs: solve`](https://github.com/control-toolbox/OptimalControl.jl/pull/866) | Solve (direct) | [`04`](04-solve-direct.md) | 5 | 🟡 in review |
-| 7 | `docs: results` | Results | [`07`](07-results.md) | 6 | ⬜ |
+| 7 | `docs: results` | Results | [`07`](07-results.md) | 6 | 🟡 branch ready, build verified green, not yet opened as a PR |
 | 8 | `docs: flows` | Flows (indirect) | [`05`](05-flows-indirect.md) | 6 | ⬜ |
 | 9 | `docs: geometry` | Geometry | [`06`](06-geometry.md) | 8 | ⬜ |
 | 10 | `docs: examples` | Examples | [`08`](08-examples.md) | 8, 9 | ⬜ |
