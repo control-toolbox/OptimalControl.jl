@@ -100,6 +100,18 @@ variable, or a grid `label(T) := data` for a time vector `T`.
 The indexed syntax `x[1](t) := ...` is **not supported** — `@init` works at the level of
 declared labels, not array positions; use `x₁(t) := ...` or a component's own name instead.
 
+Whatever you pass as `init=`/`initial_guess=` — `@init` output, `nothing`, a `Solution`, a
+constant — `solve` normalizes it the same way internally, via `build_initial_guess(ocp, ...)`.
+Calling it yourself is occasionally useful to inspect what got built:
+
+```@example main
+ig = @init ocp1 begin
+    u(t) := -0.2
+end
+built = build_initial_guess(ocp1, ig)
+typeof(built)
+```
+
 ### Constant
 
 ```@example main

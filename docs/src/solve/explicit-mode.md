@@ -57,6 +57,10 @@ Give one component, and the other two are completed the same way descriptive mod
 partial token list — first match, top to bottom in [`methods`](@ref)`()`:
 
 ```@example explicit
+methods()[1]  # (:collocation, :adnlp, :ipopt, :cpu) — what a bare solve(ocp) completes to
+```
+
+```@example explicit
 result = solve(ocp; solver=OptimalControl.Ipopt(max_iter=2000, print_level=0), display=true)
 nothing # hide
 ```

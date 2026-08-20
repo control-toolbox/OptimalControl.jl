@@ -124,6 +124,8 @@ default, or computed from the problem:
 
 ```@example advanced
 s = OptimalControl.Ipopt(max_iter=200)
+println(has_option(s, :max_iter))      # true — Ipopt declares this option
+println(has_option(s, :not_an_option)) # false
 println(option_value(s, :max_iter))    # 200 — what will actually be used
 println(option_value(s, :tol))         # 1.0e-8 — the strategy's own default
 
