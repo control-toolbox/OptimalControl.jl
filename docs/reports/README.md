@@ -52,7 +52,7 @@ Status legend: ⬜ not started · 🟡 in progress · ✅ merged
 | 2 | [`docs: infrastructure`](https://github.com/control-toolbox/OptimalControl.jl/pull/854) | build + skeleton | [`01`](01-infrastructure.md) | 1 | ✅ |
 | 3 | [`feat: deprecation shims`](https://github.com/control-toolbox/OptimalControl.jl/pull/855) | `src/deprecated.jl` | [`10`](10-migration.md) §1 | 1 | ✅ |
 | 4 | [`docs: API reference`](https://github.com/control-toolbox/OptimalControl.jl/pull/856) | API reference | [`09`](09-api-reference.md) | 2 | ✅ |
-| 5 | `docs: modelling` | Modelling | [`03`](03-modelling.md) | 2 | ⬜ |
+| 5 | [`docs: modelling`](https://github.com/control-toolbox/OptimalControl.jl/pull/865) | Modelling | [`03`](03-modelling.md) | 2 | 🟡 in review |
 | 6 | `docs: solve` | Solve (direct) | [`04`](04-solve-direct.md) | 5 | ⬜ |
 | 7 | `docs: results` | Results | [`07`](07-results.md) | 6 | ⬜ |
 | 8 | `docs: flows` | Flows (indirect) | [`05`](05-flows-indirect.md) | 6 | ⬜ |

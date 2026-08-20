@@ -217,11 +217,34 @@ Fixtures already exist and are tested: `test/problems/control_free.jl` (`Exponen
 
 ## Acceptance criteria
 
-- [ ] Every symbol in the `inspect.md` list appears on the page and executes.
-- [ ] `without-control.md` exists and both fixtures run, reproducing $p = 0.5$ and
+- [x] Every symbol in the `inspect.md` list appears on the page and executes.
+- [x] `without-control.md` exists and both fixtures run, reproducing $p = 0.5$ and
       $\omega = \pi/2$.
-- [ ] `functional-api.md` no longer contains an inline `@docs` block, and is under ~400 lines.
-- [ ] No page writes `OptimalControl.VectorField`-style qualification for an exported symbol;
+- [x] `functional-api.md` no longer contains an inline `@docs` block, and is under ~400 lines
+      (267).
+- [x] No page writes `OptimalControl.VectorField`-style qualification for an exported symbol;
       `PreModel` and `Model` *are* qualified, correctly.
-- [ ] The `@id math-formulation` anchor still resolves after the move.
-- [ ] `with-ai.md`'s prompt template points at the new DSL page URL.
+- [ ] ~~The `@id math-formulation` anchor still resolves after the move.~~ **Dropped by
+      decision, not implemented**: Documenter only recognises `@id` when the link is the sole
+      child of a *heading* node (`namedheader`, `expander_pipeline.jl`) — a standalone
+      `[](@id math-formulation)` anchor is not real Documenter syntax and was silently treated
+      as a broken link, caught by a full rebuild. No currently-built page references
+      `@ref math-formulation` (only `docs/attic/manual-macro-free.md`, not part of the live
+      build) so nothing breaks; kept only `@id modelling-formulation`, matching the sitemap
+      convention. `docs/reports/02-getting-started.md`'s mention of keeping this section on
+      `index.md` is a latent inconsistency with this PR's move — left for PR 11 to reconcile.
+- [x] `with-ai.md`'s prompt template points at the new DSL page URL, confirmed against the
+      actual built route (`/modelling/abstract-syntax`, no `.html` — DocumenterVitepress
+      clean URLs) via a full `docs/build/1` inspection, not just the source text.
+
+Verified by an independent full rebuild (`julia --project=docs docs/make.jl` +
+`npx vitepress build build/1`), not just re-checked against the diff: zero "undefined
+binding"/"no docs found"/"duplicate docs found" (regression check on PR 4), zero build
+errors, zero failed or un-expanded `@example` blocks on any of the six pages, zero unresolved
+`@ref`s originating from these pages. One genuine upstream bug found and filed in the
+process, unrelated to this PR's own content but triggered by it: `plot(sol)` throws
+`IncorrectArgument("a VBox needs at least one child")` on the *default* call for any plain
+direct-solved solution once `layout=:split`'s default description includes `:costate`
+([`CTModels.jl#392`](https://github.com/control-toolbox/CTModels.jl/issues/392)) — worked
+around in both affected pages with an explicit `plot(sol, :state, :control)`/`plot(sol,
+:state)` description.
