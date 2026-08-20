@@ -28,8 +28,8 @@ solve(ocp, :collocation, :adnlp, :ipopt)
 solve(ocp, :collocation; init=x0, display=false)
 
 # Explicit mode (typed components)
-solve(ocp; discretizer=CTDirect.Collocation(),
-           modeler=CTSolvers.Modelers.ADNLP(), solver=CTSolvers.Solvers.Ipopt())
+solve(ocp; discretizer=OptimalControl.Collocation(),
+           modeler=OptimalControl.ADNLP(), solver=OptimalControl.Ipopt())
 ```
 
 # Throws

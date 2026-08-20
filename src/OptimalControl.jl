@@ -29,10 +29,10 @@ ocp = Model(...)
 sol = solve(ocp, :collocation, :adnlp, :ipopt)
 
 # Or solve using explicit mode (typed components)
-sol = solve(ocp; 
-    discretizer=CTDirect.Collocation(),
-    modeler=CTSolvers.Modelers.ADNLP(),
-    solver=CTSolvers.Solvers.Ipopt()
+sol = solve(ocp;
+    discretizer=OptimalControl.Collocation(),
+    modeler=OptimalControl.ADNLP(),
+    solver=OptimalControl.Ipopt()
 )
 ```
 
