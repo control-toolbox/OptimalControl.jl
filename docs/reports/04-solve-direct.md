@@ -215,12 +215,46 @@ advanced page.
 
 ## Acceptance criteria
 
-- [ ] `methods()` is printed live on `choosing-a-method.md`, never quoted as a number.
-- [ ] `src/helpers/methods.jl`'s docstring reports 12 methods and the right `methods()[9]`.
-- [ ] The three module docstrings no longer show `CTSolvers.Modelers.ADNLP()` /
-      `CTDirect.Collocation()`.
-- [ ] `DirectShooting` is either reachable and documented, or explicitly listed as a known
-      limitation.
-- [ ] Every symbol in the per-page "API covered" lists appears and executes.
-- [ ] `gpu.md` is honest about not executing in CI.
-- [ ] Mode detection **by type** is stated on `overview.md`, not only in the advanced page.
+- [x] `methods()` is printed live on `choosing-a-method.md`, never quoted as a number.
+- [x] `src/helpers/methods.jl`'s docstring reports 12 methods and the right `methods()[9]`.
+      Verified live: `length(methods()) == 12`, `methods()[9] == (:collocation, :exa, :madncl,
+      :cpu)`.
+- [x] The three module docstrings no longer show `CTSolvers.Modelers.ADNLP()` /
+      `CTDirect.Collocation()`. Fixed in `src/OptimalControl.jl`, `src/solve/dispatch.jl`,
+      `src/solve/canonical.jl`; the corrected `OptimalControl.Collocation()` /
+      `OptimalControl.ADNLP()` / `OptimalControl.Ipopt()` spelling verified to actually resolve.
+- ~~[ ] `DirectShooting` is either reachable and documented, or explicitly listed as a known
+      limitation.~~ Neither, deliberately: the per-page spec for `choosing-a-method.md`
+      explicitly says "Do not wire it in and do not mention it on the page" (confirmed still
+      unreachable — not in `src/imports/ctdirect.jl`, not in the registry). That instruction is
+      more specific than this checkbox and takes precedence; the page presents `:collocation`
+      as the only discretizer, unqualified, per the spec's own page-level direction.
+- ~~[ ] Every symbol in the per-page "API covered" lists appears and executes.~~ True for every
+      page except `choosing-a-method.md`'s `strategy_ids`/`type_from_id`/`available_parameters`:
+      verified live that these require a populated `StrategyRegistry`, and the only one with the
+      real built-in strategies is internal (`OptimalControl.get_strategy_registry()`, not
+      re-exported) — calling them as the spec's outline implies (on a bare strategy type, or on
+      an empty `create_registry()`) throws. Documented honestly in an "Advanced: the strategy
+      registry" section instead of faking a working example; `describe`/`methods()` cover the
+      same ground for actual users. All other pages' listed symbols do appear and execute,
+      including three gaps caught and closed after the first full build (`has_option` on
+      `options.md`, `methods()` on `explicit-mode.md`, `build_initial_guess` on
+      `initial-guess.md`).
+- [x] `gpu.md` is honest about not executing in CI. Kept `Draft = true` (the only page in this
+      section that does), with a note at the top explaining why — confirmed live that even
+      loading `CUDA`/`MadNLPGPU` in this dev environment isn't enough to construct
+      `MadNLP{GPU}()` (a missing-extension error persists even after `using MadNLPGPU`,
+      apparently needing real hardware to fully resolve).
+- [x] Mode detection **by type** is stated on `overview.md`, not only in the advanced page —
+      and demonstrated live there via the mixed-mode `IncorrectArgument`.
+
+**Also found and fixed, beyond the checklist above:**
+- A real inconsistency between descriptive and explicit mode when both `init=` and
+  `initial_guess=` are supplied at once: explicit mode throws a clear "Conflicting aliases"
+  error; descriptive mode (the common case) silently consumes `initial_guess` and lets the
+  leftover `init` fall through to strategy-option routing, producing a confusing "unknown
+  option `:init`" error instead. Verified live under the correct dev `LOAD_PATH` (a first pass
+  of ad-hoc testing had accidentally exercised the *registered* OptimalControl package instead
+  of this worktree's source — re-verified everything once the mistake was caught). Documented
+  as-is on `initial-guess.md` rather than silently smoothed over; not fixed in `src/` since
+  it's outside this PR's declared scope (only the two docstring fixes were).
