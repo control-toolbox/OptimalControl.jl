@@ -36,9 +36,9 @@ normalized. It discretizes the problem and passes it to the underlying `solve` p
 ocp = Model(time=:final)
 # ... define OCP ...
 init = CTModels.build_initial_guess(ocp, nothing)
-disc = CTDirect.Collocation(grid_size=100)
-mod  = CTSolvers.Modelers.ADNLP()
-sol  = CTSolvers.Solvers.Ipopt()
+disc = OptimalControl.Collocation(grid_size=100)
+mod  = OptimalControl.ADNLP()
+sol  = OptimalControl.Ipopt()
 
 solution = solve(ocp, init, disc, mod, sol; display=true)
 ```
