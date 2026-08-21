@@ -339,15 +339,43 @@ Asking for an unavailable accessor raises `IncorrectArgument`.
 
 ## Acceptance criteria
 
-- [ ] Every page's preamble loads `OrdinaryDiffEqTsit5`.
-- [ ] All ten constructor forms of the catalogue appear, each with a runnable snippet.
-- [ ] The law/constructor compatibility table and the accessor availability table are on the
-      site, not only in this report.
-- [ ] `simulation.md` and `accessors.md` exist — neither has any predecessor.
-- [ ] The re-export decision on `hamiltonian` / `hamiltonian_vector_field` / `vector_field` /
-      `get_*_gradient` is taken, implemented or explicitly deferred, and
-      `test/suite/reexport/test_ctflows.jl` matches.
-- [ ] `OpenLoop`'s unconditional non-autonomy carries a `!!! warning`.
-- [ ] No page contains a positional variable, `augment=`, `Flow(f::Function)`,
-      `Flow(ocp,u,g,μ)`, `autonomous=`, or `OptimalControl.Hamiltonian`.
-- [ ] `unsafe=true` is explained where it matters — inside the shooting loop.
+- [x] Every page's preamble loads `OrdinaryDiffEqTsit5`.
+- [x] All ten constructor forms of the catalogue appear, each with a runnable snippet —
+      confirmed live across `from-hamiltonians.md` (6) and `from-ocp.md`/`simulation.md`
+      (the 4 OCP/law forms).
+- [x] The law/constructor compatibility table and the accessor availability table are on the
+      site (`overview.md`/`from-ocp.md` state the law table piecewise; the accessor table is
+      `accessors.md`'s own centrepiece, verified cell-by-cell, with one spec cell corrected —
+      `hamiltonian(f)` on a `HamiltonianVectorField`-built flow genuinely throws
+      `IncorrectArgument`).
+- [x] `simulation.md` and `accessors.md` exist — neither has any predecessor.
+- [x] The re-export decision on `hamiltonian` / `hamiltonian_vector_field` / `vector_field` /
+      `get_*_gradient` is taken and implemented (`src/imports/ctflows.jl`), and
+      `test/suite/reexport/test_ctflows.jl` has the matching testset (73/73 passing).
+- [x] `OpenLoop`'s unconditional non-autonomy carries a `!!! warning` (`simulation.md`) —
+      worded precisely after live verification: a zero-arg closure builds without error and
+      only fails on first call, not at construction as one might assume.
+- [x] No page contains a positional variable, `augment=`, `Flow(f::Function)`,
+      `Flow(ocp,u,g,μ)`, `autonomous=`, or `OptimalControl.Hamiltonian` **as working syntax**.
+      Three surviving matches on a grep, all deliberate: `from-hamiltonians.md` shows the
+      stale `VectorField(g; autonomous=false)` failing (the point of that section), and
+      `from-ocp.md` mentions `augment=true` once in prose, explaining it was renamed to
+      `variable_costate=true` — neither presents the old spelling as something that works.
+- [x] `unsafe=true` is explained where it matters — `shooting.md`, demonstrated with a
+      synthetic finite-time-blowup ODE since the worked double-integrator example itself is
+      too well-behaved to blow up even under a wild guess.
+
+**Also found and fixed, beyond the checklist above:**
+- A reproducible Documenter build quirk, isolated but not fully root-caused: `using
+  OptimalControl` inside Documenter's `@example` sandbox (a `baremodule`) fails to bind
+  `hamiltonian`/`hamiltonian_vector_field`/`vector_field`/the four `get_*_gradient` functions
+  specifically, while `Flow`/`control_law`/`pseudo_hamiltonian` (re-exported the exact same way
+  from the same `CTFlows.Systems` module) bind fine. Confirmed via extensive bisection that
+  real, normal usage (`using OptimalControl` in an ordinary session or module) is unaffected —
+  this is specific to the sandboxed `baremodule` Documenter's `@example`/`@repl` blocks run in.
+  Worked around with a hidden (`# hide`), redundant direct import in `accessors.md`'s setup
+  block; does not change what a reader sees or what a real user needs to do.
+- The spec's own claim that a flow without an integrator loaded fails with a bare `MethodError`
+  — corrected on `overview.md`: verified live it's actually a clean `ExtensionError`.
+- `method=:cpu`/`:gpu` corrected to be a construction-time keyword (`Flow(...; method=:gpu)`),
+  not a call-time one as the spec's `overview.md` outline could be read to imply.
