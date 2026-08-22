@@ -173,7 +173,7 @@ for whoever next touches this file's top-line count.
 
 ## 9. Geometry — 7
 
-API theme **geometry**.
+API theme **geometry**. Implemented in PR 9 (`docs: geometry`).
 
 | Symbol | Guide |
 | --- | --- |
@@ -183,7 +183,7 @@ API theme **geometry**.
 | `∂ₜ` | `geometry-ad` §"Partial time derivative" |
 | `dg_ad_backend` `dg_ad_backend!` | `geometry-ad-backend` |
 
-(`@Lie` counted in §2.)
+(`@Lie` counted in §2, guide `geometry-lie-macro`.)
 
 ## 10. Type vocabulary — 27
 
