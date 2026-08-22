@@ -56,7 +56,7 @@ Status legend: ⬜ not started · 🟡 in progress · ✅ merged
 | 6 | [`docs: solve`](https://github.com/control-toolbox/OptimalControl.jl/pull/866) | Solve (direct) | [`04`](04-solve-direct.md) | 5 | 🟡 in review |
 | 7 | `docs: results` | Results | [`07`](07-results.md) | 6 | ⬜ |
 | 8 | [`docs: flows`](https://github.com/control-toolbox/OptimalControl.jl/pull/868) | Flows (indirect) | [`05`](05-flows-indirect.md) | 6 | 🟡 in review |
-| 9 | `docs: geometry` | Geometry | [`06`](06-geometry.md) | 8 | 🟡 branch ready (`docs/geometry`, off `docs/flows`) |
+| 9 | [`docs: geometry`](https://github.com/control-toolbox/OptimalControl.jl/pull/869) | Geometry | [`06`](06-geometry.md) | 8 | 🟡 in review |
 | 10 | `docs: examples` | Examples | [`08`](08-examples.md) | 8, 9 | ⬜ |
 | 11 | `docs: getting started` | Getting started + `index.md` | [`02`](02-getting-started.md) | 5–10 | ⬜ |
 | 12 | `docs: migration + cleanup` | Migration page, drop `docs/attic/` | [`10`](10-migration.md) §2 | all | ⬜ |
