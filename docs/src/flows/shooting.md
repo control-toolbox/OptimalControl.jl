@@ -107,13 +107,13 @@ A nonlinear solver explores guesses that don't correspond to a real solution —
 can make the flow's integration blow up. The default behaviour is to throw, which would abort
 the whole solve on the first bad guess:
 
-```@example main
-f_blowup = Flow(VectorField(x -> x^2))   # ẋ = x², genuinely diverges before t=1
-try
-    f_blowup(0.0, 10.0, 1.0)
-catch e
-    println(e)
-end
+```@repl main
+f_blowup = Flow(VectorField(x -> x^2));  # ẋ = x², diverges before t=1
+try # hide
+f_blowup(0.0, 10.0, 1.0)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 `unsafe=true` returns whatever the integrator produced instead of throwing — garbage, but a

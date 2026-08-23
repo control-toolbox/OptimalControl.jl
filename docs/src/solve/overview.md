@@ -86,13 +86,13 @@ value `isa` `AbstractDiscretizer`, `AbstractNLPModeler`, or `AbstractNLPSolver` 
 into explicit mode, no matter what that keyword is called. Mixing a typed component with a
 non-empty symbolic description is rejected outright:
 
-```@example main
+```@repl main
 using MadNLP
-try
-    solve(ocp, :collocation; solver=OptimalControl.MadNLP())
-catch e
-    println(e)
-end
+try # hide
+solve(ocp, :collocation; solver=OptimalControl.MadNLP())
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 ## When it fails

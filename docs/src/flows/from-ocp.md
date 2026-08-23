@@ -118,12 +118,12 @@ xf_v, pf_v = fc(t0c, x0c, p0c, tf_val; variable=tf_val)
 xf_v
 ```
 
-```@example main
-try
-    fc(t0c, x0c, p0c, tf_val)
-catch e
-    println(e)
-end
+```@repl main
+try # hide
+fc(t0c, x0c, p0c, tf_val)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 The mirror image is also enforced: passing `variable=` to a flow built from a `Fixed` problem

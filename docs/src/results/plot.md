@@ -40,13 +40,13 @@ nothing # hide
 
 `plot` on a solution is an extension — nothing happens until `Plots` itself is loaded:
 
-```@example main
+```@repl main
 using Plots
-try
-    plot(sol)
-catch e
-    println(e)
-end
+try # hide
+plot(sol)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 Wait — that's not a `Plots`-missing error, it's real: [CTModels.jl#392](https://github.com/control-toolbox/CTModels.jl/issues/392),

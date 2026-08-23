@@ -102,13 +102,13 @@ problem.
 
 `Poisson` is not defined on vector fields — lift them first:
 
-```@example main
-XV = VectorField(x -> [x[2], -x[1]])
-try
-    Poisson(XV, x -> x[1])
-catch e
-    println(e)
-end
+```@repl main
+XV = VectorField(x -> [x[2], -x[1]]);
+try # hide
+Poisson(XV, x -> x[1])
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 ## See also

@@ -100,12 +100,12 @@ iterations(sol), constraints_violation(sol)
     method (it resolves to `Base.success`, a process-exit-status function). Calling it on a
     `Solution` now throws a migration-pointing error:
 
-    ```@example main
-    try
-        success(sol)
-    catch e
-        println(e)
-    end
+    ```@repl main
+    try # hide
+    success(sol)
+    catch e # hide
+    showerror(IOContext(stdout, :color => false), e) # hide
+    end # hide
     ```
 
     See [Migration](@ref migration) for the full list of renamed spellings.

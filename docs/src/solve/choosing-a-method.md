@@ -81,12 +81,12 @@ Two tokens from the *same* family never both fit one method — `:adnlp` and `:e
 be true of one quadruplet — so this raises `AmbiguousDescription` rather than silently picking
 one:
 
-```@example main
-try
-    solve(ocp, :adnlp, :exa; display=false)
-catch e
-    println(e)
-end
+```@repl main
+try # hide
+solve(ocp, :adnlp, :exa; display=false)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 The exception lists every candidate whose tokens are a superset of what matched, so you can see
