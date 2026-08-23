@@ -8,18 +8,32 @@ on:
       - 'v[0-9]+\.[0-9]+\.[0-9]+'
   pull_request:
     types: [labeled, opened, synchronize, reopened]
-  
+    # The docs build is the only job that executes the `@example` blocks and resolves
+    # the `@ref`/`@extref` links, so it is the only check that can catch a broken page.
+    # It used to be reachable solely through the 'run documentation' label, and in
+    # practice the label was never applied: the twelve PRs of the v2.1 documentation
+    # rewrite all merged without a single build. These paths are everything the built
+    # site depends on — pages, docstrings pulled into the API reference, and the doc
+    # environment itself — so a PR touching any of them now builds automatically.
+    # A PR touching none of them cannot change the output, which is why dropping the
+    # label requirement for those loses nothing.
+    paths:
+      - 'docs/**'
+      - 'src/**'
+      - 'Project.toml'
+      - '.github/workflows/Documentation.yml'
+
 jobs:
   call:
-    # A 'labeled' event fires once per label added, and re-evaluates against the PR's
-    # *current* full label set — so adding several labels in a row would otherwise
-    # re-run this job on every subsequent label add. Only react to 'labeled' when it's
-    # this specific label; for other trigger types (opened/synchronize/reopened), fall
-    # back to checking the current label set as before.
+    # With the path filter above, every pull_request event that gets here is already
+    # documentation-relevant, so the label is no longer a gate. It stays usable as a
+    # manual re-run handle. The one case still worth guarding is 'labeled': it fires
+    # once per label added, so reacting to any label would re-run this job on every
+    # subsequent label add.
     if: >
       github.event_name != 'pull_request' ||
-      (github.event.action == 'labeled' && github.event.label.name == 'run documentation') ||
-      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run documentation'))
+      github.event.action != 'labeled' ||
+      github.event.label.name == 'run documentation'
     uses: control-toolbox/CTActions/.github/workflows/documentation.yml@main
     with:
       use_ct_registry: true
