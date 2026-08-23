@@ -32,13 +32,31 @@ end
 
 # Differential geometry -------------------------------------------------------
 
+"""
+$(TYPEDSIGNATURES)
+
+Removed in v2.1.0-beta. Always throws — use [`ad`](@ref)`(X, f)` for a Lie derivative
+or [`ad`](@ref)`(X, Y)` for a Lie bracket instead.
+"""
 function Lie(X, f)
     throw(_deprecated("Lie(X, f) / Lie(X, Y)", "ad(X, f) or ad(X, Y)"))
 end
 
+"""
+$(TYPEDSIGNATURES)
+
+The `X ⋅ f` Lie-derivative operator is removed in v2.1.0-beta, with no operator
+replacement. Always throws — use [`ad`](@ref)`(X, f)` instead.
+"""
 LinearAlgebra.dot(X::AbstractVectorField, f::Function) =
     throw(_deprecated("X \\cdot f", "ad(X, f)"))
 
+"""
+$(TYPEDSIGNATURES)
+
+Removed in v2.1.0-beta. Always throws — use [`Lift`](@ref)`(f)` for a plain function, or
+`CTLie.LiftedHamiltonianFunction` directly, instead.
+"""
 function HamiltonianLift(args...)
     throw(_deprecated(
         "HamiltonianLift",

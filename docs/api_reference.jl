@@ -116,6 +116,9 @@ const API_THEMES = [
         id="flows", title="Flows",
         symbols=[
             :Flow, :control_law, :pseudo_hamiltonian,
+            :hamiltonian, :hamiltonian_vector_field, :vector_field,
+            :get_hamiltonian_gradient, :get_variable_gradient,
+            :get_pseudo_hamiltonian_gradient, :get_pseudo_variable_gradient,
             :MultiPhaseFlow, :MultiPhaseStateFlow, :MultiPhaseHamiltonianFlow,
             :AnyMultiPhaseFlow,
             :n_phases, :get_flow, :get_flows, :get_switching_time,
@@ -181,6 +184,10 @@ const API_THEMES = [
             Symbol("CTBase.Options.OptionDefinition"), Symbol("CTBase.Options.OptionValue"),
         ],
     ),
+    (
+        id="deprecated", title="Deprecated",
+        symbols=[:Lie, Symbol("⋅"), :HamiltonianLift],
+    ),
 ]
 
 # Symbols exported by `names(OptimalControl)` are checked for full coverage
@@ -245,6 +252,26 @@ function _generate_theme_page(docs_src, theme)
                 "`discretizer=CTDirect.Collocation()`) has no docstring upstream yet — " *
                 "tracked in [control-toolbox/CTDirect.jl#623]" *
                 "(https://github.com/control-toolbox/CTDirect.jl/issues/623).",
+            )
+            println(io)
+        end
+        if theme.id == "deprecated"
+            println(
+                io,
+                "Removed v2.0 names, re-introduced as throwing shims: calling one always " *
+                "raises a `PreconditionError` naming its v2.1.0-beta replacement, so a " *
+                "search for the old name lands on an explanation rather than nothing. See " *
+                "[Migrating to v2.1](@ref migration) for the full picture.",
+            )
+            println(io)
+            println(
+                io,
+                "!!! warning \"`⋅`'s entry below is misleading\"\n" *
+                "    `⋅` is `LinearAlgebra.dot`, re-exported unchanged — the docstring " *
+                "Documenter shows for it below is `dot`'s own, generic one. What actually " *
+                "changed is a *method* on it: `X ⋅ f` for `X::AbstractVectorField` always " *
+                "throws, pointing at `ad(X, f)`. That override has no separate docstring of " *
+                "its own to display here.",
             )
             println(io)
         end
