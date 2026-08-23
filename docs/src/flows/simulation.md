@@ -37,13 +37,13 @@ state(traj_ol)(0.5)
     bare constant closure. `OpenLoop(() -> 1.0)` **builds without error** but fails on the
     first call, with a bare `MethodError` far from the actual mistake:
 
-    ```@example main
-    bad_law = OpenLoop(() -> 1.0)   # constructs fine — the trap
-    try
-        Flow(ControlledVectorField(fc), bad_law)(0.0, 1.0, 1.0)
-    catch e
-        println(e)
-    end
+    ```@repl main
+    bad_law = OpenLoop(() -> 1.0);   # constructs fine — the trap
+    try # hide
+    Flow(ControlledVectorField(fc), bad_law)(0.0, 1.0, 1.0)
+    catch e # hide
+    showerror(IOContext(stdout, :color => false), e) # hide
+    end # hide
     ```
 
     `OpenLoop(t -> 1.0)` above is the only correct spelling — there is no "autonomous open
@@ -60,12 +60,12 @@ f_cl(0.0, 1.0, 1.0)
 `DynClosedLoop` (the costate-carrying law kind) is rejected on a `ControlledVectorField` — it
 has no costate to carry:
 
-```@example main
-try
-    Flow(ControlledVectorField(fc), DynClosedLoop((x, p) -> x))
-catch e
-    println(e)
-end
+```@repl main
+try # hide
+Flow(ControlledVectorField(fc), DynClosedLoop((x, p) -> x))
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 ## From an optimal control problem
@@ -100,12 +100,12 @@ objective(traj_ocp)
 A flow built without an OCP has no cost to report — calling `objective` on it is a
 `PreconditionError`, not a silent `0.0` or `NaN`:
 
-```@example main
-try
-    objective(traj_ol)
-catch e
-    println(e)
-end
+```@repl main
+try # hide
+objective(traj_ol)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 ## Inspecting the trajectory

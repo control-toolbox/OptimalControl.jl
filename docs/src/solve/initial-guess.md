@@ -316,12 +316,17 @@ variable accept an initial guess.
 `init` is an alias for `initial_guess`; use whichever reads better. **In explicit mode**,
 supplying both at once is rejected cleanly:
 
-```@example main
-try
-    solve(ocp1; discretizer=OptimalControl.Collocation(), init=1, initial_guess=2, display=false)
-catch e
-    println(e)
-end
+```@repl main
+try # hide
+solve(
+    ocp1;
+    discretizer=OptimalControl.Collocation(),
+    init=1, initial_guess=2,
+    display=false,
+)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 !!! warning "Same conflict, worse message in descriptive mode"
@@ -332,12 +337,12 @@ end
     *unrecognized solver option* rather than as a conflicting alias — a much more confusing
     message for the same mistake:
 
-    ```@example main
-    try
-        solve(ocp1; init=1, initial_guess=2, display=false)
-    catch e
-        println(e)
-    end
+    ```@repl main
+    try # hide
+    solve(ocp1; init=1, initial_guess=2, display=false)
+    catch e # hide
+    showerror(IOContext(stdout, :color => false), e) # hide
+    end # hide
     ```
 
     This is a real inconsistency between the two code paths, not intentional behavior — don't

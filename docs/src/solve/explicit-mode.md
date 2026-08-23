@@ -101,12 +101,17 @@ nothing # hide
 A flat option keyword handed to `solve` itself, rather than to the component constructor, is
 rejected — even one a completed default component would otherwise recognize:
 
-```@example explicit
-try
-    solve(ocp; discretizer=OptimalControl.Collocation(), backend=:generic, display=false)
-catch e
-    println(e)
-end
+```@repl explicit
+try # hide
+solve(
+    ocp;
+    discretizer=OptimalControl.Collocation(),
+    backend=:generic,
+    display=false,
+)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 The error names the strategy that owns the option and tells you exactly how to fix it:
@@ -118,12 +123,16 @@ a concrete instance.
 
 Symbolic tokens and typed components can't appear in the same call:
 
-```@example explicit
-try
-    solve(ocp, :adnlp, :ipopt; discretizer=OptimalControl.Collocation(), display=false)
-catch e
-    println(e)
-end
+```@repl explicit
+try # hide
+solve(
+    ocp, :adnlp, :ipopt;
+    discretizer=OptimalControl.Collocation(),
+    display=false,
+)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 Pick one: `solve(ocp, :collocation, :adnlp, :ipopt; options...)` or

@@ -97,12 +97,12 @@ Hint     Run: using JLD2
 Same pattern for `format=:JSON`, naming `JSON3` instead. An invalid `format` is caught before
 either extension is even needed:
 
-```@example main
-try
-    export_ocp_solution(sol; format=:XML)
-catch e
-    println(e)
-end
+```@repl main
+try # hide
+export_ocp_solution(sol; format=:XML)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 ## Filenames have no extension of their own

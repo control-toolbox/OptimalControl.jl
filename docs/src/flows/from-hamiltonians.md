@@ -69,12 +69,16 @@ fphvf = Flow(PseudoHamiltonianVectorField(htildevf), DynClosedLoop(law))
 fphvf(0.0, 1.0, 0.0, 1.0)
 ```
 
-```@example main
-try
-    Flow(PseudoHamiltonianVectorField(htildevf), DynClosedLoop(law); hamiltonian_type=:partial)
-catch e
-    println(e)
-end
+```@repl main
+try # hide
+Flow(
+    PseudoHamiltonianVectorField(htildevf),
+    DynClosedLoop(law);
+    hamiltonian_type=:partial,
+)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 ## From a SciML problem
@@ -91,12 +95,12 @@ nothing # hide
 SciML-backed flows are always `NonFixed` — even with no real free variable, a call needs
 `variable=nothing`:
 
-```@example main
-try
-    f_fun(0.0, [1.0], 1.0)
-catch e
-    println(e)
-end
+```@repl main
+try # hide
+f_fun(0.0, [1.0], 1.0)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 ```@example main
@@ -123,12 +127,12 @@ fg(0.0, 1.0, 1.0)
 The stale form fails two ways at once — there is no `Flow(::Function)` at all, and even fixed
 to the right type, the keyword itself changed name:
 
-```@example main
-try
-    VectorField(g; autonomous=false)
-catch e
-    println(e)
-end
+```@repl main
+try # hide
+VectorField(g; autonomous=false)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 `is_inplace=` similarly declares an in-place (mutating, `f!(dx, x)`) vs out-of-place

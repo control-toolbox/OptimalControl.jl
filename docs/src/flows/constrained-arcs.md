@@ -52,12 +52,12 @@ xf
 
 `constraint=`/`multiplier=` must be given **as a pair** — one without the other is rejected:
 
-```@example main
-try
-    Flow(ocp, law; constraint=:vmax)
-catch e
-    println(e)
-end
+```@repl main
+try # hide
+Flow(ocp, law; constraint=:vmax)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 ## Three ways to give the constraint
@@ -82,12 +82,12 @@ typeof(f_sym)
 
 An unknown label is rejected, not silently accepted:
 
-```@example main
-try
-    Flow(ocp, law; constraint=:nope, multiplier=μ)
-catch e
-    println(e)
-end
+```@repl main
+try # hide
+Flow(ocp, law; constraint=:nope, multiplier=μ)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 !!! warning "The `Symbol` form uses the model's own sign convention"
@@ -112,12 +112,12 @@ constraint order requires one.
 
 ## Positional form is gone
 
-```@example main
-try
-    Flow(ocp, law, (x, u) -> g(x), μ)
-catch e
-    println(e)
-end
+```@repl main
+try # hide
+Flow(ocp, law, (x, u) -> g(x), μ)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 ## Partial Hamiltonian on a constrained arc
@@ -129,19 +129,19 @@ optimal.
 
 ## Control-free flows reject constraints
 
-```@example main
+```@repl main
 ocp_cf = @def begin
     t ∈ [t0, tf], time
     x ∈ R, state
     x(t0) == 1.0
     ẋ(t) == -x(t)
     ∫(x(t)^2) → min
-end
-try
-    Flow(ocp_cf; constraint=(x, u) -> 1.0, multiplier=(x, p) -> 1.0)
-catch e
-    println(e)
-end
+end;
+try # hide
+Flow(ocp_cf; constraint=(x, u) -> 1.0, multiplier=(x, p) -> 1.0)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 ## See also

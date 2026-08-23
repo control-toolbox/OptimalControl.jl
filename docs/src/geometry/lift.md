@@ -92,13 +92,13 @@ associated Hamiltonian system — see
 Lifting a `HamiltonianVectorField` doesn't work — it already lives on the cotangent space, so
 there's nothing left to lift:
 
-```@example main
-hvf = HamiltonianVectorField((x, p) -> (p, -x))
-try
-    Lift(hvf)
-catch e
-    println(e)
-end
+```@repl main
+hvf = HamiltonianVectorField((x, p) -> (p, -x));
+try # hide
+Lift(hvf)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 The message talks about `ad`, not `Lift` — both operations share the same internal guard

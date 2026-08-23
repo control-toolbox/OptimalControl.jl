@@ -71,15 +71,15 @@ ZZV([1.0, 2.0])
 `is_autonomous=` and `is_variable=` work exactly as on [`Lift`](@ref); both operands must agree,
 or you get a `PreconditionError` naming both traits:
 
-```@example main
-Xa = VectorField(x -> [x[2], -x[1]])
-Xb = VectorField((t, x) -> [t + x[2], -x[1]]; is_autonomous=false)
+```@repl main
+Xa = VectorField(x -> [x[2], -x[1]]);
+Xb = VectorField((t, x) -> [t + x[2], -x[1]]; is_autonomous=false);
 
-try
-    ad(Xa, Xb)
-catch e
-    println(e)
-end
+try # hide
+ad(Xa, Xb)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 ## Partial time derivative
@@ -108,24 +108,24 @@ typeof(dXV)
 | an `InPlace` operand | `NotImplemented` |
 | a `HamiltonianVectorField` passed to `ad` | `NotImplemented` |
 
-```@example main
-H = Hamiltonian((x, p) -> x[1] + p[1])
-try
-    ad(H, x -> x)
-catch e
-    println(e)
-end
+```@repl main
+H = Hamiltonian((x, p) -> x[1] + p[1]);
+try # hide
+ad(H, x -> x)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 `ad` also refuses an `InPlace` operand:
 
-```@example main
-Xip = VectorField((dx, x) -> (dx .= [x[2], -x[1]]); is_inplace=true)
-try
-    ad(Xip, x -> x[1]^2)
-catch e
-    println(e)
-end
+```@repl main
+Xip = VectorField((dx, x) -> (dx .= [x[2], -x[1]]); is_inplace=true);
+try # hide
+ad(Xip, x -> x[1]^2)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 ## Coming from v2.0

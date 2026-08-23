@@ -106,12 +106,12 @@ Hamiltonian-shaped, so none of the four Hamiltonian-side accessors apply; use
 vector_field(Flow(VectorField(x -> -x)))
 ```
 
-```@example main
-try
-    hamiltonian(Flow(HamiltonianVectorField((x, p) -> (p, -x))))
-catch e
-    println(e)
-end
+```@repl main
+try # hide
+hamiltonian(Flow(HamiltonianVectorField((x, p) -> (p, -x))))
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 ## The underlying system and integrator
