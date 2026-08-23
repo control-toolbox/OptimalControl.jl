@@ -137,10 +137,29 @@ optimal."*
 
 ## Acceptance criteria
 
-- [ ] Every accessor in the `solution.md` list appears and executes.
-- [ ] The scalar-control shape is demonstrated explicitly, not merely asserted.
-- [ ] `save-load.md` exists, runs a real round-trip in both formats, and states how the format
-      is chosen.
-- [ ] `plot.md`'s flow section has `using OrdinaryDiffEqTsit5` and current `Flow` calls.
-- [ ] The `success` → `successful` note is present and links to the migration page.
-- [ ] Nothing in the section writes bare `Solution` as a type name.
+- [x] Every accessor in the `solution.md` list appears and executes — including
+      `is_empty_time_grid(sol)` in place of the spec's own `is_empty(sol)`, which does not
+      exist (`is_empty` only accepts a `TimeGridModel`, confirmed live via `MethodError`); the
+      page uses the real accessor instead of the spec's literal wording.
+- [x] The scalar-control shape is demonstrated explicitly (`typeof(u(0.25))`), not merely
+      asserted.
+- [x] `save-load.md` exists, runs a real round-trip in both formats (JLD2 exact, JSON3
+      bit-exact in the run but phrased as "not guaranteed" in general), and states how the
+      format is chosen.
+- [x] `plot.md`'s flow section has `using OrdinaryDiffEqTsit5` and current `Flow` calls —
+      including the fine-grid subsection, rewritten around `Flow(...; saveat=..., dense=false)`
+      at construction time since the old call-time `saveat=` no longer exists.
+- [x] The `success` → `successful` note is present, shows the real thrown error live, and links
+      to the migration page.
+- [x] Nothing in the section writes bare `Solution` as a type name.
+
+**Also found and fixed, beyond the checklist above:**
+- CTModels.jl#392 (the VBox-plotting bug already filed during PR 5, and hit once more during
+  PR 6) turned out to affect nearly every bare `plot(sol)` call in `plot.md`'s attic source
+  specifically — any call with an empty/default description, independent of styles or layout
+  kwargs, under this docs environment's pinned CTModels (`0.15.3-beta`). Fixed throughout with
+  explicit selectors or `layout=:group`, with one clear note near the top of the page instead
+  of repeating the caveat at every occurrence.
+- The spec's cited line for the `plot` `ExtensionError` (`CTModels.jl/src/Display/Display.jl:69`)
+  was off by 3 — the actual `throw` is at line 72; not worth a citation in the page itself, but
+  noted here for anyone cross-checking against source later.
