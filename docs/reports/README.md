@@ -59,7 +59,7 @@ Status legend: ⬜ not started · 🟡 in progress · ✅ merged
 | 9 | [`docs: geometry`](https://github.com/control-toolbox/OptimalControl.jl/pull/869) | Geometry | [`06`](06-geometry.md) | 8 | ✅ |
 | 10 | [`docs: examples`](https://github.com/control-toolbox/OptimalControl.jl/pull/872) | Examples | [`08`](08-examples.md) | 8, 9 | ✅ |
 | 11 | [`docs: getting started`](https://github.com/control-toolbox/OptimalControl.jl/pull/873) | Getting started + `index.md` | [`02`](02-getting-started.md) | 5–10 | ✅ |
-| 12 | [`docs: migration page`](https://github.com/control-toolbox/OptimalControl.jl/pull/874) | Migration page (`docs/src/migration.md`) | [`10`](10-migration.md) §2 | all | 🟡 in review |
+| 12 | [`docs: migration page`](https://github.com/control-toolbox/OptimalControl.jl/pull/874) | Migration page (`docs/src/migration.md`) | [`10`](10-migration.md) §2 | all | ✅ |
 | 13 | `docs: drop docs/attic` | Delete `docs/attic/` | [`10`](10-migration.md) §2 | 12 | ⬜ |
 
 PR 3 is code-only and independent — it can run in parallel with any docs PR.
@@ -72,7 +72,7 @@ Recorded here so they are not re-litigated mid-PR.
 | --- | --- |
 | Top-level structure | **By capability**, not Diátaxis buckets. Sections are named after what the user is doing. The catch-all "Manual" node disappears. |
 | Deprecation shims | **One `src/deprecated.jl` in OptimalControl**, covering removed *names* and removed *call signatures*. Piracy accepted; it is the package the user loads. |
-| Old markdown | **Archive to `docs/attic/`**, rewrite from a blank page, harvest from the attic, delete the attic in PR 12. |
+| Old markdown | **Archive to `docs/attic/`**, rewrite from a blank page, harvest from the attic, delete the attic in PR 13. |
 | API reference | **Thematic pages generated from a Julia manifest** in `docs/api_reference.jl`. No hand-written symbol list. |
 | `[compat]` | `docs/Project.toml` **mirrors the root `Project.toml` exactly**. The newer sibling releases (CTBase 0.29, CTModels 0.16, CTFlows 0.17, CTLie 0.2, CTSolvers 0.5) will not resolve — CTDirect and CTParser still require the older ones. |
 | Shapes | **"1-D is a scalar" is in force and tested** (`test/suite/shape/test_shape_contract.jl`). Guides write scalar-style for 1-D; only the in-place buffer stays a vector. The old functional-API page teaches the opposite and that section is deleted. |
