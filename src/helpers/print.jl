@@ -320,6 +320,10 @@ from "the strategy never implemented the contract at all" (`parameter(T)` threw
 with it.
 """
 struct _ParameterNotImplemented end
+
+"""
+The single [`_ParameterNotImplemented`](@ref) instance, used as the sentinel value.
+"""
 const _PARAMETER_NOT_IMPLEMENTED = _ParameterNotImplemented()
 
 """

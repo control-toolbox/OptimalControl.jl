@@ -21,6 +21,16 @@ using LinearAlgebra: ⋅
 
 export Lie, ⋅, HamiltonianLift
 
+"""
+$(TYPEDSIGNATURES)
+
+Build the [`CTBase.Exceptions.PreconditionError`](@extref) every shim in this file
+throws.
+
+One constructor for all of them, so the wording stays identical: what was removed,
+that it went in v2.1.0-beta, and what to write instead. See
+[Migrating to v2.1](@ref migration) for the full table.
+"""
 function _deprecated(old, new, ctx = nothing)
     return PreconditionError(
         "`$old` is deprecated";
