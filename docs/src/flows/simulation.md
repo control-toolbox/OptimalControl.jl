@@ -47,7 +47,8 @@ state(traj_ol)(0.5)
     ```
 
     `OpenLoop(t -> 1.0)` above is the only correct spelling — there is no "autonomous open
-    loop" any more.
+    loop" any more. See [Migration](@ref migration) for the full list of silent v2.0 → v2.1
+    semantics changes.
 
 ## Closed loop (feedback)
 
