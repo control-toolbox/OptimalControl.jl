@@ -15,6 +15,17 @@
 # which act on a bare `ComposedHamiltonian`.
 @reexport import CTFlows.Systems: control_law, pseudo_hamiltonian
 
+# Systems accessors — `system`/`integrator` stay unexported (too generic for
+# a DSL surface); reach them qualified as `CTFlows.Flows.system`/`.integrator`.
+@reexport import CTFlows.Systems:
+    hamiltonian,
+    hamiltonian_vector_field,
+    vector_field,
+    get_hamiltonian_gradient,
+    get_variable_gradient,
+    get_pseudo_hamiltonian_gradient,
+    get_pseudo_variable_gradient
+
 # Multi-phase flows — `Base.:*` is extended by `CTFlows.MultiPhase` to
 # concatenate flows, so it needs no re-export of its own.
 @reexport import CTFlows.MultiPhase:

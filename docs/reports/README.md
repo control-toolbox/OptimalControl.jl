@@ -52,11 +52,11 @@ Status legend: ⬜ not started · 🟡 in progress · ✅ merged
 | 2 | [`docs: infrastructure`](https://github.com/control-toolbox/OptimalControl.jl/pull/854) | build + skeleton | [`01`](01-infrastructure.md) | 1 | ✅ |
 | 3 | [`feat: deprecation shims`](https://github.com/control-toolbox/OptimalControl.jl/pull/855) | `src/deprecated.jl` | [`10`](10-migration.md) §1 | 1 | ✅ |
 | 4 | [`docs: API reference`](https://github.com/control-toolbox/OptimalControl.jl/pull/856) | API reference | [`09`](09-api-reference.md) | 2 | ✅ |
-| 5 | `docs: modelling` | Modelling | [`03`](03-modelling.md) | 2 | ⬜ |
-| 6 | `docs: solve` | Solve (direct) | [`04`](04-solve-direct.md) | 5 | ⬜ |
+| 5 | [`docs: modelling`](https://github.com/control-toolbox/OptimalControl.jl/pull/865) | Modelling | [`03`](03-modelling.md) | 2 | 🟡 in review |
+| 6 | [`docs: solve`](https://github.com/control-toolbox/OptimalControl.jl/pull/866) | Solve (direct) | [`04`](04-solve-direct.md) | 5 | 🟡 in review |
 | 7 | `docs: results` | Results | [`07`](07-results.md) | 6 | ⬜ |
-| 8 | `docs: flows` | Flows (indirect) | [`05`](05-flows-indirect.md) | 6 | ⬜ |
-| 9 | `docs: geometry` | Geometry | [`06`](06-geometry.md) | 8 | ⬜ |
+| 8 | [`docs: flows`](https://github.com/control-toolbox/OptimalControl.jl/pull/868) | Flows (indirect) | [`05`](05-flows-indirect.md) | 6 | 🟡 in review |
+| 9 | [`docs: geometry`](https://github.com/control-toolbox/OptimalControl.jl/pull/869) | Geometry | [`06`](06-geometry.md) | 8 | 🟡 in review |
 | 10 | `docs: examples` | Examples | [`08`](08-examples.md) | 8, 9 | ⬜ |
 | 11 | `docs: getting started` | Getting started + `index.md` | [`02`](02-getting-started.md) | 5–10 | ⬜ |
 | 12 | `docs: migration + cleanup` | Migration page, drop `docs/attic/` | [`10`](10-migration.md) §2 | all | ⬜ |
