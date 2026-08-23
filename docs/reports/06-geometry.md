@@ -255,14 +255,55 @@ Errors, all worth showing once because they are good errors:
 
 ## Acceptance criteria
 
-- [ ] `grep -rn 'Lie(\| ⋅ \|HamiltonianLift\|autonomous=\|OptimalControl\.VectorField' docs/src/geometry/`
-      returns nothing (`@Lie` and `is_autonomous=` excepted — refine the pattern).
-- [ ] The bridge identity `Poisson(Lift(X), Lift(Y)) ≈ Lift(ad(X, Y))` executes on
-      `overview.md` and again on `poisson.md`.
-- [ ] The `H isa AbstractHamiltonian` → `false` trap has a `!!! warning` on `lift.md`.
-- [ ] `ad-backend.md` exists and `dg_ad_backend` / `dg_ad_backend!` appear nowhere else as
-      undocumented names.
-- [ ] Nested Poisson notation renders correctly in the built VitePress site (check the HTML,
-      not the build log).
-- [ ] Every error in the exceptions table is demonstrated at least once across the section.
-- [ ] `LiftedHamiltonianFunction` is always written with the `OptimalControl.` prefix.
+- [x] `grep -rn 'Lie(\| ⋅ \|HamiltonianLift\|autonomous=\|OptimalControl\.VectorField' docs/src/geometry/`
+      returns nothing (`@Lie` and `is_autonomous=` excepted — refine the pattern). Verified: the
+      only hits are the "Coming from v2.0" migration tables (`overview.md`, `ad.md`) and the
+      deliberate `@Lie [...] autonomous=false` rejection demo on `lie-macro.md` — all
+      intentional mentions of the *old* API, not live usage of it.
+- [x] The bridge identity `Poisson(Lift(X), Lift(Y)) ≈ Lift(ad(X, Y))` executes on
+      `overview.md` and again on `poisson.md`. Both use the nonlinear pair
+      `X(x)=[x[1]^2,x[2]^2]`, `Y(x)=[x[2],-x[1]]` (the attic's own linear pair gives an
+      identically-zero bracket, too weak a check) — both sides evaluate to `12.0`.
+- [x] The `H isa AbstractHamiltonian` → `false` trap has a `!!! warning` on `lift.md`.
+- [x] `ad-backend.md` exists and `dg_ad_backend` / `dg_ad_backend!` appear nowhere else as
+      undocumented names (grepped across `docs/src/`).
+- [x] Nested Poisson notation renders correctly in the built VitePress site — checked the
+      actual rendered HTML (`docs/build/1/geometry/lie-macro.html`), not just the build log; the
+      `{{`/`}}` escape plugin isn't even triggered since these examples live in fenced
+      ` ```@example ` blocks, not inline code spans.
+- [x] Every error in the exceptions table is demonstrated at least once across the section,
+      including the `InPlace`-operand-to-`ad` case, added explicitly to `ad.md` once noticed it
+      was listed in the table but not actually shown anywhere.
+- [x] `LiftedHamiltonianFunction` is always written with the `OptimalControl.` prefix. Caught and
+      fixed three bare occurrences on `lift.md` during review (the type itself is import-only,
+      not exported — a bare reference in an example would be a real footgun for a reader).
+
+## Also found and fixed
+
+- **A real bug in the first draft**, caught by the actual `make.jl` build, not by review: the
+  "Arithmetic and evaluation points" example on `lie-macro.md` reused `F1`/`F2` (3-D vector
+  fields, defined earlier on the page for the Lie-bracket examples) with a 2-D evaluation point
+  — a `BoundsError`. Fixed by evaluating at a 3-D point instead of introducing new fields.
+- **`@ref examples-singular-control` doesn't exist.** The spec's own outgoing-links table
+  (`poisson.md`, `lie-macro.md`) points at this anchor, but PR 10 ("docs: examples") hasn't
+  started and `docs/src/examples/gallery.md` only carries the page-level stub anchor
+  `examples-gallery` — no sub-anchor for a specific worked example exists yet, unlike the
+  page-level stubs PR 2 pre-created for every *page* in the sitemap. Linking to the
+  not-yet-existing anchor would have been a genuine unresolved-`@ref` build warning, not a
+  harmless forward reference like the ones used elsewhere in this series. Pointed both links at
+  `@ref examples-gallery` instead; retarget to a more specific anchor once PR 10 creates one.
+- **One nuance beyond the spec**: `Lift(::HamiltonianVectorField)` throws `NotImplemented`, as
+  specced, but the underlying guard is shared with `ad` and its message says "ad" even when
+  triggered through `Lift` (`ad_types.jl:59`'s `_check_not_hvf`, reused by both). Documented
+  honestly on `lift.md` rather than silently editing the shown output to match expectations —
+  it's a harmless upstream wart, not worth an issue against CTLie.
+- **This PR needed no code change.** `src/imports/ctlie.jl` already re-exports the full surface
+  the spec calls for (`ad`, `Lift`, `Poisson`, `∂ₜ`, `@Lie`, `dg_ad_backend`,
+  `dg_ad_backend!`, plus the `CTLie`/`CTBase` module aliases), with `LiftedHamiltonianFunction`
+  correctly import-only. Confirmed live (`Base.isexported`) before writing a single page, so no
+  `src/`/`test/` changes and no re-export commit were needed for this PR — unlike PR 8.
+- Verified against **CTLie 0.1.5-beta**, the version `docs/Manifest.toml` actually resolves
+  (`~/.julia/packages/CTLie/cHxPr/`) — not the newer `../CTLie` sibling checkout (`0.2.0`), same
+  situation as PR 8's CTFlows pin. Read the full source (`ad.jl`, `lift.jl`, `poisson.jl`,
+  `lie_macro.jl`, `ad_types.jl`, `default.jl`) at that exact version rather than trusting the
+  spec's own citations.
