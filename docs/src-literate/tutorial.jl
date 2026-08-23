@@ -480,15 +480,15 @@ plot!(plt_compare, indirect_sol; label="indirect")
 #src ============================================================================
 #
 # **Variables & parameters.** Beyond the control, one can optimise **parameters** naturally, both in an OCP (the `variable` keyword of the DSL) and in a differential-constraint optimisation problem **without any control** (a *control-free* problem).
-#md # See [control-free problems](@ref examples-gallery).
+#md # See [control-free problems](@ref examples-control-free).
 #nb # See [control-free problems](https://control-toolbox.org/OptimalControl.jl/stable/example-control-free.html).
 #src NOTE(v1): parameter estimation is only *mentioned* here. The worked example is an
 #src   extension (out of v1) — see .reports/tutorial-brainstorming.md "Extensions futures".
 #
 # **Advanced examples** (each does both direct and indirect):
 #
-#md # - Singular control (control-affine systems) — [singular control](@ref examples-gallery)
-#md # - State constraint — [state constraint](@ref examples-gallery)
+#md # - Singular control (control-affine systems) — [singular control](@ref examples-singular-control)
+#md # - State constraint — [state constraint](@ref examples-state-constraint)
 #md # - Goddard problem — free final time, a singular arc, a state constraint and a structured shooting all at once — [Goddard tutorial](@extref Tutorials tutorial-goddard)
 #nb # - Singular control (control-affine systems) — <https://control-toolbox.org/OptimalControl.jl/stable/example-singular-control.html>
 #nb # - State constraint — <https://control-toolbox.org/OptimalControl.jl/stable/example-state-constraint.html>

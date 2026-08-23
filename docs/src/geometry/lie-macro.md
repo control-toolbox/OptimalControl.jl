@@ -106,5 +106,5 @@ end
 
 - [Lie derivative and Lie bracket](@ref geometry-ad)
 - [Poisson bracket](@ref geometry-poisson)
-- [Example gallery](@ref examples-gallery) — where iterated `{...}` brackets are used in
-  practice.
+- [Singular control](@ref examples-singular-control) — where iterated `{...}` brackets are used
+  in practice.

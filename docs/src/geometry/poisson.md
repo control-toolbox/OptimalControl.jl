@@ -95,8 +95,8 @@ H101 = Poisson(H1, H01)
 H001(x, p), H101(x, p)
 ```
 
-See the [example gallery](@ref examples-gallery) for a complete singular-control application on
-a real problem.
+See [Singular control](@ref examples-singular-control) for a complete application on a real
+problem.
 
 ## A trap to know about
 
@@ -115,4 +115,4 @@ end
 
 - [Lie derivative and Lie bracket](@ref geometry-ad) — the vector-field-side counterpart.
 - [The `@Lie` macro](@ref geometry-lie-macro) — `{H, G}` notation for this bracket.
-- [Example gallery](@ref examples-gallery) — the worked application.
+- [Singular control](@ref examples-singular-control) — the worked application.

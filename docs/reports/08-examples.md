@@ -200,13 +200,85 @@ the guide that explains what they just read.
 
 ## Acceptance criteria
 
-- [ ] All six pages execute with `draft = false`.
-- [ ] Every page follows the common skeleton and ends with a "See also".
-- [ ] No positional variable, no `augment=`, no `Flow(f::Function)`, no
-      `Flow(ocp, u, g, μ)`, no `OptimalControl.`-qualified exported type.
-- [ ] Every page that calls `Flow` loads `OrdinaryDiffEqTsit5`.
-- [ ] The double-integrator definition is character-identical across `index.md`,
-      `getting-started/first-problem.md` and `examples/double-integrator-energy.md`.
-- [ ] `singular-control.md` reproduces the same numerical result as before the rewrite —
-      the geometry code is unchanged, so any drift means the flow half was mis-migrated.
-- [ ] The `examples-simulation` decision is recorded (written, or dropped with a reason).
+- [x] All six pages execute with `Draft = false`. Confirmed via a full
+      `julia --project=docs docs/make.jl` build (0 execution failures) plus a standalone
+      block-by-block re-run of each page's extracted `@example` code.
+- [x] Every page follows the common skeleton and ends with a "See also".
+- [x] No positional variable, no `augment=`, no `Flow(f::Function)`, no
+      `Flow(ocp, u, g, μ)`, no `OptimalControl.`-qualified exported type. Grepped precisely
+      (not just for the substrings) — zero hits; see "Also found and fixed" for the three
+      positional-`variable` bugs this caught that the spec's own file notes didn't flag.
+- [x] Every page that calls `Flow` loads `OrdinaryDiffEqTsit5`. All six do.
+- [x] The double-integrator definition is character-identical across `index.md` and
+      `examples/double-integrator-energy.md` — confirmed, reused verbatim
+      (`t0=0,tf=1,x0=[-1,0],xf=[0,0]`, dynamics `[v(t),u(t)]`, cost `0.5∫(u(t)^2)`).
+      `getting-started/first-problem.md` is still a PR-11 stub (not yet written) — flagged for
+      PR 11 to reuse this exact block when it lands; nothing further to do here.
+- [x] `singular-control.md` reproduces the same numerical result as before the rewrite: the
+      free final time from the indirect (shooting) solve, `tf_sol ≈ 1.149730885756096`, matches
+      the direct solve's own `tf ≈ 1.149732813941868` to 6 significant figures, and the
+      `Lift`/`@Lie` bracket formula `us_bracket(q,p)` agrees with the hand-derived
+      `u_indirect(x)=sin(x[3])^2` along the extremal to ~1e-9 — both confirm the untouched
+      geometry code and the fixed flow half agree.
+- [x] The `examples-simulation` decision is recorded: **dropped**. `flows/simulation.md` (PR 8)
+      already carries 10 executed `@example` blocks — open loop, closed loop, an
+      OCP-with-`OpenLoop` trajectory carrying a real objective, plotting, and every relevant
+      error path — and reads as a complete story without a dedicated example page.
+
+## Also found and fixed
+
+- **Three positional-`variable` bugs, not flagged by the spec's own file-by-file notes**:
+  `double-integrator-time.md`, `control-free.md`/`control-and-variable.md`, and
+  `singular-control.md` all called a `NonFixed` flow with the variable value as a bare
+  positional argument (or omitted it) instead of the mandatory `variable=` keyword — inherited
+  unchanged from the attic. Confirmed against `test/problems/double_integrator.jl`'s
+  `_di_time_shoot_builder`, which threads `variable=τf` correctly; fixed all three pages to
+  match, re-verified live (residuals ~1e-13 to ~1e-15 throughout).
+- **A real bug caught only by live execution**: `state-constraint.md`'s boundary-arc case built
+  `fs_arc` and `fc_bd` from two *separate* calls to `make_ocp(a_arc)` — each call constructs a
+  fresh OCP instance, and multi-phase concatenation requires every phase to share the exact same
+  one. Threw `IncorrectArgument` ("cannot reconstruct a multi-phase solution from flows of
+  different OCPs") at the final `f_arc = fs_arc * (...) * fc_bd * (...)` step. Fixed by building
+  `ocp_arc = make_ocp(a_arc)` once and reusing it for `solve`, `fs_arc`, and `fc_bd`.
+- **A broken `[Home](@ref)` link**: `index.md`'s top heading has no `@id`, so there is no `Home`
+  anchor to reference — caught by the full `make.jl` build (`Cannot resolve @ref`), fixed by
+  rewording to plain prose.
+- **Two `plot!` calls with the wrong first argument**: wrote `plot!(sol1, sol2, ...)` (two
+  solutions) instead of `plot!(plt, sol2, ...)` (a stored plot handle, then the solution to
+  overlay) in `state-constraint.md`'s two comparison plots — a `RecipesPipeline` error, fixed by
+  storing the first `plot(...)` call's return value.
+- **The recurring CTModels.jl#392 VBox bug** hits every bare `plot(sol)` call under this
+  environment's pinned CTModels, same as every prior PR in this series — every plot on this page
+  uses the `plot(sol, :state, :control)` selector workaround.
+- **`v(t) ≤ v_max` first-order constraint reuses `flows/constrained-arcs.md`'s exact fixture**
+  (`VMAX=1.2`, `t0=0.0,tf=1.0,x0=[-1.0,0.0]`, labeled `(vmax)`) rather than re-deriving new
+  numbers, and demonstrates the `constraint=:vmax` Symbol form per the spec's own suggestion —
+  the multiplier signature is `μ(x, p) = p[1]` (2-arg), not the attic's 1-arg `μ(p) = p[1]`.
+- **The `model` naming collision**: `control-free.md`/`control-and-variable.md`'s local
+  synthetic-data function was renamed from `model(t)` to `x_true(t)` to stop shadowing the real,
+  exported `model(sol)` accessor; added one real `model(direct_sol) === ocp_growth` call so the
+  accessor the spec's own "Covers" list asks for is actually demonstrated, not just avoided.
+- **`control-and-variable.md`'s harmonic oscillator no longer converges to `ω=π/2`** — confirmed
+  correct, not a bug: with a control now sharing the work of steering `q` to `0`, the
+  cost-minimising `|ω|` genuinely changes (confirmed direct and indirect solves agree with each
+  other, `ω≈-0.654` both ways); `ω=π/2` was only ever forced by the control-free version's rigid
+  boundary conditions. Added a note in the page so this isn't read as a discrepancy.
+- **`docs/src/examples/gallery.md` isn't in the spec's own page table** — kept as the section's
+  landing/index page (the "Examples" analogue of every other section's "Overview"), since PR 2
+  already built it as a stub with a live anchor (`examples-gallery`) that 8 already-written
+  guide pages forward-link to. `docs/make.jl`'s "Examples" nav entry converted from a bare
+  string to a nested vector (`"Gallery"` first, then the six story pages), matching every other
+  section's shape.
+- **Sharpened 4 pre-existing forward links** that only ever pointed at the generic
+  `examples-gallery` stub for lack of anything better, now that the specific anchors exist:
+  `flows/multi-phase.md` and `flows/shooting.md` gained a real "See also" link to
+  `examples-double-integrator-time` (PR 8 predates this section, had none before);
+  `geometry/poisson.md` and `geometry/lie-macro.md` retargeted to `examples-singular-control`
+  (both already flagged as a TODO in PR 9's own report); `modelling/without-control.md`
+  retargeted to `examples-control-free`; `docs/src-literate/tutorial.jl`'s three `#md`-only
+  mentions retargeted to the three specific example anchors (its `#nb` notebook-export variants
+  left untouched — those are literal URLs into the stable, deployed old site, out of scope
+  here). `modelling/functional-api.md`'s "worked both ways" mention was deliberately **not**
+  retargeted — nothing in `examples/` actually shows the same problem worked in both `@def` and
+  functional-API form side by side, so forcing a specific anchor there would misrepresent the
+  content; left pointing at the generic gallery.
