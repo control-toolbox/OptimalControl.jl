@@ -48,7 +48,7 @@ never write a flow. See [Installation](@ref getting-started-installation) and
 | `OptimalControl.VectorField`, `OptimalControl.Hamiltonian`, … | `VectorField`, `Hamiltonian`, … | exported at top level since v2.1.0-beta; the qualified form still works, it's just no longer necessary |
 | `Lie(X, f)` | `ad(X, f)` | renamed; `Lie(...)` now throws |
 | `X ⋅ f` | `ad(X, f)` | removed, no operator alias; `X ⋅ f` now throws |
-| `HamiltonianLift` | `Lift(f)` to build; `CTLie.LiftedHamiltonianFunction` to name the type | renamed **and** re-parented — see [What changed meaning silently](@ref migration-silent) |
+| `HamiltonianLift` | `Lift(f)` to build; `OptimalControl.LiftedHamiltonianFunction` to name the type | renamed **and** re-parented — see [What changed meaning silently](@ref migration-silent) |
 | `autonomous=`, `variable=`, `inplace=` (constructor keywords) | `is_autonomous=`, `is_variable=`, `is_inplace=` | prefixed, on `VectorField`, `Hamiltonian`, `@Lie`, and friends |
 | `Flow(f)` with `f::Function` | `Flow(VectorField(f))`, `Flow(Hamiltonian(f))`, `Flow(HamiltonianVectorField(f))` | the bare function no longer says what kind of flow to build |
 | `Flow(ocp, u, g, μ)` (3 positional) | `Flow(ocp, u; constraint=g, multiplier=μ)` | keywords, and they come as a pair |

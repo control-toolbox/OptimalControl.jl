@@ -294,9 +294,9 @@ time_grid(sol_flow)
 ```
 
 For a denser plot, pass `saveat` **when constructing the flow**, not on the call — the call
-itself only accepts `variable`/`unsafe` (and `augment`, for costate augmentation). `dense=false`
-is required alongside `saveat`, since dense output and `saveat` conflict at the integrator
-level:
+itself only accepts `variable`/`unsafe` (and `variable_costate`, for costate augmentation).
+`dense=false` is required alongside `saveat`, since dense output and `saveat` conflict at the
+integrator level:
 
 ```@example main
 fine_grid = range(t0, tf, 100)

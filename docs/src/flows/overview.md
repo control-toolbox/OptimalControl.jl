@@ -68,6 +68,7 @@ Every flow needs an ODE integrator, and none is a hard dependency — load one, 
 
 ```@example main
 using OptimalControl
+using OrdinaryDiffEqTsit5
 using NLPModelsIpopt
 
 t0 = 0
@@ -84,20 +85,32 @@ ocp = @def begin
     0.5∫(u(t)^2) → min
 end
 
-try
-    Flow(ocp, (x, p) -> p[2])
-catch e
-    println(e)
-end
-```
-
-```@example main
-using OrdinaryDiffEqTsit5
 f = Flow(ocp, (x, p) -> p[2])
 nothing # hide
 ```
 
-Every page in this section opens with `using OrdinaryDiffEqTsit5` — no exceptions.
+Every page in this section opens with `using OrdinaryDiffEqTsit5` — no exceptions. Forget it
+and `Flow` says so at construction time, naming the `using` to add:
+
+```julia
+julia> f = Flow(ocp, (x, p) -> p[2])
+ERROR: ExtensionError → top-level scope, REPL[6]:1
+│
+│  missing dependencies to access SciML options metadata
+│
+│  Missing  OrdinaryDiffEqTsit5
+│
+│  Context  Load OrdinaryDiffEqTsit5, OrdinaryDiffEq, or DifferentialEquations to activate the CTSolversSciMLIntegrator extension.
+│  Hint     Run: using OrdinaryDiffEqTsit5
+└─
+```
+
+!!! note "Why that block is not executed"
+
+    The documentation build loads `OrdinaryDiffEq` once, for the whole site, and a Julia
+    extension stays armed for the rest of the session — so no page here can demonstrate this
+    failure live. The transcript above comes from a session loading `OptimalControl` and
+    `NLPModelsIpopt` and nothing else.
 
 ## Choosing an integrator and its options
 
