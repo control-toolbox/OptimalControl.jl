@@ -77,7 +77,8 @@ Hv([1.0, 2.0], [3.0, 4.0], 1.0)   # H(x, p, v)
     ```
 
     Only the plain-`Function` overload changed — `Lift(X::AbstractVectorField)` still returns a
-    `Hamiltonian`, confirmed above.
+    `Hamiltonian`, confirmed above. See [Migration](@ref migration) for the full list of
+    silent v2.0 → v2.1 semantics changes.
 
 ## What you can do with it
 

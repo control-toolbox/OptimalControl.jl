@@ -15,7 +15,7 @@ using OrdinaryDiffEqTsit5   # ← new, and required before any Flow(...)
 f = Flow(ocp, (x, p) -> p[2])
 ```
 
-Without it, `Flow` fails with a bare `MethodError`. This is by design: it keeps the install cost of the direct path off users who never write a flow.
+Without it, `Flow` fails with a clean `ExtensionError` naming `OrdinaryDiffEqTsit5` (or `OrdinaryDiffEq`/`DifferentialEquations`) as the missing package. This is by design: it keeps the install cost of the direct path off users who never write a flow.
 
 ## Differential geometry moved to CTLie
 
