@@ -57,8 +57,8 @@ Status legend: ⬜ not started · 🟡 in progress · ✅ merged
 | 7 | [`docs: results`](https://github.com/control-toolbox/OptimalControl.jl/pull/867) | Results | [`07`](07-results.md) | 6 | ✅ |
 | 8 | [`docs: flows`](https://github.com/control-toolbox/OptimalControl.jl/pull/868) | Flows (indirect) | [`05`](05-flows-indirect.md) | 6 | ✅ |
 | 9 | [`docs: geometry`](https://github.com/control-toolbox/OptimalControl.jl/pull/869) | Geometry | [`06`](06-geometry.md) | 8 | ✅ |
-| 10 | [`docs: examples`](https://github.com/control-toolbox/OptimalControl.jl/pull/872) | Examples | [`08`](08-examples.md) | 8, 9 | 🟡 in review |
-| 11 | [`docs: getting started`](https://github.com/control-toolbox/OptimalControl.jl/pull/873) | Getting started + `index.md` | [`02`](02-getting-started.md) | 5–10 | 🟡 in review |
+| 10 | [`docs: examples`](https://github.com/control-toolbox/OptimalControl.jl/pull/872) | Examples | [`08`](08-examples.md) | 8, 9 | ✅ |
+| 11 | [`docs: getting started`](https://github.com/control-toolbox/OptimalControl.jl/pull/873) | Getting started + `index.md` | [`02`](02-getting-started.md) | 5–10 | ✅ |
 | 12 | `docs: migration + cleanup` | Migration page, drop `docs/attic/` | [`10`](10-migration.md) §2 | all | ⬜ |
 
 PR 3 is code-only and independent — it can run in parallel with any docs PR.
