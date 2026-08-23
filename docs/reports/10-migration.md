@@ -1,21 +1,26 @@
 # Migration and deprecations — specification
 
-**PRs**: 3 (the shims, code) and 12 (the page, docs) · **Status**: specification
+**PRs**: 3 (the shims, code), 12 (the page, docs), 13 (drop `docs/attic/`) · **Status**: specification
 **Scope**: `src/deprecated.jl`, `test/suite/reexport/test_deprecated.jl`,
 `test/suite/reexport/test_ctlie.jl`, `test/suite/flows/test_flow_api.jl`, `BREAKING.md`,
-`docs/src/migration.md`
+`docs/src/migration.md`, `docs/attic/` (PR 13)
 
 ## Objective
 
 Today a v2.0 script fails with `UndefVarError: Lie not defined` or a bare `MethodError`.
-Nothing tells you what replaced it. Two deliverables:
+Nothing tells you what replaced it. Three deliverables:
 
 1. **Part 1 (PR 3, code)** — a shim layer so every removed spelling throws a
    `CTBase.PreconditionError` naming its replacement.
 2. **Part 2 (PR 12, docs)** — one page that is the old→new table, and the honest list of what
    could *not* be shimmed.
+3. **Part 3 (PR 13, docs)** — delete `docs/attic/` now that every page in it has either been
+   harvested into `docs/src/` (PRs 2–12) or superseded; nothing in `docs/src/` may reference it
+   afterward.
 
-PR 3 is independent of every docs PR and can land at any point.
+PR 3 is independent of every docs PR and can land at any point. PR 13 depends on PR 12 (the
+migration page is the last consumer of attic content — the "Legacy initial guesses" section
+harvests from `attic/manual-initial-guess.md`).
 
 ---
 
@@ -237,3 +242,26 @@ Test.@test getfield(OptimalControl, :⋅) === LinearAlgebra.dot
 - [ ] The page is explicitly non-executing and says why.
 - [ ] `geometry/overview.md`, `geometry/ad.md`, `geometry/lift.md`, `results/solution.md`
       and `flows/simulation.md` all link here.
+
+---
+
+# Part 3 — delete `docs/attic/` (PR 13)
+
+Small and mechanical, split out from PR 12 so the migration page's content review isn't
+gated on a repo-wide grep. Depends on PR 12: `attic/manual-initial-guess.md` is the source
+for the page's "Legacy initial guesses" section, so the file must still exist while that
+section is written.
+
+- Delete every file under `docs/attic/`, including `docs/attic/README.md`.
+- Grep `docs/src/` for any remaining `attic/` reference and fix or remove it — there should be
+  none left once PR 12 has landed, since every page's spec in this directory says its source is
+  either `attic/<file>.md §<section>` (harvested) or `new`.
+- The references to `docs/attic/` inside `docs/reports/*.md` (this directory) are historical
+  and stay — they document where each page's content came from, and `docs/reports/` is outside
+  both Documenter's and VitePress's source scan.
+
+## Acceptance criteria (PR 13)
+
+- [ ] `docs/attic/` no longer exists.
+- [ ] No file under `docs/src/` references `attic/`.
+- [ ] `julia --project=docs docs/make.jl` still runs clean.
