@@ -1,4 +1,4 @@
-# # OptimalControl.jl — a guided tour
+# # [OptimalControl.jl — a guided tour](@id getting-started-guided-tour)
 #
 #src ============================================================================
 #src SKELETON — v1 "socle" (~45 min). See .reports/tutorial-brainstorming.md.
@@ -23,7 +23,7 @@
 #md # !!! note "Run online"
 #md #     You can run this tutorial interactively in your browser — no installation required — by clicking the Binder badge below:
 #md #
-#md #     [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/control-toolbox/OptimalControl.jl/paderborn?urlpath=%2Fdoc%2Ftree%2Fdocs%2Fsrc%2Fnotebooks%2Ftutorial.ipynb)
+#md #     [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/control-toolbox/OptimalControl.jl/paderborn?urlpath=%2Fdoc%2Ftree%2Fdocs%2Fsrc%2Fnotebooks%2Fguided-tour.ipynb)
 
 #src ============================================================================
 # ## The problem, and installing the tools
@@ -84,7 +84,7 @@ xf = [0, 0];
 # ### The `@def` macro
 #
 #md # The [`@def`](@ref modelling-abstract-syntax) macro lets us write the problem almost exactly as the mathematics:
-#nb # The [`@def`](https://control-toolbox.org/OptimalControl.jl/stable/manual-abstract.html) macro lets us write the problem almost exactly as the mathematics:
+#nb # The [`@def`](https://control-toolbox.org/OptimalControl.jl/stable/modelling/abstract-syntax) macro lets us write the problem almost exactly as the mathematics:
 #
 # Each line of the `@def` block mirrors a piece of the mathematical formulation — time, state, control, dynamics, boundary conditions, then cost — in the same order one would write them on paper. Unicode symbols (`∈`, `R²`, `ẋ`, `∫`, `→`) make the code read like the maths; plain ASCII alternatives (`R^2`, `derivative`, `integral`, `=>`) are available for keyboards or workflows that prefer them.
 
@@ -105,7 +105,7 @@ end
 # ### The same problem with the macro-free (functional) API
 #
 #md # The [functional API](@ref modelling-functional-api) builds the *same* model step by step with plain functions — useful for programmatic problem generation or macro-free library code.
-#nb # The [functional API](https://control-toolbox.org/OptimalControl.jl/stable/manual-macro-free.html) builds the *same* model step by step with plain functions — useful for programmatic problem generation or macro-free library code.
+#nb # The [functional API](https://control-toolbox.org/OptimalControl.jl/stable/modelling/functional-api) builds the *same* model step by step with plain functions — useful for programmatic problem generation or macro-free library code.
 
 pre = OptimalControl.PreModel()
 
@@ -196,7 +196,7 @@ println("iterations, @init guess:   ", iterations(sol))
 # In this case both guesses give **1 iteration**: the double integrator is a *linear-quadratic* problem, so the NLP is quadratic and Ipopt solves it in a single step regardless of the starting point. Warm-starting only pays off on genuinely nonlinear problems — we will see this with the **Goddard rocket** in the next section.
 
 #md # For all the ways to specify an initial guess, see [Set an initial guess](@ref solve-initial-guess).
-#nb # For all the ways to specify an initial guess, see [Set an initial guess](https://control-toolbox.org/OptimalControl.jl/stable/manual-initial-guess.html).
+#nb # For all the ways to specify an initial guess, see [Set an initial guess](https://control-toolbox.org/OptimalControl.jl/stable/solve/initial-guess).
 #md # !!! note
 #md #     There is currently no way to initialise the costate directly — only state, control and variable can be provided through `@init`. The solver initialises the adjoint internally (as we saw above). Costate initialisation is a planned feature.
 #nb # **Note:** there is currently no way to initialise the costate directly — only state, control and variable can be provided through `@init`. The solver initialises the adjoint internally (as we saw above). Costate initialisation is a planned feature.
@@ -267,7 +267,7 @@ end
 # ### Choosing a solver is trivial
 #
 #md # `solve` uses the defaults (collocation, ADNLP modeler, Ipopt, CPU). Switching solver is just loading a package and passing a token (see [Solve a problem](@ref solve-overview)):
-#nb # `solve` uses the defaults (collocation, ADNLP modeler, Ipopt, CPU). Switching solver is just loading a package and passing a token (see [Solve a problem](https://control-toolbox.org/OptimalControl.jl/stable/manual-solve.html)):
+#nb # `solve` uses the defaults (collocation, ADNLP modeler, Ipopt, CPU). Switching solver is just loading a package and passing a token (see [Solve a problem](https://control-toolbox.org/OptimalControl.jl/stable/solve/choosing-a-method)):
 
 using MadNLP
 
@@ -309,7 +309,7 @@ plot!(plt, s1000; label="1000")
 
 # How much better is the optimal solution compared to a naive strategy? We simulate **full thrust until fuel depletion, then coast to apogee** — a bang-bang profile with no optimisation, just two ODE integrations with callbacks.
 
-using OrdinaryDiffEq   # ODE solver (callbacks for the bang-bang simulation)
+using OrdinaryDiffEqTsit5   # ODE solver (callbacks for the bang-bang simulation)
 
 ## Phase 1: u = 1, stop when m = mf (fuel depleted)
 bang1!(dx, x, p, t) = (dx[:] = F0(x) + F1(x))
@@ -383,7 +383,7 @@ catch e
 end
 
 #md # For the full GPU setup, see [Solve on GPU](@ref solve-gpu).
-#nb # For the full GPU setup, see [Solve on GPU](https://control-toolbox.org/OptimalControl.jl/stable/manual-solve-gpu.html).
+#nb # For the full GPU setup, see [Solve on GPU](https://control-toolbox.org/OptimalControl.jl/stable/solve/gpu).
 
 #src ============================================================================
 # ## The indirect method
@@ -435,7 +435,7 @@ end
 #
 # For the energy problem, $H = p_1 v + p_2 u - u^2/2$, so the maximiser is $u = p_2$.
 
-using OrdinaryDiffEq   # ODE solver (Hamiltonian flow)
+using OrdinaryDiffEqTsit5   # ODE solver (Hamiltonian flow)
 using NonlinearSolve   # nonlinear equations (shooting)
 
 ## maximising control in feedback form
@@ -473,7 +473,7 @@ plt_compare = plot(direct_sol; label="direct", size=(800, 600))
 plot!(plt_compare, indirect_sol; label="indirect")
 
 #md # See [Compute flows from optimal control problems](@ref flows-from-ocp) for the flow construction, and the [indirect simple shooting tutorial](@extref tutorial-indirect-simple-shooting).
-#nb # See [Compute flows from optimal control problems](https://control-toolbox.org/OptimalControl.jl/stable/manual-flow-ocp.html) for the flow construction, and the [indirect simple shooting tutorial](https://control-toolbox.org/Tutorials.jl/stable/).
+#nb # See [Compute flows from optimal control problems](https://control-toolbox.org/OptimalControl.jl/stable/flows/from-ocp) for the flow construction, and the [indirect simple shooting tutorial](https://control-toolbox.org/Tutorials.jl/stable/).
 
 #src ============================================================================
 # ## Going further
@@ -481,7 +481,7 @@ plot!(plt_compare, indirect_sol; label="indirect")
 #
 # **Variables & parameters.** Beyond the control, one can optimise **parameters** naturally, both in an OCP (the `variable` keyword of the DSL) and in a differential-constraint optimisation problem **without any control** (a *control-free* problem).
 #md # See [control-free problems](@ref examples-control-free).
-#nb # See [control-free problems](https://control-toolbox.org/OptimalControl.jl/stable/example-control-free.html).
+#nb # See [control-free problems](https://control-toolbox.org/OptimalControl.jl/stable/examples/control-free).
 #src NOTE(v1): parameter estimation is only *mentioned* here. The worked example is an
 #src   extension (out of v1) — see .reports/tutorial-brainstorming.md "Extensions futures".
 #
@@ -490,8 +490,8 @@ plot!(plt_compare, indirect_sol; label="indirect")
 #md # - Singular control (control-affine systems) — [singular control](@ref examples-singular-control)
 #md # - State constraint — [state constraint](@ref examples-state-constraint)
 #md # - Goddard problem — free final time, a singular arc, a state constraint and a structured shooting all at once — [Goddard tutorial](@extref Tutorials tutorial-goddard)
-#nb # - Singular control (control-affine systems) — <https://control-toolbox.org/OptimalControl.jl/stable/example-singular-control.html>
-#nb # - State constraint — <https://control-toolbox.org/OptimalControl.jl/stable/example-state-constraint.html>
+#nb # - Singular control (control-affine systems) — <https://control-toolbox.org/OptimalControl.jl/stable/examples/singular-control>
+#nb # - State constraint — <https://control-toolbox.org/OptimalControl.jl/stable/examples/state-constraint>
 #nb # - Goddard problem — free final time, a singular arc, a state constraint and a structured shooting all at once — <https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html>
 #
 #md # **Discrete continuation** — warm-starting across a family of problems (homotopy on a physical parameter), the grown-up version of the grid continuation above: [Discrete continuation](@extref Tutorials tutorial-continuation).

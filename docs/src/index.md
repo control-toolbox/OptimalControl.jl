@@ -4,22 +4,14 @@ The OptimalControl.jl package is the root package of the [control-toolbox ecosys
 
 ## Installation
 
-To install OptimalControl.jl, please [open Julia's interactive session (known as REPL)](https://docs.julialang.org/en/v1/manual/getting-started) and use the Julia package manager:
-
-```julia
-using Pkg
-Pkg.add("OptimalControl")
-```
-
-!!! tip
-
-    If you are new to Julia, please follow this [guidelines](https://github.com/orgs/control-toolbox/discussions/64).
+See [Installation](@ref getting-started-installation) — one package to add, plus a handful of
+optional pieces (a solver, plotting, flows, saving) loaded only when you use them.
 
 ## Basic usage
 
 Let us model, solve and plot a simple optimal control problem.
 
-```julia
+```@example main
 using OptimalControl
 using NLPModelsIpopt
 using Plots
@@ -35,13 +27,27 @@ ocp = @def begin
 end
 
 sol = solve(ocp)
-plot(sol)
+plot(sol; layout=:group)
 ```
 
-- For more details, see the [example gallery](@ref examples-gallery).  
+- For more details, see the [energy minimisation example](@ref examples-double-integrator-energy).  
 - The `@def` macro defines the problem. See the [abstract syntax guide](@ref modelling-abstract-syntax).  
 - The `solve` function has many options. See the [solve overview](@ref solve-overview).  
 - The `plot` function is flexible. See the [plot guide](@ref results-plot).
+
+## Where to go next
+
+| Section | What's there |
+| --- | --- |
+| [Getting started](@ref getting-started-guided-tour) | Install, solve your first problem, then a longer guided tour covering both the direct and indirect methods. |
+| [Modelling](@ref modelling-formulation) | The `@def` DSL, the macro-free functional API, control-free (parameter estimation) problems, and problem introspection. |
+| [Solve (direct)](@ref solve-overview) | Discretize-and-transcribe methods: choosing a strategy, initial guesses, options, explicit mode, GPU. |
+| [Results](@ref results-solution) | Read a `Solution` — trajectories, costate, duals, status — plot it, save it, reload it. |
+| [Flows (indirect)](@ref flows-overview) | The Pontryagin Maximum Principle as code: build, integrate, and shoot with Hamiltonian flows. |
+| [Geometry](@ref geometry-overview) | The Lie-theoretic tools (`Lift`, `ad`, `Poisson`, `@Lie`) behind singular-control problems. |
+| [Examples](@ref examples-gallery) | Six worked problems, direct and indirect, from energy minimisation to state constraints. |
+| [API reference](@ref api-modelling) | Every re-exported symbol, organised by theme. |
+| [Migrating to v2.1](@ref migration) | What changed since v2.0 and how to update your code. |
 
 ## Mathematical formulation
 
