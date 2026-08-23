@@ -179,3 +179,5 @@ trajectory, found by two different methods.
 - [Multi-phase flows](@ref flows-multi-phase) — concatenating the arcs once switching times are
   known.
 - [Solve overview](@ref solve-overview) — the direct-method starting point used above.
+- [Time minimisation (bang–bang)](@ref examples-double-integrator-time) — the full story behind
+  the double-integrator example used throughout this page.

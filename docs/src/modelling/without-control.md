@@ -353,7 +353,8 @@ To turn either of these examples into a controlled problem, declare a control an
   law and so no pseudo-Hamiltonian to carry a $\mu \cdot g$ term. Use
   `Flow(ocp, law; constraint=…, multiplier=…)` instead.
 
-See the [example gallery](@ref examples-gallery) for a worked example with both.
+See [Parameter estimation without a control](@ref examples-control-free) for a worked example
+with both.
 
 ## See also
 
