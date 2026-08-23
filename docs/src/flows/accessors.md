@@ -12,14 +12,6 @@ the map of what you can pull back out, and from which kind of flow.
 using OptimalControl
 using OrdinaryDiffEqTsit5
 using NLPModelsIpopt
-import CTFlows.Systems: # hide
-    hamiltonian, # hide
-    hamiltonian_vector_field, # hide
-    vector_field, # hide
-    get_hamiltonian_gradient, # hide
-    get_variable_gradient, # hide
-    get_pseudo_hamiltonian_gradient, # hide
-    get_pseudo_variable_gradient # hide
 nothing # hide
 ```
 
