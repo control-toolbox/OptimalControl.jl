@@ -30,6 +30,25 @@ There are 12 methods: every `{adnlp, exa} × {ipopt, madnlp, uno, madncl, knitro
 This list is not fixed prose to memorize — it is exactly what `methods()` returns, so it's
 printed live rather than quoted as a number anywhere on this page.
 
+## A problem to try them on
+
+Every `solve` call on this page uses the same problem — the double integrator, with its
+dynamics written coordinatewise so that both the `:adnlp` and the `:exa` modeler accept it:
+
+```@example main
+ocp = @def begin
+    t ∈ [0, 1], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    x(0) == [-1, 0]
+    x(1) == [0, 0]
+    ∂(q)(t) == v(t)
+    ∂(v)(t) == u(t)
+    ∫(0.5u(t)^2) → min
+end
+nothing # hide
+```
+
 ## Partial descriptions
 
 `solve(ocp, :madnlp)` doesn't need the other three tokens — they're completed for you.
@@ -112,29 +131,49 @@ describe(:cpu)
 
 `:collocation` accepts a `scheme` option (alias `disc_method`):
 
-| Value | Notes |
-| --- | --- |
-| `:trapeze` | second-order |
-| `:midpoint` | second-order, **default** |
-| `:euler`, `:euler_explicit`, `:euler_forward` | first-order, explicit |
-| `:euler_implicit`, `:euler_backward` | first-order, implicit |
-| `:gauss_legendre_2` | fourth-order, **`:adnlp` modeler only** |
-| `:gauss_legendre_3` | sixth-order, **`:adnlp` modeler only** |
-| `:variable` | variable-step ODE-based discretization |
+| Value | Notes | `:adnlp` | `:exa` |
+| --- | --- | :-: | :-: |
+| `:trapeze` | second-order | ✅ | ✅ |
+| `:midpoint` | second-order, **default** | ✅ | ✅ |
+| `:euler` | first-order, explicit | ✅ | ✅ |
+| `:euler_implicit` | first-order, implicit | ✅ | ✅ |
+| `:euler_explicit`, `:euler_forward` | aliases of `:euler` | ✅ | ✗ |
+| `:euler_backward` | alias of `:euler_implicit` | ✅ | ✗ |
+| `:gauss_legendre_2` | fourth-order | ✅ | ✗ |
+| `:gauss_legendre_3` | sixth-order | ✅ | ✗ |
+| `:variable` | variable-step, ODE-based | ✗ | ✗ |
 
 plus `grid_size` (default `250`) or an explicit, possibly non-uniform, `time_grid`.
 
-!!! warning "Gauss-Legendre schemes are `:adnlp`-only"
+Every cell above was checked by solving with that scheme. Two of the results need spelling out.
 
-    `:gauss_legendre_2`/`:gauss_legendre_3` are rejected under `:exa` — confirmed live:
+!!! warning "Under `:exa`, only the four canonical names work"
+
+    `:exa` takes `:trapeze`, `:midpoint`, `:euler` and `:euler_implicit`, and nothing else.
+    Both Gauss-Legendre schemes are out — and so are the aliases, which is the surprising part:
+    `:euler_forward` is rejected where `:euler` is accepted, though under `:adnlp` the two name
+    the same scheme. Confirmed live:
 
     ```@example main
+    using Logging
+    # ExaModels warns about a deprecated `ExaCore()` call on every model it
+    # builds; silenced here so the scheme error is the only output.
     try
-        solve(ocp, :exa; scheme=:gauss_legendre_2, display=false)
+        with_logger(NullLogger()) do
+            solve(ocp, :exa; scheme=:gauss_legendre_2, display=false)
+        end
     catch e
         println(e)
     end
     ```
+
+!!! warning "`:variable` is advertised but does not run"
+
+    The `describe(:collocation)` output above lists `:variable`, and the registry accepts it,
+    but no modeler can use it: the scheme dispatches to `CTDirect.VariableStepODE`, whose
+    implementation is not compiled into CTDirect, so a solve raises
+    `UndefVarError(:VariableStepODE, …, CTDirect)` rather than any typed error. It is kept in
+    the table only because the registry listing above advertises it.
 
 ## Advanced: the strategy registry
 
