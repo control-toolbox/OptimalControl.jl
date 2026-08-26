@@ -18,10 +18,8 @@ DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 ExaModels = "1037b233-b668-4ce9-9b63-f9f681f55dd2"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-NLPModels = "a4795742-8479-5a88-8948-cc11e1c8c1a6"
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
-SolverCore = "ff4d7338-4cf1-434d-91df-b86cb86fb843"
 
 [compat]
 ADNLPModels = "0.8"
@@ -45,7 +43,6 @@ LinearAlgebra = "1"
 MadNCL = "0.2"
 MadNLP = "0.9, 0.10"
 MadNLPGPU = "0.8, 0.10"
-NLPModels = "0.21"
 NLPModelsIpopt = "0.11"
 NonlinearSolve = "4"
 OrdinaryDiffEq = "6, 7"
@@ -74,9 +71,10 @@ OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
 OrdinaryDiffEqTsit5 = "b1df2697-797e-41e3-8120-5422d3b24e4a"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 SciMLBase = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
+SolverCore = "ff4d7338-4cf1-434d-91df-b86cb86fb843"
 SplitApplyCombine = "03a91e81-4c3e-53e1-a0a4-9c0c8f19dd66"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 UnoSolver = "1baa60ac-02f7-4b39-a7a8-2f4f58486b05"
 
 [targets]
-test = ["BenchmarkTools", "CUDA", "CUDSS", "DiffEqBase", "MadNCL", "MadNLP", "MadNLPGPU", "NLPModelsIpopt", "NonlinearSolve", "OrdinaryDiffEq", "OrdinaryDiffEqTsit5", "Printf", "SciMLBase", "SplitApplyCombine", "Test", "UnoSolver"]
+test = ["BenchmarkTools", "CUDA", "CUDSS", "DiffEqBase", "MadNCL", "MadNLP", "MadNLPGPU", "NLPModelsIpopt", "NonlinearSolve", "OrdinaryDiffEq", "OrdinaryDiffEqTsit5", "Printf", "SciMLBase", "SolverCore", "SplitApplyCombine", "Test", "UnoSolver"]

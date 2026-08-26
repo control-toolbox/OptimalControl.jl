@@ -10,7 +10,6 @@ module TestKwargExtraction
 
 using Test: Test
 using OptimalControl: OptimalControl
-using CTDirect: CTDirect
 using CTSolvers: CTSolvers
 using CTBase: CTBase
 
@@ -178,9 +177,10 @@ function test_kwarg_extraction()
                 )
                 Test.@test allocs == 0
 
-                # Type stability (Julia 1.10 fails @inferred here: it widens the
-                # return type to Union{Nothing,AbstractDiscretizer} where 1.11's
-                # inference narrows it to the concrete branch actually taken)
+                # Type stability. On Julia < 1.11, inference for this call gives the
+                # wider `Union{Nothing, AbstractDiscretizer}` instead of the concrete
+                # runtime type, so `@inferred` fails — a compiler precision
+                # difference, not a logic bug; the strict check only holds from 1.11 on.
                 if VERSION >= v"1.11"
                     Test.@test_nowarn Test.@inferred OptimalControl._extract_kwarg(
                         kw, CTSolvers.DOCP.AbstractDiscretizer
@@ -198,9 +198,7 @@ function test_kwarg_extraction()
                 )
                 Test.@test allocs == 0
 
-                # Type stability (Julia 1.10 fails @inferred here: it widens the
-                # return type to Union{Nothing,AbstractDiscretizer} where 1.11's
-                # inference narrows it to the concrete branch actually taken)
+                # Type stability — see comment above, strict check only holds from 1.11 on.
                 if VERSION >= v"1.11"
                     Test.@test_nowarn Test.@inferred OptimalControl._extract_kwarg(
                         kw, CTSolvers.DOCP.AbstractDiscretizer
@@ -232,7 +230,7 @@ function test_kwarg_extraction()
                 )
                 Test.@test allocs < 1000  # Small allocation acceptable for large kwargs
 
-                # Type stability (see the 1.10-vs-1.11 inference note above)
+                # Type stability — see comment above, strict check only holds from 1.11 on.
                 if VERSION >= v"1.11"
                     Test.@test_nowarn Test.@inferred OptimalControl._extract_kwarg(
                         large_kw, CTSolvers.DOCP.AbstractDiscretizer
