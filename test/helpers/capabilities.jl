@@ -49,17 +49,17 @@ gpu_extension_armed() = Base.get_extension(CTSolvers, :CTSolversMadNLPGPU) !== n
 """
     on_gpu_runner()
 
-`true` on the self-hosted `kkt` GPU runner (`.github/workflows/CI.yml:41`).
+`true` on the self-hosted `kkt` or `occidata` GPU runner.
 
 `RUNNER_NAME` is set by the GitHub Actions runner agent itself, so this needs no
 CI.yml or CTActions change. Its purpose is to turn the device tier from
-*skipped* into *required* on the one machine that must have a device: without
-it, a `kkt` whose driver broke is indistinguishable from a laptop, and the GPU
+*skipped* into *required* on the machines that must have a device: without
+it, a runner whose driver broke is indistinguishable from a laptop, and the GPU
 job goes green having run nothing — the failure class of CTSolvers#189.
 
-If the runner is ever renamed this check stops firing silently rather than
-failing loudly; update the literal alongside CI.yml.
+If a runner is ever renamed this check stops firing silently rather than
+failing loudly; update the names alongside CI.yml.
 """
-on_gpu_runner() = get(ENV, "RUNNER_NAME", "") == "kkt"
+on_gpu_runner() = get(ENV, "RUNNER_NAME", "") in ("kkt", "occidata")
 
 end # module

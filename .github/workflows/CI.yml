@@ -27,16 +27,16 @@ jobs:
     secrets:
       SSH_KEY: ${{ secrets.SSH_KEY }}
 
-  # Job pour le runner self-hosted kkt (GPU/CUDA)
-  test-gpu-kkt:
+  # Job for the self-hosted occidata runner (GPU/CUDA)
+  test-gpu-occidata:
     # See the comment on test-cpu-github above.
     if: >
       github.event_name != 'pull_request' ||
-      (github.event.action == 'labeled' && github.event.label.name == 'run ci kkt-runner') ||
-      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run ci kkt-runner'))
+      (github.event.action == 'labeled' && github.event.label.name == 'run ci occidata-runner') ||
+      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run ci occidata-runner'))
     uses: control-toolbox/CTActions/.github/workflows/ci.yml@main
     with:
-      runs_on: '[["kkt"]]'
+      runs_on: '[["occidata"]]'
       runner_type: 'self-hosted'
       use_ct_registry: true
     secrets:

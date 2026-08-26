@@ -189,11 +189,12 @@ function test_gpu_routing()
                 successful(sol)
             end
 
-            # ⚠️ A skip is honest on a laptop and a lie on the GPU runner. The
-            # `kkt` runner exists to have a device; if CUDA is not functional
-            # *there*, skipping turns the whole GPU job green with nothing run
-            # — the failure class CTSolvers#189/#190 was about, one level up.
-            # So on that runner the device itself is asserted, not assumed.
+            # ⚠️ A skip is honest on a laptop and a lie on a GPU runner. The
+            # `kkt` and `occidata` runners exist to have a device; if CUDA is
+            # not functional there, skipping turns the whole GPU job green with
+            # nothing run — the failure class CTSolvers#189/#190 was about, one
+            # level up. So on those runners the device itself is asserted, not
+            # assumed.
             if on_gpu_runner()
                 Test.@test is_cuda_on()
             end
