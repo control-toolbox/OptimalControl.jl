@@ -2,7 +2,7 @@
 
 julia_version = "1.12.6"
 manifest_format = "2.0"
-project_hash = "dda4f3934c82d9777bee29d127aad4a323bf2ab9"
+project_hash = "26eb9b75f34bdc881816c6687e0dd3d6d94ef708"
 
 [[deps.ADNLPModels]]
 deps = ["ADTypes", "ForwardDiff", "LinearAlgebra", "NLPModels", "Requires", "ReverseDiff", "SparseArrays", "SparseConnectivityTracer", "SparseMatrixColorings"]
@@ -200,9 +200,9 @@ version = "0.5.0"
 
 [[deps.CTBase]]
 deps = ["ADTypes", "DocStringExtensions"]
-git-tree-sha1 = "20c6e9ee2beda7262dfd1903a0ac3af00f2fe9d0"
+git-tree-sha1 = "b04407ff8c71b5184a512d1c1f846b2578758ee0"
 uuid = "54762871-cc72-4466-b8e8-f6c8b58076cd"
-version = "0.28.9-beta"
+version = "0.29.3"
 
     [deps.CTBase.extensions]
     CTBaseDifferentiationInterface = ["DifferentiationInterface"]
@@ -222,15 +222,15 @@ version = "0.28.9-beta"
 
 [[deps.CTDirect]]
 deps = ["ADNLPModels", "CTBase", "CTModels", "CTParser", "CTSolvers", "DocStringExtensions", "ExaModels", "SolverCore", "SparseArrays", "SparseConnectivityTracer"]
-git-tree-sha1 = "f8e3825bffc9618fc395fb1615ba54f7cf93f831"
+git-tree-sha1 = "d2ec87a0dd88f2682bc3cee22bc49d9ffbf64fcc"
 uuid = "790bbbee-bee9-49ee-8912-a9de031322d5"
-version = "1.1.0-beta"
+version = "1.1.1-beta"
 
 [[deps.CTFlows]]
 deps = ["ADTypes", "CTBase", "CTModels", "CTSolvers", "CommonSolve", "DocStringExtensions", "GPUArraysCore", "RecipesBase"]
-git-tree-sha1 = "b6baf4ab49152b914ddbab9573628ff8323b1245"
+git-tree-sha1 = "8bd5bbf6b115e8fe45eeacb6f59b68fead8b11f1"
 uuid = "1c39547c-7794-42f7-af83-d98194f657c2"
-version = "0.16.3-beta"
+version = "0.17.2"
 weakdeps = ["Plots", "SciMLBase", "StaticArrays"]
 
     [deps.CTFlows.extensions]
@@ -241,15 +241,15 @@ weakdeps = ["Plots", "SciMLBase", "StaticArrays"]
 
 [[deps.CTLie]]
 deps = ["CTBase", "DocStringExtensions", "MacroTools"]
-git-tree-sha1 = "0d2430616c9d327132554d6c35b9c96826629da9"
+git-tree-sha1 = "d334dc3a53b7cfd49765795598c8fe2a4e1f9a5a"
 uuid = "6880e05b-3a7d-4cac-887c-30cb52c5fdde"
-version = "0.1.5-beta"
+version = "0.2.0"
 
 [[deps.CTModels]]
 deps = ["CTBase", "DocStringExtensions", "LinearAlgebra", "MLStyle", "MacroTools", "OrderedCollections", "Parameters", "RecipesBase"]
-git-tree-sha1 = "fab733098cfbf9b90b45444628776d8abcb390a3"
+git-tree-sha1 = "a5a3bea60097a2e10fe44f7e5fbfc2b668cdbfc7"
 uuid = "34c4fa32-2049-4079-8329-de33c2a22e2d"
-version = "0.15.3-beta"
+version = "0.18.0"
 weakdeps = ["JLD2", "JSON3", "Plots"]
 
     [deps.CTModels.extensions]
@@ -259,15 +259,19 @@ weakdeps = ["JLD2", "JSON3", "Plots"]
 
 [[deps.CTParser]]
 deps = ["CTBase", "DocStringExtensions", "MLStyle", "OrderedCollections", "Parameters", "Unicode"]
-git-tree-sha1 = "f7ed2822bbf3bb3a32c9230a25d5ca18ba452277"
+git-tree-sha1 = "89f467610eccac99906c35d49aee2c3a6e5efcd1"
 uuid = "32681960-a1b1-40db-9bff-a1ca817385d1"
-version = "0.8.17-beta"
+version = "0.9.0-beta"
+weakdeps = ["ExaModels", "LinearAlgebra"]
+
+    [deps.CTParser.extensions]
+    CTParserExaModels = ["ExaModels", "LinearAlgebra"]
 
 [[deps.CTSolvers]]
 deps = ["CTBase", "CTModels", "CommonSolve", "DocStringExtensions", "KernelAbstractions", "SolverCore"]
-git-tree-sha1 = "7526cb348b58dd866ed0cee7fd6d957c407b6bc4"
+git-tree-sha1 = "de11d900a6ae7d65510b2d7ac8ccb58140d904af"
 uuid = "d3e8d392-8e4b-4d9b-8e92-d7d4e3650ef6"
-version = "0.4.34-beta"
+version = "0.5.3"
 
     [deps.CTSolvers.extensions]
     CTSolversADNLPModels = "ADNLPModels"
@@ -710,9 +714,9 @@ version = "0.0.20230411+1"
 
 [[deps.ExaModels]]
 deps = ["Adapt", "NLPModels", "Printf", "SolverCore"]
-git-tree-sha1 = "dcca978ca344d939bb87df2ac315adac32d34d45"
+git-tree-sha1 = "4768a744999b18de3727364984f327cf98f2cbaa"
 uuid = "1037b233-b668-4ce9-9b63-f9f681f55dd2"
-version = "0.11.2"
+version = "0.12.0"
 
     [deps.ExaModels.extensions]
     ExaModelsJuMP = "JuMP"
@@ -1892,8 +1896,8 @@ uuid = "efe28fd5-8261-553b-a9e1-b2916fc3738e"
 version = "0.5.6+0"
 
 [[deps.OptimalControl]]
-deps = ["ADNLPModels", "CTBase", "CTDirect", "CTFlows", "CTLie", "CTModels", "CTParser", "CTSolvers", "CommonSolve", "DifferentiationInterface", "DocStringExtensions", "ExaModels", "ForwardDiff", "LinearAlgebra", "NLPModels", "RecipesBase", "Reexport", "SolverCore"]
-git-tree-sha1 = "f87943a0923ddcdfe29fe3ec4e12d01786d4ef4a"
+deps = ["ADNLPModels", "CTBase", "CTDirect", "CTFlows", "CTLie", "CTModels", "CTParser", "CTSolvers", "CommonSolve", "DifferentiationInterface", "DocStringExtensions", "ExaModels", "ForwardDiff", "LinearAlgebra", "RecipesBase", "Reexport"]
+path = ".."
 uuid = "5f98b655-cc9a-415a-b60e-744165666948"
 version = "2.1.0-beta"
 
@@ -1904,9 +1908,9 @@ uuid = "91d4177d-7536-5919-b921-800302f37372"
 version = "1.6.1+0"
 
 [[deps.OrderedCollections]]
-git-tree-sha1 = "94ba93778373a53bfd5a0caaf7d809c445292ff4"
+git-tree-sha1 = "05f45c2e0de6259db764adbfd2f1dc6d3f8de13c"
 uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
-version = "1.8.2"
+version = "2.0.1"
 
 [[deps.OrdinaryDiffEq]]
 deps = ["ADTypes", "CommonSolve", "DiffEqBase", "DocStringExtensions", "OrdinaryDiffEqBDF", "OrdinaryDiffEqCore", "OrdinaryDiffEqDefault", "OrdinaryDiffEqRosenbrock", "OrdinaryDiffEqTsit5", "OrdinaryDiffEqVerner", "SciMLBase", "SciMLLogging"]
@@ -1916,9 +1920,9 @@ version = "7.7.0"
 
 [[deps.OrdinaryDiffEqBDF]]
 deps = ["ADTypes", "ArrayInterface", "DiffEqBase", "FastBroadcast", "LinearAlgebra", "MacroTools", "MuladdMacro", "OrdinaryDiffEqCore", "OrdinaryDiffEqDifferentiation", "OrdinaryDiffEqNonlinearSolve", "OrdinaryDiffEqSDIRK", "PrecompileTools", "Preferences", "RecursiveArrayTools", "Reexport", "SciMLBase", "TruncatedStacktraces"]
-git-tree-sha1 = "3cd8b3d3b103929cd391291391107c50f54d5ba1"
+git-tree-sha1 = "68cf87ca2e23da73b13a1620860d625726977847"
 uuid = "6ad6398a-0878-4a85-9266-38940aa047c8"
-version = "2.4.4"
+version = "2.4.5"
 
 [[deps.OrdinaryDiffEqCore]]
 deps = ["ADTypes", "Accessors", "Adapt", "ArrayInterface", "BinaryHeaps", "CommonSolve", "ConstructionBase", "DiffEqBase", "DocStringExtensions", "EnumX", "EnzymeCore", "FastBroadcast", "FastClosures", "FastPower", "FindFirstFunctions", "FunctionWrappers", "FunctionWrappersWrappers", "InteractiveUtils", "LinearAlgebra", "Logging", "MacroTools", "MuladdMacro", "PrecompileTools", "Preferences", "Printf", "Random", "RecursiveArrayTools", "Reexport", "SciMLBase", "SciMLLogging", "SciMLOperators", "SciMLStructures", "SymbolicIndexingInterface", "TruncatedStacktraces"]
@@ -1971,9 +1975,9 @@ version = "2.4.2"
 
 [[deps.OrdinaryDiffEqSDIRK]]
 deps = ["ADTypes", "CommonSolve", "ConstructionBase", "DiffEqBase", "FastBroadcast", "LinearAlgebra", "MacroTools", "MuladdMacro", "OrdinaryDiffEqCore", "OrdinaryDiffEqDifferentiation", "OrdinaryDiffEqNonlinearSolve", "PrecompileTools", "Preferences", "RecursiveArrayTools", "Reexport", "SciMLBase", "TruncatedStacktraces"]
-git-tree-sha1 = "ca6c4595b1eac30ea943ba0365bef4ac3bee48df"
+git-tree-sha1 = "8b7b68f485214ca3788cd6f0537e54fe52f44097"
 uuid = "2d112036-d095-4a1e-ab9a-08536f3ecdbf"
-version = "2.9.0"
+version = "2.9.1"
 
 [[deps.OrdinaryDiffEqTsit5]]
 deps = ["CommonSolve", "DiffEqBase", "FastBroadcast", "LinearAlgebra", "MuladdMacro", "OrdinaryDiffEqCore", "PrecompileTools", "Preferences", "RecursiveArrayTools", "Reexport", "SciMLBase", "TruncatedStacktraces"]
