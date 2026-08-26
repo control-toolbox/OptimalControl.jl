@@ -2,8 +2,10 @@ name: Compile JOSS paper
 
 on:
   push:
+    branches:
+      - joss  # Only trigger on the joss branch
     paths:
-      - 'joss/**'  # Se déclenche uniquement pour les changements dans le dossier joss
+      - 'joss/**'  # Only trigger for changes under the joss folder
 
 jobs:
   paper:
