@@ -97,13 +97,17 @@ what's close.
 | Solver | Load |
 | --- | --- |
 | `:ipopt` | `using NLPModelsIpopt` |
-| `:madnlp` | `using MadNLP` (CPU) or `using MadNLPGPU` (GPU) |
+| `:madnlp` | `using MadNLP` (CPU) |
 | `:uno` | `using UnoSolver` |
 | `:madncl` | `using MadNCL` and `using MadNLP` (both) |
 | `:knitro` | `using NLPModelsKnitro` (commercial licence required) |
+| either on `:gpu` | `using MadNLPGPU`, `using CUDA` **and** `using CUDSS` — all three |
 
 Solving without the matching package loaded raises an `ExtensionError` naming exactly which
-`using` statement to add.
+`using` statement to add — with one exception. On the `:gpu` row the error always names
+`MadNLPGPU`, even when the package actually missing is `CUDSS`
+([CTSolvers#216](https://github.com/control-toolbox/CTSolvers.jl/issues/216)); see
+[Solving on GPU](@ref solve-gpu).
 
 ## Inspecting a strategy
 
@@ -154,18 +158,18 @@ Every cell above was checked by solving with that scheme. Two of the results nee
     `:euler_forward` is rejected where `:euler` is accepted, though under `:adnlp` the two name
     the same scheme. Confirmed live:
 
-    ```@example main
-    using Logging
-    # ExaModels warns about a deprecated `ExaCore()` call on every model it
-    # builds; silenced here so the scheme error is the only output.
-    try
-        with_logger(NullLogger()) do
-            solve(ocp, :exa; scheme=:gauss_legendre_2, display=false)
-        end
-    catch e
-        println(e)
-    end
+    ```@repl main
+    try # hide
+    solve(ocp, :exa; scheme=:gauss_legendre_2, display=false)
+    catch e # hide
+    showerror(IOContext(stdout, :color => false), e) # hide
+    end # hide
     ```
+
+    The `Line 6:` prefix is emitted by the parser, not by the error. It reports the generated
+    line that was running when the exception escaped — here the dynamics equation, which is
+    correct and has nothing to do with the scheme. See
+    [CTParser#338](https://github.com/control-toolbox/CTParser.jl/issues/338).
 
 !!! warning "`:variable` is advertised but does not run"
 

@@ -21,12 +21,33 @@ GPU support runs through [ExaModels.jl](https://exanauts.github.io/ExaModels.jl/
 
 ```julia
 using OptimalControl
-using ExaModels
 using MadNLPGPU
 using CUDA
+using CUDSS
 ```
 
 Check `CUDA.functional()` before assuming a `:gpu` solve will actually run on the device.
+
+!!! warning "All three — and `CUDSS` is the one you will forget"
+
+    The `CTSolversMadNLPGPU` extension is armed by `MadNLPGPU`, `CUDA` **and** `CUDSS`
+    together. Load only the first two — the pair every GPU tutorial shows — and the extension
+    does not load, so the GPU solver strategies are never registered.
+
+    It used to work by accident. Up to MadNLPGPU 0.8, `CUDSS` was a hard dependency, so
+    `using MadNLPGPU` pulled it in and the third trigger was satisfied without anyone asking.
+    From 0.9 onward it is a weak dependency and you must load it yourself.
+
+    You do get an error, but it points the wrong way. It reports `Missing MadNLPGPU` and
+    suggests `using MadNLPGPU`, which you already did; the package actually absent is `CUDSS`.
+    See [CTSolvers#216](https://github.com/control-toolbox/CTSolvers.jl/issues/216).
+
+`ExaModels` needs no `using` of its own. It is a dependency of OptimalControl, so the module is
+already bound after `using OptimalControl` and `:exa` works without it. Importing it explicitly
+also brings its `objective` and `constraint` into scope, both of which collide with the
+accessors of the same name — see
+[#882](https://github.com/control-toolbox/OptimalControl.jl/issues/882). If you do need
+ExaModels' own API, import it qualified: `using ExaModels: ExaModels`.
 
 ## The problem must be coordinatewise
 

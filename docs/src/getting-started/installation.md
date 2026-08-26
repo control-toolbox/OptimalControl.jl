@@ -109,15 +109,25 @@ See [Save & load](@ref results-save-load).
 ## Optional: GPU
 
 ```julia
-using ExaModels
 using MadNLPGPU
 using CUDA
+using CUDSS
 ```
 
-NVIDIA GPUs only; the problem's dynamics must be written coordinatewise. Missing any of the
-three raises the same `ExtensionError` as above, naming whichever is missing first. See
-[GPU](@ref solve-gpu) for the constraints and check `CUDA.functional()` before assuming a
-`:gpu` solve will actually run on the device.
+NVIDIA GPUs only; the problem's dynamics must be written coordinatewise.
+
+All three are required together — they are what arms the `CTSolversMadNLPGPU` extension. Older
+guides list only the first two, because up to MadNLPGPU 0.8 `CUDSS` came in as a hard
+dependency; from 0.9 it is weak and has to be loaded explicitly.
+
+Unlike the optional pieces above, a missing one is **not** reported accurately: the
+`ExtensionError` always names `MadNLPGPU`, even when the package actually absent is `CUDSS`
+([CTSolvers#216](https://github.com/control-toolbox/CTSolvers.jl/issues/216)). If you loaded
+`MadNLPGPU` and are told to load `MadNLPGPU`, the answer is `using CUDSS`.
+
+`ExaModels` is not in the list on purpose: it ships as a dependency of OptimalControl, so
+`:exa` works without importing it. See [GPU](@ref solve-gpu) for the constraints, and check
+`CUDA.functional()` before assuming a `:gpu` solve will actually run on the device.
 
 ## Checking your setup
 

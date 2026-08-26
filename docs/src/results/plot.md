@@ -38,29 +38,14 @@ sol = solve(ocp; display=false)
 nothing # hide
 ```
 
-`plot` on a solution is an extension — nothing happens until `Plots` itself is loaded:
-
-```@repl main
-using Plots
-try # hide
-plot(sol)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
-```
-
-Wait — that's not a `Plots`-missing error, it's real: [CTModels.jl#392](https://github.com/control-toolbox/CTModels.jl/issues/392),
-a genuine upstream bug hit while writing this page. A bare `plot(sol)` currently fails whenever
-the default subplot selection includes the costate column under the default `:split` layout —
-which is nearly always. **Explicit selectors or `layout=:group` both avoid it**:
+`plot` on a solution is an extension — nothing is drawn until `Plots` itself is loaded:
 
 ```@example main
-plot(sol, :state, :costate, :control)
+using Plots
+plot(sol)
 ```
 
-Every example below uses one of those two forms for that reason, not by preference. Loading
-`Plots` before `plot(sol)` at all — the *actual* extension gate — throws a clean
-`ExtensionError` instead:
+Without `Plots` in the session the call throws a clean `ExtensionError` instead:
 
 ```julia
 julia> using OptimalControl
@@ -122,8 +107,7 @@ plot(sol, :state, :control)
 ## Layout
 
 `layout=:group` puts each family (state, costate, control) in one subplot instead of one per
-component — and, as shown above, is one of the two ways to sidestep CTModels.jl#392 on a bare
-call:
+component:
 
 ```@example main
 plot(sol; layout=:group)
