@@ -35,7 +35,7 @@ ocp = @def begin
 end
 
 sol = solve(ocp)
-plot(sol; layout=:group)
+plot(sol)
 ```
 
 - For more details, see the [energy minimisation example](@ref examples-double-integrator-energy).  

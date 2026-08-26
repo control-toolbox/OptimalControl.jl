@@ -49,12 +49,8 @@ nothing # hide
 
 ```@example main
 using Plots
-plot(sol; layout=:group)
+plot(sol)
 ```
-
-(`layout=:group` sidesteps a known upstream bug in the default layout,
-[CTModels.jl#392](https://github.com/control-toolbox/CTModels.jl/issues/392) — see
-[Plotting](@ref results-plot) for the full story.)
 
 ```@example main
 objective(sol), iterations(sol), successful(sol)
