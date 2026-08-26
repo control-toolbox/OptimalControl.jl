@@ -11,8 +11,8 @@ extend-ignore-re = [
     "choses",
     "certains",
     "remplace",
-    "construit",
-    "maintenant"
+    "maintenant",
+    "construit"
 ]
 
 [files]

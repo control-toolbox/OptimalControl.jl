@@ -164,7 +164,9 @@ function test_bypass()
                     initial_guess=init,
                     display=false,
                     registry=registry,
-                    unknown_opt=CTBase.Strategies.route_to(ipopt=CTBase.Strategies.bypass(42)),
+                    unknown_opt=CTBase.Strategies.route_to(
+                        ipopt=CTBase.Strategies.bypass(42)
+                    ),
                 )
                 Test.@test sol isa MockBypassSolution
                 # The bypassed option should be inside the solver's options
@@ -183,11 +185,14 @@ function test_bypass()
                     initial_guess=init,
                     display=false,
                     registry=registry,
-                    disc_custom=CTBase.Strategies.route_to(collocation=CTBase.Strategies.bypass(:fine)),
+                    disc_custom=CTBase.Strategies.route_to(
+                        collocation=CTBase.Strategies.bypass(:fine)
+                    ),
                 )
                 Test.@test sol isa MockBypassSolution
                 Test.@test CTBase.Strategies.has_option(sol.discretizer, :disc_custom)
-                Test.@test CTBase.Strategies.option_value(sol.discretizer, :disc_custom) == :fine
+                Test.@test CTBase.Strategies.option_value(sol.discretizer, :disc_custom) ==
+                    :fine
             end
 
             Test.@testset "Bypass on modeler" begin
@@ -199,11 +204,14 @@ function test_bypass()
                     initial_guess=init,
                     display=false,
                     registry=registry,
-                    mod_custom=CTBase.Strategies.route_to(adnlp=CTBase.Strategies.bypass("sparse_mode")),
+                    mod_custom=CTBase.Strategies.route_to(
+                        adnlp=CTBase.Strategies.bypass("sparse_mode")
+                    ),
                 )
                 Test.@test sol isa MockBypassSolution
                 Test.@test CTBase.Strategies.has_option(sol.modeler, :mod_custom)
-                Test.@test CTBase.Strategies.option_value(sol.modeler, :mod_custom) == "sparse_mode"
+                Test.@test CTBase.Strategies.option_value(sol.modeler, :mod_custom) ==
+                    "sparse_mode"
             end
 
             Test.@testset "Multi-bypass: two strategies simultaneously" begin
@@ -216,14 +224,16 @@ function test_bypass()
                     display=false,
                     registry=registry,
                     shared_opt=CTBase.Strategies.route_to(
-                        ipopt=CTBase.Strategies.bypass(100), adnlp=CTBase.Strategies.bypass(:dense)
+                        ipopt=CTBase.Strategies.bypass(100),
+                        adnlp=CTBase.Strategies.bypass(:dense),
                     ),
                 )
                 Test.@test sol isa MockBypassSolution
                 Test.@test CTBase.Strategies.has_option(sol.solver, :shared_opt)
                 Test.@test CTBase.Strategies.option_value(sol.solver, :shared_opt) == 100
                 Test.@test CTBase.Strategies.has_option(sol.modeler, :shared_opt)
-                Test.@test CTBase.Strategies.option_value(sol.modeler, :shared_opt) == :dense
+                Test.@test CTBase.Strategies.option_value(sol.modeler, :shared_opt) ==
+                    :dense
             end
 
             Test.@testset "Bypass with nothing value" begin
@@ -235,11 +245,15 @@ function test_bypass()
                     initial_guess=init,
                     display=false,
                     registry=registry,
-                    nullable_opt=CTBase.Strategies.route_to(ipopt=CTBase.Strategies.bypass(nothing)),
+                    nullable_opt=CTBase.Strategies.route_to(
+                        ipopt=CTBase.Strategies.bypass(nothing)
+                    ),
                 )
                 Test.@test sol isa MockBypassSolution
                 Test.@test CTBase.Strategies.has_option(sol.solver, :nullable_opt)
-                Test.@test isnothing(CTBase.Strategies.option_value(sol.solver, :nullable_opt))
+                Test.@test isnothing(
+                    CTBase.Strategies.option_value(sol.solver, :nullable_opt)
+                )
             end
         end
 
@@ -260,7 +274,8 @@ function test_bypass()
                 )
                 Test.@test sol isa MockBypassSolution
                 Test.@test CTBase.Strategies.has_option(sol.solver, :unknown_opt)
-                Test.@test CTBase.Strategies.option_value(sol.solver, :unknown_opt) == "passed"
+                Test.@test CTBase.Strategies.option_value(sol.solver, :unknown_opt) ==
+                    "passed"
             end
         end
 
@@ -276,11 +291,15 @@ function test_bypass()
                     :ipopt;
                     display=false,
                     registry=registry,
-                    custom_backend_opt=CTBase.Strategies.route_to(ipopt=CTBase.Strategies.bypass(99)),
+                    custom_backend_opt=CTBase.Strategies.route_to(
+                        ipopt=CTBase.Strategies.bypass(99)
+                    ),
                 )
                 Test.@test sol isa MockBypassSolution
                 Test.@test CTBase.Strategies.has_option(sol.solver, :custom_backend_opt)
-                Test.@test CTBase.Strategies.option_value(sol.solver, :custom_backend_opt) == 99
+                Test.@test CTBase.Strategies.option_value(
+                    sol.solver, :custom_backend_opt
+                ) == 99
             end
 
             Test.@testset "Explicit via solve" begin
@@ -295,7 +314,9 @@ function test_bypass()
                 )
                 Test.@test sol isa MockBypassSolution
                 Test.@test CTBase.Strategies.has_option(sol.solver, :custom_backend_opt)
-                Test.@test CTBase.Strategies.option_value(sol.solver, :custom_backend_opt) == 99
+                Test.@test CTBase.Strategies.option_value(
+                    sol.solver, :custom_backend_opt
+                ) == 99
             end
         end
     end

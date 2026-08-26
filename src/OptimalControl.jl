@@ -29,10 +29,10 @@ ocp = Model(...)
 sol = solve(ocp, :collocation, :adnlp, :ipopt)
 
 # Or solve using explicit mode (typed components)
-sol = solve(ocp; 
-    discretizer=CTDirect.Collocation(),
-    modeler=CTSolvers.Modelers.ADNLP(),
-    solver=CTSolvers.Solvers.Ipopt()
+sol = solve(ocp;
+    discretizer=OptimalControl.Collocation(),
+    modeler=OptimalControl.ADNLP(),
+    solver=OptimalControl.Ipopt()
 )
 ```
 
@@ -80,6 +80,9 @@ include(joinpath(@__DIR__, "imports", "examodels.jl"))
 include(joinpath(@__DIR__, "imports", "ad.jl"))
 # include(joinpath(@__DIR__, "imports", "redefine.jl"))
 
+# v2.0 deprecation shims
+include(joinpath(@__DIR__, "deprecated.jl"))
+
 # helpers
 include(joinpath(@__DIR__, "helpers", "kwarg_extraction.jl"))
 include(joinpath(@__DIR__, "helpers", "print.jl"))
@@ -90,6 +93,7 @@ include(joinpath(@__DIR__, "helpers", "component_checks.jl"))
 include(joinpath(@__DIR__, "helpers", "strategy_builders.jl"))
 include(joinpath(@__DIR__, "helpers", "component_completion.jl"))
 include(joinpath(@__DIR__, "helpers", "descriptive_routing.jl"))
+include(joinpath(@__DIR__, "helpers", "explicit_validation.jl"))
 
 # solve
 include(joinpath(@__DIR__, "solve", "mode.jl"))

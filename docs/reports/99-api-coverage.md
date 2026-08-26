@@ -143,7 +143,7 @@ All on `solve-options` or `solve-choosing-a-method`; API theme **options**.
 | `parameter` `default_parameter` `available_parameters` | `solve-gpu` |
 | `CPU` `GPU` | `solve-gpu` |
 
-## 8. Flows — 17
+## 8. Flows — 24
 
 API theme **flows**.
 
@@ -151,25 +151,29 @@ API theme **flows**.
 | --- | --- |
 | `Flow` | `flows-from-ocp`, `flows-from-hamiltonians`, `flows-simulation` |
 | `control_law` `pseudo_hamiltonian` | `flows-accessors` |
+| `hamiltonian` `hamiltonian_vector_field` `vector_field` | `flows-accessors` |
+| `get_hamiltonian_gradient` `get_variable_gradient` `get_pseudo_hamiltonian_gradient` `get_pseudo_variable_gradient` | `flows-accessors` |
 | `MultiPhaseFlow` `MultiPhaseStateFlow` `MultiPhaseHamiltonianFlow` `AnyMultiPhaseFlow` | `flows-multi-phase` |
 | `n_phases` `get_flow` `get_flows` `get_switching_time` `get_switching_times` `get_jump` `get_jumps` | `flows-multi-phase` |
 | `SciML` `AbstractIntegrator` `AbstractIntegrationResult` | `flows-overview` |
 | `final_state` `evaluate_at` | `flows-overview` |
 
-**Pending PR 8 — 7 more rows, decided but not yet implemented.** `hamiltonian`,
-`hamiltonian_vector_field`, `vector_field`, `get_hamiltonian_gradient`,
-`get_variable_gradient`, `get_pseudo_hamiltonian_gradient`, `get_pseudo_variable_gradient`
-are exported by `CTFlows` but not re-exported here, while their siblings `control_law` and
-`pseudo_hamiltonian` are. PR 8 closes the gap
-([`05-flows-indirect.md`](05-flows-indirect.md) §`flows/accessors.md`); all seven belong on
-`flows-accessors`, API theme **flows**. `system` and `integrator` stay deliberately
+**Implemented in PR 8.** `hamiltonian`, `hamiltonian_vector_field`, `vector_field`,
+`get_hamiltonian_gradient`, `get_variable_gradient`, `get_pseudo_hamiltonian_gradient`,
+`get_pseudo_variable_gradient` were exported by `CTFlows` but not re-exported here, while
+their siblings `control_law` and `pseudo_hamiltonian` were — PR 8 closed the gap
+(`src/imports/ctflows.jl`, matching `test/suite/reexport/test_ctflows.jl`'s new "Systems
+accessors — gradients and vocabulary" testset). `system` and `integrator` stay deliberately
 unexported — qualified as `CTFlows.Flows.system(f)`.
 
-After PR 8 the exported count becomes **200**.
+`length(names(OptimalControl)) - 1` measured **203** after this change, not the **200** this
+report anticipated (193 + 7) — a 3-symbol drift accumulated somewhere between this report's
+original count and PR 8, unrelated to this PR's own +7. Not audited/reconciled here; flagging
+for whoever next touches this file's top-line count.
 
 ## 9. Geometry — 7
 
-API theme **geometry**.
+API theme **geometry**. Implemented in PR 9 (`docs: geometry`).
 
 | Symbol | Guide |
 | --- | --- |
@@ -179,7 +183,7 @@ API theme **geometry**.
 | `∂ₜ` | `geometry-ad` §"Partial time derivative" |
 | `dg_ad_backend` `dg_ad_backend!` | `geometry-ad-backend` |
 
-(`@Lie` counted in §2.)
+(`@Lie` counted in §2, guide `geometry-lie-macro`.)
 
 ## 10. Type vocabulary — 27
 
@@ -262,7 +266,7 @@ Recorded so they are decided, not forgotten.
 
 | Hole | Where it belongs | Status |
 | --- | --- | --- |
-| `hamiltonian`, `hamiltonian_vector_field`, `vector_field`, `get_*_gradient` not re-exported, while `control_law` / `pseudo_hamiltonian` are | §8 | ✅ **decided**: PR 8 re-exports the seven; `system`/`integrator` stay qualified |
+| `hamiltonian`, `hamiltonian_vector_field`, `vector_field`, `get_*_gradient` not re-exported, while `control_law` / `pseudo_hamiltonian` are | §8 | ✅ **implemented**: PR 8 re-exports the seven; `system`/`integrator` stay qualified |
 | CTModels serialization: how is the format selected? | §11 | ✅ **resolved**: `format::Symbol` = `:JLD` \| `:JSON`, plus `filename` without extension. The `*Tag` types are internal dispatch and must not appear in the docs |
 | `CTDirect.DirectShooting` exists but is in neither `methods()` nor the registry | §5 | ✅ **closed**: not functional yet — out of scope, do not mention it |
 | `SolverFailure` is exported by `CTBase.Exceptions` but imported nowhere in OptimalControl | §12 | open — PR 3: surface it or note the omission |

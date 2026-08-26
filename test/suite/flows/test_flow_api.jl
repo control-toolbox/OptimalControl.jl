@@ -42,12 +42,12 @@ function build_labelled()
     CTModels.Building.time!(pre; t0=T0, tf=TF)
     CTModels.Building.state!(pre, 2)
     CTModels.Building.control!(pre, 1)
-    CTModels.Building.dynamics!(pre, (r, t, x, u, v) -> (r[1] = x[2]; r[2] = u[1]; nothing))
+    CTModels.Building.dynamics!(pre, (r, t, x, u, v) -> (r[1]=x[2]; r[2]=u[1]; nothing))
     CTModels.Building.objective!(pre, :min; lagrange=(t, x, u, v) -> 0.5 * u[1]^2)
     CTModels.Building.constraint!(
         pre,
         :path;
-        f=(r, t, x, u, v) -> (r[1] = x[2]; nothing),
+        f=(r, t, x, u, v) -> (r[1]=x[2]; nothing),
         lb=[-Inf],
         ub=[VMAX],
         label=:vmax,
@@ -71,7 +71,7 @@ function build_nonfixed()
     CTModels.Building.time!(pre; t0=T0, indf=1)
     CTModels.Building.state!(pre, 2)
     CTModels.Building.control!(pre, 1)
-    CTModels.Building.dynamics!(pre, (r, t, x, u, v) -> (r[1] = x[2]; r[2] = u[1]; nothing))
+    CTModels.Building.dynamics!(pre, (r, t, x, u, v) -> (r[1]=x[2]; r[2]=u[1]; nothing))
     CTModels.Building.objective!(pre, :min; mayer=(x0, xf, v) -> v[1])
     CTModels.Building.time_dependence!(pre; autonomous=true)
     return CTModels.Building.build(pre)
@@ -206,7 +206,9 @@ function test_flow_api()
         end
 
         Test.@testset "multiplier accepts a Data object" begin
-            f = Flow(ocp, (x, p) -> 0.0; constraint=:vmax, multiplier=Multiplier((x, p) -> p[1]))
+            f = Flow(
+                ocp, (x, p) -> 0.0; constraint=:vmax, multiplier=Multiplier((x, p) -> p[1])
+            )
             Test.@test f(T0, X0, P0, TF) isa Tuple
         end
 
@@ -267,6 +269,57 @@ function test_flow_api()
             # generically here, so it moved rather than vanished.
             f = Flow(build_nonfixed(), (x, p, v) -> p[2])
             Test.@test_throws OptimalControl.PreconditionError f(T0, X0, P0, TF)
+        end
+
+        Test.@testset "deprecated v2.0 flow shims" begin
+            # The old Flow(f::Function) constructor.
+            e = try
+                Flow(x -> [x[2], -x[1]])
+            catch err
+                err
+            end
+            Test.@test e isa OptimalControl.PreconditionError
+            Test.@test occursin("Flow(f::Function)", e.msg)
+            Test.@test occursin("Flow(VectorField", e.suggestion)
+
+            # 5-positional Hamiltonian flow call.
+            f = Flow(ocp, (x, p) -> p[2])
+            e = try
+                f(T0, X0, P0, TF, 0.0)
+            catch err
+                err
+            end
+            Test.@test e isa OptimalControl.PreconditionError
+            Test.@test occursin("f(t0, x0, p0, tf, lambda)", e.msg)
+            Test.@test occursin("f(t0, x0, p0, tf; variable=lambda)", e.suggestion)
+
+            # 4-positional State flow call.
+            f_closed = Flow(ocp, ClosedLoop(x -> 0.0))
+            e = try
+                f_closed(T0, X0, TF, 0.0)
+            catch err
+                err
+            end
+            Test.@test e isa OptimalControl.PreconditionError
+            Test.@test occursin("f(t0, x0, tf, lambda)", e.msg)
+            Test.@test occursin("f(t0, x0, tf; variable=lambda)", e.suggestion)
+
+            # time and success on the OCP and on a Solution.
+            traj = f((T0, TF), X0, P0)
+            for (thunk, expected, suggestion) in (
+                (() -> Base.time(ocp), "time(ocp)", "times(ocp)"),
+                (() -> Base.time(traj), "time(sol)", "time_grid(sol)"),
+                (() -> Base.success(traj), "success(sol)", "successful(sol)"),
+            )
+                e = try
+                    thunk()
+                catch err
+                    err
+                end
+                Test.@test e isa OptimalControl.PreconditionError
+                Test.@test occursin(expected, e.msg)
+                Test.@test occursin(suggestion, e.suggestion)
+            end
         end
     end
 end

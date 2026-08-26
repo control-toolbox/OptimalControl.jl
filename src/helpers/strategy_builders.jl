@@ -171,7 +171,9 @@ skipping directly to processing the solver component.
 - Delegates to solver processing
 - Terminal case in the recursion chain
 """
-function _build_partial_tuple(::Nothing, solver::Union{CTSolvers.Solvers.AbstractNLPSolver,Nothing})
+function _build_partial_tuple(
+    ::Nothing, solver::Union{CTSolvers.Solvers.AbstractNLPSolver,Nothing}
+)
     return _build_partial_tuple(solver)
 end
 
@@ -330,5 +332,7 @@ function _build_or_use_strategy(
     registry::CTBase.Strategies.StrategyRegistry,
 )
     # Build path: construct from resolved method
-    return CTBase.Orchestration.build_strategy_from_resolved(resolved, family_name, families, registry)
+    return CTBase.Orchestration.build_strategy_from_resolved(
+        resolved, family_name, families, registry
+    )
 end

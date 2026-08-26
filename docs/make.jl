@@ -1,5 +1,7 @@
 # to run the documentation generation:
 # julia --project=. docs/make.jl
+# to serve the documentation:
+#   npx serve docs/build/1 --listen 5173
 pushfirst!(LOAD_PATH, joinpath(@__DIR__, ".."))
 pushfirst!(LOAD_PATH, joinpath(@__DIR__))
 
@@ -8,6 +10,7 @@ using OptimalControl
 using CTBase
 using CTDirect
 using CTFlows
+using CTLie
 using CTModels
 using CTParser
 using CTSolvers
@@ -39,63 +42,11 @@ using JLD2
 using Plots
 
 #
-links = InterLinks(
-    "CTBase" => (
-        "https://control-toolbox.org/CTBase.jl/stable/",
-        "https://control-toolbox.org/CTBase.jl/stable/objects.inv",
-        joinpath(@__DIR__, "inventories", "CTBase.toml"),
-    ),
-    "CTDirect" => (
-        "https://control-toolbox.org/CTDirect.jl/stable/",
-        "https://control-toolbox.org/CTDirect.jl/stable/objects.inv",
-        joinpath(@__DIR__, "inventories", "CTDirect.toml"),
-    ),
-    "CTFlows" => (
-        "https://control-toolbox.org/CTFlows.jl/stable/",
-        "https://control-toolbox.org/CTFlows.jl/stable/objects.inv",
-        joinpath(@__DIR__, "inventories", "CTFlows.toml"),
-    ),
-    "CTModels" => (
-        "https://control-toolbox.org/CTModels.jl/stable/",
-        "https://control-toolbox.org/CTModels.jl/stable/objects.inv",
-        joinpath(@__DIR__, "inventories", "CTModels.toml"),
-    ),
-    "CTParser" => (
-        "https://control-toolbox.org/CTParser.jl/stable/",
-        "https://control-toolbox.org/CTParser.jl/stable/objects.inv",
-        joinpath(@__DIR__, "inventories", "CTParser.toml"),
-    ),
-    "CTSolvers" => (
-        "https://control-toolbox.org/CTSolvers.jl/stable/",
-        "https://control-toolbox.org/CTSolvers.jl/stable/objects.inv",
-        joinpath(@__DIR__, "inventories", "CTSolvers.toml"),
-    ),
-    "ADNLPModels" => (
-        "https://jso.dev/ADNLPModels.jl/stable/",
-        "https://jso.dev/ADNLPModels.jl/stable/objects.inv",
-        joinpath(@__DIR__, "inventories", "ADNLPModels.toml"),
-    ),
-    "NLPModelsIpopt" => (
-        "https://jso.dev/NLPModelsIpopt.jl/stable/",
-        "https://jso.dev/NLPModelsIpopt.jl/stable/objects.inv",
-        joinpath(@__DIR__, "inventories", "NLPModelsIpopt.toml"),
-    ),
-    "ExaModels" => (
-        "https://exanauts.github.io/ExaModels.jl/stable/",
-        "https://exanauts.github.io/ExaModels.jl/stable/objects.inv",
-        joinpath(@__DIR__, "inventories", "ExaModels.toml"),
-    ),
-    "MadNLP" => (
-        "https://madnlp.github.io/MadNLP.jl/stable/",
-        "https://madnlp.github.io/MadNLP.jl/stable/objects.inv",
-        joinpath(@__DIR__, "inventories", "MadNLP.toml"),
-    ),
-    "Tutorials" => (
-        "https://control-toolbox.org/Tutorials.jl/stable/",
-        "https://control-toolbox.org/Tutorials.jl/stable/objects.inv",
-        joinpath(@__DIR__, "inventories", "Tutorials.toml"),
-    ),
-)
+function _ext(pkg, sym)
+    m = Base.get_extension(pkg, sym)
+    isnothing(m) && @warn "Extension $sym of $pkg is not loaded"
+    return m
+end
 
 # to add docstrings from external packages
 const CTModelsJLD = Base.get_extension(CTModels, :CTModelsJLD)
@@ -105,24 +56,31 @@ const CTSolversIpopt = Base.get_extension(CTSolvers, :CTSolversIpopt)
 const CTSolversKnitro = Base.get_extension(CTSolvers, :CTSolversKnitro)
 const CTSolversMadNLP = Base.get_extension(CTSolvers, :CTSolversMadNLP)
 const CTSolversMadNCL = Base.get_extension(CTSolvers, :CTSolversMadNCL)
-const CTFlowsODE = Base.get_extension(CTFlows, :CTFlowsODE)
-Modules = [
+
+Modules = Any[
     CTBase,
+    CTLie,
     CTFlows,
     CTDirect,
     CTModels,
     CTSolvers,
     CTParser,
     OptimalControl,
-    CTModelsJLD,
-    CTModelsJSON,
-    CTModelsPlots,
-    CTSolversIpopt,
-    CTSolversKnitro,
-    CTSolversMadNLP,
-    CTSolversMadNCL,
-    CTFlowsODE,
 ]
+
+for (pkg, syms) in [
+    CTModels => (:CTModelsJLD, :CTModelsJSON, :CTModelsPlots),
+    CTSolvers => (:CTSolversIpopt, :CTSolversKnitro,
+                  :CTSolversMadNLP, :CTSolversMadNCL),
+    CTFlows => (:CTFlowsPlots, :CTFlowsSciMLFlows,
+                :CTFlowsSciMLIntegrator),
+]
+    for s in syms
+        m = _ext(pkg, s)
+        isnothing(m) || push!(Modules, m)
+    end
+end
+
 for Module in Modules
     isnothing(DocMeta.getdocmeta(Module, :DocTestSetup)) &&
         DocMeta.setdocmeta!(Module, :DocTestSetup, :(using $Module); recursive=true)
@@ -153,7 +111,7 @@ cp(
 Draft = false
 ```
 =#
-draft = false  # Draft mode: skip @example execution globally; tutorial overrides below
+draft = true  # Draft mode: skip @example execution globally; guided tour overrides below
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Load extensions
@@ -175,12 +133,78 @@ ext_dir = abspath(joinpath(@__DIR__, "..", "ext"))
 include("api_reference.jl")
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# Literate: generate tutorial.md, tutorial.ipynb, tutorial.jl
+# InterLinks
+# ═══════════════════════════════════════════════════════════════════════════════
+links = InterLinks(
+    "CTBase" => (
+        "https://control-toolbox.org/CTBase.jl/stable/",
+        joinpath(@__DIR__, "..", "..", "CTBase", "docs", "build", "1", "objects.inv"),
+        "https://control-toolbox.org/CTBase.jl/stable/objects.inv",
+    ),
+    "CTDirect" => (
+        "https://control-toolbox.org/CTDirect.jl/stable/",
+        joinpath(@__DIR__, "..", "..", "CTDirect.jl", "docs", "build", "1", "objects.inv"),
+        "https://control-toolbox.org/CTDirect.jl/stable/objects.inv",
+    ),
+    "CTFlows" => (
+        "https://control-toolbox.org/CTFlows.jl/stable/",
+        joinpath(@__DIR__, "..", "..", "CTFlows.jl", "docs", "build", "1", "objects.inv"),
+        "https://control-toolbox.org/CTFlows.jl/stable/objects.inv",
+    ),
+    "CTLie" => (
+        "https://control-toolbox.org/CTLie.jl/stable/",
+        joinpath(@__DIR__, "..", "..", "CTLie", "docs", "build", "1", "objects.inv"),
+        "https://control-toolbox.org/CTLie.jl/stable/objects.inv",
+    ),
+    "CTModels" => (
+        "https://control-toolbox.org/CTModels.jl/stable/",
+        joinpath(@__DIR__, "..", "..", "CTModels.jl", "docs", "build", "1", "objects.inv"),
+        "https://control-toolbox.org/CTModels.jl/stable/objects.inv",
+    ),
+    "CTParser" => (
+        "https://control-toolbox.org/CTParser.jl/stable/",
+        joinpath(@__DIR__, "..", "..", "CTParser.jl", "docs", "build", "1", "objects.inv"),
+        "https://control-toolbox.org/CTParser.jl/stable/objects.inv",
+    ),
+    "CTSolvers" => (
+        "https://control-toolbox.org/CTSolvers.jl/stable/",
+        joinpath(@__DIR__, "..", "..", "CTSolvers", "docs", "build", "1", "objects.inv"),
+        "https://control-toolbox.org/CTSolvers.jl/stable/objects.inv",
+    ),
+    "ADNLPModels" => (
+        "https://jso.dev/ADNLPModels.jl/stable/",
+        joinpath(@__DIR__, "inventories", "ADNLPModels.toml"),
+        "https://jso.dev/ADNLPModels.jl/stable/objects.inv",
+    ),
+    "NLPModelsIpopt" => (
+        "https://jso.dev/NLPModelsIpopt.jl/stable/",
+        joinpath(@__DIR__, "inventories", "NLPModelsIpopt.toml"),
+        "https://jso.dev/NLPModelsIpopt.jl/stable/objects.inv",
+    ),
+    "ExaModels" => (
+        "https://exanauts.github.io/ExaModels.jl/stable/",
+        joinpath(@__DIR__, "inventories", "ExaModels.toml"),
+        "https://exanauts.github.io/ExaModels.jl/stable/objects.inv",
+    ),
+    "MadNLP" => (
+        "https://madnlp.github.io/MadNLP.jl/stable/",
+        joinpath(@__DIR__, "inventories", "MadNLP.toml"),
+        "https://madnlp.github.io/MadNLP.jl/stable/objects.inv",
+    ),
+    "Tutorials" => (
+        "https://control-toolbox.org/Tutorials.jl/stable/",
+        joinpath(@__DIR__, "inventories", "Tutorials.toml"),
+        "https://control-toolbox.org/Tutorials.jl/stable/objects.inv",
+    ),
+)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Literate: generate getting-started/guided-tour.md and sidecar files
 # ═══════════════════════════════════════════════════════════════════════════════
 using Literate
 
 LITERATE_DIR = joinpath(@__DIR__, "src-literate")
-MD_OUTPUT = joinpath(@__DIR__, "src")
+MD_OUTPUT = joinpath(@__DIR__, "src", "getting-started")
 NB_OUTPUT = joinpath(@__DIR__, "src", "notebooks")
 JL_OUTPUT = joinpath(@__DIR__, "src", "scripts")
 mkpath(NB_OUTPUT)
@@ -188,14 +212,15 @@ mkpath(JL_OUTPUT)
 
 for file in ["tutorial.jl"]
     INPUT = joinpath(LITERATE_DIR, file)
-    # Inject @meta Draft=false so the tutorial executes even with global draft=true
-    function tutorial_postprocess(content)
-        # return "```@meta\nDraft = false\n```\n\n" * content
-        return content
-    end
-    Literate.markdown(INPUT, MD_OUTPUT; documenter=true, postprocess=tutorial_postprocess)
-    Literate.notebook(INPUT, NB_OUTPUT; execute=false)
-    Literate.script(INPUT, JL_OUTPUT)
+    # No Draft=false override: the guided tour is real tutorial content, not
+    # yet written/debugged (that's PR 11's job) — it must stay skipped under
+    # the global draft=true like every other stub page until then. Forcing
+    # it to execute early surfaced several unrelated runtime bugs
+    # (docs/reports/01-infrastructure.md's own PR 2 scope is "a green build
+    # with mostly empty pages").
+    Literate.markdown(INPUT, MD_OUTPUT; name="guided-tour")
+    Literate.notebook(INPUT, NB_OUTPUT; name="guided-tour", execute=false)
+    Literate.script(INPUT, JL_OUTPUT; name="guided-tour")
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -203,10 +228,9 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 with_api_reference(src_dir, ext_dir) do api_pages
 
-    # add api/public.md
+    # add api/ecosystem.md to the generated API pages
     api_pages_final = copy(api_pages)
-    pushfirst!(api_pages_final, "Public" => joinpath("api", "public.md"))
-    push!(api_pages_final, "Subpackages" => joinpath("api", "subpackages.md"))
+    push!(api_pages_final, "Ecosystem" => "api/ecosystem.md")
 
     # build documentation
     return makedocs(;
@@ -219,38 +243,61 @@ with_api_reference(src_dir, ext_dir) do api_pages
         ),
         pages=[
             # index.md is the VitePress root — not listed here
-            "Guided tour" => "tutorial.md",
-            "Examples" => [
-                "Energy minimisation" => "example-double-integrator-energy.md",
-                "Time minimisation" => "example-double-integrator-time.md",
-                "Control-free problems" => "example-control-free.md",
-                "Control and variable" => "example-control-and-variable.md",
-                "Singular control" => "example-singular-control.md",
-                "State constraint" => "example-state-constraint.md",
+            "Getting started" => [
+                "Installation" => "getting-started/installation.md",
+                "First problem" => "getting-started/first-problem.md",
+                "Guided tour" => "getting-started/guided-tour.md",
             ],
-            "Manual" => [
-                "Define a problem" => [
-                    "Abstract syntax (@def)" => "manual-abstract.md",
-                    "Functional API (macro-free)" => "manual-macro-free.md",
-                ],
-                "Use AI" => "manual-ai-llm.md",
-                "Problem characteristics" => "manual-model.md",
-                "Set an initial guess" => "manual-initial-guess.md",
-                "Solve a problem" => [
-                    "Basic usage" => "manual-solve.md",
-                    "Advanced options" => "manual-solve-advanced.md",
-                    "Explicit mode" => "manual-solve-explicit.md",
-                    "GPU solving" => "manual-solve-gpu.md",
-                ],
-                "Solution characteristics" => "manual-solution.md",
-                "Plot a solution" => "manual-plot.md",
-                "Differential geometry tools" => "manual-differential-geometry.md",
-                "Compute flows" => [
-                    "From optimal control problems" => "manual-flow-ocp.md",
-                    "From Hamiltonians and others" => "manual-flow-others.md",
-                ],
+            "Modelling" => [
+                "Formulation" => "modelling/formulation.md",
+                "Abstract syntax (@def)" => "modelling/abstract-syntax.md",
+                "Functional API" => "modelling/functional-api.md",
+                "No control" => "modelling/without-control.md",
+                "Inspect a problem" => "modelling/inspect.md",
+                "With AI" => "modelling/with-ai.md",
+            ],
+            "Solve (direct)" => [
+                "Overview" => "solve/overview.md",
+                "Initial guess" => "solve/initial-guess.md",
+                "Choosing a method" => "solve/choosing-a-method.md",
+                "Options" => "solve/options.md",
+                "Explicit mode" => "solve/explicit-mode.md",
+                "GPU" => "solve/gpu.md",
+            ],
+            "Results" => [
+                "Solution object" => "results/solution.md",
+                "Plot" => "results/plot.md",
+                "Save & load" => "results/save-load.md",
+            ],
+            "Flows (indirect)" => [
+                "Overview" => "flows/overview.md",
+                "From an OCP" => "flows/from-ocp.md",
+                "From Hamiltonians" => "flows/from-hamiltonians.md",
+                "Simulation" => "flows/simulation.md",
+                "Accessors" => "flows/accessors.md",
+                "Multi-phase" => "flows/multi-phase.md",
+                "Constrained arcs" => "flows/constrained-arcs.md",
+                "Shooting" => "flows/shooting.md",
+            ],
+            "Geometry" => [
+                "Overview" => "geometry/overview.md",
+                "Lift" => "geometry/lift.md",
+                "ad" => "geometry/ad.md",
+                "Poisson" => "geometry/poisson.md",
+                "@Lie" => "geometry/lie-macro.md",
+                "AD backend" => "geometry/ad-backend.md",
+            ],
+            "Examples" => [
+                "Gallery" => "examples/gallery.md",
+                "Energy minimisation" => "examples/double-integrator-energy.md",
+                "Time minimisation (bang-bang)" => "examples/double-integrator-time.md",
+                "Parameter estimation without a control" => "examples/control-free.md",
+                "Control and variable together" => "examples/control-and-variable.md",
+                "Singular control" => "examples/singular-control.md",
+                "State constraint" => "examples/state-constraint.md",
             ],
             "API Reference" => api_pages_final,
+            "Migrating to v2.1" => "migration.md",
         ],
         plugins=[links],
     )

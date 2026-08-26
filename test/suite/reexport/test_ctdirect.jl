@@ -36,8 +36,7 @@ function test_ctdirect()
 
         Test.@testset "Ownership after the move" begin
             # The abstraction belongs to CTSolvers now…
-            Test.@test parentmodule(OptimalControl.AbstractDiscretizer) ===
-                CTSolvers.DOCP
+            Test.@test parentmodule(OptimalControl.AbstractDiscretizer) === CTSolvers.DOCP
             Test.@test parentmodule(discretize) === CTSolvers.DOCP
             # …and CTDirect implements it.
             Test.@test OptimalControl.Collocation <: OptimalControl.AbstractDiscretizer
@@ -46,8 +45,7 @@ function test_ctdirect()
 
         Test.@testset "Method Signatures" begin
             Test.@test hasmethod(
-                discretize,
-                Tuple{OptimalControl.AbstractModel,OptimalControl.Collocation},
+                discretize, Tuple{OptimalControl.AbstractModel,OptimalControl.Collocation}
             )
         end
 

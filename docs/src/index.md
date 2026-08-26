@@ -1,5 +1,9 @@
 # OptimalControl.jl
 
+```@meta
+Draft = false
+```
+
 The OptimalControl.jl package is the root package of the [control-toolbox ecosystem](https://github.com/control-toolbox). The control-toolbox ecosystem gathers Julia packages for mathematical control and applications. It aims to provide tools to model and solve optimal control problems with ordinary differential equations by direct and indirect methods, both on CPU and GPU.
 
 ## Motivation
@@ -8,22 +12,14 @@ The guiding philosophy of OptimalControl.jl is to offer, to our knowledge, the o
 
 ## Installation
 
-To install OptimalControl.jl, please [open Julia's interactive session (known as REPL)](https://docs.julialang.org/en/v1/manual/getting-started) and use the Julia package manager:
-
-```julia
-using Pkg
-Pkg.add("OptimalControl")
-```
-
-!!! tip
-
-    If you are new to Julia, please follow this [guidelines](https://github.com/orgs/control-toolbox/discussions/64).
+See [Installation](@ref getting-started-installation) — one package to add, plus a handful of
+optional pieces (a solver, plotting, flows, saving) loaded only when you use them.
 
 ## Basic usage
 
 Let us model, solve and plot a simple optimal control problem.
 
-```julia
+```@example main
 using OptimalControl
 using NLPModelsIpopt  # activates the Ipopt solver extension (required for solve)
 using Plots           # activates the plotting extension (required for plot)
@@ -39,64 +35,34 @@ ocp = @def begin
 end
 
 sol = solve(ocp)
-plot(sol)
+plot(sol; layout=:group)
 ```
 
-- For more details, see the [basic example tutorial](@ref example-double-integrator-energy).  
-- The [`@def`](@ref) macro defines the problem. See the [abstract syntax tutorial](@ref manual-abstract-syntax).  
-- The [`solve`](@ref) function has many options. See the [solve tutorial](@ref manual-solve).  
-- The [`plot`](@ref) function is flexible. See the [plot tutorial](@ref manual-plot).
+- For more details, see the [energy minimisation example](@ref examples-double-integrator-energy).  
+- The `@def` macro defines the problem. See the [abstract syntax guide](@ref modelling-abstract-syntax).  
+- The `solve` function has many options. See the [solve overview](@ref solve-overview).  
+- The `plot` function is flexible. See the [plot guide](@ref results-plot).
 
-## [Mathematical formulation](@id math-formulation)
+## Where to go next
 
-An optimal control problem (OCP) with fixed initial and final times can be described as minimising the cost functional (in Bolza form)
+| Section | What's there |
+| --- | --- |
+| [Getting started](@ref getting-started-guided-tour) | Install, solve your first problem, then a longer guided tour covering both the direct and indirect methods. |
+| [Modelling](@ref modelling-formulation) | The `@def` DSL, the macro-free functional API, control-free (parameter estimation) problems, and problem introspection. |
+| [Solve (direct)](@ref solve-overview) | Discretize-and-transcribe methods: choosing a strategy, initial guesses, options, explicit mode, GPU. |
+| [Results](@ref results-solution) | Read a `Solution` — trajectories, costate, duals, status — plot it, save it, reload it. |
+| [Flows (indirect)](@ref flows-overview) | The Pontryagin Maximum Principle as code: build, integrate, and shoot with Hamiltonian flows. |
+| [Geometry](@ref geometry-overview) | The Lie-theoretic tools (`Lift`, `ad`, `Poisson`, `@Lie`) behind singular-control problems. |
+| [Examples](@ref examples-gallery) | Six worked problems, direct and indirect, from energy minimisation to state constraints. |
+| [API reference](@ref api-modelling) | Every re-exported symbol, organised by theme. |
+| [Migrating to v2.1](@ref migration) | What changed since v2.0 and how to update your code. |
 
-```math
-J(x, u) = g(x(t_0), x(t_f)) + \int_{t_0}^{t_f} f^{0}(t, x(t), u(t))\,\mathrm{d}t
-```
+## Mathematical formulation
 
-where the state $x$ and the control $u$ are functions of time $t$, subject for $t \in [t_0, t_f]$ to the differential constraint
-
-```math
-\dot{x}(t) = f(t, x(t), u(t))
-```
-
-and other constraints such as
-
-```math
-\begin{array}{llcll}
-x_{\mathrm{lower}} & \le & x(t)              & \le & x_{\mathrm{upper}}, \\
-u_{\mathrm{lower}} & \le & u(t)              & \le & u_{\mathrm{upper}}, \\
-c_{\mathrm{lower}} & \le & c(t, x(t), u(t))  & \le & c_{\mathrm{upper}}, \\
-b_{\mathrm{lower}} & \le & b(x(t_0), x(t_f)) & \le & b_{\mathrm{upper}}.
-\end{array}
-```
-
-If $g = 0$, the cost is said to be in **Lagrange form**; if $f^0 = 0$, it is in **Mayer form**.
-
-**Free times and extra variables**
-
-The initial time $t_0$ and the final time $t_f$ may also be free, that is part of the optimisation variables:
-
-```math
-J(x, u, t_0, t_f) \to \min.
-```
-
-More generally, a vector $v \in \mathbb{R}^k$ of $k$ additional variables can be introduced (it may contain $t_0$, $t_f$, or any other free parameter). The cost, dynamics, and constraints then all depend on $v$:
-
-```math
-J(x, u, v) = g(x(t_0), x(t_f), v) + \int_{t_0}^{t_f} f^{0}(t, x(t), u(t), v)\,\mathrm{d}t \to \min,
-```
-
-```math
-\dot{x}(t) = f(t, x(t), u(t), v),
-```
-
-with, in addition, box constraints on $v$:
-
-```math
-v_{\mathrm{lower}} \le v \le v_{\mathrm{upper}}.
-```
+Optimal control problems are stated in Bolza form — a cost functional combining a terminal
+(Mayer) and an integral (Lagrange) term, subject to dynamics and box/path/boundary
+constraints, with optionally free times and extra optimisation variables. See
+[Formulation](@ref modelling-formulation) for the full mathematical setting.
 
 ## Citing us
 
@@ -156,7 +122,7 @@ _downloads_toml(".") # hide
 ```
 
 ```@raw html
-<details style="margin-bottom: 0.5em; margin-top: 1em;"><summary>ℹ️ Version info</summary>
+<details style="margin-bottom: 0.5em; margin-top: 1em;"><summary style="margin-bottom: 0px; margin-top: 0px;">ℹ️ Version info</summary>
 ```
 
 ```@example main
@@ -168,7 +134,7 @@ versioninfo() # hide
 ```
 
 ```@raw html
-<details style="margin-bottom: 0.5em;"><summary>📦 Package status</summary>
+<details style="margin-bottom: 0.5em;"><summary style="margin-bottom: 0px; margin-top: 0px;">📦 Package status</summary>
 ```
 
 ```@example main
@@ -180,7 +146,7 @@ Pkg.status() # hide
 ```
 
 ```@raw html
-<details style="margin-bottom: 0.5em;"><summary>📚 Complete manifest</summary>
+<details style="margin-bottom: 0.5em;"><summary style="margin-bottom: 0px; margin-top: 0px;">📚 Complete manifest</summary>
 ```
 
 ```@example main

@@ -63,7 +63,8 @@ end
 match. Use it when the owner is awkward to name (e.g. `Base` generics extended
 downstream).
 """
-same_object(mod::Module, name::Symbol, ref) =
-    isdefined(mod, name) && getfield(mod, name) === ref
+function same_object(mod::Module, name::Symbol, ref)
+    return isdefined(mod, name) && getfield(mod, name) === ref
+end
 
 end # module

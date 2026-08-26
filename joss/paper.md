@@ -1,5 +1,5 @@
 ---
-title: 'OptimalControl.jl: A Julia package for modeling and solving optimal control problems with ODEs'
+title: "OptimalControl.jl: a Julia package to model and solve optimal control problems with ODE's"
 tags:
   - Julia
   - optimal control

@@ -58,6 +58,36 @@ function test_ctflows()
             end
         end
 
+        Test.@testset "Systems accessors — gradients and vocabulary" begin
+            # Added alongside flows/accessors.md: hamiltonian/hamiltonian_vector_field/
+            # vector_field and the four get_*_gradient functions were exported by
+            # CTFlows.Systems but not re-exported here — an inconsistency with their
+            # siblings control_law/pseudo_hamiltonian above.
+            for f in (
+                :hamiltonian,
+                :hamiltonian_vector_field,
+                :vector_field,
+                :get_hamiltonian_gradient,
+                :get_variable_gradient,
+                :get_pseudo_hamiltonian_gradient,
+                :get_pseudo_variable_gradient,
+            )
+                Test.@testset "$f" begin
+                    Test.@test reexports(OptimalControl, f, CTFlows.Systems)
+                    Test.@test isdefined(CurrentModule, f)
+                end
+            end
+
+            # `system`/`integrator` deliberately stay unexported — too generic for
+            # a DSL surface — but must still resolve when qualified through Flows.
+            for f in (:system, :integrator)
+                Test.@testset "$f stays unexported" begin
+                    Test.@test !is_exported(OptimalControl, f)
+                    Test.@test isdefined(CTFlows.Flows, f)
+                end
+            end
+        end
+
         Test.@testset "MultiPhase" begin
             for f in (
                 :n_phases,
@@ -82,14 +112,13 @@ function test_ctflows()
                 Test.@testset "$T" begin
                     Test.@test isdefined(OptimalControl, T)
                     Test.@test is_exported(OptimalControl, T)
-                    Test.@test getfield(OptimalControl, T) === getfield(CTFlows.MultiPhase, T)
+                    Test.@test getfield(OptimalControl, T) ===
+                        getfield(CTFlows.MultiPhase, T)
                 end
             end
             # `*` concatenates flows. It is `Base.:*`, extended by MultiPhase,
             # so it needs no re-export of its own — but the method must exist.
-            Test.@test any(
-                m -> parentmodule(m) === CTFlows.MultiPhase, methods(*)
-            )
+            Test.@test any(m -> parentmodule(m) === CTFlows.MultiPhase, methods(*))
         end
 
         Test.@testset "Moved away from CTFlows" begin

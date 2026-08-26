@@ -14,7 +14,7 @@ Return the beam problem as a [`TestProblem`](@ref).
 function Beam(form::Symbol=:abstract)
     check_form(form)
     return cached(:beam, form, ()) do
-        form === :abstract ? _beam_abstract() : _beam_functional()
+        return form === :abstract ? _beam_abstract() : _beam_functional()
     end
 end
 

@@ -63,12 +63,15 @@ function test_kwarg_extraction()
 
         Test.@testset "Extracts all three component types" begin
             kw = pairs((; discretizer=DISC, modeler=MOD, solver=SOL, print_level=0))
-            Test.@test OptimalControl._extract_kwarg(kw, CTSolvers.DOCP.AbstractDiscretizer) ===
-                DISC
-            Test.@test OptimalControl._extract_kwarg(kw, CTSolvers.Modelers.AbstractNLPModeler) ===
-                MOD
-            Test.@test OptimalControl._extract_kwarg(kw, CTSolvers.Solvers.AbstractNLPSolver) ===
-                SOL
+            Test.@test OptimalControl._extract_kwarg(
+                kw, CTSolvers.DOCP.AbstractDiscretizer
+            ) === DISC
+            Test.@test OptimalControl._extract_kwarg(
+                kw, CTSolvers.Modelers.AbstractNLPModeler
+            ) === MOD
+            Test.@test OptimalControl._extract_kwarg(
+                kw, CTSolvers.Solvers.AbstractNLPSolver
+            ) === SOL
         end
 
         # ====================================================================
@@ -289,7 +292,9 @@ function test_kwarg_extraction()
             Test.@testset "Multiple matching types in kwargs" begin
                 # Test when multiple instances of the same type are present
                 kw = pairs((; discretizer=DISC, another_disc=DISC))
-                result = OptimalControl._extract_kwarg(kw, CTSolvers.DOCP.AbstractDiscretizer)
+                result = OptimalControl._extract_kwarg(
+                    kw, CTSolvers.DOCP.AbstractDiscretizer
+                )
                 Test.@test result === DISC  # Should return the first match
             end
 
@@ -297,7 +302,9 @@ function test_kwarg_extraction()
                 # Test with more complex types
                 kw = pairs((; discretizer=DISC, some_string="hello", some_number=42))
 
-                result1 = OptimalControl._extract_kwarg(kw, CTSolvers.DOCP.AbstractDiscretizer)
+                result1 = OptimalControl._extract_kwarg(
+                    kw, CTSolvers.DOCP.AbstractDiscretizer
+                )
                 result2 = OptimalControl._extract_kwarg(kw, String)
                 result3 = OptimalControl._extract_kwarg(kw, Int)
 
@@ -350,7 +357,9 @@ function test_kwarg_extraction()
 
                 # Extract components
                 disc = OptimalControl._extract_kwarg(kw, CTSolvers.DOCP.AbstractDiscretizer)
-                mod = OptimalControl._extract_kwarg(kw, CTSolvers.Modelers.AbstractNLPModeler)
+                mod = OptimalControl._extract_kwarg(
+                    kw, CTSolvers.Modelers.AbstractNLPModeler
+                )
                 sol = OptimalControl._extract_kwarg(kw, CTSolvers.Solvers.AbstractNLPSolver)
 
                 Test.@test disc === DISC
@@ -379,7 +388,9 @@ function test_kwarg_extraction()
                 ))
 
                 disc = OptimalControl._extract_kwarg(kw, CTSolvers.DOCP.AbstractDiscretizer)
-                mod = OptimalControl._extract_kwarg(kw, CTSolvers.Modelers.AbstractNLPModeler)
+                mod = OptimalControl._extract_kwarg(
+                    kw, CTSolvers.Modelers.AbstractNLPModeler
+                )
                 sol = OptimalControl._extract_kwarg(kw, CTSolvers.Solvers.AbstractNLPSolver)
 
                 Test.@test isnothing(disc)

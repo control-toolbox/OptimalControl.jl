@@ -1,21 +1,26 @@
 # Migration and deprecations — specification
 
-**PRs**: 3 (the shims, code) and 12 (the page, docs) · **Status**: specification
+**PRs**: 3 (the shims, code), 12 (the page, docs), 13 (drop `docs/attic/`) · **Status**: specification
 **Scope**: `src/deprecated.jl`, `test/suite/reexport/test_deprecated.jl`,
 `test/suite/reexport/test_ctlie.jl`, `test/suite/flows/test_flow_api.jl`, `BREAKING.md`,
-`docs/src/migration.md`
+`docs/src/migration.md`, `docs/attic/` (PR 13)
 
 ## Objective
 
 Today a v2.0 script fails with `UndefVarError: Lie not defined` or a bare `MethodError`.
-Nothing tells you what replaced it. Two deliverables:
+Nothing tells you what replaced it. Three deliverables:
 
 1. **Part 1 (PR 3, code)** — a shim layer so every removed spelling throws a
    `CTBase.PreconditionError` naming its replacement.
 2. **Part 2 (PR 12, docs)** — one page that is the old→new table, and the honest list of what
    could *not* be shimmed.
+3. **Part 3 (PR 13, docs)** — delete `docs/attic/` now that every page in it has either been
+   harvested into `docs/src/` (PRs 2–12) or superseded; nothing in `docs/src/` may reference it
+   afterward.
 
-PR 3 is independent of every docs PR and can land at any point.
+PR 3 is independent of every docs PR and can land at any point. PR 13 depends on PR 12 (the
+migration page is the last consumer of attic content — the "Legacy initial guesses" section
+harvests from `attic/manual-initial-guess.md`).
 
 ---
 
@@ -59,8 +64,9 @@ already in the repo: `src/helpers/describe.jl:51-55` pirates
 | `Flow(f::Function)` | yes — piracy on `CTFlows.Flows.Flow` | no | **do it** |
 | flow call `f(t0,x0,p0,tf,λ)` | yes — one method on the `AbstractHamiltonianFlow` alias | no | **do it** — best value/cost of the set |
 | flow call `f(t0,x0,tf,λ)` (state flow) | yes — same pattern on `AbstractStateFlow` | no | **do it**, for symmetry |
-| `Flow(ocp, u, g, μ)` | only as a 4-arity specialisation; the exact signature would **overwrite** upstream | **yes** — `PreconditionError` at `CTFlows/…/src/Flows/building.jl:1019` | **skip**; open a CTFlows issue (its `suggestion` string is wrong for this case) |
-| flow call `augment=true` | **no** — Julia cannot dispatch on a keyword name | no | **skip**; CTFlows issue |
+| `Flow(ocp, u, g, μ)` | only as a 4-arity specialisation; the exact signature would **overwrite** upstream | **yes** — `PreconditionError` at `CTFlows/…/src/Flows/building.jl:1019` | **skip**; filed [CTFlows#401](https://github.com/control-toolbox/CTFlows.jl/issues/401) (its `suggestion` string is wrong for this case) |
+| flow call `augment=true` | **no** — same positional signature as the still-valid call, so a shim would overwrite CTFlows' own `OptimalControlFlow` method; confirmed this breaks precompilation (`ERROR: Method overwriting is not permitted during Module precompilation`) | no | **skip**; filed [CTFlows#402](https://github.com/control-toolbox/CTFlows.jl/issues/402) |
+| flow call `f(...; saveat=, abstol=, reltol=, alg=, ...)` (per-call integrator option override) | **no** — same reason as `Flow(ocp, u, g, μ)`: the call signature is closed (`variable`/`unsafe`/`variable_costate` only), so a shim would overwrite CTFlows' own call method | no — bare `MethodError`, not caught anywhere | **skip**; document in `BREAKING.md` (§"Flow call convention" point 4). Construction-time options (`Flow(ocp, u; abstol=...)`) are unaffected and still work. Not filed upstream: this looks like a deliberate CTFlows design choice (options are baked into the flow's type at construction), not a bug — unlike the two rows above. |
 | `@Lie … autonomous=false` | n/a | **yes** — `IncorrectArgument` at `CTLie/src/lie_macro.jl:381` | **skip** |
 | `autonomous=` / `variable=` / `inplace=` on the `Data` constructors | **no** — 14 entry points, and the workaround duplicates CTBase's trait detection | no | **skip**; optional CTBase issue |
 
@@ -189,16 +195,16 @@ Test.@test getfield(OptimalControl, :⋅) === LinearAlgebra.dot
 
 ## Acceptance criteria (PR 3)
 
-- [ ] `src/deprecated.jl` exists, is included after `imports/`, and has the piracy banner
+- [x] `src/deprecated.jl` exists, is included after `imports/`, and has the piracy banner
       plus the "not shimmed, and why" list.
-- [ ] `Lie`, `⋅`, `HamiltonianLift` are exported; `success`, `time`, `Flow` are not
+- [x] `Lie`, `⋅`, `HamiltonianLift` are exported; `success`, `time`, `Flow` are not
       re-exported by this file.
-- [ ] `using OptimalControl, LinearAlgebra` produces **no** export-conflict warning.
-- [ ] Every shim's message names its replacement, verified by an `occursin` assertion.
-- [ ] The three `test_ctlie.jl` assertions are rewritten; the full suite is green via
+- [x] `using OptimalControl, LinearAlgebra` produces **no** export-conflict warning.
+- [x] Every shim's message names its replacement, verified by an `occursin` assertion.
+- [x] The three `test_ctlie.jl` assertions are rewritten; the full suite is green via
       `ct-dev-mcp` (`get_test_command` → run + `tee` → `generate_report`).
-- [ ] `BREAKING.md` records the new contract.
-- [ ] The two CTFlows issues are filed and linked from `BREAKING.md`.
+- [x] `BREAKING.md` records the new contract.
+- [x] The two CTFlows issues are filed and linked from `BREAKING.md`.
 
 ---
 
@@ -236,3 +242,26 @@ Test.@test getfield(OptimalControl, :⋅) === LinearAlgebra.dot
 - [ ] The page is explicitly non-executing and says why.
 - [ ] `geometry/overview.md`, `geometry/ad.md`, `geometry/lift.md`, `results/solution.md`
       and `flows/simulation.md` all link here.
+
+---
+
+# Part 3 — delete `docs/attic/` (PR 13)
+
+Small and mechanical, split out from PR 12 so the migration page's content review isn't
+gated on a repo-wide grep. Depends on PR 12: `attic/manual-initial-guess.md` is the source
+for the page's "Legacy initial guesses" section, so the file must still exist while that
+section is written.
+
+- Delete every file under `docs/attic/`, including `docs/attic/README.md`.
+- Grep `docs/src/` for any remaining `attic/` reference and fix or remove it — there should be
+  none left once PR 12 has landed, since every page's spec in this directory says its source is
+  either `attic/<file>.md §<section>` (harvested) or `new`.
+- The references to `docs/attic/` inside `docs/reports/*.md` (this directory) are historical
+  and stay — they document where each page's content came from, and `docs/reports/` is outside
+  both Documenter's and VitePress's source scan.
+
+## Acceptance criteria (PR 13)
+
+- [ ] `docs/attic/` no longer exists.
+- [ ] No file under `docs/src/` references `attic/`.
+- [ ] `julia --project=docs docs/make.jl` still runs clean.

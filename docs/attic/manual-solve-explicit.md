@@ -182,13 +182,43 @@ nothing # hide
 
     If you have many undeclared options, you can use `mode=:permissive` to disable validation globally. However, this is not recommended as it will also ignore typos in valid option names.
 
+### Strategy options must be configured at construction
+
+In explicit mode, options specific to a strategy must be passed when constructing that strategy. They are not routed from the `solve` call.
+
+The following syntax is **invalid**:
+
+```julia
+disc = OptimalControl.Collocation()
+solve(ocp; disc, backend=:generic)
+```
+
+Because `disc` is a typed component, this call automatically selects explicit mode. `backend` is not an option of the `solve` action; it is an option of a modeler or solver strategy. The error does not mean that `backend` was lost or not transmitted. It means that an explicit component was combined with descriptive-style option syntax.
+
+Configure the modeler first, then pass the configured strategy to `solve`:
+
+```julia
+disc = OptimalControl.Collocation()
+modeler = OptimalControl.ADNLP(backend=:generic)
+result = solve(ocp; discretizer=disc, modeler=modeler)
+```
+
+If an option is declared by one of the completed strategies, the error identifies that strategy and suggests constructing it with the option. If the option is not declared by any strategy, the error reports an unknown option and lists the options accepted directly by `solve`, such as `initial_guess`, `init`, and `display`.
+
+`route_to` is only for descriptive mode. Likewise, `bypass` and `force` do not bypass explicit-mode validation. They can be used for undeclared options while constructing a strategy:
+
+```julia
+modeler = OptimalControl.ADNLP(custom_option=bypass(value))
+solve(ocp; modeler=modeler)
+```
+
 ### No routing needed
 
-In explicit mode, there's no option routing or ambiguity:
+In explicit mode, there is no automatic option routing:
 
-- Options go directly to the component you're configuring
-- No need for `route_to` (it's only for descriptive mode)
-- No automatic routing between strategies
+- Strategy options are passed to strategy constructors
+- `solve` accepts action options and typed component instances
+- `route_to` is only relevant to descriptive mode
 
 ```@example explicit
 # Each component gets its own options directly

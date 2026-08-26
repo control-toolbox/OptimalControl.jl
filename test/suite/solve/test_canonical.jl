@@ -124,9 +124,11 @@ function run_test(
             Test.@test solve_result isa OptimalControl.AbstractSolution
             # Use absolute tolerance when reference objective is near zero
             if abs(pb.objective) < 1e-6
-                Test.@test OptimalControl.objective(solve_result) ≈ pb.objective atol = OBJ_ATOL
+                Test.@test OptimalControl.objective(solve_result) ≈ pb.objective atol =
+                    OBJ_ATOL
             else
-                Test.@test OptimalControl.objective(solve_result) ≈ pb.objective rtol = OBJ_RTOL
+                Test.@test OptimalControl.objective(solve_result) ≈ pb.objective rtol =
+                    OBJ_RTOL
             end
         end
     end
