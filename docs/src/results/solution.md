@@ -65,8 +65,58 @@ points:
 x(0.25)  # still works
 ```
 
-`time_grid(sol)` returns the discretization nodes; `times(sol)` returns the richer `TimesModel`
-struct.
+`time_grid(sol)` returns the discretization nodes, and `times(sol)` is an alias for it.
+
+## The time horizon
+
+`initial_time` and `final_time` read the endpoints back. On a fixed-time problem they give you
+what you wrote in the `@def`:
+
+```@example main
+initial_time(sol), final_time(sol)
+```
+
+The case worth knowing is the **free** one. When a time is an optimisation variable, its value
+is not in the model — the model only records *which* component of the variable holds it. The
+accessor resolves that against the solution's variable for you:
+
+```@example main
+ocp_free = @def begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    tf ≥ 0
+    -1 ≤ u(t) ≤ 1
+    x(0) == [-1, 0]
+    q(tf) == 0
+    v(tf) == 0
+    ẋ(t) == [v(t), u(t)]
+    tf → min
+end
+sol_free = solve(ocp_free; display=false)
+
+initial_time(sol_free), final_time(sol_free)
+```
+
+Here `t0` is fixed and `tf` is free, so the second value is the optimal final time. It is the
+number the solver put in the optimisation variable, reached through the accessor rather than by
+indexing:
+
+```@example main
+final_time(sol_free), variable(sol_free)
+```
+
+!!! warning "Requires CTModels ≥ 0.18"
+
+    Before that release, `final_time(sol)` threw a `MethodError` on any problem with a free
+    final time: the solution-level accessor called `final_time(sol.times)` without passing the
+    variable through, and no method matched a `FreeTimeModel` alone. `initial_time(sol)` hit
+    the same wall whenever `t0` was the free one.
+
+    The example above is the regression guard — no page in this site read the horizon back from
+    a solution, which is how the bug shipped. See
+    [CTModels#402](https://github.com/control-toolbox/CTModels.jl/pull/402).
 
 **1-D is a scalar here too**: with a 1-D control, `u(t)` is a `Number`, not a length-1 vector —
 same rule as everywhere else on the site ([functional-API callbacks](@ref modelling-functional-api-shapes),
