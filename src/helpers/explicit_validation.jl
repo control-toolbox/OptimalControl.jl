@@ -16,6 +16,16 @@ function _extract_explicit_component_kwargs(kwargs::Base.Pairs)
     return Base.pairs(remaining)
 end
 
+"""
+$(TYPEDSIGNATURES)
+
+Whether `value` is a strategy instance rather than a plain option value.
+
+A keyword whose value `isa` one of the family abstract types in `families` is a
+*component* — it names which strategy to use — not an option to route. This is the
+test that puts `solve` into explicit mode, so it is deliberately structural: any
+third-party strategy subtyping one of the families is recognised without registration.
+"""
 function _is_explicit_component(value, families=_descriptive_families())
     return any(T -> value isa T, values(families))
 end
@@ -64,6 +74,16 @@ function _validate_explicit_options(kwargs, components::NamedTuple)
     return nothing
 end
 
+"""
+$(TYPEDSIGNATURES)
+
+Reject an option that belongs to exactly one of the explicitly given strategies.
+
+In explicit mode the caller has already constructed the strategy, so the option
+belongs in that constructor — routing it through `solve` would silently override a
+choice the caller made by hand. Always throws
+[`CTBase.Exceptions.IncorrectArgument`](@extref), naming the strategy to configure.
+"""
 function _throw_strategy_explicit_option(option, owner, components::NamedTuple)
     strategy = components[owner]
     strategy_name = nameof(typeof(strategy))
@@ -78,6 +98,16 @@ function _throw_strategy_explicit_option(option, owner, components::NamedTuple)
     )
 end
 
+"""
+$(TYPEDSIGNATURES)
+
+Reject an option declared by several of the explicitly given strategies.
+
+`route_to` disambiguates in descriptive mode, but it has no counterpart here: the
+strategies are already built, so the caller sets the option on whichever one they
+meant. Always throws [`CTBase.Exceptions.IncorrectArgument`](@extref), listing every
+claimant.
+"""
 function _throw_ambiguous_explicit_option(option, owners)
     owner_names = join(string.(owners), ", ")
     return throw(
@@ -91,6 +121,15 @@ function _throw_ambiguous_explicit_option(option, owners)
     )
 end
 
+"""
+$(TYPEDSIGNATURES)
+
+Reject an option no explicitly given strategy claims, and that is not a solve action
+option either.
+
+Always throws [`CTBase.Exceptions.IncorrectArgument`](@extref), listing the action
+options `solve` does accept in explicit mode.
+"""
 function _throw_unknown_explicit_option(option)
     action_options = join(_explicit_option_names(), ", ")
     return throw(
