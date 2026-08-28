@@ -27,6 +27,8 @@ Dependency realignment onto the released control-toolbox ecosystem and a full do
 
 - **Export-collision canary**: a regression test pins `intersect(names(ExaModels), names(OptimalControl))` to its known genuine-clash set `[:constraint, :objective]`, so the next colliding upstream export lands as a red test rather than a user bug report
 
+- **GPU capability checks aligned with the CTSolvers contract** ([#883](https://github.com/control-toolbox/OptimalControl.jl/issues/883)). `TestCapabilities` moved into `test/runtests.jl` as `Main`-bound constants (`CUDA_FUNCTIONAL`, `ON_GPU_RUNNER`, `GPU_EXTENSION_ARMED`), replacing the `test/helpers/capabilities.jl` functions; `ON_GPU_RUNNER` now matches the `kkt` / `occidata` *substring* of `RUNNER_NAME` (the self-hosted runners register as `…-runner`, [CTSolvers#223](https://github.com/control-toolbox/CTSolvers.jl/pull/223)). A new `test/suite/environment/test_environment_contract.jl` centralises the loud device requirement on the GPU runner and greps the suite for the `isdefined`-against-`Main` and unbraced-device-guard anti-patterns. Fixes the asymmetry where a lost GPU device failed loudly in `test_gpu_routing.jl` but skipped silently in `test_options_forwarding.jl`
+
 ### Documentation
 
 - The documentation site was rewritten onto a new sitemap (getting started, modelling, solve, results, flows, geometry, an examples gallery, and a thematic API reference) and a v2.0 → v2.1 migration page added. The retired v2.0 manuals are kept under `docs/attic/`

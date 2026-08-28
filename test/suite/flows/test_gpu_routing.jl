@@ -40,9 +40,6 @@ using MadNLP: MadNLP
 using ExaModels: ExaModels
 import OrdinaryDiffEqTsit5: OrdinaryDiffEqTsit5 # `Flow` needs an integrator
 
-include(joinpath(@__DIR__, "..", "..", "helpers", "capabilities.jl"))
-using .TestCapabilities: is_cuda_on, gpu_extension_armed, on_gpu_runner
-
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
@@ -56,7 +53,7 @@ function test_gpu_routing()
         # ====================================================================
 
         Test.@testset "GPU extension armed" begin
-            Test.@test gpu_extension_armed()
+            Test.@test Main.TestCapabilities.GPU_EXTENSION_ARMED
             # The single most load-bearing assertion in this file: it is the
             # only local evidence the GPU code path exists at all, and it
             # passes with `CUDA.functional() == false`.
@@ -163,8 +160,8 @@ function test_gpu_routing()
         # ====================================================================
 
         Test.@testset "device runs" begin
-            # `@test_skip` rather than a silent `if is_cuda_on()`: a skipped
-            # assertion is visible in the summary, an elided branch is not.
+            # `@test_skip` on the `else` rather than a silent unbraced guard: a
+            # skipped assertion is visible in the summary, an elided branch is not.
             gpu_solve() = begin
                 ocp = @def begin
                     t ∈ [0, 1], time
@@ -189,17 +186,12 @@ function test_gpu_routing()
                 successful(sol)
             end
 
-            # ⚠️ A skip is honest on a laptop and a lie on a GPU runner. The
-            # `kkt` and `occidata` runners exist to have a device; if CUDA is
-            # not functional there, skipping turns the whole GPU job green with
-            # nothing run — the failure class CTSolvers#189/#190 was about, one
-            # level up. So on those runners the device itself is asserted, not
-            # assumed.
-            if on_gpu_runner()
-                Test.@test is_cuda_on()
-            end
-
-            if is_cuda_on()
+            # A skip is honest on a laptop and a lie on a GPU runner. That the
+            # `kkt` / `occidata` runners actually have a working device is
+            # asserted centrally, once, in
+            # test/suite/environment/test_environment_contract.jl — so here the
+            # device tier is a plain skip when absent.
+            if Main.TestCapabilities.CUDA_FUNCTIONAL
                 Test.@test gpu_solve()
             else
                 Test.@test_skip gpu_solve()
