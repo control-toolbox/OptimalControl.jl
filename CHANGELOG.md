@@ -7,7 +7,37 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
-## [2.1.0-beta] — unreleased
+## [2.2.0-beta] — 2026-08-28
+
+Dependency realignment onto the released control-toolbox ecosystem and a full documentation-site rewrite. No breaking change to OptimalControl's own API; one near-breaking upstream note — see [BREAKING.md](BREAKING.md).
+
+### Dependencies
+
+- **Realigned on the released ecosystem** — every sibling resolves from the General registry with no `Pkg.develop`: CTBase `0.28`→`0.29`, CTModels `0.15`→`0.18`, CTSolvers `0.4`→`0.5`, CTFlows `0.16`→`0.17`, CTParser `0.8`→`0.9`, CTLie `0.1`→`0.2`; CTDirect stays pinned to `1` (the major alone, per the pinning-granularity rule)
+
+- **ExaModels `0.11`→`0.12`** — not optional: CTParser 0.9 emits `add_var` / `add_con` / `add_obj`, which do not exist in ExaModels 0.11, so every `:exa` solve fails at run time on the older version
+
+- `docs/Project.toml` and `docs/src/assets/{Project,Manifest}.toml` mirror the root environment exactly
+
+### Fixed
+
+- **`using ExaModels` alongside `using OptimalControl` is no longer suggested anywhere.** ExaModels 0.12 newly exports `objective` and `constraint`, both of which OptimalControl also exports; importing ExaModels unqualified shadows the accessors and the next `objective(sol)` throws `UndefVarError`. The `:exa` modeler needs no `using ExaModels` at all — the module is already bound through `using OptimalControl`. `docs/src/solve/gpu.md` and `docs/src/getting-started/installation.md` dropped the bare import and now state that `:exa` needs no extra package. See [#882](https://github.com/control-toolbox/OptimalControl.jl/issues/882)
+
+### Testing
+
+- **Export-collision canary**: a regression test pins `intersect(names(ExaModels), names(OptimalControl))` to its known genuine-clash set `[:constraint, :objective]`, so the next colliding upstream export lands as a red test rather than a user bug report
+
+### Documentation
+
+- The documentation site was rewritten onto a new sitemap (getting started, modelling, solve, results, flows, geometry, an examples gallery, and a thematic API reference) and a v2.0 → v2.1 migration page added. The retired v2.0 manuals are kept under `docs/attic/`
+
+### Compatibility
+
+- **No breaking changes to OptimalControl's own public API.** One near-breaking upstream change: `using ExaModels` now collides with the `objective` / `constraint` accessors. See [BREAKING.md](BREAKING.md).
+
+---
+
+## [2.1.0-beta] — 2026-07-30
 
 Dependency upgrade onto the restructured control-toolbox stack, CTLie integration, and a substantial test rework. See [BREAKING.md](BREAKING.md) for the migration guide.
 
@@ -685,6 +715,8 @@ multiple versions.
   keyword arguments to any OptimalControl function, rename to the new keyword (see
   CTBase changelog for details).
 
+[2.2.0-beta]: https://github.com/control-toolbox/OptimalControl.jl/compare/v2.1.0-beta...v2.2.0-beta
+[2.1.0-beta]: https://github.com/control-toolbox/OptimalControl.jl/compare/v2.0.5-beta...v2.1.0-beta
 [2.0.5-beta]: https://github.com/control-toolbox/OptimalControl.jl/compare/v2.0.4...v2.0.5-beta
 [2.0.4]: https://github.com/control-toolbox/OptimalControl.jl/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/control-toolbox/OptimalControl.jl/compare/v2.0.2...v2.0.3
