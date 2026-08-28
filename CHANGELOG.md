@@ -1,3 +1,4 @@
+<!-- markdownlint-disable MD024 -->
 # Changelog
 
 All notable changes to **OptimalControl.jl** are documented here.
@@ -9,9 +10,37 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.2.0-beta] — 2026-08-28
 
-Dependency realignment onto the released control-toolbox ecosystem and a full documentation-site rewrite. No breaking change to OptimalControl's own API; one near-breaking upstream note — see [BREAKING.md](BREAKING.md).
+Dependency realignment onto the released control-toolbox ecosystem, the v2.0 → v2.1 compatibility shims, and a full documentation-site rewrite. No breaking change to OptimalControl's own API; two near-breaking notes — see [BREAKING.md](BREAKING.md).
 
-### Dependencies
+### ✨ New Features
+
+- **v2.0 → v2.1 compatibility shims** (`src/deprecated.jl`, [#855](https://github.com/control-toolbox/OptimalControl.jl/pull/855)). Five spellings removed in [2.1.0-beta] now throw a typed `CTBase.Exceptions.PreconditionError` naming their replacement instead of a bare `UndefVarError`/`MethodError`: `Lie(X, f)` / `Lie(X, Y)` / `X ⋅ f` → `ad`; `HamiltonianLift` → `Lift` / `CTLie.LiftedHamiltonianFunction`; `time(ocp)` / `time(sol)` → `times` / `time_grid`; `success(sol)` → `successful`; `Flow(f::Function)` and the obsolete 5-/4-positional flow calls → typed constructors / keyword `variable=`. Two spellings are deliberately **not** shimmed — `Flow(ocp, u, g, μ)` (3 positional) and `augment=true` — because a shim would overwrite CTFlows' own method and break precompilation; tracked upstream as [CTFlows#401](https://github.com/control-toolbox/CTFlows.jl/issues/401) and [CTFlows#402](https://github.com/control-toolbox/CTFlows.jl/issues/402). See [Migration](@ref migration).
+
+  **Not carried by the `v2.1.0-beta` tag itself** — that release (2026-07-30) predates this PR by two weeks and ships none of these shims; installing exactly `v2.1.0-beta` still gets the bare error. The structured messages are new here, in 2.2.0-beta.
+
+### 🐛 Bug Fixes
+
+- **`using ExaModels` alongside `using OptimalControl` is no longer suggested anywhere.** ExaModels 0.12 newly exports `objective` and `constraint`, both of which OptimalControl also exports; importing ExaModels unqualified shadows the accessors and the next `objective(sol)` throws `UndefVarError`. The `:exa` modeler needs no `using ExaModels` at all — the module is already bound through `using OptimalControl`. `docs/src/solve/gpu.md` and `docs/src/getting-started/installation.md` dropped the bare import and now state that `:exa` needs no extra package. See [#882](https://github.com/control-toolbox/OptimalControl.jl/issues/882)
+
+### 🛠 Enhancements
+
+- **Explicit `solve` mode rejects unconsumed keyword arguments** instead of silently ignoring them ([#853](https://github.com/control-toolbox/OptimalControl.jl/pull/853)). A mistyped or misplaced strategy option used to be dropped without warning; it now raises an actionable error naming the option, and the explicit-mode documentation is clearer that strategy-specific options are set at construction time. **Near-breaking**: a script that relied on an unconsumed option being silently ignored will now raise. See [BREAKING.md](BREAKING.md)
+
+### 🔄 Refactoring
+
+- The documentation-build label gate (`run documentation`), briefly removed in [#875](https://github.com/control-toolbox/OptimalControl.jl/pull/875), was restored in [#876](https://github.com/control-toolbox/OptimalControl.jl/pull/876) — the gate is deliberate, not an oversight, and stays
+
+### 🧪 Testing
+
+- **Export-collision canary**: a regression test pins `intersect(names(ExaModels), names(OptimalControl))`, filtered to bindings that actually differ (so the shared `:ExaModels` module name does not count), to its known genuine-clash set `[:constraint, :objective]` — the next colliding upstream export lands as a red test rather than a user bug report
+
+- **GPU capability checks aligned with the CTSolvers contract** ([#883](https://github.com/control-toolbox/OptimalControl.jl/issues/883)). `TestCapabilities` moved into `test/runtests.jl` as `Main`-bound constants (`CUDA_FUNCTIONAL`, `ON_GPU_RUNNER`, `GPU_EXTENSION_ARMED`), replacing the `test/helpers/capabilities.jl` functions; `ON_GPU_RUNNER` now matches the `kkt` / `occidata` *substring* of `RUNNER_NAME` (the self-hosted runners register as `…-runner`, [CTSolvers#223](https://github.com/control-toolbox/CTSolvers.jl/pull/223)). A new `test/suite/environment/test_environment_contract.jl` centralises the loud device requirement on the GPU runner and greps the suite for the `isdefined`-against-`Main` and unbraced-device-guard anti-patterns. Fixes the asymmetry where a lost GPU device failed loudly in `test_gpu_routing.jl` but skipped silently in `test_options_forwarding.jl`
+
+### 📚 Documentation
+
+- The documentation site was rewritten onto a new sitemap (getting started, modelling, solve, results, flows, geometry, an examples gallery, and a thematic API reference) and a v2.0 → v2.1 migration page added. The retired v2.0 manuals are kept under `docs/attic/`
+
+### 📦 Dependencies
 
 - **Realigned on the released ecosystem** — every sibling resolves from the General registry with no `Pkg.develop`: CTBase `0.28`→`0.29`, CTModels `0.15`→`0.18`, CTSolvers `0.4`→`0.5`, CTFlows `0.16`→`0.17`, CTParser `0.8`→`0.9`, CTLie `0.1`→`0.2`; CTDirect stays pinned to `1` (the major alone, per the pinning-granularity rule)
 
@@ -19,23 +48,9 @@ Dependency realignment onto the released control-toolbox ecosystem and a full do
 
 - `docs/Project.toml` and `docs/src/assets/{Project,Manifest}.toml` mirror the root environment exactly
 
-### Fixed
+### ✅ Compatibility
 
-- **`using ExaModels` alongside `using OptimalControl` is no longer suggested anywhere.** ExaModels 0.12 newly exports `objective` and `constraint`, both of which OptimalControl also exports; importing ExaModels unqualified shadows the accessors and the next `objective(sol)` throws `UndefVarError`. The `:exa` modeler needs no `using ExaModels` at all — the module is already bound through `using OptimalControl`. `docs/src/solve/gpu.md` and `docs/src/getting-started/installation.md` dropped the bare import and now state that `:exa` needs no extra package. See [#882](https://github.com/control-toolbox/OptimalControl.jl/issues/882)
-
-### Testing
-
-- **Export-collision canary**: a regression test pins `intersect(names(ExaModels), names(OptimalControl))` to its known genuine-clash set `[:constraint, :objective]`, so the next colliding upstream export lands as a red test rather than a user bug report
-
-- **GPU capability checks aligned with the CTSolvers contract** ([#883](https://github.com/control-toolbox/OptimalControl.jl/issues/883)). `TestCapabilities` moved into `test/runtests.jl` as `Main`-bound constants (`CUDA_FUNCTIONAL`, `ON_GPU_RUNNER`, `GPU_EXTENSION_ARMED`), replacing the `test/helpers/capabilities.jl` functions; `ON_GPU_RUNNER` now matches the `kkt` / `occidata` *substring* of `RUNNER_NAME` (the self-hosted runners register as `…-runner`, [CTSolvers#223](https://github.com/control-toolbox/CTSolvers.jl/pull/223)). A new `test/suite/environment/test_environment_contract.jl` centralises the loud device requirement on the GPU runner and greps the suite for the `isdefined`-against-`Main` and unbraced-device-guard anti-patterns. Fixes the asymmetry where a lost GPU device failed loudly in `test_gpu_routing.jl` but skipped silently in `test_options_forwarding.jl`
-
-### Documentation
-
-- The documentation site was rewritten onto a new sitemap (getting started, modelling, solve, results, flows, geometry, an examples gallery, and a thematic API reference) and a v2.0 → v2.1 migration page added. The retired v2.0 manuals are kept under `docs/attic/`
-
-### Compatibility
-
-- **No breaking changes to OptimalControl's own public API.** One near-breaking upstream change: `using ExaModels` now collides with the `objective` / `constraint` accessors. See [BREAKING.md](BREAKING.md).
+- **No breaking changes to OptimalControl's own public API.** Two near-breaking notes: `using ExaModels` now collides with the `objective` / `constraint` accessors (see 🐛 above), and explicit-mode `solve` now rejects options it used to ignore silently (see 🛠 above). See [BREAKING.md](BREAKING.md).
 
 ---
 
