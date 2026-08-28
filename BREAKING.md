@@ -1,3 +1,24 @@
+# Non-breaking notes
+
+## Non-breaking note (2.2.0-beta)
+
+- **`using ExaModels` now clashes with OptimalControl.** ExaModels 0.12 added `objective` and `constraint` to its export list (oracle builders); OptimalControl exports both names as accessors. Loading ExaModels unqualified next to OptimalControl makes `objective(sol)` / `constraint(ocp, :label)` throw `UndefVarError` — Julia refuses to resolve the ambiguous binding.
+
+  **No migration required for the common case.** The `:exa` modeler needs no `using ExaModels`: the module is bound through `using OptimalControl` and `solve(ocp, :exa)` works as-is. Only import ExaModels if you genuinely need its own API, and then import it qualified:
+
+  ```julia
+  # Before — shadows the accessors
+  using ExaModels
+
+  # After
+  using ExaModels: ExaModels
+  ExaModels.some_function(...)
+  ```
+
+  **No breaking change to OptimalControl's API**: `objective` / `constraint` are unchanged. See [#882](https://github.com/control-toolbox/OptimalControl.jl/issues/882), and the same fix one layer down in [CTParser#230](https://github.com/control-toolbox/CTParser.jl/issues/230).
+
+---
+
 # Breaking Changes: v2.0 → v2.1.0-beta
 
 This section describes the breaking changes when migrating from **OptimalControl.jl v2.0.5-beta** to **v2.1.0-beta**. For the v1.x → v2.0 migration, see [the section below](#breaking-changes-v1x--v20).
