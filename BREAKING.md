@@ -1,31 +1,58 @@
-# Non-breaking notes
+# Breaking & non-breaking changes
 
-## Non-breaking note (2.2.0-beta)
+Chronological, newest first. Each `CHANGELOG.md` entry links back here for the full technical
+record; this file never duplicates a release's own compat table, only what a caller must
+change or be aware of.
 
-- **`using ExaModels` now clashes with OptimalControl.** ExaModels 0.12 added `objective` and `constraint` to its export list (oracle builders); OptimalControl exports both names as accessors. Loading ExaModels unqualified next to OptimalControl makes `objective(sol)` / `constraint(ocp, :label)` throw `UndefVarError` — Julia refuses to resolve the ambiguous binding.
-
-  **No migration required for the common case.** The `:exa` modeler needs no `using ExaModels`: the module is bound through `using OptimalControl` and `solve(ocp, :exa)` works as-is. Only import ExaModels if you genuinely need its own API, and then import it qualified:
-
-  ```julia
-  # Before — shadows the accessors
-  using ExaModels
-
-  # After
-  using ExaModels: ExaModels
-  ExaModels.some_function(...)
-  ```
-
-  **No breaking change to OptimalControl's API**: `objective` / `constraint` are unchanged. See [#882](https://github.com/control-toolbox/OptimalControl.jl/issues/882), and the same fix one layer down in [CTParser#230](https://github.com/control-toolbox/CTParser.jl/issues/230).
+- [Non-breaking notes (2.2.0-beta)](#non-breaking-notes-220-beta)
+- [Breaking changes: v2.0 → v2.1.0-beta](#breaking-changes-v20--v210-beta)
+- [Breaking changes: v1.x → v2.0](#breaking-changes-v1x--v20)
 
 ---
 
-# Breaking Changes: v2.0 → v2.1.0-beta
+## Non-breaking notes (2.2.0-beta)
+
+### `using ExaModels` now clashes with OptimalControl
+
+ExaModels 0.12 added `objective` and `constraint` to its export list (oracle builders); OptimalControl exports both names as accessors. Loading ExaModels unqualified next to OptimalControl makes `objective(sol)` / `constraint(ocp, :label)` throw `UndefVarError` — Julia refuses to resolve the ambiguous binding.
+
+**No migration required for the common case.** The `:exa` modeler needs no `using ExaModels`: the module is bound through `using OptimalControl` and `solve(ocp, :exa)` works as-is. Only import ExaModels if you genuinely need its own API, and then import it qualified:
+
+```julia
+# Before — shadows the accessors
+using ExaModels
+
+# After
+using ExaModels: ExaModels
+ExaModels.some_function(...)
+```
+
+**No breaking change to OptimalControl's API**: `objective` / `constraint` are unchanged. See [#882](https://github.com/control-toolbox/OptimalControl.jl/issues/882), and the same fix one layer down in [CTParser#230](https://github.com/control-toolbox/CTParser.jl/issues/230).
+
+### Explicit `solve` now rejects options it used to ignore
+
+Explicit-mode `solve` used to silently drop a keyword argument that did not match any known option — a typo in a strategy option, or an option passed to the wrong strategy, ran without warning. It now raises an actionable error naming the option ([#853](https://github.com/control-toolbox/OptimalControl.jl/pull/853)).
+
+```julia
+# Before — silently ignored, ran with defaults
+solve(ocp, :adnlp, :ipopt; toll=1e-8)   # typo for tol=, dropped without a word
+
+# After — raises, names the option
+solve(ocp, :adnlp, :ipopt; toll=1e-8)
+# ERROR: unconsumed option(s): toll
+```
+
+Strategy-specific options must be configured at construction time, not passed loose to `solve`; see the explicit-mode documentation. **Near-breaking**: a script that relied on a mistyped or misplaced option being silently ignored will now raise where it previously ran. No option that was ever actually *read* changes behaviour — this only catches ones nothing was reading.
+
+---
+
+## Breaking Changes: v2.0 → v2.1.0-beta
 
 This section describes the breaking changes when migrating from **OptimalControl.jl v2.0.5-beta** to **v2.1.0-beta**. For the v1.x → v2.0 migration, see [the section below](#breaking-changes-v1x--v20).
 
 Three symbol families physically changed package in this release, as the ecosystem was reorganised so that each name has exactly one owner. Most of the fallout is mechanical, but three items are semantic and will not announce themselves as import errors.
 
-## Start here: `Flow` needs an integrator
+### Start here: `Flow` needs an integrator
 
 Every example's preamble changes. SciML is no longer a hard dependency of the stack — the user chooses and loads an integrator:
 
@@ -38,7 +65,7 @@ f = Flow(ocp, (x, p) -> p[2])
 
 Without it, `Flow` fails with a clean `ExtensionError` naming `OrdinaryDiffEqTsit5` (or `OrdinaryDiffEq`/`DifferentialEquations`) as the missing package. This is by design: it keeps the install cost of the direct path off users who never write a flow.
 
-## Differential geometry moved to CTLie
+### Differential geometry moved to CTLie
 
 `Lift`, `Poisson`, `∂ₜ` and `@Lie` are re-exported from the same names as before, so most code is unaffected. Two changes are not cosmetic:
 
@@ -57,7 +84,7 @@ H isa AbstractHamiltonian   # false in v2.1.0-beta, true in v2.0
 
 Note that `Lift` is overloaded on its input: `Lift(X::AbstractVectorField)` still returns a `Hamiltonian`. Only the plain-`Function` overload changed.
 
-## Flow call convention
+### Flow call convention
 
 The signature changed, not just the spelling.
 
@@ -90,7 +117,7 @@ f(t0, x0, p0, tf; variable=λ, variable_costate=true)
    f(t0, x0, p0, tf)
    ```
 
-## Constrained flows: keywords replace positional arguments
+### Constrained flows: keywords replace positional arguments
 
 ```julia
 # before
@@ -110,7 +137,7 @@ The two are a pair: one without the other is an `IncorrectArgument`.
 fb = Flow(ocp, u; constraint=:vmax, multiplier=μ)  # reuse the model's own constraint
 ```
 
-## Constructor keywords take an `is_` prefix
+### Constructor keywords take an `is_` prefix
 
 ```julia
 # before
@@ -124,14 +151,14 @@ VectorField(f; is_autonomous=false, is_variable=true)
 
 The old spelling on `@Lie` raises an `IncorrectArgument` at macro-expansion time rather than being ignored.
 
-## Two names are no longer re-exported
+### Two names are no longer re-exported
 
 | Name | Why |
 | --- | --- |
 | `time` | It is `Base.time`. `time(ocp)` and `time(sol)` now throw `PreconditionError`; use `times(ocp)` or `time_grid(sol)`. |
 | `success` | `Base.success` is the name. `success(sol)` now throws `PreconditionError`; use `successful(sol)`. |
 
-## Newly re-exported
+### Newly re-exported
 
 The full `CTBase.Data` type vocabulary is now available without reaching into the package by hand — `Flow` dispatches on these, so building a flow explicitly needed them:
 
@@ -141,7 +168,7 @@ The full `CTBase.Data` type vocabulary is now available without reaching into th
 
 Also new: `CTLie.dg_ad_backend` / `dg_ad_backend!` (global AD-backend control), `CTFlows.MultiPhase` (`n_phases`, `get_flow`, `get_switching_time`, …), and `CTSolvers.Integrators` (`SciML`, `final_state`, `evaluate_at`).
 
-## `OpenLoop` is unconditionally non-autonomous
+### `OpenLoop` is unconditionally non-autonomous
 
 An open-loop control depends only on time — `u(t)` (or `u(t, v)`) — never on the state or costate, and autonomy is a property of the OCP, not of the control law itself. `OpenLoop` therefore does not offer `is_autonomous` as a real choice, unlike `ClosedLoop`/`DynClosedLoop`:
 
@@ -154,7 +181,7 @@ OpenLoop(() -> 1.0)             # wrong: constructs silently, MethodError once t
 
 See [control-toolbox/CTBase.jl#515](https://github.com/control-toolbox/CTBase.jl/issues/515).
 
-## For package authors: the strategy contract
+### For package authors: the strategy contract
 
 If you define your own `AbstractStrategy`, you must now implement `parameter`:
 
@@ -167,13 +194,13 @@ This is **not** a rename of `CTSolvers.Strategies.get_parameter_type`, which ret
 
 A caller that cannot guarantee a third-party strategy implements the contract should reach for the non-throwing `CTBase.Strategies.parameter(strategy_type, default)` — the `get(dict, key, default)`-style 2-arg accessor (CTBase ≥ 0.28.8-beta) — rather than writing its own `try`/`catch` around `NotImplemented`. OptimalControl's own display code does exactly this, and warns once per strategy type when the fallback is taken.
 
-## `describe` now covers every strategy
+### `describe` now covers every strategy
 
 `describe(:id)` previously only knew the *solve* registry (discretizer, NLP modeler, NLP solver). The AD backend and the ODE integrator are strategies in the same sense — `describe(:di)` and `describe(:sciml)` now work from the same single entry point, which merges the solve registry with CTFlows' flow registry (`Base.merge(::CTBase.Strategies.StrategyRegistry...)`, CTBase ≥ 0.28.8-beta).
 
 ---
 
-# Breaking Changes: v1.x → v2.0
+## Breaking Changes: v1.x → v2.0
 
 This document describes the breaking changes when migrating from **OptimalControl.jl v1.1.6** (last stable release) to **v2.0.0**.
 
@@ -192,7 +219,7 @@ This document describes the breaking changes when migrating from **OptimalContro
 !!! note "v2.0.1 Compatibility"
     **v2.0.1** is fully backward compatible with v2.0.0. It contains documentation improvements and an export change (`build_initial_guess` is now explicitly reexported) with no breaking changes.
 
-## Overview
+### Overview
 
 Version 2.0.0 represents a major architectural redesign of OptimalControl.jl, introducing:
 
@@ -204,11 +231,11 @@ Version 2.0.0 represents a major architectural redesign of OptimalControl.jl, in
 - **CTFlows enhancements** with `augment=true` and direct OCP flow creation
 - **Modernized reexport system** using `@reexport import`
 
-## Removed Functions
+### Removed Functions
 
 The following functions from v1.1.6 have been removed and replaced:
 
-### CTDirect Functions
+#### CTDirect Functions
 
 | v1.1.6 Function        | v2.0.0 Replacement | Notes                                                  |
 | ---------------------- | ------------------ | ------------------------------------------------------ |
@@ -233,9 +260,9 @@ end
 sol = ocp_solution(docp, nlp_sol)
 ```
 
-## Changed Exports
+### Changed Exports
 
-### CTBase Exceptions
+#### CTBase Exceptions
 
 **Removed exports:**
 
@@ -249,7 +276,7 @@ sol = ocp_solution(docp, nlp_sol)
 
 These exceptions are still available via `CTBase.IncorrectMethod`, etc., but are no longer re-exported by OptimalControl.jl.
 
-### CTFlows Types
+#### CTFlows Types
 
 The following types are **no longer exported** (but still available via qualified access):
 
@@ -271,11 +298,11 @@ using CTFlows: VectorField
 X = VectorField(f)
 ```
 
-## New Solve Architecture
+### New Solve Architecture
 
 The `solve` function has been completely redesigned with two modes:
 
-### Descriptive Mode (Symbolic)
+#### Descriptive Mode (Symbolic)
 
 ```julia
 # Specify strategies using symbols
@@ -286,7 +313,7 @@ sol = solve(ocp, :ipopt)  # Uses first matching method
 sol = solve(ocp, :gpu)    # Uses first GPU method
 ```
 
-### Explicit Mode (Typed Components)
+#### Explicit Mode (Typed Components)
 
 ```julia
 # Specify strategies using typed components
@@ -297,7 +324,7 @@ sol = solve(ocp;
 )
 ```
 
-### Methods System
+#### Methods System
 
 The `methods()` function now returns **4-tuples** instead of 3-tuples:
 
@@ -312,11 +339,11 @@ methods()  # Returns (discretizer, modeler, solver, parameter)
 
 The 4th element is the **parameter** (`:cpu` or `:gpu`) for execution backend.
 
-## Option Routing System
+### Option Routing System
 
 v2.0.0 introduces automatic option routing with new introspection tools:
 
-### New Functions
+#### New Functions
 
 - `describe(strategy)` — Display available options for a strategy
 - `route_to(strategy=value)` — Disambiguate shared options
@@ -341,7 +368,7 @@ sol = solve(ocp, :ipopt;
 )
 ```
 
-## Initial Guess with @init Macro
+### Initial Guess with @init Macro
 
 v2.0.0 introduces the `@init` macro for constructing initial guesses:
 
@@ -359,11 +386,11 @@ sol = solve(ocp; init=init)
 
 The old functional approach is no longer supported.
 
-## New Features (Non-Breaking)
+### New Features (Non-Breaking)
 
 These features are new in v2.0.0 but don't break existing code:
 
-### Control-Free Problems Support
+#### Control-Free Problems Support
 
 Support for optimal control problems without control variables:
 
@@ -377,14 +404,14 @@ ocp = @def begin
 end
 ```
 
-### New Solvers
+#### New Solvers
 
 - **Uno**: CPU-only nonlinear optimization solver
 - **MadNCL**: GPU-capable solver
 
 Total of 5 solvers: Ipopt, MadNLP, Uno, MadNCL, Knitro
 
-### Additional Discretization Schemes
+#### Additional Discretization Schemes
 
 **Basic schemes:**
 
@@ -398,7 +425,7 @@ Total of 5 solvers: Ipopt, MadNLP, Uno, MadNCL, Knitro
 - `:gauss_legendre_2` — 2-point Gauss-Legendre collocation
 - `:gauss_legendre_3` — 3-point Gauss-Legendre collocation
 
-### GPU Support
+#### GPU Support
 
 Explicit GPU/CPU selection via parameter:
 
@@ -411,9 +438,9 @@ using CUDA, MadNLPGPU
 sol = solve(ocp, :collocation, :exa, :madnlp, :gpu)
 ```
 
-## CTFlows Features
+### CTFlows Features
 
-### Control-Free Problems
+#### Control-Free Problems
 
 v2.0.0 introduces comprehensive support for control-free problems (optimal control without control variables) with enhanced CTFlows integration:
 
@@ -450,7 +477,7 @@ end
 - Automatic handling of Mayer costs: $p_\omega(t_f) = -2\omega$
 - Initial conditions: $p_\lambda(t_0) = 0$ by construction
 
-## Dependency Updates
+### Dependency Updates
 
 v2.0.0 requires updated versions of CTX packages:
 
@@ -464,7 +491,7 @@ v2.0.0 requires updated versions of CTX packages:
 
 **New dependency:** CTSolvers.jl (handles NLP modeling and solving)
 
-## Summary
+### Summary
 
 The main breaking changes are:
 

@@ -14,9 +14,20 @@ Draft = false
 
 `OptimalControl.jl` v2.1.0-beta reorganised the ecosystem so that every name has exactly one
 owner. Most of the fallout is mechanical — a `Lie` becomes an `ad`, a `success` becomes a
-`successful` — and every mechanical rename now fails loudly with a message naming its
-replacement, instead of a bare `UndefVarError`. A few changes are semantic and will **not**
-announce themselves; those get their own warnings below.
+`successful` — and every mechanical rename fails loudly with a message naming its replacement,
+instead of a bare `UndefVarError`. A few changes are semantic and will **not** announce
+themselves; those get their own warnings below.
+
+!!! warning "The informative messages below need 2.2.0-beta, not just v2.1.0-beta"
+
+    Every spelling on this page **stopped working in v2.1.0-beta**, tagged 2026-07-30 — that
+    is when each old name was removed. The **shims** that turn the mistake into a named,
+    actionable `PreconditionError` (the block under
+    [What you get instead of an error](@ref migration-instead-of-error)) shipped two weeks
+    later, in **2.2.0-beta** (`src/deprecated.jl`, [#855](https://github.com/control-toolbox/OptimalControl.jl/pull/855)).
+    A copy pinned to exactly `v2.1.0-beta` gets a bare `UndefVarError` or `MethodError` for
+    every one of them — the same mistake, none of the guidance below. Use `2.2.0-beta` or
+    newer.
 
 The full technical record of every breaking change is [`BREAKING.md`](https://github.com/control-toolbox/OptimalControl.jl/blob/main/BREAKING.md)
 in the repository root — this page is its user-facing rendering, organised around "what do I
@@ -174,10 +185,11 @@ the current package.
     plain vector-field flow, unaffected) but genuinely ambiguous on `AbstractHamiltonianFlow`,
     where it collides with the real v2.1.0-beta call. This one is on the caller to catch by eye.
 
-## What you get instead of an error
+## [What you get instead of an error](@id migration-instead-of-error)
 
 Every removed spelling below throws `CTBase.Exceptions.PreconditionError` naming its
-replacement — confirmed by running each one against the current package:
+replacement — confirmed by running each one against **2.2.0-beta** (the shims are not in the
+bare `v2.1.0-beta` tag; see the note near the top of this page):
 
 ```julia
 julia> Lie(X, f)
