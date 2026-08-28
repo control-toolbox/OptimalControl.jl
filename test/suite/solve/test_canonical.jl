@@ -34,10 +34,6 @@ using CUDSS: CUDSS
 include(joinpath(@__DIR__, "..", "..", "problems", "TestProblems.jl"))
 using .TestProblems
 
-# Shared CUDA/GPU capability checks — one definition for the whole suite.
-include(joinpath(@__DIR__, "..", "..", "helpers", "capabilities.jl"))
-using .TestCapabilities: is_cuda_on, gpu_extension_armed
-
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
@@ -255,9 +251,11 @@ function test_canonical()
         passed_tests = passed_tests_ref[]
 
         # ----------------------------------------------------------------
-        # GPU tests (only if CUDA is available)
+        # GPU tests (device tier — only with a functional CUDA device).
+        # A lost device on a GPU runner is caught centrally by
+        # test/suite/environment/test_environment_contract.jl, not here.
         # ----------------------------------------------------------------
-        if is_cuda_on()
+        if Main.TestCapabilities.CUDA_FUNCTIONAL
             # Define GPU modelers and solvers as lists (even with single element)
             gpu_modelers = [(
                 "Exa", OptimalControl.Exa{OptimalControl.GPU}(backend=CUDA.CUDABackend())
