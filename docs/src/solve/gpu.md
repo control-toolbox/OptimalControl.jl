@@ -38,9 +38,8 @@ Check `CUDA.functional()` before assuming a `:gpu` solve will actually run on th
     `using MadNLPGPU` pulled it in and the third trigger was satisfied without anyone asking.
     From 0.9 onward it is a weak dependency and you must load it yourself.
 
-    You do get an error, but it points the wrong way. It reports `Missing MadNLPGPU` and
-    suggests `using MadNLPGPU`, which you already did; the package actually absent is `CUDSS`.
-    See [CTSolvers#216](https://github.com/control-toolbox/CTSolvers.jl/issues/216).
+    The error names exactly which one is missing — load `MadNLPGPU` and `CUDA` but not
+    `CUDSS`, and it reports `Missing CUDSS` with the hint `using CUDSS`.
 
 `ExaModels` needs no `using` of its own. It is a dependency of OptimalControl, so the module is
 already bound after `using OptimalControl` and `:exa` works without it. Importing it explicitly
