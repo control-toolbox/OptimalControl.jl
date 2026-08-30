@@ -41,6 +41,15 @@ using JLD2
 # plotting
 using Plots
 
+# DocumenterVitepress picks the highest-priority MIME type a plot object responds to
+# (image/png: 4.0 over image/svg+xml: 3.0) — the opposite of Documenter.HTML, which
+# prefers SVG. Plots.jl (unlike CairoMakie) responds to both, so PNG wins unless this
+# is disabled. Global, not per-page: Base.showable is a method on the Plots.Plot type,
+# so setting it once here — before any @example block runs — covers every page that
+# ever calls `using Plots`, not just the ones that do today. See Handbook/VITEPRESS-DOC.md
+# "Plot image format — SVG vs PNG".
+Base.showable(::MIME"image/png", ::Plots.Plot) = false
+
 #
 function _ext(pkg, sym)
     m = Base.get_extension(pkg, sym)
