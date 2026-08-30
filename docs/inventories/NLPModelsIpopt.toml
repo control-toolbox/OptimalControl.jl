@@ -1,0 +1,118 @@
+# DocInventory version 1
+project = "NLPModelsIpopt"
+version = "0.11.3"
+
+[[jl.function]]
+name = "NLPModelsIpopt.ipopt"
+uri = "tutorial/#$"
+
+[[jl.method]]
+name = "NLPModelsIpopt.ipopt-Tuple{NLPModels.AbstractNLPModel}"
+uri = "reference/#NLPModelsIpopt.ipopt-Tuple%7BNLPModels.AbstractNLPModel%7D"
+[[jl.method]]
+name = "NLPModelsIpopt.ipopt-Tuple{NLPModelsModifiers.FeasibilityFormNLS}"
+uri = "reference/#NLPModelsIpopt.ipopt-Tuple%7BNLPModelsModifiers.FeasibilityFormNLS%7D"
+[[jl.method]]
+name = "NLPModelsIpopt.set_callbacks-Tuple{NLPModels.AbstractNLPModel}"
+uri = "reference/#NLPModelsIpopt.set_callbacks-Tuple%7BNLPModels.AbstractNLPModel%7D"
+[[jl.method]]
+name = "SolverCore.reset!-Tuple{IpoptSolver, NLPModels.AbstractNLPModel}"
+uri = "reference/#SolverCore.reset%21-Tuple%7BIpoptSolver%2C%20NLPModels.AbstractNLPModel%7D"
+
+[[jl.type]]
+name = "NLPModelsIpopt.IpoptSolver"
+uri = "reference/#$"
+
+[[std.doc]]
+dispname = "Home"
+name = "index"
+uri = ""
+[[std.doc]]
+dispname = "Reference"
+name = "reference"
+uri = "reference/"
+[[std.doc]]
+dispname = "Performance tips"
+name = "tips"
+uri = "tips/"
+[[std.doc]]
+dispname = "Tutorial"
+name = "tutorial"
+uri = "tutorial/"
+
+[[std.label]]
+name = "AppleAccelerate"
+uri = "tips/#$"
+[[std.label]]
+dispname = "BLAS and LAPACK"
+name = "BLAS-and-LAPACK"
+uri = "tips/#$"
+[[std.label]]
+dispname = "Bug reports and discussions"
+name = "Bug-reports-and-discussions"
+uri = "#$"
+[[std.label]]
+dispname = "Callback parameters"
+name = "Callback-parameters"
+uri = "tutorial/#$"
+[[std.label]]
+dispname = "Custom stopping criteria"
+name = "Custom-stopping-criteria"
+uri = "tutorial/#$"
+[[std.label]]
+dispname = "Display backends"
+name = "Display-backends"
+uri = "tips/#$"
+[[std.label]]
+dispname = "Example usage"
+name = "Example-usage"
+uri = "tutorial/#$"
+[[std.label]]
+dispname = "Example: Using L-BFGS (limited-memory) Hessian approximation with Ipopt"
+name = "Example:-Using-L-BFGS-(limited-memory)-Hessian-approximation-with-Ipopt"
+uri = "tutorial/#Example%3A-Using-L-BFGS-%28limited-memory%29-Hessian-approximation-with-Ipopt"
+[[std.label]]
+name = "HSL"
+uri = "tips/#$"
+[[std.label]]
+name = "Index"
+uri = "reference/#$"
+[[std.label]]
+name = "Install"
+uri = "#$"
+[[std.label]]
+dispname = "Linear solvers"
+name = "Linear-solvers"
+uri = "tips/#$"
+[[std.label]]
+name = "MKL"
+uri = "tips/#$"
+[[std.label]]
+dispname = "Manual input"
+name = "Manual-input"
+uri = "tutorial/#$"
+[[std.label]]
+dispname = "Monitoring optimization with callbacks"
+name = "Monitoring-optimization-with-callbacks"
+uri = "tutorial/#$"
+[[std.label]]
+dispname = "NLPModelsIpopt.jl documentation"
+name = "NLPModelsIpopt.jl-documentation"
+uri = "#$"
+[[std.label]]
+name = "Reference"
+uri = "reference/#$"
+[[std.label]]
+dispname = "Return value"
+name = "Return-value"
+uri = "tutorial/#$"
+[[std.label]]
+name = "SPRAL"
+uri = "tips/#$"
+[[std.label]]
+dispname = "Simple problems"
+name = "Simple-problems"
+uri = "tutorial/#$"
+[[std.label]]
+name = "Tutorial"
+uri = "tutorial/#$"

@@ -236,7 +236,22 @@ with_api_reference(src_dir, ext_dir) do api_pages
     return makedocs(;
         draft=draft,
         remotes=nothing, # Disable remote links. Needed for DocumenterReference
-        warnonly=true,
+        # Not fully zero: 2 unresolved @ref (DOCPCache, category :cross_references) and 6
+        # unresolved @extref (CTModels.Solution / CTBase.Strategies.parameter — a *separate*
+        # category, :external_cross_references, registered by DocumenterInterLinks, not
+        # Documenter itself) are upstream defects, tracked at control-toolbox/CTDirect.jl#630,
+        # control-toolbox/CTModels.jl#416 and control-toolbox/CTBase.jl#543 respectively. Drop
+        # this exclusion once those land — see .reports/campaign/D-api-reference.md.
+        #
+        # :example_block is deliberately *not* here: the one remaining un-expanded @example
+        # (CTParser's @def docstring, control-toolbox/CTParser.jl#341, transcluded onto
+        # api/modelling.md) is a side effect of `draft` mode skipping execution and is never
+        # added to `doc.internal.errors` — confirmed by testing that a genuinely broken
+        # @example block on a Draft=false page (this file rewritten to error) still fails the
+        # build with :example_block even with this exact warnonly list, while the CTParser one
+        # stays silent either way. Excluding :example_block would have hidden real breakage for
+        # no benefit.
+        warnonly=[:cross_references, :external_cross_references],
         sitename="OptimalControl.jl",
         format=DocumenterVitepress.MarkdownVitepress(;
             repo=repo_url, devbranch="main", devurl="dev", sidebar_drawer=true
