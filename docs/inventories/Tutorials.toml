@@ -1,0 +1,449 @@
+# DocInventory version 1
+project = "Tutorials"
+version = "0.5.3"
+
+[[std.doc]]
+dispname = "Getting Started"
+name = "index"
+uri = "index.html"
+[[std.doc]]
+dispname = "Constraints at intermediate times"
+name = "tutorial-cit"
+uri = "tutorial-cit.html"
+[[std.doc]]
+dispname = "Discrete continuation"
+name = "tutorial-continuation"
+uri = "tutorial-continuation.html"
+[[std.doc]]
+dispname = "Discretisation methods"
+name = "tutorial-discretisation"
+uri = "tutorial-discretisation.html"
+[[std.doc]]
+dispname = "Final time"
+name = "tutorial-free-times-final"
+uri = "tutorial-free-times-final.html"
+[[std.doc]]
+dispname = "Final and initial times"
+name = "tutorial-free-times-final-initial"
+uri = "tutorial-free-times-final-initial.html"
+[[std.doc]]
+dispname = "Initial time"
+name = "tutorial-free-times-initial"
+uri = "tutorial-free-times-initial.html"
+[[std.doc]]
+dispname = "Goddard: direct, indirect"
+name = "tutorial-goddard"
+uri = "tutorial-goddard.html"
+[[std.doc]]
+dispname = "Indirect simple shooting"
+name = "tutorial-iss"
+uri = "tutorial-iss.html"
+[[std.doc]]
+dispname = "Linear–quadratic regulator"
+name = "tutorial-lqr"
+uri = "tutorial-lqr.html"
+[[std.doc]]
+dispname = "Minimal action"
+name = "tutorial-mam"
+uri = "tutorial-mam.html"
+[[std.doc]]
+dispname = "Model Predictive Control"
+name = "tutorial-mpc"
+uri = "tutorial-mpc.html"
+[[std.doc]]
+dispname = "NLP manipulations"
+name = "tutorial-nlp"
+uri = "tutorial-nlp.html"
+[[std.doc]]
+dispname = "Symbolic Lagrangian Mechanics"
+name = "tutorial-symbolics"
+uri = "tutorial-symbolics.html"
+
+[[std.label]]
+name = "Applications"
+uri = "index.html#$"
+[[std.label]]
+dispname = "Approach A: Using OptimalControl solver wrapper"
+name = "Approach-A:-Using-OptimalControl-solver-wrapper"
+uri = "tutorial-nlp.html#Approach-A%3A-Using-OptimalControl-solver-wrapper"
+[[std.label]]
+dispname = "Approach B: Using external NLP solvers directly"
+name = "Approach-B:-Using-external-NLP-solvers-directly"
+uri = "tutorial-nlp.html#Approach-B%3A-Using-external-NLP-solvers-directly"
+[[std.label]]
+dispname = "Augmented problem"
+name = "Augmented-problem"
+uri = "tutorial-cit.html#$"
+[[std.label]]
+dispname = "Automated Kinematics and Lagrangian"
+name = "Automated-Kinematics-and-Lagrangian"
+uri = "tutorial-symbolics.html#$"
+[[std.label]]
+dispname = "Available tutorials"
+name = "Available-tutorials"
+uri = "index.html#$"
+[[std.label]]
+dispname = "Best practices and limitations"
+name = "Best-practices-and-limitations"
+uri = "tutorial-continuation.html#$"
+[[std.label]]
+dispname = "Boundary value problem"
+name = "Boundary-value-problem"
+uri = "tutorial-iss.html#$"
+[[std.label]]
+dispname = "Canonical solve"
+name = "Canonical-solve"
+uri = "tutorial-nlp.html#$"
+[[std.label]]
+dispname = "Code Generation"
+name = "Code-Generation"
+uri = "tutorial-symbolics.html#$"
+[[std.label]]
+dispname = "Combined approaches"
+name = "Combined-approaches"
+uri = "index.html#$"
+[[std.label]]
+dispname = "Comparison of the two solvers"
+name = "Comparison-of-the-two-solvers"
+uri = "tutorial-goddard.html#$"
+[[std.label]]
+name = "Conclusion"
+uri = "tutorial-cit.html#$"
+[[std.label]]
+dispname = "Continuation on parameter"
+name = "Continuation-on-parameter"
+uri = "tutorial-continuation.html#$"
+[[std.label]]
+dispname = "Continuation on parametric OCP"
+name = "Continuation-on-parametric-OCP"
+uri = "tutorial-continuation.html#$"
+[[std.label]]
+name = "Data"
+uri = "tutorial-mpc.html#$"
+[[std.label]]
+dispname = "Definition of the problem"
+name = "Definition-of-the-problem"
+uri = "tutorial-free-times-final.html#$"
+[[std.label]]
+dispname = "Direct methods"
+name = "Direct-methods"
+uri = "index.html#$"
+[[std.label]]
+dispname = "Direct resolution"
+name = "Direct-resolution"
+uri = "tutorial-free-times-final.html#$"
+[[std.label]]
+dispname = "Direct solution"
+name = "Direct-solution"
+uri = "tutorial-free-times-initial.html#$"
+[[std.label]]
+dispname = "Direct solution: control"
+name = "Direct-solution:-control"
+uri = "tutorial-cit.html#Direct-solution%3A-control"
+[[std.label]]
+dispname = "Direct solution: state and costate"
+name = "Direct-solution:-state-and-costate"
+uri = "tutorial-cit.html#Direct-solution%3A-state-and-costate"
+[[std.label]]
+dispname = "Direct solution: trajectory"
+name = "Direct-solution:-trajectory"
+uri = "tutorial-cit.html#Direct-solution%3A-trajectory"
+[[std.label]]
+dispname = "Discretisation schemes"
+name = "Discretisation-schemes"
+uri = "tutorial-discretisation.html#$"
+[[std.label]]
+name = "Display"
+uri = "tutorial-mpc.html#$"
+[[std.label]]
+dispname = "Euler–Lagrange Equation"
+name = "Euler–Lagrange-Equation"
+uri = "tutorial-symbolics.html#Euler%E2%80%93Lagrange-Equation"
+[[std.label]]
+dispname = "Euler–Lagrange Equations and Mass-Matrix Inversion"
+name = "Euler–Lagrange-Equations-and-Mass-Matrix-Inversion"
+uri = "tutorial-symbolics.html#Euler%E2%80%93Lagrange-Equations-and-Mass-Matrix-Inversion"
+[[std.label]]
+dispname = "Example 1: a tram with intermediate stops"
+name = "Example-1:-a-tram-with-intermediate-stops"
+uri = "tutorial-cit.html#Example-1%3A-a-tram-with-intermediate-stops"
+[[std.label]]
+dispname = "Example 2: hovercraft path planning"
+name = "Example-2:-hovercraft-path-planning"
+uri = "tutorial-cit.html#Example-2%3A-hovercraft-path-planning"
+[[std.label]]
+dispname = "Explicit time grid"
+name = "Explicit-time-grid"
+uri = "tutorial-discretisation.html#$"
+[[std.label]]
+dispname = "First resolution"
+name = "First-resolution"
+uri = "tutorial-mpc.html#$"
+[[std.label]]
+name = "Fundamentals"
+uri = "index.html#$"
+[[std.label]]
+dispname = "Getting Started"
+name = "Getting-Started"
+uri = "index.html#$"
+[[std.label]]
+dispname = "Hamiltonian verification"
+name = "Hamiltonian-verification"
+uri = "tutorial-goddard.html#$"
+[[std.label]]
+dispname = "Indirect (shooting) solution"
+name = "Indirect-(shooting)-solution"
+uri = "tutorial-free-times-initial.html#Indirect-%28shooting%29-solution"
+[[std.label]]
+dispname = "Indirect methods"
+name = "Indirect-methods"
+uri = "index.html#$"
+[[std.label]]
+dispname = "Indirect shooting"
+name = "Indirect-shooting"
+uri = "tutorial-goddard.html#$"
+[[std.label]]
+dispname = "Indirect solution: control"
+name = "Indirect-solution:-control"
+uri = "tutorial-cit.html#Indirect-solution%3A-control"
+[[std.label]]
+dispname = "Indirect solution: state and costate"
+name = "Indirect-solution:-state-and-costate"
+uri = "tutorial-cit.html#Indirect-solution%3A-state-and-costate"
+[[std.label]]
+dispname = "Indirect solution: trajectory"
+name = "Indirect-solution:-trajectory"
+uri = "tutorial-cit.html#Indirect-solution%3A-trajectory"
+[[std.label]]
+dispname = "Initial Guess"
+name = "Initial-Guess"
+uri = "tutorial-mam.html#$"
+[[std.label]]
+dispname = "Initial guess"
+name = "Initial-guess"
+uri = "tutorial-goddard.html#$"
+[[std.label]]
+dispname = "Initial guess and warm start"
+name = "Initial-guess-and-warm-start"
+uri = "tutorial-nlp.html#$"
+[[std.label]]
+name = "Introduction"
+uri = "tutorial-goddard.html#$"
+[[std.label]]
+name = "Lagrangian"
+uri = "tutorial-symbolics.html#$"
+[[std.label]]
+dispname = "Large problems and AD backend"
+name = "Large-problems-and-AD-backend"
+uri = "tutorial-discretisation.html#$"
+[[std.label]]
+dispname = "MPC Approach"
+name = "MPC-Approach"
+uri = "tutorial-mpc.html#$"
+[[std.label]]
+dispname = "Minimize with respect to T"
+name = "Minimize-with-respect-to-T"
+uri = "tutorial-mam.html#$"
+[[std.label]]
+name = "Motivation"
+uri = "tutorial-cit.html#$"
+[[std.label]]
+dispname = "Optimal Control Formulation"
+name = "Optimal-Control-Formulation"
+uri = "tutorial-mam.html#$"
+[[std.label]]
+dispname = "Optimal Control Problem Definition"
+name = "Optimal-Control-Problem-Definition"
+uri = "tutorial-symbolics.html#$"
+[[std.label]]
+dispname = "Optimal Control of a Cart-Pole System using Symbolics.jl"
+name = "Optimal-Control-of-a-Cart-Pole-System-using-Symbolics.jl"
+uri = "tutorial-symbolics.html#$"
+[[std.label]]
+dispname = "OptimalControl solver"
+name = "OptimalControl-solver"
+uri = "tutorial-mpc.html#$"
+[[std.label]]
+dispname = "Physical Parameters and Symbolic Variables"
+name = "Physical-Parameters-and-Symbolic-Variables"
+uri = "tutorial-symbolics.html#$"
+[[std.label]]
+dispname = "Plot of the solution"
+name = "Plot-of-the-solution"
+uri = "tutorial-iss.html#$"
+[[std.label]]
+dispname = "Plotting the Solutions"
+name = "Plotting-the-Solutions"
+uri = "tutorial-lqr.html#$"
+[[std.label]]
+dispname = "Plotting the hovercraft solution"
+name = "Plotting-the-hovercraft-solution"
+uri = "tutorial-cit.html#$"
+[[std.label]]
+dispname = "Plotting the multi-arc solution"
+name = "Plotting-the-multi-arc-solution"
+uri = "tutorial-cit.html#$"
+[[std.label]]
+name = "Positions"
+uri = "tutorial-symbolics.html#$"
+[[std.label]]
+dispname = "Problem Setup"
+name = "Problem-Setup"
+uri = "tutorial-mam.html#$"
+[[std.label]]
+dispname = "Problem Statement"
+name = "Problem-Statement"
+uri = "tutorial-mam.html#$"
+[[std.label]]
+dispname = "Problem statement"
+name = "Problem-statement"
+uri = "tutorial-lqr.html#$"
+[[std.label]]
+name = "References"
+uri = "tutorial-goddard.html#$"
+[[std.label]]
+name = "Reproducibility"
+uri = "index.html#$"
+[[std.label]]
+dispname = "Required Packages"
+name = "Required-Packages"
+uri = "tutorial-mam.html#$"
+[[std.label]]
+dispname = "Required packages"
+name = "Required-packages"
+uri = "tutorial-lqr.html#$"
+[[std.label]]
+dispname = "Resolution of the shooting equation"
+name = "Resolution-of-the-shooting-equation"
+uri = "tutorial-iss.html#$"
+[[std.label]]
+name = "Results"
+uri = "tutorial-symbolics.html#$"
+[[std.label]]
+dispname = "Setup & Imports"
+name = "Setup-and-Imports"
+uri = "tutorial-symbolics.html#$"
+[[std.label]]
+dispname = "Simulation of the Real System"
+name = "Simulation-of-the-Real-System"
+uri = "tutorial-mpc.html#$"
+[[std.label]]
+dispname = "Solution and comparison"
+name = "Solution-and-comparison"
+uri = "tutorial-cit.html#$"
+[[std.label]]
+dispname = "Solving the NLP"
+name = "Solving-the-NLP"
+uri = "tutorial-symbolics.html#$"
+[[std.label]]
+dispname = "Solving the Problem"
+name = "Solving-the-Problem"
+uri = "tutorial-mam.html#$"
+[[std.label]]
+dispname = "Solving the problem for different final times"
+name = "Solving-the-problem-for-different-final-times"
+uri = "tutorial-lqr.html#$"
+[[std.label]]
+dispname = "State-Space Form"
+name = "State-Space-Form"
+uri = "tutorial-symbolics.html#$"
+[[std.label]]
+dispname = "Step 1: Build the initial guess"
+name = "Step-1:-Build-the-initial-guess"
+uri = "tutorial-nlp.html#Step-1%3A-Build-the-initial-guess"
+[[std.label]]
+dispname = "Step 2: Discretize the OCP"
+name = "Step-2:-Discretize-the-OCP"
+uri = "tutorial-nlp.html#Step-2%3A-Discretize-the-OCP"
+[[std.label]]
+dispname = "Step 3: Build the NLP model"
+name = "Step-3:-Build-the-NLP-model"
+uri = "tutorial-nlp.html#Step-3%3A-Build-the-NLP-model"
+[[std.label]]
+dispname = "Step 4: Solve the NLP"
+name = "Step-4:-Solve-the-NLP"
+uri = "tutorial-nlp.html#Step-4%3A-Solve-the-NLP"
+[[std.label]]
+dispname = "Step 5: Build the OCP solution"
+name = "Step-5:-Build-the-OCP-solution"
+uri = "tutorial-nlp.html#Step-5%3A-Build-the-OCP-solution"
+[[std.label]]
+dispname = "Step-by-step resolution with OptimalControl"
+name = "Step-by-step-resolution-with-OptimalControl"
+uri = "tutorial-nlp.html#$"
+[[std.label]]
+dispname = "The Cart-Pole System"
+name = "The-Cart-Pole-System"
+uri = "tutorial-symbolics.html#$"
+[[std.label]]
+dispname = "The multi-arc augmentation technique"
+name = "The-multi-arc-augmentation-technique"
+uri = "tutorial-cit.html#$"
+[[std.label]]
+dispname = "Time normalisation"
+name = "Time-normalisation"
+uri = "tutorial-cit.html#$"
+[[std.label]]
+dispname = "Visualizing Results"
+name = "Visualizing-Results"
+uri = "tutorial-mam.html#$"
+[[std.label]]
+dispname = "Discrete continuation"
+name = "tutorial-continuation"
+uri = "tutorial-continuation.html#$"
+[[std.label]]
+dispname = "Discretisation methods"
+name = "tutorial-discretisation-methods"
+uri = "tutorial-discretisation.html#$"
+[[std.label]]
+dispname = "Constraints at intermediate times"
+name = "tutorial-for-constraints-at-intermediate-times"
+uri = "tutorial-cit.html#$"
+[[std.label]]
+dispname = "Optimal control problem with free final time"
+name = "tutorial-free-times-final"
+uri = "tutorial-free-times-final.html#$"
+[[std.label]]
+dispname = "Free initial and final times"
+name = "tutorial-free-times-final-initial"
+uri = "tutorial-free-times-final-initial.html#$"
+[[std.label]]
+dispname = "Optimal control problem with free initial time"
+name = "tutorial-free-times-initial"
+uri = "tutorial-free-times-initial.html#$"
+[[std.label]]
+dispname = "Direct and indirect methods for the Goddard problem"
+name = "tutorial-goddard"
+uri = "tutorial-goddard.html#$"
+[[std.label]]
+dispname = "Plot of the solution"
+name = "tutorial-goddard-plot"
+uri = "tutorial-goddard.html#$"
+[[std.label]]
+dispname = "Structure of the solution"
+name = "tutorial-goddard-structure"
+uri = "tutorial-goddard.html#$"
+[[std.label]]
+dispname = "Indirect simple shooting"
+name = "tutorial-indirect-simple-shooting"
+uri = "tutorial-iss.html#$"
+[[std.label]]
+dispname = "A simple Linear–quadratic regulator example"
+name = "tutorial-lqr"
+uri = "tutorial-lqr.html#$"
+[[std.label]]
+dispname = "Minimal Action Method using Optimal Control"
+name = "tutorial-mam"
+uri = "tutorial-mam.html#$"
+[[std.label]]
+dispname = "Navigation problem, MPC approach"
+name = "tutorial-mpc"
+uri = "tutorial-mpc.html#$"
+[[std.label]]
+dispname = "NLP and DOCP manipulations"
+name = "tutorial-nlp"
+uri = "tutorial-nlp.html#$"
+[[std.label]]
+dispname = "Cart-Pole Periodic Orbit via Symbolic Lagrangian Mechanics"
+name = "tutorial-symbolics"
+uri = "tutorial-symbolics.html#$"

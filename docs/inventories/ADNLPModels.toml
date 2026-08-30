@@ -1,0 +1,208 @@
+# DocInventory version 1
+project = "ADNLPModels"
+version = "0.8.13"
+
+[[jl.function]]
+name = "ADNLPModels.compute_jacobian_sparsity"
+uri = "reference/#$"
+
+[[jl.method]]
+name = "ADNLPModels.ADNLPModel-Union{Tuple{S}, Tuple{Any, S}} where S"
+uri = "reference/#ADNLPModels.ADNLPModel-Union%7BTuple%7BS%7D%2C%20Tuple%7BAny%2C%20S%7D%7D%20where%20S"
+[[jl.method]]
+name = "ADNLPModels.ADNLSModel-Union{Tuple{S}, Tuple{Any, S, Integer}} where S"
+uri = "reference/#ADNLPModels.ADNLSModel-Union%7BTuple%7BS%7D%2C%20Tuple%7BAny%2C%20S%2C%20Integer%7D%7D%20where%20S"
+[[jl.method]]
+name = "ADNLPModels.compute_hessian_sparsity-NTuple{4, Any}"
+uri = "reference/#ADNLPModels.compute_hessian_sparsity-NTuple%7B4%2C%20Any%7D"
+[[jl.method]]
+name = "ADNLPModels.get_F-Tuple{ADNLPModels.AbstractADNLSModel}"
+uri = "reference/#ADNLPModels.get_F-Tuple%7BADNLPModels.AbstractADNLSModel%7D"
+[[jl.method]]
+name = "ADNLPModels.get_adbackend-Tuple{Union{ADNLPModels.AbstractADNLPModel{T, S}, ADNLPModels.AbstractADNLSModel{T, S}} where {T, S}}"
+uri = "reference/#ADNLPModels.get_adbackend-Tuple%7BUnion%7BADNLPModels.AbstractADNLPModel%7BT%2C%20S%7D%2C%20ADNLPModels.AbstractADNLSModel%7BT%2C%20S%7D%7D%20where%20%7BT%2C%20S%7D%7D"
+[[jl.method]]
+name = "ADNLPModels.get_c-Tuple{Union{ADNLPModels.AbstractADNLPModel{T, S}, ADNLPModels.AbstractADNLSModel{T, S}} where {T, S}}"
+uri = "reference/#ADNLPModels.get_c-Tuple%7BUnion%7BADNLPModels.AbstractADNLPModel%7BT%2C%20S%7D%2C%20ADNLPModels.AbstractADNLSModel%7BT%2C%20S%7D%7D%20where%20%7BT%2C%20S%7D%7D"
+[[jl.method]]
+name = "ADNLPModels.get_default_backend-Tuple{Symbol, Vararg{Any}}"
+uri = "reference/#ADNLPModels.get_default_backend-Tuple%7BSymbol%2C%20Vararg%7BAny%7D%7D"
+[[jl.method]]
+name = "ADNLPModels.get_lag-Tuple{ADNLPModels.AbstractADNLPModel, ADNLPModels.ADBackend, Real}"
+uri = "reference/#ADNLPModels.get_lag-Tuple%7BADNLPModels.AbstractADNLPModel%2C%20ADNLPModels.ADBackend%2C%20Real%7D"
+[[jl.method]]
+name = "ADNLPModels.get_nln_nnzh-Tuple{ADNLPModels.ADModelBackend, Any}"
+uri = "reference/#ADNLPModels.get_nln_nnzh-Tuple%7BADNLPModels.ADModelBackend%2C%20Any%7D"
+[[jl.method]]
+name = "ADNLPModels.get_nln_nnzj-Tuple{ADNLPModels.ADModelBackend, Any, Any}"
+uri = "reference/#ADNLPModels.get_nln_nnzj-Tuple%7BADNLPModels.ADModelBackend%2C%20Any%2C%20Any%7D"
+[[jl.method]]
+name = "ADNLPModels.get_residual_nnzh-Tuple{ADNLPModels.ADModelBackend, Any}"
+uri = "reference/#ADNLPModels.get_residual_nnzh-Tuple%7BADNLPModels.ADModelBackend%2C%20Any%7D"
+[[jl.method]]
+name = "ADNLPModels.get_residual_nnzj-Tuple{ADNLPModels.ADModelBackend, Any, Any}"
+uri = "reference/#ADNLPModels.get_residual_nnzj-Tuple%7BADNLPModels.ADModelBackend%2C%20Any%2C%20Any%7D"
+[[jl.method]]
+name = "ADNLPModels.get_sparsity_pattern-Tuple{Union{ADNLPModels.AbstractADNLPModel{T, S}, ADNLPModels.AbstractADNLSModel{T, S}} where {T, S}, Symbol}"
+uri = "reference/#ADNLPModels.get_sparsity_pattern-Tuple%7BUnion%7BADNLPModels.AbstractADNLPModel%7BT%2C%20S%7D%2C%20ADNLPModels.AbstractADNLSModel%7BT%2C%20S%7D%7D%20where%20%7BT%2C%20S%7D%2C%20Symbol%7D"
+[[jl.method]]
+name = "ADNLPModels.set_adbackend!-Tuple{Union{ADNLPModels.AbstractADNLPModel{T, S}, ADNLPModels.AbstractADNLSModel{T, S}} where {T, S}, ADNLPModels.ADModelBackend}"
+uri = "reference/#ADNLPModels.set_adbackend%21-Tuple%7BUnion%7BADNLPModels.AbstractADNLPModel%7BT%2C%20S%7D%2C%20ADNLPModels.AbstractADNLSModel%7BT%2C%20S%7D%7D%20where%20%7BT%2C%20S%7D%2C%20ADNLPModels.ADModelBackend%7D"
+
+[[jl.type]]
+name = "ADNLPModels.ADModelBackend"
+uri = "reference/#$"
+[[jl.type]]
+name = "ADNLPModels.ADNLPModel"
+uri = "#$"
+[[jl.type]]
+name = "ADNLPModels.ADNLSModel"
+uri = "#$"
+
+[[std.doc]]
+dispname = "Backend"
+name = "backend"
+uri = "backend/"
+[[std.doc]]
+dispname = "Support multiple precision"
+name = "generic"
+uri = "generic/"
+[[std.doc]]
+dispname = "Home"
+name = "index"
+uri = ""
+[[std.doc]]
+dispname = "Build a hybrid NLPModel"
+name = "mixed"
+uri = "mixed/"
+[[std.doc]]
+dispname = "Performance tips"
+name = "performance"
+uri = "performance/"
+[[std.doc]]
+dispname = "Default backends"
+name = "predefined"
+uri = "predefined/"
+[[std.doc]]
+dispname = "Reference"
+name = "reference"
+uri = "reference/"
+[[std.doc]]
+dispname = "Sparse Jacobian and Hessian"
+name = "sparse"
+uri = "sparse/"
+[[std.doc]]
+dispname = "Providing sparsity pattern for sparse derivatives"
+name = "sparsity_pattern"
+uri = "sparsity_pattern/"
+[[std.doc]]
+dispname = "Tutorial"
+name = "tutorial"
+uri = "tutorial/"
+
+[[std.label]]
+name = "ADNLPModels"
+uri = "#$"
+[[std.label]]
+name = "Acknowledgements"
+uri = "sparse/#$"
+[[std.label]]
+dispname = "Automatic sparse differentiation (ASD)"
+name = "Automatic-sparse-differentiation-(ASD)"
+uri = "sparse/#Automatic-sparse-differentiation-%28ASD%29"
+[[std.label]]
+name = "Benchmarks"
+uri = "performance/#$"
+[[std.label]]
+dispname = "Bug reports and discussions"
+name = "Bug-reports-and-discussions"
+uri = "#$"
+[[std.label]]
+dispname = "Build a hybrid NLPModel"
+name = "Build-a-hybrid-NLPModel"
+uri = "mixed/#$"
+[[std.label]]
+dispname = "Change backend"
+name = "Change-backend"
+uri = "backend/#$"
+[[std.label]]
+dispname = "Complementary packages"
+name = "Complementary-packages"
+uri = "#$"
+[[std.label]]
+dispname = "Creating an ADNLPModels backend that supports multiple precisions"
+name = "Creating-an-ADNLPModels-backend-that-supports-multiple-precisions"
+uri = "generic/#$"
+[[std.label]]
+dispname = "Default backend and performance in ADNLPModels"
+name = "Default-backend-and-performance-in-ADNLPModels"
+uri = "predefined/#$"
+[[std.label]]
+name = "Examples"
+uri = "backend/#$"
+[[std.label]]
+dispname = "Extracting sparsity patterns"
+name = "Extracting-sparsity-patterns"
+uri = "sparse/#$"
+[[std.label]]
+dispname = "How to switch backend in ADNLPModels"
+name = "How-to-switch-backend-in-ADNLPModels"
+uri = "backend/#$"
+[[std.label]]
+name = "Index"
+uri = "reference/#$"
+[[std.label]]
+name = "Install"
+uri = "#$"
+[[std.label]]
+name = "License"
+uri = "#$"
+[[std.label]]
+dispname = "Options for sparsity pattern detection and coloring"
+name = "Options-for-sparsity-pattern-detection-and-coloring"
+uri = "sparse/#$"
+[[std.label]]
+dispname = "Performance tips"
+name = "Performance-tips"
+uri = "performance/#$"
+[[std.label]]
+dispname = "Predefined backends"
+name = "Predefined-backends"
+uri = "predefined/#$"
+[[std.label]]
+name = "Reference"
+uri = "reference/#$"
+[[std.label]]
+dispname = "Support multiple precision without having to recreate the model"
+name = "Support-multiple-precision-without-having-to-recreate-the-model"
+uri = "backend/#$"
+[[std.label]]
+name = "Tutorial"
+uri = "tutorial/#$"
+[[std.label]]
+name = "Usage"
+uri = "#$"
+[[std.label]]
+dispname = "Use another backend"
+name = "Use-another-backend"
+uri = "backend/#$"
+[[std.label]]
+dispname = "Use in-place constructor"
+name = "Use-in-place-constructor"
+uri = "performance/#$"
+[[std.label]]
+dispname = "Use only the needed backends"
+name = "Use-only-the-needed-backends"
+uri = "performance/#$"
+[[std.label]]
+dispname = "Using known sparsity patterns"
+name = "Using-known-sparsity-patterns"
+uri = "sparse/#$"
+[[std.label]]
+dispname = "Sparse Hessian and Jacobian computations"
+name = "sparse"
+uri = "sparse/#$"
+[[std.label]]
+dispname = "Improve sparse derivatives"
+name = "sparsity-pattern"
+uri = "sparsity_pattern/#$"

@@ -71,7 +71,19 @@ const API_THEMES = [
     (
         id="solving", title="Solving",
         symbols=[
-            :solve, :methods, :discretize, :ocp_model, :nlp_model,
+            # `solve` and `methods` are bare-name qualified below (Pair form): both are
+            # generic functions the wider Julia/SciML ecosystem extends heavily, and a
+            # bare `:solve`/`:methods` pulls in every loaded package's docstring for the
+            # binding, not just ours (traced in the Phase D campaign report — e.g. Base's
+            # own `methods` docstring cross-references `which`/`@which`/`methodswith`,
+            # none of which resolve in this build).
+            :solve => "solve(::CTModels.AbstractModel, ::Symbol...)",
+            :solve => "solve(::CTModels.AbstractModel, ::CTModels.AbstractInitialGuess, " *
+                      "::CTSolvers.DOCP.AbstractDiscretizer, " *
+                      "::CTSolvers.Modelers.AbstractNLPModeler, " *
+                      "::CTSolvers.Solvers.AbstractNLPSolver)",
+            :methods => "methods()",
+            :discretize, :ocp_model, :nlp_model,
             :ocp_solution, :get_build_examodel,
         ],
     ),
@@ -194,7 +206,17 @@ const API_THEMES = [
 # below. Theme entries that are module-qualified (e.g. `CTModels.Solutions.variable`)
 # stand in for the bare exported name (`variable`) for that check — see
 # `_bare_name`.
+#
+# A theme entry can also be a `Pair` (e.g. `:solve => "solve(::CTModels.AbstractModel,
+# ::Symbol...)"`): the key is what the coverage check sees, the value is the exact
+# signature written into the `@docs` block. Needed whenever a bare name would pull in
+# a foreign package's docstring for the same generic function (`:solve` collides with
+# `CommonSolve.solve`, `:methods` with `Base.methods` — see docs/reports/99-api-coverage.md
+# and control-toolbox/OptimalControl.jl's Phase D campaign report for how this was found).
 _bare_name(s::Symbol) = Symbol(split(String(s), ".")[end])
+_bare_name(p::Pair) = _bare_name(first(p))
+_doc_entry(s::Symbol) = s
+_doc_entry(p::Pair) = last(p)
 
 const _COVERED_BARE_NAMES = let
     covered = Set{Symbol}()
@@ -277,7 +299,7 @@ function _generate_theme_page(docs_src, theme)
         end
         println(io, "```@docs; canonical=true")
         for s in theme.symbols
-            println(io, s)
+            println(io, _doc_entry(s))
         end
         println(io, "```")
     end
