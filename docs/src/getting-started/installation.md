@@ -120,10 +120,9 @@ All three are required together — they are what arms the `CTSolversMadNLPGPU` 
 guides list only the first two, because up to MadNLPGPU 0.8 `CUDSS` came in as a hard
 dependency; from 0.9 it is weak and has to be loaded explicitly.
 
-Unlike the optional pieces above, a missing one is **not** reported accurately: the
-`ExtensionError` always names `MadNLPGPU`, even when the package actually absent is `CUDSS`
-([CTSolvers#216](https://github.com/control-toolbox/CTSolvers.jl/issues/216)). If you loaded
-`MadNLPGPU` and are told to load `MadNLPGPU`, the answer is `using CUDSS`.
+Like the optional pieces above, a missing one is reported accurately: the `ExtensionError`
+names exactly which of the three is absent, so if you're told to load `CUDSS`, that's the one
+you forgot.
 
 `ExaModels` is not in the list on purpose: it ships as a dependency of OptimalControl, so
 `:exa` works without importing it. See [GPU](@ref solve-gpu) for the constraints, and check

@@ -104,10 +104,8 @@ what's close.
 | either on `:gpu` | `using MadNLPGPU`, `using CUDA` **and** `using CUDSS` — all three |
 
 Solving without the matching package loaded raises an `ExtensionError` naming exactly which
-`using` statement to add — with one exception. On the `:gpu` row the error always names
-`MadNLPGPU`, even when the package actually missing is `CUDSS`
-([CTSolvers#216](https://github.com/control-toolbox/CTSolvers.jl/issues/216)); see
-[Solving on GPU](@ref solve-gpu).
+`using` statement to add — including on the `:gpu` row, which needs all three of `MadNLPGPU`,
+`CUDA` and `CUDSS`; see [Solving on GPU](@ref solve-gpu).
 
 ## Inspecting a strategy
 
@@ -145,11 +143,10 @@ describe(:cpu)
 | `:euler_backward` | alias of `:euler_implicit` | ✅ | ✗ |
 | `:gauss_legendre_2` | fourth-order | ✅ | ✗ |
 | `:gauss_legendre_3` | sixth-order | ✅ | ✗ |
-| `:variable` | variable-step, ODE-based | ✗ | ✗ |
 
 plus `grid_size` (default `250`) or an explicit, possibly non-uniform, `time_grid`.
 
-Every cell above was checked by solving with that scheme. Two of the results need spelling out.
+Every cell above was checked by solving with that scheme. One of the results needs spelling out.
 
 !!! warning "Under `:exa`, only the four canonical names work"
 
@@ -165,19 +162,6 @@ Every cell above was checked by solving with that scheme. Two of the results nee
     showerror(IOContext(stdout, :color => false), e) # hide
     end # hide
     ```
-
-    The `Line 6:` prefix is emitted by the parser, not by the error. It reports the generated
-    line that was running when the exception escaped — here the dynamics equation, which is
-    correct and has nothing to do with the scheme. See
-    [CTParser#338](https://github.com/control-toolbox/CTParser.jl/issues/338).
-
-!!! warning "`:variable` is advertised but does not run"
-
-    The `describe(:collocation)` output above lists `:variable`, and the registry accepts it,
-    but no modeler can use it: the scheme dispatches to `CTDirect.VariableStepODE`, whose
-    implementation is not compiled into CTDirect, so a solve raises
-    `UndefVarError(:VariableStepODE, …, CTDirect)` rather than any typed error. It is kept in
-    the table only because the registry listing above advertises it.
 
 ## Advanced: the strategy registry
 
