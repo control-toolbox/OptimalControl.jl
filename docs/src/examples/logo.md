@@ -168,8 +168,7 @@ scatter!(ax, Point2f(0, 0); color = jl.blue, markersize = 100)
 fig
 ```
 
-That is the figure the site uses as its logo (`docs/src/assets/logo.png`) and, downscaled, as
-its favicon.
+That is the figure the site uses as its logo (`docs/src/assets/logo.png`).
 
 The published asset is produced by a slightly more elaborate script — crisper strokes, a few
 tuning knobs — kept in the repository at `.extras/logos/logo-gagnant/`. The optimal control
