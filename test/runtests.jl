@@ -54,8 +54,7 @@ const CUDA_FUNCTIONAL = CUDA.functional()
 const ON_GPU_RUNNER = any(
     gpu -> occursin(gpu, get(ENV, "RUNNER_NAME", "")), ("kkt", "occidata")
 )
-const GPU_EXTENSION_ARMED =
-    Base.get_extension(CTSolvers, :CTSolversMadNLPGPU) !== nothing
+const GPU_EXTENSION_ARMED = Base.get_extension(CTSolvers, :CTSolversMadNLPGPU) !== nothing
 end
 
 if TestCapabilities.CUDA_FUNCTIONAL
