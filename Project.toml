@@ -24,7 +24,7 @@ Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 [compat]
 ADNLPModels = "0.8"
 BenchmarkTools = "1"
-CTBase = "0.30"
+CTBase = "0.30, 0.29"
 CTDirect = "1"
 CTFlows = "0.18"
 CTLie = "0.2"
