@@ -48,6 +48,10 @@ ocp = @def begin
 end
 ```
 
+The `+ 0.0` in `v(t) + 0.0 ≤ VMAX` forces the parser to read this as a nonlinear **path**
+constraint (with a dual, reachable by its `:vmax` label) rather than a plain box bound on the
+state — see [Constrained arcs](@ref flows-constrained-arcs).
+
 ### Direct solution
 
 ```@example main
@@ -292,5 +296,5 @@ t1_arc, 3a_arc, t2_arc, 1 - 3a_arc
 
 - [Constrained arcs](@ref flows-constrained-arcs) — `constraint=`/`multiplier=`, the three ways
   to spell the constraint, in general.
-- [Multi-phase](@ref flows-multi-phase) — flow concatenation and costate jumps, in general.
+- [Multi-phase flows](@ref flows-multi-phase) — flow concatenation and costate jumps, in general.
 - [Energy minimisation](@ref examples-double-integrator-energy) — the same wagon, unconstrained.

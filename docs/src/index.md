@@ -47,7 +47,7 @@ plot(sol)
 
 | Section | What's there |
 | --- | --- |
-| [Getting started](@ref getting-started-guided-tour) | Install, solve your first problem, then a longer guided tour covering both the direct and indirect methods. |
+| [Getting started](@ref getting-started-installation) | Install, solve your first problem, then a longer guided tour covering both the direct and indirect methods. |
 | [Modelling](@ref modelling-formulation) | The `@def` DSL, the macro-free functional API, control-free (parameter estimation) problems, and problem introspection. |
 | [Solve (direct)](@ref solve-overview) | Discretize-and-transcribe methods: choosing a strategy, initial guesses, options, explicit mode, GPU. |
 | [Results](@ref results-solution) | Read a `Solution` — trajectories, costate, duals, status — plot it, save it, reload it. |

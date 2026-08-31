@@ -14,7 +14,7 @@ any one piece before you commit to it.
   Only `:collocation` exists today.
 - **Modeler** — how the resulting NLP is built: `:adnlp` (automatic differentiation via
   ADNLPModels) or `:exa` (SIMD-friendly, GPU-capable, via ExaModels — only for problems whose
-  dynamics are written coordinatewise, see [Abstract syntax](@ref modelling-abstract-syntax)).
+  dynamics are written coordinatewise, see [Abstract syntax (`@def`)](@ref modelling-abstract-syntax)).
 - **Solver** — which NLP solver runs: `:ipopt`, `:madnlp`, `:uno`, `:madncl`, `:knitro`.
 - **Parameter** — execution backend: `:cpu` or `:gpu`.
 

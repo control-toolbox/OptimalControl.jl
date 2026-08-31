@@ -58,7 +58,7 @@ f_typed(t0, x0, p0, tf)[1] ≈ xf
 
 Two other law kinds exist — `ClosedLoop(x -> ...)` and `OpenLoop(t -> ...)` — but they build a
 *state* flow with no costate, appropriate for simulation rather than indirect solving; see
-[Simulating a controlled system](@ref flows-simulation).
+[Simulation](@ref flows-simulation).
 
 ## Non-autonomous problems
 
@@ -166,7 +166,7 @@ pω
 ## Control-free problems
 
 `Flow(ocp)` — no law argument — works when the problem has no control at all: see
-[Problems without a control](@ref modelling-without-control) for how to declare one and what
+[No control](@ref modelling-without-control) for how to declare one and what
 it means.
 
 ## Total or partial Hamiltonian
@@ -222,12 +222,12 @@ Everything in [Solution object](@ref results-solution) and [Plot](@ref results-p
 verbatim — `state(sol)`, `control(sol)`, `objective(sol)`, `plot(sol)`. This is specific to
 flows built **from an OCP**; a flow built without one (a bare `Hamiltonian`, a
 `ControlledVectorField`, ...) returns its own trajectory wrapper instead — see
-[Simulating a controlled system](@ref flows-simulation) for that distinction.
+[Simulation](@ref flows-simulation) for that distinction.
 
 ## See also
 
-- [What you can get back from a flow](@ref flows-accessors) — the Hamiltonian, its vector
+- [Accessors](@ref flows-accessors) — the Hamiltonian, its vector
   field, and the law you passed in, pulled back out.
-- [Writing a shooting function](@ref flows-shooting) — the payoff: turn this into a root-finding
+- [Shooting](@ref flows-shooting) — the payoff: turn this into a root-finding
   problem for $p_0$.
-- [Problems without a control](@ref modelling-without-control) — the `Flow(ocp)` case in full.
+- [No control](@ref modelling-without-control) — the `Flow(ocp)` case in full.

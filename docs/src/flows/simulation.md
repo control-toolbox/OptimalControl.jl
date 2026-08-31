@@ -138,5 +138,5 @@ never name it in your own code, only call the generic accessors on it.
   above, in full.
 - [From an OCP](@ref flows-from-ocp) — the indirect-solving counterpart, where the law comes
   from the PMP instead of being handed to you.
-- [Problems without a control](@ref modelling-without-control) — control-free problems, a
+- [No control](@ref modelling-without-control) — control-free problems, a
   related but distinct case.

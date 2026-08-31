@@ -117,7 +117,7 @@ ocp = build(pre)
 
 ## A worked example: double integrator, energy minimisation
 
-The simplest case: fixed time interval, boundary constraints, autonomous dynamics, Lagrange cost. The [`@def`](@ref) abstract syntax is shown on the left and the equivalent functional API on the right. See the [example gallery](@ref examples-gallery) for more problems worked both ways, including a control-free one (see also [Problems without a control](@ref modelling-without-control)).
+The simplest case: fixed time interval, boundary constraints, autonomous dynamics, Lagrange cost. The [`@def`](@ref) abstract syntax is shown on the left and the equivalent functional API on the right. See the [example gallery](@ref examples-gallery) for more problems worked both ways, including a control-free one (see also [No control](@ref modelling-without-control)).
 
 ```@example ex-energy
 using OptimalControl
@@ -253,7 +253,7 @@ This is the one place on the site where this is spelled out; every other page ju
 - `variable!` → before `time!` when using free-time indices (`indf`, `ind0`)
 - `variable!` → before `dynamics!` and `objective!`
 - `dynamics!` and `objective!` → after `time!` and `state!`
-- `control!` is optional and, when used, has no ordering constraint of its own beyond needing `state!` first (component-count validation) — see [Problems without a control](@ref modelling-without-control) for what omitting it means.
+- `control!` is optional and, when used, has no ordering constraint of its own beyond needing `state!` first (component-count validation) — see [No control](@ref modelling-without-control) for what omitting it means.
 
 ## Equivalence
 
@@ -263,5 +263,5 @@ The abstract and functional forms are not just "meant to agree" — it's a teste
 
 - [Formulation](@ref modelling-formulation) — the mathematics this API builds.
 - [Abstract syntax (`@def`)](@ref modelling-abstract-syntax) — the macro alternative.
-- [Problems without a control](@ref modelling-without-control) — omitting `control!` entirely.
+- [No control](@ref modelling-without-control) — omitting `control!` entirely.
 - [Inspect a problem](@ref modelling-inspect) — read a built model back.

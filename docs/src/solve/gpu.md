@@ -52,7 +52,7 @@ ExaModels' own API, import it qualified: `using ExaModels: ExaModels`.
 
 `:exa` — the only GPU-capable modeler — requires dynamics (and any path constraint) written
 one coordinate at a time, `∂(x₁)(t) == ...`, not `ẋ(t) == [...]`. See
-[Abstract syntax](@ref modelling-abstract-syntax) for the two forms side by side.
+[Abstract syntax (`@def`)](@ref modelling-abstract-syntax) for the two forms side by side.
 
 ```julia
 ocp = @def begin

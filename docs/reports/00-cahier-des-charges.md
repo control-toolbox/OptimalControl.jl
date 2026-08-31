@@ -420,7 +420,10 @@ after the three assertions in `test/suite/reexport/test_ctlie.jl:81-84` are rewr
 - [ ] `docs/Project.toml` resolves against the root `Project.toml`.
 - [ ] `docs/make.jl` runs with `draft = false`, log clean of resolution errors.
 - [ ] No user-facing page contains `Lie(`, ` ⋅ `, `HamiltonianLift`, `OptimalControl.VectorField`,
-      `autonomous=`, `Flow(ocp, u, g,` — except the Migration page, in inert fences.
+      the bare `autonomous=` keyword, or `Flow(ocp, u, g,` — except the Migration page, in inert
+      fences. The `is_autonomous=` spelling and CTModels' `time_dependence!(…; autonomous=…)`
+      (its real current signature) are the supported API and do not count; grep with
+      `grep -nE '(^|[^_])autonomous=' | grep -v time_dependence` to skip both.
 - [ ] Every capability in §6 has a page.
 - [ ] [`99-api-coverage.md`](99-api-coverage.md) has no uncovered re-exported symbol.
 - [ ] `docs/attic/` is gone.
