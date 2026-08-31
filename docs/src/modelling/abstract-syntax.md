@@ -421,7 +421,7 @@ nothing # hide
     ```
 
 !!! warning
-    Constraint bounds must be *effective*, that is must not depend on a variable. For instance, the following is rejected (the message is currently not explicit — the cause is `x₂(0) == v` using the variable `v` as a bound):
+    A constraint *bound* must be constant — it may not depend on the variable, the state, the control or the time. The following is rejected, with a message naming the cause:
 
     ```@repl abs
     try # hide
@@ -432,7 +432,7 @@ nothing # hide
         u ∈ R, control
         -1 ≤ v ≤ 1
         x₁(0) == -1
-        x₂(0) == v # wrong: the bound is not effective (it depends on the variable)
+        x₂(0) == v # wrong: the bound v depends on the variable
         x(1) == [0, 0]
         ẋ(t) == [x₂(t), u(t)]
         ∫(0.5u(t)^2) → min
@@ -442,7 +442,7 @@ nothing # hide
     end # hide
     ```
 
-    Write instead a boundary constraint, which *may* involve the variable:
+    Write instead a boundary constraint, moving the term to the constrained side — that side *may* involve the variable:
 
     ```@example abs
     @def begin

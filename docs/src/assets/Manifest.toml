@@ -225,9 +225,9 @@ version = "0.30.2-beta"
 
 [[deps.CTDirect]]
 deps = ["ADNLPModels", "CTBase", "CTModels", "CTParser", "CTSolvers", "DocStringExtensions", "ExaModels", "SolverCore", "SparseArrays", "SparseConnectivityTracer"]
-git-tree-sha1 = "f5b16f5b312265d2000cf1ce2a46ad219b1e4717"
+git-tree-sha1 = "f88e02b5c7102b24efa7e89c558c6d8fc67015e5"
 uuid = "790bbbee-bee9-49ee-8912-a9de031322d5"
-version = "1.1.5-beta"
+version = "1.1.6-beta"
 
 [[deps.CTFlows]]
 deps = ["ADTypes", "CTBase", "CTModels", "CTSolvers", "CommonSolve", "DocStringExtensions", "GPUArraysCore", "RecipesBase"]
@@ -274,9 +274,9 @@ version = "0.19.2-beta"
 
 [[deps.CTParser]]
 deps = ["CTBase", "DocStringExtensions", "MLStyle", "OrderedCollections", "Parameters", "Unicode"]
-git-tree-sha1 = "5b64179056b79c42ee4fd748e55e98e5a1e3f5e9"
+git-tree-sha1 = "3f745c73919729ca654d02e1091fce5583facacc"
 uuid = "32681960-a1b1-40db-9bff-a1ca817385d1"
-version = "0.9.4-beta"
+version = "0.9.5-beta"
 weakdeps = ["ExaModels", "LinearAlgebra"]
 
     [deps.CTParser.extensions]
