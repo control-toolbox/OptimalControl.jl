@@ -5,7 +5,7 @@ Draft = false
 ```
 
 Two problems with no control anywhere — only a `variable` to fit to data. See
-[Problems without a control](@ref modelling-without-control) for the modelling side of this;
+[No control](@ref modelling-without-control) for the modelling side of this;
 this page is the full worked story, direct and indirect, for both.
 
 ```@example main
@@ -188,7 +188,7 @@ plot!(plt_harmonic, indirect_harmonic, :state; label="Indirect", linestyle=:dash
 
 ## See also
 
-- [Problems without a control](@ref modelling-without-control) — the modelling-side guide for
+- [No control](@ref modelling-without-control) — the modelling-side guide for
   control-free problems.
 - [Control and variable together](@ref examples-control-and-variable) — the same two systems,
   with a control added back in.

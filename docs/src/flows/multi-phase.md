@@ -132,7 +132,7 @@ xf   # ≈ [0, 0], the target
 
 - [Constrained arcs](@ref flows-constrained-arcs) — assembling arcs around a boundary arc
   specifically, where the jump usually comes from a costate discontinuity.
-- [Writing a shooting function](@ref flows-shooting) — solving for the switching time(s)
+- [Shooting](@ref flows-shooting) — solving for the switching time(s)
   themselves, not just assuming them known as here.
 - [From an OCP](@ref flows-from-ocp) — the single-arc case this section generalises.
 - [Time minimisation (bang–bang)](@ref examples-double-integrator-time) — the full story behind

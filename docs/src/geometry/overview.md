@@ -66,7 +66,7 @@ autonomous, one not, say — throw a `PreconditionError` naming both traits expl
 
 Everything here is AD-backed **except `Lift`**, which is a purely algebraic rearrangement
 ($H(x,p) = p \cdot X(x)$, no derivative involved). See
-[Choosing an AD backend](@ref geometry-ad-backend) for how the derivatives themselves are
+[AD backend](@ref geometry-ad-backend) for how the derivatives themselves are
 computed and how to change the backend.
 
 ## Coming from v2.0
@@ -86,4 +86,4 @@ catch the old names.
 - [Lie derivative and Lie bracket](@ref geometry-ad)
 - [Poisson bracket](@ref geometry-poisson)
 - [The `@Lie` macro](@ref geometry-lie-macro)
-- [Choosing an AD backend](@ref geometry-ad-backend)
+- [AD backend](@ref geometry-ad-backend)

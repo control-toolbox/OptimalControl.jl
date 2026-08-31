@@ -1,4 +1,4 @@
-# [Choosing an AD backend](@id geometry-ad-backend)
+# [AD backend](@id geometry-ad-backend)
 
 ```@meta
 Draft = false
@@ -30,8 +30,9 @@ keyword is given.
 ## Changing it globally
 
 ```@example main
-import CTBase: Differentiation
+using CTBase: Differentiation
 
+default_backend = dg_ad_backend()   # keep the default, to restore it below
 dg_ad_backend!(Differentiation.DifferentiationInterface())
 dg_ad_backend()
 ```
@@ -54,7 +55,7 @@ A GPU-parameterized backend is constructed the same way, with the `GPU` strategy
 `CPU`:
 
 ```julia
-import CTBase: Differentiation, Strategies
+using CTBase: Differentiation, Strategies
 
 dg_ad_backend!(Differentiation.DifferentiationInterface{Strategies.GPU}())
 ```
@@ -66,6 +67,16 @@ environment or in CI, the same caveat as [GPU](@ref solve-gpu) on the solve side
 
 ```@example main
 describe(:di)
+```
+
+## Restoring the default
+
+`dg_ad_backend!` is global and persists for the rest of the session — set it back when the
+demonstration is over:
+
+```@example main
+dg_ad_backend!(default_backend)
+dg_ad_backend()
 ```
 
 ## If nothing works

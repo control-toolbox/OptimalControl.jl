@@ -55,10 +55,10 @@ v_{\mathrm{lower}} \le v \le v_{\mathrm{upper}}.
 
 ## The control-free case
 
-Nothing above requires a control to be present: taking $m = 0$ (no $u$) is a legitimate degenerate case, used to fit or optimise parameters of a dynamical system rather than to steer it. See [Problems without a control](@ref modelling-without-control) for how to declare and solve such problems.
+Nothing above requires a control to be present: taking $m = 0$ (no $u$) is a legitimate degenerate case, used to fit or optimise parameters of a dynamical system rather than to steer it. See [No control](@ref modelling-without-control) for how to declare and solve such problems.
 
 ## See also
 
 - [Abstract syntax (`@def`)](@ref modelling-abstract-syntax) — write this formulation directly as Julia code.
 - [Functional API](@ref modelling-functional-api) — build the same model without the macro.
-- [Problems without a control](@ref modelling-without-control) — the $m = 0$ case.
+- [No control](@ref modelling-without-control) — the $m = 0$ case.

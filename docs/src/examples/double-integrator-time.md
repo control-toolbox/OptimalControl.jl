@@ -118,7 +118,7 @@ plot!(plt, indirect_sol, :state, :control; label="Indirect")
 
 ## See also
 
-- [Multi-phase](@ref flows-multi-phase) — flow concatenation `*`, in general.
+- [Multi-phase flows](@ref flows-multi-phase) — flow concatenation `*`, in general.
 - [Shooting](@ref flows-shooting) — bang–bang shooting, worked in full detail from this exact
   problem.
 - [Energy minimisation](@ref examples-double-integrator-energy) — the same wagon, unbounded

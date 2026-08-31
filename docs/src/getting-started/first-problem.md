@@ -36,7 +36,7 @@ end
 nothing # hide
 ```
 
-See [Abstract syntax](@ref modelling-abstract-syntax) for what each line above means.
+See [Abstract syntax (`@def`)](@ref modelling-abstract-syntax) for what each line above means.
 
 ## Solve it
 

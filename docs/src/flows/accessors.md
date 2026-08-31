@@ -131,6 +131,6 @@ CTFlows.Flows.integrator(f)
 
 - [From an OCP](@ref flows-from-ocp) — the most common source of a flow with all four
   accessors available.
-- [From Hamiltonians and vector fields](@ref flows-from-hamiltonians) — every constructor in
+- [From Hamiltonians](@ref flows-from-hamiltonians) — every constructor in
   the table above, built and shown in full.
 - [Geometry](@ref geometry-overview) — the Lie-theoretic tools these systems are built on.

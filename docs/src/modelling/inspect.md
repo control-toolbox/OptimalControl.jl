@@ -160,7 +160,7 @@ dim_control_constraints_box(ocp)
 has_control(ocp)  # true if the problem has a control input
 ```
 
-`is_control_free(ocp) ≡ !has_control(ocp)` — see [Problems without a control](@ref modelling-without-control).
+`is_control_free(ocp) ≡ !has_control(ocp)` — see [No control](@ref modelling-without-control).
 
 ## Variable
 

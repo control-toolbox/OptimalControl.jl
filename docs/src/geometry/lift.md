@@ -85,7 +85,7 @@ Hv([1.0, 2.0], [3.0, 4.0], 1.0)   # H(x, p, v)
 Feed a lift straight into [`Poisson`](@ref) (see
 [The bridge identity](@ref geometry-overview)), or into [`Flow`](@ref) to integrate the
 associated Hamiltonian system — see
-[From Hamiltonians and vector fields](@ref flows-from-hamiltonians).
+[From Hamiltonians](@ref flows-from-hamiltonians).
 
 ## A trap to know about
 
@@ -109,5 +109,5 @@ it. Harmless, but don't be thrown by it: the operation that actually failed is `
 
 - [Overview](@ref geometry-overview) — the bridge identity this page is one half of.
 - [Poisson bracket](@ref geometry-poisson) — what a lift is usually fed into.
-- [From Hamiltonians and vector fields](@ref flows-from-hamiltonians) — turning a lift into a
+- [From Hamiltonians](@ref flows-from-hamiltonians) — turning a lift into a
   flow.

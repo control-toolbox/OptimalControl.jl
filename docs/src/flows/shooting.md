@@ -1,4 +1,4 @@
-# [Writing a shooting function](@id flows-shooting)
+# [Shooting](@id flows-shooting)
 
 ```@meta
 Draft = false
@@ -84,7 +84,7 @@ sqrt(sum(abs2, s))
 ```@example main
 ξ_guess = [1.0, 1.0, 1.0, 2.0] .* 1.1
 prob = NonlinearProblem((s, ξ, _) -> shoot!(s, ξ), ξ_guess)
-sol = solve(prob, SimpleNewtonRaphson(); abstol=1e-10, reltol=1e-10)
+sol = NonlinearSolve.solve(prob, SimpleNewtonRaphson(); abstol=1e-10, reltol=1e-10)
 sol.u, sol.retcode
 ```
 

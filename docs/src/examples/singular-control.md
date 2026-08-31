@@ -46,6 +46,11 @@ ocp = @def begin
 end
 ```
 
+The $-\pi/2 \le \theta(t) \le \pi/2$ box only keeps the *direct* solver away from a spurious
+branch where the vehicle turns the long way round; the optimal orientation stays well inside
+it, so the bound is never active at the solution. The *indirect* solution below is built from
+the PMP flow alone and never sees this bound — the two still agree because it is slack.
+
 ## Direct solution
 
 ```@example main
@@ -86,6 +91,17 @@ to a function of the state alone:
 
 ```@example main
 u_indirect(x) = sin(x[3])^2
+```
+
+This is exact on the singular surface $\{H_1 = 0,\ H_{01} = 0\}$ — here $p_\theta = 0$ and
+$p_y = p_x\tan\theta$. Check it against the bracket formula at an arbitrary point of that
+surface:
+
+```@example main
+q_s = [0.3, -0.1, 0.5]
+p_s = [1.7, 1.7 * tan(q_s[3]), 0.0]      # a point of {H₁ = 0, H₀₁ = 0}
+
+us_bracket(q_s, p_s), u_indirect(q_s)    # equal
 ```
 
 ## Indirect solution
@@ -149,12 +165,12 @@ The indirect and direct solutions match closely, confirming the singular-control
 above is correct — and, since `Lift`/`@Lie` needed no change from the pre-rewrite version, that
 the flow half was migrated correctly too.
 
-The bracket formula and the simplified state-only one agree **along this extremal** — not at an
-arbitrary $(q,p)$, only on the trajectory the costate actually produces:
+The same equality, now along the computed extremal rather than a hand-picked surface point:
 
 ```@example main
-[us_bracket(state(indirect_sol)(t), costate(indirect_sol)(t)) - u_indirect(state(indirect_sol)(t))
- for t in range(t0, tf_sol, 5)]
+xs = state(indirect_sol)
+ps = costate(indirect_sol)
+[us_bracket(xs(t), ps(t)) - u_indirect(xs(t)) for t in range(t0, tf_sol, 5)]
 ```
 
 ## See also

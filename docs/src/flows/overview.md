@@ -51,14 +51,14 @@ numerically.
 ## Three things this section does
 
 1. **Indirect solving** — [From an OCP](@ref flows-from-ocp),
-   [Constrained arcs](@ref flows-constrained-arcs), [Multi-phase](@ref flows-multi-phase),
+   [Constrained arcs](@ref flows-constrained-arcs), [Multi-phase flows](@ref flows-multi-phase),
    [Shooting](@ref flows-shooting).
-2. **Simulation** — [Simulating a controlled system](@ref flows-simulation): integrate under a
+2. **Simulation** — [Simulation](@ref flows-simulation): integrate under a
    given control, no optimization involved.
-3. **Inspection** — [What you can get back from a flow](@ref flows-accessors): the Hamiltonian,
+3. **Inspection** — [Accessors](@ref flows-accessors): the Hamiltonian,
    its vector field, the pseudo-Hamiltonian, the control law you passed in.
 
-[From Hamiltonians and vector fields](@ref flows-from-hamiltonians) covers the lower-level
+[From Hamiltonians](@ref flows-from-hamiltonians) covers the lower-level
 constructors these three jobs are all built from.
 
 ## Before you start
@@ -150,12 +150,12 @@ f(t0, x0, p0, tf; method=:gpu)    # wrong — MethodError, no such call-time key
 ## Where to go
 
 - [From an OCP](@ref flows-from-ocp) — the main path for indirect optimal control.
-- [From Hamiltonians and vector fields](@ref flows-from-hamiltonians) — building blocks below
+- [From Hamiltonians](@ref flows-from-hamiltonians) — building blocks below
   the OCP layer.
-- [Simulating a controlled system](@ref flows-simulation) — no optimization, just integration.
-- [What you can get back from a flow](@ref flows-accessors) — inspection.
+- [Simulation](@ref flows-simulation) — no optimization, just integration.
+- [Accessors](@ref flows-accessors) — inspection.
 - [Multi-phase flows](@ref flows-multi-phase) and [Constrained arcs](@ref flows-constrained-arcs)
   — assembling several arcs into one trajectory.
-- [Writing a shooting function](@ref flows-shooting) — the payoff.
+- [Shooting](@ref flows-shooting) — the payoff.
 - [Solve overview](@ref solve-overview) — the direct-method counterpart to everything here.
 - [Geometry](@ref geometry-overview) — the Lie-theoretic tools some of these constructors build on.

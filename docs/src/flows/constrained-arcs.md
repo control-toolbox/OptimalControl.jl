@@ -44,6 +44,11 @@ end
 nothing # hide
 ```
 
+`v(t) + 0.0 ≤ VMAX` rather than `v(t) ≤ VMAX`: a bare `v(t) ≤ VMAX` parses as a **box bound**
+on the state component, which carries no path multiplier and cannot be pulled into a flow by
+its label. Adding `+ 0.0` makes it a nonlinear **path** constraint — it now has a dual, and
+`constraint=:vmax` below can reach it.
+
 ## Building the constrained flow
 
 ```@example main
@@ -176,7 +181,7 @@ end # hide
 
 - [Multi-phase flows](@ref flows-multi-phase) — assembling several arcs, constrained or not,
   into one callable flow.
-- [Writing a shooting function](@ref flows-shooting) — solving for the switching times
+- [Shooting](@ref flows-shooting) — solving for the switching times
   themselves rather than assuming them known.
 - [State constraint](@ref examples-state-constraint) — this OCP worked end to end: the
   three-arc structure, the costate jump, and the shooting for the entry and exit times.

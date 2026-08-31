@@ -94,12 +94,12 @@ them directly, but because `@Lie`'s expansion needs them in scope.
 The old `autonomous=`/`variable=` keywords are rejected at macro-expansion time, not silently
 accepted:
 
-```@repl main
-try # hide
-eval(:(@Lie [$F1, $F2] autonomous=false))
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
+```julia
+julia> @Lie [F1, F2] autonomous=false
+ERROR: IncorrectArgument: @Lie: unknown keyword argument
+Got       autonomous
+Expected  is_autonomous, is_variable, or ad_backend
+Context   @Lie macro keyword parsing
 ```
 
 ## See also

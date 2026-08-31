@@ -289,7 +289,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
             # index.md is the VitePress root — not listed here
             "Getting started" => [
                 "Installation" => "getting-started/installation.md",
-                "First problem" => "getting-started/first-problem.md",
+                "Your first problem" => "getting-started/first-problem.md",
                 "Guided tour" => "getting-started/guided-tour.md",
             ],
             "Modelling" => [
@@ -319,22 +319,22 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "From Hamiltonians" => "flows/from-hamiltonians.md",
                 "Simulation" => "flows/simulation.md",
                 "Accessors" => "flows/accessors.md",
-                "Multi-phase" => "flows/multi-phase.md",
+                "Multi-phase flows" => "flows/multi-phase.md",
                 "Constrained arcs" => "flows/constrained-arcs.md",
                 "Shooting" => "flows/shooting.md",
             ],
             "Geometry" => [
                 "Overview" => "geometry/overview.md",
                 "Lift" => "geometry/lift.md",
-                "ad" => "geometry/ad.md",
-                "Poisson" => "geometry/poisson.md",
-                "@Lie" => "geometry/lie-macro.md",
+                "Lie derivative and Lie bracket" => "geometry/ad.md",
+                "Poisson bracket" => "geometry/poisson.md",
+                "The @Lie macro" => "geometry/lie-macro.md",
                 "AD backend" => "geometry/ad-backend.md",
             ],
             "Examples" => [
-                "Gallery" => "examples/gallery.md",
+                "Example gallery" => "examples/gallery.md",
                 "Energy minimisation" => "examples/double-integrator-energy.md",
-                "Time minimisation (bang-bang)" => "examples/double-integrator-time.md",
+                "Time minimisation (bang–bang)" => "examples/double-integrator-time.md",
                 "Parameter estimation without a control" => "examples/control-free.md",
                 "Control and variable together" => "examples/control-and-variable.md",
                 "Singular control" => "examples/singular-control.md",

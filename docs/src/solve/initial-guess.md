@@ -361,4 +361,4 @@ under `using OptimalControl` is an open question, not a decision this page makes
 - [Overview](@ref solve-overview) — the rest of what `solve` accepts.
 - [Solution object](@ref results-solution) — `state`, `costate`, `control`, `variable` on a
   returned solution.
-- [Abstract syntax](@ref modelling-abstract-syntax) — where the labels `@init` uses come from.
+- [Abstract syntax (`@def`)](@ref modelling-abstract-syntax) — where the labels `@init` uses come from.

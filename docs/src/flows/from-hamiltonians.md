@@ -1,4 +1,4 @@
-# [From Hamiltonians and vector fields](@id flows-from-hamiltonians)
+# [From Hamiltonians](@id flows-from-hamiltonians)
 
 ```@meta
 Draft = false
@@ -154,7 +154,7 @@ isn't.
 
 - [From an OCP](@ref flows-from-ocp) — the same constructors, specialised: an OCP supplies
   $\tilde H$ automatically, you only supply the law.
-- [What you can get back from a flow](@ref flows-accessors) — which accessor works on which of
+- [Accessors](@ref flows-accessors) — which accessor works on which of
   the flows built here.
 - [Lift and Poisson brackets](@ref geometry-lift) — the differential-geometric layer these
   constructors sit on top of.
