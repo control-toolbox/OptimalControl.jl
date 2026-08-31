@@ -40,25 +40,25 @@ using OptimalControl
 
 pre = OptimalControl.PreModel()
 
-# ─── Optional: must come before time! when using indf/ind0 ───────────────────
+# ─── Optional: before time! when using indf/ind0 ───────────────
 variable!(pre, q)                         # q = variable dimension
-# ─────────────────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────────────────────
 
 time!(pre; t0=..., tf=...)                # fixed times
-# or: time!(pre; t0=..., indf=i)          # free final time at variable index i
+# or: time!(pre; t0=..., indf=i)   # free final time at var index i
 
 state!(pre, n)                            # n = state dimension
 
-# ─── Optional: omit entirely for control-free problems ───────────────────────
+# ─── Optional: omit for control-free problems ──────────────────
 control!(pre, m)                          # m = control dimension
-# ─────────────────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────────────────────
 
 # Dynamics — in-place, signature: dyn!(dx, t, x, u, v)
-#   dx : output vector (modified in place), length n — always a vector, even for n=1
+#   dx : output vector (modified in place), length n (vector even for n=1)
 #   t  : current time  (scalar)
 #   x  : state         (scalar if n=1, vector of length n otherwise)
-#   u  : control       (scalar if m=1, vector of length m otherwise; `nothing` if control-free)
-#   v  : variable      (scalar if q=1, vector of length q otherwise; `nothing` if no variable)
+#   u  : control    (scalar if m=1 else vector; `nothing` if control-free)
+#   v  : variable   (scalar if q=1 else vector; `nothing` if none)
 function dyn!(dx, t, x, u, v)
     dx[1] = ...
     dx[2] = ...
@@ -76,11 +76,11 @@ objective!(pre, :min; lagrange=lag)                   # Lagrange cost
 # or: objective!(pre, :min; mayer=may)                # Mayer cost
 # or: objective!(pre, :min; mayer=may, lagrange=lag)  # Bolza cost
 
-# ─── Optional: one call per constraint ───────────────────────────────────────
+# ─── Optional: one call per constraint ─────────────────────────
 # Two families of constraints:
 #
 # (a) Box constraints on components — :state, :control, :variable
-#     rg selects the component range i:j, with lb ≤ x[rg] ≤ ub (resp. u, v).
+#     rg selects the range i:j, with lb ≤ x[rg] ≤ ub (resp. u, v).
 constraint!(pre, :state;    rg=i:j, lb=..., ub=..., label=:name)
 constraint!(pre, :control;  rg=i:j, lb=..., ub=..., label=:name)
 constraint!(pre, :variable; rg=i:j, lb=..., ub=..., label=:name)
@@ -88,10 +88,10 @@ constraint!(pre, :variable; rg=i:j, lb=..., ub=..., label=:name)
 # (b) Non-linear constraints defined by a function — :boundary, :path
 #     The constraint reads:  lb ≤ f(...) ≤ ub  (use lb=ub for equality).
 #
-#     Boundary — in-place, signature: b!(val, x0, xf, v)   (same shape as Mayer)
-#         val : output vector (modified in place), length = length(lb) = length(ub)
-#     Path — in-place, signature: p!(val, t, x, u, v)      (same shape as dynamics)
-#         val : output vector (modified in place), length = length(lb) = length(ub)
+#     Boundary — in-place: b!(val, x0, xf, v)   (same shape as Mayer)
+#         val : vector (in place), length = length(lb) = length(ub)
+#     Path — in-place: p!(val, t, x, u, v)      (same shape as dynamics)
+#         val : vector (in place), length = length(lb) = length(ub)
 function b!(val, x0, xf, v)
     val[1] = ...
 end
@@ -101,7 +101,7 @@ function p!(val, t, x, u, v)
     val[1] = ...
 end
 constraint!(pre, :path; f=p!, lb=..., ub=..., label=:name)
-# ─────────────────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────────────────────
 
 # autonomous=true  ⟺  time t does NOT appear explicitly in the dynamics,
 #                     the Lagrange integrand, nor in any :path constraint.
@@ -207,13 +207,24 @@ Both formulations produce identical solutions. We solve both and plot them toget
 sol_macro = solve(ocp_macro; display=false)
 sol_func = solve(ocp_func; display=false)
 
-println("Macro: objective = ", objective(sol_macro), ", iterations = ", iterations(sol_macro))
-println("Functional API: objective = ", objective(sol_func), ", iterations = ", iterations(sol_func))
+println(
+    "Macro: objective = ", objective(sol_macro),
+    ", iterations = ", iterations(sol_macro),
+)
+println(
+    "Functional API: objective = ", objective(sol_func),
+    ", iterations = ", iterations(sol_func),
+)
 ```
 
 ```@example ex-energy
-plt = plot(sol_macro, :state, :control; label="Macro", color=1, size=(800, 600))
-plot!(plt, sol_func, :state, :control; label="Functional API", color=2, linestyle=:dash)
+plt = plot(
+    sol_macro, :state, :control; label="Macro", color=1, size=(800, 600)
+)
+plot!(
+    plt, sol_func, :state, :control;
+    label="Functional API", color=2, linestyle=:dash,
+)
 ```
 
 The two models are functionally equivalent. The key difference is visible via [`definition`](@ref): the macro records the full DSL expression, whereas the functional API stores an empty definition.
@@ -243,7 +254,7 @@ typeof(u_macro(t0)), typeof(u_func(t0))
 The **in-place output buffer is the one exception**: `dx` (dynamics), `val` (boundary/path constraints) is always a vector of its declared length, written by index, even when that length is 1 — a scalar cannot be mutated in place:
 
 ```julia
-f!(r, t, x, u, v) = (r[1] = -x + u; nothing)  # r is always a vector; x, u here are scalars
+f!(r, t, x, u, v) = (r[1] = -x + u; nothing)  # r vector; x,u scalars
 ```
 
 This is the one place on the site where this is spelled out; every other page just follows it.

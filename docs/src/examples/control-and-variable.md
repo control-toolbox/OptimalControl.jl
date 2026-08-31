@@ -67,7 +67,9 @@ f_growth = Flow(ocp_growth, u_growth)
 
 function shoot_growth!(s, ξ)
     p0, λ = ξ[1], ξ[2]
-    _, p_tf, pλ_tf = f_growth(t0, x0, p0, tf; variable=λ, variable_costate=true)
+    _, p_tf, pλ_tf = f_growth(
+        t0, x0, p0, tf; variable=λ, variable_costate=true
+    )
     s[1] = p_tf
     s[2] = pλ_tf
     return nothing
@@ -89,7 +91,10 @@ p0_sol_growth, λ_sol = shoot_sol_growth.u
 
 ```@example main
 indirect_growth = f_growth((t0, tf), x0, p0_sol_growth; variable=λ_sol)
-plot!(plt_growth, indirect_growth, :state, :control; label="Indirect", linestyle=:dash)
+plot!(
+    plt_growth, indirect_growth, :state, :control;
+    label="Indirect", linestyle=:dash,
+)
 ```
 
 ## Harmonic oscillator, with control
@@ -146,7 +151,9 @@ f_harmonic = Flow(ocp_harmonic, u_harmonic)
 
 function shoot_harmonic!(s, ξ)
     p0, ω = ξ[1:2], ξ[3]
-    x_tf, p_tf, pω_tf = f_harmonic(t0h, [q0, v0], p0, tfh; variable=ω, variable_costate=true)
+    x_tf, p_tf, pω_tf = f_harmonic(
+        t0h, [q0, v0], p0, tfh; variable=ω, variable_costate=true
+    )
     s[1] = x_tf[1]
     s[2] = p_tf[2]
     s[3] = pω_tf + 2ω
@@ -161,16 +168,23 @@ p0_guess_h = costate(harmonic_sol)(t0h)
 ω_guess = variable(harmonic_sol)
 
 prob_harmonic = NonlinearProblem(nle_harmonic!, [p0_guess_h..., ω_guess])
-shoot_sol_harmonic = NonlinearSolve.solve(prob_harmonic; show_trace=Val(false))
+shoot_sol_harmonic = NonlinearSolve.solve(
+    prob_harmonic; show_trace=Val(false)
+)
 p0_sol_harmonic, ω_sol = shoot_sol_harmonic.u[1:2], shoot_sol_harmonic.u[3]
 ```
 
 ### Comparison
 
 ```@example main
-indirect_harmonic = f_harmonic((t0h, tfh), [q0, v0], p0_sol_harmonic; variable=ω_sol)
+indirect_harmonic = f_harmonic(
+    (t0h, tfh), [q0, v0], p0_sol_harmonic; variable=ω_sol
+)
 plt_harmonic = plot(harmonic_sol, :state, :control; label="Direct")
-plot!(plt_harmonic, indirect_harmonic, :state, :control; label="Indirect", linestyle=:dash)
+plot!(
+    plt_harmonic, indirect_harmonic, :state, :control;
+    label="Indirect", linestyle=:dash,
+)
 ```
 
 ## See also

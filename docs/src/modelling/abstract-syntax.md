@@ -25,8 +25,8 @@ While the syntax will be transparent to those users familiar with Julia expressi
 
 ```@setup abs
 using OptimalControl
-data(t) = 2exp(0.5t)   # observed-data stub for the parameter-estimation example
-c(t) = 1.0             # coefficient stub for the damped-integrator examples
+data(t) = 2exp(0.5t)   # observed-data stub (parameter estimation)
+c(t) = 1.0             # coefficient stub (damped integrator)
 ```
 
 ## [Variable](@id modelling-abstract-syntax-variable)

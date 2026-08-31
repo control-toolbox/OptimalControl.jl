@@ -109,7 +109,8 @@ t2_guess = t_grid[last(active)]
 
 prob = NonlinearProblem(nle!, ξ_guess)
 shooting_sol = NonlinearSolve.solve(prob; show_trace=Val(false))
-p0_sol, t1_sol, t2_sol = shooting_sol.u[1:2], shooting_sol.u[3], shooting_sol.u[4]
+p0_sol, t1_sol, t2_sol =
+    shooting_sol.u[1:2], shooting_sol.u[3], shooting_sol.u[4]
 ```
 
 ```@example main
@@ -123,7 +124,10 @@ s
 ```@example main
 φ = f_interior * (t1_sol, f_boundary) * (t2_sol, f_interior)
 indirect_sol = φ((t0, tf), x0, p0_sol)
-plot!(plt, indirect_sol, :state, :control; label="Indirect", linestyle=:dash)
+plot!(
+    plt, indirect_sol, :state, :control;
+    label="Indirect", linestyle=:dash,
+)
 ```
 
 ## Second-order constraint: bounding the position
@@ -201,11 +205,15 @@ p_of_t_touch = costate(sol_touch)
 p0_guess_t = p_of_t_touch(t0b)
 t1_guess_t = t_grid_t[argmin(abs.(g_touch.(state(sol_touch).(t_grid_t))))]
 ε = 0.05 * (tfb - t0b)
-Δpq_guess = p_of_t_touch(t1_guess_t + ε)[1] - p_of_t_touch(t1_guess_t - ε)[1]
+Δpq_guess =
+    p_of_t_touch(t1_guess_t + ε)[1] - p_of_t_touch(t1_guess_t - ε)[1]
 
-prob_touch = NonlinearProblem(nle_touch!, [p0_guess_t..., t1_guess_t, Δpq_guess])
+prob_touch = NonlinearProblem(
+    nle_touch!, [p0_guess_t..., t1_guess_t, Δpq_guess]
+)
 shoot_sol_touch = NonlinearSolve.solve(prob_touch; show_trace=Val(false))
-p0_touch, t1_touch, Δpq_touch = shoot_sol_touch.u[1:2], shoot_sol_touch.u[3], shoot_sol_touch.u[4]
+p0_touch, t1_touch, Δpq_touch =
+    shoot_sol_touch.u[1:2], shoot_sol_touch.u[3], shoot_sol_touch.u[4]
 ```
 
 ```@example main
@@ -227,7 +235,10 @@ sol_arc = solve(ocp_arc; grid_size=100, display=false)
 fs_arc = Flow(ocp_arc, (x, p) -> p[2])
 g_arc(x) = a_arc - x[1]
 
-fc_bd = Flow(ocp_arc, (x, p) -> 0.0; constraint=(x, u) -> g_arc(x), multiplier=(x, p) -> 0.0)
+fc_bd = Flow(
+    ocp_arc, (x, p) -> 0.0;
+    constraint=(x, u) -> g_arc(x), multiplier=(x, p) -> 0.0,
+)
 ```
 
 ```@example main
@@ -281,7 +292,8 @@ s
 ```
 
 ```@example main
-f_arc = fs_arc * (t1_arc, [Δpq1, 0.0], fc_bd) * (t2_arc, [Δpq2, 0.0], fs_arc)
+f_arc =
+    fs_arc * (t1_arc, [Δpq1, 0.0], fc_bd) * (t2_arc, [Δpq2, 0.0], fs_arc)
 indirect_arc = f_arc((t0b, tfb), x0_bd, p0_arc)
 plot!(plt2, indirect_arc, :state, :control; label="Indirect (a = 0.1)")
 ```

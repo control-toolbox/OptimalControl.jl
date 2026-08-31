@@ -95,7 +95,7 @@ dg(3.0, [1.0, 2.0])   # ∂g/∂t = 2t = 6
 ```
 
 ```@example main
-dXV = ∂ₜ(XV)   # XV::VectorField, defined above — still comes back NonAutonomous
+dXV = ∂ₜ(XV)   # XV::VectorField from above — still NonAutonomous
 typeof(dXV)
 ```
 

@@ -225,7 +225,9 @@ variable_constraints_lb_dual(sol), variable_constraints_ub_dual(sol)
 with matching dimension accessors:
 
 ```@example main
-dim_dual_state_constraints_box(sol), dim_dual_control_constraints_box(sol), dim_dual_variable_constraints_box(sol)
+dim_dual_state_constraints_box(sol),
+dim_dual_control_constraints_box(sol),
+dim_dual_variable_constraints_box(sol)
 ```
 
 And the nonlinear (path/boundary) duals as a whole, plus their counts:

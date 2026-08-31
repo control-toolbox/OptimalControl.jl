@@ -84,7 +84,9 @@ sqrt(sum(abs2, s))
 ```@example main
 ξ_guess = [1.0, 1.0, 1.0, 2.0] .* 1.1
 prob = NonlinearProblem((s, ξ, _) -> shoot!(s, ξ), ξ_guess)
-sol = NonlinearSolve.solve(prob, SimpleNewtonRaphson(); abstol=1e-10, reltol=1e-10)
+sol = NonlinearSolve.solve(
+    prob, SimpleNewtonRaphson(); abstol=1e-10, reltol=1e-10
+)
 sol.u, sol.retcode
 ```
 
@@ -122,7 +124,9 @@ condition — no separate machinery needed beyond adding it as a residual. For a
 directly if the transversality condition is stated in terms of $p_v(t_f)$ instead:
 
 ```@example main
-xf_v, pf_v, pvf = f_max(t0, x0, [1.0, 1.0], 1.0; variable=2.0, variable_costate=true)
+xf_v, pf_v, pvf = f_max(
+    t0, x0, [1.0, 1.0], 1.0; variable=2.0, variable_costate=true
+)
 pvf
 ```
 
@@ -157,7 +161,7 @@ p0_sol, t1_sol, tf_sol = sol.u[1:2], sol.u[3], sol.u[4]
 f_bb = f_max * (t1_sol, f_min)
 zf = f_bb(t0, x0, p0_sol, tf_sol; variable=tf_sol)
 
-zf[1:2]     # the final state ≈ [0, 0] — the indirect solution hits the target
+zf[1:2]     # final state ≈ [0, 0] — the indirect solution hits the target
 ```
 
 The two methods agree on the optimum. The cost here is the final time, so comparing objectives

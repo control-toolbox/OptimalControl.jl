@@ -21,8 +21,8 @@ Let us model, solve and plot a simple optimal control problem.
 
 ```@example main
 using OptimalControl
-using NLPModelsIpopt  # activates the Ipopt solver extension (required for solve)
-using Plots           # activates the plotting extension (required for plot)
+using NLPModelsIpopt  # Ipopt solver extension (needed for solve)
+using Plots           # plotting extension (needed for plot)
 
 ocp = @def begin
     t ∈ [0, 1], time
@@ -110,9 +110,9 @@ function _downloads_toml(DIR)
     link_manifest = joinpath("assets", DIR, "Manifest.toml")
     link_project = joinpath("assets", DIR, "Project.toml")
     return Markdown.parse("""
-    You can download the exact environment used to build this documentation:
+    Download the exact environment used to build these docs:
     - 📦 [Project.toml]($link_project) - Package dependencies
-    - 📋 [Manifest.toml]($link_manifest) - Complete dependency tree with versions
+    - 📋 [Manifest.toml]($link_manifest) - Full dependency tree
     """)
 end
 ```

@@ -232,7 +232,7 @@ ERROR: PreconditionError: `f(t0, x0, p0, tf, lambda)` is deprecated
 Reason  this spelling was removed in v2.1.0-beta
 Hint    use f(t0, x0, p0, tf; variable=lambda)
 
-julia> f(t0, x0, tf, λ)   # 4-positional, on a plain state flow (AbstractStateFlow)
+julia> f(t0, x0, tf, λ)   # 4-positional, on a plain state flow
 ERROR: PreconditionError: `f(t0, x0, tf, lambda)` is deprecated
 Reason  this spelling was removed in v2.1.0-beta
 Hint    use f(t0, x0, tf; variable=lambda)

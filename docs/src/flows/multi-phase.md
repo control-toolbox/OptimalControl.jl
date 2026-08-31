@@ -27,7 +27,7 @@ typeof(f)
 ```
 
 ```@example main
-f(0.0, 0.0, 2.0)   # one unit of f1's zero slope, then one unit of f2's slope-1
+f(0.0, 0.0, 2.0)   # one unit of f1's flat, then one of f2's slope-1
 ```
 
 ## Jumps
@@ -60,8 +60,8 @@ A jump argument can be a function (as above), `nothing` for the identity (no jum
 — accepted in addition to the two — a plain `Vector` added to the state/costate directly:
 
 ```@example main
-h_identity = h1 * (1.0, nothing, nothing, h2)   # nothing, nothing ≡ no jump
-h_vec = h1 * (1.0, [0.0, 0.0], h2)               # a bare vector jump also works
+h_identity = h1 * (1.0, nothing, nothing, h2)   # nothing ≡ no jump
+h_vec = h1 * (1.0, [0.0, 0.0], h2)   # a bare vector jump works too
 nothing # hide
 ```
 

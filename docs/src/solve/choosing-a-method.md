@@ -56,9 +56,9 @@ Completion walks `methods()` from top to bottom and returns the first entry cont
 token you gave:
 
 ```julia
-solve(ocp, :madnlp)   # → (:collocation, :adnlp, :madnlp, :cpu)  — first entry with :madnlp
-solve(ocp, :exa)      # → (:collocation, :exa,   :ipopt,  :cpu)  — first entry with :exa
-solve(ocp, :gpu)      # → (:collocation, :exa,   :madnlp, :gpu)  — first GPU entry
+solve(ocp, :madnlp)   # → (:collocation, :adnlp, :madnlp, :cpu)
+solve(ocp, :exa)      # → (:collocation, :exa,   :ipopt,  :cpu)
+solve(ocp, :gpu)      # → (:collocation, :exa,   :madnlp, :gpu)
 ```
 
 This first-match-top-to-bottom rule is also why the plain `solve(ocp)` default is
@@ -66,7 +66,7 @@ This first-match-top-to-bottom rule is also why the plain `solve(ocp)` default i
 equivalent:
 
 ```julia
-solve(ocp)                                      # empty description → methods()[1]
+solve(ocp)                       # empty description → methods()[1]
 solve(ocp, :collocation)
 solve(ocp, :adnlp)
 solve(ocp, :ipopt)

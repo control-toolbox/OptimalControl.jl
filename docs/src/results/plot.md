@@ -56,7 +56,10 @@ With every group shown, the layout is a grid: state trajectories on the left, co
 right, control along the bottom.
 
 ```@example main
-plot(sol, :state, :costate, :control; size=(700, 450), legend=:bottomright, grid=false, linewidth=2)
+plot(
+    sol, :state, :costate, :control;
+    size=(700, 450), legend=:bottomright, grid=false, linewidth=2,
+)
 ```
 
 `state_style`, `costate_style`, and `control_style` set series attributes per group (any
@@ -120,7 +123,7 @@ plot(sol; control=:norm, layout=:group, size=(800, 300))
 ```
 
 ```@example main
-plot(sol; control=:components, layout=:group, size=(800, 300))  # the default
+plot(sol; control=:components, layout=:group, size=(800, 300))  # default
 ```
 
 ```@example main
@@ -158,14 +161,20 @@ solutions = [solve(lqr(tf); display=false) for tf in tfs]
 
 plt = plot()
 for (tf, sol) in zip(tfs, solutions)
-    plot!(plt, sol, :state, :control; time=:normalize, label="tf = $tf", xlabel="s")
+    plot!(
+        plt, sol, :state, :control;
+        time=:normalize, label="tf = $tf", xlabel="s",
+    )
 end
 
 using Plots.PlotMeasures
 px1 = plot(plt[1]; legend=false)  # x₁
 px2 = plot(plt[2]; legend=true)   # x₂
 pu = plot(plt[3]; legend=false)   # u
-plot(px1, px2, pu; layout=(1, 3), size=(800, 300), leftmargin=5mm, bottommargin=5mm)
+plot(
+    px1, px2, pu;
+    layout=(1, 3), size=(800, 300), leftmargin=5mm, bottommargin=5mm,
+)
 ```
 
 ## Constraints
@@ -260,7 +269,7 @@ using OrdinaryDiffEqTsit5
 
 p = costate(sol)
 p0 = p(t0)
-f = Flow(ocp, (x, p) -> p[2])  # flow from an ocp and a feedback control law
+f = Flow(ocp, (x, p) -> p[2])  # flow from an ocp + a feedback law
 
 sol_flow = f((t0, tf), x0, p0)
 plot(sol_flow)

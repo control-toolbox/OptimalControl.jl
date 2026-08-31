@@ -145,7 +145,8 @@ tf_guess = variable(direct_sol)
 
 prob = NonlinearProblem(nle!, ξ_guess)
 shooting_sol = NonlinearSolve.solve(prob; show_trace=Val(false))
-p0_sol, θ0_sol, tf_sol = shooting_sol.u[1:3], shooting_sol.u[4], shooting_sol.u[5]
+p0_sol, θ0_sol, tf_sol =
+    shooting_sol.u[1:3], shooting_sol.u[4], shooting_sol.u[5]
 ```
 
 ```@example main
@@ -158,7 +159,10 @@ s
 
 ```@example main
 indirect_sol = f((t0, tf_sol), [0, 0, θ0_sol], p0_sol; variable=tf_sol)
-plot!(plt, indirect_sol, :state, :control; label="Indirect", linestyle=:dash)
+plot!(
+    plt, indirect_sol, :state, :control;
+    label="Indirect", linestyle=:dash,
+)
 ```
 
 The indirect and direct solutions match closely, confirming the singular-control computation
@@ -170,7 +174,8 @@ The same equality, now along the computed extremal rather than a hand-picked sur
 ```@example main
 xs = state(indirect_sol)
 ps = costate(indirect_sol)
-[us_bracket(xs(t), ps(t)) - u_indirect(xs(t)) for t in range(t0, tf_sol, 5)]
+[us_bracket(xs(t), ps(t)) - u_indirect(xs(t))
+ for t in range(t0, tf_sol, 5)]
 ```
 
 ## See also
