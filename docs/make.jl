@@ -50,6 +50,26 @@ using Plots
 # "Plot image format — SVG vs PNG".
 Base.showable(::MIME"image/png", ::Plots.Plot) = false
 
+# DocumenterVitepress (0.3.5) hard-codes `collapsed: false` on every sidebar group
+# (`vitepress_config.jl`'s `pagelist2str` for a nested `name => children` entry), so the
+# whole navigation tree renders fully expanded and there is no `MarkdownVitepress` option
+# to change it. Override that one method to emit `collapsed: true` for the sidebar: each
+# group starts folded, and VitePress still auto-expands the group containing the current
+# page. The navbar branch (`sidenav === Val(:navbar)`) is left untouched.
+@eval DocumenterVitepress function pagelist2str(
+    doc, name_contents::Pair{<:AbstractString,<:AbstractArray}, sidenav::Val
+)
+    name, contents = name_contents
+    rendered_contents = String[]
+    for content in contents
+        str = pagelist2str(doc, content, sidenav)
+        isempty(str) || push!(rendered_contents, "{" * str * "}")
+    end
+    final_contents = join(rendered_contents, ",\n")
+    collapse = sidenav === Val(:sidebar) ? "collapsed: true," : ""
+    return "text: '$(replace(name, "'" => "\\'"))', $collapse items: [\n$(final_contents)\n]"
+end
+
 #
 function _ext(pkg, sym)
     m = Base.get_extension(pkg, sym)
