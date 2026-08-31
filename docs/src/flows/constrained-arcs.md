@@ -20,17 +20,23 @@ unconstrained arc, boundary arc (where the constraint is tight and pins down bot
 and the multiplier in feedback form), unconstrained arc again. The boundary arc's flow needs
 that extra structure.
 
+The full three-arc problem — including the shooting that finds the entry and exit times — is
+worked end to end in [State constraint](@ref examples-state-constraint), on this exact OCP.
+This page stays with the boundary arc's flow in isolation.
+
 ```@example main
 t0 = 0.0
 tf = 1.0
 x0 = [-1.0, 0.0]
-VMAX = 1.2
+xf = [0.0, 0.0]
+VMAX = 1.0        # the unconstrained transfer peaks at v = 1.5, so this bound bites
 
 ocp = @def begin
     t ∈ [t0, tf], time
     x = (q, v) ∈ R², state
     u ∈ R, control
     x(t0) == x0
+    x(tf) == xf
     v(t) + 0.0 ≤ VMAX, (vmax)
     ẋ(t) == [v(t), u(t)]
     0.5∫(u(t)^2) → min
@@ -41,13 +47,17 @@ nothing # hide
 ## Building the constrained flow
 
 ```@example main
-g(x) = VMAX - x[2]      # ≥ 0 while the constraint holds
-μ(x, p) = p[1]           # multiplier in feedback form on the boundary
-law(x, p) = 0.0           # control on the boundary arc
+g(x) = VMAX - x[2]      # ≥ 0 away from the boundary, 0 on it
+μ(x, p) = p[1]           # feedback multiplier on the boundary arc: μ = p_q
+law(x, p) = 0.0           # the boundary control: u = 0 keeps v̇ = 0, holding v at VMAX
 
 f_boundary = Flow(ocp, law; constraint=(x, u) -> g(x), multiplier=μ)
-xf, pf = f_boundary(t0, x0, [12.0, 6.0], tf)
-xf
+
+# integrate a segment of the boundary arc: enter at t1 with v = VMAX
+t1, t2 = 0.3, 0.7
+p1 = [1.0, 0.4]
+xb, pb = f_boundary(t1, [-0.5, VMAX], p1, t2)
+xb, g(xb)                # v held at VMAX along the arc → g(xb) ≈ 0
 ```
 
 `constraint=`/`multiplier=` must be given **as a pair** — one without the other is rejected:
@@ -69,7 +79,7 @@ for the other shapes) — equivalent, more explicit:
 
 ```@example main
 f_typed = Flow(ocp, law; constraint=StateConstraint(g), multiplier=μ)
-f_typed(t0, x0, [12.0, 6.0], tf)[1] ≈ xf
+f_typed(t1, [-0.5, VMAX], p1, t2)[1] ≈ xb
 ```
 
 **A `Symbol` naming a `:path` constraint already declared in the OCP** — the standout
@@ -101,14 +111,32 @@ end # hide
 ## Several constraints at once
 
 Pass matched tuples of functions (or labels) and multipliers, one per active constraint on the
-boundary arc, in place of the single values above.
+boundary arc, in place of the single values above:
+
+```@example main
+g_q(x) = 10.0 - x[1]                       # a second bound, q ≤ 10 — slack on this arc
+f_two = Flow(ocp, law;
+             constraint = ((x, u) -> g(x), (x, u) -> g_q(x)),
+             multiplier = (μ, (x, p) -> 0.0))
+f_two(t1, [-0.5, VMAX], p1, t2)[1] ≈ xb    # same arc: the extra constraint contributes nothing
+```
 
 ## Assembling the arcs
 
 A boundary arc is one phase in a larger [multi-phase flow](@ref flows-multi-phase):
 unconstrained arc, then the constrained flow from `t1` (constraint activation), then
 unconstrained again from `t2` (exit) — with a jump on the costate at each switch if the
-constraint order requires one.
+constraint order requires one (none here: a first-order constraint keeps the costate
+continuous).
+
+```@example main
+f_interior = Flow(ocp, (x, p) -> p[2])                  # u = p_v away from the boundary
+φ = f_interior * (t1, f_boundary) * (t2, f_interior)    # unconstrained · boundary · unconstrained
+n_phases(φ)
+```
+
+Solving for `t1` and `t2` rather than fixing them is the shooting problem worked in
+[State constraint](@ref examples-state-constraint).
 
 ## Positional form is gone
 
@@ -150,3 +178,5 @@ end # hide
   into one callable flow.
 - [Writing a shooting function](@ref flows-shooting) — solving for the switching times
   themselves rather than assuming them known.
+- [State constraint](@ref examples-state-constraint) — this OCP worked end to end: the
+  three-arc structure, the costate jump, and the shooting for the entry and exit times.

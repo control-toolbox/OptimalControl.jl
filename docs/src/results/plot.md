@@ -5,13 +5,8 @@ Draft = false
 ```
 
 `plot`/`plot!` extend [Plots.jl](https://docs.juliaplots.org) to draw a [`Solution`](@ref results-solution)
-directly — the same call works on a `Flow`-produced trajectory too (last section below).
-
-```@docs; canonical=false
-plot(::CTModels.Solution, ::Symbol...)
-plot!(::CTModels.Solution, ::Symbol...)
-plot!(::Plots.Plot, ::CTModels.Solution, ::Symbol...)
-```
+directly — the same call works on a `Flow`-produced trajectory too (last section below). The
+full signatures are collected under [Reference](@ref results-plot-reference) at the end.
 
 ## Getting started
 
@@ -287,6 +282,14 @@ fine_grid = range(t0, tf, 100)
 f2 = Flow(ocp, (x, p) -> p[2]; saveat=fine_grid, dense=false)
 sol_flow2 = f2((t0, tf), x0, p0)
 plot(sol_flow2)
+```
+
+## [Reference](@id results-plot-reference)
+
+```@docs; canonical=false
+plot(::CTModels.Solution, ::Symbol...)
+plot!(::CTModels.Solution, ::Symbol...)
+plot!(::Plots.Plot, ::CTModels.Solution, ::Symbol...)
 ```
 
 ## See also
