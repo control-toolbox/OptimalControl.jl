@@ -344,6 +344,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "Control and variable together" => "examples/control-and-variable.md",
                 "Singular control" => "examples/singular-control.md",
                 "State constraint" => "examples/state-constraint.md",
+                "The logo" => "examples/logo.md",
             ],
             "API Reference" => api_pages_final,
             "Migrating to v2.1" => "migration.md",
