@@ -11,6 +11,24 @@ The full grammar of OptimalControl.jl's small *Domain Specific Language* is give
 
 While the syntax will be transparent to those users familiar with Julia expressions (`Expr`'s), we provide examples for every case that should be widely understandable. Abstract definitions use the macro [`@def`](@ref).
 
+!!! note "About the code blocks on this page"
+    Blocks written `:( … )` — such as the state pattern `:( $x ∈ R^$n, state )` — are
+    **grammar patterns**: the shape of the Julia expression the parser accepts, with the
+    `$`-prefixed names standing for the parts you supply. They are notation, not runnable
+    code, and are shown inert on purpose.
+
+    Every other block is executed when the documentation is built. A problem definition must
+    include at least time, state, dynamics and cost (the control declaration is optional —
+    see [Problems without a control](@ref modelling-abstract-syntax-control-free)); in the
+    blocks that illustrate a single clause, the other required clauses are present but hidden
+    so that the block still builds a complete model.
+
+```@setup abs
+using OptimalControl
+data(t) = 2exp(0.5t)   # observed-data stub for the parameter-estimation example
+c(t) = 1.0             # coefficient stub for the damped-integrator examples
+```
+
 ## [Variable](@id modelling-abstract-syntax-variable)
 
 ```julia
@@ -18,36 +36,43 @@ While the syntax will be transparent to those users familiar with Julia expressi
 :( $v ∈ R   , variable )
 ```
 
-A variable (only one is allowed) is a finite dimensional vector or reals that will be *optimised* along with state and control values. To define an (almost empty!) optimal control problem, named `ocp`, having a dimension two variable named `v`, do the following:
+A variable (only one is allowed) is a finite dimensional vector of reals that will be *optimised* along with state and control values. To define an optimal control problem with a dimension-two variable named `v`:
 
-```julia
+```@example abs
 @def begin
+    t ∈ [0, 1], time            # hide
+    x ∈ R, state                # hide
     v ∈ R², variable
-    ...
+    ẋ(t) == v₁ * x(t) + v₂      # hide
+    ∫(x(t)^2) → min             # hide
 end
+nothing # hide
 ```
 
-!!! warning
+Aliases `v₁`, `v₂` (and `v1`, `v2`) are automatically defined and can be used in subsequent expressions instead of `v[1]` and `v[2]`. You can also define your own aliases for the components (one alias per dimension):
 
-    - Note that the full code of the definition above is not provided (hence the `...`). The same is true for most examples below (only those without `...` are indeed complete).
-    - Also note that problem definitions must at least include definitions for time, state, dynamics and cost. The control declaration is optional (see [Problems without a control](@ref modelling-abstract-syntax-control-free)).
-
-Aliases `v₁`, `v₂` (and `v1`, `v2`) are automatically defined and can be used in subsequent expressions instead of `v[1]` and `v[2]`. The user can also define her own aliases for the components (one alias per dimension):
-
-```julia
+```@example abs
 @def begin
+    t ∈ [0, 1], time            # hide
+    x ∈ R, state                # hide
     v = (a, b) ∈ R², variable
-    ...
+    ẋ(t) == a * x(t) + b        # hide
+    ∫(x(t)^2) → min             # hide
 end
+nothing # hide
 ```
 
 A one dimensional variable can be declared according to
 
-```julia
+```@example abs
 @def begin
+    t ∈ [0, 1], time            # hide
+    x ∈ R, state                # hide
     v ∈ R, variable
-    ...
+    ẋ(t) == v * x(t)            # hide
+    ∫(x(t)^2) → min             # hide
 end
+nothing # hide
 ```
 
 !!! warning
@@ -61,23 +86,30 @@ end
 
 The independent variable or *time* is a scalar bound to a given interval. Its name is arbitrary.
 
-```julia
+```@example abs
 t0 = 1
 tf = 5
 @def begin
     t ∈ [t0, tf], time
-    ...
+    x ∈ R, state                # hide
+    u ∈ R, control              # hide
+    ẋ(t) == u(t)                # hide
+    ∫(x(t)^2 + u(t)^2) → min    # hide
 end
+nothing # hide
 ```
 
 One (or even the two bounds) can be variable, typically for minimum time problems (see [Mayer cost](@ref modelling-abstract-syntax-mayer) section):
 
-```julia
+```@example abs
 @def begin
     v = (T, λ) ∈ R², variable
     t ∈ [0, T], time
-    ...
+    x ∈ R, state                # hide
+    ẋ(t) == λ * x(t)            # hide
+    T → min                     # hide
 end
+nothing # hide
 ```
 
 ## [State](@id modelling-abstract-syntax-state)
@@ -89,20 +121,28 @@ end
 
 The state declaration defines the name and the dimension of the state:
 
-```julia
+```@example abs
 @def begin
+    t ∈ [0, 1], time                       # hide
     x ∈ R⁴, state
-    ...
+    u ∈ R, control                         # hide
+    ẋ(t) == [x₂(t), x₃(t), x₄(t), u(t)]    # hide
+    ∫(u(t)^2) → min                        # hide
 end
+nothing # hide
 ```
 
-As for the variable, there are automatic aliases (`x₁` and `x1` for `x[1]`, *etc.*) and the user can define her own aliases (one per scalar component of the state):
+As for the variable, there are automatic aliases (`x₁` and `x1` for `x[1]`, *etc.*) and you can define your own aliases (one per scalar component of the state):
 
-```julia
+```@example abs
 @def begin
+    t ∈ [0, 1], time                        # hide
     x = (q₁, q₂, v₁, v₂) ∈ R⁴, state
-    ...
+    u ∈ R², control                         # hide
+    ẋ(t) == [v₁(t), v₂(t), u₁(t), u₂(t)]    # hide
+    ∫(u₁(t)^2 + u₂(t)^2) → min              # hide
 end
+nothing # hide
 ```
 
 ## [Control](@id modelling-abstract-syntax-control)
@@ -114,20 +154,28 @@ end
 
 The control declaration defines the name and the dimension of the control:
 
-```julia
+```@example abs
 @def begin
+    t ∈ [0, 1], time                # hide
+    x ∈ R², state                   # hide
     u ∈ R², control
-    ...
+    ẋ(t) == u(t)                    # hide
+    ∫(u₁(t)^2 + u₂(t)^2) → min      # hide
 end
+nothing # hide
 ```
 
-As before, there are automatic aliases (`u₁` and `u1` for `u[1]`, *etc.*) and the user can define her own aliases (one per scalar component of the state):
+As before, there are automatic aliases (`u₁` and `u1` for `u[1]`, *etc.*) and you can define your own aliases (one per scalar component of the control):
 
-```julia
+```@example abs
 @def begin
+    t ∈ [0, 1], time                # hide
+    x ∈ R², state                   # hide
     u = (α, β) ∈ R², control
-    ...
+    ẋ(t) == [α(t), β(t)]            # hide
+    ∫(α(t)^2 + β(t)^2) → min        # hide
 end
+nothing # hide
 ```
 
 !!! note
@@ -140,32 +188,35 @@ The control declaration is **optional**. You can define problems without control
 - **Parameter estimation**: identify unknown parameters in the dynamics from observed data,
 - **Dynamic optimisation**: optimise constant parameters subject to ODE constraints.
 
-For example, to estimate a growth rate parameter:
+For example, to estimate a growth rate parameter (here `data` is the observed signal, a
+function defined beforehand):
 
-```julia
+```@example abs
 @def begin
-    p ∈ R, variable              # parameter to estimate
+    p ∈ R, variable                 # parameter to estimate
     t ∈ [0, 10], time
     x ∈ R, state
     x(0) == 2.0
-    ẋ(t) == p * x(t)             # dynamics depends on p
-    ∫(x(t) - data(t))² → min     # fit to observed data
+    ẋ(t) == p * x(t)                # dynamics depends on p
+    ∫((x(t) - data(t))^2) → min     # fit to observed data
 end
+nothing # hide
 ```
 
 Or to optimise the pulsation of a harmonic oscillator:
 
-```julia
+```@example abs
 @def begin
-    ω ∈ R, variable              # pulsation to optimize
+    ω ∈ R, variable                 # pulsation to optimise
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
     q(0) == 1.0
     v(0) == 0.0
-    q(1) == 0.0                  # final condition
-    ẋ(t) == [v(t), -ω²*q(t)]    # harmonic oscillator
-    ω² → min                     # minimize pulsation
+    q(1) == 0.0                     # final condition
+    ẋ(t) == [v(t), -ω^2 * q(t)]     # harmonic oscillator
+    ω^2 → min                       # minimise pulsation
 end
+nothing # hide
 ```
 
 There is no dedicated syntax for "no control": omitting the control declaration entirely *is*
@@ -190,53 +241,57 @@ depending on whether it is autonomous / with a variable or not (the parser will 
 which entails that time, state and variable must be declared prior to dynamics - an error will be issued otherwise). The symbol `∂`, or the dotted state name
 (`ẋ`), or the keyword `derivative` can be used:
 
-```julia
+```@example abs
 @def begin
     t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
     ∂(x)(t) == [x₂(t), u(t)]
-    ...
+    ∫(u(t)^2) → min
 end
+nothing # hide
 ```
 
 or
 
-```julia
+```@example abs
 @def begin
     t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
     ẋ(t) == [x₂(t), u(t)]
-    ...
+    ∫(u(t)^2) → min
 end
+nothing # hide
 ```
 
 or
 
-```julia
+```@example abs
 @def begin
     t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
     derivative(x)(t) == [x₂(t), u(t)]
-    ...
+    ∫(u(t)^2) → min
 end
+nothing # hide
 ```
 
 Any Julia code can be used, so the following is also OK:
 
-```julia
+```@example abs
 ocp = @def begin
     t ∈ [0, 1], time
     x ∈ R², state
     u ∈ R, control
     ẋ(t) == F₀(x(t)) + u(t) * F₁(x(t))
-    ...
+    ∫(u(t)^2) → min
 end
 
 F₀(x) = [x[2], 0]
 F₁(x) = [0, 1]
+nothing # hide
 ```
 
 !!! note
@@ -244,7 +299,7 @@ F₁(x) = [0, 1]
 
 While it is also possible to declare the dynamics component after component (see below), one may equivalently use *aliases* (check the relevant [aliases](@ref modelling-abstract-syntax-aliases) section below):
 
-```julia
+```@example abs
 @def damped_integrator begin
     tf ∈ R, variable
     t ∈ [0, tf], time
@@ -253,8 +308,9 @@ While it is also possible to declare the dynamics component after component (see
     q̇ = v(t)
     v̇ = u(t) - c(t)
     ẋ(t) == [q̇, v̇]
-    ...
+    ∫(u(t)^2) → min
 end
+nothing # hide
 ```
 
 ## [Dynamics (coordinatewise)](@id modelling-abstract-syntax-dynamics-coord)
@@ -265,7 +321,7 @@ end
 
 The dynamics can also be declared coordinate by coordinate. The previous example can be written as
 
-```julia
+```@example abs
 @def damped_integrator begin
     tf ∈ R, variable
     t ∈ [0, tf], time
@@ -273,8 +329,9 @@ The dynamics can also be declared coordinate by coordinate. The previous example
     u ∈ R, control
     ∂(q)(t) == v(t)
     ∂(v)(t) == u(t) - c(t)
-    ...
+    ∫(u(t)^2) → min
 end
+nothing # hide
 ```
 
 ## [Constraints](@id modelling-abstract-syntax-constraints)
@@ -302,7 +359,7 @@ In the example below, there are
 - one linear state constraint,
 - one (two-sided) nonlinear control constraint.
 
-```julia
+```@example abs
 @def begin
     tf ∈ R, variable
     t ∈ [0, tf], time
@@ -314,8 +371,9 @@ In the example below, there are
     tf ≥ 0
     x₂(t) ≤ 1
     0.1 ≤ u(t)^2 ≤ 1
-    ...
+    tf → min
 end
+nothing # hide
 ```
 
 !!! note "Duplicate box constraints"
@@ -324,7 +382,7 @@ end
 !!! note
     Symbols like `<=` or `>=` are also authorised:
 
-```julia
+```@example abs
 @def begin
     tf ∈ R, variable
     t ∈ [0, tf], time
@@ -336,19 +394,17 @@ end
     tf >= 0
     x₂(t) <= 1
     0.1 ≤ u(t)^2 <= 1
-    ...
+    tf → min
 end
+nothing # hide
 ```
 
 !!! warning
     Write either `u(t)^2` or `(u^2)(t)`, not `u^2(t)` since in Julia the latter means `u^(2t)`. Moreover,
-    in the case of equalities or of one-sided inequalities, the control and / or the state must belong to the *left-hand side*. The following will error:
+    in the case of equalities or of one-sided inequalities, the control and / or the state must belong to the *left-hand side*. The following errors:
 
-    ```@setup main-repl
-    using OptimalControl
-    ```
-
-    ```@repl main-repl
+    ```@repl abs
+    try # hide
     @def begin
         t ∈ [0, 2], time
         x ∈ R², state
@@ -359,30 +415,37 @@ end
         1 ≤ x₂(t)
         -1 ≤ u(t) ≤ 1
     end
+    catch e # hide
+    showerror(IOContext(stdout, :color => false), e) # hide
+    end # hide
     ```
 
 !!! warning
-    Constraint bounds must be *effective*, that is must not depend on a variable. For instance, instead of
+    Constraint bounds must be *effective*, that is must not depend on a variable. For instance, the following is rejected (the message is currently not explicit — the cause is `x₂(0) == v` using the variable `v` as a bound):
 
-    ```julia
-    o = @def begin
+    ```@repl abs
+    try # hide
+    @def begin
         v ∈ R, variable
         t ∈ [0, 1], time
         x ∈ R², state
         u ∈ R, control
         -1 ≤ v ≤ 1
         x₁(0) == -1
-        x₂(0) == v # wrong: the bound is not effective (as it depends on the variable)
+        x₂(0) == v # wrong: the bound is not effective (it depends on the variable)
         x(1) == [0, 0]
         ẋ(t) == [x₂(t), u(t)]
-        ∫( 0.5u(t)^2 ) → min
+        ∫(0.5u(t)^2) → min
     end
+    catch e # hide
+    showerror(IOContext(stdout, :color => false), e) # hide
+    end # hide
     ```
 
-    write
+    Write instead a boundary constraint, which *may* involve the variable:
 
-    ```julia
-    o = @def begin
+    ```@example abs
+    @def begin
         v ∈ R, variable
         t ∈ [0, 1], time
         x ∈ R², state
@@ -392,8 +455,9 @@ end
         x₂(0) - v == 0 # OK: the boundary constraint may involve the variable
         x(1) == [0, 0]
         ẋ(t) == [x₂(t), u(t)]
-        ∫( 0.5u(t)^2 ) → min
+        ∫(0.5u(t)^2) → min
     end
+    nothing # hide
     ```
 
 ### [Duplicate box constraints](@id modelling-abstract-syntax-box-dedup)
@@ -410,7 +474,7 @@ When the **same scalar component** is targeted by several box-constraint declara
 
 For instance,
 
-```julia
+```@example abs
 @def begin
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
@@ -418,15 +482,17 @@ For instance,
     0 ≤ q(t) ≤ 2, (q_wide)
     1 ≤ q(t) ≤ 3, (q_tight)
     ẋ(t) == [v(t), u(t)]
-    ...
+    ∫(u(t)^2) → min
 end
+nothing # hide
 ```
 
 yields the effective constraint `1 ≤ q(t) ≤ 2`, with `aliases = [:q_wide, :q_tight]` for that component, and a warning reporting both labels.
 
 Conversely, the following declares an empty feasible set and raises an error at build time:
 
-```julia
+```@repl abs
+try # hide
 @def begin
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
@@ -434,8 +500,11 @@ Conversely, the following declares an empty feasible set and raises an error at 
     0 ≤ q(t) ≤ 1, (low)
     2 ≤ q(t) ≤ 3, (high) # max(lbs)=2 > min(ubs)=1 ⇒ IncorrectArgument
     ẋ(t) == [v(t), u(t)]
-    ...
+    ∫(u(t)^2) → min
 end
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 ```
 
 ## [Mayer cost](@id modelling-abstract-syntax-mayer)
@@ -448,7 +517,7 @@ end
 Mayer costs are defined in a similar way to boundary conditions and follow the same rules. The symbol `→` is used
 to denote minimisation or maximisation, the latter being treated by minimising the opposite cost. (The symbol `=>` can also be used.)
 
-```@repl main-repl
+```@repl abs
 @def begin
     tf ∈ R, variable
     t ∈ [0, tf], time
@@ -480,26 +549,28 @@ end
 
 Lagrange (integral) costs are defined used the symbol `∫`, *with parentheses*. The keyword `integral` can also be used:
 
-```julia
+```@example abs
 @def begin
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
     u ∈ R, control
+    ẋ(t) == [v(t), u(t)]           # hide
     0.5∫(q(t) + u(t)^2) → min
-    ...
 end
+nothing # hide
 ```
 
 or
 
-```julia
+```@example abs
 @def begin
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
     u ∈ R, control
+    ẋ(t) == [v(t), u(t)]                  # hide
     0.5integral(q(t) + u(t)^2) → min
-    ...
 end
+nothing # hide
 ```
 
 The integration range is implicitly equal to the time range, so the cost above is to be understood as
@@ -533,42 +604,48 @@ As for the dynamics, the parser will detect whether the integrand depends or not
 
 Quite readily, Mayer and Lagrange costs can be combined into general Bolza costs. For instance as follows:
 
-```julia
+```@example abs
 @def begin
     p = (t0, tf) ∈ R², variable
     t ∈ [t0, tf], time
     x = (q, v) ∈ R², state
-    u ∈ R², control
+    u ∈ R, control
+    ẋ(t) == [v(t), u(t)]                    # hide
     (tf - t0) + 0.5∫(c(t) * u(t)^2) → min
-    ...
 end
+nothing # hide
 ```
 
 !!! warning
     The expression must be the sum of two terms (plus, possibly, a scalar factor before the integral), not *more*, so mind the parentheses. For instance, the following errors:
 
-    ```julia
+    ```@repl abs
+    try # hide
     @def begin
         p = (t0, tf) ∈ R², variable
         t ∈ [t0, tf], time
         x = (q, v) ∈ R², state
-        u ∈ R², control
-        (tf - t0) + q(tf) + 0.5∫( c(t) * u(t)^2 ) → min
-        ...
+        u ∈ R, control
+        ẋ(t) == [v(t), u(t)]
+        (tf - t0) + q(tf) + 0.5∫(c(t) * u(t)^2) → min
     end
+    catch e # hide
+    showerror(IOContext(stdout, :color => false), e) # hide
+    end # hide
     ```
 
     The correct syntax is
 
-    ```julia
+    ```@example abs
     @def begin
         p = (t0, tf) ∈ R², variable
         t ∈ [t0, tf], time
         x = (q, v) ∈ R², state
-        u ∈ R², control
-        ((tf - t0) + q(tf)) + 0.5∫( c(t) * u(t)^2 ) → min
-        ...
+        u ∈ R, control
+        ẋ(t) == [v(t), u(t)]
+        ((tf - t0) + q(tf)) + 0.5∫(c(t) * u(t)^2) → min
     end
+    nothing # hide
     ```
 
 ## [Aliases](@id modelling-abstract-syntax-aliases)
@@ -577,9 +654,9 @@ end
 :( $a = $e1 )
 ```
 
-The single `=` symbol is used to define not a constraint but an alias, that is a purely syntactic replacement. There are some automatic aliases, *e.g.* `x₁` and `x1` for `x[1]` if `x` is the state (same for variable and control, for indices comprised between 1 and 9), and we have also seen that the user can define her own aliases when declaring the [variable](@ref modelling-abstract-syntax-variable), [state](@ref modelling-abstract-syntax-state) and [control](@ref modelling-abstract-syntax-control). Arbitrary aliases can be further defined, as below (compare with previous examples in the [dynamics](@ref modelling-abstract-syntax-dynamics) section):
+The single `=` symbol is used to define not a constraint but an alias, that is a purely syntactic replacement. There are some automatic aliases, *e.g.* `x₁` and `x1` for `x[1]` if `x` is the state (same for variable and control, for indices comprised between 1 and 9), and we have also seen that you can define your own aliases when declaring the [variable](@ref modelling-abstract-syntax-variable), [state](@ref modelling-abstract-syntax-state) and [control](@ref modelling-abstract-syntax-control). Arbitrary aliases can be further defined, as below (compare with previous examples in the [dynamics](@ref modelling-abstract-syntax-dynamics) section):
 
-```julia
+```@example abs
 @def begin
     t ∈ [0, 1], time
     x ∈ R², state
@@ -587,8 +664,9 @@ The single `=` symbol is used to define not a constraint but an alias, that is a
     F₀ = [x₂(t), 0]
     F₁ = [0, 1]
     ẋ(t) == F₀ + u(t) * F₁
-    ...
+    ∫(u(t)^2) → min
 end
+nothing # hide
 ```
 
 !!! warning
@@ -597,7 +675,7 @@ end
 !!! hint
     You can rely on a trace mode for the macro `@def` to look at your code after expansions of the aliases using the `@def ocp ...` syntax and adding `true` after your `begin ... end` block:
 
-    ```@repl main-repl
+    ```@repl abs
     @def damped_integrator begin
         tf ∈ R, variable
         t ∈ [0, tf], time
@@ -606,13 +684,15 @@ end
         q̇ = v(t)
         v̇ = u(t) - c(t)
         ẋ(t) == [q̇, v̇]
+        ∫(u(t)^2) → min
     end true;
     ```
 
 !!! warning
     The dynamics of an OCP is indeed a particular constraint, be careful to use `==` and not a single `=` that would try to define an alias:
 
-    ```@repl main-repl
+    ```@repl abs
+    try # hide
     double_integrator = @def begin
         tf ∈ R, variable
         t ∈ [0, tf], time
@@ -622,6 +702,9 @@ end
         v̇ = u
         ẋ(t) = [q̇, v̇]
     end
+    catch e # hide
+    showerror(IOContext(stdout, :color => false), e) # hide
+    end # hide
     ```
 
 ## Misc
@@ -629,7 +712,7 @@ end
 - Declarations (of variable - if any -, time, state and control - if any -) must be done first. Then, dynamics, constraints and cost can be introduced in an arbitrary order.
 - It is possible to provide numbers / labels (as in math equations) for the constraints to improve readability (this is mostly for future use, typically to retrieve the Lagrange multiplier associated with the discretisation of a given constraint):
 
-```julia
+```@example abs
 @def damped_integrator begin
     tf ∈ R, variable
     t ∈ [0, tf], time
@@ -641,8 +724,9 @@ end
     v̇ = u(t) - c(t)
     ẋ(t) == [q̇, v̇]
     x(t).^2  ≤ [1, 2], (state_con)
-    ...
+    ∫(u(t)^2) → min
 end
+nothing # hide
 ```
 
 - Parsing errors should be explicit enough (with line number in the `@def` `begin ... end` block indicated).
