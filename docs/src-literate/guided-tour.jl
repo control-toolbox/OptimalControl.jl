@@ -281,10 +281,7 @@ println("MadNLP : r(tf) = ", objective(sol_madnlp), ", ", iterations(sol_madnlp)
 
 # ### Grid continuation by warm-starting
 #
-# A solution can be passed **directly** as the initial guess of another solve — it is interpolated onto the new grid. This makes discrete continuation trivial and ties back to the initialisation above. On this nonlinear problem it genuinely **pays**: we compare reaching a fine grid of 1000 two ways:
-#
-# 1. **cold start** — solve `grid_size=1000` directly;
-# 2. **cascade** — solve `grid_size=50` first, then `grid_size=1000` warm-started with that solution.
+# A solution can be passed **directly** as the initial guess of another solve — it is interpolated onto the new grid. This makes discrete continuation trivial and ties back to the initialisation above. On this nonlinear problem it genuinely **pays**: we compare reaching a fine grid of 1000 two ways — a **cold start** (solve `grid_size=1000` directly) versus a **cascade** (solve `grid_size=50` first, then `grid_size=1000` warm-started with that solution).
 
 ## solutions computed once, reused for iteration counts and the overlay plot
 sol_cold = solve(goddard; grid_size=1000, display=false)
@@ -409,29 +406,29 @@ end
 # S(p_0) = 0.
 # ```
 #
-# The indirect method proceeds in three steps:
+# The indirect method proceeds in three steps.
 #
-# 1. **Maximising control.** The PMP yields the control in feedback form $u(x, p) = \arg\max_u H(x, p, u)$. Substituting back gives the maximised Hamiltonian
+# **Step 1 — Maximising control.** The PMP yields the control in feedback form $u(x, p) = \arg\max_u H(x, p, u)$. Substituting back gives the maximised Hamiltonian
 #
-#    ```math
-#    \mathbf{H}(x, p) = H(x, p, u(x, p)).
-#    ```
+# ```math
+# \mathbf{H}(x, p) = H(x, p, u(x, p)).
+# ```
 #
-# 2. **Boundary value problem.** The optimal trajectory satisfies the Hamiltonian system
+# **Step 2 — Boundary value problem.** The optimal trajectory satisfies the Hamiltonian system
 #
-#    ```math
-#    \dot{x} = \nabla_p \mathbf{H}, \qquad \dot{p} = -\nabla_x \mathbf{H},
-#    ```
+# ```math
+# \dot{x} = \nabla_p \mathbf{H}, \qquad \dot{p} = -\nabla_x \mathbf{H},
+# ```
 #
-#    with boundary conditions $x(t_0) = x_0$, $x(t_f) = x_f$.
+# with boundary conditions $x(t_0) = x_0$, $x(t_f) = x_f$.
 #
-# 3. **Shooting function.** Let $\varphi_{t_0, x_0, p_0}(\cdot)$ denote the flow of the Hamiltonian vector field from $(x_0, p_0)$. The shooting function
+# **Step 3 — Shooting function.** Let $\varphi_{t_0, x_0, p_0}(\cdot)$ denote the flow of the Hamiltonian vector field from $(x_0, p_0)$. The shooting function
 #
-#    ```math
-#    S(p_0) = \pi(\varphi_{t_0, x_0, p_0}(t_f)) - x_f, \qquad \pi(x, p) = x,
-#    ```
+# ```math
+# S(p_0) = \pi(\varphi_{t_0, x_0, p_0}(t_f)) - x_f, \qquad \pi(x, p) = x,
+# ```
 #
-#    measures the miss at $t_f$: solving the BVP reduces to finding $p_0$ such that $S(p_0) = 0$.
+# measures the miss at $t_f$: solving the BVP reduces to finding $p_0$ such that $S(p_0) = 0$.
 #
 # For the energy problem, $H = p_1 v + p_2 u - u^2/2$, so the maximiser is $u = p_2$.
 
