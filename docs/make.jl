@@ -239,7 +239,7 @@ JL_OUTPUT = joinpath(@__DIR__, "src", "scripts")
 mkpath(NB_OUTPUT)
 mkpath(JL_OUTPUT)
 
-for file in ["tutorial.jl"]
+for file in ["guided-tour.jl"]
     INPUT = joinpath(LITERATE_DIR, file)
     # No Draft=false override: the guided tour is real tutorial content, not
     # yet written/debugged (that's PR 11's job) — it must stay skipped under
