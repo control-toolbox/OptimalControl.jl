@@ -29,7 +29,7 @@ t0 = 0.0
 tf = 1.0
 x0 = [-1.0, 0.0]
 xf = [0.0, 0.0]
-VMAX = 1.0        # the unconstrained transfer peaks at v = 1.5, so this bound bites
+VMAX = 1.0        # unconstrained transfer peaks at v = 1.5, so this bites
 
 ocp = @def begin
     t ∈ [t0, tf], time
@@ -54,7 +54,7 @@ its label. Adding `+ 0.0` makes it a nonlinear **path** constraint — it now ha
 ```@example main
 g(x) = VMAX - x[2]      # ≥ 0 away from the boundary, 0 on it
 μ(x, p) = p[1]           # feedback multiplier on the boundary arc: μ = p_q
-law(x, p) = 0.0           # the boundary control: u = 0 keeps v̇ = 0, holding v at VMAX
+law(x, p) = 0.0   # boundary control: u = 0 ⟹ v̇ = 0 ⟹ v = VMAX
 
 f_boundary = Flow(ocp, law; constraint=(x, u) -> g(x), multiplier=μ)
 
@@ -119,11 +119,11 @@ Pass matched tuples of functions (or labels) and multipliers, one per active con
 boundary arc, in place of the single values above:
 
 ```@example main
-g_q(x) = 10.0 - x[1]                       # a second bound, q ≤ 10 — slack on this arc
+g_q(x) = 10.0 - x[1]      # a second bound, q ≤ 10 — slack on this arc
 f_two = Flow(ocp, law;
              constraint = ((x, u) -> g(x), (x, u) -> g_q(x)),
              multiplier = (μ, (x, p) -> 0.0))
-f_two(t1, [-0.5, VMAX], p1, t2)[1] ≈ xb    # same arc: the extra constraint contributes nothing
+f_two(t1, [-0.5, VMAX], p1, t2)[1] ≈ xb   # extra bound is slack
 ```
 
 ## Assembling the arcs
@@ -135,8 +135,8 @@ constraint order requires one (none here: a first-order constraint keeps the cos
 continuous).
 
 ```@example main
-f_interior = Flow(ocp, (x, p) -> p[2])                  # u = p_v away from the boundary
-φ = f_interior * (t1, f_boundary) * (t2, f_interior)    # unconstrained · boundary · unconstrained
+f_interior = Flow(ocp, (x, p) -> p[2])   # u = p_v away from the boundary
+φ = f_interior * (t1, f_boundary) * (t2, f_interior)   # 3 arcs
 n_phases(φ)
 ```
 

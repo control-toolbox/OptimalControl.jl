@@ -96,7 +96,8 @@ tf_guess = variable(direct_sol)
 
 prob = NonlinearProblem(nle!, ξ_guess)
 shooting_sol = NonlinearSolve.solve(prob; show_trace=Val(false))
-p0_sol, t1_sol, tf_sol = shooting_sol.u[1:2], shooting_sol.u[3], shooting_sol.u[4]
+p0_sol, t1_sol, tf_sol =
+    shooting_sol.u[1:2], shooting_sol.u[3], shooting_sol.u[4]
 ```
 
 ```@example main

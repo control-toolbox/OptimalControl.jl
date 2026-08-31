@@ -157,7 +157,9 @@ f_aug = Flow(ocp_aug, (x, p, ω) -> p[2])
 ω_val = π / 2
 p0_val = [1.0, 0.5]
 
-xf_aug, pf_aug, pω = f_aug(t0d, [q0, v0], p0_val, tfd; variable=ω_val, variable_costate=true)
+xf_aug, pf_aug, pω = f_aug(
+    t0d, [q0, v0], p0_val, tfd; variable=ω_val, variable_costate=true
+)
 pω
 ```
 
@@ -198,7 +200,7 @@ xf_total ≈ xf_partial
 ```
 
 ```@example main
-# :total reproduces the stationary law's trajectory exactly — the perturbation cancels
+# :total reproduces the stationary law's trajectory exactly
 xf_stationary, _ = Flow(ocp, (x, p) -> p[2])(t0, x0, p0, tf)
 xf_total ≈ xf_stationary
 ```

@@ -75,7 +75,10 @@ nothing # hide
 ```@example main
 plt = plot(sol, :state; size=(800, 400), label="Direct")
 tg = time_grid(sol)
-plot!(plt, tg, data.(tg); subplot=1, line=:dot, lw=2, label="Data", color=:black)
+plot!(
+    plt, tg, data.(tg);
+    subplot=1, line=:dot, lw=2, label="Data", color=:black,
+)
 ```
 
 The estimate is close to $\lambda \approx 0.5$. The indirect (PMP shooting) solution of the

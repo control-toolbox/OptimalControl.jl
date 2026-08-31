@@ -144,7 +144,7 @@ constructing** a flow, not on the call:
 
 ```julia
 f = Flow(ocp, law; method=:gpu)   # correct — a constructor keyword
-f(t0, x0, p0, tf; method=:gpu)    # wrong — MethodError, no such call-time keyword
+f(t0, x0, p0, tf; method=:gpu)    # wrong — no such call-time keyword
 ```
 
 ## Where to go

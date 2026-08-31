@@ -76,7 +76,9 @@ end
 The `:gpu` parameter token selects GPU-optimized defaults:
 
 ```julia
-sol = solve(ocp, :exa, :madnlp, :gpu; grid_size=100, print_level=MadNLP.ERROR)
+sol = solve(
+    ocp, :exa, :madnlp, :gpu; grid_size=100, print_level=MadNLP.ERROR
+)
 
 # or, letting completion fill in the rest — first match with :gpu:
 sol = solve(ocp, :gpu; grid_size=100, print_level=MadNLP.ERROR)

@@ -57,11 +57,15 @@ Give one component, and the other two are completed the same way descriptive mod
 partial token list — first match, top to bottom in [`methods`](@ref)`()`:
 
 ```@example explicit
-methods()[1]  # (:collocation, :adnlp, :ipopt, :cpu) — what a bare solve(ocp) completes to
+methods()[1]  # what a bare solve(ocp) completes to
 ```
 
 ```@example explicit
-result = solve(ocp; solver=OptimalControl.Ipopt(max_iter=2000, print_level=0), display=true)
+result = solve(
+    ocp;
+    solver=OptimalControl.Ipopt(max_iter=2000, print_level=0),
+    display=true,
+)
 nothing # hide
 ```
 
@@ -86,7 +90,9 @@ afterward, unlike descriptive mode:
 ```@example explicit
 disc = OptimalControl.Collocation(grid_size=150, scheme=:gauss_legendre_2)
 mod = OptimalControl.ADNLP(backend=:optimized, show_time=true)
-sol = OptimalControl.Ipopt(max_iter=1000, tol=1e-8, print_level=5, acceptable_tol=1e-6)
+sol = OptimalControl.Ipopt(
+    max_iter=1000, tol=1e-8, print_level=5, acceptable_tol=1e-6
+)
 nothing # hide
 ```
 
@@ -94,7 +100,9 @@ Undeclared options still need `bypass` (or its alias `force`), same reasoning as
 mode — but here it's passed straight into the constructor, not through `route_to`:
 
 ```@example explicit
-solver = OptimalControl.Ipopt(max_iter=500, print_level=0, mumps_print_level=bypass(1))
+solver = OptimalControl.Ipopt(
+    max_iter=500, print_level=0, mumps_print_level=bypass(1)
+)
 nothing # hide
 ```
 

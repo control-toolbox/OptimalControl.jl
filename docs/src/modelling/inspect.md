@@ -97,7 +97,7 @@ has_free_final_time(ocp)
 ### Autonomy
 
 ```@example main
-is_autonomous(ocp)  # false if the dynamics or the Lagrange cost depend on time
+is_autonomous(ocp)  # false if dynamics or Lagrange cost depend on t
 ```
 
 See [Time dependence](@ref modelling-inspect-time-dependence) below.
@@ -246,7 +246,7 @@ s = 0.5; q = [1.0, 2.0]; u = 3.0
 ```
 
 ```@example main
-(type, f, lb, ub) = constraint(ocp, :cons_mixed)   # a path (mixed state–control) constraint
+(type, f, lb, ub) = constraint(ocp, :cons_mixed)  # a mixed path constraint
 (type, f(s, q, u, v))
 ```
 
@@ -279,7 +279,7 @@ nothing # hide
 ```
 
 ```@example main
-has_abstract_definition(ocp)  # false for a functional-API model (EmptyDefinition)
+has_abstract_definition(ocp)  # false for a functional-API model
 ```
 
 ## [Time dependence](@id modelling-inspect-time-dependence)

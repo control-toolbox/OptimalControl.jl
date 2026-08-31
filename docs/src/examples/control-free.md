@@ -57,7 +57,10 @@ println("estimated λ = ", variable(growth_sol))
 ```@example main
 t_grid = time_grid(growth_sol)
 plt_growth = plot(growth_sol, :state; label="Direct")
-plot!(plt_growth, t_grid, data.(t_grid); line=:dot, label="Data", color=:black)
+plot!(
+    plt_growth, t_grid, data.(t_grid);
+    line=:dot, label="Data", color=:black,
+)
 ```
 
 `model(growth_sol)` gives back the underlying problem the solution was computed from — the same
@@ -82,7 +85,9 @@ The costate $p$ and the variable's own costate $p_\lambda$ must both vanish at $
 ```@example main
 function shoot_growth!(s, ξ)
     p0, λ = ξ[1], ξ[2]
-    _, p_tf, pλ_tf = f_growth(t0, x0, p0, tf; variable=λ, variable_costate=true)
+    _, p_tf, pλ_tf = f_growth(
+        t0, x0, p0, tf; variable=λ, variable_costate=true
+    )
     s[1] = p_tf
     s[2] = pλ_tf
     return nothing
@@ -104,7 +109,10 @@ p0_sol_growth, λ_sol = shoot_sol_growth.u
 
 ```@example main
 indirect_growth = f_growth((t0, tf), x0, p0_sol_growth; variable=λ_sol)
-plot!(plt_growth, indirect_growth, :state; label="Indirect", linestyle=:dash)
+plot!(
+    plt_growth, indirect_growth, :state;
+    label="Indirect", linestyle=:dash,
+)
 ```
 
 The direct and indirect estimates of $\lambda$ agree, and both curves fit the noisy data
@@ -144,7 +152,10 @@ end
 
 ```@example main
 harmonic_sol = solve(ocp_harmonic; grid_size=20, display=false)
-println("estimated ω = ", variable(harmonic_sol), "  (expected π/2 ≈ ", π / 2, ")")
+println(
+    "estimated ω = ", variable(harmonic_sol),
+    "  (expected π/2 ≈ ", π / 2, ")",
+)
 ```
 
 ```@example main
@@ -158,7 +169,9 @@ f_harmonic = Flow(ocp_harmonic)
 
 function shoot_harmonic!(s, ξ)
     p0, ω = ξ[1:2], ξ[3]
-    x_tf, p_tf, pω_tf = f_harmonic(t0h, [q0, v0], p0, tfh; variable=ω, variable_costate=true)
+    x_tf, p_tf, pω_tf = f_harmonic(
+        t0h, [q0, v0], p0, tfh; variable=ω, variable_costate=true
+    )
     s[1] = x_tf[1]           # q(tf) = 0
     s[2] = p_tf[2]           # free final velocity
     s[3] = pω_tf + 2ω        # Mayer-cost transversality
@@ -173,7 +186,9 @@ p0_guess_h = costate(harmonic_sol)(t0h)
 ω_guess = variable(harmonic_sol)
 
 prob_harmonic = NonlinearProblem(nle_harmonic!, [p0_guess_h..., ω_guess])
-shoot_sol_harmonic = NonlinearSolve.solve(prob_harmonic; show_trace=Val(false))
+shoot_sol_harmonic = NonlinearSolve.solve(
+    prob_harmonic; show_trace=Val(false)
+)
 p0_sol_harmonic, ω_sol = shoot_sol_harmonic.u[1:2], shoot_sol_harmonic.u[3]
 println("indirect ω = ", ω_sol)
 ```
@@ -181,9 +196,14 @@ println("indirect ω = ", ω_sol)
 ### Comparison
 
 ```@example main
-indirect_harmonic = f_harmonic((t0h, tfh), [q0, v0], p0_sol_harmonic; variable=ω_sol)
+indirect_harmonic = f_harmonic(
+    (t0h, tfh), [q0, v0], p0_sol_harmonic; variable=ω_sol
+)
 plt_harmonic = plot(harmonic_sol, :state; label="Direct")
-plot!(plt_harmonic, indirect_harmonic, :state; label="Indirect", linestyle=:dash)
+plot!(
+    plt_harmonic, indirect_harmonic, :state;
+    label="Indirect", linestyle=:dash,
+)
 ```
 
 ## See also
