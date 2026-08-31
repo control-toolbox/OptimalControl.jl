@@ -241,13 +241,18 @@ mkpath(JL_OUTPUT)
 
 for file in ["guided-tour.jl"]
     INPUT = joinpath(LITERATE_DIR, file)
-    # No Draft=false override: the guided tour is real tutorial content, not
-    # yet written/debugged (that's PR 11's job) — it must stay skipped under
-    # the global draft=true like every other stub page until then. Forcing
-    # it to execute early surfaced several unrelated runtime bugs
-    # (docs/reports/01-infrastructure.md's own PR 2 scope is "a green build
-    # with mostly empty pages").
-    Literate.markdown(INPUT, MD_OUTPUT; name="guided-tour")
+    # The guided tour executes like every other real page: inject `Draft = false`
+    # into the generated page's `@meta` block so its code runs under the global
+    # `draft = true` (Phase E5). The PR-2-era comment here claimed executing it
+    # "surfaced several unrelated runtime bugs" — those were upstream and have
+    # since been fixed; the tour now builds clean.
+    add_draft_false =
+        content -> replace(
+            content,
+            "EditURL = \"../../src-literate/$file\"\n" =>
+                "EditURL = \"../../src-literate/$file\"\nDraft = false\n",
+        )
+    Literate.markdown(INPUT, MD_OUTPUT; name="guided-tour", postprocess=add_draft_false)
     Literate.notebook(INPUT, NB_OUTPUT; name="guided-tour", execute=false)
     Literate.script(INPUT, JL_OUTPUT; name="guided-tour")
 end
