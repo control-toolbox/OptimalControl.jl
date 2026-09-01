@@ -4,9 +4,9 @@ $(TYPEDSIGNATURES)
 Main entry point for optimal control problem resolution.
 
 This function orchestrates the complete solve workflow by:
-1. Detecting the resolution mode (explicit vs descriptive) from arguments
-2. Extracting or creating the strategy registry for component completion
-3. Dispatching to the appropriate Layer 2 solver based on the detected mode
+- Detecting the resolution mode (explicit vs descriptive) from arguments
+- Extracting or creating the strategy registry for component completion
+- Dispatching to the appropriate Layer 2 solver based on the detected mode
 
 # Arguments
 - `ocp::CTModels.AbstractModel`: The optimal control problem to solve

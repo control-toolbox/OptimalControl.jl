@@ -4,10 +4,10 @@ $(TYPEDSIGNATURES)
 Complete missing resolution components using the registry.
 
 This function orchestrates the component completion workflow:
-1. Extract symbols from provided components using `_build_partial_description`
-2. Complete the method description using `_complete_description`
-3. Resolve method with parameter information using `CTBase.Orchestration.resolve_method`
-4. Build or use strategies for each family using `_build_or_use_strategy`
+- Extract symbols from provided components using `_build_partial_description`
+- Complete the method description using `_complete_description`
+- Resolve method with parameter information using `CTBase.Orchestration.resolve_method`
+- Build or use strategies for each family using `_build_or_use_strategy`
 
 # Arguments
 - `discretizer::Union{CTSolvers.DOCP.AbstractDiscretizer, Nothing}`: Discretization strategy or `nothing`
