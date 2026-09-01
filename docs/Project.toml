@@ -35,7 +35,7 @@ UnoSolver = "1baa60ac-02f7-4b39-a7a8-2f4f58486b05"
 
 [compat]
 ADNLPModels = "0.8"
-CTBase = "0.30"
+CTBase = "0.30, 0.29"
 CTDirect = "1"
 CTFlows = "0.18"
 CTLie = "0.2"
