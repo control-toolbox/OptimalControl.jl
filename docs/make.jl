@@ -87,22 +87,13 @@ const CTSolversMadNLP = Base.get_extension(CTSolvers, :CTSolversMadNLP)
 const CTSolversMadNCL = Base.get_extension(CTSolvers, :CTSolversMadNCL)
 
 Modules = Any[
-    CTBase,
-    CTLie,
-    CTFlows,
-    CTDirect,
-    CTModels,
-    CTSolvers,
-    CTParser,
-    OptimalControl,
+    CTBase, CTLie, CTFlows, CTDirect, CTModels, CTSolvers, CTParser, OptimalControl
 ]
 
 for (pkg, syms) in [
     CTModels => (:CTModelsJLD, :CTModelsJSON, :CTModelsPlots),
-    CTSolvers => (:CTSolversIpopt, :CTSolversKnitro,
-                  :CTSolversMadNLP, :CTSolversMadNCL),
-    CTFlows => (:CTFlowsPlots, :CTFlowsSciMLFlows,
-                :CTFlowsSciMLIntegrator),
+    CTSolvers => (:CTSolversIpopt, :CTSolversKnitro, :CTSolversMadNLP, :CTSolversMadNCL),
+    CTFlows => (:CTFlowsPlots, :CTFlowsSciMLFlows, :CTFlowsSciMLIntegrator),
 ]
     for s in syms
         m = _ext(pkg, s)
@@ -249,8 +240,7 @@ for file in ["guided-tour.jl"]
     add_draft_false =
         content -> replace(
             content,
-            "EditURL = \"../../src-literate/$file\"\n" =>
-                "EditURL = \"../../src-literate/$file\"\nDraft = false\n",
+            "EditURL = \"../../src-literate/$file\"\n" => "EditURL = \"../../src-literate/$file\"\nDraft = false\n",
         )
     Literate.markdown(INPUT, MD_OUTPUT; name="guided-tour", postprocess=add_draft_false)
     Literate.notebook(INPUT, NB_OUTPUT; name="guided-tour", execute=false)
