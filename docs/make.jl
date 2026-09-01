@@ -336,6 +336,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "Time minimisation (bang–bang)" => "examples/double-integrator-time.md",
                 "Parameter estimation without a control" => "examples/control-free.md",
                 "Control and variable together" => "examples/control-and-variable.md",
+                "Turnpike (bang–singular–bang)" => "examples/turnpike.md",
                 "Singular control" => "examples/singular-control.md",
                 "State constraint" => "examples/state-constraint.md",
                 "The logo" => "examples/logo.md",

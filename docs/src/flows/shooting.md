@@ -135,7 +135,9 @@ pvf
 The example above already carries one: $t_1$ is solved for alongside $p_0$ and $t_f$. Each
 additional switch adds one more unknown time and one more switching-condition residual — see
 [Multi-phase flows](@ref flows-multi-phase) for concatenating the corresponding flows once the
-times are known (or being solved for).
+times are known (or being solved for), and
+[Turnpike (bang–singular–bang)](@ref examples-turnpike) for a worked case with two unknown
+switching times bracketing a singular arc.
 
 ## Getting a starting point from a direct solve
 
