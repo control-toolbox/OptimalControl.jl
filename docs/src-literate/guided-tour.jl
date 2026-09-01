@@ -115,7 +115,7 @@ control!(pre, 1)
 
 function f_energy!(dx, t, x, u, v)
     dx[1] = x[2]
-    dx[2] = u[1]
+    dx[2] = u          # scalar control: `u`, not `u[1]`
     return nothing
 end
 dynamics!(pre, f_energy!)
@@ -132,7 +132,7 @@ constraint!(
     f=boundary_energy!, lb=zeros(4), ub=zeros(4), label=:endpoint,
 )
 
-lagrange_energy(t, x, u, v) = 0.5 * u[1]^2
+lagrange_energy(t, x, u, v) = 0.5 * u^2
 objective!(pre, :min; lagrange=lagrange_energy)
 
 time_dependence!(pre; autonomous=true)
@@ -151,9 +151,9 @@ definition(ocp)          # the macro records the full DSL expression
 has_abstract_definition(ocp_func)   # false: no symbolic definition
 
 #md # !!! warning "Two things to keep in mind"
-#md #     - In the functional API, callbacks are **always vector-valued**: even when the control is scalar, one writes `u[1]` — not `u` — inside `f_energy!` or `lagrange_energy`.
+#md #     - A dimension-1 `x`, `u` or `v` reaches a callback as a **scalar** — write `u`, not `u[1]` — exactly as on a solution and in `@def`. The one exception is the in-place output buffer (`dx` here, `val` for constraints): always a vector, written by index. See [Shapes in callbacks](@ref modelling-functional-api-shapes).
 #md #     - The functional API currently works only with the `:adnlp` modeler; it does **not** support the `:exa` modeler needed for GPU solving — one more reason to prefer `@def` when GPU execution is contemplated (more in the GPU section).
-#nb # **Two things to keep in mind:** (1) in the functional API, callbacks are always vector-valued — even when the control is scalar, one writes `u[1]` — not `u` — inside `f_energy!` or `lagrange_energy`; (2) the functional API currently works only with the `:adnlp` modeler, **not** `:exa` (needed for GPU solving) — one more reason to prefer `@def` when GPU execution is contemplated (more in the GPU section).
+#nb # **Two things to keep in mind:** (1) a dimension-1 `x`, `u` or `v` reaches a callback as a scalar — write `u`, not `u[1]` — while the in-place output buffer (`dx`, `val`) is always a vector written by index; (2) the functional API currently works only with the `:adnlp` modeler, **not** `:exa` (needed for GPU solving) — one more reason to prefer `@def` when GPU execution is contemplated (more in the GPU section).
 
 #src ============================================================================
 # ## First solve, initial guess, and the costate
