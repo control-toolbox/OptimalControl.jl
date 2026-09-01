@@ -40,15 +40,18 @@ using JLD2
 
 # plotting
 using Plots
+import CairoMakie   # `import`, not `using`: keeps Makie's `plot`/`plot!` out of Main,
+# which would collide with Plots' in the `@docs` block on results/plot.md
 
 # DocumenterVitepress picks the highest-priority MIME type a plot object responds to
 # (image/png: 4.0 over image/svg+xml: 3.0) — the opposite of Documenter.HTML, which
-# prefers SVG. Plots.jl (unlike CairoMakie) responds to both, so PNG wins unless this
-# is disabled. Global, not per-page: Base.showable is a method on the Plots.Plot type,
-# so setting it once here — before any @example block runs — covers every page that
-# ever calls `using Plots`, not just the ones that do today. See Handbook/VITEPRESS-DOC.md
-# "Plot image format — SVG vs PNG".
+# prefers SVG. Both Plots.jl and CairoMakie respond to `image/png`, so PNG wins for
+# every figure unless it is disabled. Set once here, before any @example block runs,
+# so it covers every page present or future — not just the ones plotting today. See
+# Handbook/VITEPRESS-DOC.md "Plot image format — SVG vs PNG".
 Base.showable(::MIME"image/png", ::Plots.Plot) = false
+CairoMakie.activate!(; type="svg")
+Base.showable(::MIME"image/png", ::CairoMakie.Makie.Figure) = false
 
 # DocumenterVitepress (0.3.5) hard-codes `collapsed: false` on every sidebar group
 # (`vitepress_config.jl`'s `pagelist2str` for a nested `name => children` entry), so the
