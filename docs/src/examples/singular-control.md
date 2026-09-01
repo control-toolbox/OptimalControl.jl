@@ -9,6 +9,9 @@ $-1$ on part of the trajectory — a **singular arc**. This is the problem the w
 [Geometry](@ref geometry-overview) section exists to support: computing that arc's control
 needs Poisson brackets.
 
+For the minimal case, where the singular control drops out of the optimality conditions with no
+brackets at all, see [Turnpike (bang–singular–bang)](@ref examples-turnpike) first.
+
 ```@example main
 using OptimalControl
 using NLPModelsIpopt

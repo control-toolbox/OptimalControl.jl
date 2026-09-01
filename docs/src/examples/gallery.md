@@ -16,6 +16,7 @@ Read them in order: each one uses something the previous introduced.
 | [Time minimisation (bang–bang)](@ref examples-double-integrator-time) | The same wagon, transferred as fast as possible. | bang–bang control, flow concatenation, switching-time detection |
 | [Parameter estimation without a control](@ref examples-control-free) | Fitting a growth rate and an oscillator's pulsation — no control anywhere. | control-free problems, `variable_costate=true` |
 | [Control and variable together](@ref examples-control-and-variable) | The same two systems, now with a control input to pay for. | estimating a parameter *and* a control at once |
+| [Turnpike (bang–singular–bang)](@ref examples-turnpike) | A scalar system whose optimal control is bang, singular, then bang again. | singular arcs, two switching times as shooting unknowns, three-flow concatenation |
 | [Singular control](@ref examples-singular-control) | A drift system whose optimal control has a singular arc. | `Lift`, `@Lie` Poisson brackets, the Geometry toolkit's payoff |
 | [State constraint](@ref examples-state-constraint) | The double integrator again, this time with a velocity or position bound. | boundary arcs, costate jumps, `constraint=`/`multiplier=` |
 
