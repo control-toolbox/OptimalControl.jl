@@ -17,7 +17,7 @@ For the full worked story — both examples below solved **direct and indirect**
 
 ## How to declare it
 
-There is no dedicated syntax for "no control": simply never declare one. Declare a `variable`, a time, a state, dynamics, and a cost, and omit the control line entirely (on the [abstract syntax](@ref modelling-abstract-syntax)) or never call `control!` (on the [functional API](@ref modelling-functional-api)).
+There is no dedicated syntax for "no control": simply never declare one. Declare a `variable`, a time, a state, dynamics, and a cost, and omit the control line entirely (on the [abstract syntax](@ref modelling-abstract-syntax)) or never call `control!` (on the [functional API](@ref modelling-functional-api)). The [functional API](@ref modelling-functional-api) page shows the parameter-estimation problem below built both ways, side by side.
 
 !!! warning "`control!(pre, 0)` is an error, not a spelling for \"no control\""
 
