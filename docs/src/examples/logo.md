@@ -117,7 +117,8 @@ orbit to the outer one.
 xt  = state(sol)
 arc = [Point2f(xt(t)[1], xt(t)[2]) for t in range(0, tf; length = 500)]
 
-circle(r) = [Point2f(r * cos(a), r * sin(a)) for a in range(0, 2π; length = 300)]
+circle(r) =
+    [Point2f(r * cos(a), r * sin(a)) for a in range(0, 2π; length = 300)]
 
 fig = Figure(size = (460, 460))
 ax  = Axis(fig[1, 1]; aspect = DataAspect())
@@ -141,18 +142,21 @@ orbit in Julia blue and the central body, and the logo is done.
 using Colors
 
 rot(ψ) = [cos(ψ) -sin(ψ); sin(ψ) cos(ψ)]
-jl = Colors.JULIA_LOGO_COLORS                     # (red, green, blue, purple)
+jl = Colors.JULIA_LOGO_COLORS   # (red, green, blue, purple)
 
 # departure points placed as the Julia-logo dots — green on top
 arms = [(7π / 6, jl.red), (π / 2, jl.green), (11π / 6, jl.purple)]
 
 fig = Figure(size = (600, 600), backgroundcolor = :transparent)
-ax  = Axis(fig[1, 1]; aspect = DataAspect(), backgroundcolor = :transparent)
+ax  = Axis(
+    fig[1, 1];
+    aspect = DataAspect(), backgroundcolor = :transparent,
+)
 hidedecorations!(ax)
 hidespines!(ax)
 limits!(ax, -1.32rf, 1.32rf, -1.32rf, 1.32rf)
 
-poly!(ax, circle(rf); color = :white)            # white disk behind everything
+poly!(ax, circle(rf); color = :white)   # white disk behind everything
 
 for (ψ, c) in arms
     P = [Point2f(rot(ψ) * p) for p in arc]
