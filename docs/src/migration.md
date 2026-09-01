@@ -76,13 +76,10 @@ Three call conventions changed signature, not just spelling.
 **The flow call.** There is no positional slot for the variable any more:
 
 ```julia
-# before
-f(t0, x0, p0, tf, λ)
-f(t0, x0, p0, tf; augment=true)
-
-# after
-f(t0, x0, p0, tf; variable=λ)
-f(t0, x0, p0, tf; variable=λ, variable_costate=true)
+f(t0, x0, p0, tf, λ)                                  # [!code --]
+f(t0, x0, p0, tf; augment=true)                       # [!code --]
+f(t0, x0, p0, tf; variable=λ)                         # [!code ++]
+f(t0, x0, p0, tf; variable=λ, variable_costate=true)  # [!code ++]
 ```
 
 `variable=` is mandatory on a `NonFixed` problem — omitting it does not silently default, it
@@ -102,11 +99,8 @@ f(t0, x0, p0, tf)
 **Constrained flows.** Positional arguments became a keyword pair:
 
 ```julia
-# before
-fb = Flow(ocp, u, g, μ)                            # 3 positional
-
-# after
-fb = Flow(ocp, u; constraint=g, multiplier=μ)      # paired keywords
+fb = Flow(ocp, u, g, μ)                         # 3 positional     [!code --]
+fb = Flow(ocp, u; constraint=g, multiplier=μ)   # paired keywords  [!code ++]
 ```
 
 The two keywords are a pair: one without the other is an `IncorrectArgument`. `constraint=`
@@ -118,13 +112,10 @@ now also accepts a `Symbol` naming a `:path` constraint already declared in the 
 every sibling `Data` constructor:
 
 ```julia
-# before
-VectorField(f; autonomous=false, variable=true)
-@Lie [X, Y] autonomous=false
-
-# after
-VectorField(f; is_autonomous=false, is_variable=true)
-@Lie [X, Y] is_autonomous=false
+VectorField(f; autonomous=false, variable=true)        # [!code --]
+@Lie [X, Y] autonomous=false                            # [!code --]
+VectorField(f; is_autonomous=false, is_variable=true)   # [!code ++]
+@Lie [X, Y] is_autonomous=false                         # [!code ++]
 ```
 
 The old spelling on `@Lie` raises an `IncorrectArgument` at macro-expansion time — loud, not
@@ -157,8 +148,8 @@ the current package.
     closure **constructs without error** and only fails once the flow actually runs:
 
     ```julia
-    bad_law = OpenLoop(() -> 1.0)          # constructs fine — the trap
-    Flow(ControlledVectorField(fc), bad_law)(t0, x0, tf)   # MethodError here, not above
+    bad_law = OpenLoop(() -> 1.0)                          # constructs fine — the trap
+    Flow(ControlledVectorField(fc), bad_law)(t0, x0, tf)   # MethodError here, not above  [!code error]
     ```
 
     The `MethodError` points at the call site, far from the actual mistake at construction.
@@ -175,7 +166,7 @@ the current package.
     instead of erroring — `tf` silently becomes `p0` and `λ` silently becomes `tf`:
 
     ```julia
-    f(t0, x0, tf, λ)   # intended: state flow, tf and lambda as before
+    f(t0, x0, tf, λ)   # intended: state flow, tf and lambda as before  [!code warning]
     # actually runs as f(t0, x0, p0=tf, tf=λ)  — arguments shifted by one position
     ```
 

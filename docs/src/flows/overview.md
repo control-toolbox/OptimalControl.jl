@@ -50,13 +50,13 @@ numerically.
 
 ## Three things this section does
 
-1. **Indirect solving** — [From an OCP](@ref flows-from-ocp),
-   [Constrained arcs](@ref flows-constrained-arcs), [Multi-phase flows](@ref flows-multi-phase),
-   [Shooting](@ref flows-shooting).
-2. **Simulation** — [Simulation](@ref flows-simulation): integrate under a
-   given control, no optimization involved.
-3. **Inspection** — [Accessors](@ref flows-accessors): the Hamiltonian,
-   its vector field, the pseudo-Hamiltonian, the control law you passed in.
+- **Indirect solving** — [From an OCP](@ref flows-from-ocp),
+  [Constrained arcs](@ref flows-constrained-arcs), [Multi-phase flows](@ref flows-multi-phase),
+  [Shooting](@ref flows-shooting).
+- **Simulation** — [Simulation](@ref flows-simulation): integrate under a
+  given control, no optimization involved.
+- **Inspection** — [Accessors](@ref flows-accessors): the Hamiltonian,
+  its vector field, the pseudo-Hamiltonian, the control law you passed in.
 
 [From Hamiltonians](@ref flows-from-hamiltonians) covers the lower-level
 constructors these three jobs are all built from.
