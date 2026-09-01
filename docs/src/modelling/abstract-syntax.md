@@ -452,7 +452,7 @@ nothing # hide
         u ∈ R, control
         -1 ≤ v ≤ 1
         x₁(0) == -1
-        x₂(0) - v == 0 # OK: the boundary constraint may involve the variable
+        x₂(0) - v == 0 # OK: this side may involve the variable
         x(1) == [0, 0]
         ẋ(t) == [x₂(t), u(t)]
         ∫(0.5u(t)^2) → min

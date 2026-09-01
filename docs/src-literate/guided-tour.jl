@@ -127,7 +127,10 @@ function boundary_energy!(b, x0_, xf_, v)
     b[4] = xf_[2] - xf[2]
     return nothing
 end
-constraint!(pre, :boundary; f=boundary_energy!, lb=zeros(4), ub=zeros(4), label=:endpoint)
+constraint!(
+    pre, :boundary;
+    f=boundary_energy!, lb=zeros(4), ub=zeros(4), label=:endpoint,
+)
 
 lagrange_energy(t, x, u, v) = 0.5 * u[1]^2
 objective!(pre, :min; lagrange=lagrange_energy)
@@ -145,7 +148,7 @@ definition(ocp)          # the macro records the full DSL expression
 
 #-
 
-has_abstract_definition(ocp_func)   # false: functional API stores no abstract definition
+has_abstract_definition(ocp_func)   # false: no symbolic definition
 
 #md # !!! warning "Two things to keep in mind"
 #md #     - In the functional API, callbacks are **always vector-valued**: even when the control is scalar, one writes `u[1]` — not `u` — inside `f_energy!` or `lagrange_energy`.
@@ -274,8 +277,14 @@ using MadNLP
 sol_ipopt = solve(goddard; grid_size=250, display=false)
 sol_madnlp = solve(goddard, :madnlp; grid_size=250, display=false)
 
-println("Ipopt  : r(tf) = ", objective(sol_ipopt), ", ", iterations(sol_ipopt), " iters")
-println("MadNLP : r(tf) = ", objective(sol_madnlp), ", ", iterations(sol_madnlp), " iters")
+println(
+    "Ipopt  : r(tf) = ", objective(sol_ipopt),
+    ", ", iterations(sol_ipopt), " iters",
+)
+println(
+    "MadNLP : r(tf) = ", objective(sol_madnlp),
+    ", ", iterations(sol_madnlp), " iters",
+)
 
 # The available methods and their options can be inspected with `methods()` and `describe(:collocation)`; we will not dwell on them here.
 
@@ -283,7 +292,7 @@ println("MadNLP : r(tf) = ", objective(sol_madnlp), ", ", iterations(sol_madnlp)
 #
 # A solution can be passed **directly** as the initial guess of another solve — it is interpolated onto the new grid. This makes discrete continuation trivial and ties back to the initialisation above. On this nonlinear problem it genuinely **pays**: we compare reaching a fine grid of 1000 two ways — a **cold start** (solve `grid_size=1000` directly) versus a **cascade** (solve `grid_size=50` first, then `grid_size=1000` warm-started with that solution).
 
-## solutions computed once, reused for iteration counts and the overlay plot
+## computed once, reused for iteration counts and the overlay plot
 sol_cold = solve(goddard; grid_size=1000, display=false)
 
 ## warm cascade: grid 50 first, then grid 1000 initialised from it
@@ -306,7 +315,7 @@ plot!(plt, s1000; label="1000")
 
 # How much better is the optimal solution compared to a naive strategy? We simulate **full thrust until fuel depletion, then coast to apogee** — a bang-bang profile with no optimisation, just two ODE integrations with callbacks.
 
-using OrdinaryDiffEqTsit5   # ODE solver (callbacks for the bang-bang simulation)
+using OrdinaryDiffEqTsit5   # ODE solver (bang-bang simulation callbacks)
 
 ## Phase 1: u = 1, stop when m = mf (fuel depleted)
 bang1!(dx, x, p, t) = (dx[:] = F0(x) + F1(x))
@@ -356,7 +365,10 @@ t_bang = [sol_bang1.t; sol_bang2.t]
 r_bang = [sol_bang1[1, :]; sol_bang2[1, :]]
 
 plt_bang = plot(sol_cold; label="optimal", linewidth=2, color=1)
-plot!(plt_bang[1], t_bang, r_bang; label="bang-bang", linestyle=:dash, linewidth=2, color=2)
+plot!(
+    plt_bang[1], t_bang, r_bang;
+    label="bang-bang", linestyle=:dash, linewidth=2, color=2,
+)
 plot(plt_bang[1]; legend=:bottomright, xlabel="time", ylabel="altitude")
 
 #src ============================================================================
@@ -456,7 +468,7 @@ p_of_t = costate(direct_sol)     # costate as a function of time
 p0_guess = p_of_t(t0)              # initial costate from the direct method
 
 prob = NonlinearProblem(nle!, p0_guess)
-shooting_sol = solve(prob; show_trace=Val(true))
+shooting_sol = NonlinearSolve.solve(prob; show_trace=Val(true))
 p0_sol = shooting_sol.u
 
 println("costate p0 = ", p0_sol)
