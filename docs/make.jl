@@ -94,9 +94,9 @@ Modules = Any[
 ]
 
 for (pkg, syms) in [
-    CTModels => (:CTModelsJLD, :CTModelsJSON, :CTModelsPlots),
+    CTModels => (:CTModelsJLD, :CTModelsJSON, :CTModelsPlots, :CTModelsMakie),
     CTSolvers => (:CTSolversIpopt, :CTSolversKnitro, :CTSolversMadNLP, :CTSolversMadNCL),
-    CTFlows => (:CTFlowsPlots, :CTFlowsSciMLFlows, :CTFlowsSciMLIntegrator),
+    CTFlows => (:CTFlowsPlots, :CTFlowsSciMLFlows, :CTFlowsSciMLIntegrator, :CTFlowsMakie),
 ]
     for s in syms
         m = _ext(pkg, s)
@@ -309,6 +309,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
             "Results" => [
                 "Solution object" => "results/solution.md",
                 "Plot" => "results/plot.md",
+                "Plot with Makie" => "results/plot-makie.md",
                 "Save & load" => "results/save-load.md",
             ],
             "Flows (indirect)" => [

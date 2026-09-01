@@ -8,6 +8,11 @@ Draft = false
 directly — the same call works on a `Flow`-produced trajectory too (last section below). The
 full signatures are collected under [Reference](@ref results-plot-reference) at the end.
 
+**Choosing a backend.** Plots is the default and what this page documents. A second backend,
+[Makie.jl](https://docs.makie.org), draws the same figures at feature parity — worth it for an
+interactive window, or if you already draw in Makie elsewhere. See
+[Plot with Makie](@ref results-plot-makie).
+
 ## Getting started
 
 ```@example main
@@ -258,6 +263,17 @@ plot(plt[1])  # x₁
 ```@example main
 plot(plt[5])  # u
 ```
+
+A subplot also accepts native Plots calls directly, to annotate rather than re-plot it — for
+example marking a control bound:
+
+```@example main
+plot(plt[5])
+hline!([-1, 1]; linestyle=:dash, color=:red)
+```
+
+The same idea, in Makie, needs one extra step — a panel there is an `Axis`, not a subplot —
+see [Plot with Makie](@ref results-plot-makie).
 
 ## Plotting a flow trajectory
 
