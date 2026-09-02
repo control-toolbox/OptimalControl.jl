@@ -8,6 +8,26 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.2.1-beta] — 2026-09-02
+
+Documentation-infrastructure follow-up to the 2.2.0-beta site rewrite. No change to OptimalControl's API or runtime behaviour; nothing to migrate — see [BREAKING.md](BREAKING.md).
+
+### 📚 Documentation
+
+- **The docs build resolves every `@extref` and `@ref`.** Two long-standing backlogs closed:
+  - `_strategy_parameter` cross-referenced `CTBase.Strategies.parameter` by method signature (`parameter(T, default)` / `parameter(T)`), but CTBase's auto-generated reference indexes the function under a single anchor, so neither link resolved — collapsed to the one anchor ([#944](https://github.com/control-toolbox/OptimalControl.jl/pull/944)).
+  - the four `Plots.plot(::CTModels.Solutions.Solution)` `@extref` links were CTModels' plotting-extension docstrings referencing an anchor that cannot exist (extension methods are not in any inventory); fixed upstream and shipped in [CTModels 0.19.4-beta](https://github.com/control-toolbox/CTModels.jl/pull/428).
+
+- **`makedocs` no longer sets `warnonly`** ([#952](https://github.com/control-toolbox/OptimalControl.jl/pull/952)). With both backlogs cleared — the `@ref`/`DOCPCache` pair ([CTDirect#630](https://github.com/control-toolbox/CTDirect.jl/issues/630)) and the `@extref` set above — an unresolved cross-reference now fails the build instead of warning. Verified with the sibling inventories resolved remotely, as on CI.
+
+- **`docs/make.jl` runs `draft = false` by default** ([#949](https://github.com/control-toolbox/OptimalControl.jl/pull/949)). The build used to ship `draft = true` globally with a `@meta Draft = false` block repeated in 43 pages to opt each one back into execution — a double negative that also blocked a fast `draft = true` pass for link/nav checks. Now the default executes every page; flip the one flag in `make.jl` for a fast local build, or set `Draft = true` in a single page's `@meta` to exclude it. The guided-tour `Draft = false` Literate injection is removed.
+
+- **The local sibling `objects.inv` path is only tried outside CI** ([#951](https://github.com/control-toolbox/OptimalControl.jl/pull/951)) — CI never has the sibling repos checked out, so it was logging seven `Failed to load inventory` warnings on every run before falling back to the remote inventory. Local-dev ordering (local-first) is unchanged.
+
+### 📦 Dependencies
+
+- Picks up **CTBase `0.30.4-beta`** (`Descriptions` error-message fixes, re-exported) and **CTModels `0.19.4-beta`** (the `@extref` docstring fix). `docs/src/assets/Manifest.toml` regenerated to match.
+
 ## [2.2.0-beta] — 2026-08-28
 
 Dependency realignment onto the released control-toolbox ecosystem, the v2.0 → v2.1 compatibility shims, and a full documentation-site rewrite. No breaking change to OptimalControl's own API; two near-breaking notes — see [BREAKING.md](BREAKING.md).
@@ -39,10 +59,6 @@ Dependency realignment onto the released control-toolbox ecosystem, the v2.0 →
 ### 📚 Documentation
 
 - The documentation site was rewritten onto a new sitemap (getting started, modelling, solve, results, flows, geometry, an examples gallery, and a thematic API reference) and a v2.0 → v2.1 migration page added. The retired v2.0 manuals are kept under `docs/attic/`
-
-- **`_strategy_parameter` docstring no longer emits an unresolvable `@extref`** ([#943](https://github.com/control-toolbox/OptimalControl.jl/issues/943)). It cross-referenced `CTBase.Strategies.parameter` by method signature (`parameter(T, default)` / `parameter(T)`), but CTBase's auto-generated reference indexes the function under a single anchor, so neither link resolved. Collapsed to the one anchor; `docs/make.jl`'s `warnonly` comment refreshed. The remaining `@extref` warnings (`Plots.plot(::CTModels.Solutions.Solution)`) are fixed upstream in [CTModels 0.19.4-beta](https://github.com/control-toolbox/CTModels.jl/issues/427).
-
-- **`docs/make.jl` runs `draft = false` by default** ([#948](https://github.com/control-toolbox/OptimalControl.jl/issues/948)). The build used to ship `draft = true` globally with a `@meta Draft = false` block repeated in 43 pages to opt each one back into execution — a double negative that also blocked a fast `draft = true` pass for link/nav checks. Now the default executes every page; flip the one flag in `make.jl` for a fast local build, or set `Draft = true` in a single page's `@meta` to exclude it. The guided-tour `Draft = false` Literate injection is removed.
 
 ### 📦 Dependencies
 

@@ -301,9 +301,9 @@ version = "0.2.2-beta"
 
 [[deps.CTModels]]
 deps = ["CTBase", "DocStringExtensions", "LinearAlgebra", "MLStyle", "MacroTools", "OrderedCollections", "Parameters", "RecipesBase"]
-git-tree-sha1 = "5906f713c5443c89fc897b3be4b8e2945cf9b1a7"
+git-tree-sha1 = "007472ded070a4ebfa4dedec8074608a139225f1"
 uuid = "34c4fa32-2049-4079-8329-de33c2a22e2d"
-version = "0.19.3-beta"
+version = "0.19.4-beta"
 weakdeps = ["JLD2", "JSON3", "Makie", "Plots"]
 
     [deps.CTModels.extensions]
@@ -2808,9 +2808,9 @@ version = "3.7.2"
 
 [[deps.SPRAL_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Hwloc_jll", "JLLWrappers", "Libdl", "METIS_jll", "libblastrampoline_jll"]
-git-tree-sha1 = "139fa63f03a16b3d859d925ee9149dfc15f21ece"
+git-tree-sha1 = "b78d602475715c9c6ea21c9650fa5dba58e9945b"
 uuid = "319450e9-13b8-58e8-aa9f-8fd1420848ab"
-version = "2025.9.18+0"
+version = "2025.9.18+1"
 
 [[deps.SciMLBase]]
 deps = ["ADTypes", "Accessors", "Adapt", "ArrayInterface", "CommonSolve", "ConstructionBase", "Distributed", "DocStringExtensions", "EnumX", "FindFirstFunctions", "FunctionWrappersWrappers", "IteratorInterfaceExtensions", "LinearAlgebra", "Logging", "LoggingExtras", "Markdown", "PreallocationTools", "PrecompileTools", "Preferences", "Printf", "Random", "RecipesBase", "RecursiveArrayTools", "RuntimeGeneratedFunctions", "SciMLOperators", "SciMLPublic", "SciMLStructures", "StaticArraysCore", "Statistics", "SymbolicIndexingInterface"]

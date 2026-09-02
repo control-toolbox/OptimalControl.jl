@@ -4,11 +4,26 @@ Chronological, newest first. Each `CHANGELOG.md` entry links back here for the f
 record; this file never duplicates a release's own compat table, only what a caller must
 change or be aware of.
 
+- [Non-breaking notes (2.2.1-beta)](#non-breaking-notes-221-beta)
 - [Non-breaking notes (2.2.0-beta)](#non-breaking-notes-220-beta)
 - [Breaking changes: v2.0 → v2.1.0-beta](#breaking-changes-v20--v210-beta)
 - [Breaking changes: v1.x → v2.0](#breaking-changes-v1x--v20)
 
 ---
+
+## Non-breaking notes (2.2.1-beta)
+
+Documentation infrastructure only. **Nothing to migrate** — OptimalControl's API and runtime
+behaviour are unchanged, and the change is invisible to anyone who only *uses* the package.
+
+For contributors who build the documentation locally:
+
+- `docs/make.jl` now defaults to `draft = false`, so every page executes its `@example` /
+  `@repl` blocks. Set `draft = true` in `make.jl` for a fast local build that skips
+  execution; opt a single page out of execution with `Draft = true` in its `@meta` block.
+- The docs build has no `warnonly` fallback any more: an unresolved `@ref` / `@extref`, or a
+  broken `@example` / `@repl`, now fails the build rather than warning.
+- The docs environment moves to CTBase `0.30.4-beta` and CTModels `0.19.4-beta`.
 
 ## Non-breaking notes (2.2.0-beta)
 
