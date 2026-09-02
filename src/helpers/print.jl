@@ -331,11 +331,10 @@ $(TYPEDSIGNATURES)
 
 Parameter type of a strategy, or `nothing` when it declares none.
 
-Since CTBase 0.28.8-beta this is a thin wrapper around
-[`CTBase.Strategies.parameter(T, default)`](@extref) — the non-throwing counterpart to
-[`CTBase.Strategies.parameter(T)`](@extref) requested as
-[CTBase#518](https://github.com/control-toolbox/CTBase.jl/issues/518), so display no longer
-needs its own `try`/`catch` around `NotImplemented`.
+Since CTBase 0.28.8-beta this is a thin wrapper around the two-argument form of
+[`CTBase.Strategies.parameter`](@extref) — the non-throwing counterpart to its one-argument
+form ([CTBase#518](https://github.com/control-toolbox/CTBase.jl/issues/518)), so display no
+longer needs its own `try`/`catch` around `NotImplemented`.
 
 Display must not be the thing that crashes on a third-party strategy which simply chose not to
 be parameterized. Every in-tree strategy implements the contract, so the fallback path below is
