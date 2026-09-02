@@ -247,21 +247,13 @@ with_api_reference(src_dir, ext_dir) do api_pages
     return makedocs(;
         draft=draft,
         remotes=nothing, # Disable remote links. Needed for DocumenterReference
-        # Not fully zero: 2 unresolved @ref remain (DOCPCache, category :cross_references),
-        # tracked at control-toolbox/CTDirect.jl#630 — drop :cross_references once that lands.
-        # The @extref backlog (category :external_cross_references, registered by
-        # DocumenterInterLinks, not Documenter itself) is cleared: the CTBase.Strategies.parameter
-        # links were this repo's own signature-suffixed docstring (#943, fixed here) and the
-        # Plots.plot(::CTModels.Solutions.Solution) links were CTModels' extension docstrings
-        # (control-toolbox/CTModels.jl#427, fixed in CTModels 0.19.4-beta). Once that release is
-        # in docs/Manifest.toml, :external_cross_references can be dropped from this list so a
-        # future unresolved @extref fails the build. See .reports/campaign/D-api-reference.md.
-        #
-        # :example_block is deliberately *not* here: with `draft = false` every page
-        # executes, and a genuinely broken `@example` / `@repl` block must fail the build.
-        # Verified: an error introduced into any executing block still fails with
-        # :example_block under this exact warnonly list.
-        warnonly=[:cross_references, :external_cross_references],
+        # No `warnonly`: every unresolved cross-reference fails the build. The historical
+        # backlog is cleared — the `@ref`/`DOCPCache` pair (control-toolbox/CTDirect.jl#630,
+        # closed) and the `@extref` set (`CTBase.Strategies.parameter` #943; CTModels'
+        # extension docstrings control-toolbox/CTModels.jl#427, shipped in CTModels
+        # 0.19.4-beta). With `draft = false` a broken `@example` / `@repl` also fails
+        # (:example_block). Verified with the sibling inventories resolved remotely (as on
+        # CI). See .reports/campaign/D-api-reference.md.
         sitename="OptimalControl.jl",
         format=DocumenterVitepress.MarkdownVitepress(;
             repo=repo_url, devbranch="main", devurl="dev", sidebar_drawer=true

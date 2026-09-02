@@ -1,8 +1,8 @@
 # API coverage matrix
 
 **Status**: living cross-reference · **Measured against**: `names(OptimalControl)` on
-OptimalControl 2.2.0-beta (`[compat]` floors CTBase 0.30, CTModels 0.19, CTFlows 0.18,
-CTLie 0.2, CTSolvers 0.5, CTDirect 1, CTParser 0.9)
+OptimalControl 2.2.1-beta (`[compat]` floors CTBase 0.30, CTModels 0.19, CTFlows 0.18,
+CTLie 0.2, CTSolvers 0.5, CTDirect 1, CTParser 0.9) — unchanged from 2.2.0-beta
 
 ## What this is
 
