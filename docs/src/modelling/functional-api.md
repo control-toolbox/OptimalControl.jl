@@ -1,9 +1,5 @@
 # [Functional API](@id modelling-functional-api)
 
-```@meta
-Draft = false
-```
-
 The [`@def`](@ref) macro provides a concise DSL to define optimal control problems. An alternative is the **functional API**, which builds the same problem step by step using plain Julia functions.
 
 The functional API uses `OptimalControl.PreModel` as a mutable builder, populated by setter calls, then frozen into an immutable `OptimalControl.Model` by [`build`](@ref). Both `PreModel` and `Model` are imported, not exported — write `OptimalControl.PreModel()`.

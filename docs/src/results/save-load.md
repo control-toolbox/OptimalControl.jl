@@ -1,9 +1,5 @@
 # [Save & load](@id results-save-load)
 
-```@meta
-Draft = false
-```
-
 Persist a solution to disk and read it back — for expensive solves you don't want to redo,
 warm starts across sessions, or sharing a result with someone who doesn't have the code that
 produced it.

@@ -1,9 +1,5 @@
 # [Migrating to v2.1](@id migration)
 
-```@meta
-Draft = false
-```
-
 !!! note "This page does not execute"
 
     Unlike every other page on this site, the code blocks here deliberately show **spellings

@@ -1,9 +1,5 @@
 # [Installation](@id getting-started-installation)
 
-```@meta
-Draft = false
-```
-
 ## Install
 
 Open Julia's [interactive session (REPL)](https://docs.julialang.org/en/v1/manual/getting-started)

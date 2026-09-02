@@ -1,9 +1,5 @@
 # [Turnpike (bang–singular–bang)](@id examples-turnpike)
 
-```@meta
-Draft = false
-```
-
 A scalar system, $\dot x = u$ with $u \in [-1,1]$, driven between two states over a fixed
 horizon while minimising $\int x^2$. Because the cost is linear in $u$, the optimal control is
 bang — $u = \pm 1$ — except on an interval where the switching function vanishes: a **singular

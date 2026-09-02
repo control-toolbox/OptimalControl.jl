@@ -1,9 +1,5 @@
 # [Overview](@id flows-overview)
 
-```@meta
-Draft = false
-```
-
 `Flow` is one constructor that does three distinct jobs: **indirect optimal control** (build
 the Hamiltonian flow of the Pontryagin Maximum Principle, write a shooting function, solve it),
 **simulation** (integrate a controlled system under an open-loop or feedback control), and

@@ -127,14 +127,17 @@ cp(
 # ═══════════════════════════════════════════════════════════════════════════════
 # Configuration
 # ═══════════════════════════════════════════════════════════════════════════════
-# if draft is true, then the julia code from .md is not executed
-# to disable the draft mode in a specific markdown file, use the following:
+# `draft = false` is the committed default: every page executes its `@example` /
+# `@repl` blocks, which is what a published build must do. Flip this to `true`
+# locally for a fast build that skips all execution (checking navigation, links,
+# `@extref`/`@ref` resolution, rendering). To keep one specific page drafted while
+# the rest execute, add to its `@meta` block:
 #=
 ```@meta
-Draft = false
+Draft = true
 ```
 =#
-draft = true  # Draft mode: skip @example execution globally; guided tour overrides below
+draft = false
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Load extensions
@@ -235,17 +238,10 @@ mkpath(JL_OUTPUT)
 
 for file in ["guided-tour.jl"]
     INPUT = joinpath(LITERATE_DIR, file)
-    # The guided tour executes like every other real page: inject `Draft = false`
-    # into the generated page's `@meta` block so its code runs under the global
-    # `draft = true` (Phase E5). The PR-2-era comment here claimed executing it
-    # "surfaced several unrelated runtime bugs" — those were upstream and have
-    # since been fixed; the tour now builds clean.
-    add_draft_false =
-        content -> replace(
-            content,
-            "EditURL = \"../../src-literate/$file\"\n" => "EditURL = \"../../src-literate/$file\"\nDraft = false\n",
-        )
-    Literate.markdown(INPUT, MD_OUTPUT; name="guided-tour", postprocess=add_draft_false)
+    # The guided tour executes like every other real page under the global
+    # `draft = false`. (It once carried an injected `Draft = false` override to run
+    # under a `draft = true` default; that default is gone.)
+    Literate.markdown(INPUT, MD_OUTPUT; name="guided-tour")
     Literate.notebook(INPUT, NB_OUTPUT; name="guided-tour", execute=false)
     Literate.script(INPUT, JL_OUTPUT; name="guided-tour")
 end
@@ -273,14 +269,10 @@ with_api_reference(src_dir, ext_dir) do api_pages
         # in docs/Manifest.toml, :external_cross_references can be dropped from this list so a
         # future unresolved @extref fails the build. See .reports/campaign/D-api-reference.md.
         #
-        # :example_block is deliberately *not* here: the one remaining un-expanded @example
-        # (CTParser's @def docstring, control-toolbox/CTParser.jl#341, transcluded onto
-        # api/modelling.md) is a side effect of `draft` mode skipping execution and is never
-        # added to `doc.internal.errors` — confirmed by testing that a genuinely broken
-        # @example block on a Draft=false page (this file rewritten to error) still fails the
-        # build with :example_block even with this exact warnonly list, while the CTParser one
-        # stays silent either way. Excluding :example_block would have hidden real breakage for
-        # no benefit.
+        # :example_block is deliberately *not* here: with `draft = false` every page
+        # executes, and a genuinely broken `@example` / `@repl` block must fail the build.
+        # Verified: an error introduced into any executing block still fails with
+        # :example_block under this exact warnonly list.
         warnonly=[:cross_references, :external_cross_references],
         sitename="OptimalControl.jl",
         format=DocumenterVitepress.MarkdownVitepress(;

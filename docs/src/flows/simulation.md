@@ -1,9 +1,5 @@
 # [Simulation](@id flows-simulation)
 
-```@meta
-Draft = false
-```
-
 Sometimes you don't want an optimum — you have a controlled system and a specific control
 (open-loop or feedback), and you want the trajectory it produces.
 

@@ -1,9 +1,5 @@
 # [Solution object](@id results-solution)
 
-```@meta
-Draft = false
-```
-
 Everything you do after something has been computed: read the trajectories, check whether it
 converged, read the sensitivities. This page mirrors [Inspect a problem](@ref modelling-inspect)
 — that page reads a *model* back, this one reads a *solution* back — and the two sections link

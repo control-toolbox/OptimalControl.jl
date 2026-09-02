@@ -1,9 +1,5 @@
 # [Accessors](@id flows-accessors)
 
-```@meta
-Draft = false
-```
-
 Building a flow doesn't throw away what it was built from — a flow remembers its Hamiltonian,
 its vector field, the control law you passed in, and the underlying integrator. This page is
 the map of what you can pull back out, and from which kind of flow.

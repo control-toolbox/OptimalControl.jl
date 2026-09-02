@@ -1,9 +1,5 @@
 # [Energy minimisation](@id examples-double-integrator-energy)
 
-```@meta
-Draft = false
-```
-
 The double integrator — a unit mass sliding frictionlessly on a rail, acceleration as the
 control — transferred between two rest states at minimal energy. The simplest problem on this
 site, and the same one used to introduce the package on the home page.

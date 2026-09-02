@@ -1,9 +1,5 @@
 # [Initial guess](@id solve-initial-guess)
 
-```@meta
-Draft = false
-```
-
 Every way to hand `solve` a starting point: constants, functions, grids, a previous solution,
 or nothing at all.
 

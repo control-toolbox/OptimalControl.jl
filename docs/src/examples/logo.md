@@ -1,9 +1,5 @@
 # [The logo](@id examples-logo)
 
-```@meta
-Draft = false
-```
-
 The OptimalControl.jl logo is not a drawing. It is the solution of an optimal control
 problem — an **energy-minimal low-thrust orbit transfer** — solved once and repeated by
 symmetry.

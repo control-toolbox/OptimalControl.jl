@@ -1,9 +1,5 @@
 # [The `@Lie` macro](@id geometry-lie-macro)
 
-```@meta
-Draft = false
-```
-
 `@Lie` lets you write brackets the way you'd write them on paper: square brackets for a Lie
 bracket, curly braces for a Poisson bracket.
 

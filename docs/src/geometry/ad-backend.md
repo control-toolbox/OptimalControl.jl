@@ -1,9 +1,5 @@
 # [AD backend](@id geometry-ad-backend)
 
-```@meta
-Draft = false
-```
-
 ```@example main
 using OptimalControl
 ```

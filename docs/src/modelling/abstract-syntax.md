@@ -1,9 +1,5 @@
 # [Abstract syntax (`@def`)](@id modelling-abstract-syntax)
 
-```@meta
-Draft = false
-```
-
 The full grammar of OptimalControl.jl's small *Domain Specific Language* is given below. The idea is to use a syntax that is
 
 - pure Julia (and, as such, effortlessly analysed by the standard Julia parser),

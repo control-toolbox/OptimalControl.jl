@@ -1,9 +1,5 @@
 # [Lift](@id geometry-lift)
 
-```@meta
-Draft = false
-```
-
 Given a vector field $X : \mathbb{R}^n \to \mathbb{R}^n$, its **lift** is the Hamiltonian
 
 ```math

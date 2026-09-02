@@ -1,9 +1,5 @@
 # [Example gallery](@id examples-gallery)
 
-```@meta
-Draft = false
-```
-
 A guide answers *"how do I do X"*; an example answers *"what does a real problem look like"*.
 Each page here is a complete, self-contained problem worked end to end — a story with a
 result, not a feature demonstration.
