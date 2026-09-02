@@ -43,9 +43,11 @@ jobs:
       # GITHUB_TOKEN/HTTPS confirmed). `build-gpu`'s own `if` already restricts it to
       # push/tag — inert on PR-preview builds regardless of what's passed here.
       gpu_runner: '["occidata"]'
-      # Measured cold build on occidata: 2265s (~38 min). Budget with real margin —
-      # this is the number to get right at the top of a Monday, right after the
-      # occidata-runner-maintenance.yml cache purge, not the warm-cache case.
-      gpu_timeout_minutes: 90
+      # Measured cold build on occidata: 2265s (~38 min). occidata is a single shared
+      # box — other repos' CI (e.g. CTDirect's test-gpu-occidata job) can queue ahead
+      # of this one, and Monday mornings add the occidata-runner-maintenance.yml cache
+      # purge on top. continue-on-error means a longer timeout costs nothing (build
+      # already published beforehand) — budget generously.
+      gpu_timeout_minutes: 180
     secrets:
       SSH_KEY: ${{ secrets.SSH_KEY }}
