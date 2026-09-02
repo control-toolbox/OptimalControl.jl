@@ -1,29 +1,28 @@
 # [GPU](@id solve-gpu)
 
 ```@meta
-Draft = true
+Draft = false
 ```
 
 GPU support runs through [ExaModels.jl](https://exanauts.github.io/ExaModels.jl/stable) and
 [MadNLPGPU.jl](https://github.com/MadNLP/MadNLP.jl), NVIDIA GPUs only, via
 [CUDA.jl](https://github.com/JuliaGPU/CUDA.jl).
 
-!!! note "This page doesn't execute"
+!!! note "What you are reading depends on the machine that built this page"
 
-    Unlike every other page in this section, the code blocks here are not run when the docs
-    are built — there is no CUDA-capable GPU in CI or in this development environment. Loading
-    `CUDA`/`MadNLPGPU` and *constructing* CPU-side handles works fine without a device, but the
-    GPU-parameterized solver strategies pull in extensions (CUDSS in particular) that only
-    finish loading with real GPU hardware present. Everything below is accurate as prose and
-    matches the source it describes, but treat it as reference, not as tested output.
+    Every block below is executed when the documentation is built. With a functional CUDA
+    device you are reading real GPU output; without one, you are reading the failure this exact
+    code really produces. The first block says which of the two it is.
 
 ## Prerequisites
 
-```julia
+```@example gpu
 using OptimalControl
 using MadNLPGPU
 using CUDA
 using CUDSS
+
+println("CUDA.functional() = ", CUDA.functional())
 ```
 
 Check `CUDA.functional()` before assuming a `:gpu` solve will actually run on the device.
@@ -54,7 +53,7 @@ ExaModels' own API, import it qualified: `using ExaModels: ExaModels`.
 one coordinate at a time, `∂(x₁)(t) == ...`, not `ẋ(t) == [...]`. See
 [Abstract syntax (`@def`)](@ref modelling-abstract-syntax) for the two forms side by side.
 
-```julia
+```@example gpu
 ocp = @def begin
     t ∈ [0, 1], time
     x ∈ R², state
@@ -75,41 +74,107 @@ end
 
 The `:gpu` parameter token selects GPU-optimized defaults:
 
-```julia
-sol = solve(
-    ocp, :exa, :madnlp, :gpu; grid_size=100, print_level=MadNLP.ERROR
-)
-
-# or, letting completion fill in the rest — first match with :gpu:
-sol = solve(ocp, :gpu; grid_size=100, print_level=MadNLP.ERROR)
+```@example gpu
+try
+    global sol = solve(ocp, :exa, :madnlp, :gpu; grid_size=100, display=false)
+    println("objective  = ", objective(sol))
+    println("iterations = ", iterations(sol))
+catch e
+    println("GPU solve failed — no functional device on this machine.")
+    println("CUDA.functional() = ", CUDA.functional())
+    println("Exception: ", first(sprint(showerror, e), 400))
+end
 ```
+
+Completion fills in the rest — the first match containing `:gpu` is the same method:
+
+```@example gpu
+try
+    global sol = solve(ocp, :gpu; grid_size=100, display=false)
+    println("objective = ", objective(sol))
+catch e
+    println("Exception: ", first(sprint(showerror, e), 400))
+end
+```
+
+Solver verbosity is a separate concern: `display=false` above silences the OptimalControl-level
+report, and the underlying solver takes its own options — `print_level=MadNLP.ERROR` for
+MadNLP, which needs `using MadNLP` in scope. See [Options](@ref solve-options).
 
 `:gpu` changes what a strategy's own defaults are: `Exa{GPU}` uses a CUDA differentiation
 backend, `MadNLP{GPU}` uses the `CUDSSSolver` linear solver instead of MUMPS. `describe(:gpu)`
-lists every strategy with a GPU-parameterized variant (`:exa`, `:madnlp`, `:madncl`, plus the
-indirect-side `:di` and `:sciml`) — this call needs nothing GPU-specific and runs fine on CPU
-alone.
+lists every strategy with a GPU-parameterized variant — this call needs nothing GPU-specific
+and runs fine on CPU alone:
+
+```@example gpu
+describe(:gpu)
+```
 
 ## Explicit mode
 
-```julia
-disc = OptimalControl.Collocation(grid_size=100, scheme=:midpoint)
-mod = OptimalControl.Exa{GPU}()
-sol = OptimalControl.MadNLP{GPU}(print_level=MadNLP.ERROR)
+Constructing the components does not touch the device, so this block runs anywhere:
 
-result = solve(ocp; discretizer=disc, modeler=mod, solver=sol)
+```@example gpu
+disc = OptimalControl.Collocation(; grid_size=100, scheme=:midpoint)
+mod = OptimalControl.Exa{GPU}()
+slv = OptimalControl.MadNLP{GPU}()
+nothing # hide
+```
+
+Running them is what needs the hardware:
+
+```@example gpu
+try
+    global result = solve(ocp; discretizer=disc, modeler=mod, solver=slv)
+    println("objective = ", objective(result))
+catch e
+    println("Exception: ", first(sprint(showerror, e), 400))
+end
 ```
 
 ## What combinations work
 
-Only `:exa × {:madnlp, :madncl}` on `:gpu` — the two entries at the end of
+Only `:exa × {:madnlp, :madncl}` on `:gpu` — the two `:gpu` entries of
 [`methods`](@ref)`()` (see [Choosing a method](@ref solve-choosing-a-method)). Everything else
-is a compile-time or runtime error, confirmed directly against the type system:
+is a compile-time or runtime error. These are type-system and routing errors, not
+hardware-dependent ones, so they raise identically on every machine:
 
-- `OptimalControl.ADNLP{GPU}()` — `TypeError`, `ADNLP`'s parameter is constrained to `<:CPU`.
-- `OptimalControl.Ipopt{GPU}()` — same, `Ipopt`'s parameter is `<:CPU`-only.
-- Descriptively, `solve(ocp, :adnlp, :gpu)` or `solve(ocp, :ipopt, :gpu)` fail as
-  `AmbiguousDescription`: no entry in `methods()` has `:adnlp` or `:ipopt` together with `:gpu`.
+`ADNLP`'s parameter is constrained to `<:CPU`:
+
+```@repl gpu
+try # hide
+OptimalControl.ADNLP{GPU}()
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
+```
+
+Same for `Ipopt`:
+
+```@repl gpu
+try # hide
+OptimalControl.Ipopt{GPU}()
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
+```
+
+Descriptively, the same combinations fail earlier still — no entry in `methods()` carries
+`:adnlp` together with `:gpu`, so completion cannot resolve the description at all:
+
+```@repl gpu
+try # hide
+solve(ocp, :adnlp, :gpu)
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
+```
+
+!!! note "That `Available` list is truncated"
+
+    The diagnostic prints the first ten of the twelve entries `methods()` returns, so the two
+    `:gpu` ones are cut from it — they do exist, as `describe(:gpu)` above shows. The empty
+    `Hint` line is the same display bug.
 
 ## Performance notes
 
@@ -117,11 +182,20 @@ GPU solving amortizes best on large-scale problems (thousands of variables/const
 repeated solves in a loop, where the per-call setup overhead is paid once. For small problems,
 plain CPU solving is typically faster.
 
-```julia
+The idiomatic guard is `CUDA.functional()` — pick the strategy, then solve:
+
+```@example gpu
+strategy = CUDA.functional() ? :gpu : :cpu
+println("strategy = ", strategy)
+```
+
+```@example gpu
 if CUDA.functional()
-    sol = solve(ocp, :gpu)
+    t = @elapsed solve(ocp, :gpu; grid_size=1000, display=false)
+    println("GPU solve at grid_size=1000: ", round(t; digits=2), " s")
 else
-    sol = solve(ocp, :cpu)
+    println("No functional device here, so there is no GPU timing to report.")
+    println("On a CUDA machine this block prints the :gpu solve time at grid_size=1000.")
 end
 ```
 
