@@ -1,7 +1,7 @@
 # Thematic API reference manifest.
 #
 # Each theme is a literal, hand-maintained list of symbols — no scraping of
-# docs/reports/99-api-coverage.md. That file is prose meant for a human to
+# docs/api-coverage.md. That file is prose meant for a human to
 # read and copy from, not a machine-parseable format: an earlier version of
 # this script tried to extract symbols from it automatically and silently
 # picked up names from sentences that explicitly said *not* to document them
@@ -9,14 +9,14 @@
 # module qualification some symbols need to resolve in `@docs` (a bare
 # `constraint` does not resolve; `CTModels.Components.constraint` does).
 #
-# When 99-api-coverage.md changes, update the lists below by hand and rerun
+# When docs/api-coverage.md changes, update the lists below by hand and rerun
 # `julia --project=docs docs/make.jl` to check the completeness error and the
 # build log for new "undefined binding" / "no docs found" warnings.
 
 const EXCLUDE_SYMBOLS = [:include, :eval, :OptimalControl]
 
 # Re-exported purely as escape hatches for generated code / cross-package
-# qualification (see docs/reports/99-api-coverage.md §1 "Module aliases").
+# qualification (see docs/api-coverage.md §1 "Module aliases").
 # They carry no docstring of their own (`@doc` on a bare module without one
 # resolves to Julia's generic "here are its exports" filler, identical across
 # all of them — not worth transcluding). Described in prose on qualified.md
@@ -351,7 +351,7 @@ const API_THEMES = [
 # ::Symbol...)"`): the key is what the coverage check sees, the value is the exact
 # signature written into the `@docs` block. Needed whenever a bare name would pull in
 # a foreign package's docstring for the same generic function (`:solve` collides with
-# `CommonSolve.solve`, `:methods` with `Base.methods` — see docs/reports/99-api-coverage.md
+# `CommonSolve.solve`, `:methods` with `Base.methods` — see docs/api-coverage.md
 # and control-toolbox/OptimalControl.jl's Phase D campaign report for how this was found).
 _bare_name(s::Symbol) = Symbol(split(String(s), ".")[end])
 _bare_name(p::Pair) = _bare_name(first(p))

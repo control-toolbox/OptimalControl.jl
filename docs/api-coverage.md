@@ -1,17 +1,24 @@
 # API coverage matrix
 
-**Status**: specification · **Generated from**: `names(OptimalControl)` on
-OptimalControl 2.1.0-beta, resolved environment (CTBase 0.28.9-beta, CTModels 0.15.3-beta,
-CTFlows 0.16.3-beta, CTLie 0.1.5-beta, CTSolvers 0.4.34-beta)
+**Status**: living cross-reference · **Measured against**: `names(OptimalControl)` on
+OptimalControl 2.2.0-beta (`[compat]` floors CTBase 0.30, CTModels 0.19, CTFlows 0.18,
+CTLie 0.2, CTSolvers 0.5, CTDirect 1, CTParser 0.9)
 
 ## What this is
 
 The objective acceptance criterion for the whole rewrite: **every exported symbol appears in
 at least one guide page and in exactly one API-reference theme.**
 
-`names(OptimalControl)` returns **193 symbols** (excluding `:OptimalControl` itself). They are
-partitioned below. A symbol with an empty *Guide* cell is a hole — either a page must cover it
-or it must be justified as reference-only.
+The *theme* half is enforced by the docs build: `docs/api_reference.jl` (lines ~361–389)
+`error`s the build if any exported symbol is absent from `API_THEMES`, or if a theme lists a
+name that is neither exported nor `qualified`. This file is the **guide-side** cross-reference
+the build cannot check — which page actually teaches each symbol.
+
+`names(OptimalControl)` returns **203 symbols** (excluding `:OptimalControl` itself). Sections
+§§1–11 below partition **200** of them; the remaining **3** — `Lie`, `⋅`, `HamiltonianLift`
+(§13, the deprecated shims re-introduced by PR 3, now real exported bindings) — bring the
+total to 203. A symbol with an empty *Guide* cell is a hole — either a page must cover it or
+it must be justified as reference-only.
 
 Regenerate the ground truth with:
 
@@ -21,10 +28,11 @@ julia --project=. -e 'using OptimalControl;
   println(length(ns)); foreach(println, ns)'
 ```
 
-PR 4 wires the same computation into `docs/api_reference.jl` as a build-time check
-([`09-api-reference.md`](09-api-reference.md) §"The completeness check").
+`docs/api_reference.jl` runs the same computation as a build-time completeness check (the
+`let` block after `API_THEMES`).
 
-Page ids refer to the sitemap in [`00-cahier-des-charges.md`](00-cahier-des-charges.md) §7.
+Page ids are the `@id` anchors declared on the pages under `docs/src/` (e.g.
+`modelling-abstract-syntax` on `modelling/abstract-syntax.md`).
 
 ---
 
@@ -58,7 +66,7 @@ Re-exported so generated code and macro expansions can qualify. Not user-facing 
 | `time!` `state!` `control!` `variable!` `dynamics!` `objective!` `constraint!` `time_dependence!` `build` | `modelling-functional-api` | modelling |
 | `build_initial_guess` | `solve-initial-guess` | modelling |
 
-## 4. Problem introspection — 47
+## 4. Problem introspection — 58
 
 All on `modelling-inspect` unless noted; API theme **problem**.
 
@@ -79,7 +87,7 @@ All on `modelling-inspect` unless noted; API theme **problem**.
 `dynamics` `mayer` `lagrange` `has_mayer_cost` `has_lagrange_cost`
 `is_mayer_cost_defined` `is_lagrange_cost_defined`
 
-**Constraints (11)**
+**Constraints (12)**
 `constraint` `constraints` `path_constraints_nl` `boundary_constraints_nl`
 `state_constraints_box` `control_constraints_box` `variable_constraints_box`
 `dim_path_constraints_nl` `dim_boundary_constraints_nl` `dim_state_constraints_box`
@@ -130,7 +138,7 @@ All on `results-solution` unless noted; API theme **solution**.
 `dim_dual_state_constraints_box` `dim_dual_control_constraints_box`
 `dim_dual_variable_constraints_box`
 
-## 7. Options and strategies — 22
+## 7. Options and strategies — 25
 
 All on `solve-options` or `solve-choosing-a-method`; API theme **options**.
 
@@ -143,7 +151,7 @@ All on `solve-options` or `solve-choosing-a-method`; API theme **options**.
 | `parameter` `default_parameter` `available_parameters` | `solve-gpu` |
 | `CPU` `GPU` | `solve-gpu` |
 
-## 8. Flows — 24
+## 8. Flows — 26
 
 API theme **flows**.
 
@@ -166,10 +174,9 @@ their siblings `control_law` and `pseudo_hamiltonian` were — PR 8 closed the g
 accessors — gradients and vocabulary" testset). `system` and `integrator` stay deliberately
 unexported — qualified as `CTFlows.Flows.system(f)`.
 
-`length(names(OptimalControl)) - 1` measured **203** after this change, not the **200** this
-report anticipated (193 + 7) — a 3-symbol drift accumulated somewhere between this report's
-original count and PR 8, unrelated to this PR's own +7. Not audited/reconciled here; flagging
-for whoever next touches this file's top-line count.
+PR 8 brought the count from 193 to 200 (+7 here); the remaining 3 of the current 203 are the
+§13 deprecated shims (`Lie`, `⋅`, `HamiltonianLift`), which PR 3 made real exported bindings.
+Reconciled 2026-09 during E6-C.
 
 ## 9. Geometry — 7
 
@@ -272,13 +279,14 @@ Recorded so they are decided, not forgotten.
 | `SolverFailure` is exported by `CTBase.Exceptions` but imported nowhere in OptimalControl | §12 | open — PR 3: surface it or note the omission |
 | CTModels init helpers not re-exported: `initial_guess`, `pre_initial_guess`, `validate_initial_guess`, `initial_state`, `initial_control`, `initial_variable`, `PreInitialGuess` | §3 | open — PR 5/6 |
 | `@def_exa` exists in CTParser but is not re-exported | §2 | open — PR 5 |
-| `time` and `success` are `Base` names with no OptimalControl binding | §13 | open — PR 3 |
+| `time` and `success` are `Base` names with no OptimalControl binding | §13 | ✅ closed — PR 3 added throwing `Base.time`/`Base.success` methods (`src/deprecated.jl`) |
 
 ## 15. How to use this file
 
-1. When a docs PR is written, tick its symbols off by filling the *Guide* column with the page
-   that actually covers them (not the one that was planned).
-2. Before merging PR 12, re-run the `names(OptimalControl)` command above and diff against
-   §§1–11. A new symbol with no row is a missing docs change.
-3. After PR 4, the build itself reports missing and stale symbols; this file becomes the
-   record of the *guide*-side coverage, which the build cannot check.
+1. When a docs page changes what it covers, update the *Guide* column to the page that
+   actually teaches the symbol.
+2. When the API surface changes, re-run the `names(OptimalControl)` command above and diff
+   against §§1–11 + §13. The docs build already fails on an uncovered *theme*; this file is
+   the *guide*-side record the build cannot check.
+3. Keep the top-line count and the per-section subtotals in sync with the body — they are
+   documentation, not the enforced contract (that is `docs/api_reference.jl`).
