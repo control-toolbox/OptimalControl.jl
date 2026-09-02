@@ -40,7 +40,7 @@ using JLD2
 
 # plotting
 using Plots
-import CairoMakie   # `import`, not `using`: keeps Makie's `plot`/`plot!` out of Main,
+using CairoMakie: CairoMakie   # `import`, not `using`: keeps Makie's `plot`/`plot!` out of Main,
 # which would collide with Plots' in the `@docs` block on results/plot.md
 
 # DocumenterVitepress picks the highest-priority MIME type a plot object responds to

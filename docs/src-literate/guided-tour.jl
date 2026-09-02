@@ -127,10 +127,7 @@ function boundary_energy!(b, x0_, xf_, v)
     b[4] = xf_[2] - xf[2]
     return nothing
 end
-constraint!(
-    pre, :boundary;
-    f=boundary_energy!, lb=zeros(4), ub=zeros(4), label=:endpoint,
-)
+constraint!(pre, :boundary; f=boundary_energy!, lb=zeros(4), ub=zeros(4), label=:endpoint)
 
 lagrange_energy(t, x, u, v) = 0.5 * u^2
 objective!(pre, :min; lagrange=lagrange_energy)
@@ -277,14 +274,8 @@ using MadNLP
 sol_ipopt = solve(goddard; grid_size=250, display=false)
 sol_madnlp = solve(goddard, :madnlp; grid_size=250, display=false)
 
-println(
-    "Ipopt  : r(tf) = ", objective(sol_ipopt),
-    ", ", iterations(sol_ipopt), " iters",
-)
-println(
-    "MadNLP : r(tf) = ", objective(sol_madnlp),
-    ", ", iterations(sol_madnlp), " iters",
-)
+println("Ipopt  : r(tf) = ", objective(sol_ipopt), ", ", iterations(sol_ipopt), " iters")
+println("MadNLP : r(tf) = ", objective(sol_madnlp), ", ", iterations(sol_madnlp), " iters")
 
 # The available methods and their options can be inspected with `methods()` and `describe(:collocation)`; we will not dwell on them here.
 
@@ -365,10 +356,7 @@ t_bang = [sol_bang1.t; sol_bang2.t]
 r_bang = [sol_bang1[1, :]; sol_bang2[1, :]]
 
 plt_bang = plot(sol_cold; label="optimal", linewidth=2, color=1)
-plot!(
-    plt_bang[1], t_bang, r_bang;
-    label="bang-bang", linestyle=:dash, linewidth=2, color=2,
-)
+plot!(plt_bang[1], t_bang, r_bang; label="bang-bang", linestyle=:dash, linewidth=2, color=2)
 plot(plt_bang[1]; legend=:bottomright, xlabel="time", ylabel="altitude")
 
 #src ============================================================================
