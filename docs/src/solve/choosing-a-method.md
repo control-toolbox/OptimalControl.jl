@@ -167,9 +167,8 @@ Every cell above was checked by solving with that scheme. One of the results nee
 
 `strategy_ids`, `type_from_id`, and `available_parameters` (and the [`create_registry`](@ref)
 used to build one) all operate on a populated `StrategyRegistry`. The one that already knows
-about every built-in strategy is internal (`OptimalControl.get_strategy_registry()`, not
-re-exported) — these functions are orchestration/extension-authoring tools, not something a
-typical solve caller reaches for. For everyday inspection, `methods()` and `describe` (above)
+about every built-in strategy is internal and not re-exported — these functions are
+orchestration/extension-authoring tools, not something a typical solve caller reaches for. For everyday inspection, `methods()` and `describe` (above)
 cover the same ground and need nothing extra.
 
 ## See also
