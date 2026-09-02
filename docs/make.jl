@@ -263,12 +263,15 @@ with_api_reference(src_dir, ext_dir) do api_pages
     return makedocs(;
         draft=draft,
         remotes=nothing, # Disable remote links. Needed for DocumenterReference
-        # Not fully zero: 2 unresolved @ref (DOCPCache, category :cross_references) and 6
-        # unresolved @extref (CTModels.Solution / CTBase.Strategies.parameter — a *separate*
-        # category, :external_cross_references, registered by DocumenterInterLinks, not
-        # Documenter itself) are upstream defects, tracked at control-toolbox/CTDirect.jl#630,
-        # control-toolbox/CTModels.jl#416 and control-toolbox/CTBase.jl#543 respectively. Drop
-        # this exclusion once those land — see .reports/campaign/D-api-reference.md.
+        # Not fully zero: 2 unresolved @ref remain (DOCPCache, category :cross_references),
+        # tracked at control-toolbox/CTDirect.jl#630 — drop :cross_references once that lands.
+        # The @extref backlog (category :external_cross_references, registered by
+        # DocumenterInterLinks, not Documenter itself) is cleared: the CTBase.Strategies.parameter
+        # links were this repo's own signature-suffixed docstring (#943, fixed here) and the
+        # Plots.plot(::CTModels.Solutions.Solution) links were CTModels' extension docstrings
+        # (control-toolbox/CTModels.jl#427, fixed in CTModels 0.19.4-beta). Once that release is
+        # in docs/Manifest.toml, :external_cross_references can be dropped from this list so a
+        # future unresolved @extref fails the build. See .reports/campaign/D-api-reference.md.
         #
         # :example_block is deliberately *not* here: the one remaining un-expanded @example
         # (CTParser's @def docstring, control-toolbox/CTParser.jl#341, transcluded onto
