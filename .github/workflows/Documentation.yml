@@ -8,7 +8,18 @@ on:
       - 'v[0-9]+\.[0-9]+\.[0-9]+'
   pull_request:
     types: [labeled, synchronize, reopened]
-  
+
+# A GPU-attempt job now runs behind every push/tag build (see `gpu_runner` below) and
+# can take up to `gpu_timeout_minutes`. Without this, two pushes to `main` in quick
+# succession could leave an older run's GPU pass finishing — and redeploying — after a
+# newer run's CPU build has already published, showing older content over newer.
+# `cancel-in-progress` cancels the whole older run, its queued/running GPU job
+# included. Tags carry distinct refs (the tag name, not `main`), so a release build is
+# never cancelled by an unrelated push to `main`, and vice versa.
+concurrency:
+  group: documentation-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   call:
     # A 'labeled' event fires once per label added, and re-evaluates against the PR's
@@ -23,5 +34,18 @@ jobs:
     uses: control-toolbox/CTActions/.github/workflows/documentation.yml@main
     with:
       use_ct_registry: true
+      # GPU-backed docs build (#885 part 2): publish then upgrade. The GitHub-hosted
+      # `build` job (unaffected by this) always deploys first; `build-gpu` runs only
+      # once `build` has already published and can only ever improve the already-live
+      # site — see CTActions#71 and .reports/campaign/P-gpu-docs-executable.md for the
+      # full design and the feasibility probe this is based on (Phase D, 2026-09-02:
+      # real GPU on occidata, a `:gpu` solve in 205s, full docs build 2265s, push via
+      # GITHUB_TOKEN/HTTPS confirmed). `build-gpu`'s own `if` already restricts it to
+      # push/tag — inert on PR-preview builds regardless of what's passed here.
+      gpu_runner: '["occidata"]'
+      # Measured cold build on occidata: 2265s (~38 min). Budget with real margin —
+      # this is the number to get right at the top of a Monday, right after the
+      # occidata-runner-maintenance.yml cache purge, not the warm-cache case.
+      gpu_timeout_minutes: 90
     secrets:
       SSH_KEY: ${{ secrets.SSH_KEY }}
