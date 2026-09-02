@@ -135,6 +135,7 @@ translate the problem below into OptimalControl.jl DSL:
          margin-top: 20px;
          margin-bottom: 20px;
          width: calc(100% - 60px);
+         max-width: 800px;
          height: auto;
      ">
 
