@@ -1,9 +1,5 @@
 # [Overview](@id solve-overview)
 
-```@meta
-Draft = false
-```
-
 `solve` is the entry point for the direct methods: transcribe the problem, hand it to an NLP
 solver, get a [`Solution`](@ref results-solution) back. This page shows the quickest way to call it, how to read
 what it printed, and the two ways to steer it away from its defaults.

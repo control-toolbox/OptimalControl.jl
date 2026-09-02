@@ -1,9 +1,5 @@
 # [Parameter estimation without a control](@id examples-control-free)
 
-```@meta
-Draft = false
-```
-
 Two problems with no control anywhere — only a `variable` to fit to data. See
 [No control](@ref modelling-without-control) for the modelling side of this;
 this page is the full worked story, direct and indirect, for both.

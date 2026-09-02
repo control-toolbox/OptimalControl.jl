@@ -1,9 +1,5 @@
 # [State constraint](@id examples-state-constraint)
 
-```@meta
-Draft = false
-```
-
 The double integrator again, this time with a state constraint active on part of the
 trajectory — a boundary arc, a costate jump, and (for the second problem below) a genuine
 multi-arc structure.

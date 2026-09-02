@@ -1,9 +1,5 @@
 # [Choosing a method](@id solve-choosing-a-method)
 
-```@meta
-Draft = false
-```
-
 A **method** is a quadruplet `(discretizer, modeler, solver, parameter)`. This page maps out
 what can be combined with what, how a partial description gets completed, and how to inspect
 any one piece before you commit to it.

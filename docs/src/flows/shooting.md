@@ -1,9 +1,5 @@
 # [Shooting](@id flows-shooting)
 
-```@meta
-Draft = false
-```
-
 The payoff of everything else in this section: turn a flow into a root-finding problem for the
 unknown initial costate (and switching times, and free final time), and solve it.
 

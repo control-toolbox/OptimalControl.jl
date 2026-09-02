@@ -1,9 +1,5 @@
 # [No control](@id modelling-without-control)
 
-```@meta
-Draft = false
-```
-
 ## What this is for
 
 Control-free problems are optimal control problems without a control variable — used for **optimising constant parameters in dynamical systems**, such as:

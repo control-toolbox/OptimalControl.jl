@@ -1,9 +1,5 @@
 # [Inspect a problem](@id modelling-inspect)
 
-```@meta
-Draft = false
-```
-
 Once a problem is built — via [`@def`](@ref) or the [functional API](@ref modelling-functional-api) — every part of it can be read back: dimensions, names, dynamics, costs, constraints, traits. This page is about reading a model, not solving it: for that, see [Solve overview](@ref solve-overview); for the indirect/PMP route, see [Flows overview](@ref flows-overview).
 
 !!! note "Signatures and `is_*` aliases"

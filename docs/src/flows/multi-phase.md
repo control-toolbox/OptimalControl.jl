@@ -1,9 +1,5 @@
 # [Multi-phase flows](@id flows-multi-phase)
 
-```@meta
-Draft = false
-```
-
 Bang-bang switchings, jumps at a boundary arc's entry/exit, phase changes of any kind: a
 sequence of flows, each active on its own sub-interval, concatenated into one callable object —
 itself a flow.

@@ -1,9 +1,5 @@
 # [Poisson bracket](@id geometry-poisson)
 
-```@meta
-Draft = false
-```
-
 For two Hamiltonians $H, G$,
 
 ```math

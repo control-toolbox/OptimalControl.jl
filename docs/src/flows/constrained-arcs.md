@@ -1,9 +1,5 @@
 # [Constrained arcs](@id flows-constrained-arcs)
 
-```@meta
-Draft = false
-```
-
 A flow along a boundary arc — where a state constraint is active — needs the constraint and
 its multiplier, not just the control law.
 

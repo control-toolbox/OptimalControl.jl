@@ -42,6 +42,8 @@ Dependency realignment onto the released control-toolbox ecosystem, the v2.0 →
 
 - **`_strategy_parameter` docstring no longer emits an unresolvable `@extref`** ([#943](https://github.com/control-toolbox/OptimalControl.jl/issues/943)). It cross-referenced `CTBase.Strategies.parameter` by method signature (`parameter(T, default)` / `parameter(T)`), but CTBase's auto-generated reference indexes the function under a single anchor, so neither link resolved. Collapsed to the one anchor; `docs/make.jl`'s `warnonly` comment refreshed. The remaining `@extref` warnings (`Plots.plot(::CTModels.Solutions.Solution)`) are fixed upstream in [CTModels 0.19.4-beta](https://github.com/control-toolbox/CTModels.jl/issues/427).
 
+- **`docs/make.jl` runs `draft = false` by default** ([#948](https://github.com/control-toolbox/OptimalControl.jl/issues/948)). The build used to ship `draft = true` globally with a `@meta Draft = false` block repeated in 43 pages to opt each one back into execution — a double negative that also blocked a fast `draft = true` pass for link/nav checks. Now the default executes every page; flip the one flag in `make.jl` for a fast local build, or set `Draft = true` in a single page's `@meta` to exclude it. The guided-tour `Draft = false` Literate injection is removed.
+
 ### 📦 Dependencies
 
 - **Realigned on the released ecosystem** — every sibling resolves from the General registry with no `Pkg.develop`: CTBase `0.28`→`0.29`, CTModels `0.15`→`0.18`, CTSolvers `0.4`→`0.5`, CTFlows `0.16`→`0.17`, CTParser `0.8`→`0.9`, CTLie `0.1`→`0.2`; CTDirect stays pinned to `1` (the major alone, per the pinning-granularity rule)

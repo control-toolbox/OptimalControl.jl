@@ -1,9 +1,5 @@
 # [Overview](@id geometry-overview)
 
-```@meta
-Draft = false
-```
-
 Some flows can't be built directly from an optimal control problem — the control law itself
 has to be *derived* first, for example a singular control on an arc where the usual
 maximization condition degenerates. Deriving it needs differential-geometry tools: Lie

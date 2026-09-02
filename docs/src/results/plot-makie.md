@@ -1,9 +1,5 @@
 # [Plot with Makie](@id results-plot-makie)
 
-```@meta
-Draft = false
-```
-
 This site draws with [Plots.jl](@ref results-plot) by default. [Makie.jl](https://docs.makie.org)
 is the second backend, at feature parity — same figures, same keywords. The one real
 difference is how you call it, and that difference is worth a page of its own.

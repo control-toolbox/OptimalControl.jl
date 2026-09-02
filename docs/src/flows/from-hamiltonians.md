@@ -1,9 +1,5 @@
 # [From Hamiltonians](@id flows-from-hamiltonians)
 
-```@meta
-Draft = false
-```
-
 Every constructor below builds a flow **without** an OCP — the building blocks
 [From an OCP](@ref flows-from-ocp) is itself assembled from. One section per constructor.
 

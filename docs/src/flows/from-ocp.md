@@ -1,9 +1,5 @@
 # [From an OCP](@id flows-from-ocp)
 
-```@meta
-Draft = false
-```
-
 The main path: you've worked out the PMP's maximising control $u^*(t,x,p,v)$ by hand, and want
 the Hamiltonian flow it defines.
 

@@ -1,9 +1,5 @@
 # [Formulation](@id modelling-formulation)
 
-```@meta
-Draft = false
-```
-
 An optimal control problem (OCP) with fixed initial and final times can be described as minimising the cost functional (in Bolza form)
 
 ```math

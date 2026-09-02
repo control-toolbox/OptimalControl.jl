@@ -1,9 +1,5 @@
 # [Plot](@id results-plot)
 
-```@meta
-Draft = false
-```
-
 `plot`/`plot!` extend [Plots.jl](https://docs.juliaplots.org) to draw a [`Solution`](@ref results-solution)
 directly — the same call works on a `Flow`-produced trajectory too (last section below). The
 full signatures are collected under [Reference](@ref results-plot-reference) at the end.

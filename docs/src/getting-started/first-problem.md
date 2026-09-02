@@ -1,9 +1,5 @@
 # [Your first problem](@id getting-started-first-problem)
 
-```@meta
-Draft = false
-```
-
 The shortest complete story: define a problem, solve it, look at the result. Fifteen lines,
 no options, no theory.
 

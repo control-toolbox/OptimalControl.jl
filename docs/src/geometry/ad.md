@@ -1,9 +1,5 @@
 # [Lie derivative and Lie bracket](@id geometry-ad)
 
-```@meta
-Draft = false
-```
-
 `ad(X, foo)` is one function with two meanings, chosen by what `foo` returns.
 
 ```@example main

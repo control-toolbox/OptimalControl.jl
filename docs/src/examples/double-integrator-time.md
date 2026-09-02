@@ -1,9 +1,5 @@
 # [Time minimisation (bang–bang)](@id examples-double-integrator-time)
 
-```@meta
-Draft = false
-```
-
 Same wagon as [Energy minimisation](@ref examples-double-integrator-energy), but transferred
 **as fast as possible** instead of at minimal energy — a bounded control gives a bang–bang
 optimal law with a single switch.

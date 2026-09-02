@@ -1,9 +1,5 @@
 # [Singular control](@id examples-singular-control)
 
-```@meta
-Draft = false
-```
-
 A vehicle in the plane with drift, time-optimal, whose extremal control is neither $+1$ nor
 $-1$ on part of the trajectory — a **singular arc**. This is the problem the whole
 [Geometry](@ref geometry-overview) section exists to support: computing that arc's control

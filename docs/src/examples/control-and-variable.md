@@ -1,9 +1,5 @@
 # [Control and variable together](@id examples-control-and-variable)
 
-```@meta
-Draft = false
-```
-
 The same two systems as [Parameter estimation without a control](@ref examples-control-free),
 now with a control input and a quadratic control cost — estimating a parameter *and* a control
 at the same time. Read that page first; this one skips the narration that doesn't change.
