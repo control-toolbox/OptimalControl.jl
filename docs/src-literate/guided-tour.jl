@@ -366,9 +366,12 @@ plot(plt_bang[1]; legend=:bottomright, xlabel="time", ylabel="altitude")
 # Moving to the GPU is a single token, `:gpu`, which auto-completes to `(:collocation, :exa, :madnlp, :gpu)`. It requires the `:exa` modeler (hence `@def`, not the macro-free API — cf. the definition section) plus a CUDA-capable GPU.
 #
 # In a seminar or on Binder there is usually **no functional GPU**, so the call is *expected to fail* — that is the pedagogical point: the `:gpu` token needs a specific setup. We wrap it in a `try/catch` so the tour keeps running and shows the raised exception.
+#
+# The GPU stack is armed by **three** loads, not two: `MadNLPGPU`, `CUDA` and `CUDSS`. Miss the third and the failure you get is a missing package, not a missing device.
 
 using MadNLPGPU
 using CUDA
+using CUDSS
 
 try
     global sol_gpu = solve(goddard, :gpu; grid_size=1000, display=false)

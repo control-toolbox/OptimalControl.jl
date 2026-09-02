@@ -1,6 +1,7 @@
 [deps]
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+CUDSS = "45b445bb-4962-46a0-9369-b4df9d0f772e"
 MadNLP = "2621e9c9-9eb4-46b1-8089-e8c72242dfb6"
 MadNLPGPU = "d72a61cc-809d-412f-99be-fd81f4b8a598"
 NLPModelsIpopt = "f4238b75-b362-5c4c-b852-0801c9a21d71"
