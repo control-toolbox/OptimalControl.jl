@@ -170,12 +170,6 @@ showerror(IOContext(stdout, :color => false), e) # hide
 end # hide
 ```
 
-!!! note "That `Available` list is truncated"
-
-    The diagnostic prints the first ten of the twelve entries `methods()` returns, so the two
-    `:gpu` ones are cut from it — they do exist, as `describe(:gpu)` above shows. The empty
-    `Hint` line is the same display bug.
-
 ## Performance notes
 
 GPU solving amortizes best on large-scale problems (thousands of variables/constraints) or
