@@ -60,7 +60,7 @@ Status legend: ⬜ not started · 🟡 in progress · ✅ merged
 | 10 | [`docs: examples`](https://github.com/control-toolbox/OptimalControl.jl/pull/872) | Examples | [`08`](08-examples.md) | 8, 9 | ✅ |
 | 11 | [`docs: getting started`](https://github.com/control-toolbox/OptimalControl.jl/pull/873) | Getting started + `index.md` | [`02`](02-getting-started.md) | 5–10 | ✅ |
 | 12 | [`docs: migration page`](https://github.com/control-toolbox/OptimalControl.jl/pull/874) | Migration page (`docs/src/migration.md`) | [`10`](10-migration.md) §2 | all | ✅ |
-| 13 | `docs: drop docs/attic` | Delete `docs/attic/` | [`10`](10-migration.md) §2 | 12 | ⬜ |
+| 13 | [`docs: drop docs/attic`](https://github.com/control-toolbox/OptimalControl.jl/pull/940) | Delete `docs/attic/` | [`10`](10-migration.md) §2 | 12 | 🟡 |
 
 PR 3 is code-only and independent — it can run in parallel with any docs PR.
 
