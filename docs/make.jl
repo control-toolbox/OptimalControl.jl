@@ -161,42 +161,30 @@ include("api_reference.jl")
 # ═══════════════════════════════════════════════════════════════════════════════
 # InterLinks
 # ═══════════════════════════════════════════════════════════════════════════════
+# CI never has the sibling control-toolbox repos checked out next to this one, so the
+# local sibling `objects.inv` path below can never resolve there — DocumenterInterLinks
+# tries it first, fails, and logs a Warning before falling back to the remote inventory,
+# 7 times on every single CI run (see #950). Only include the local path outside CI, so
+# the CI runner's tuple has just the 2 sources that can actually succeed. Order stays
+# local-first when present: a contributor with siblings cloned and built locally sees
+# their own in-progress docstring/@extref changes, not the last stable release.
+const IN_CI = get(ENV, "CI", "false") == "true"
+
+function sibling_inventory(dir_name::AbstractString, base_url::AbstractString)
+    remote = (base_url, base_url * "objects.inv")
+    IN_CI && return remote
+    local_inv = joinpath(@__DIR__, "..", "..", dir_name, "docs", "build", "1", "objects.inv")
+    return (base_url, local_inv, base_url * "objects.inv")
+end
+
 links = InterLinks(
-    "CTBase" => (
-        "https://control-toolbox.org/CTBase.jl/stable/",
-        joinpath(@__DIR__, "..", "..", "CTBase", "docs", "build", "1", "objects.inv"),
-        "https://control-toolbox.org/CTBase.jl/stable/objects.inv",
-    ),
-    "CTDirect" => (
-        "https://control-toolbox.org/CTDirect.jl/stable/",
-        joinpath(@__DIR__, "..", "..", "CTDirect.jl", "docs", "build", "1", "objects.inv"),
-        "https://control-toolbox.org/CTDirect.jl/stable/objects.inv",
-    ),
-    "CTFlows" => (
-        "https://control-toolbox.org/CTFlows.jl/stable/",
-        joinpath(@__DIR__, "..", "..", "CTFlows.jl", "docs", "build", "1", "objects.inv"),
-        "https://control-toolbox.org/CTFlows.jl/stable/objects.inv",
-    ),
-    "CTLie" => (
-        "https://control-toolbox.org/CTLie.jl/stable/",
-        joinpath(@__DIR__, "..", "..", "CTLie", "docs", "build", "1", "objects.inv"),
-        "https://control-toolbox.org/CTLie.jl/stable/objects.inv",
-    ),
-    "CTModels" => (
-        "https://control-toolbox.org/CTModels.jl/stable/",
-        joinpath(@__DIR__, "..", "..", "CTModels.jl", "docs", "build", "1", "objects.inv"),
-        "https://control-toolbox.org/CTModels.jl/stable/objects.inv",
-    ),
-    "CTParser" => (
-        "https://control-toolbox.org/CTParser.jl/stable/",
-        joinpath(@__DIR__, "..", "..", "CTParser.jl", "docs", "build", "1", "objects.inv"),
-        "https://control-toolbox.org/CTParser.jl/stable/objects.inv",
-    ),
-    "CTSolvers" => (
-        "https://control-toolbox.org/CTSolvers.jl/stable/",
-        joinpath(@__DIR__, "..", "..", "CTSolvers", "docs", "build", "1", "objects.inv"),
-        "https://control-toolbox.org/CTSolvers.jl/stable/objects.inv",
-    ),
+    "CTBase" => sibling_inventory("CTBase", "https://control-toolbox.org/CTBase.jl/stable/"),
+    "CTDirect" => sibling_inventory("CTDirect.jl", "https://control-toolbox.org/CTDirect.jl/stable/"),
+    "CTFlows" => sibling_inventory("CTFlows.jl", "https://control-toolbox.org/CTFlows.jl/stable/"),
+    "CTLie" => sibling_inventory("CTLie", "https://control-toolbox.org/CTLie.jl/stable/"),
+    "CTModels" => sibling_inventory("CTModels.jl", "https://control-toolbox.org/CTModels.jl/stable/"),
+    "CTParser" => sibling_inventory("CTParser.jl", "https://control-toolbox.org/CTParser.jl/stable/"),
+    "CTSolvers" => sibling_inventory("CTSolvers", "https://control-toolbox.org/CTSolvers.jl/stable/"),
     "ADNLPModels" => (
         "https://jso.dev/ADNLPModels.jl/stable/",
         joinpath(@__DIR__, "inventories", "ADNLPModels.toml"),
