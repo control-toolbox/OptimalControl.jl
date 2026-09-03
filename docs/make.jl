@@ -173,18 +173,26 @@ const IN_CI = get(ENV, "CI", "false") == "true"
 function sibling_inventory(dir_name::AbstractString, base_url::AbstractString)
     remote = (base_url, base_url * "objects.inv")
     IN_CI && return remote
-    local_inv = joinpath(@__DIR__, "..", "..", dir_name, "docs", "build", "1", "objects.inv")
+    local_inv = joinpath(
+        @__DIR__, "..", "..", dir_name, "docs", "build", "1", "objects.inv"
+    )
     return (base_url, local_inv, base_url * "objects.inv")
 end
 
 links = InterLinks(
-    "CTBase" => sibling_inventory("CTBase", "https://control-toolbox.org/CTBase.jl/stable/"),
-    "CTDirect" => sibling_inventory("CTDirect.jl", "https://control-toolbox.org/CTDirect.jl/stable/"),
-    "CTFlows" => sibling_inventory("CTFlows.jl", "https://control-toolbox.org/CTFlows.jl/stable/"),
+    "CTBase" =>
+        sibling_inventory("CTBase", "https://control-toolbox.org/CTBase.jl/stable/"),
+    "CTDirect" =>
+        sibling_inventory("CTDirect.jl", "https://control-toolbox.org/CTDirect.jl/stable/"),
+    "CTFlows" =>
+        sibling_inventory("CTFlows.jl", "https://control-toolbox.org/CTFlows.jl/stable/"),
     "CTLie" => sibling_inventory("CTLie", "https://control-toolbox.org/CTLie.jl/stable/"),
-    "CTModels" => sibling_inventory("CTModels.jl", "https://control-toolbox.org/CTModels.jl/stable/"),
-    "CTParser" => sibling_inventory("CTParser.jl", "https://control-toolbox.org/CTParser.jl/stable/"),
-    "CTSolvers" => sibling_inventory("CTSolvers", "https://control-toolbox.org/CTSolvers.jl/stable/"),
+    "CTModels" =>
+        sibling_inventory("CTModels.jl", "https://control-toolbox.org/CTModels.jl/stable/"),
+    "CTParser" =>
+        sibling_inventory("CTParser.jl", "https://control-toolbox.org/CTParser.jl/stable/"),
+    "CTSolvers" =>
+        sibling_inventory("CTSolvers", "https://control-toolbox.org/CTSolvers.jl/stable/"),
     "ADNLPModels" => (
         "https://jso.dev/ADNLPModels.jl/stable/",
         joinpath(@__DIR__, "inventories", "ADNLPModels.toml"),
