@@ -4,7 +4,7 @@ The OptimalControl.jl logo is not a drawing. It is the solution of an optimal co
 problem — an **energy-minimal low-thrust orbit transfer** — solved once and repeated by
 symmetry.
 
-![The OptimalControl.jl logo](../assets/logo.png)
+![The OptimalControl.jl logo](../assets/logo.svg)
 
 A spacecraft spirals from a low circular orbit out to a higher one under continuous weak
 thrust. Two-body dynamics do not care which way is up, so the same optimal transfer, rotated
@@ -168,7 +168,7 @@ scatter!(ax, Point2f(0, 0); color = jl.blue, markersize = 100)
 fig
 ```
 
-That is the figure the site uses as its logo (`docs/src/assets/logo.png`).
+That is the figure the site uses as its logo (`docs/src/assets/logo.svg`).
 
 The published asset is produced by a slightly more elaborate script — crisper strokes, a few
 tuning knobs — kept in the repository at `.extras/logos/logo-gagnant/`. The optimal control

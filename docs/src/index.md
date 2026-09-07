@@ -2,9 +2,37 @@
 
 The OptimalControl.jl package is the root package of the [control-toolbox ecosystem](https://github.com/control-toolbox). The control-toolbox ecosystem gathers Julia packages for mathematical control and applications. It aims to provide tools to model and solve optimal control problems with ordinary differential equations by direct and indirect methods, both on CPU and GPU.
 
+```@raw html
+<style>
+.oc-logo { width: 200px; margin: 1.5rem auto; }
+.oc-logo--light { display: block; }
+.oc-logo--dark  { display: none; }
+.dark .oc-logo--light { display: none; }
+.dark .oc-logo--dark  { display: block; }
+</style>
+<img src="./assets/logo.svg"      alt="OptimalControl.jl logo" class="oc-logo oc-logo--light" />
+<img src="./assets/logo-dark.svg" alt="OptimalControl.jl logo" class="oc-logo oc-logo--dark" />
+```
+
 ## Motivation
 
-The guiding philosophy of OptimalControl.jl is to offer, to our knowledge, the only Julia package that unifies both direct and indirect methods for optimal control within a single, coherent framework. This fills a gap in a landscape where existing tools are fragmented across programming languages and paradigms, and are usually restricted to a single family of methods. The package provides a domain-specific language that closely matches mathematical notation, together with multiple discretization schemes and shooting methods, and planned support for homotopy continuation methods. Its modeler–solver separation makes it agnostic to the underlying NLP modeling backend and optimization solver, and enables seamless execution on both CPU and GPU with minimal user intervention. Combined with an ecosystem of domain-specific applications, tutorials, and benchmarking tools, this design targets researchers and engineers working in optimal control, control theorists developing new algorithms, and students learning the field through interactive tutorials.
+To our knowledge, OptimalControl.jl is the only Julia package that unifies both direct
+and indirect methods for optimal control within a single, coherent framework. This fills
+a gap in a landscape where existing tools are fragmented across programming languages and
+paradigms, and are usually restricted to a single family of methods.
+
+The package provides a domain-specific language that closely matches mathematical
+notation, together with multiple discretization schemes and shooting methods, and planned
+support for homotopy continuation methods.
+
+Its modeler–solver separation makes it agnostic to the underlying NLP modeling backend
+and optimization solver, and enables seamless execution on both CPU and GPU with minimal
+user intervention.
+
+Combined with an ecosystem of domain-specific applications, tutorials, and benchmarking
+tools, this design targets researchers and engineers working in optimal control, control
+theorists developing new algorithms, and students learning the field through interactive
+tutorials.
 
 ## Installation
 
@@ -34,7 +62,9 @@ sol = solve(ocp)
 plot(sol)
 ```
 
-- For more details, see the [energy minimisation example](@ref examples-double-integrator-energy).  
+That is the whole program — model, solve, plot. Each step has its own guide:
+
+- For more details about the example, see the [energy minimisation page](@ref examples-double-integrator-energy).  
 - The `@def` macro defines the problem. See the [abstract syntax guide](@ref modelling-abstract-syntax).  
 - The `solve` function has many options. See the [solve overview](@ref solve-overview).  
 - The `plot` function is flexible. See the [plot guide](@ref results-plot).
@@ -49,15 +79,17 @@ plot(sol)
 | [Results](@ref results-solution) | Read a `Solution` — trajectories, costate, duals, status — plot it, save it, reload it. |
 | [Flows (indirect)](@ref flows-overview) | The Pontryagin Maximum Principle as code: build, integrate, and shoot with Hamiltonian flows. |
 | [Geometry](@ref geometry-overview) | The Lie-theoretic tools (`Lift`, `ad`, `Poisson`, `@Lie`) behind singular-control problems. |
-| [Examples](@ref examples-gallery) | Six worked problems, direct and indirect, from energy minimisation to state constraints. |
+| [Examples](@ref examples-gallery) | A gallery of complete problems worked end to end, direct and indirect, from energy minimisation to state constraints. |
 | [API reference](@ref api-modelling) | Every re-exported symbol, organised by theme. |
 | [Migrating to v2.1](@ref migration) | What changed since v2.0 and how to update your code. |
 
 ## Mathematical formulation
 
-Optimal control problems are stated in Bolza form — a cost functional combining a terminal
-(Mayer) and an integral (Lagrange) term, subject to dynamics and box/path/boundary
-constraints, with optionally free times and extra optimisation variables. See
+Optimal control problems are stated in Bolza form — a cost functional combining a boundary
+term (Mayer), a pointwise cost evaluated on the initial and final times and states and on
+the optimisation variables, and an integral term (Lagrange) accumulated along the
+trajectory. The problem is subject to dynamics and box/path/boundary constraints, with
+optionally free times and extra optimisation variables. See
 [Formulation](@ref modelling-formulation) for the full mathematical setting.
 
 ## Citing us
@@ -92,63 +124,57 @@ If you want to ask a question, feel free to start a discussion [here](https://gi
 
 ## Testing
 
-OptimalControl.jl is the umbrella package of a multi-repository ecosystem, and testing is organized in layers. Each sub-package (`CTBase`, `CTParser`, `CTModels`, `CTDirect`, `CTSolvers`, `CTFlows`) has its own test suite combining unit tests, integration tests, and code-quality checks (e.g. with [Aqua.jl](https://github.com/JuliaTesting/Aqua.jl)). At the umbrella level, OptimalControl.jl adds strong end-to-end integration tests that solve complete optimal control problems with both direct and indirect methods. Continuous integration runs on Linux, macOS, and Windows, on both CPU and GPU (via a self-hosted CUDA runner), through reusable workflows centralized in [CTActions](https://github.com/control-toolbox/CTActions). Code coverage is tracked on [Codecov](https://codecov.io), downstream packages are guarded against regressions through dedicated breakage tests, and beta versions are distributed during development via a local registry, [ct-registry](https://github.com/control-toolbox/ct-registry). Part of the test code is written with the help of AI agents, always under human review.
+OptimalControl.jl is the umbrella package of a multi-repository ecosystem, and testing is
+organized in layers. Each sub-package (`CTBase`, `CTDirect`, `CTFlows`, `CTModels`, `CTLie`,
+`CTSolvers`, `CTParser`) has its own test suite combining unit tests, integration
+tests, and code-quality checks (e.g. with [Aqua.jl](https://github.com/JuliaTesting/Aqua.jl)).
+At the umbrella level, OptimalControl.jl adds strong end-to-end integration tests that
+solve complete optimal control problems with both direct and indirect methods.
+
+Continuous integration runs on Linux, macOS, and Windows, on both CPU and GPU (via a
+self-hosted CUDA runner), through reusable workflows centralized in
+[CTActions](https://github.com/control-toolbox/CTActions). Code coverage is tracked on
+[Codecov](https://codecov.io), and downstream packages are guarded against regressions
+through dedicated breakage tests.
+
+Beta versions are distributed during development via a local registry,
+[ct-registry](https://github.com/control-toolbox/ct-registry). Part of the test code is
+written with the help of AI agents, always under human review.
 
 ## Reproducibility
 
 ```@setup main
 using Pkg
 using InteractiveUtils
-using Markdown
-
-# Download links for the benchmark environment
-function _downloads_toml(DIR)
-    link_manifest = joinpath("assets", DIR, "Manifest.toml")
-    link_project = joinpath("assets", DIR, "Project.toml")
-    return Markdown.parse("""
-    Download the exact environment used to build these docs:
-    - 📦 [Project.toml]($link_project) - Package dependencies
-    - 📋 [Manifest.toml]($link_manifest) - Full dependency tree
-    """)
-end
 ```
 
-```@example main
-_downloads_toml(".") # hide
-```
+Every page on this site executes its code when the documentation is built, against a
+single pinned environment. You can inspect that environment below, or download it and
+rebuild it locally.
 
-```@raw html
-<details style="margin-bottom: 0.5em; margin-top: 1em;"><summary style="margin-bottom: 0px; margin-top: 0px;">ℹ️ Version info</summary>
-```
+| Download | Contents |
+| --- | --- |
+| [`Project.toml`](assets/Project.toml) | the packages this documentation depends on directly |
+| [`Manifest.toml`](assets/Manifest.toml) | the exact version of every package in the resolved dependency tree |
+
+::: details Environment used to build this documentation
+
+**Julia version and operating system**
 
 ```@example main
 versioninfo() # hide
 ```
 
-```@raw html
-</details>
-```
-
-```@raw html
-<details style="margin-bottom: 0.5em;"><summary style="margin-bottom: 0px; margin-top: 0px;">📦 Package status</summary>
-```
+**Direct dependencies**
 
 ```@example main
 Pkg.status() # hide
 ```
 
-```@raw html
-</details>
-```
-
-```@raw html
-<details style="margin-bottom: 0.5em;"><summary style="margin-bottom: 0px; margin-top: 0px;">📚 Complete manifest</summary>
-```
+**Full dependency tree**
 
 ```@example main
 Pkg.status(; mode = PKGMODE_MANIFEST) # hide
 ```
 
-```@raw html
-</details>
-```
+:::

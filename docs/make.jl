@@ -112,15 +112,32 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 # Assets for reproducibility
 # ═══════════════════════════════════════════════════════════════════════════════
+# Each TOML is copied twice: into `src/assets/` so Documenter's link checker
+# resolves the `assets/…` download links (no `warnonly` since #952), and into
+# `src/public/assets/` so VitePress actually serves the file — it does not bundle
+# `.toml`, and DocumenterVitepress's assets→public copy only handles logo/favicon.
+# Creating `src/public/` also makes DVP skip that logo copy, so the logo is staged
+# into `src/public/` here as well. `src/public/` is git-ignored (build output);
+# `src/assets/Manifest.toml` stays tracked (the reviewable snapshot).
 mkpath(joinpath(@__DIR__, "src", "assets"))
-cp(
-    joinpath(@__DIR__, "Manifest.toml"),
-    joinpath(@__DIR__, "src", "assets", "Manifest.toml");
-    force=true,
+mkpath(joinpath(@__DIR__, "src", "public", "assets"))
+for f in ("Manifest.toml", "Project.toml")
+    cp(joinpath(@__DIR__, f), joinpath(@__DIR__, "src", "assets", f); force=true)
+    cp(joinpath(@__DIR__, f), joinpath(@__DIR__, "src", "public", "assets", f); force=true)
+end
+
+# Logo: `logo.svg` is the tracked light artwork; `logo-dark.svg` is the same file with
+# the white backdrop swapped for the VitePress dark surface (#1b1b1f), Julia mark colours
+# unchanged — generated here (git-ignored) and Vite-bundled from `src/assets/` for the
+# home-page <img> pair. `logo.svg` is also staged into `src/public/` for the navbar (DVP
+# fills `logo:` with the single `/logo.svg`; a `.dark` filter recolours it there).
+write(
+    joinpath(@__DIR__, "src", "assets", "logo-dark.svg"),
+    replace(read(joinpath(@__DIR__, "src", "assets", "logo.svg"), String), "#ffffff" => "#1b1b1f"),
 )
 cp(
-    joinpath(@__DIR__, "Project.toml"),
-    joinpath(@__DIR__, "src", "assets", "Project.toml");
+    joinpath(@__DIR__, "src", "assets", "logo.svg"),
+    joinpath(@__DIR__, "src", "public", "logo.svg");
     force=true,
 )
 
