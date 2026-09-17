@@ -1,5 +1,5 @@
 ---
-title: "OptimalControl.jl: a Julia package to model and solve optimal control problems with ODE's"
+title: "OptimalControl.jl: a Julia package to model and solve optimal control problems with ODEs"
 tags:
   - Julia
   - optimal control
@@ -74,13 +74,13 @@ OptimalControl.jl requires Julia version 1.10 or later and is registered in the 
 
 - **Legacy tools (COTCOT, HamPath, NutoPy)**: These Fortran packages excel at indirect methods and homotopy continuation but require multi-language setup (Fortran plus MATLAB / Python). OptimalControl.jl provides both direct and indirect methods in pure Julia with straightforward installation via package manager.
 
-- **Direct-method tools (BOCOP, ACADO, GPOPS-II, acados, nosnoc)**: Strong direct-method implementations: [GPOPS-II](https://gpops2.com) delivers mature methods with MATLAB and C++ implementations but is proprietary; [acados](https://docs.acados.org) targets real-time MPC on embedded systems; [nosnoc](https://github.com/nosnoc/nosnoc) [@Nurkanovic2022] specializes in nonsmooth optimal control; [CasADi](https://web.casadi.org), used as symbolic backend by several of these tools, is a general NLP modeler rather than an optimal control solver. OptimalControl.jl offers an open-source alternative with expressive DSL, native Julia ecosystem integration, GPU support, and unified direct and indirect approaches.
+- **Direct-method tools (BOCOP, ACADO, GPOPS-II, acados, nosnoc)**: Strong direct-method implementations: [GPOPS-II](https://gpops2.com) delivers mature methods with a MATLAB implementation but is proprietary; [acados](https://docs.acados.org) targets real-time MPC on embedded systems; [nosnoc](https://github.com/nosnoc/nosnoc) [@Nurkanovic2022] specializes in nonsmooth optimal control; [CasADi](https://web.casadi.org), used as symbolic backend by several of these tools, is a general NLP modeler rather than an optimal control solver. OptimalControl.jl offers an open-source alternative with expressive DSL, native Julia ecosystem integration, GPU support, and unified direct and indirect approaches.
 
 - **Julia packages**: [RobustAndOptimalControl.jl](https://juliacontrol.github.io/RobustAndOptimalControl.jl) targets linear systems; [QuantumControl.jl](https://juliaquantumcontrol.github.io/QuantumControl.jl), [Piccolo.jl](https://github.com/harmoniqs/Piccolo.jl) and [DirectTrajectoryOptimization.jl](https://github.com/thowell/DirectTrajectoryOptimization.jl) serve specific domains; [LinearMPC.jl](https://darnstrom.github.io/LinearMPC.jl/stable/) and [ModelPredictiveControl.jl](https://juliacontrol.github.io/ModelPredictiveControl.jl/stable/) focus on model predictive control. [InfiniteOpt.jl](https://infiniteopt.github.io/InfiniteOpt.jl) addresses a very rich range of problems, including optimization on PDEs or with chance constraints, focusing on direct transcription methods. OptimalControl.jl supports both CPU and GPU execution (currently NVIDIA-only, via [ExaModels.jl](https://github.com/exanauts/ExaModels.jl) + [MadNLP.jl](https://github.com/MadNLP/MadNLP.jl)), and adds tools to do shooting in a unified framework plus systematic benchmarking through [OptimalControlProblems.jl](https://control-toolbox.org/OptimalControlProblems.jl) and [CTBenchmarks.jl](https://control-toolbox.org/CTBenchmarks.jl).
 
 # Illustrative Example
 
-A self-contained illustrative example is provided as a companion repository [@joss_oc_example], archived on Zenodo. It combines direct and indirect solution approaches for a constrained energy minimization problem: a direct method on a coarse grid identifies the three-arc structure (unconstrained–constrained–unconstrained) and initializes a shooting method based on Pontryagin's Maximum Principle, which then converges to arbitrary precision.
+A self-contained illustrative example is provided as a companion repository [@joss_oc_example], archived on Zenodo. It combines direct and indirect solution approaches for a constrained energy minimization problem: a direct method on a coarse grid identifies the three-arc structure (unconstrained–constrained–unconstrained) and initializes a shooting method based on Pontryagin's Maximum Principle, which then converges to a prescribed numerical tolerance.
 
 # Software Design
 
@@ -104,7 +104,7 @@ The package architecture balances expressiveness, performance, and extensibility
 
 2. **GPU acceleration strategy**: The modeler-solver separation enables a straightforward CPU-to-GPU transition. Users select the [ExaModels](https://github.com/exanauts/ExaModels.jl) modeler with [MadNLP](https://github.com/MadNLP/MadNLP.jl) and the [CUDSS](https://github.com/exanauts/CUDSS.jl) linear solver for GPU execution, or simply append the `:gpu` token to the `solve` call. This modular approach minimizes maintenance burden while enabling GPU performance without reimplementing transcription logic. GPU support is currently limited to NVIDIA hardware and to the [ExaModels](https://github.com/exanauts/ExaModels.jl) + [MadNLP](https://github.com/MadNLP/MadNLP.jl) modeler-solver combination.
 
-3. **Method coverage**: Supporting both direct and indirect approaches increases code complexity but serves distinct user needs: direct methods for constrained problems with many variables, indirect methods for theoretical analysis and smaller problems requiring high accuracy. Both approaches rely on iterative solvers and may or may not converge, *e.g.*, depending on the initial guess. In the case of optimization solvers, the full output status of the solver is returned allowing *a posteriori* analysis.
+3. **Method coverage**: Supporting both direct and indirect approaches increases code complexity but serves distinct user needs: direct methods are typically preferred for constrained problems with many variables, while indirect methods are typically favored for theoretical analysis and smaller problems requiring high accuracy. Both approaches rely on iterative solvers and may or may not converge, *e.g.*, depending on the initial guess. In the case of optimization solvers, the full output status of the solver is returned allowing *a posteriori* analysis.
 
 # Research Impact Statement
 
