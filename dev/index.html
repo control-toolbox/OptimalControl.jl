@@ -9,11 +9,11 @@
     <link rel="preload stylesheet" href="/OptimalControl.jl/dev/assets/style.23QOOYKc.css" as="style">
     <link rel="preload stylesheet" href="/OptimalControl.jl/dev/vp-icons.css" as="style">
     
-    <script type="module" src="/OptimalControl.jl/dev/assets/app.Z38kd7jh.js"></script>
+    <script type="module" src="/OptimalControl.jl/dev/assets/app.LWy1DLYf.js"></script>
     <link rel="preload" href="/OptimalControl.jl/dev/assets/inter-roman-latin.Di8DUHzh.woff2" as="font" type="font/woff2" crossorigin="">
-    <link rel="modulepreload" href="/OptimalControl.jl/dev/assets/chunks/theme.D7Lsm1SF.js">
-    <link rel="modulepreload" href="/OptimalControl.jl/dev/assets/chunks/framework.BElv-TZa.js">
-    <link rel="modulepreload" href="/OptimalControl.jl/dev/assets/index.md.CXhk0Qn8.lean.js">
+    <link rel="modulepreload" href="/OptimalControl.jl/dev/assets/chunks/theme.B87nr5Go.js">
+    <link rel="modulepreload" href="/OptimalControl.jl/dev/assets/chunks/framework.B3VJHZaz.js">
+    <link rel="modulepreload" href="/OptimalControl.jl/dev/assets/index.md.Cx8M013C.lean.js">
     <link rel="stylesheet" href="https://control-toolbox.org/assets/css/vitepress-documentation.css">
     <script src="/OptimalControl.jl/versions.js"></script>
     <script src="https://control-toolbox.org/assets/js/vitepress-documentation.js"></script>
@@ -38,7 +38,7 @@
 <span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">end</span></span>
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">sol </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> solve</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ocp)</span></span>
-<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">plot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(sol)</span></span></code></pre></div><p><img src="/OptimalControl.jl/dev/assets/qoaqqgp.BGhl3hem.svg" alt=""></p><ul><li><p>For more details, see the <a href="/OptimalControl.jl/dev/examples/double-integrator-energy#examples-double-integrator-energy">energy minimisation example</a>.</p></li><li><p>The <code>@def</code> macro defines the problem. See the <a href="/OptimalControl.jl/dev/modelling/abstract-syntax#modelling-abstract-syntax">abstract syntax guide</a>.</p></li><li><p>The <code>solve</code> function has many options. See the <a href="/OptimalControl.jl/dev/solve/overview#solve-overview">solve overview</a>.</p></li><li><p>The <code>plot</code> function is flexible. See the <a href="/OptimalControl.jl/dev/results/plot#results-plot">plot guide</a>.</p></li></ul><h2 id="Where-to-go-next" tabindex="-1">Where to go next <a class="header-anchor" href="#Where-to-go-next" aria-label="Permalink to &quot;Where to go next {#Where-to-go-next}&quot;">​</a></h2><table tabindex="0"><thead><tr><th style="text-align:right;">Section</th><th style="text-align:right;">What&#39;s there</th></tr></thead><tbody><tr><td style="text-align:right;"><a href="/OptimalControl.jl/dev/getting-started/installation#getting-started-installation">Getting started</a></td><td style="text-align:right;">Install, solve your first problem, then a longer guided tour covering both the direct and indirect methods.</td></tr><tr><td style="text-align:right;"><a href="/OptimalControl.jl/dev/modelling/formulation#modelling-formulation">Modelling</a></td><td style="text-align:right;">The <code>@def</code> DSL, the macro-free functional API, control-free (parameter estimation) problems, and problem introspection.</td></tr><tr><td style="text-align:right;"><a href="/OptimalControl.jl/dev/solve/overview#solve-overview">Solve (direct)</a></td><td style="text-align:right;">Discretize-and-transcribe methods: choosing a strategy, initial guesses, options, explicit mode, GPU.</td></tr><tr><td style="text-align:right;"><a href="/OptimalControl.jl/dev/results/solution#results-solution">Results</a></td><td style="text-align:right;">Read a <code>Solution</code> — trajectories, costate, duals, status — plot it, save it, reload it.</td></tr><tr><td style="text-align:right;"><a href="/OptimalControl.jl/dev/flows/overview#flows-overview">Flows (indirect)</a></td><td style="text-align:right;">The Pontryagin Maximum Principle as code: build, integrate, and shoot with Hamiltonian flows.</td></tr><tr><td style="text-align:right;"><a href="/OptimalControl.jl/dev/geometry/overview#geometry-overview">Geometry</a></td><td style="text-align:right;">The Lie-theoretic tools (<code>Lift</code>, <code>ad</code>, <code>Poisson</code>, <code>@Lie</code>) behind singular-control problems.</td></tr><tr><td style="text-align:right;"><a href="/OptimalControl.jl/dev/examples/gallery#examples-gallery">Examples</a></td><td style="text-align:right;">Six worked problems, direct and indirect, from energy minimisation to state constraints.</td></tr><tr><td style="text-align:right;"><a href="/OptimalControl.jl/dev/api/modelling#api-modelling">API reference</a></td><td style="text-align:right;">Every re-exported symbol, organised by theme.</td></tr><tr><td style="text-align:right;"><a href="/OptimalControl.jl/dev/migration#migration">Migrating to v2.1</a></td><td style="text-align:right;">What changed since v2.0 and how to update your code.</td></tr></tbody></table><h2 id="Mathematical-formulation" tabindex="-1">Mathematical formulation <a class="header-anchor" href="#Mathematical-formulation" aria-label="Permalink to &quot;Mathematical formulation {#Mathematical-formulation}&quot;">​</a></h2><p>Optimal control problems are stated in Bolza form — a cost functional combining a terminal (Mayer) and an integral (Lagrange) term, subject to dynamics and box/path/boundary constraints, with optionally free times and extra optimisation variables. See <a href="/OptimalControl.jl/dev/modelling/formulation#modelling-formulation">Formulation</a> for the full mathematical setting.</p><h2 id="Citing-us" tabindex="-1">Citing us <a class="header-anchor" href="#Citing-us" aria-label="Permalink to &quot;Citing us {#Citing-us}&quot;">​</a></h2><p>If you use OptimalControl.jl in your work, please cite us:</p><blockquote><p>Caillau, J.-B., Cots, O., Gergaud, J., Martinon, P., &amp; Sed, S. <em>OptimalControl.jl: a Julia package to model and solve optimal control problems with ODE&#39;s</em>. <a href="https://doi.org/10.5281/zenodo.13336563" target="_blank" rel="noreferrer">doi.org/10.5281/zenodo.13336563</a></p></blockquote><p>or in bibtex format:</p><div class="language-bibtex vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">bibtex</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">@software</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">OptimalControl_jl</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">plot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(sol)</span></span></code></pre></div><p><img src="/OptimalControl.jl/dev/assets/jitejio._sbn7RuE.svg" alt=""></p><ul><li><p>For more details, see the <a href="/OptimalControl.jl/dev/examples/double-integrator-energy#examples-double-integrator-energy">energy minimisation example</a>.</p></li><li><p>The <code>@def</code> macro defines the problem. See the <a href="/OptimalControl.jl/dev/modelling/abstract-syntax#modelling-abstract-syntax">abstract syntax guide</a>.</p></li><li><p>The <code>solve</code> function has many options. See the <a href="/OptimalControl.jl/dev/solve/overview#solve-overview">solve overview</a>.</p></li><li><p>The <code>plot</code> function is flexible. See the <a href="/OptimalControl.jl/dev/results/plot#results-plot">plot guide</a>.</p></li></ul><h2 id="Where-to-go-next" tabindex="-1">Where to go next <a class="header-anchor" href="#Where-to-go-next" aria-label="Permalink to &quot;Where to go next {#Where-to-go-next}&quot;">​</a></h2><table tabindex="0"><thead><tr><th style="text-align:right;">Section</th><th style="text-align:right;">What&#39;s there</th></tr></thead><tbody><tr><td style="text-align:right;"><a href="/OptimalControl.jl/dev/getting-started/installation#getting-started-installation">Getting started</a></td><td style="text-align:right;">Install, solve your first problem, then a longer guided tour covering both the direct and indirect methods.</td></tr><tr><td style="text-align:right;"><a href="/OptimalControl.jl/dev/modelling/formulation#modelling-formulation">Modelling</a></td><td style="text-align:right;">The <code>@def</code> DSL, the macro-free functional API, control-free (parameter estimation) problems, and problem introspection.</td></tr><tr><td style="text-align:right;"><a href="/OptimalControl.jl/dev/solve/overview#solve-overview">Solve (direct)</a></td><td style="text-align:right;">Discretize-and-transcribe methods: choosing a strategy, initial guesses, options, explicit mode, GPU.</td></tr><tr><td style="text-align:right;"><a href="/OptimalControl.jl/dev/results/solution#results-solution">Results</a></td><td style="text-align:right;">Read a <code>Solution</code> — trajectories, costate, duals, status — plot it, save it, reload it.</td></tr><tr><td style="text-align:right;"><a href="/OptimalControl.jl/dev/flows/overview#flows-overview">Flows (indirect)</a></td><td style="text-align:right;">The Pontryagin Maximum Principle as code: build, integrate, and shoot with Hamiltonian flows.</td></tr><tr><td style="text-align:right;"><a href="/OptimalControl.jl/dev/geometry/overview#geometry-overview">Geometry</a></td><td style="text-align:right;">The Lie-theoretic tools (<code>Lift</code>, <code>ad</code>, <code>Poisson</code>, <code>@Lie</code>) behind singular-control problems.</td></tr><tr><td style="text-align:right;"><a href="/OptimalControl.jl/dev/examples/gallery#examples-gallery">Examples</a></td><td style="text-align:right;">Six worked problems, direct and indirect, from energy minimisation to state constraints.</td></tr><tr><td style="text-align:right;"><a href="/OptimalControl.jl/dev/api/modelling#api-modelling">API reference</a></td><td style="text-align:right;">Every re-exported symbol, organised by theme.</td></tr><tr><td style="text-align:right;"><a href="/OptimalControl.jl/dev/migration#migration">Migrating to v2.1</a></td><td style="text-align:right;">What changed since v2.0 and how to update your code.</td></tr></tbody></table><h2 id="Mathematical-formulation" tabindex="-1">Mathematical formulation <a class="header-anchor" href="#Mathematical-formulation" aria-label="Permalink to &quot;Mathematical formulation {#Mathematical-formulation}&quot;">​</a></h2><p>Optimal control problems are stated in Bolza form — a cost functional combining a terminal (Mayer) and an integral (Lagrange) term, subject to dynamics and box/path/boundary constraints, with optionally free times and extra optimisation variables. See <a href="/OptimalControl.jl/dev/modelling/formulation#modelling-formulation">Formulation</a> for the full mathematical setting.</p><h2 id="Citing-us" tabindex="-1">Citing us <a class="header-anchor" href="#Citing-us" aria-label="Permalink to &quot;Citing us {#Citing-us}&quot;">​</a></h2><p>If you use OptimalControl.jl in your work, please cite us:</p><blockquote><p>Caillau, J.-B., Cots, O., Gergaud, J., Martinon, P., &amp; Sed, S. <em>OptimalControl.jl: a Julia package to model and solve optimal control problems with ODE&#39;s</em>. <a href="https://doi.org/10.5281/zenodo.13336563" target="_blank" rel="noreferrer">doi.org/10.5281/zenodo.13336563</a></p></blockquote><p>or in bibtex format:</p><div class="language-bibtex vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">bibtex</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">@software</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">OptimalControl_jl</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">author</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> = </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">{</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Caillau, Jean-Baptiste and Cots, Olivier and Gergaud, Joseph and Martinon, Pierre and Sed, Sophia</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">}</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">doi</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> = </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">{</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">10.5281/zenodo.13336563</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">}</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">license</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> = </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">{</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">MIT</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">}</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
@@ -51,41 +51,40 @@
 <li><p>📋 <a href="assets/./Manifest.toml">Manifest.toml</a> - Full dependency tree</p>
 </li>
 </ul>
-</div></div><details style="margin-bottom:0.5em;margin-top:1em;"><summary style="margin-bottom:0px;margin-top:0px;">ℹ️ Version info</summary><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Julia Version 1.12.7</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Commit 6d172b025e4 (2026-08-15 08:05 UTC)</span></span>
+</div></div><details style="margin-bottom:0.5em;margin-top:1em;"><summary style="margin-bottom:0px;margin-top:0px;">ℹ️ Version info</summary><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Julia Version 1.13.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Commit 96ca370cf0e (2026-09-25 19:34 UTC)</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Build Info:</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  Official https://julialang.org release</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Platform Info:</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  OS: Linux (x86_64-linux-gnu)</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  CPU: 20 × Intel(R) Xeon(R) CPU E5-2640 v4 @ 2.40GHz</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  CPU: 4 × Intel(R) Xeon(R) 6973P-C</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  WORD_SIZE: 64</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  LLVM: libLLVM-18.1.7 (ORCJIT, broadwell)</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  LLVM: libLLVM-20.1.8 (ORCJIT, graniterapids)</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  GC: Built with stock GC</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Threads: 1 default, 1 interactive, 1 GC (on 20 virtual cores)</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Threads: 1 default, 1 interactive, 1 GC (on 4 virtual cores)</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Environment:</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  JULIA_PKG_SERVER_REGISTRY_PREFERENCE = eager</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  JULIA_DEPOT_PATH = /projects/ctb/gha-runner/julia_depot</span></span></code></pre></div></details><details style="margin-bottom:0.5em;"><summary style="margin-bottom:0px;margin-top:0px;">📦 Package status</summary><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Status `/projects/ctb/gha-runner/_work/OptimalControl.jl/OptimalControl.jl/docs/Project.toml`</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [54578032] ADNLPModels v0.8.13</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [54762871] CTBase v0.30.4-beta</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [790bbbee] CTDirect v1.1.6-beta</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  JULIA_PKG_SERVER_REGISTRY_PREFERENCE = eager</span></span></code></pre></div></details><details style="margin-bottom:0.5em;"><summary style="margin-bottom:0px;margin-top:0px;">📦 Package status</summary><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Status `~/work/OptimalControl.jl/OptimalControl.jl/docs/Project.toml`</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [54578032] ADNLPModels v0.8.14</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [54762871] CTBase v0.30.5</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [790bbbee] CTDirect v1.1.8-beta</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1c39547c] CTFlows v0.18.0-beta</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [6880e05b] CTLie v0.2.2-beta</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [34c4fa32] CTModels v0.19.4-beta</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [34c4fa32] CTModels v0.19.5</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [32681960] CTParser v0.9.5-beta</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d3e8d392] CTSolvers v0.5.6-beta</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌃ [052768ef] CUDA v6.2.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [45b445bb] CUDSS v0.7.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [13f3f980] CairoMakie v0.15.14</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [5ae59095] Colors v0.13.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [13f3f980] CairoMakie v0.15.15</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [5ae59095] Colors v0.13.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [38540f10] CommonSolve v0.2.14</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a0c0ee7d] DifferentiationInterface v0.7.21</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [e30172f5] Documenter v1.19.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d12716ef] DocumenterInterLinks v1.1.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4710194d] DocumenterVitepress v0.3.5</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4710194d] DocumenterVitepress v0.3.6</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1037b233] ExaModels v0.12.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [f6369f11] ForwardDiff v1.4.5</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [033835bb] JLD2 v0.6.6</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [0f8b85d8] JSON3 v1.14.3</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [f6369f11] ForwardDiff v1.4.6</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [033835bb] JLD2 v0.6.7</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [0f8b85d8] JSON3 v1.14.3 [deprecated]</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [98b081ad] Literate v2.21.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [16fef848] LiveServer v1.6.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [434a0bcb] MadNCL v0.2.3</span></span>
@@ -94,40 +93,41 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d0879d2d] MarkdownAST v0.1.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [f4238b75] NLPModelsIpopt v0.11.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [bec4dd0d] NLPModelsKnitro v0.10.6</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [8913a72c] NonlinearSolve v4.29.2</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [5f98b655] OptimalControl v2.2.1-beta `/projects/ctb/gha-runner/_work/OptimalControl.jl/OptimalControl.jl`</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [8913a72c] NonlinearSolve v4.32.0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [5f98b655] OptimalControl v2.2.1-beta `~/work/OptimalControl.jl/OptimalControl.jl`</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1dea7af3] OrdinaryDiffEq v7.8.1</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b1df2697] OrdinaryDiffEqTsit5 v2.1.4</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b1df2697] OrdinaryDiffEqTsit5 v2.1.5</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [91a5bcdd] Plots v1.41.7</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1baa60ac] UnoSolver v0.3.6</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`</span></span></code></pre></div></details><details style="margin-bottom:0.5em;"><summary style="margin-bottom:0px;margin-top:0px;">📚 Complete manifest</summary><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Status `/projects/ctb/gha-runner/_work/OptimalControl.jl/OptimalControl.jl/docs/Manifest.toml`</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [54578032] ADNLPModels v0.8.13</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1baa60ac] UnoSolver v0.3.7</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Info Packages marked with [deprecated] are no longer maintained. Use `status --deprecated` to see more information.</span></span></code></pre></div></details><details style="margin-bottom:0.5em;"><summary style="margin-bottom:0px;margin-top:0px;">📚 Complete manifest</summary><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Status `~/work/OptimalControl.jl/OptimalControl.jl/docs/Manifest.toml`</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [54578032] ADNLPModels v0.8.14</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [47edcb42] ADTypes v1.24.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [14f7f29c] AMD v0.5.4</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a4c015fc] ANSIColoredPrinters v0.0.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [621f4979] AbstractFFTs v1.5.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1520ce14] AbstractTrees v0.4.5</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [7d9f7c33] Accessors v0.1.45</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [79e6a3ab] Adapt v4.7.0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [79e6a3ab] Adapt v4.7.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [35492f91] AdaptivePredicates v1.2.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [66dad0bd] AliasTables v1.1.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [27a7e980] Animations v0.4.2</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4fba245c] ArrayInterface v7.30.1</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a9b6321e] Atomix v1.1.3</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4fba245c] ArrayInterface v7.30.2</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a9b6321e] Atomix v1.2.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [67c07d97] Automa v1.2.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [13072b0f] AxisAlgorithms v1.1.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [39de3d68] AxisArrays v0.4.8</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ab4f0b2a] BFloat16s v0.6.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ab4f0b2a] BFloat16s v0.6.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [18cc8868] BaseDirs v1.4.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b2a6c25c] BinaryHeaps v1.1.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [70df07ce] BracketingNonlinearSolve v1.12.6</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [70df07ce] BracketingNonlinearSolve v1.12.8</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [fa961155] CEnum v0.5.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [96374032] CRlibm v1.0.2</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [54762871] CTBase v0.30.4-beta</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [790bbbee] CTDirect v1.1.6-beta</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [54762871] CTBase v0.30.5</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [790bbbee] CTDirect v1.1.8-beta</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1c39547c] CTFlows v0.18.0-beta</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [6880e05b] CTLie v0.2.2-beta</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [34c4fa32] CTModels v0.19.4-beta</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [34c4fa32] CTModels v0.19.5</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [32681960] CTParser v0.9.5-beta</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d3e8d392] CTSolvers v0.5.6-beta</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌃ [052768ef] CUDA v6.2.0</span></span>
@@ -137,7 +137,7 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [45b445bb] CUDSS v0.7.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [9e67e8f6] CUPTI v6.2.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [159f3aea] Cairo v1.1.1</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [13f3f980] CairoMakie v0.15.14</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [13f3f980] CairoMakie v0.15.15</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d360d2e6] ChainRulesCore v1.26.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [0b6fb165] ChunkCodecCore v1.0.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4c0bbee4] ChunkCodecLibZlib v1.1.0</span></span>
@@ -146,9 +146,9 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [6b39b394] CodecZstd v0.8.7</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a2cac450] ColorBrewer v0.4.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [35d6a980] ColorSchemes v3.31.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [3da002f7] ColorTypes v0.12.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [3da002f7] ColorTypes v0.12.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [c3611d14] ColorVectorSpace v0.11.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [5ae59095] Colors v0.13.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [5ae59095] Colors v0.13.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [38540f10] CommonSolve v0.2.14</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [bbf7d656] CommonSubexpressions v0.3.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [34da2185] Compat v4.18.1</span></span>
@@ -162,9 +162,9 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [9a962f9c] DataAPI v1.16.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [864edb3b] DataStructures v0.19.6</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [e2d170a0] DataValueInterfaces v1.0.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [927a84f5] DelaunayTriangulation v1.6.6</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [927a84f5] DelaunayTriangulation v1.6.7</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [8bb1440f] DelimitedFiles v1.9.1</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [2b5f629d] DiffEqBase v7.20.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [2b5f629d] DiffEqBase v7.21.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [163ba53b] DiffResults v1.1.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b552c78f] DiffRules v1.16.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a0c0ee7d] DifferentiationInterface v0.7.21</span></span>
@@ -173,13 +173,13 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ffbed154] DocStringExtensions v0.9.5</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [e30172f5] Documenter v1.19.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d12716ef] DocumenterInterLinks v1.1.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4710194d] DocumenterVitepress v0.3.5</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4710194d] DocumenterVitepress v0.3.6</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4e289a0a] EnumX v1.0.7</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [f151be2c] EnzymeCore v0.8.21</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1037b233] ExaModels v0.12.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [429591f6] ExactPredicates v2.2.9</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [e2ba6199] ExprTools v0.1.11</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [c87230d0] FFMPEG v0.4.5</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [c87230d0] FFMPEG v0.4.6</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b86e33f2] FFTA v0.3.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [7034ab61] FastBroadcast v1.4.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [9aa1b823] FastClosures v0.3.2</span></span>
@@ -187,27 +187,27 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [5789e2e9] FileIO v1.20.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [8fc22ac5] FilePaths v0.9.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [48062228] FilePathsBase v0.9.24</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1a297f60] FillArrays v1.17.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [64ca27bc] FindFirstFunctions v3.2.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1a297f60] FillArrays v1.17.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [64ca27bc] FindFirstFunctions v3.4.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [6a86dc24] FiniteDiff v2.33.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [53c48c17] FixedPointNumbers v0.8.6</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1fa38f19] Format v1.3.7</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [f6369f11] ForwardDiff v1.4.5</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [f6369f11] ForwardDiff v1.4.6</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b38be410] FreeType v4.1.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [663a7486] FreeTypeAbstraction v0.10.8</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [069b7b12] FunctionWrappers v1.1.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [77dc65aa] FunctionWrappersWrappers v1.13.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [0c68f7d7] GPUArrays v11.5.14</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [46192b85] GPUArraysCore v0.2.0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [0c68f7d7] GPUArrays v11.5.15</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [46192b85] GPUArraysCore v0.2.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [61eb1bfa] GPUCompiler v1.23.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [096a3bc2] GPUToolbox v1.1.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [28b8d3ca] GR v0.73.27</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a0844989] Gamma v1.2.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [5c1252a2] GeometryBasics v0.5.12</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [5c1252a2] GeometryBasics v0.5.13</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d7ba0133] Git v1.5.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a2bd30eb] Graphics v1.1.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [3955a311] GridLayoutBase v0.11.3</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [cd3eb016] HTTP v2.6.7</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [cd3eb016] HTTP v2.8.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [076d061b] HashArrayMappedTries v0.2.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [34004b35] HypergeometricFunctions v0.3.30</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b5f81e59] IOCapture v1.0.0</span></span>
@@ -220,38 +220,38 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d25df0c9] Inflate v0.1.5</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [18e54dd8] IntegerMathUtils v0.1.4</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a98d9a8b] Interpolations v0.16.3</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d1acc4aa] IntervalArithmetic v1.0.11</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d1acc4aa] IntervalArithmetic v1.0.12</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [8197267c] IntervalSets v0.7.14</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [3587e190] InverseFunctions v0.1.17</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b6b21f68] Ipopt v1.15.0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b6b21f68] Ipopt v1.16.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [92d709cd] IrrationalConstants v0.2.6</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [f1662d9f] Isoband v0.1.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [c8e1da08] IterTools v1.10.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [82899510] IteratorInterfaceExtensions v1.0.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [033835bb] JLD2 v0.6.6</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [033835bb] JLD2 v0.6.7</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1019f520] JLFzf v0.1.11</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [692b3bcd] JLLWrappers v1.8.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [682c06a0] JSON v1.8.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [0f8b85d8] JSON3 v1.14.3</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [682c06a0] JSON v1.10.0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [0f8b85d8] JSON3 v1.14.3 [deprecated]</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b835a17e] JpegTurbo v0.1.6</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [67920dd8] KNITRO v1.3.1</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [63c18a36] KernelAbstractions v0.9.42</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [63c18a36] KernelAbstractions v0.9.43</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [5ab0869b] KernelDensity v0.6.12</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ba0b0d4f] Krylov v0.10.9</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ba0b0d4f] Krylov v0.10.10</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [40e66cde] LDLFactorizations v0.10.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [2faa5264] LHLFactorization v2.2.2</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [929cbde3] LLVM v9.13.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [929cbde3] LLVM v9.13.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [8b046642] LLVMLoopInfo v1.0.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b964fa9f] LaTeXStrings v1.4.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [23fbe1c1] Latexify v0.16.12</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [0e77f7df] LazilyInitializedFields v1.3.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [8cdb02fc] LazyModules v0.3.1</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [87fe0de2] LineSearch v0.1.16</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [5c8ed15e] LinearOperators v2.14.2</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [7ed4a6bd] LinearSolve v5.16.0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [87fe0de2] LineSearch v0.1.19</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [5c8ed15e] LinearOperators v2.14.3</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [7ed4a6bd] LinearSolve v5.18.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [98b081ad] Literate v2.21.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [16fef848] LiveServer v1.6.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [2ab3a3ac] LogExpFunctions v1.0.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [2ab3a3ac] LogExpFunctions v1.0.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [e6f89c97] LoggingExtras v1.2.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [6c6e2e6c] MIMEs v1.1.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d8e11817] MLStyle v0.4.17</span></span>
@@ -259,7 +259,7 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [434a0bcb] MadNCL v0.2.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [2621e9c9] MadNLP v0.10.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d72a61cc] MadNLPGPU v0.10.2</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ee78f7c6] Makie v0.24.14</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ee78f7c6] Makie v0.24.15</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [dbb5928d] MappedArrays v0.4.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d0879d2d] MarkdownAST v0.1.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [0a4f8689] MathTeXEngine v0.6.9</span></span>
@@ -277,27 +277,27 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [5da4648a] NVTX v1.0.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [77ba4419] NaNMath v1.1.4</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [f09324ee] Netpbm v1.1.1</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [8913a72c] NonlinearSolve v4.29.2</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌃ [be0214bd] NonlinearSolveBase v2.48.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [5959db7a] NonlinearSolveFirstOrder v2.5.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [8913a72c] NonlinearSolve v4.32.0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [be0214bd] NonlinearSolveBase v2.54.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [5959db7a] NonlinearSolveFirstOrder v2.10.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [9a2c21bd] NonlinearSolveQuasiNewton v1.15.3</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [26075421] NonlinearSolveSpectralMethods v1.8.2</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [26075421] NonlinearSolveSpectralMethods v1.8.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [510215fc] Observables v0.5.5</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [6fe1bfb0] OffsetArrays v1.17.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [52e1d378] OpenEXR v0.3.3</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [5f98b655] OptimalControl v2.2.1-beta `/projects/ctb/gha-runner/_work/OptimalControl.jl/OptimalControl.jl`</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [5f98b655] OptimalControl v2.2.1-beta `~/work/OptimalControl.jl/OptimalControl.jl`</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [bac558e1] OrderedCollections v2.0.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1dea7af3] OrdinaryDiffEq v7.8.1</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [6ad6398a] OrdinaryDiffEqBDF v2.4.6</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [bbf590c4] OrdinaryDiffEqCore v4.17.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [50262376] OrdinaryDiffEqDefault v2.6.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4302a76b] OrdinaryDiffEqDifferentiation v3.11.5</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.5</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [6ad6398a] OrdinaryDiffEqBDF v2.4.12</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [bbf590c4] OrdinaryDiffEqCore v4.18.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [50262376] OrdinaryDiffEqDefault v2.6.2</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4302a76b] OrdinaryDiffEqDifferentiation v3.12.4</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.9</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.5</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [2d112036] OrdinaryDiffEqSDIRK v2.9.2</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b1df2697] OrdinaryDiffEqTsit5 v2.1.4</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [79d7bb75] OrdinaryDiffEqVerner v2.4.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [2d112036] OrdinaryDiffEqSDIRK v2.9.7</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b1df2697] OrdinaryDiffEqTsit5 v2.1.5</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [79d7bb75] OrdinaryDiffEqVerner v2.4.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [90014a1f] PDMats v0.11.41</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [f57f5aa1] PNGFiles v0.4.5</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [19eb6ba3] Packing v0.5.1</span></span>
@@ -306,77 +306,77 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [69de0a69] Parsers v2.8.8</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [eebad327] PkgVersion v0.3.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ccf2f8ad] PlotThemes v3.3.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [995b91a9] PlotUtils v1.4.4</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [995b91a9] PlotUtils v1.5.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [91a5bcdd] Plots v1.41.7</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [647866c9] PolygonOps v0.1.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d236fae5] PreallocationTools v1.7.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [aea7be01] PrecompileTools v1.3.4</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [21216c6a] Preferences v1.5.2</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [08abe8d2] PrettyTables v3.4.8</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [21216c6a] Preferences v1.6.0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [08abe8d2] PrettyTables v3.5.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [27ebfcd6] Primes v0.5.7</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [92933f4c] ProgressMeter v1.11.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [43287f4e] PtrArrays v1.4.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [0c0d3e7f] PureKLU v1.4.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [0c0d3e7f] PureKLU v1.6.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4b34888f] QOI v1.0.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1fd47b50] QuadGK v2.11.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [74087812] Random123 v1.7.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [e6cf234a] RandomNumbers v1.6.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b3c3ace0] RangeArrays v0.3.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [c84ed2f1] Ratios v0.4.5</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [3cdcf5f2] RecipesBase v1.3.4</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [3cdcf5f2] RecipesBase v1.4.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [01d81517] RecipesPipeline v0.6.12</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [731186ca] RecursiveArrayTools v4.5.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [731186ca] RecursiveArrayTools v4.5.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [189a3867] Reexport v1.2.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [2792f1a3] RegistryInstances v0.1.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [05181044] RelocatableFolders v1.0.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ae029012] Requires v1.3.1</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [802f3686] Reseau v1.4.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [802f3686] Reseau v1.5.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [9fe22ead] RespecializeParams v1.3.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [37e2e3b7] ReverseDiff v1.17.0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [37e2e3b7] ReverseDiff v1.18.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [79098fc4] Rmath v0.9.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [f2b01f46] Roots v3.0.8</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [5eaf0fd0] RoundingEmulator v0.2.1</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [7e49a35a] RuntimeGeneratedFunctions v0.5.26</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [7e49a35a] RuntimeGeneratedFunctions v0.5.27</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [fdea26ae] SIMD v3.7.2</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [0bca4576] SciMLBase v3.53.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [0bca4576] SciMLBase v3.57.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [19f34311] SciMLJacobianOperators v0.1.19</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a6db7da4] SciMLLogging v2.1.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [c0aeaf25] SciMLOperators v1.30.0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [c0aeaf25] SciMLOperators v1.30.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [431bcebd] SciMLPublic v1.3.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [53ae85a6] SciMLStructures v1.10.5</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [7e506255] ScopedValues v1.6.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [6c6a2e73] Scratch v1.3.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [efcf1570] Setfield v1.1.2</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [65257c39] ShaderAbstractions v0.5.0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [65257c39] ShaderAbstractions v0.5.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [992d4aef] Showoff v1.1.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [73760f76] SignedDistanceFields v0.4.1</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [727e6d20] SimpleNonlinearSolve v2.14.2</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [727e6d20] SimpleNonlinearSolve v2.14.6</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [699a6c99] SimpleTraits v0.9.6</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [45858cf5] Sixel v0.1.5</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ed01d8cd] Sobol v1.5.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ff4d7338] SolverCore v0.3.10</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a2af1166] SortingAlgorithms v1.2.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a57abbd0] SparseColumnPivotedQR v2.1.8</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [9f842d2f] SparseConnectivityTracer v1.2.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [0a514795] SparseMatrixColorings v0.4.28</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [276daf66] SpecialFunctions v2.9.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [860ef19b] StableRNGs v1.0.4</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [cae243ae] StackViews v0.1.2</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [90137ffa] StaticArrays v1.9.20</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [90137ffa] StaticArrays v1.9.22</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1e83bf80] StaticArraysCore v1.4.4</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [10745b16] Statistics v1.11.5</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [82ae8749] StatsAPI v1.8.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [2913bbd2] StatsBase v0.34.13</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4c63d2b9] StatsFuns v2.2.1</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [892a3eda] StringManipulation v0.5.0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [892a3eda] StringManipulation v0.6.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [09ab397b] StructArrays v0.7.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [856f2bd8] StructTypes v1.11.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ec057cc2] StructUtils v2.8.5</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ec057cc2] StructUtils v2.9.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [2efcf032] SymbolicIndexingInterface v0.3.55</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [3783bdb8] TableTraits v1.0.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [bd369af6] Tables v1.14.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [62fd8b95] TensorCore v0.1.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [731e570b] TiffImages v0.11.9</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [a759f4b9] TimerOutputs v0.5.29</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a759f4b9] TimerOutputs v1.2.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [e689c965] Tracy v0.1.6</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [3bb67fe8] TranscodingStreams v0.11.3</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [981d1d27] TriplotBase v0.1.0</span></span>
@@ -385,7 +385,7 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [3a884ed6] UnPack v1.0.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1cfade01] UnicodeFun v0.4.1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1986cc42] Unitful v1.29.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1baa60ac] UnoSolver v0.3.6</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1baa60ac] UnoSolver v0.3.7</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [013be700] UnsafeAtomics v0.3.2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [41fe7b60] Unzip v0.2.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [e3aaa7dc] WebP v0.1.3</span></span>
@@ -407,8 +407,8 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ee1fde0b] Dbus_jll v1.16.2+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [5ae413db] EarCut_jll v2.2.4+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [2702e6a9] EpollShim_jll v0.0.20230411+1</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [2e619515] Expat_jll v2.8.3+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [b22a6f82] FFMPEG_jll v8.1.2+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [2e619515] Expat_jll v2.8.4+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b22a6f82] FFMPEG_jll v9.0.1+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a3f928ae] Fontconfig_jll v2.17.1+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d7e528f0] FreeType2_jll v2.14.3+1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [559328eb] FriBidi_jll v1.0.17+0</span></span>
@@ -416,15 +416,15 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d2c73de3] GR_jll v0.73.27+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [b0724c58] GettextRuntime_jll v0.22.4+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [61579ee1] Ghostscript_jll v9.55.1+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [59f7168a] Giflib_jll v5.2.3+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [59f7168a] Giflib_jll v6.1.3+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [020c3dae] Git_LFS_jll v3.7.1+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [f8c6e375] Git_jll v2.55.0+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [f8c6e375] Git_jll v2.56.0+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [7746bdde] Glib_jll v2.88.3+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [3b182d85] Graphite2_jll v1.3.16+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [017b0a0e] HSL_jll v4.0.8+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [2e76f6c2] HarfBuzz_jll v100.14003.0+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [8fd58aa0] HiGHS_jll v1.15.0+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [e33a78d0] Hwloc_jll v2.14.0+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [2e76f6c2] HarfBuzz_jll v100.14004.0+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [8fd58aa0] HiGHS_jll v1.15.1+3</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [e33a78d0] Hwloc_jll v2.14.1+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [905a6f67] Imath_jll v3.2.2+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [9cc047cb] Ipopt_jll v300.1400.1902+0</span></span>
@@ -432,9 +432,9 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [9c1d0b0a] JuliaNVTXCallbacks_jll v0.2.1+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [0e6b36f8] KNITRO_jll v16.0.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [c1c5ebd0] LAME_jll v3.100.3+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [88015f11] LERC_jll v4.1.0+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [88015f11] LERC_jll v4.2.0+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [dad2f222] LLVMExtra_jll v0.0.47+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1d63c593] LLVMOpenMP_jll v22.1.7+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1d63c593] LLVMOpenMP_jll v23.1.1+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ad6e5548] LibTracyClient_jll v0.13.1+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [e9f186c6] Libffi_jll v3.4.7+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [7e76a0d4] Libglvnd_jll v1.7.1+1</span></span>
@@ -442,16 +442,16 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4b2f31a3] Libmount_jll v2.42.0+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [89763e89] Libtiff_jll v4.7.3+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [38a345b3] Libuuid_jll v2.42.0+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d00139f3] METIS_jll v5.1.3+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d00139f3] METIS_jll v5.1.4+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [856f044c] MKL_jll v2025.2.0+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d7ed1dd3] MUMPS_seq_jll v500.900.100+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ef6e0fe3] NVPTX_LLVM_Backend_jll v22.1.7+1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [ef6e0fe3] NVPTX_LLVM_Backend_jll v22.1.7+1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [e98f9f5b] NVTX_jll v3.2.2+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [c7aee132] NodeJS_20_jll v20.12.2+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [e7412a2a] Ogg_jll v1.3.6+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [656ef2d0] OpenBLAS32_jll v0.3.34+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [6cdc7f73] OpenBLASConsistentFPCSR_jll v0.3.34+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [18a262bb] OpenEXR_jll v3.4.14+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [18a262bb] OpenEXR_jll v3.4.15+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [9bd350c2] OpenSSH_jll v10.5.1+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [efe28fd5] OpenSpecFun_jll v0.5.6+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [91d4177d] Opus_jll v1.6.1+0</span></span>
@@ -464,11 +464,11 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [e99dba38] Qt6Wayland_jll v6.10.2+1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [f50d1b31] Rmath_jll v0.5.2+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [319450e9] SPRAL_jll v2025.9.18+1</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [396d5378] Uno_jll v2.8.0+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [396d5378] Uno_jll v2.9.0+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a44049a8] Vulkan_Loader_jll v1.3.243+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a2964d1f] Wayland_jll v1.24.0+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [02c8fc9c] XML2_jll v2.13.9+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ffd25f8a] XZ_jll v5.8.3+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [02c8fc9c] XML2_jll v2.15.4+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ffd25f8a] XZ_jll v5.8.4+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [f67eecfb] Xorg_libICE_jll v1.1.2+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [c834827a] Xorg_libSM_jll v1.2.6+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4f6342f7] Xorg_libX11_jll v1.8.13+0</span></span>
@@ -493,12 +493,11 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [35661453] Xorg_xkbcomp_jll v1.4.7+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [c5fb5394] Xorg_xtrans_jll v1.6.0+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [3161d3a3] Zstd_jll v1.5.7+1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1e29f10c] demumble_jll v1.3.0+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [35ca27e7] eudev_jll v3.2.14+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [214eeab7] fzf_jll v0.61.1+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [9a68df92] isoband_jll v0.2.3+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a4ae2306] libaom_jll v3.14.1+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a4ae2306] libaom_jll v3.15.1+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [0ac62f75] libass_jll v0.17.5+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1183f4f0] libdecor_jll v0.2.2+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [8e53e030] libdrm_jll v2.4.134+0</span></span>
@@ -509,7 +508,7 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [075b6546] libsixel_jll v1.10.5+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [9a156e7d] libva_jll v2.23.0+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [f27f6e37] libvorbis_jll v1.3.8+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [c5f90fcd] libwebp_jll v1.6.0+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [c5f90fcd] libwebp_jll v1.6.1+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [009596ad] mtdev_jll v1.1.7+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1317d2d5] oneTBB_jll v2022.3.0+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">⌅ [1270edf5] x264_jll v10164.0.1+0</span></span>
@@ -527,23 +526,23 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b77e0a4c] InteractiveUtils v1.11.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ac6e5ff7] JuliaSyntaxHighlighting v1.12.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4af54fe1] LazyArtifacts v1.11.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b27032c2] LibCURL v0.6.4</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [b27032c2] LibCURL v1.0.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [76f85450] LibGit2 v1.11.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [8f399da3] Libdl v1.11.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [37e2e46d] LinearAlgebra v1.12.0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [37e2e46d] LinearAlgebra v1.13.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [56ddb016] Logging v1.11.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [d6f4376e] Markdown v1.11.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [a63ad114] Mmap v1.11.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ca575930] NetworkOptions v1.3.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [44cfe95a] Pkg v1.12.1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [44cfe95a] Pkg v1.13.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [de0858da] Printf v1.11.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [3fa0cd96] REPL v1.11.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [9a3f8284] Random v1.11.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ea8e919c] SHA v0.7.0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [ea8e919c] SHA v1.0.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [9e88b42a] Serialization v1.11.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [1a1011a3] SharedArrays v1.11.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [6462fe0b] Sockets v1.11.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [2f01184e] SparseArrays v1.12.0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [2f01184e] SparseArrays v1.13.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [f489334b] StyledStrings v1.11.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4607b0f0] SuiteSparse</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [fa267f1f] TOML v1.0.3</span></span>
@@ -551,22 +550,24 @@
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [8dfed614] Test v1.11.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [cf7118a7] UUIDs v1.11.0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4ec0a83e] Unicode v1.11.0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [e66e0078] CompilerSupportLibraries_jll v1.3.1+2</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [deac9b47] LibCURL_jll v8.15.0+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [e37daf67] LibGit2_jll v1.9.0+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [29816b5a] LibSSH2_jll v1.11.3+1</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [14a3606d] MozillaCACerts_jll v2025.11.4</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4536629a] OpenBLAS_jll v0.3.29+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [e66e0078] CompilerSupportLibraries_jll v1.5.5+2</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [deac9b47] LibCURL_jll v8.18.0+1</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [e37daf67] LibGit2_jll v1.9.1+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [29816b5a] LibSSH2_jll v1.11.104+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [14a3606d] MozillaCACerts_jll v2026.8.13</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [4536629a] OpenBLAS_jll v0.3.30+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [05823500] OpenLibm_jll v0.8.7+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [458c3c95] OpenSSL_jll v3.5.6+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [efcefdf7] PCRE2_jll v10.44.0+1</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [bea87d4a] SuiteSparse_jll v7.8.3+2</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [efcefdf7] PCRE2_jll v10.46.0+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [bea87d4a] SuiteSparse_jll v7.10.1+0</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [83775a58] Zlib_jll v1.3.1+2</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [3161d3a3] Zstd_jll v1.5.7+1</span></span>
 <span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [8e850b90] libblastrampoline_jll v5.15.0+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [8e850ede] nghttp2_jll v1.64.0+1</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [3f19e933] p7zip_jll v17.7.0+0</span></span>
-<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</span></span></code></pre></div></details></div></div></main><footer class="VPDocFooter" data-v-83890dd9 data-v-4f9813fa><!--[--><!--]--><div class="edit-info" data-v-4f9813fa><div class="edit-link" data-v-4f9813fa><a class="VPLink link vp-external-link-icon no-icon edit-link-button" href="https://github.com/control-toolbox/OptimalControl.jl/edit/main/docs/src/index.md" target="_blank" rel="noreferrer" data-v-4f9813fa><!--[--><span class="vpi-square-pen edit-link-icon" data-v-4f9813fa></span> Edit this page<!--]--></a></div><!----></div><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-4f9813fa><span class="visually-hidden" id="doc-footer-aria-label" data-v-4f9813fa>Pager</span><div class="pager" data-v-4f9813fa><!----></div><div class="pager" data-v-4f9813fa><a class="VPLink link pager-link next" href="/OptimalControl.jl/dev/getting-started/installation" data-v-4f9813fa><!--[--><span class="desc" data-v-4f9813fa>Next page</span><span class="title" data-v-4f9813fa>Installation</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><footer class="VPFooter has-sidebar" data-v-a9a9e638 data-v-c970a860><div class="container" data-v-c970a860><p class="message" data-v-c970a860>Made with <a href="https://luxdl.github.io/DocumenterVitepress.jl/dev/" target="_blank"><strong>DocumenterVitepress.jl</strong></a><br></p><p class="copyright" data-v-c970a860>© Copyright 2026.</p></div></footer><!--[--><!--]--></div></div>
-    <script>window.__VP_HASH_MAP__=JSON.parse("{\"api_deprecated.md\":\"CHWJjsLT\",\"api_ecosystem.md\":\"28V97MNQ\",\"api_flows.md\":\"C2jwWljt\",\"api_geometry.md\":\"-5RQVG1E\",\"api_internals.md\":\"CQ_G_buo\",\"api_io.md\":\"BqJGC4gS\",\"api_modelling.md\":\"70dFNapv\",\"api_options.md\":\"Cs5MgZFq\",\"api_problem.md\":\"D9i5_W12\",\"api_qualified.md\":\"DeAq30tl\",\"api_solution.md\":\"DozDCfmD\",\"api_solving.md\":\"D6D-Ib0I\",\"api_types.md\":\"C-Q4s45M\",\"examples_control-and-variable.md\":\"r8R5AwT8\",\"examples_control-free.md\":\"vdKgxG6x\",\"examples_double-integrator-energy.md\":\"DFOzgQLO\",\"examples_double-integrator-time.md\":\"BEio4_DM\",\"examples_gallery.md\":\"BD97XtbO\",\"examples_logo.md\":\"D2fBfILy\",\"examples_singular-control.md\":\"K20QeZPt\",\"examples_state-constraint.md\":\"CrNU9ziF\",\"examples_turnpike.md\":\"C1p6dIbL\",\"flows_accessors.md\":\"CEegZE3E\",\"flows_constrained-arcs.md\":\"DZKTVGCc\",\"flows_from-hamiltonians.md\":\"DgvogszX\",\"flows_from-ocp.md\":\"NlbKFptw\",\"flows_multi-phase.md\":\"DYUx3LQl\",\"flows_overview.md\":\"DZWqkVGf\",\"flows_shooting.md\":\"Cu67yY-e\",\"flows_simulation.md\":\"DXySTbJF\",\"geometry_ad-backend.md\":\"CjvEZ8J8\",\"geometry_ad.md\":\"CRPgsfPV\",\"geometry_lie-macro.md\":\"j_fsm8ds\",\"geometry_lift.md\":\"B82kEM14\",\"geometry_overview.md\":\"SOkOdP3k\",\"geometry_poisson.md\":\"Bx_xrbxS\",\"getting-started_first-problem.md\":\"Dn6Fwt5E\",\"getting-started_guided-tour.md\":\"kpbERJdA\",\"getting-started_installation.md\":\"CtzzZFRL\",\"index.md\":\"CXhk0Qn8\",\"migration.md\":\"B65KXQAt\",\"modelling_abstract-syntax.md\":\"BwhVKyGI\",\"modelling_formulation.md\":\"C7mVOStV\",\"modelling_functional-api.md\":\"Adu6JX9t\",\"modelling_inspect.md\":\"Q2QLYkvf\",\"modelling_with-ai.md\":\"BWP5oZ7t\",\"modelling_without-control.md\":\"BbvKa-6A\",\"results_plot-makie.md\":\"DCFapOwJ\",\"results_plot.md\":\"kcc6BoL8\",\"results_save-load.md\":\"DvYLx38S\",\"results_solution.md\":\"6H_tfuoF\",\"solve_choosing-a-method.md\":\"C-1VrvFF\",\"solve_explicit-mode.md\":\"DFgNb-di\",\"solve_gpu.md\":\"BF6mni01\",\"solve_initial-guess.md\":\"B4BOltXA\",\"solve_options.md\":\"BQQUP6ew\",\"solve_overview.md\":\"D6M3K_YM\"}");window.__VP_SITE_DATA__=JSON.parse("{\"lang\":\"en-US\",\"dir\":\"ltr\",\"title\":\"OptimalControl.jl\",\"description\":\"Documentation for OptimalControl.jl\",\"base\":\"/OptimalControl.jl/dev/\",\"head\":[],\"router\":{\"prefetchLinks\":true},\"appearance\":true,\"themeConfig\":{\"outline\":\"deep\",\"logo\":{\"src\":\"/logo.png\",\"width\":24,\"height\":24},\"search\":{\"provider\":\"local\",\"options\":{\"detailedView\":true}},\"nav\":[{\"text\":\"Home\",\"link\":\"/index\"},{\"component\":\"VersionPicker\"}],\"sidebar\":[{\"text\":\"Getting started\",\"collapsed\":true,\"items\":[{\"text\":\"Installation\",\"link\":\"/getting-started/installation\"},{\"text\":\"Your first problem\",\"link\":\"/getting-started/first-problem\"},{\"text\":\"Guided tour\",\"link\":\"/getting-started/guided-tour\"}]},{\"text\":\"Modelling\",\"collapsed\":true,\"items\":[{\"text\":\"Formulation\",\"link\":\"/modelling/formulation\"},{\"text\":\"Abstract syntax (@def)\",\"link\":\"/modelling/abstract-syntax\"},{\"text\":\"Functional API\",\"link\":\"/modelling/functional-api\"},{\"text\":\"No control\",\"link\":\"/modelling/without-control\"},{\"text\":\"Inspect a problem\",\"link\":\"/modelling/inspect\"},{\"text\":\"With AI\",\"link\":\"/modelling/with-ai\"}]},{\"text\":\"Solve (direct)\",\"collapsed\":true,\"items\":[{\"text\":\"Overview\",\"link\":\"/solve/overview\"},{\"text\":\"Initial guess\",\"link\":\"/solve/initial-guess\"},{\"text\":\"Choosing a method\",\"link\":\"/solve/choosing-a-method\"},{\"text\":\"Options\",\"link\":\"/solve/options\"},{\"text\":\"Explicit mode\",\"link\":\"/solve/explicit-mode\"},{\"text\":\"GPU\",\"link\":\"/solve/gpu\"}]},{\"text\":\"Results\",\"collapsed\":true,\"items\":[{\"text\":\"Solution object\",\"link\":\"/results/solution\"},{\"text\":\"Plot\",\"link\":\"/results/plot\"},{\"text\":\"Plot with Makie\",\"link\":\"/results/plot-makie\"},{\"text\":\"Save & load\",\"link\":\"/results/save-load\"}]},{\"text\":\"Flows (indirect)\",\"collapsed\":true,\"items\":[{\"text\":\"Overview\",\"link\":\"/flows/overview\"},{\"text\":\"From an OCP\",\"link\":\"/flows/from-ocp\"},{\"text\":\"From Hamiltonians\",\"link\":\"/flows/from-hamiltonians\"},{\"text\":\"Simulation\",\"link\":\"/flows/simulation\"},{\"text\":\"Accessors\",\"link\":\"/flows/accessors\"},{\"text\":\"Multi-phase flows\",\"link\":\"/flows/multi-phase\"},{\"text\":\"Constrained arcs\",\"link\":\"/flows/constrained-arcs\"},{\"text\":\"Shooting\",\"link\":\"/flows/shooting\"}]},{\"text\":\"Geometry\",\"collapsed\":true,\"items\":[{\"text\":\"Overview\",\"link\":\"/geometry/overview\"},{\"text\":\"Lift\",\"link\":\"/geometry/lift\"},{\"text\":\"Lie derivative and Lie bracket\",\"link\":\"/geometry/ad\"},{\"text\":\"Poisson bracket\",\"link\":\"/geometry/poisson\"},{\"text\":\"The @Lie macro\",\"link\":\"/geometry/lie-macro\"},{\"text\":\"AD backend\",\"link\":\"/geometry/ad-backend\"}]},{\"text\":\"Examples\",\"collapsed\":true,\"items\":[{\"text\":\"Example gallery\",\"link\":\"/examples/gallery\"},{\"text\":\"Energy minimisation\",\"link\":\"/examples/double-integrator-energy\"},{\"text\":\"Time minimisation (bang–bang)\",\"link\":\"/examples/double-integrator-time\"},{\"text\":\"Parameter estimation without a control\",\"link\":\"/examples/control-free\"},{\"text\":\"Control and variable together\",\"link\":\"/examples/control-and-variable\"},{\"text\":\"Turnpike (bang–singular–bang)\",\"link\":\"/examples/turnpike\"},{\"text\":\"Singular control\",\"link\":\"/examples/singular-control\"},{\"text\":\"State constraint\",\"link\":\"/examples/state-constraint\"},{\"text\":\"The logo\",\"link\":\"/examples/logo\"}]},{\"text\":\"API Reference\",\"collapsed\":true,\"items\":[{\"text\":\"Modelling\",\"link\":\"/api/modelling\"},{\"text\":\"Problem\",\"link\":\"/api/problem\"},{\"text\":\"Solving\",\"link\":\"/api/solving\"},{\"text\":\"Options and strategies\",\"link\":\"/api/options\"},{\"text\":\"Solution\",\"link\":\"/api/solution\"},{\"text\":\"Flows\",\"link\":\"/api/flows\"},{\"text\":\"Geometry\",\"link\":\"/api/geometry\"},{\"text\":\"Types\",\"link\":\"/api/types\"},{\"text\":\"Plotting and I/O\",\"link\":\"/api/io\"},{\"text\":\"Qualified access\",\"link\":\"/api/qualified\"},{\"text\":\"Deprecated\",\"link\":\"/api/deprecated\"},{\"text\":\"Internals\",\"link\":\"/api/internals\"},{\"text\":\"Ecosystem\",\"link\":\"/api/ecosystem\"}]},{\"text\":\"Migrating to v2.1\",\"link\":\"/migration\"}],\"sidebarDrawer\":true,\"editLink\":{\"pattern\":\"https://github.com/control-toolbox/OptimalControl.jl/edit/main/docs/src/:path\"},\"socialLinks\":[{\"icon\":\"github\",\"link\":\"https://github.com/control-toolbox/OptimalControl.jl\"}],\"footer\":{\"message\":\"Made with <a href=\\\"https://luxdl.github.io/DocumenterVitepress.jl/dev/\\\" target=\\\"_blank\\\"><strong>DocumenterVitepress.jl</strong></a><br>\",\"copyright\":\"© Copyright 2026.\"}},\"locales\":{},\"scrollOffset\":134,\"cleanUrls\":true}");</script>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [8e850ede] nghttp2_jll v1.67.1+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">  [3f19e933] p7zip_jll v17.8.2+0</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</span></span>
+<span class="line"><span style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;">Info Packages marked with [deprecated] are no longer maintained. Use `status --deprecated -m` to see more information.</span></span></code></pre></div></details></div></div></main><footer class="VPDocFooter" data-v-83890dd9 data-v-4f9813fa><!--[--><!--]--><div class="edit-info" data-v-4f9813fa><div class="edit-link" data-v-4f9813fa><a class="VPLink link vp-external-link-icon no-icon edit-link-button" href="https://github.com/control-toolbox/OptimalControl.jl/edit/main/docs/src/index.md" target="_blank" rel="noreferrer" data-v-4f9813fa><!--[--><span class="vpi-square-pen edit-link-icon" data-v-4f9813fa></span> Edit this page<!--]--></a></div><!----></div><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-4f9813fa><span class="visually-hidden" id="doc-footer-aria-label" data-v-4f9813fa>Pager</span><div class="pager" data-v-4f9813fa><!----></div><div class="pager" data-v-4f9813fa><a class="VPLink link pager-link next" href="/OptimalControl.jl/dev/getting-started/installation" data-v-4f9813fa><!--[--><span class="desc" data-v-4f9813fa>Next page</span><span class="title" data-v-4f9813fa>Installation</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><footer class="VPFooter has-sidebar" data-v-a9a9e638 data-v-c970a860><div class="container" data-v-c970a860><p class="message" data-v-c970a860>Made with <a href="https://luxdl.github.io/DocumenterVitepress.jl/dev/" target="_blank"><strong>DocumenterVitepress.jl</strong></a><br></p><p class="copyright" data-v-c970a860>© Copyright 2026.</p></div></footer><!--[--><!--]--></div></div>
+    <script>window.__VP_HASH_MAP__=JSON.parse("{\"api_deprecated.md\":\"C3PKgzDj\",\"api_ecosystem.md\":\"iWMQlz6x\",\"api_flows.md\":\"BoWRN761\",\"api_geometry.md\":\"DtorKW3i\",\"api_internals.md\":\"Z-WtmJl4\",\"api_io.md\":\"Cszs2oBy\",\"api_modelling.md\":\"D_-odHD1\",\"api_options.md\":\"CCCHGM6J\",\"api_problem.md\":\"C8XVk8-3\",\"api_qualified.md\":\"CJFMvMg9\",\"api_solution.md\":\"BZrB0ZMr\",\"api_solving.md\":\"CzY9BEZH\",\"api_types.md\":\"BNRNda9f\",\"examples_control-and-variable.md\":\"YE7cG2YK\",\"examples_control-free.md\":\"BgHdI1pv\",\"examples_double-integrator-energy.md\":\"B50Ms8ng\",\"examples_double-integrator-time.md\":\"BGfl2pZa\",\"examples_gallery.md\":\"BMWOj37w\",\"examples_logo.md\":\"_lFQrbs0\",\"examples_singular-control.md\":\"Dhl5Ifk-\",\"examples_state-constraint.md\":\"BWPM8VsE\",\"examples_turnpike.md\":\"CpIhtfU5\",\"flows_accessors.md\":\"De6vxJ8R\",\"flows_constrained-arcs.md\":\"BShnomvD\",\"flows_from-hamiltonians.md\":\"D1F4Y3pi\",\"flows_from-ocp.md\":\"CZrlyqrL\",\"flows_multi-phase.md\":\"DAhm6Mtg\",\"flows_overview.md\":\"NjDMeo3U\",\"flows_shooting.md\":\"CRrW4cXc\",\"flows_simulation.md\":\"BW4ph6Xd\",\"geometry_ad-backend.md\":\"CkmUt9AO\",\"geometry_ad.md\":\"BsMg1Pqv\",\"geometry_lie-macro.md\":\"tE4CZfjR\",\"geometry_lift.md\":\"DXissyNq\",\"geometry_overview.md\":\"CiCLPOYc\",\"geometry_poisson.md\":\"DIVSL4iW\",\"getting-started_first-problem.md\":\"BFfgpdnU\",\"getting-started_guided-tour.md\":\"acl51nkA\",\"getting-started_installation.md\":\"D2LW3HL2\",\"index.md\":\"Cx8M013C\",\"migration.md\":\"Corl7ad_\",\"modelling_abstract-syntax.md\":\"DqONb7rR\",\"modelling_formulation.md\":\"BcrIUteB\",\"modelling_functional-api.md\":\"m5GbGGrM\",\"modelling_inspect.md\":\"ckhdBDTG\",\"modelling_with-ai.md\":\"DsbdLi1n\",\"modelling_without-control.md\":\"BZ-qN9zx\",\"results_plot-makie.md\":\"DIns06wR\",\"results_plot.md\":\"sZ9wZRes\",\"results_save-load.md\":\"sqi8RgDO\",\"results_solution.md\":\"Dt-o5lcp\",\"solve_choosing-a-method.md\":\"BijQj0wU\",\"solve_explicit-mode.md\":\"BCtyUzkG\",\"solve_gpu.md\":\"DLsfScDq\",\"solve_initial-guess.md\":\"6RAnaXtt\",\"solve_options.md\":\"1uL9avpK\",\"solve_overview.md\":\"CJOkM1o9\"}");window.__VP_SITE_DATA__=JSON.parse("{\"lang\":\"en-US\",\"dir\":\"ltr\",\"title\":\"OptimalControl.jl\",\"description\":\"Documentation for OptimalControl.jl\",\"base\":\"/OptimalControl.jl/dev/\",\"head\":[],\"router\":{\"prefetchLinks\":true},\"appearance\":true,\"themeConfig\":{\"outline\":\"deep\",\"logo\":{\"src\":\"/logo.png\",\"width\":24,\"height\":24},\"search\":{\"provider\":\"local\",\"options\":{\"detailedView\":true}},\"nav\":[{\"text\":\"Home\",\"link\":\"/index\"},{\"component\":\"VersionPicker\"}],\"sidebar\":[{\"text\":\"Getting started\",\"collapsed\":true,\"items\":[{\"text\":\"Installation\",\"link\":\"/getting-started/installation\"},{\"text\":\"Your first problem\",\"link\":\"/getting-started/first-problem\"},{\"text\":\"Guided tour\",\"link\":\"/getting-started/guided-tour\"}]},{\"text\":\"Modelling\",\"collapsed\":true,\"items\":[{\"text\":\"Formulation\",\"link\":\"/modelling/formulation\"},{\"text\":\"Abstract syntax (@def)\",\"link\":\"/modelling/abstract-syntax\"},{\"text\":\"Functional API\",\"link\":\"/modelling/functional-api\"},{\"text\":\"No control\",\"link\":\"/modelling/without-control\"},{\"text\":\"Inspect a problem\",\"link\":\"/modelling/inspect\"},{\"text\":\"With AI\",\"link\":\"/modelling/with-ai\"}]},{\"text\":\"Solve (direct)\",\"collapsed\":true,\"items\":[{\"text\":\"Overview\",\"link\":\"/solve/overview\"},{\"text\":\"Initial guess\",\"link\":\"/solve/initial-guess\"},{\"text\":\"Choosing a method\",\"link\":\"/solve/choosing-a-method\"},{\"text\":\"Options\",\"link\":\"/solve/options\"},{\"text\":\"Explicit mode\",\"link\":\"/solve/explicit-mode\"},{\"text\":\"GPU\",\"link\":\"/solve/gpu\"}]},{\"text\":\"Results\",\"collapsed\":true,\"items\":[{\"text\":\"Solution object\",\"link\":\"/results/solution\"},{\"text\":\"Plot\",\"link\":\"/results/plot\"},{\"text\":\"Plot with Makie\",\"link\":\"/results/plot-makie\"},{\"text\":\"Save & load\",\"link\":\"/results/save-load\"}]},{\"text\":\"Flows (indirect)\",\"collapsed\":true,\"items\":[{\"text\":\"Overview\",\"link\":\"/flows/overview\"},{\"text\":\"From an OCP\",\"link\":\"/flows/from-ocp\"},{\"text\":\"From Hamiltonians\",\"link\":\"/flows/from-hamiltonians\"},{\"text\":\"Simulation\",\"link\":\"/flows/simulation\"},{\"text\":\"Accessors\",\"link\":\"/flows/accessors\"},{\"text\":\"Multi-phase flows\",\"link\":\"/flows/multi-phase\"},{\"text\":\"Constrained arcs\",\"link\":\"/flows/constrained-arcs\"},{\"text\":\"Shooting\",\"link\":\"/flows/shooting\"}]},{\"text\":\"Geometry\",\"collapsed\":true,\"items\":[{\"text\":\"Overview\",\"link\":\"/geometry/overview\"},{\"text\":\"Lift\",\"link\":\"/geometry/lift\"},{\"text\":\"Lie derivative and Lie bracket\",\"link\":\"/geometry/ad\"},{\"text\":\"Poisson bracket\",\"link\":\"/geometry/poisson\"},{\"text\":\"The @Lie macro\",\"link\":\"/geometry/lie-macro\"},{\"text\":\"AD backend\",\"link\":\"/geometry/ad-backend\"}]},{\"text\":\"Examples\",\"collapsed\":true,\"items\":[{\"text\":\"Example gallery\",\"link\":\"/examples/gallery\"},{\"text\":\"Energy minimisation\",\"link\":\"/examples/double-integrator-energy\"},{\"text\":\"Time minimisation (bang–bang)\",\"link\":\"/examples/double-integrator-time\"},{\"text\":\"Parameter estimation without a control\",\"link\":\"/examples/control-free\"},{\"text\":\"Control and variable together\",\"link\":\"/examples/control-and-variable\"},{\"text\":\"Turnpike (bang–singular–bang)\",\"link\":\"/examples/turnpike\"},{\"text\":\"Singular control\",\"link\":\"/examples/singular-control\"},{\"text\":\"State constraint\",\"link\":\"/examples/state-constraint\"},{\"text\":\"The logo\",\"link\":\"/examples/logo\"}]},{\"text\":\"API Reference\",\"collapsed\":true,\"items\":[{\"text\":\"Modelling\",\"link\":\"/api/modelling\"},{\"text\":\"Problem\",\"link\":\"/api/problem\"},{\"text\":\"Solving\",\"link\":\"/api/solving\"},{\"text\":\"Options and strategies\",\"link\":\"/api/options\"},{\"text\":\"Solution\",\"link\":\"/api/solution\"},{\"text\":\"Flows\",\"link\":\"/api/flows\"},{\"text\":\"Geometry\",\"link\":\"/api/geometry\"},{\"text\":\"Types\",\"link\":\"/api/types\"},{\"text\":\"Plotting and I/O\",\"link\":\"/api/io\"},{\"text\":\"Qualified access\",\"link\":\"/api/qualified\"},{\"text\":\"Deprecated\",\"link\":\"/api/deprecated\"},{\"text\":\"Internals\",\"link\":\"/api/internals\"},{\"text\":\"Ecosystem\",\"link\":\"/api/ecosystem\"}]},{\"text\":\"Migrating to v2.1\",\"link\":\"/migration\"}],\"sidebarDrawer\":true,\"editLink\":{\"pattern\":\"https://github.com/control-toolbox/OptimalControl.jl/edit/main/docs/src/:path\"},\"socialLinks\":[{\"icon\":\"github\",\"link\":\"https://github.com/control-toolbox/OptimalControl.jl\"}],\"footer\":{\"message\":\"Made with <a href=\\\"https://luxdl.github.io/DocumenterVitepress.jl/dev/\\\" target=\\\"_blank\\\"><strong>DocumenterVitepress.jl</strong></a><br>\",\"copyright\":\"© Copyright 2026.\"}},\"locales\":{},\"scrollOffset\":134,\"cleanUrls\":true}");</script>
     
   </body>
 </html>
