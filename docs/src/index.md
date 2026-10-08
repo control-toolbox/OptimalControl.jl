@@ -96,17 +96,22 @@ optionally free times and extra optimisation variables. See
 
 If you use OptimalControl.jl in your work, please cite us:
 
-> Caillau, J.-B., Cots, O., Gergaud, J., Martinon, P., & Sed, S. *OptimalControl.jl: a Julia package to model and solve optimal control problems with ODE's*. [doi.org/10.5281/zenodo.13336563](https://doi.org/10.5281/zenodo.13336563)
+> Caillau, J.-B., Cots, O., Gergaud, J., Martinon, P., & Sed, S. *OptimalControl.jl: a Julia package to model and solve optimal control problems with ODEs*. Journal of Open Source Software, 11(126), 10630, [doi.org/10.21105/joss.10630](https://doi.org/10.21105/joss.10630)
 
 or in bibtex format:
 
 ```bibtex
-@software{OptimalControl_jl,
-author = {Caillau, Jean-Baptiste and Cots, Olivier and Gergaud, Joseph and Martinon, Pierre and Sed, Sophia},
-doi = {10.5281/zenodo.13336563},
-license = {MIT},
-title = {{OptimalControl.jl: a Julia package to model and solve optimal control problems with ODE's}},
-url = {https://control-toolbox.org/OptimalControl.jl}
+@article{Caillau2026, 
+  doi = {10.21105/joss.10630}, 
+  url = {https://doi.org/10.21105/joss.10630}, 
+  year = {2026}, 
+  publisher = {The Open Journal}, 
+  volume = {11}, 
+  number = {126}, 
+  pages = {10630}, 
+  author = {Caillau, Jean-Baptiste and Cots, Olivier and Gergaud, Joseph and Martinon, Pierre and Sed, Sophia}, 
+  title = {OptimalControl.jl: a Julia package to model and solve optimal control problems with ODEs}, 
+  journal = {Journal of Open Source Software} 
 }
 ```
 
