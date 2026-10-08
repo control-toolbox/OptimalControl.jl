@@ -69,7 +69,9 @@ Base.showable(::MIME"image/png", ::CairoMakie.Makie.Figure) = false
         isempty(str) || push!(rendered_contents, "{" * str * "}")
     end
     final_contents = join(rendered_contents, ",\n")
-    collapse = sidenav === Val(:sidebar) ? "collapsed: true," : ""
+    is_sidebar = sidenav === Val(:sidebar)
+    is_getting_started = lowercase(strip(name)) == "getting started"
+    collapse = is_sidebar && !is_getting_started ? "collapsed: true," : ""
     return "text: '$(replace(name, "'" => "\\'"))', $collapse items: [\n$(final_contents)\n]"
 end
 
@@ -151,7 +153,7 @@ cp(
 # the rest execute, add to its `@meta` block:
 #=
 ```@meta
-Draft = true
+Draft = false
 ```
 =#
 draft = true
