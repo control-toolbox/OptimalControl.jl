@@ -375,9 +375,10 @@ model(sol) === ocp
 
 ## [Solutions from a flow](@id results-solution-flows)
 
-A [flow](@ref flows-overview) integrated from a problem returns a `Solution` too. Here the
-flow of the energy problem, with the control u = p₂ given by the maximum principle, from the
-initial costate p(0) = (12, 6):
+The Hamiltonian [flow](@ref flows-overview) of a problem, built with a control law of the
+state and the costate, returns a `Solution` too (other flows return their own trajectories,
+see [Simulation](@ref flows-simulation)). Here the flow of the energy problem, with the
+control u = p₂ given by the maximum principle, from the initial costate p(0) = (12, 6):
 
 ```@example main
 using OrdinaryDiffEqTsit5

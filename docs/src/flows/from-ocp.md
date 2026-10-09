@@ -344,8 +344,9 @@ objective(sol)
 nothing                                                                             # hide
 ```
 
-This is specific to flows built from a problem. A flow built from a Hamiltonian or a vector
-field returns its own trajectory type: see [Simulation](@ref flows-simulation).
+This is specific to flows built from a problem with a law of the state and the costate. The
+other flows, such as `Flow(ocp, OpenLoop(…))` or `Flow(Hamiltonian(H))`, return their own
+trajectories: see [What a flow returns](@ref flows-simulation-returns).
 
 ## See also
 
