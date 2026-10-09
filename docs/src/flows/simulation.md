@@ -78,7 +78,7 @@ end # hide
 
 Built from an optimal control problem, the simulation also computes the cost of the control.
 On the energy-minimal double integrator, the optimal control is $u(t) = 6 - 12t$, with
-cost $6$ (see [First problem](@ref getting-started-first-problem)):
+cost $6$ (see [Your first problem](@ref getting-started-first-problem)):
 
 ```@example main
 t0, tf = 0, 1

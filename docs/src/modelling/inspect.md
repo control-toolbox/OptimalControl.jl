@@ -323,7 +323,7 @@ is_nonautonomous(ocp)  # the negation of is_autonomous
 
 The time accessor is `times(ocp)`, shown above. `time` is Julia's `Base.time` (the wall-clock
 time): calling `time(ocp)` raises an error whose hint is `use times(ocp)`. Coming from v2.0?
-See [Migration](@ref migration).
+See [Migrating from v2.0](@ref migration).
 
 ## Signatures and `is_*` aliases
 

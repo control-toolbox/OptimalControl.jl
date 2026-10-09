@@ -182,7 +182,7 @@ its entry and exit times, with the junction conditions (see
 the cost, its transversality condition uses the costate of the variable, computed with
 `variable_costate=true` (see [From an OCP](@ref flows-from-ocp-variable-costate)). The
 [examples](@ref examples-gallery) solve several such problems, for instance
-[Turnpike](@ref examples-turnpike), with two switching times around a singular arc.
+[Turnpike (bang–singular–bang)](@ref examples-turnpike), with two switching times around a singular arc.
 
 ## See also
 

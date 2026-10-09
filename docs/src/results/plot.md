@@ -34,7 +34,7 @@ your own figure from the trajectories, see [Custom plots](@ref results-plot-cust
 ## Getting started
 
 We take the energy-minimal double integrator, whose solution is u(t) = 6 − 12t (see
-[First problem](@ref getting-started-first-problem)):
+[Your first problem](@ref getting-started-first-problem)):
 
 ```@example main
 using OptimalControl
@@ -421,5 +421,5 @@ plot!(::Plots.Plot, ::CTModels.Solution, ::Symbol...)
 
 - [Solution object](@ref results-solution): the functions this page draws.
 - [Plot with Makie](@ref results-plot-makie): the same figures with Makie.
-- [Save and load](@ref results-save-load): write a solution to disk instead of plotting it.
+- [Save & load](@ref results-save-load): write a solution to disk instead of plotting it.
 - [Flows](@ref flows-overview): how to build the `Flow` of the last section.

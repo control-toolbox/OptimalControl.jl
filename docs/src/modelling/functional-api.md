@@ -348,11 +348,11 @@ println(
 nothing                                                                  # hide
 ```
 
-Full worked story (direct + indirect): [Time minimisation](@ref examples-double-integrator-time) · [example gallery](@ref examples-gallery).
+Full worked story (direct + indirect): [Time minimisation (bang–bang)](@ref examples-double-integrator-time) · [example gallery](@ref examples-gallery).
 
 ### 3. Parameter estimation — no control
 
-No control anywhere: `control!` is simply never called (see [No control](@ref modelling-without-control)). Only a **variable** — the growth rate `λ` — is optimised, fitting the state to data. The Lagrange integrand reads `t` through `data(t)`, so the problem is **non-autonomous**.
+No control anywhere: `control!` is simply never called (see [Control-free problems](@ref modelling-without-control)). Only a **variable** — the growth rate `λ` — is optimised, fitting the state to data. The Lagrange integrand reads `t` through `data(t)`, so the problem is **non-autonomous**.
 
 ```@example ex-control-free
 using OptimalControl
@@ -447,7 +447,7 @@ println(
 nothing                                                                   # hide
 ```
 
-Full worked story (direct + indirect): [Parameter estimation without a control](@ref examples-control-free), [No control](@ref modelling-without-control) · [example gallery](@ref examples-gallery).
+Full worked story (direct + indirect): [Parameter estimation without a control](@ref examples-control-free), [Control-free problems](@ref modelling-without-control) · [example gallery](@ref examples-gallery).
 
 ### 4. Control and variable together
 
@@ -881,7 +881,7 @@ f!(r, t, x, u, v) = (r[1] = -x + u; nothing)  # r vector; x,u scalars
 - `variable!` → before `time!` when using free-time indices (`indf`, `ind0`)
 - `variable!` → before `dynamics!` and `objective!`
 - `dynamics!` and `objective!` → after `time!` and `state!`
-- `control!` is optional and, when used, has no ordering constraint of its own beyond needing `state!` first (component-count validation) — see [No control](@ref modelling-without-control) for what omitting it means.
+- `control!` is optional and, when used, has no ordering constraint of its own beyond needing `state!` first (component-count validation) — see [Control-free problems](@ref modelling-without-control) for what omitting it means.
 
 ## Equivalence
 
@@ -891,5 +891,5 @@ The abstract and functional forms are not just "meant to agree": it is a tested 
 
 - [Formulation](@ref modelling-formulation) — the mathematics this API builds.
 - [Abstract syntax (`@def`)](@ref modelling-abstract-syntax) — the macro alternative.
-- [No control](@ref modelling-without-control) — omitting `control!` entirely.
+- [Control-free problems](@ref modelling-without-control) — omitting `control!` entirely.
 - [Inspect a problem](@ref modelling-inspect) — read a built model back.

@@ -72,7 +72,7 @@ v_{\mathrm{lower}} \le v \le v_{\mathrm{upper}}.
 
 Nothing above requires a control: taking $m = 0$ (no $u$) is a legitimate degenerate case. It
 is used to fit or optimise the parameters $v$ of a dynamical system rather than to steer it.
-See [No control](@ref modelling-without-control) for how to declare and solve such problems.
+See [Control-free problems](@ref modelling-without-control) for how to declare and solve such problems.
 
 ## [Notation and conventions](@id modelling-formulation-conventions)
 
@@ -141,5 +141,5 @@ instance, with the cost term $\omega^2$ and $p^0 = -1$, $p_\omega(t_f) = -2\omeg
 
 - [Abstract syntax (`@def`)](@ref modelling-abstract-syntax) — write this formulation directly as Julia code.
 - [Functional API](@ref modelling-functional-api) — build the same model without the macro.
-- [No control](@ref modelling-without-control) — the $m = 0$ case.
+- [Control-free problems](@ref modelling-without-control) — the $m = 0$ case.
 - [Flows](@ref flows-overview) — build the Hamiltonian flows of the indirect method.

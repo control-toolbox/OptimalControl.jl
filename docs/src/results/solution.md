@@ -9,7 +9,7 @@ a *model* back, this one reads a *solution* back.
 
 We take the energy-minimal double integrator, whose solution is known in closed form:
 u(t) = 6 − 12t, q(t) = −1 + 3t² − 2t³, v(t) = 6t − 6t², and the cost is J = 6 (see
-[First problem](@ref getting-started-first-problem)).
+[Your first problem](@ref getting-started-first-problem)).
 
 ```@example main
 using OptimalControl
@@ -40,7 +40,7 @@ sol
 ```
 
 and plots in one line, once a plotting package is loaded (see
-[Plot a solution](@ref results-plot)):
+[Plot](@ref results-plot)):
 
 ```@example main
 using Plots
@@ -234,7 +234,7 @@ nothing                                           # hide
     end # hide
     ```
 
-    See [Migration](@ref migration) for every renamed function.
+    See [Migrating from v2.0](@ref migration) for every renamed function.
 
 What to do when a solve fails (a better initial guess, a finer grid, other tolerances) is the
 subject of [Initial guess](@ref solve-initial-guess) and [Options](@ref solve-options).
@@ -409,6 +409,6 @@ nothing                                                            # hide
 ## See also
 
 - [Inspect a problem](@ref modelling-inspect): the model-side mirror of this page.
-- [Plot a solution](@ref results-plot): draw everything read here.
-- [Save and load](@ref results-save-load): write a solution to disk and read it back.
-- [Migration](@ref migration): every renamed function, `success` → `successful` included.
+- [Plot](@ref results-plot): draw everything read here.
+- [Save & load](@ref results-save-load): write a solution to disk and read it back.
+- [Migrating from v2.0](@ref migration): every renamed function, `success` → `successful` included.

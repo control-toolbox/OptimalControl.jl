@@ -248,7 +248,7 @@ nothing # hide
 There is no dedicated syntax for "no control": omitting the control declaration entirely *is*
 the syntax — do not declare a dummy `u ∈ R, control` with `u(t) == 0`, and never write
 `control!(pre, 0)` on the [functional API](@ref modelling-functional-api), which is rejected
-as an error. See [No control](@ref modelling-without-control) for the full
+as an error. See [Control-free problems](@ref modelling-without-control) for the full
 worked examples above, solved both directly and indirectly.
 
 ## [Dynamics](@id modelling-abstract-syntax-dynamics)
@@ -773,5 +773,5 @@ problems written with this syntax, see the [example gallery](@ref examples-galle
 
 - [Formulation](@ref modelling-formulation) — the mathematics this syntax encodes.
 - [Functional API](@ref modelling-functional-api) — build the same model without the macro.
-- [No control](@ref modelling-without-control) — the control-free case, worked in full.
+- [Control-free problems](@ref modelling-without-control) — the control-free case, worked in full.
 - [Inspect a problem](@ref modelling-inspect) — read a built model back.
