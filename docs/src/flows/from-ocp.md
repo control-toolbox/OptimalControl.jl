@@ -284,7 +284,7 @@ showerror(IOContext(stdout, :color => false), e) # hide
 end # hide
 ```
 
-## Total or partial Hamiltonian
+## [Total or partial Hamiltonian](@id flows-from-ocp-total-partial)
 
 The keyword `hamiltonian_type` chooses how the flow is built from $H$ and the law
 $u(x, p)$:

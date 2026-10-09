@@ -1,7 +1,9 @@
 # [From Hamiltonians](@id flows-from-hamiltonians)
 
-Every constructor below builds a flow **without** an OCP — the building blocks
-[From an OCP](@ref flows-from-ocp) is itself assembled from. One section per constructor.
+The constructors on this page build a flow without an optimal control problem: from a
+Hamiltonian, a Hamiltonian vector field, a pseudo-Hamiltonian and a control law, or a plain
+vector field. They are the building blocks [From an OCP](@ref flows-from-ocp) is made of, and
+they are useful when you have worked out the Hamiltonian yourself.
 
 ```@example main
 using OptimalControl
@@ -9,148 +11,196 @@ using OrdinaryDiffEqTsit5
 nothing # hide
 ```
 
-## From a vector field
+## Extremals
 
-The plain ODE case, $\dot x = f(x)$ (or `f(t, x)` if non-autonomous — see below):
+We take the energy-minimal double integrator again: $\dot q = v$, $\dot v = u$, cost
+$\frac12\int u^2$, from $x_0 = (-1, 0)$ to $(0, 0)$ on $[0, 1]$. With the notation of
+[Notation and conventions](@ref modelling-formulation-conventions) and $p^0 = -1$, the
+pseudo-Hamiltonian is
+
+```math
+H(x, p, u) = p_1 v + p_2 u - \frac{u^2}{2},
+```
+
+maximised by $u(x, p) = p_2$. The maximised Hamiltonian is
+$\mathbf{H}(x, p) = p_1 v + p_2^2/2$, and the pairs $(x, p)$ solutions of its Hamiltonian
+system
+
+```math
+\dot x = \nabla_p \mathbf{H}(x, p), \qquad \dot p = -\nabla_x \mathbf{H}(x, p)
+```
+
+are the **extremals**. From the initial costate $p_0 = (12, 6)$, the extremal reaches the
+target: $x(1) = (0, 0)$ and $p(1) = (12, -6)$. Each constructor below computes it from a
+different description of the same system.
 
 ```@example main
-f = Flow(VectorField(x -> -x))
-f(0.0, 1.0, 1.0)   # (t0, x0, tf) → x(tf), exp(-1)
+t0, tf = 0, 1
+x0 = [-1, 0]
+p0 = [12, 6]
+nothing # hide
 ```
 
 ## From a Hamiltonian
 
-$\vec H = (\partial_p H, -\partial_x H)$ is obtained by automatic differentiation:
+Give $\mathbf{H}(x, p)$; its Hamiltonian vector field
+$\vec{\mathbf{H}} = (\nabla_p \mathbf{H}, -\nabla_x \mathbf{H})$ is computed by automatic
+differentiation:
 
 ```@example main
-h(x, p) = 0.5 * (x^2 + p^2)
-fh = Flow(Hamiltonian(h))
-fh(0.0, 1.0, 0.0, 1.0)   # (t0, x0, p0, tf) → (x(tf), p(tf))
+H(x, p) = p[1] * x[2] + p[2]^2 / 2
+
+f_h = Flow(Hamiltonian(H))
+xf, pf = f_h(t0, x0, p0, tf)
 ```
 
-`Hamiltonian` defaults to the natural 2-arg autonomous form `h(x, p)`. A 3-arg
-`h(t, x, p)` silently mis-dispatches unless declared explicitly non-autonomous — see below.
+```@example main
+@assert isapprox(xf, [0, 0]; atol=1e-8) && isapprox(pf, [12, -6]; atol=1e-8)   # hide
+nothing                                                                        # hide
+```
+
+A Hamiltonian is `H(x, p)` by default. If it depends on time, write `H(t, x, p)` and declare
+it with `Hamiltonian(H; is_autonomous=false)`; if it depends on a variable, `H(x, p, v)`
+with `is_variable=true`. Without the declaration, the call fails with a `MethodError`.
 
 ## From a Hamiltonian vector field
 
-Same system, but $\vec H$ given directly — no AD:
+Give $\vec{\mathbf{H}}$ directly, as a function returning the pair $(\dot x, \dot p)$. No
+automatic differentiation is involved:
 
 ```@example main
-hvf(x, p) = (p, -x)
-fhvf = Flow(HamiltonianVectorField(hvf))
-fhvf(0.0, 1.0, 0.0, 1.0)
+Hv(x, p) = ([x[2], p[2]], [0, -p[1]])
+
+f_hv = Flow(HamiltonianVectorField(Hv))
+f_hv(t0, x0, p0, tf)
 ```
 
 ## From a pseudo-Hamiltonian and a control law
 
-$\tilde H(x,p,u)$ plus a law $u^*(x,p)$ — `Flow` substitutes and differentiates through it
-(AD), same as [From an OCP](@ref flows-from-ocp)'s default `hamiltonian_type=:total`:
+Give $H(x, p, u)$ and the law $u(x, p)$: the flow is the one of
+$\bar H(x, p) = H(x, p, u(x, p))$, differentiated through the law by automatic
+differentiation. This is what [From an OCP](@ref flows-from-ocp) does, with the
+pseudo-Hamiltonian read from the problem.
 
 ```@example main
-htilde(x, p, u) = p * u - 0.5 * u^2
-law(x, p) = p   # the maximiser of h̃ above
-fph = Flow(PseudoHamiltonian(htilde), DynClosedLoop(law))
-fph(0.0, 1.0, 0.0, 1.0)
+Hp(x, p, u) = p[1] * x[2] + p[2] * u - u^2 / 2
+law(x, p) = p[2]
+
+f_hp = Flow(PseudoHamiltonian(Hp), DynClosedLoop(law))
+f_hp(t0, x0, p0, tf)
 ```
+
+`hamiltonian_type=:partial` freezes the control instead of differentiating through the law
+(see [Total or partial Hamiltonian](@ref flows-from-ocp-total-partial)).
 
 ## From a pseudo-Hamiltonian vector field and a control law
 
-Same idea, vector-field form: $\tilde{\vec H}(x,p,u) = (\partial_p\tilde H, -\partial_x\tilde H)$
-given directly. No `hamiltonian_type=` here — there's no pseudo-Hamiltonian scalar to
-differentiate two different ways, so passing it is rejected:
+Give $(\nabla_p H, -\nabla_x H)$ as a function of $(x, p, u)$, and the law:
 
 ```@example main
-htildevf(x, p, u) = (u, 0.0)
-fphvf = Flow(PseudoHamiltonianVectorField(htildevf), DynClosedLoop(law))
-fphvf(0.0, 1.0, 0.0, 1.0)
+Hpv(x, p, u) = ([x[2], u], [0, -p[1]])
+
+f_hpv = Flow(PseudoHamiltonianVectorField(Hpv), DynClosedLoop(law))
+f_hpv(t0, x0, p0, tf)
 ```
+
+```@example main
+for g in (f_hv, f_hp, f_hpv)                                                   # hide
+    xg, pg = g(t0, x0, p0, tf)                                                 # hide
+    @assert isapprox(xg, [0, 0]; atol=1e-8) && isapprox(pg, [12, -6]; atol=1e-8)   # hide
+end                                                                            # hide
+nothing                                                                        # hide
+```
+
+Here the partial derivatives are given, so there is nothing to differentiate through the
+law, and `hamiltonian_type` is not an option of this flow. Passing it raises an error, which
+reads as an unknown integrator option:
 
 ```@repl main
 try # hide
-Flow(
-    PseudoHamiltonianVectorField(htildevf),
-    DynClosedLoop(law);
-    hamiltonian_type=:partial,
-)
+Flow(PseudoHamiltonianVectorField(Hpv), DynClosedLoop(law); hamiltonian_type=:partial)
 catch e # hide
 showerror(IOContext(stdout, :color => false), e) # hide
 end # hide
 ```
+
+## From a vector field
+
+A flow of the state alone, $\dot x = f(x)$, or $f(t, x)$ when declared with
+`is_autonomous=false`. With the optimal control $u(t) = 6 - 12t$ written as a function of
+time, the state reaches the target:
+
+```@example main
+f_x = Flow(VectorField((t, x) -> [x[2], 6 - 12t]; is_autonomous=false))
+f_x(t0, x0, tf)
+```
+
+```@example main
+@assert isapprox(f_x(t0, x0, tf), [0, 0]; atol=1e-8)   # hide
+nothing                                                # hide
+```
+
+To simulate a control system under a given control, open-loop or feedback, see
+[Simulation](@ref flows-simulation).
 
 ## From a SciML problem
 
-An `ODEFunction`/`ODEProblem` from the SciML ecosystem works directly — reachable through
-`OrdinaryDiffEqTsit5` alone, nothing extra to load:
+An `ODEFunction` or an `ODEProblem` of the SciML ecosystem can be used directly, with
+`OrdinaryDiffEqTsit5` alone. The parameter `p` of the SciML function `f!(dx, x, p, t)` is the
+**variable** of the flow, passed with the keyword `variable`. Here $\dot x = -p\,x$:
 
 ```@example main
-rhs!(dx, x, p, t) = (dx[1] = -x[1]; nothing)
-f_fun = Flow(ODEFunction(rhs!))
-nothing # hide
+rhs!(dx, x, p, t) = (dx[1] = -p * x[1]; nothing)
+
+f_ode = Flow(ODEFunction(rhs!))
+f_ode(0, [1.0], 1; variable=2)   # exp(-2)
 ```
 
-SciML-backed flows are always `NonFixed` — even with no real free variable, a call needs
-`variable=nothing`:
+```@example main
+@assert isapprox(f_ode(0, [1.0], 1; variable=2)[1], exp(-2); atol=1e-8)   # hide
+nothing                                                                    # hide
+```
+
+So the keyword is required even when the function does not use `p`: pass
+`variable=nothing`. Without it, the call raises an error:
 
 ```@repl main
 try # hide
-f_fun(0.0, [1.0], 1.0)
+f_ode(0, [1.0], 1)
 catch e # hide
 showerror(IOContext(stdout, :color => false), e) # hide
 end # hide
 ```
 
-```@example main
-f_fun(0.0, [1.0], 1.0; variable=nothing)
-```
+An `ODEProblem` works the same way:
 
 ```@example main
-prob = ODEProblem(rhs!, [1.0], (0.0, 1.0))
-f_prob = Flow(prob)
-typeof(f_prob)
+f_prob = Flow(ODEProblem(rhs!, [1.0], (0.0, 1.0), 2.0))
+f_prob(0, [1.0], 1; variable=2)
 ```
 
-## Non-autonomous and variable-dependent forms
+## Summary
 
-`is_autonomous=` and `is_variable=` (not `autonomous=`, an old spelling that no longer
-exists) declare the extra arguments a function needs:
+| Constructor | You give | Automatic differentiation | Point call returns |
+| --- | --- | --- | --- |
+| `Flow(Hamiltonian(H))` | $\mathbf{H}(x, p)$ | yes | `(x(tf), p(tf))` |
+| `Flow(HamiltonianVectorField(Hv))` | $(\nabla_p \mathbf{H}, -\nabla_x \mathbf{H})$ | no | `(x(tf), p(tf))` |
+| `Flow(PseudoHamiltonian(Hp), law)` | $H(x, p, u)$ and $u(x, p)$ | yes | `(x(tf), p(tf))` |
+| `Flow(PseudoHamiltonianVectorField(Hpv), law)` | $(\nabla_p H, -\nabla_x H)$ and $u(x, p)$ | no | `(x(tf), p(tf))` |
+| `Flow(VectorField(f))` | $f(x)$ | no | `x(tf)` |
+| `Flow(ODEFunction(f!))`, `Flow(ODEProblem(…))` | a SciML function or problem | no | `x(tf)` |
 
-```@example main
-g(t, x) = -t * x
-fg = Flow(VectorField(g; is_autonomous=false))
-fg(0.0, 1.0, 1.0)
-```
-
-The stale form fails two ways at once — there is no `Flow(::Function)` at all, and even fixed
-to the right type, the keyword itself changed name:
-
-```@repl main
-try # hide
-VectorField(g; autonomous=false)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
-```
-
-`is_inplace=` similarly declares an in-place (mutating, `f!(dx, x)`) vs out-of-place
-(`f(x) -> dx`) function — inferred automatically in most cases, settable explicitly when it
-isn't.
-
-## Summary table
-
-| Constructor | Uses AD? | Returns |
-| --- | --- | --- |
-| `Flow(VectorField(f))` | no | `StateFlow` |
-| `Flow(Hamiltonian(h))` | yes | `HamiltonianFlow` |
-| `Flow(HamiltonianVectorField(hvf))` | no | `HamiltonianFlow` |
-| `Flow(PseudoHamiltonian(h̃), law)` | yes | `HamiltonianFlow` |
-| `Flow(PseudoHamiltonianVectorField(h̃vf), law)` | no | `HamiltonianFlow` |
-| `Flow(ODEFunction(...))` / `Flow(ODEProblem(...))` | no | `StateFlow` / `SciMLProblemFlow` |
+`Hamiltonian`, `HamiltonianVectorField`, `PseudoHamiltonian`, `PseudoHamiltonianVectorField`
+and `VectorField` take the keywords `is_autonomous=false` and `is_variable=true` for a
+function of time or of a variable. Every `Flow` takes the integrator options of
+[Flows overview](@ref flows-overview). Called on a time
+span, `f((t0, tf), x0, p0)` returns a trajectory: see [Simulation](@ref flows-simulation).
 
 ## See also
 
-- [From an OCP](@ref flows-from-ocp) — the same constructors, specialised: an OCP supplies
-  $\tilde H$ automatically, you only supply the law.
-- [Accessors](@ref flows-accessors) — which accessor works on which of
-  the flows built here.
-- [Lift and Poisson brackets](@ref geometry-lift) — the differential-geometric layer these
-  constructors sit on top of.
+- [From an OCP](@ref flows-from-ocp): the same flows, with the problem supplying the
+  pseudo-Hamiltonian; you only write the law.
+- [Accessors](@ref flows-accessors): read the Hamiltonian, its vector field and the law back
+  from a flow.
+- [Lift](@ref geometry-lift): the Hamiltonian lift of a vector field, and the other tools of
+  the geometry section.
