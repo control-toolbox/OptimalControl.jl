@@ -1,32 +1,27 @@
 # [Shooting](@id flows-shooting)
 
-The payoff of everything else in this section: turn a flow into a root-finding problem for the
-unknown initial costate (and switching times, and free final time), and solve it.
+The maximum principle gives the extremals, but not the initial costate, the switching times
+or a free final time. **Shooting** finds them: write the conditions the extremal must satisfy
+as equations in these unknowns, integrate the flows to evaluate them, and solve the equations
+with a nonlinear solver. The direct method gives the starting point.
 
 ```@example main
 using OptimalControl
 using OrdinaryDiffEqTsit5
 using NonlinearSolve
+using NLPModelsIpopt
 nothing # hide
 ```
 
-## The shooting equation
+## The problem
 
-The PMP gives necessary conditions but not $p_0$ directly. Shooting turns "integrate the flow
-and check the boundary/transversality conditions" into a root-finding problem: guess the
-unknowns (initial costate, switching times, free final time), integrate, measure how far the
-result is from satisfying the conditions, and let a nonlinear solver close the gap.
-
-Worked example throughout: minimise the final time for $\ddot q = u$, $u \in [-1,1]$, from
-$(q,v)=(-1,0)$ to $(0,0)$ — bang-bang, one switch, free $t_f$. The reference solution is
-$p_0=(1,1)$, one switch at $t=1$, $t_f=2$.
+We take the minimum-time transfer of the double integrator: minimise $t_f$ for
+$\ddot q = u$, $u \in [-1, 1]$, from $(q, v) = (-1, 0)$ to $(0, 0)$:
 
 ```@example main
-t0 = 0.0
-x0 = [-1.0, 0.0]
-xf = [0.0, 0.0]
-u_max = 1.0
-u_min = -1.0
+t0 = 0
+x0 = [-1, 0]
+xf = [0, 0]
 
 ocp = @def begin
     tf ∈ R, variable
@@ -34,146 +29,165 @@ ocp = @def begin
     x = (q, v) ∈ R², state
     u ∈ R, control
     -1 ≤ u(t) ≤ 1
-    q(0) == -1
-    v(0) == 0
-    q(tf) == 0
-    v(tf) == 0
+    x(0) == x0, (start)
+    x(tf) == xf
     ẋ(t) == [v(t), u(t)]
     tf → min
 end
+nothing # hide
+```
 
-f_max = Flow(ocp, (x, p, v) -> u_max)
-f_min = Flow(ocp, (x, p, v) -> u_min)
+With $p^0 = -1$ and the Mayer cost $t_f$, the pseudo-Hamiltonian is
+$H = p_1 v + p_2 u$, maximised by $u = \operatorname{sign}(p_2)$: the **switching function**
+is $p_2$. As on [Multi-phase flows](@ref flows-multi-phase), the solution is $u = +1$ then
+$u = -1$, with $p_0 = (1, 1)$, $t_1 = 1$ and $t_f = 2$. Shooting will find these values.
+
+```@example main
+f_max = Flow(ocp, (x, p, v) -> 1)
+f_min = Flow(ocp, (x, p, v) -> -1)
 nothing # hide
 ```
 
 ## The shooting function
 
-The problem has 4 unknowns — $p_0$ (2), the switching time $t_1$, and $t_f$ — and 4
-residuals: the target state (2), the switching condition ($p_2=0$ where the bang-bang control
-switches, since $H_u=0$ there), and the free-time transversality $H(t_f)=-1$ (the Mayer cost is
-$t_f\to\min$, normal case). Written in place, the way `NonlinearSolve` wants it:
+There are four unknowns, $p_0 \in \mathbb{R}^2$, $t_1$ and $t_f$, and four conditions:
+
+- the target, $x(t_f) = (0, 0)$ (two equations);
+- the switch: the switching function vanishes at $t_1$, $p_2(t_1) = 0$;
+- the transversality condition of the free final time: for the Mayer cost $t_f$, the
+  maximised Hamiltonian equals $-p^0 = 1$ at $t_f$, that is
+  $p(t_f) \cdot f(x(t_f), u(t_f)) = 1$ (see
+  [Notation and conventions](@ref modelling-formulation-conventions)).
+
+The shooting function integrates the two arcs and returns the four residuals. It is written in
+place, as `NonlinearSolve` expects:
 
 ```@example main
-H(x, p, u) = p[1] * x[2] + p[2] * u - 1
+H(x, p, u) = p[1] * x[2] + p[2] * u   # p ⋅ f(x, u)
 
-function shoot!(s, ξ)
-    p0 = ξ[1:2]
-    t1, tfv = ξ[3], ξ[4]
-    x1, p1 = f_max(t0, x0, p0, t1; variable=tfv)
-    xf_, pf = f_min(t1, x1, p1, tfv; variable=tfv)
-    s[1:2] = xf_ - xf
-    s[3] = p1[2]
-    s[4] = H(xf_, pf, u_min)
+function shoot!(s, ξ, _)
+    p0, t1, tf = ξ[1:2], ξ[3], ξ[4]
+    x1, p1 = f_max(t0, x0, p0, t1; variable=tf, unsafe=true)
+    x2, p2 = f_min(t1, x1, p1, tf; variable=tf, unsafe=true)
+    s[1:2] = x2 - xf             # target
+    s[3] = p1[2]                 # switching function at t1
+    s[4] = H(x2, p2, -1) - 1     # transversality, free final time
     return nothing
 end
-
-s = zeros(4)
-shoot!(s, [1.0, 1.0, 1.0, 2.0])   # residual at the reference solution
-sqrt(sum(abs2, s))
+nothing # hide
 ```
 
-## Solving it
-
-`NonlinearSolve` closes the gap from a perturbed guess:
+At the solution, the residuals vanish:
 
 ```@example main
-ξ_guess = [1.0, 1.0, 1.0, 2.0] .* 1.1
-prob = NonlinearProblem((s, ξ, _) -> shoot!(s, ξ), ξ_guess)
-sol = NonlinearSolve.solve(
-    prob, SimpleNewtonRaphson(); abstol=1e-10, reltol=1e-10
-)
-sol.u, sol.retcode
+s = zeros(4)
+shoot!(s, [1, 1, 1, 2], nothing)
+s
 ```
 
-## `unsafe=true` inside the loop
+```@example main
+@assert maximum(abs, s) < 1e-10   # hide
+nothing                           # hide
+```
 
-A nonlinear solver explores guesses that don't correspond to a real solution — some of them
-can make the flow's integration blow up. The default behaviour is to throw, which would abort
-the whole solve on the first bad guess:
+## `unsafe=true`
+
+While it searches, a nonlinear solver tries unknowns that are far from the solution, and the
+integration can fail on them. By default a flow then raises an error, which would stop the
+search. With `unsafe=true`, the flow returns what the integrator computed instead, and the
+residual is just large. On $\dot x = x^2$, which blows up before $t = 1$ from $x(0) = 10$:
 
 ```@repl main
-f_blowup = Flow(VectorField(x -> x^2));  # ẋ = x², diverges before t=1
+f_blowup = Flow(VectorField(x -> x^2));
 try # hide
-f_blowup(0.0, 10.0, 1.0)
+f_blowup(0, 10.0, 1)
 catch e # hide
 showerror(IOContext(stdout, :color => false), e) # hide
 end # hide
 ```
 
-`unsafe=true` returns whatever the integrator produced instead of throwing — garbage, but a
-*value*, letting the shooting residual carry the failure forward as "very wrong" rather than
-crashing the solve:
-
 ```@example main
-f_blowup(0.0, 10.0, 1.0; unsafe=true)
+f_blowup(0, 10.0, 1; unsafe=true)
 ```
 
-Inside a `shoot!`, wrap the flow calls with `unsafe=true` so an intermediate failure shows up as
-a large residual for the solver to step away from, not an exception that stops the search.
+This is why `shoot!` above calls the flows with `unsafe=true`.
 
-## Free final time
+## Starting from the direct solution
 
-The transversality residual `H(xf_, pf, u_min) = -1` above **is** the free-final-time
-condition — no separate machinery needed beyond adding it as a residual. For a smooth
-(non-switching) free-final-time problem, `variable_costate=true` gives the extra adjoint
-directly if the transversality condition is stated in terms of $p_v(t_f)$ instead:
+A shooting method converges from a good initial guess. The direct method provides one:
 
-```@example main
-xf_v, pf_v, pvf = f_max(
-    t0, x0, [1.0, 1.0], 1.0; variable=2.0, variable_costate=true
-)
-pvf
-```
-
-## Switching times as unknowns
-
-The example above already carries one: $t_1$ is solved for alongside $p_0$ and $t_f$. Each
-additional switch adds one more unknown time and one more switching-condition residual — see
-[Multi-phase flows](@ref flows-multi-phase) for concatenating the corresponding flows once the
-times are known (or being solved for), and
-[Turnpike (bang–singular–bang)](@ref examples-turnpike) for a worked case with two unknown
-switching times bracketing a singular arc.
-
-## Getting a starting point from a direct solve
-
-Manufacturing a shooting guess by hand doesn't scale — the standard workflow is to solve the
-same problem directly first, then read `costate(sol)(t0)` off as the initial guess:
+- the initial costate is the multiplier of the initial condition, `dual(sol, ocp, :start)`
+  (more accurate than `costate(sol)(0)`, see
+  [Solution object](@ref results-solution-duals));
+- the switching time is read off the control, where it changes sign;
+- the final time is the variable.
 
 ```@example main
-using NLPModelsIpopt
-direct_sol = solve(ocp; display=false)
-p0_guess = costate(direct_sol)(0.0)
-p0_guess
+sol_d = solve(ocp; display=false)
+
+p0_guess = dual(sol_d, ocp, :start)
+tg = time_grid(sol_d)
+t1_guess = tg[findfirst(t -> control(sol_d)(t) < 0, tg)]
+tf_guess = variable(sol_d)
+
+ξ_guess = [p0_guess; t1_guess; tf_guess]
 ```
 
-## Checking against the direct solution
-
-Rebuild the full bang–bang trajectory from the shooting solution — `f_max`, then `f_min` at
-the solved switch — and read its endpoint (a concatenated flow returns the stacked
-state–costate vector `[q, v, p_q, p_v]` at the final time):
+## Solving the shooting equations
 
 ```@example main
-p0_sol, t1_sol, tf_sol = sol.u[1:2], sol.u[3], sol.u[4]
-
-f_bb = f_max * (t1_sol, f_min)
-zf = f_bb(t0, x0, p0_sol, tf_sol; variable=tf_sol)
-
-zf[1:2]     # final state ≈ [0, 0] — the indirect solution hits the target
+prob = NonlinearProblem(shoot!, ξ_guess)
+sol = NonlinearSolve.solve(prob, SimpleNewtonRaphson(); abstol=1e-10, reltol=1e-10)
+sol.u, sol.retcode
 ```
 
-The two methods agree on the optimum. The cost here is the final time, so comparing objectives
-is comparing $t_f$:
+The solver finds $p_0 = (1, 1)$, $t_1 = 1$ and $t_f = 2$.
 
 ```@example main
-tf_sol, objective(direct_sol)
+@assert string(sol.retcode) == "Success"                        # hide
+@assert isapprox(sol.u, [1, 1, 1, 2]; atol=1e-8)                # hide
+nothing                                                         # hide
 ```
+
+## Checking the solution
+
+The two arcs, concatenated at the switching time found, reach the target. The point call of
+a concatenation returns `[x; p]` (see [Multi-phase flows](@ref flows-multi-phase)):
+
+```@example main
+p0_s, t1_s, tf_s = sol.u[1:2], sol.u[3], sol.u[4]
+
+f_bb = f_max * (t1_s, f_min)
+zf = f_bb(t0, x0, p0_s, tf_s; variable=tf_s)
+zf[1:2]
+```
+
+The final time is the cost, so the indirect and the direct solutions agree when their final
+times do:
+
+```@example main
+tf_s, objective(sol_d)
+```
+
+```@example main
+@assert isapprox(zf[1:2], xf; atol=1e-8) && isapprox(objective(sol_d), tf_s; atol=1e-6)   # hide
+nothing                                                                                   # hide
+```
+
+## More switches, other unknowns
+
+Each additional switch adds an unknown time and a switching condition; a boundary arc adds
+its entry and exit times, with the junction conditions (see
+[Constrained arcs](@ref flows-constrained-arcs)). When the variable enters the dynamics or
+the cost, its transversality condition uses the costate of the variable, computed with
+`variable_costate=true` (see [From an OCP](@ref flows-from-ocp-variable-costate)). The
+[examples](@ref examples-gallery) solve several such problems, for instance
+[Turnpike](@ref examples-turnpike), with two switching times around a singular arc.
 
 ## See also
 
-- [From an OCP](@ref flows-from-ocp) — building the flows a shooting function is made of.
-- [Multi-phase flows](@ref flows-multi-phase) — concatenating the arcs once switching times are
-  known.
-- [Solve overview](@ref solve-overview) — the direct-method starting point used above.
-- [Time minimisation (bang–bang)](@ref examples-double-integrator-time) — the full story behind
-  the double-integrator example used throughout this page.
+- [From an OCP](@ref flows-from-ocp): the flows a shooting function is made of.
+- [Multi-phase flows](@ref flows-multi-phase): concatenations of arcs.
+- [Solve overview](@ref solve-overview): the direct method used for the initial guess.
+- [Time minimisation (bang–bang)](@ref examples-double-integrator-time): this example in
+  full.
