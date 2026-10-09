@@ -1,18 +1,18 @@
 # [The `@Lie` macro](@id geometry-lie-macro)
 
-`@Lie` lets you write brackets the way you'd write them on paper: square brackets for a Lie
-bracket, curly braces for a Poisson bracket.
+`@Lie` writes brackets as on paper: square brackets for a Lie bracket of vector fields,
+`@Lie [X, Y]`, which calls [`ad`](@ref geometry-ad), and curly braces for a Poisson bracket of
+Hamiltonians, `@Lie {H, G}`, which calls [`Poisson`](@ref geometry-poisson).
 
 ```@example main
 using OptimalControl
 ```
 
-## Why a macro
-
-`@Lie [X, Y]` reads as $[X, Y]$; `@Lie {H, K}` reads as $\{H, K\}$ — both expand to a call to
-[`ad`](@ref) or [`Poisson`](@ref) respectively.
-
 ## Lie brackets
+
+The fields $F_1(x) = (0, -x_3, x_2)$ and $F_2(x) = (x_3, 0, -x_1)$ generate the rotations
+about the first two axes. Their bracket is $[F_1, F_2](x) = (x_2, -x_1, 0)$, a rotation about
+the third axis:
 
 ```@example main
 F1 = VectorField(x -> [0, -x[3], x[2]])
@@ -22,47 +22,51 @@ F12 = @Lie [F1, F2]
 F12([1.0, 2.0, 3.0])
 ```
 
-## Poisson brackets
+Brackets nest. A linear vector field commutes with the radial field
+$F_3(x) = x$, so $[[F_1, F_2], F_3] = 0$:
 
 ```@example main
-H0(x, p) = p[1] * x[2] + p[2] * (-x[1])
-H1(x, p) = p[2]
+F3 = VectorField(x -> x)
 
-H01 = @Lie {H0, H1}
-H01([1.0, 2.0], [3.0, 4.0])
-```
-
-## Nesting
-
-```@example main
-F3 = VectorField(x -> [x[1], x[2], x[3]])
 F123 = @Lie [[F1, F2], F3]
 F123([1.0, 2.0, 3.0])
 ```
 
 ```@example main
-H001 = @Lie {H0, {H0, H1}}
-H001([1.0, 2.0], [3.0, 4.0])
+@assert F12([1.0, 2.0, 3.0]) ≈ [2, -1, 0] && F123([1.0, 2.0, 3.0]) ≈ [0, 0, 0]   # hide
+nothing                                                                         # hide
 ```
 
-## Arithmetic and evaluation points
+## Poisson brackets
 
-`@Lie` brackets combine with ordinary arithmetic once evaluated:
+With $H_0(x, p) = p_1 x_2 - p_2 x_1$ and $H_1(x, p) = p_2$, $\{H_0, H_1\} = -p_1$ and
+$\{H_0, \{H_0, H_1\}\} = -p_2$:
 
 ```@example main
-x = [1.0, 2.0, 3.0]   # F1, F2 are 3-D vector fields, defined above
-@Lie [F1, F2](x) + 4 * [F1, F2](x)
+H0(x, p) = p[1] * x[2] - p[2] * x[1]
+H1(x, p) = p[2]
+
+H01 = @Lie {H0, H1}
+H001 = @Lie {H0, {H0, H1}}
+
+x, p = [1.0, 2.0], [3.0, 4.0]
+H01(x, p), H001(x, p)
 ```
 
-**Parenthesise when you evaluate** — a trailing keyword binds to the macro, not to the call:
-write `(@Lie [F, G](x))`, never `@Lie [F, G](x) atol=1e-6`, if you're combining the result with
-anything else on the same line.
+```@example main
+@assert H01(x, p) ≈ -3 && H001(x, p) ≈ -4   # hide
+nothing                                    # hide
+```
+
+These iterated brackets give the control on a singular arc (see
+[Poisson bracket](@ref geometry-poisson-singular)).
 
 ## Keywords
 
-`is_autonomous=`, `is_variable=`, and `ad_backend=` all work exactly as on `ad`/`Poisson`,
-inferred from typed `VectorField`/`Hamiltonian` operands or given explicitly for plain
-functions:
+On plain functions, give the dependence on time and on the variable with the keywords
+`is_autonomous=` and `is_variable=`, after the brackets. On typed operands, the traits are
+read from the operands. With $X(t, x) = (t + x_2, -x_1)$ and $Y(t, x) = (x_1, t x_2)$,
+$[X, Y] = (t + x_2 - t x_2,\ x_1 - t x_1)$, which is $(1, 0)$ at $t = 1$, $x = (1, 2)$:
 
 ```@example main
 X(t, x) = [t + x[2], -x[1]]
@@ -72,35 +76,66 @@ Z = @Lie [X, Y] is_autonomous=false
 Z(1.0, [1.0, 2.0])
 ```
 
-## What it needs in scope
-
-The macro's expansion emits fully qualified `CTLie.*` and `CTBase.Traits.*` names, so both
-modules must be resolvable at the call site. `using OptimalControl` re-exports both module
-aliases:
-
 ```@example main
-CTLie, CTBase
+@assert Z(1.0, [1.0, 2.0]) ≈ [1, 0]   # hide
+nothing                              # hide
 ```
 
-which is why they appear in `names(OptimalControl)` at all — not because you're expected to use
-them directly, but because `@Lie`'s expansion needs them in scope.
+The keyword `ad_backend=` chooses the AD backend (see [AD backend](@ref geometry-ad-backend)).
+Any other keyword, such as `autonomous=false`, raises an `IncorrectArgument` that lists the
+accepted ones.
 
-## A trap to know about
+```@example main
+err = try eval(:(@Lie [F1, F2] autonomous=false)); nothing catch e; e end   # hide
+@assert err isa CTBase.Exceptions.IncorrectArgument                       # hide
+nothing                                                                   # hide
+```
 
-The old `autonomous=`/`variable=` keywords are rejected at macro-expansion time, not silently
-accepted:
+## Evaluating a bracket in an expression
 
-```julia
-julia> @Lie [F1, F2] autonomous=false
-ERROR: IncorrectArgument: @Lie: unknown keyword argument
-Got       autonomous
-Expected  is_autonomous, is_variable, or ad_backend
-Context   @Lie macro keyword parsing
+Inside a bracket expression, `[F1, F2](x)` evaluates the bracket at `x`, and the result
+combines with ordinary arithmetic:
+
+```@example main
+y = [1.0, 2.0, 3.0]
+@Lie [F1, F2](y) + 4 * [F1, F2](y)
+```
+
+The macro takes everything that follows it as its argument, commas included. Inside a function
+call, put it in parentheses: `isapprox((@Lie [F1, F2])(y), [2, -1, 0])`. Without them,
+`isapprox(@Lie [F1, F2](y), [2, -1, 0])` passes both arguments to the macro, and returns a
+function instead of a Boolean, without an error.
+
+```@example main
+@assert (@Lie [F1, F2](y) + 4 * [F1, F2](y)) ≈ [10, -5, 0]          # hide
+@assert isapprox((@Lie [F1, F2])(y), [2, -1, 0])                   # hide
+@assert !(isapprox(@Lie [F1, F2](y), [2, -1, 0]) isa Bool)         # hide
+nothing                                                           # hide
+```
+
+## `using OptimalControl` is needed
+
+The expansion of `@Lie` refers to the modules `CTLie` and `CTBase` by name, which
+`using OptimalControl` brings into scope. With `import OptimalControl` or
+`using OptimalControl: @Lie` only, the expanded code fails with an `UndefVarError`
+([CTLie#40](https://github.com/control-toolbox/CTLie.jl/issues/40)).
+
+```@example main
+m = Module()                                                                  # hide
+Core.eval(m, :(import OptimalControl))                                        # hide
+err = try                                                                     # hide
+    Core.eval(m, :((OptimalControl.@Lie [x -> [x[2], -x[1]], x -> x])([1.0, 2.0])))   # hide
+    nothing                                                                   # hide
+catch e                                                                       # hide
+    e                                                                         # hide
+end                                                                           # hide
+@assert err isa UndefVarError                                                 # hide
+nothing                                                                       # hide
 ```
 
 ## See also
 
-- [Lie derivative and Lie bracket](@ref geometry-ad)
-- [Poisson bracket](@ref geometry-poisson)
-- [Singular control](@ref examples-singular-control) — where iterated `{...}` brackets are used
-  in practice.
+- [Lie derivative and Lie bracket](@ref geometry-ad): `ad`, called by `@Lie [X, Y]`.
+- [Poisson bracket](@ref geometry-poisson): `Poisson`, called by `@Lie {H, G}`.
+- [Singular control](@ref examples-singular-control): iterated Poisson brackets on a complete
+  problem.
