@@ -1,13 +1,11 @@
 # [AD backend](@id geometry-ad-backend)
 
+`ad`, `Poisson`, `∂ₜ` and `@Lie` compute their derivatives by automatic differentiation (AD);
+`Lift` computes none. This page shows which AD backend they use, and how to change it.
+
 ```@example main
 using OptimalControl
 ```
-
-## Everything here is AD-backed, except `Lift`
-
-[`ad`](@ref), [`Poisson`](@ref), [`∂ₜ`](@ref), and [`@Lie`](@ref) all differentiate under the
-hood; [`Lift`](@ref) is purely algebraic and never touches a backend at all.
 
 ## The default
 
@@ -15,76 +13,77 @@ hood; [`Lift`](@ref) is purely algebraic and never touches a backend at all.
 dg_ad_backend()
 ```
 
-`DifferentiationInterface{CPU}` over `ForwardDiff`, the same default used throughout
-`CTBase`/`CTLie`.
+The default backend calls [DifferentiationInterface](https://github.com/JuliaDiff/DifferentiationInterface.jl)
+with ForwardDiff, on the CPU. OptimalControl depends on both packages, so nothing else needs
+to be installed. `describe` lists the options of the backend, and their defaults on the CPU
+and on the GPU:
 
-## Reading the current backend
-
-`dg_ad_backend()` (above) always returns the backend that will be used when no `ad_backend=`
-keyword is given.
-
-## Changing it globally
-
-```@example main
-using CTBase: Differentiation
-
-default_backend = dg_ad_backend()   # keep the default, to restore it below
-dg_ad_backend!(Differentiation.DifferentiationInterface())
-dg_ad_backend()
-```
-
-## Changing it for one call
-
-Every operation in this section accepts its own `ad_backend=`, overriding the global setting
-just for that call:
-
-```@example main
-X(x) = [x[2], -x[1]]
-f(x) = x[1]^2 + x[2]^2
-
-ad(X, f; ad_backend=Differentiation.DifferentiationInterface())([1.0, 2.0])
-```
-
-## GPU
-
-A GPU-parameterized backend is constructed the same way, with the `GPU` strategy instead of
-`CPU`:
-
-```julia
-using CTBase: Differentiation, Strategies
-
-dg_ad_backend!(Differentiation.DifferentiationInterface{Strategies.GPU}())
-```
-
-This block is not executed on this page — no CUDA-capable GPU is available in this development
-environment or in CI, the same caveat as [GPU](@ref solve-gpu) on the solve side.
-
-## Introspection
+::: details `describe(:di)`
 
 ```@example main
 describe(:di)
 ```
 
-## Restoring the default
+:::
 
-`dg_ad_backend!` is global and persists for the rest of the session — set it back when the
-demonstration is over:
+## Choosing a backend
+
+A backend is built with `CTBase.Differentiation.DifferentiationInterface`, whose option
+`ad_backend` is a backend type of [ADTypes](https://github.com/SciML/ADTypes.jl).
+DifferentiationInterface re-exports these types; add it to your environment to use them. For
+example, ForwardDiff with a chunk size of one:
 
 ```@example main
-dg_ad_backend!(default_backend)
+using DifferentiationInterface: AutoForwardDiff
+
+backend = CTBase.Differentiation.DifferentiationInterface(; ad_backend=AutoForwardDiff(chunksize=1))
+```
+
+Every operation accepts `ad_backend=` for one call:
+
+```@example main
+X(x) = [x[2], -x[1]]
+f(x) = x[1]^2 + x[2]^2 + x[1]
+
+ad(X, f; ad_backend=backend)([1.0, 2.0])   # 2x₁x₂ - 2x₂x₁ + x₂
+```
+
+`dg_ad_backend!` changes the default for the rest of the session. Keep the previous one to
+restore it:
+
+```@example main
+previous = dg_ad_backend()
+dg_ad_backend!(backend)
+ad(X, f)([1.0, 2.0])
+```
+
+```@example main
+dg_ad_backend!(previous)
 dg_ad_backend()
 ```
 
-## If nothing works
+```@example main
+@assert ad(X, f; ad_backend=backend)([1.0, 2.0]) ≈ 2   # hide
+@assert ad(X, f)([1.0, 2.0]) ≈ 2                       # hide
+@assert dg_ad_backend() === previous                   # hide
+nothing                                                # hide
+```
 
-If `DifferentiationInterface` (and a concrete AD package, such as `ForwardDiff`) isn't loaded,
-the extension that actually performs the differentiation never arms, and calling `ad`,
-`Poisson`, `∂ₜ`, or `@Lie` fails. `OptimalControl` loads `DifferentiationInterface` and
-`ForwardDiff` itself, so this only bites if you're using `CTLie` standalone.
+## GPU
+
+The GPU backend is built with the parameter `GPU`. Its default is Mooncake, since ForwardDiff
+does not run on GPU arrays:
+
+```@example main
+CTBase.Differentiation.DifferentiationInterface{GPU}()
+```
+
+It differentiates functions of `CuArray`s, and needs CUDA and Mooncake to be loaded, as
+`Flow(…; method=:gpu)` does (see [Flows overview](@ref flows-overview)).
 
 ## See also
 
-- [Overview](@ref geometry-overview) — where each operation sits relative to AD.
-- [GPU](@ref solve-gpu) — the same `CPU`/`GPU` strategy split on the solve side.
-- [Flows overview](@ref flows-overview) — the `method=:cpu`/`:gpu` construction-time keyword on
+- [Geometry overview](@ref geometry-overview): the operations that use this backend.
+- [GPU](@ref solve-gpu): solving on a GPU.
+- [Flows overview](@ref flows-overview): the `method=:cpu` and `method=:gpu` options of
   `Flow`.
