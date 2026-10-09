@@ -5,7 +5,7 @@ The full grammar of OptimalControl.jl's small *Domain Specific Language* is give
 - pure Julia (and, as such, effortlessly analysed by the standard Julia parser),
 - as close as possible to the mathematical description of an optimal control problem (see [Formulation](@ref modelling-formulation)).
 
-While the syntax will be transparent to those users familiar with Julia expressions (`Expr`'s), we provide examples for every case that should be widely understandable. Abstract definitions use the macro [`@def`](@ref).
+While the syntax will be transparent to those users familiar with Julia expressions (`Expr`s), we provide examples for every case that should be widely understandable. Abstract definitions use the macro [`@def`](@ref).
 
 !!! note "About the code blocks on this page"
     Blocks written `:( … )` — such as the state pattern `:( $x ∈ R^$n, state )` — are
@@ -21,9 +21,39 @@ While the syntax will be transparent to those users familiar with Julia expressi
 
 ```@setup abs
 using OptimalControl
+using Logging: with_logger, ConsoleLogger
+# show warnings without the source location (a local package path)
+quiet_location(f) = with_logger(f, ConsoleLogger(stderr; meta_formatter=(level, args...) -> (:yellow, "Warning:", "")))
 data(t) = 2exp(0.5t)   # observed-data stub (parameter estimation)
-c(t) = 1.0             # coefficient stub (damped integrator)
+c(t) = 1.0             # damping coefficient (damped integrator)
 ```
+
+## [Structure of a definition](@id modelling-abstract-syntax-structure)
+
+A definition is a `begin … end` block passed to `@def`:
+
+- **Declarations come first:** the variable (if any), the time, the state, and the control (if
+  any), preferably in this order. The variable must come before the time when the time bounds
+  use it, as in `t ∈ [0, tf], time`.
+- **Then, in any order:** the dynamics, the constraints and the cost.
+- **Two equivalent forms:** `ocp = @def begin … end` and `@def ocp begin … end` both bind the
+  model to `ocp`. The second form also accepts a trailing `true` that turns on the
+  [trace mode](@ref modelling-abstract-syntax-aliases).
+- **When names are read:** constants used in the declarations or in the bounds of a
+  constraint (`t0`, `tf`, `x0`, …) are read when the model is built, so they must be defined
+  *before* the block. Functions called in the dynamics, the constraints or the cost are only
+  called when these are evaluated (during `solve`), so they may be defined after the block.
+
+The symbols have plain ASCII alternatives:
+
+| Unicode | ASCII |
+| --- | --- |
+| `t ∈ [0, 1]` | `t in [0, 1]` |
+| `R²` | `R^2` |
+| `ẋ(t)`, `∂(x)(t)` | `derivative(x)(t)` |
+| `∫(…)` | `integral(…)` |
+| `≤`, `≥` | `<=`, `>=` |
+| `→ min` | `=> min` |
 
 ## [Variable](@id modelling-abstract-syntax-variable)
 
@@ -95,7 +125,7 @@ end
 nothing # hide
 ```
 
-One (or even the two bounds) can be variable, typically for minimum time problems (see [Mayer cost](@ref modelling-abstract-syntax-mayer) section):
+One bound (or both) can be variable, typically for minimum time problems (see [Mayer cost](@ref modelling-abstract-syntax-mayer) section):
 
 ```@example abs
 @def begin
@@ -174,8 +204,8 @@ end
 nothing # hide
 ```
 
-!!! note
-    One dimensional variable, state or control are treated as scalars (`Real`), not vectors (`Vector`). In Julia, for `x::Real`, it is possible to write `x[1]` (and `x[1][1]`...) so it is OK (though useless) to write `x₁`, `x1` or `x[1]` instead of simply `x` to access the corresponding value. Conversely it is *not* OK to use such an `x` as a vector, for instance as in `...f(x)...` where `f(x::Vector{T}) where {T <: Real}`. This same convention applies on the [functional API](@ref modelling-functional-api): a dimension-1 quantity is a scalar, not a length-1 vector — see [Shapes in callbacks](@ref modelling-functional-api-shapes).
+!!! note "1-D is a scalar"
+    A one-dimensional variable, state or control is treated as a scalar (`Real`), not a vector (`Vector`). In Julia, for `x::Real`, it is possible to write `x[1]` (and `x[1][1]`...) so it is OK (though useless) to write `x₁`, `x1` or `x[1]` instead of simply `x` to access the corresponding value. Conversely it is *not* OK to use such an `x` as a vector, for instance as in `...f(x)...` where `f(x::Vector{T}) where {T <: Real}`. This same convention applies on the [functional API](@ref modelling-functional-api): a dimension-1 quantity is a scalar, not a length-1 vector — see [Shapes in callbacks](@ref modelling-functional-api-shapes).
 
 ## [Problems without a control](@id modelling-abstract-syntax-control-free)
 
@@ -291,7 +321,7 @@ nothing # hide
 ```
 
 !!! note
-    The vector fields `F₀` and `F₁` can be defined afterwards, as they only need to be available when the dynamics will be evaluated.
+    The vector fields `F₀` and `F₁` are defined after the block: functions are only called when the dynamics is evaluated, during `solve` (see [Structure of a definition](@ref modelling-abstract-syntax-structure)).
 
 While it is also possible to declare the dynamics component after component (see below), one may equivalently use *aliases* (check the relevant [aliases](@ref modelling-abstract-syntax-aliases) section below):
 
@@ -302,7 +332,7 @@ While it is also possible to declare the dynamics component after component (see
     x = (q, v) ∈ R², state
     u ∈ R, control
     q̇ = v(t)
-    v̇ = u(t) - c(t)
+    v̇ = u(t) - c(t) * v(t)
     ẋ(t) == [q̇, v̇]
     ∫(u(t)^2) → min
 end
@@ -324,7 +354,7 @@ The dynamics can also be declared coordinate by coordinate. The previous example
     x = (q, v) ∈ R², state
     u ∈ R, control
     ∂(q)(t) == v(t)
-    ∂(v)(t) == u(t) - c(t)
+    ∂(v)(t) == u(t) - c(t) * v(t)
     ∫(u(t)^2) → min
 end
 nothing # hide
@@ -342,18 +372,18 @@ nothing # hide
 
 Admissible constraints can be
 
-- of five types: boundary, variable, control, state, mixed (the last three ones are *path* constraints, that is constraints evaluated all times)
-- linear (ranges) or nonlinear (not ranges),
-- equalities or (one or two-sided) inequalities.
+- of five types: boundary, variable, control, state, mixed (the last three are *path* constraints, that is, constraints evaluated at all times);
+- box constraints (a range on a single component, such as `x₂(t) ≤ 1`) or general ones (any expression, such as `u(t)^2`);
+- equalities or (one- or two-sided) inequalities.
 
 Boundary conditions are detected when the expression contains evaluations of the state at initial and / or final time bounds (*e.g.*, `x(0)`), and may not involve the control. Conversely control, state or mixed constraints will involve control, state or both evaluated at the declared time (*e.g.*, `x(t) + u(t)`).
 Other combinations should be detected as incorrect by the parser. The variable may be involved in any of the four previous constraints. Constraints involving the variable only are variable constraints, either linear or nonlinear.
 In the example below, there are
 
-- two linear boundary constraints,
-- one linear variable constraint,
-- one linear state constraint,
-- one (two-sided) nonlinear control constraint.
+- two boundary constraints,
+- one box constraint on the variable,
+- one box constraint on the state,
+- one (two-sided) general control constraint.
 
 ```@example abs
 @def begin
@@ -378,26 +408,26 @@ nothing # hide
 !!! note
     Symbols like `<=` or `>=` are also authorised:
 
-```@example abs
-@def begin
-    tf ∈ R, variable
-    t ∈ [0, tf], time
-    x ∈ R², state
-    u ∈ R, control
-    x(0) == [-1, 0]
-    x(tf) == [0, 0]
-    ẋ(t) == [x₂(t), u(t)]
-    tf >= 0
-    x₂(t) <= 1
-    0.1 ≤ u(t)^2 <= 1
-    tf → min
-end
-nothing # hide
-```
+    ```@example abs
+    @def begin
+        tf ∈ R, variable
+        t ∈ [0, tf], time
+        x ∈ R², state
+        u ∈ R, control
+        x(0) == [-1, 0]
+        x(tf) == [0, 0]
+        ẋ(t) == [x₂(t), u(t)]
+        tf >= 0
+        x₂(t) <= 1
+        0.1 ≤ u(t)^2 <= 1
+        tf → min
+    end
+    nothing # hide
+    ```
 
 !!! warning
     Write either `u(t)^2` or `(u^2)(t)`, not `u^2(t)` since in Julia the latter means `u^(2t)`. Moreover,
-    in the case of equalities or of one-sided inequalities, the control and / or the state must belong to the *left-hand side*. The following errors:
+    in the case of equalities or of one-sided inequalities, the control and / or the state must belong to the *left-hand side*. The following errors (the example quoted in the message is generic, see [CTParser#352](https://github.com/control-toolbox/CTParser.jl/issues/352); here, write `x₂(t) ≥ 1`):
 
     ```@repl abs
     try # hide
@@ -471,6 +501,7 @@ When the **same scalar component** is targeted by several box-constraint declara
 For instance,
 
 ```@example abs
+quiet_location() do # hide
 @def begin
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
@@ -480,6 +511,7 @@ For instance,
     ẋ(t) == [v(t), u(t)]
     ∫(u(t)^2) → min
 end
+end # hide
 nothing # hide
 ```
 
@@ -488,6 +520,7 @@ yields the effective constraint `1 ≤ q(t) ≤ 2`, with `aliases = [:q_wide, :q
 Conversely, the following declares an empty feasible set and raises an error at build time:
 
 ```@repl abs
+quiet_location() do # hide
 try # hide
 @def begin
     t ∈ [0, 1], time
@@ -500,6 +533,7 @@ try # hide
 end
 catch e # hide
 showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
 end # hide
 ```
 
@@ -543,7 +577,7 @@ end
 :( $e1 * ∫($e2) → max )
 ```
 
-Lagrange (integral) costs are defined used the symbol `∫`, *with parentheses*. The keyword `integral` can also be used:
+Lagrange (integral) costs are defined using the symbol `∫`, *with parentheses*. The keyword `integral` can also be used:
 
 ```@example abs
 @def begin
@@ -650,7 +684,7 @@ nothing # hide
 :( $a = $e1 )
 ```
 
-The single `=` symbol is used to define not a constraint but an alias, that is a purely syntactic replacement. There are some automatic aliases, *e.g.* `x₁` and `x1` for `x[1]` if `x` is the state (same for variable and control, for indices comprised between 1 and 9), and we have also seen that you can define your own aliases when declaring the [variable](@ref modelling-abstract-syntax-variable), [state](@ref modelling-abstract-syntax-state) and [control](@ref modelling-abstract-syntax-control). Arbitrary aliases can be further defined, as below (compare with previous examples in the [dynamics](@ref modelling-abstract-syntax-dynamics) section):
+The single `=` symbol is used to define not a constraint but an alias, that is, a purely syntactic replacement. There are some automatic aliases, *e.g.* `x₁` and `x1` for `x[1]` if `x` is the state (same for variable and control, for indices between 1 and 9), and we have also seen that you can define your own aliases when declaring the [variable](@ref modelling-abstract-syntax-variable), [state](@ref modelling-abstract-syntax-state) and [control](@ref modelling-abstract-syntax-control). Arbitrary aliases can be further defined, as below (compare with previous examples in the [dynamics](@ref modelling-abstract-syntax-dynamics) section):
 
 ```@example abs
 @def begin
@@ -666,10 +700,10 @@ nothing # hide
 ```
 
 !!! warning
-    Such aliases do *not* define any additional function and are just replaced textually by the parser. In particular, they cannot be used outside the `@def` `begin ... end` block. Conversely, constants and functions used within the `@def` block must be defined outside and before this block.
+    Such aliases do *not* define any additional function and are just replaced textually by the parser. In particular, they cannot be used outside the `@def` `begin ... end` block. Conversely, the constants and functions used within the block are ordinary Julia names, defined outside it (see [Structure of a definition](@ref modelling-abstract-syntax-structure) for when).
 
 !!! hint
-    You can rely on a trace mode for the macro `@def` to look at your code after expansions of the aliases using the `@def ocp ...` syntax and adding `true` after your `begin ... end` block:
+    You can rely on a trace mode for the macro `@def` to look at your code after expansions of the aliases using the `@def ocp ...` syntax and adding `true` after your `begin ... end` block. The trace still shows some internal names, such as `var"u##…"[1]` for `u` ([CTParser#354](https://github.com/control-toolbox/CTParser.jl/issues/354)):
 
     ```@repl abs
     @def damped_integrator begin
@@ -678,14 +712,14 @@ nothing # hide
         x = (q, v) ∈ R², state
         u ∈ R, control
         q̇ = v(t)
-        v̇ = u(t) - c(t)
+        v̇ = u(t) - c(t) * v(t)
         ẋ(t) == [q̇, v̇]
         ∫(u(t)^2) → min
     end true;
     ```
 
 !!! warning
-    The dynamics of an OCP is indeed a particular constraint, be careful to use `==` and not a single `=` that would try to define an alias:
+    The dynamics of an OCP is a constraint: use `==`, not a single `=`, which would try to define an alias. The error does not say so explicitly yet ([CTParser#353](https://github.com/control-toolbox/CTParser.jl/issues/353)):
 
     ```@repl abs
     try # hide
@@ -703,10 +737,12 @@ nothing # hide
     end # hide
     ```
 
-## Misc
+## [Labels](@id modelling-abstract-syntax-labels)
 
-- Declarations (of variable - if any -, time, state and control - if any -) must be done first. Then, dynamics, constraints and cost can be introduced in an arbitrary order.
-- It is possible to provide numbers / labels (as in math equations) for the constraints to improve readability (this is mostly for future use, typically to retrieve the Lagrange multiplier associated with the discretisation of a given constraint):
+A constraint can carry a label, written after a comma, as in a numbered equation. A label
+names the constraint, for instance to retrieve its multiplier with
+[`dual(sol, ocp, :label)`](@ref results-solution-duals). A number `(1)` is stored as the
+label `:eq1`:
 
 ```@example abs
 @def damped_integrator begin
@@ -717,7 +753,7 @@ nothing # hide
     tf ≥ 0, (1)
     q(0) == 2, (♡)
     q̇ = v(t)
-    v̇ = u(t) - c(t)
+    v̇ = u(t) - c(t) * v(t)
     ẋ(t) == [q̇, v̇]
     x(t).^2  ≤ [1, 2], (state_con)
     ∫(u(t)^2) → min
@@ -725,12 +761,10 @@ end
 nothing # hide
 ```
 
-- Parsing errors should be explicit enough (with line number in the `@def` `begin ... end` block indicated).
-- Check tutorials and applications in the documentation for further use.
+Here the labels are `:eq1`, `:♡` and `:state_con`.
 
-## [Known issues](@id modelling-abstract-syntax-known-issues)
-
-- [Reverse over forward AD issues with ADNLP](https://github.com/control-toolbox/OptimalControl.jl/issues/481#issuecomment-3471352183)
+Parsing errors report the line of the `begin … end` block where they occur. For complete
+problems written with this syntax, see the [example gallery](@ref examples-gallery).
 
 ## See also
 

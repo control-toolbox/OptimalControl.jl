@@ -156,7 +156,7 @@ iterations(sol), constraints_violation(sol)
 
     See [Migration](@ref migration) for the full list of renamed spellings.
 
-## Dual variables
+## [Dual variables](@id results-solution-duals)
 
 Dual variables (Lagrange multipliers) give sensitivity information. A richer problem to show
 them on:
