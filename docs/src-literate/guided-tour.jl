@@ -12,7 +12,7 @@
 #src   `#md ...`   → markdown output only     `#nb ...` → notebook output only
 #src
 #src LINKS: doc-internal links are split — `#md` emits `@ref`/`@extref` (cross-refs for the
-#src   Documenter build), `#nb` emits plain https URLs (for the Binder notebook). External
+#src   Documenter build), `#nb` emits plain https URLs (for the downloadable notebook). External
 #src   homepages (jso.dev, juliaplots, control-toolbox.org root) stay as single plain URLs.
 #src ============================================================================
 #
