@@ -373,7 +373,7 @@ nothing                                                                         
 model(sol) === ocp
 ```
 
-## Solutions from a flow
+## [Solutions from a flow](@id results-solution-flows)
 
 A [flow](@ref flows-overview) integrated from a problem returns a `Solution` too. Here the
 flow of the energy problem, with the control u = p₂ given by the maximum principle, from the
