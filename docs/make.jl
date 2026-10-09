@@ -238,10 +238,10 @@ using Literate
 
 LITERATE_DIR = joinpath(@__DIR__, "src-literate")
 MD_OUTPUT = joinpath(@__DIR__, "src", "getting-started")
-NB_OUTPUT = joinpath(@__DIR__, "src", "notebooks")
-JL_OUTPUT = joinpath(@__DIR__, "src", "scripts")
-mkpath(NB_OUTPUT)
-mkpath(JL_OUTPUT)
+# The notebook and the script are offered as downloads on the guided tour page, served by
+# VitePress from `src/public/assets/` (git-ignored). The page links them in raw HTML, so
+# Documenter's link checker does not need a copy in `src/assets/`.
+DOWNLOAD_DIR = joinpath(@__DIR__, "src", "public", "assets")
 
 for file in ["guided-tour.jl"]
     INPUT = joinpath(LITERATE_DIR, file)
@@ -249,8 +249,8 @@ for file in ["guided-tour.jl"]
     # `draft = false`. (It once carried an injected `Draft = false` override to run
     # under a `draft = true` default; that default is gone.)
     Literate.markdown(INPUT, MD_OUTPUT; name="guided-tour")
-    Literate.notebook(INPUT, NB_OUTPUT; name="guided-tour", execute=false)
-    Literate.script(INPUT, JL_OUTPUT; name="guided-tour")
+    Literate.notebook(INPUT, DOWNLOAD_DIR; name="guided-tour", execute=false)
+    Literate.script(INPUT, DOWNLOAD_DIR; name="guided-tour")
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════
