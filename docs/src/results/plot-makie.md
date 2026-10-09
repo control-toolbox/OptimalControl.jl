@@ -26,8 +26,9 @@ using GLMakie   # interactive — a window you can pan and zoom
 
 ## Qualify `plot`
 
-`OptimalControl` re-exports `Plots`' `plot`/`plot!`. Loading a Makie backend brings in *its*
-`plot`/`plot!` too — same names, different functions — so the bare call becomes ambiguous:
+`OptimalControl` exports `plot` and `plot!`: the generic functions of RecipesBase, which
+Plots extends. Loading a Makie backend brings in *its* `plot`/`plot!` too — same names,
+different functions — so the bare name becomes ambiguous:
 
 ```@example main
 using OptimalControl
@@ -44,10 +45,12 @@ showerror(IOContext(stdout, :color => false), e) # hide
 end # hide
 ```
 
-Julia's own hint names both modules. The fix is to always qualify the Makie call:
+Julia's hint lists the modules that export a `plot`: OptimalControl and CairoMakie, and
+here also Plots and GR, which this site's build has loaded. The fix is to always qualify the
+Makie call:
 
 ```julia
-Makie.plot(sol)    # [!code error]
+plot(sol)          # [!code error]
 Makie.plot(sol)    # [!code ++]
 ```
 
@@ -85,8 +88,8 @@ Makie.plot(sol)
 Makie.plot(sol; layout=:group, control=:all)
 ```
 
-A problem with a box control constraint and a path constraint, the same one used on
-[Plot](@ref results-plot):
+A problem with a box constraint on the control and a path constraint, the speed-limited
+thrust used on [Plot](@ref results-plot-constraints):
 
 ```@example main
 ocp_c = @def begin
@@ -95,12 +98,11 @@ ocp_c = @def begin
     x = (q, v) ∈ R², state
     u ∈ R, control
     tf ≥ 0
-    -1 ≤ u(t) ≤ 1
-    q(0) == -1
-    v(0) == 0
+    -1 ≤ u(t) ≤ 1, (u_box)
+    u(t) + v(t) ≤ 1, (thrust)
+    x(0) == [-1, 0]
     q(tf) == 0
     v(tf) == 0
-    1 ≤ v(t) + 1 ≤ 1.8, (c1)
     ẋ(t) == [v(t), u(t)]
     tf → min
 end
@@ -139,6 +141,8 @@ end # hide
 `plot`/`plot!` build a whole figure in one call — a convenience on top of the backend, not the
 backend itself. To add something of your own, reach into the figure and use Makie directly. A
 time-minimal problem makes this concrete: mark the control bounds and the switching time.
+From x(0) = (0, 1), the optimal control is u = −1, then u = +1: the final time is
+t_f = 1 + √2, and the switch happens at t = 1 + √2/2 ≈ 1.71, not at t_f/2.
 
 ```@example main
 ocp_bb = @def begin
@@ -163,11 +167,23 @@ ax = f.content[3]   # the control panel — see "Where the panels are" below
 f
 ```
 
+The switching time is read off the control: the first grid point where u becomes positive.
+
+```@example main
+u_bb = control(sol_bb)
+t_switch = first(t for t in time_grid(sol_bb) if u_bb(t) > 0)
+```
+
+```@example main
+@assert isapprox(final_time(sol_bb), 1 + sqrt(2); atol=1e-3)        # hide
+@assert isapprox(t_switch, 1 + sqrt(2) / 2; atol=2e-2)              # hide
+nothing                                                             # hide
+```
+
 ```@example main
 Makie.hlines!(ax, [-1.0, 1.0]; color=:red, linestyle=:dash)
-tf_bb = variable(sol_bb)
-Makie.vlines!(ax, [tf_bb / 2]; color=:green)
-Makie.text!(ax, tf_bb / 2, 0.0; text="switch")
+Makie.vlines!(ax, [t_switch]; color=:green)
+Makie.text!(ax, t_switch, 0.0; text="switch")
 f
 ```
 
@@ -186,7 +202,7 @@ sol)` here. It fails:
 try # hide
 Makie.plot!(ax, sol_bb)
 catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
+print(replace(sprint(showerror, e), r"Solution\{.*"s => "Solution{…}}")) # hide
 end # hide
 ```
 
@@ -215,13 +231,12 @@ When annotating an existing panel is not enough — a custom layout, a different
 entirely — draw straight from the accessors instead of going through `plot` at all:
 
 ```@example main
-using LinearAlgebra
 tg = time_grid(sol_bb)
-u = control(sol_bb)
+x_bb = state(sol_bb)
 
 fig = Figure(size=(500, 300))
-axu = Axis(fig[1, 1]; xlabel="t", ylabel="‖u‖")
-Makie.lines!(axu, tg, norm.(u.(tg)))
+axq = Axis(fig[1, 1]; xlabel="x₁", ylabel="x₂", title="phase portrait")
+Makie.lines!(axq, [x_bb(t)[1] for t in tg], [x_bb(t)[2] for t in tg])
 fig
 ```
 
@@ -242,14 +257,14 @@ f = Makie.plot(sol)   # opens a window; unaffected otherwise
 
 ## Flows
 
-The same call works on a trajectory produced by [`Flow`](@ref) — see
-[Flows](@ref flows-overview) for how to build one:
+The same call works on the solution of a [`Flow`](@ref) — see [Flows](@ref flows-overview)
+for how to build one. Here from the exact initial costate p(0) = (12, 6), as on
+[Plot](@ref results-plot-flow):
 
 ```@example main
 using OrdinaryDiffEqTsit5
 
-p = costate(sol)
-p0 = p(t0)
+p0 = [12, 6]
 flow = Flow(ocp, (x, p) -> p[2])
 sol_flow = flow((t0, tf), x0, p0)
 Makie.plot(sol_flow)

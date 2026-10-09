@@ -6,13 +6,15 @@ any one piece before you commit to it.
 
 ## The four families
 
-- **Discretizer** — how the continuous problem is transcribed into a finite-dimensional one.
+- **Discretizer**: how the continuous problem is transcribed into a finite-dimensional one.
   Only `:collocation` exists today.
-- **Modeler** — how the resulting NLP is built: `:adnlp` (automatic differentiation via
-  ADNLPModels) or `:exa` (SIMD-friendly, GPU-capable, via ExaModels — only for problems whose
-  dynamics are written coordinatewise, see [Abstract syntax (`@def`)](@ref modelling-abstract-syntax)).
-- **Solver** — which NLP solver runs: `:ipopt`, `:madnlp`, `:uno`, `:madncl`, `:knitro`.
-- **Parameter** — execution backend: `:cpu` or `:gpu`.
+- **Modeler**: how the resulting NLP is built: `:adnlp`
+  ([ADNLPModels](https://jso.dev/ADNLPModels.jl/stable/), automatic differentiation) or
+  `:exa` ([ExaModels](https://madsuite-org.github.io/ExaModels.jl/stable/), SIMD-friendly
+  and GPU-capable). `:exa` needs a problem written with [`@def`](@ref modelling-abstract-syntax),
+  not with the [functional API](@ref modelling-functional-api).
+- **Solver**: which NLP solver runs: `:ipopt`, `:madnlp`, `:uno`, `:madncl`, `:knitro`.
+- **Parameter**: the execution backend, `:cpu` or `:gpu`.
 
 ## What is available
 
@@ -23,13 +25,17 @@ methods()
 
 There are 12 methods: every `{adnlp, exa} × {ipopt, madnlp, uno, madncl, knitro}` pair on
 `:cpu` (10), plus the two GPU-capable combinations `:exa × {:madnlp, :madncl}` on `:gpu` (2).
-This list is not fixed prose to memorize — it is exactly what `methods()` returns, so it's
-printed live rather than quoted as a number anywhere on this page.
+
+```@example main
+@assert length(methods()) == 12                                    # hide
+@assert methods()[1] == (:collocation, :adnlp, :ipopt, :cpu)       # hide
+nothing                                                            # hide
+```
 
 ## A problem to try them on
 
-Every `solve` call on this page uses the same problem — the double integrator, with its
-dynamics written coordinatewise so that both the `:adnlp` and the `:exa` modeler accept it:
+Every `solve` call on this page uses the same problem, the double integrator. Both modelers
+accept it as written, with the dynamics in vector form:
 
 ```@example main
 ocp = @def begin
@@ -38,8 +44,7 @@ ocp = @def begin
     u ∈ R, control
     x(0) == [-1, 0]
     x(1) == [0, 0]
-    ∂(q)(t) == v(t)
-    ∂(v)(t) == u(t)
+    ẋ(t) == [v(t), u(t)]
     ∫(0.5u(t)^2) → min
 end
 nothing # hide
@@ -47,7 +52,7 @@ nothing # hide
 
 ## Partial descriptions
 
-`solve(ocp, :madnlp)` doesn't need the other three tokens — they're completed for you.
+`solve(ocp, :madnlp)` does not need the other three tokens: they are completed for you.
 Completion walks `methods()` from top to bottom and returns the first entry containing every
 token you gave:
 
@@ -57,9 +62,16 @@ solve(ocp, :exa)      # → (:collocation, :exa,   :ipopt,  :cpu)
 solve(ocp, :gpu)      # → (:collocation, :exa,   :madnlp, :gpu)
 ```
 
-This first-match-top-to-bottom rule is also why the plain `solve(ocp)` default is
-`(:collocation, :adnlp, :ipopt, :cpu)`: it's simply `methods()[1]`. All of these are
-equivalent:
+The first line of the display shows the completed method. For instance, with `:exa`:
+
+```@example main
+using NLPModelsIpopt
+sol = solve(ocp, :exa; print_level=0)
+nothing # hide
+```
+
+This first-match rule is also why the plain `solve(ocp)` default is
+`(:collocation, :adnlp, :ipopt, :cpu)`: it is `methods()[1]`. All of these are equivalent:
 
 ```julia
 solve(ocp)                       # empty description → methods()[1]
@@ -71,11 +83,11 @@ solve(ocp, :collocation, :adnlp)
 solve(ocp, :collocation, :adnlp, :ipopt, :cpu)  # the complete description
 ```
 
-## Ambiguity
+## Incompatible tokens
 
-Two tokens from the *same* family never both fit one method — `:adnlp` and `:exa` can't both
-be true of one quadruplet — so this raises `AmbiguousDescription` rather than silently picking
-one:
+Two tokens of the *same* family never fit one method: `:adnlp` and `:exa` cannot both describe
+one quadruplet. No method contains both, so `solve` raises an error rather than silently
+picking one. It lists the available methods and the closest matches:
 
 ```@repl main
 try # hide
@@ -84,9 +96,6 @@ catch e # hide
 showerror(IOContext(stdout, :color => false), e) # hide
 end # hide
 ```
-
-The exception lists every candidate whose tokens are a superset of what matched, so you can see
-what's close.
 
 ## What each solver needs installed
 
@@ -97,33 +106,99 @@ what's close.
 | `:uno` | `using UnoSolver` |
 | `:madncl` | `using MadNCL` and `using MadNLP` (both) |
 | `:knitro` | `using NLPModelsKnitro` (commercial licence required) |
-| either on `:gpu` | `using MadNLPGPU`, `using CUDA` **and** `using CUDSS` — all three |
+| either on `:gpu` | `using MadNLPGPU`, `using CUDA` **and** `using CUDSS`, all three |
 
-Solving without the matching package loaded raises an `ExtensionError` naming exactly which
-`using` statement to add — including on the `:gpu` row, which needs all three of `MadNLPGPU`,
-`CUDA` and `CUDSS`; see [Solving on GPU](@ref solve-gpu).
+Solving without the matching package loaded raises an `ExtensionError` naming the `using`
+statement to add; see [Installation](@ref getting-started-installation) and
+[GPU](@ref solve-gpu).
 
 ## Inspecting a strategy
 
-`describe` works on any strategy id, and covers more than the direct-solve side: it also
-describes the indirect-method families (`:di`, `:sciml`) and the two parameters themselves.
+`describe` prints a strategy: its family, the parameters it supports, and every option with
+its type, its aliases and its default value:
 
 ```@example main
 describe(:collocation)
 ```
+
+!!! note "Understanding default values"
+
+    `(default: NotProvided)` means that OptimalControl does not set the option, so the
+    solver or modeler uses its **own** default. For instance, an Ipopt option shown with
+    `(default: NotProvided)` takes Ipopt's default value. Only the options with an explicit
+    default, such as `(default: 1000)` for Ipopt's `max_iter`, are set by OptimalControl.
+
+The modelers and solvers are described the same way. The solver packages must be loaded
+first, as for solving:
+
+::: details `describe(:adnlp)` and `describe(:exa)`
 
 ```@example main
 describe(:adnlp)
 ```
 
 ```@example main
-using NLPModelsIpopt
+describe(:exa)
+```
+
+:::
+
+::: details `describe(:ipopt)`
+
+```@example main
 describe(:ipopt)
 ```
+
+:::
+
+::: details `describe(:madnlp)` and `describe(:madncl)`
+
+```@example main
+using MadNLP
+describe(:madnlp)
+```
+
+```@example main
+using MadNCL
+describe(:madncl)
+```
+
+:::
+
+::: details `describe(:uno)`
+
+```@example main
+using UnoSolver
+describe(:uno)
+```
+
+:::
+
+`describe` also accepts the parameters, which lists the strategies that support them:
 
 ```@example main
 describe(:cpu)
 ```
+
+```@example main
+describe(:gpu)
+```
+
+It covers the strategies of the indirect method too: `describe(:sciml)` for the ODE
+integrator of [flows](@ref flows-overview), and `describe(:di)` for the automatic
+differentiation backend ([DifferentiationInterface](https://juliadiff.org/DifferentiationInterface.jl/DifferentiationInterface/stable/)).
+
+### Official documentation
+
+For the complete list of each package's options, see:
+
+- **ADNLPModels**: [documentation](https://jso.dev/ADNLPModels.jl/stable/)
+- **ExaModels**: [documentation](https://madsuite-org.github.io/ExaModels.jl/stable/)
+- **Ipopt**: [options](https://coin-or.github.io/Ipopt/OPTIONS.html)
+- **MadNLP**: [options](https://madsuite-org.github.io/MadNLP.jl/stable/options/)
+- **Uno**: [documentation](https://unosolver.readthedocs.io)
+- **MadNCL**: [repository](https://github.com/MadNLP/MadNCL.jl)
+- **Knitro**: [options](https://www.artelys.com/docs/knitro/3_referenceManual/userOptions.html)
 
 ## Discretization schemes
 
@@ -131,44 +206,38 @@ describe(:cpu)
 
 | Value | Notes | `:adnlp` | `:exa` |
 | --- | --- | :-: | :-: |
-| `:trapeze` | second-order | ✅ | ✅ |
-| `:midpoint` | second-order, **default** | ✅ | ✅ |
-| `:euler` | first-order, explicit | ✅ | ✅ |
-| `:euler_implicit` | first-order, implicit | ✅ | ✅ |
+| `:trapeze` | trapezoidal rule, second-order | ✅ | ✅ |
+| `:midpoint` | midpoint rule, second-order, **default** | ✅ | ✅ |
+| `:euler` | explicit Euler, first-order | ✅ | ✅ |
+| `:euler_implicit` | implicit Euler, first-order, more stable for stiff problems | ✅ | ✅ |
 | `:euler_explicit`, `:euler_forward` | aliases of `:euler` | ✅ | ✗ |
 | `:euler_backward` | alias of `:euler_implicit` | ✅ | ✗ |
-| `:gauss_legendre_2` | fourth-order | ✅ | ✗ |
-| `:gauss_legendre_3` | sixth-order | ✅ | ✗ |
+| `:gauss_legendre_2` | 2-point Gauss–Legendre collocation, fourth-order | ✅ | ✗ |
+| `:gauss_legendre_3` | 3-point Gauss–Legendre collocation, sixth-order | ✅ | ✗ |
 
-plus `grid_size` (default `250`) or an explicit, possibly non-uniform, `time_grid`.
-
-Every cell above was checked by solving with that scheme. One of the results needs spelling out.
+The higher-order Gauss–Legendre schemes are more accurate, at a higher cost per grid step.
+The grid is set by `grid_size` (default `250`), or, with `:adnlp`, by an explicit, possibly
+non-uniform, `time_grid` (with `:exa`, `time_grid` is not supported yet:
+[CTDirect#638](https://github.com/control-toolbox/CTDirect.jl/issues/638)).
 
 !!! warning "Under `:exa`, only the four canonical names work"
 
     `:exa` takes `:trapeze`, `:midpoint`, `:euler` and `:euler_implicit`, and nothing else.
-    Both Gauss-Legendre schemes are out — and so are the aliases, which is the surprising part:
-    `:euler_forward` is rejected where `:euler` is accepted, though under `:adnlp` the two name
-    the same scheme. Confirmed live:
+    Both Gauss–Legendre schemes are out, and so are the aliases: `:euler_forward` is rejected
+    where `:euler` is accepted, though under `:adnlp` the two name the same scheme
+    ([CTParser#355](https://github.com/control-toolbox/CTParser.jl/issues/355)):
 
     ```@repl main
     try # hide
-    solve(ocp, :exa; scheme=:gauss_legendre_2, display=false)
+    solve(ocp, :exa; scheme=:euler_forward, display=false)
     catch e # hide
     showerror(IOContext(stdout, :color => false), e) # hide
     end # hide
     ```
 
-## Advanced: the strategy registry
-
-`strategy_ids`, `type_from_id`, and `available_parameters` (and the [`create_registry`](@ref)
-used to build one) all operate on a populated `StrategyRegistry`. The one that already knows
-about every built-in strategy is internal and not re-exported — these functions are
-orchestration/extension-authoring tools, not something a typical solve caller reaches for. For everyday inspection, `methods()` and `describe` (above)
-cover the same ground and need nothing extra.
-
 ## See also
 
-- [Options and routing](@ref solve-options) — how keyword arguments reach the right strategy.
-- [Solving on GPU](@ref solve-gpu) — the `:gpu` parameter in full.
-- [API reference: Options and strategies](@ref api-options) — every symbol on this page, with full signatures.
+- [Options](@ref solve-options): how keyword arguments reach the right strategy.
+- [GPU](@ref solve-gpu): the `:gpu` parameter in full.
+- [API reference: Options and strategies](@ref api-options): every symbol on this page, with
+  full signatures.

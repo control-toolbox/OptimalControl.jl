@@ -1,8 +1,561 @@
 # DocInventory version 1
-project = "MadNLP"
+project = "MadNLP.jl"
+version = "0.9.1"
 
-# Placeholder: madnlp.github.io/MadNLP.jl/stable/objects.inv currently 404s
-# (checked 2026-08-15), so there is no reachable source to harvest real entries
-# from. This empty inventory keeps the build green; @extref MadNLP ... will
-# report "not found" (not a build Error) until either the upstream site comes
-# back or this file is populated with real entries.
+[[jl.function]]
+name = "MadNLP.build_kkt!"
+uri = "lib/kkt/#MadNLP.build_kkt%21"
+[[jl.function]]
+name = "MadNLP.compress_hessian!"
+uri = "lib/kkt/#MadNLP.compress_hessian%21"
+[[jl.function]]
+name = "MadNLP.compress_jacobian!"
+uri = "lib/kkt/#MadNLP.compress_jacobian%21"
+[[jl.function]]
+name = "MadNLP.create_callback"
+uri = "lib/callbacks/#$"
+[[jl.function]]
+name = "MadNLP.create_kkt_system"
+uri = "lib/kkt/#$"
+[[jl.function]]
+name = "MadNLP.dual"
+uri = "lib/kkt/#$"
+[[jl.function]]
+name = "MadNLP.dual_lb"
+uri = "lib/kkt/#$"
+[[jl.function]]
+name = "MadNLP.dual_ub"
+uri = "lib/kkt/#$"
+[[jl.function]]
+name = "MadNLP.factorize!"
+uri = "lib/linear_solvers/#MadNLP.factorize%21"
+[[jl.function]]
+name = "MadNLP.factorize_kkt!"
+uri = "lib/kkt/#MadNLP.factorize_kkt%21"
+[[jl.function]]
+name = "MadNLP.full"
+uri = "lib/kkt/#$"
+[[jl.function]]
+name = "MadNLP.get_hessian"
+uri = "lib/kkt/#$"
+[[jl.function]]
+name = "MadNLP.get_jacobian"
+uri = "lib/kkt/#$"
+[[jl.function]]
+name = "MadNLP.get_kkt"
+uri = "lib/kkt/#$"
+[[jl.function]]
+name = "MadNLP.inertia"
+uri = "lib/linear_solvers/#$"
+[[jl.function]]
+name = "MadNLP.initialize!"
+uri = "lib/kkt/#MadNLP.initialize%21"
+[[jl.function]]
+name = "MadNLP.introduce"
+uri = "lib/linear_solvers/#$"
+[[jl.function]]
+name = "MadNLP.is_inertia"
+uri = "lib/linear_solvers/#$"
+[[jl.function]]
+name = "MadNLP.is_inertia_correct"
+uri = "lib/kkt/#$"
+[[jl.function]]
+name = "MadNLP.jtprod!"
+uri = "lib/kkt/#MadNLP.jtprod%21"
+[[jl.function]]
+name = "MadNLP.madnlp"
+uri = "lib/ipm/#$"
+[[jl.function]]
+name = "MadNLP.nnz_jacobian"
+uri = "lib/kkt/#$"
+[[jl.function]]
+name = "MadNLP.num_variables"
+uri = "lib/kkt/#$"
+[[jl.function]]
+name = "MadNLP.number_dual"
+uri = "lib/kkt/#$"
+[[jl.function]]
+name = "MadNLP.number_primal"
+uri = "lib/kkt/#$"
+[[jl.function]]
+name = "MadNLP.primal"
+uri = "lib/kkt/#$"
+[[jl.function]]
+name = "MadNLP.primal_dual"
+uri = "lib/kkt/#$"
+[[jl.function]]
+name = "MadNLP.regularize_diagonal!"
+uri = "lib/kkt/#MadNLP.regularize_diagonal%21"
+[[jl.function]]
+name = "MadNLP.should_regularize_dual"
+uri = "lib/kkt/#$"
+[[jl.function]]
+name = "MadNLP.solve!"
+uri = "lib/ipm/#MadNLP.solve%21"
+[[jl.function]]
+name = "MadNLP.solve_kkt!"
+uri = "lib/kkt/#MadNLP.solve_kkt%21"
+[[jl.function]]
+name = "MadNLP.solve_linear_system!"
+uri = "lib/linear_solvers/#MadNLP.solve_linear_system%21"
+[[jl.function]]
+name = "MadNLP.solve_refine!"
+uri = "lib/linear_solvers/#MadNLP.solve_refine%21"
+[[jl.function]]
+name = "MadNLP.update_barrier!"
+uri = "lib/barrier/#MadNLP.update_barrier%21"
+
+[[jl.type]]
+name = "MadNLP.AbstractAdaptiveUpdate"
+uri = "lib/barrier/#$"
+[[jl.type]]
+name = "MadNLP.AbstractBarrierUpdate"
+uri = "lib/barrier/#$"
+[[jl.type]]
+name = "MadNLP.AbstractCallback"
+uri = "lib/callbacks/#$"
+[[jl.type]]
+name = "MadNLP.AbstractCondensedKKTSystem"
+uri = "lib/kkt/#$"
+[[jl.type]]
+name = "MadNLP.AbstractEqualityTreatment"
+uri = "lib/callbacks/#$"
+[[jl.type]]
+name = "MadNLP.AbstractFixedVariableTreatment"
+uri = "lib/callbacks/#$"
+[[jl.type]]
+name = "MadNLP.AbstractKKTSystem"
+uri = "lib/kkt/#$"
+[[jl.type]]
+name = "MadNLP.AbstractKKTVector"
+uri = "lib/kkt/#$"
+[[jl.type]]
+name = "MadNLP.AbstractLinearSolver"
+uri = "lib/linear_solvers/#$"
+[[jl.type]]
+name = "MadNLP.AbstractReducedKKTSystem"
+uri = "lib/kkt/#$"
+[[jl.type]]
+name = "MadNLP.AbstractUnreducedKKTSystem"
+uri = "lib/kkt/#$"
+[[jl.type]]
+name = "MadNLP.DenseCallback"
+uri = "lib/callbacks/#$"
+[[jl.type]]
+name = "MadNLP.DenseCondensedKKTSystem"
+uri = "lib/kkt/#$"
+[[jl.type]]
+name = "MadNLP.DenseKKTSystem"
+uri = "lib/kkt/#$"
+[[jl.type]]
+name = "MadNLP.EnforceEquality"
+uri = "lib/callbacks/#$"
+[[jl.type]]
+name = "MadNLP.LOQOUpdate"
+uri = "lib/barrier/#$"
+[[jl.type]]
+name = "MadNLP.MadNLPExecutionStats"
+uri = "lib/ipm/#$"
+[[jl.type]]
+name = "MadNLP.MadNLPOptions"
+uri = "options/#$"
+[[jl.type]]
+name = "MadNLP.MadNLPSolver"
+uri = "lib/ipm/#$"
+[[jl.type]]
+name = "MadNLP.MakeParameter"
+uri = "lib/callbacks/#$"
+[[jl.type]]
+name = "MadNLP.MonotoneUpdate"
+uri = "lib/barrier/#$"
+[[jl.type]]
+name = "MadNLP.QualityFunctionUpdate"
+uri = "lib/barrier/#$"
+[[jl.type]]
+name = "MadNLP.RelaxBound"
+uri = "lib/callbacks/#$"
+[[jl.type]]
+name = "MadNLP.RelaxEquality"
+uri = "lib/callbacks/#$"
+[[jl.type]]
+name = "MadNLP.ScaledSparseKKTSystem"
+uri = "lib/kkt/#$"
+[[jl.type]]
+name = "MadNLP.SparseCallback"
+uri = "lib/callbacks/#$"
+[[jl.type]]
+name = "MadNLP.SparseCondensedKKTSystem"
+uri = "lib/kkt/#$"
+[[jl.type]]
+name = "MadNLP.SparseKKTSystem"
+uri = "lib/kkt/#$"
+[[jl.type]]
+name = "MadNLP.SparseUnreducedKKTSystem"
+uri = "lib/kkt/#$"
+[[jl.type]]
+name = "MadNLP.UnreducedKKTVector"
+uri = "lib/kkt/#$"
+
+[[std.doc]]
+dispname = "Algorithm"
+name = "algorithm"
+uri = "algorithm/"
+[[std.doc]]
+dispname = "Home"
+name = "index"
+uri = ""
+[[std.doc]]
+dispname = "Installation"
+name = "installation"
+uri = "installation/"
+[[std.doc]]
+dispname = "Barrier strategies"
+name = "lib/barrier"
+uri = "lib/barrier/"
+[[std.doc]]
+dispname = "Callback wrappers"
+name = "lib/callbacks"
+uri = "lib/callbacks/"
+[[std.doc]]
+dispname = "IPM solver"
+name = "lib/ipm"
+uri = "lib/ipm/"
+[[std.doc]]
+dispname = "KKT systems"
+name = "lib/kkt"
+uri = "lib/kkt/"
+[[std.doc]]
+dispname = "Linear Solvers"
+name = "lib/linear_solvers"
+uri = "lib/linear_solvers/"
+[[std.doc]]
+dispname = "KKT systems"
+name = "man/kkt"
+uri = "man/kkt/"
+[[std.doc]]
+dispname = "Linear Solvers"
+name = "man/linear_solvers"
+uri = "man/linear_solvers/"
+[[std.doc]]
+dispname = "Options"
+name = "options"
+uri = "options/"
+[[std.doc]]
+dispname = "Quickstart"
+name = "quickstart"
+uri = "quickstart/"
+[[std.doc]]
+dispname = "GPU acceleration"
+name = "tutorials/gpu"
+uri = "tutorials/gpu/"
+[[std.doc]]
+dispname = "Custom KKT system"
+name = "tutorials/kktsystem"
+uri = "tutorials/kktsystem/"
+[[std.doc]]
+dispname = "Multi-precision"
+name = "tutorials/multiprecision"
+uri = "tutorials/multiprecision/"
+[[std.doc]]
+dispname = "Quasi-Newton"
+name = "tutorials/quasi_newton"
+uri = "tutorials/quasi_newton/"
+[[std.doc]]
+dispname = "Warm-start"
+name = "tutorials/warmstart"
+uri = "tutorials/warmstart/"
+
+[[std.label]]
+dispname = "A brief look at the math"
+name = "A-brief-look-at-the-math"
+uri = "man/kkt/#$"
+[[std.label]]
+name = "AbstractKKTSystem"
+uri = "lib/kkt/#$"
+[[std.label]]
+name = "AbstractKKTVector"
+uri = "lib/kkt/#$"
+[[std.label]]
+dispname = "Adaptive strategies"
+name = "Adaptive-strategies"
+uri = "lib/barrier/#$"
+[[std.label]]
+dispname = "Advanced solution: keeping the solver in memory"
+name = "Advanced-solution:-keeping-the-solver-in-memory"
+uri = "tutorials/warmstart/#Advanced-solution%3A-keeping-the-solver-in-memory"
+[[std.label]]
+dispname = "Assembling a KKT system, step by step"
+name = "Assembling-a-KKT-system,-step-by-step"
+uri = "man/kkt/#Assembling-a-KKT-system%2C-step-by-step"
+[[std.label]]
+dispname = "Assembling the KKT matrix"
+name = "Assembling-the-KKT-matrix"
+uri = "man/kkt/#$"
+[[std.label]]
+dispname = "Barrier strategies"
+name = "Barrier-strategies"
+uri = "lib/barrier/#$"
+[[std.label]]
+name = "Callbacks"
+uri = "lib/callbacks/#$"
+[[std.label]]
+dispname = "Citing MadNLP.jl"
+name = "Citing-MadNLP.jl"
+uri = "#$"
+[[std.label]]
+dispname = "Computing the initial primal-dual iterate"
+name = "Computing-the-initial-primal-dual-iterate"
+uri = "algorithm/#$"
+[[std.label]]
+dispname = "Creating the KKT system"
+name = "Creating-the-KKT-system"
+uri = "tutorials/kktsystem/#$"
+[[std.label]]
+dispname = "Defining a problem in arbitrary precision"
+name = "Defining-a-problem-in-arbitrary-precision"
+uri = "tutorials/multiprecision/#$"
+[[std.label]]
+name = "Demonstration"
+uri = "tutorials/kktsystem/#$"
+[[std.label]]
+dispname = "Dense KKT systems"
+name = "Dense-KKT-systems"
+uri = "lib/kkt/#$"
+[[std.label]]
+name = "Design"
+uri = "#$"
+[[std.label]]
+dispname = "Direct linear solvers"
+name = "Direct-linear-solvers"
+uri = "lib/linear_solvers/#$"
+[[std.label]]
+dispname = "Equality constraints"
+name = "Equality-constraints"
+uri = "algorithm/#$"
+[[std.label]]
+dispname = "Evaluating the model on the GPU with ExaModels"
+name = "Evaluating-the-model-on-the-GPU-with-ExaModels"
+uri = "tutorials/gpu/#$"
+[[std.label]]
+dispname = "Example: Implementing a new KKT system"
+name = "Example:-Implementing-a-new-KKT-system"
+uri = "tutorials/kktsystem/#Example%3A-Implementing-a-new-KKT-system"
+[[std.label]]
+dispname = "Factorization algorithm"
+name = "Factorization-algorithm"
+uri = "man/linear_solvers/#$"
+[[std.label]]
+dispname = "Feasility restoration phase"
+name = "Feasility-restoration-phase"
+uri = "algorithm/#$"
+[[std.label]]
+dispname = "Fixed variables"
+name = "Fixed-variables"
+uri = "algorithm/#$"
+[[std.label]]
+dispname = "GPU support"
+name = "GPU-support"
+uri = "installation/#$"
+[[std.label]]
+dispname = "HSL linear solver"
+name = "HSL-linear-solver"
+uri = "installation/#$"
+[[std.label]]
+dispname = "How is LBFGS implemented in MadNLP?"
+name = "How-is-LBFGS-implemented-in-MadNLP?"
+uri = "tutorials/quasi_newton/#How-is-LBFGS-implemented-in-MadNLP%3F"
+[[std.label]]
+dispname = "How to solve a problem on the GPU with ExaModels?"
+name = "How-to-solve-a-problem-on-the-GPU-with-ExaModels?"
+uri = "tutorials/gpu/#How-to-solve-a-problem-on-the-GPU-with-ExaModels%3F"
+[[std.label]]
+dispname = "How to solve on the GPU a JuMP model?"
+name = "How-to-solve-on-the-GPU-a-JuMP-model?"
+uri = "tutorials/gpu/#How-to-solve-on-the-GPU-a-JuMP-model%3F"
+[[std.label]]
+dispname = "How to solve on the GPU a legacy model running on the CPU?"
+name = "How-to-solve-on-the-GPU-a-legacy-model-running-on-the-CPU?"
+uri = "tutorials/gpu/#How-to-solve-on-the-GPU-a-legacy-model-running-on-the-CPU%3F"
+[[std.label]]
+dispname = "How to tune the options in LBFGS?"
+name = "How-to-tune-the-options-in-LBFGS?"
+uri = "tutorials/quasi_newton/#How-to-tune-the-options-in-LBFGS%3F"
+[[std.label]]
+dispname = "How to use BFGS in MadNLP?"
+name = "How-to-use-BFGS-in-MadNLP?"
+uri = "tutorials/quasi_newton/#How-to-use-BFGS-in-MadNLP%3F"
+[[std.label]]
+dispname = "How to use LBFGS in MadNLP?"
+name = "How-to-use-LBFGS-in-MadNLP?"
+uri = "tutorials/quasi_newton/#How-to-use-LBFGS-in-MadNLP%3F"
+[[std.label]]
+dispname = "Implementing a custom KKT system"
+name = "Implementing-a-custom-KKT-system"
+uri = "tutorials/kktsystem/#$"
+[[std.label]]
+name = "Inertia-correction"
+uri = "algorithm/#$"
+[[std.label]]
+dispname = "Inertia detection"
+name = "Inertia-detection"
+uri = "man/linear_solvers/#$"
+[[std.label]]
+dispname = "Initializing a KKT system"
+name = "Initializing-a-KKT-system"
+uri = "man/kkt/#$"
+[[std.label]]
+name = "Installation"
+uri = "installation/#$"
+[[std.label]]
+dispname = "Interior-point algorithm"
+name = "Interior-point-algorithm"
+uri = "algorithm/#$"
+[[std.label]]
+dispname = "Interior-point iterations"
+name = "Interior-point-iterations"
+uri = "algorithm/#$"
+[[std.label]]
+dispname = "Iterative refinement"
+name = "Iterative-refinement"
+uri = "lib/linear_solvers/#$"
+[[std.label]]
+dispname = "MadNLP's performance"
+name = "MadNLP's-performance"
+uri = "#MadNLP%27s-performance"
+[[std.label]]
+dispname = "MadNLP's problem structure"
+name = "MadNLP's-problem-structure"
+uri = "#MadNLP%27s-problem-structure"
+[[std.label]]
+dispname = "MadNLP solver"
+name = "MadNLP-solver"
+uri = "lib/ipm/#$"
+[[std.label]]
+dispname = "Monotone strategy"
+name = "Monotone-strategy"
+uri = "lib/barrier/#$"
+[[std.label]]
+dispname = "Naive solution: starting from the previous solution"
+name = "Naive-solution:-starting-from-the-previous-solution"
+uri = "tutorials/warmstart/#Naive-solution%3A-starting-from-the-previous-solution"
+[[std.label]]
+dispname = "Pardiso linear solver"
+name = "Pardiso-linear-solver"
+uri = "installation/#$"
+[[std.label]]
+name = "Pre-processing"
+uri = "algorithm/#$"
+[[std.label]]
+dispname = "Problem's reformulation"
+name = "Problem's-reformulation"
+uri = "algorithm/#Problem%27s-reformulation"
+[[std.label]]
+dispname = "Quasi-Newton methods"
+name = "Quasi-Newton-methods"
+uri = "tutorials/quasi_newton/#$"
+[[std.label]]
+name = "Quickstart"
+uri = "quickstart/#$"
+[[std.label]]
+dispname = "Running MadNLP in arbitrary precision"
+name = "Running-MadNLP-in-arbitrary-precision"
+uri = "tutorials/multiprecision/#$"
+[[std.label]]
+dispname = "Running MadNLP on the GPU"
+name = "Running-MadNLP-on-the-GPU"
+uri = "tutorials/gpu/#$"
+[[std.label]]
+name = "Scaling"
+uri = "algorithm/#$"
+[[std.label]]
+dispname = "Slack variables"
+name = "Slack-variables"
+uri = "algorithm/#$"
+[[std.label]]
+dispname = "Solution of the KKT system"
+name = "Solution-of-the-KKT-system"
+uri = "man/kkt/#$"
+[[std.label]]
+dispname = "Solution of the primal-dual KKT system"
+name = "Solution-of-the-primal-dual-KKT-system"
+uri = "algorithm/#$"
+[[std.label]]
+dispname = "Solving a KKT system with MadNLP"
+name = "Solving-a-KKT-system-with-MadNLP"
+uri = "man/linear_solvers/#$"
+[[std.label]]
+dispname = "Solving a problem in Float128"
+name = "Solving-a-problem-in-Float128"
+uri = "tutorials/multiprecision/#$"
+[[std.label]]
+dispname = "Solving a problem in Float32"
+name = "Solving-a-problem-in-Float32"
+uri = "tutorials/multiprecision/#$"
+[[std.label]]
+dispname = "Solving an AbstractKKTSystem in MadNLP"
+name = "Solving-an-AbstractKKTSystem-in-MadNLP"
+uri = "tutorials/kktsystem/#$"
+[[std.label]]
+dispname = "Solving the problem on the GPU with HyKKT"
+name = "Solving-the-problem-on-the-GPU-with-HyKKT"
+uri = "tutorials/gpu/#$"
+[[std.label]]
+dispname = "Solving the problem on the GPU with MadNLP"
+name = "Solving-the-problem-on-the-GPU-with-MadNLP"
+uri = "tutorials/gpu/#$"
+[[std.label]]
+dispname = "Sparse KKT systems"
+name = "Sparse-KKT-systems"
+uri = "lib/kkt/#$"
+[[std.label]]
+dispname = "Step 1: Computing the first and second-order sensitivities"
+name = "Step-1:-Computing-the-first-and-second-order-sensitivities"
+uri = "algorithm/#Step-1%3A-Computing-the-first-and-second-order-sensitivities"
+[[std.label]]
+dispname = "Step 2: Updating the barrier parameter"
+name = "Step-2:-Updating-the-barrier-parameter"
+uri = "algorithm/#Step-2%3A-Updating-the-barrier-parameter"
+[[std.label]]
+dispname = "Step 3: Solving the primal-dual KKT system"
+name = "Step-3:-Solving-the-primal-dual-KKT-system"
+uri = "algorithm/#Step-3%3A-Solving-the-primal-dual-KKT-system"
+[[std.label]]
+dispname = "Step 4: Finding the next iterate using the filter line-search"
+name = "Step-4:-Finding-the-next-iterate-using-the-filter-line-search"
+uri = "algorithm/#Step-4%3A-Finding-the-next-iterate-using-the-filter-line-search"
+[[std.label]]
+dispname = "Structure exploiting methods"
+name = "Structure-exploiting-methods"
+uri = "tutorials/kktsystem/#$"
+[[std.label]]
+dispname = "Updating a KKT system"
+name = "Updating-a-KKT-system"
+uri = "man/kkt/#$"
+[[std.label]]
+dispname = "Updating the initial guess"
+name = "Updating-the-initial-guess"
+uri = "tutorials/warmstart/#$"
+[[std.label]]
+dispname = "Updating the values of the Hessian"
+name = "Updating-the-values-of-the-Hessian"
+uri = "man/kkt/#$"
+[[std.label]]
+dispname = "Updating the values of the Jacobian"
+name = "Updating-the-values-of-the-Jacobian"
+uri = "man/kkt/#$"
+[[std.label]]
+dispname = "Updating the values of the diagonal matrices"
+name = "Updating-the-values-of-the-diagonal-matrices"
+uri = "man/kkt/#$"
+[[std.label]]
+dispname = "Using MadNLP with JuMP"
+name = "Using-MadNLP-with-JuMP"
+uri = "quickstart/#$"
+[[std.label]]
+dispname = "Using MadNLP with NLPModels"
+name = "Using-MadNLP-with-NLPModels"
+uri = "quickstart/#$"
+[[std.label]]
+dispname = "Warmstarting MadNLP"
+name = "Warmstarting-MadNLP"
+uri = "tutorials/warmstart/#$"

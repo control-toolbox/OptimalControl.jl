@@ -2,15 +2,6 @@
 
 Once a problem is built — via [`@def`](@ref) or the [functional API](@ref modelling-functional-api) — every part of it can be read back: dimensions, names, dynamics, costs, constraints, traits. This page is about reading a model, not solving it: for that, see [Solve overview](@ref solve-overview); for the indirect/PMP route, see [Flows overview](@ref flows-overview).
 
-!!! note "Signatures and `is_*` aliases"
-    Every accessor on this page is listed with its full signature and return type in the
-    [Problem API reference](@ref api-problem). Many predicates also have an equivalent `is_*`
-    alias — `has_control` / `is_control_free`, `has_variable` / `is_variable` / `is_nonvariable`,
-    `is_autonomous` / `is_nonautonomous`, `has_fixed_final_time` / `is_final_time_fixed` (and the
-    three other time variants), `has_mayer_cost` / `is_mayer_cost_defined`,
-    `has_lagrange_cost` / `is_lagrange_cost_defined`, `has_abstract_definition` /
-    `is_abstractly_defined`. Only the `has_*` / `is_autonomous` forms are shown below.
-
 ```@example main
 using OptimalControl
 nothing # hide
@@ -57,8 +48,11 @@ nothing # hide
 ### Times model
 
 ```@example main
-times(ocp)  # the TimesModel struct
+times(ocp)  # a struct describing the initial and final times
 ```
+
+On a solution, `times(sol)` returns something else: the time grid, a vector (see
+[Solution object](@ref results-solution)).
 
 Initial and final times separately. The final time needs the variable value when it is free:
 
@@ -67,7 +61,8 @@ initial_time(ocp)
 final_time(ocp, [1, 2])   # w = 1, tf = 2
 ```
 
-Asking for a free final time without the variable errors:
+Asking for a free final time without the variable raises an error, whose hint says to pass
+the variable:
 
 ```@repl main
 final_time(ocp)
@@ -93,7 +88,7 @@ has_free_final_time(ocp)
 ### Autonomy
 
 ```@example main
-is_autonomous(ocp)  # false if dynamics or Lagrange cost depend on t
+is_autonomous(ocp)  # false if the dynamics, the Lagrange cost or a path constraint depend on t
 ```
 
 See [Time dependence](@ref modelling-inspect-time-dependence) below.
@@ -156,7 +151,7 @@ dim_control_constraints_box(ocp)
 has_control(ocp)  # true if the problem has a control input
 ```
 
-`is_control_free(ocp) ≡ !has_control(ocp)` — see [No control](@ref modelling-without-control).
+`is_control_free(ocp) ≡ !has_control(ocp)`: see [Control-free problems](@ref modelling-without-control).
 
 ## Variable
 
@@ -187,9 +182,9 @@ The dynamics are stored as an in-place function `f!(dx, t, x, u, v)` — `dx` is
 
 ```@example main
 f! = dynamics(ocp)
-s = 0.5; q = [0.0, 1.0]; u = 2.0; v = [1.0, 2.0]
-dq = similar(q)
-f!(dq, s, q, u, v)
+s1 = 0.5; q1 = [0.0, 1.0]; u1 = 2.0; v1 = [1.0, 2.0]   # values at which to evaluate
+dq = similar(q1)
+f!(dq, s1, q1, u1, v1)
 dq  # the state derivative q̇
 ```
 
@@ -206,7 +201,7 @@ has_mayer_cost(ocp)
 has_lagrange_cost(ocp)
 ```
 
-Get the cost functions — `mayer` has signature `g(x0, xf, v)` and errors when there is no Mayer cost; `lagrange` has signature `f⁰(t, x, u, v)`:
+Get the cost functions: `mayer` has signature `g(x0, xf, v)` and raises an error when there is no Mayer cost (check first with `has_mayer_cost`); `lagrange` has signature `f⁰(t, x, u, v)`:
 
 ```@repl main
 mayer(ocp)
@@ -214,36 +209,36 @@ mayer(ocp)
 
 ```@example main
 f⁰ = lagrange(ocp)
-f⁰(0.5, [0.0, 1.0], 2.0, [1.0, 2.0])  # the integrand value
+f⁰(s1, q1, u1, v1)  # the integrand value
 ```
 
 ## Constraints
 
 ### Individual constraints
 
-`constraint(ocp, label)` returns `(type, f, lb, ub)`. The function signature is `f(x0, xf, v)` for `:boundary` and `:variable` constraints, `f(t, x, u, v)` for `:control`, `:state` and `:mixed` ones:
+`constraint(ocp, label)` returns `(type, f, lb, ub)`. The function signature is `f(x0, xf, v)` for `:boundary` and `:variable` constraints, `f(t, x, u, v)` for `:control`, `:state` and `:mixed` ones. The constraint `0 ≤ tf ≤ 2` was labelled `(1)`, which is stored as `:eq1` (see [Labels](@ref modelling-abstract-syntax-labels)):
 
 ```@example main
-x0 = [0, 1]; xf = [2, 3]; v = [1, 4]
-s = 0.5; q = [1.0, 2.0]; u = 3.0
+x0 = [0, 1]; xf = [2, 3]; v1 = [1, 4]        # boundary values and variable
+s1 = 0.5; q1 = [1.0, 2.0]; u1 = 3.0          # time, state and control values
 
 (type, f, lb, ub) = constraint(ocp, :eq1)
-(type, f(x0, xf, v), lb, ub)
+(type, f(x0, xf, v1), lb, ub)
 ```
 
 ```@example main
 (type, f, lb, ub) = constraint(ocp, :cons_bound)   # a boundary constraint
-(type, f(x0, xf, v))
+(type, f(x0, xf, v1))
 ```
 
 ```@example main
 (type, f, lb, ub) = constraint(ocp, :cons_u)       # a control constraint
-(type, f(s, q, u, v))
+(type, f(s1, q1, u1, v1))
 ```
 
 ```@example main
 (type, f, lb, ub) = constraint(ocp, :cons_mixed)  # a mixed path constraint
-(type, f(s, q, u, v))
+(type, f(s1, q1, u1, v1))
 ```
 
 ### All constraints, and nonlinear ones
@@ -266,7 +261,7 @@ dim_boundary_constraints_nl(ocp)
 ## Problem definition
 
 ```@example main
-definition(ocp)  # the OCP definition, an AbstractDefinition
+definition(ocp)  # the definition recorded by @def
 ```
 
 ```@example main
@@ -280,7 +275,7 @@ has_abstract_definition(ocp)  # false for a functional-API model
 
 ## [Time dependence](@id modelling-inspect-time-dependence)
 
-A problem is **autonomous** when neither the dynamics nor the Lagrange cost depends explicitly on the time variable, **non-autonomous** otherwise.
+A problem is **autonomous** when neither the dynamics, nor the Lagrange cost, nor any path constraint depends explicitly on the time variable, and **non-autonomous** otherwise.
 
 ```@example main
 ocp = @def begin
@@ -306,13 +301,39 @@ end
 is_autonomous(ocp)
 ```
 
+A path constraint that depends on `t` has the same effect:
+
+```@example main
+ocp = @def begin
+    t ∈ [ 0, 1 ], time
+    x ∈ R, state
+    u ∈ R, control
+    x(t) - t ≤ 1                       # explicit dependence on t
+    ẋ(t)  == u(t)
+    x(1) + 0.5∫( u(t)^2 ) → min
+end
+is_autonomous(ocp)
+```
+
 ```@example main
 is_nonautonomous(ocp)  # the negation of is_autonomous
 ```
 
-## API trap: `time` is gone
+## `times`, not `time`
 
-`time(ocp)` is not the time accessor — `time` is `Base.time` (wall-clock time), extended but not exported. The accessor is `times(ocp)`, shown above. Calling `time(ocp)` throws a migration error pointing here — see [Migrating to v2.1](@ref migration).
+The time accessor is `times(ocp)`, shown above. `time` is Julia's `Base.time` (the wall-clock
+time): calling `time(ocp)` raises an error whose hint is `use times(ocp)`. Coming from v2.0?
+See [Migrating from v2.0](@ref migration).
+
+## Signatures and `is_*` aliases
+
+Every accessor on this page is listed with its full signature and return type in the
+[Problem API reference](@ref api-problem). Many predicates also have an `is_*` counterpart (equivalent, or its negation as for
+`has_control` / `is_control_free`): `has_variable` / `is_variable` / `is_nonvariable`,
+`is_autonomous` / `is_nonautonomous`, `has_fixed_final_time` / `is_final_time_fixed` (and the
+three other time variants), `has_mayer_cost` / `is_mayer_cost_defined`,
+`has_lagrange_cost` / `is_lagrange_cost_defined`, `has_abstract_definition` /
+`is_abstractly_defined`. Only the `has_*` and `is_autonomous` forms are shown above.
 
 ## See also
 

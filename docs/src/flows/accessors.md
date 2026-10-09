@@ -1,132 +1,152 @@
 # [Accessors](@id flows-accessors)
 
-Building a flow doesn't throw away what it was built from — a flow remembers its Hamiltonian,
-its vector field, the control law you passed in, and the underlying integrator. This page is
-the map of what you can pull back out, and from which kind of flow.
+A flow keeps what it was built from: its Hamiltonian, its vector field, the
+pseudo-Hamiltonian and the control law, and its integrator. This page shows how to read them
+back, and on which flows.
 
 ```@example main
 using OptimalControl
 using OrdinaryDiffEqTsit5
-using NLPModelsIpopt
 nothing # hide
 ```
 
-## What a flow remembers
+We take the flow of the energy-minimal double integrator, built from the problem and the
+control law $u = p_2$ (see [From an OCP](@ref flows-from-ocp)), and the point
+$x = (-1, 0)$, $p = (12, 6)$: the start of the optimal extremal.
 
-Every flow wraps a **system** (the mathematical object — a Hamiltonian, a vector field, a
-pseudo-Hamiltonian plus a law...) and an **integrator**. The four accessors below read off the
-system; the last section reaches the integrator directly.
+```@example main
+ocp = @def begin
+    t ∈ [0, 1], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    x(0) == [-1, 0]
+    x(1) == [0, 0]
+    ẋ(t) == [v(t), u(t)]
+    0.5∫(u(t)^2) → min
+end
+
+f = Flow(ocp, (x, p) -> p[2])
+x, p = [-1, 0], [12, 6]
+nothing # hide
+```
 
 ## The Hamiltonian
 
+`hamiltonian(f)` returns the maximised Hamiltonian
+$\mathbf{H}(x, p) = H(x, p, u(x, p)) = p_1 v + p_2^2/2$:
+
 ```@example main
-h(x, p) = 0.5 * (x^2 + p^2)
-f = Flow(Hamiltonian(h))
 H = hamiltonian(f)
-H(0.0, 1.0, 0.0, 1.0)   # H(t, x, p, v)
+H(x, p)   # 12 × 0 + 6²/2
 ```
 
 ## The Hamiltonian vector field
 
-```@example main
-hamiltonian_vector_field(f)
-```
+`hamiltonian_vector_field(f)` returns
+$\vec{\mathbf{H}} = (\nabla_p \mathbf{H}, -\nabla_x \mathbf{H})$, as the pair
+$(\dot x, \dot p) = ((v, p_2), (0, -p_1))$:
 
-Returns a [`HamiltonianVectorField`](@ref) — $(\partial_p H, -\partial_x H)$ — whether or not
-the flow was built with AD.
+```@example main
+Hv = hamiltonian_vector_field(f)
+Hv(x, p)
+```
 
 ## The pseudo-Hamiltonian and the control law
 
-Only available on flows built from a pseudo-Hamiltonian (or an OCP, which is one under the
-hood) plus a law:
+`pseudo_hamiltonian(f)` returns $H(x, p, u) = p_1 v + p_2 u - u^2/2$, and `control_law(f)`
+the law you passed:
 
 ```@example main
-htilde(x, p, u) = p * u - 0.5 * u^2
-law_fun(x, p) = p
-f_ph = Flow(PseudoHamiltonian(htilde), DynClosedLoop(law_fun))
-
-H̃ = pseudo_hamiltonian(f_ph)
-H̃(0.0, 1.0, 0.0, 1.0, 1.0)   # H̃(t, x, p, u, v)
+Hp = pseudo_hamiltonian(f)
+u = control_law(f)
+Hp(x, p, u(x, p)), u(x, p)
 ```
 
 ```@example main
-control_law(f_ph)(1.0, 0.5)   # the law you passed in, u(x, p)
+@assert H(x, p) == 18 && Hp(x, p, 6) == 18 && u(x, p) == 6                       # hide
+@assert all(Hv(x, p) .≈ ([0, 6], [0, -12]))                                      # hide
+@assert H(0.0, x, p, Float64[]) == 18 && u(0.0, x, p, Float64[]) == 6            # hide
+nothing                                                                          # hide
 ```
+
+These functions take the short form of their arguments, as above, or the full form with the
+time and the variable: `H(t, x, p, v)`, `Hv(t, x, p, v)`, `Hp(t, x, p, u, v)`,
+`u(t, x, p, v)`, with `v = Float64[]` for a problem without a variable.
 
 ## Gradients
 
-Four functions, each returning a struct-wrapped callable (not a bare function or a vector) —
-expect `(t, x, p, v)`-shaped arguments when calling what they return:
+`get_hamiltonian_gradient(f)` returns the gradient of $\mathbf{H}$ with respect to $x$ and
+$p$, and `get_variable_gradient(f)` its gradient with respect to the variable.
+`get_pseudo_hamiltonian_gradient` and `get_pseudo_variable_gradient` do the same for $H$,
+before the law is substituted. They only take the full form `(t, x, p, v)`
+([CTFlows#438](https://github.com/control-toolbox/CTFlows.jl/issues/438)):
 
 ```@example main
-get_hamiltonian_gradient(f_ph)
+∇H = get_hamiltonian_gradient(f)
+∇H(0.0, x, p, Float64[])   # (∇ₓH, ∇ₚH) = ((0, 12), (0, 6))
 ```
 
 ```@example main
-get_variable_gradient(f_ph)
+@assert all(∇H(0.0, x, p, Float64[]) .≈ ([0, 12], [0, 6]))   # hide
+nothing                                                     # hide
 ```
 
-`get_pseudo_hamiltonian_gradient(f_ph)` and `get_pseudo_variable_gradient(f_ph)` mirror the
-two above, taken on $\tilde H$ before the law is substituted in rather than on the composed $H$.
+## Without a flow
 
-## Building the Hamiltonian vector field from a Hamiltonian, without a flow
-
-`hamiltonian_vector_field` also works directly on an `AbstractHamiltonian`, no `Flow` needed:
+`hamiltonian_vector_field` also applies to a `Hamiltonian`, without building a flow:
 
 ```@example main
-hamiltonian_vector_field(Hamiltonian(h))
+Hv2 = hamiltonian_vector_field(Hamiltonian((x, p) -> p[1] * x[2] + p[2]^2 / 2))
+Hv2(x, p)
 ```
 
-## What is available on which flow
+## On which flow
 
-Not every accessor makes sense on every flow — and the failure mode differs by *why* it
-doesn't apply, confirmed live rather than assumed uniform:
+What a flow can give back depends on what it was built from:
 
-| Built from | `hamiltonian` | `hamiltonian_vector_field` | `pseudo_hamiltonian` | `control_law` |
-| --- | --- | --- | --- | --- |
-| `Hamiltonian(h)` | ✅ | ✅ | ✗ `IncorrectArgument` | ✗ `IncorrectArgument` |
-| `HamiltonianVectorField(hvf)` | ✗ `IncorrectArgument` | ✅ | ✗ `MethodError` | ✗ `MethodError` |
-| `PseudoHamiltonian(h̃), law` | ✅ | ✅ | ✅ | ✅ |
-| `ocp, law` | ✅ | ✅ | ✅ | ✅ |
-| `VectorField(f)` | ✗ `MethodError` | ✗ `MethodError` (use `vector_field`) | ✗ `MethodError` | ✗ `MethodError` |
+| Flow built from | `hamiltonian` | `hamiltonian_vector_field` | `pseudo_hamiltonian`, `control_law` | `vector_field` |
+| --- | :-: | :-: | :-: | :-: |
+| `ocp, law` with a law `u(x, p)`, or `PseudoHamiltonian(Hp), law` | ✓ | ✓ | ✓ | ✓ |
+| `Hamiltonian(H)` | ✓ | ✓ | ✗ | ✓ |
+| `HamiltonianVectorField(Hv)` | ✗ | ✓ | ✗ | ✓ |
+| `VectorField(f)`, `ControlledVectorField(f), law`, `ocp, OpenLoop(…)` | ✗ | ✗ | ✗ | ✓ |
 
-`IncorrectArgument` shows up where the flow *could* answer in principle but deliberately
-doesn't have enough information (a `HamiltonianVectorField`-built flow has no scalar
-Hamiltonian to hand back, only its vector field — the error says so and suggests
-`hamiltonian_vector_field` instead). `MethodError` shows up where the accessor simply has no
-method for that system type at all — a `VectorField`-built flow was never given anything
-Hamiltonian-shaped, so none of the four Hamiltonian-side accessors apply; use
-`vector_field` instead:
+On a flow of the state, `vector_field` returns the vector field that is integrated:
 
 ```@example main
-vector_field(Flow(VectorField(x -> -x)))
+Fx = vector_field(Flow(VectorField(x -> -x)))
+Fx(2.0)
 ```
+
+An accessor that does not apply raises an error. For a Hamiltonian flow, the error says what
+the flow holds and what to use instead:
 
 ```@repl main
 try # hide
-hamiltonian(Flow(HamiltonianVectorField((x, p) -> (p, -x))))
+hamiltonian(Flow(HamiltonianVectorField((x, p) -> ([x[2], p[2]], [0, -p[1]]))))
 catch e # hide
 showerror(IOContext(stdout, :color => false), e) # hide
 end # hide
 ```
 
-## The underlying system and integrator
+On a flow of the state, it is a `MethodError` for now
+([CTFlows#438](https://github.com/control-toolbox/CTFlows.jl/issues/438)).
 
-Escape hatch, for when nothing above is specific enough — `system`/`integrator` stay
-deliberately unexported (too generic a name for a DSL surface), reach them qualified:
+## The system and the integrator
 
-```@example main
-CTFlows.Flows.system(f)
-```
+A flow is made of a **system**, the mathematical object it integrates, and an
+**integrator**. Both are reached with qualified names, since they are not exported:
 
 ```@example main
 CTFlows.Flows.integrator(f)
 ```
 
+The options of the integrator are those of [Flows overview](@ref flows-overview), given when
+the flow is built.
+
 ## See also
 
-- [From an OCP](@ref flows-from-ocp) — the most common source of a flow with all four
-  accessors available.
-- [From Hamiltonians](@ref flows-from-hamiltonians) — every constructor in
-  the table above, built and shown in full.
-- [Geometry](@ref geometry-overview) — the Lie-theoretic tools these systems are built on.
+- [From an OCP](@ref flows-from-ocp): the flow used on this page.
+- [From Hamiltonians](@ref flows-from-hamiltonians): every constructor in the table above.
+- [Geometry overview](@ref geometry-overview): Lie derivatives and brackets of these
+  Hamiltonians and vector fields.

@@ -2,8 +2,7 @@
 
 ## Install
 
-Open Julia's [interactive session (REPL)](https://docs.julialang.org/en/v1/manual/getting-started)
-and use the package manager:
+Open Julia's [interactive session (REPL)](https://docs.julialang.org/en/v1/manual/getting-started) and use the package manager:
 
 ```julia
 using Pkg
@@ -12,35 +11,46 @@ Pkg.add("OptimalControl")
 
 !!! tip
 
-    If you are new to Julia, follow [this guideline](https://github.com/orgs/control-toolbox/discussions/64).
+    If you are new to Julia, read [New to Julia: how to use OptimalControl](https://github.com/orgs/control-toolbox/discussions/64).
 
-`OptimalControl` alone is enough to define a problem with [`@def`](@ref modelling-abstract-syntax)
-and describe [solve strategies](@ref solve-choosing-a-method). Everything below is optional —
-loaded only when the feature it backs is actually used.
+`OptimalControl` alone is enough to define a problem with [`@def`](@ref modelling-abstract-syntax) and describe [solve strategies](@ref solve-choosing-a-method). The features below are optional: each requires an additional package, which you only need to load when you use that feature.
 
 ## You will also need a solver
 
-`solve` needs an NLP solver backend loaded. `NLPModelsIpopt` is the default and the one used
-throughout this documentation:
+`solve` requires an NLP solver backend to be loaded. `NLPModelsIpopt` is the default solver and is used throughout this documentation:
 
 ```julia
 using NLPModelsIpopt
 ```
 
-Alternatives exist, each behind its own package:
+Other solvers are available through their respective packages:
 
 | Solver | Load |
 | --- | --- |
 | `:ipopt` (default) | `using NLPModelsIpopt` |
-| `:madnlp` | `using MadNLP` (CPU) or `using MadNLPGPU` (GPU) |
+| `:madnlp` | `using MadNLP` (on GPU, see [below](@ref getting-started-installation-gpu)) |
 | `:uno` | `using UnoSolver` |
 | `:madncl` | `using MadNCL` **and** `using MadNLP` (both) |
 | `:knitro` | `using NLPModelsKnitro` (commercial licence required) |
 
-See [Choosing a method](@ref solve-choosing-a-method) for how these combine with a discretizer,
-a modeler and a `:cpu`/`:gpu` parameter. Calling `solve` before the matching package is loaded
-raises an `ExtensionError` naming exactly which `using` statement to add — the same mechanism
-covers every optional piece on this page.
+See [Choosing a method](@ref solve-choosing-a-method) to learn how these packages combine with a discretizer, a modeler, and a `:cpu`/`:gpu` parameter.
+
+If you call `solve` before loading the appropriate package, it raises an `ExtensionError` that names the missing package and the `using` statement to add:
+
+```julia
+julia> solve(ocp)
+ERROR: ExtensionError → _route_descriptive_options, descriptive_routing.jl:259
+│
+│  missing dependencies to access Ipopt{CPU} options metadata
+│
+│  Missing  NLPModelsIpopt
+│
+│  Context  Load NLPModelsIpopt extension first: using NLPModelsIpopt
+│  Hint     Run: using NLPModelsIpopt
+└─
+```
+
+The same mechanism covers every optional feature described on this page.
 
 ## Optional: plotting
 
@@ -48,41 +58,23 @@ covers every optional piece on this page.
 using Plots
 ```
 
-unlocks `plot(sol)`. Without it:
+Loading this package enables `plot(sol)`. Without it, `plot(sol)` raises an `ExtensionError` that asks for `using Plots`. See [Plot](@ref results-plot).
 
-```julia
-julia> using OptimalControl
-julia> plot(sol)
-ERROR: ExtensionError: missing dependencies to plot solutions
-Missing  Plots
-Hint     Run: using Plots
-```
-
-See [Plotting](@ref results-plot).
+[Makie](https://docs.makie.org) is supported too. Load `CairoMakie` for static figures or `GLMakie` for an interactive window, then call `Makie.plot(sol)`. See [Plot with Makie](@ref results-plot-makie).
 
 ## Optional: flows
 
-Building a [`Flow`](@ref flows-overview) — indirect shooting, simulation, or inspecting a
-Hamiltonian vector field — needs an ODE integrator:
+Creating a [`Flow`](@ref flows-overview)—for indirect shooting, simulation, or inspecting a Hamiltonian vector field—requires an ODE integrator:
 
 ```julia
 using OrdinaryDiffEqTsit5
 ```
 
-!!! warning "The most common first failure"
+Loading this package enables the creation of a `Flow`. Without it, `Flow` raises an `ExtensionError` that asks for `using OrdinaryDiffEqTsit5`.
 
-    Every page in the [Flows](@ref flows-overview) section opens with
-    `using OrdinaryDiffEqTsit5` for this reason: building a `Flow` before it is loaded is the
-    single most common trap for newcomers to this part of the package. It fails cleanly rather
-    than silently:
+!!! tip "Other integrators"
 
-    ```julia
-    julia> using OptimalControl
-    julia> φ = Flow(ocp, u)
-    ERROR: ExtensionError: missing dependencies to access SciML options metadata
-    Missing  OrdinaryDiffEqTsit5
-    Hint     Run: using OrdinaryDiffEqTsit5
-    ```
+    `Tsit5` is the default integrator. To use another method from the [SciML ODE solvers](https://docs.sciml.ai/DiffEqDocs/stable/solvers/ode_solve/), load its package and pass the algorithm when you build the flow, for example `Flow(ocp, law; alg=Vern9())` after `using OrdinaryDiffEqVerner`. `OrdinaryDiffEqTsit5` is then not needed; without it, a flow built without `alg` raises an error that shows how to pass one. The umbrella packages `OrdinaryDiffEq` and `DifferentialEquations` include `Tsit5` and work too.
 
 ## Optional: saving solutions
 
@@ -91,18 +83,11 @@ using JLD2   # format=:JLD (default)
 using JSON3  # format=:JSON
 ```
 
-unlock `export_ocp_solution`/`import_ocp_solution`. Without the matching one:
+Loading either of these packages enables `export_ocp_solution` and `import_ocp_solution` in the matching format. Without it, these functions raise an `ExtensionError` that names the package to load. See [Save & load](@ref results-save-load).
 
-```julia
-julia> export_ocp_solution(sol; format=:JLD)
-ERROR: ExtensionError: missing dependencies to export solutions to JLD2 format
-Missing  JLD2
-Hint     Run: using JLD2
-```
+## [Optional: GPU](@id getting-started-installation-gpu)
 
-See [Save & load](@ref results-save-load).
-
-## Optional: GPU
+Only NVIDIA GPUs are supported. Load these three packages together:
 
 ```julia
 using MadNLPGPU
@@ -110,35 +95,11 @@ using CUDA
 using CUDSS
 ```
 
-NVIDIA GPUs only; the problem's dynamics must be written coordinatewise.
+`CUDSS` is the one people forget: `using MadNLPGPU` does not load it, and the GPU solvers do not work without it. If one of the three is missing, the `ExtensionError` names it. One exception: when `MadNLPGPU` is the missing one, the error first asks for `MadNLP`, and names `MadNLPGPU` only once `MadNLP` is loaded ([CTSolvers#234](https://github.com/control-toolbox/CTSolvers.jl/issues/234)).
 
-All three are required together — they are what arms the `CTSolversMadNLPGPU` extension. Older
-guides list only the first two, because up to MadNLPGPU 0.8 `CUDSS` came in as a hard
-dependency; from 0.9 it is weak and has to be loaded explicitly.
+`ExaModels`, the GPU-capable modeler, needs no `using`: it comes with `OptimalControl`, so `:exa` works out of the box.
 
-Like the optional pieces above, a missing one is reported accurately: the `ExtensionError`
-names exactly which of the three is absent, so if you're told to load `CUDSS`, that's the one
-you forgot.
-
-`ExaModels` is not in the list on purpose: it ships as a dependency of OptimalControl, so
-`:exa` works without importing it. See [GPU](@ref solve-gpu) for the constraints, and check
-`CUDA.functional()` before assuming a `:gpu` solve will actually run on the device.
-
-## Checking your setup
-
-Loading everything and calling `methods()` is a quick way to confirm the install is sound —
-if this runs without error, `OptimalControl` and every optional piece above are wired in:
-
-```@example main
-using OptimalControl
-using NLPModelsIpopt
-using Plots
-using OrdinaryDiffEqTsit5
-using JLD2
-using JSON3
-
-methods()
-```
+Before relying on a `:gpu` solve, check that `CUDA.functional()` returns `true`. See [GPU](@ref solve-gpu) for the details and for a complete example.
 
 ## See also
 

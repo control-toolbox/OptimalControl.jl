@@ -4,10 +4,12 @@ Everything documented in this API reference is reachable from `using OptimalCont
 OptimalControl is the user-facing entry point of the control-toolbox ecosystem; it
 re-exports and wires together the lower-level packages below.
 
-- [CTBase](@extref CTBase index)
-- [CTDirect](@extref CTDirect index)
-- [CTFlows](@extref CTFlows index)
-- [CTLie](@extref CTLie index)
-- [CTModels](@extref CTModels index)
-- [CTParser](@extref CTParser index)
-- [CTSolvers](@extref CTSolvers index)
+| Package | Role |
+| --- | --- |
+| [CTBase](@extref CTBase index) | the foundation: shared types (vector fields, Hamiltonians), exceptions, strategies |
+| [CTModels](@extref CTModels index) | the optimal control problem and its solution, with their accessors |
+| [CTParser](@extref CTParser index) | the abstract syntax, `@def` |
+| [CTDirect](@extref CTDirect index) | the direct method: the discretisation of the problem |
+| [CTSolvers](@extref CTSolvers index) | the modelers and the solvers of the discretised problem |
+| [CTFlows](@extref CTFlows index) | flows of vector fields and Hamiltonians, for the indirect method |
+| [CTLie](@extref CTLie index) | Lie derivatives, Lie and Poisson brackets, lifts |

@@ -1,10 +1,10 @@
-# [Overview](@id geometry-overview)
+# [Geometry overview](@id geometry-overview)
 
-Some flows can't be built directly from an optimal control problem — the control law itself
-has to be *derived* first, for example a singular control on an arc where the usual
-maximization condition degenerates. Deriving it needs differential-geometry tools: Lie
-derivatives, Lie brackets, Poisson brackets. This section is that toolkit. It moved to its own
-package, **CTLie**, in v2.1.0-beta.
+Optimal control theory relies on tools from differential geometry: to analyse Hamiltonian
+systems, compute singular controls, or study controllability. This section presents the
+operators that OptimalControl provides for this: the Hamiltonian lift, Lie derivatives, Lie
+brackets, Poisson brackets and partial time derivatives. They come from the package CTLie, and
+`using OptimalControl` makes them available.
 
 ```@example main
 using OptimalControl
@@ -12,74 +12,77 @@ using OptimalControl
 
 ## What this is for
 
-- Computing a **singular control** — the standard chain of iterated Poisson brackets
-  ($H_{01}$, $H_{001}$, $H_{101}$, ...) that gives $u_{\text{sing}}$ on a singular arc.
-- Checking **controllability** via the Lie brackets of the system's vector fields.
-- Building a **Hamiltonian from a vector field** — the canonical lift used throughout the
-  indirect-methods section.
+- Computing a **singular control**: on an arc where the switching function vanishes, its
+  successive time derivatives are Poisson brackets ($H_{01}$, $H_{001}$, $H_{101}$, …), and
+  they give the control (see [Poisson bracket](@ref geometry-poisson-singular)).
+- Checking **controllability**, with the Lie brackets of the vector fields of the system.
+- Building a **Hamiltonian from a vector field**, the lift, to integrate its flow (see
+  [From Hamiltonians](@ref flows-from-hamiltonians)).
 
-## The four operations
+## Summary
 
-| Operation | Signature | What it computes |
-| --- | --- | --- |
-| [`Lift`](@ref) | `Lift(X)` | the Hamiltonian $H_X(x,p) = \langle p, X(x)\rangle$ of a vector field $X$ |
-| [`ad`](@ref) | `ad(X, f)` / `ad(X, Y)` | Lie derivative of a scalar `f`, or Lie bracket of a vector field `Y`, along $X$ |
-| [`Poisson`](@ref) | `Poisson(H, G)` | the Poisson bracket of two Hamiltonians |
-| [`∂ₜ`](@ref) | `∂ₜ(f)` | the partial time derivative of a non-autonomous `f` |
+| Operation | Notation | Julia | Page |
+| --- | --- | --- | --- |
+| Hamiltonian lift | $H_X(x, p) = \langle p, X(x) \rangle$ | `Lift(X)` | [Lift](@ref geometry-lift) |
+| Lie derivative | $(\mathcal{L}_X f)(x) = f'(x) \cdot X(x)$ | `ad(X, f)` | [Lie derivative and Lie bracket](@ref geometry-ad) |
+| Lie bracket | $[X, Y](x) = Y'(x) \cdot X(x) - X'(x) \cdot Y(x)$ | `ad(X, Y)` or `@Lie [X, Y]` | [Lie derivative and Lie bracket](@ref geometry-ad) |
+| Poisson bracket | $\{H, G\} = \nabla_p H \cdot \nabla_x G - \nabla_x H \cdot \nabla_p G$ | `Poisson(H, G)` or `@Lie {H, G}` | [Poisson bracket](@ref geometry-poisson) |
+| Partial time derivative | $\partial_t f(t, x, \ldots)$ | `∂ₜ(f)` | [Lie derivative and Lie bracket](@ref geometry-ad-time) |
 
-## Two vocabularies
+`ad(X, f)` computes a Lie derivative when `f` returns a scalar, and a Lie bracket when it
+returns a vector. The macro [`@Lie`](@ref geometry-lie-macro) writes the brackets as on paper.
 
-Two kinds of objects appear throughout: **vector fields** live on the state space
-($X : x \mapsto X(x)$), **Hamiltonians** live on the cotangent space
-($H : (x, p) \mapsto H(x,p)$). `ad` and its bracket operate on the first vocabulary, `Poisson`
-on the second. [`Lift`](@ref) is the bridge from one to the other.
+## Two kinds of objects
 
-## The bridge identity
+**Vector fields** live on the state space, $X : x \mapsto X(x)$, and **Hamiltonians** on the
+cotangent space, $H : (x, p) \mapsto H(x, p)$. `ad` acts on vector fields, `Poisson` on
+Hamiltonians, and the lift takes a vector field to a Hamiltonian.
 
-Lifting turns a Lie bracket into a Poisson bracket: $\{H_X, H_Y\} = H_{[X,Y]}$, i.e.
-`Poisson(Lift(X), Lift(Y)) ≈ Lift(ad(X, Y))`. It is the single best check that the two halves
-of the toolkit agree — not a linear example, where the bracket is trivially zero:
+Each can be a plain Julia function or a typed object, `VectorField(f)` or `Hamiltonian(h)`.
+On plain functions, the default is a function of the state only (`x` or `(x, p)`): the
+keywords `is_autonomous=false` (an argument `t` first) and `is_variable=true` (an argument `v`
+last) describe the other cases. A typed object carries this information itself, and the
+operations return typed objects, which can be nested. Two operands must have the same
+dependence on time and on the variable.
+
+## [The bridge identity](@id geometry-overview-bridge)
+
+The lift turns a Lie bracket into a Poisson bracket:
+
+```math
+\{H_X, H_Y\} = H_{[X, Y]}.
+```
+
+Indeed, $\nabla_p H_X = X$ and $\nabla_x H_Y = Y'^{\top} p$, so
+$\{H_X, H_Y\} = \langle p, Y' X \rangle - \langle p, X' Y \rangle = \langle p, [X, Y] \rangle$.
+For $X(x) = (x_1^2, x_2^2)$ and $Y(x) = (x_2, -x_1)$, the bracket is
+$[X, Y](x) = (x_2^2 - 2x_1 x_2,\ 2 x_1 x_2 - x_1^2)$, so at $x = (1, 2)$, $[X, Y] = (0, 3)$,
+and at $p = (3, 4)$ both sides equal $12$:
 
 ```@example main
 X(x) = [x[1]^2, x[2]^2]
 Y(x) = [x[2], -x[1]]
 
-lhs = Poisson(Lift(X), Lift(Y))
-rhs = Lift(ad(X, Y))
-
 x, p = [1.0, 2.0], [3.0, 4.0]
-lhs(x, p), rhs(x, p)
+Poisson(Lift(X), Lift(Y))(x, p), Lift(ad(X, Y))(x, p)
 ```
 
-## Autonomous, non-autonomous, variable
-
-Every operation here takes `is_autonomous::Bool` and `is_variable::Bool` keywords (default
-`true`/`false` — time-independent, no extra parameter). Operands that disagree — one
-autonomous, one not, say — throw a `PreconditionError` naming both traits explicitly; see
-[Lie derivative and Lie bracket](@ref geometry-ad) for the exact message.
+```@example main
+@assert ad(X, Y)(x) ≈ [0, 3]                                              # hide
+@assert Poisson(Lift(X), Lift(Y))(x, p) ≈ 12 && Lift(ad(X, Y))(x, p) ≈ 12   # hide
+nothing                                                                    # hide
+```
 
 ## Automatic differentiation
 
-Everything here is AD-backed **except `Lift`**, which is a purely algebraic rearrangement
-($H(x,p) = p \cdot X(x)$, no derivative involved). See
-[AD backend](@ref geometry-ad-backend) for how the derivatives themselves are
-computed and how to change the backend.
-
-## Coming from v2.0
-
-| v2.0 | v2.1 |
-| --- | --- |
-| `Lie(X, f)` / `Lie(X, Y)` | `ad(X, f)` / `ad(X, Y)` |
-| `X ⋅ f` | `ad(X, f)` — no operator replacement |
-| `HamiltonianLift` | `LiftedHamiltonianFunction` (written `OptimalControl.LiftedHamiltonianFunction`) |
-
-See [Migrating to v2.1](@ref migration) for the full picture, including the throwing shims that
-catch the old names.
+`ad`, `Poisson`, `∂ₜ` and `@Lie` compute their derivatives by automatic differentiation;
+`Lift` needs none. [AD backend](@ref geometry-ad-backend) shows how to choose the backend.
 
 ## See also
 
-- [Lifting a vector field](@ref geometry-lift)
+- [Lift](@ref geometry-lift)
 - [Lie derivative and Lie bracket](@ref geometry-ad)
 - [Poisson bracket](@ref geometry-poisson)
 - [The `@Lie` macro](@ref geometry-lie-macro)
 - [AD backend](@ref geometry-ad-backend)
+- [Singular control](@ref examples-singular-control): these tools on a complete problem.

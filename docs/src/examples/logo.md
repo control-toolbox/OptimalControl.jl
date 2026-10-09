@@ -1,33 +1,38 @@
 # [The logo](@id examples-logo)
 
 The OptimalControl.jl logo is not a drawing. It is the solution of an optimal control
-problem — an **energy-minimal low-thrust orbit transfer** — solved once and repeated by
+problem, an **energy-minimal low-thrust orbit transfer**, solved once and repeated by
 symmetry.
 
-![The OptimalControl.jl logo](../assets/logo.png)
+```@raw html
+<img src="../assets/logo.svg"      alt="OptimalControl.jl logo" class="oc-logo oc-logo--light" />
+<img src="../assets/logo-dark.svg" alt="OptimalControl.jl logo" class="oc-logo oc-logo--dark" />
+```
 
 A spacecraft spirals from a low circular orbit out to a higher one under continuous weak
 thrust. Two-body dynamics do not care which way is up, so the same optimal transfer, rotated
-by ``\pm 120°``, gives three trajectories at once — and their three departure points sit
+by $\pm 120°$, gives three trajectories at once, and their three departure points sit
 exactly where the three dots of the Julia logo go, winding onto the outer orbit around the
 central body.
 
-This page rebuilds that figure from scratch.
+This page rebuilds that figure from scratch. Besides OptimalControl and NLPModelsIpopt, it
+uses [CairoMakie](https://docs.makie.org) and [Colors](https://github.com/JuliaGraphics/Colors.jl)
+for the figures: add them to your environment to run it.
 
 ## The transfer problem
 
-Normalised two-body dynamics (gravitational parameter ``\mu = 1``). The state is the
+Normalised two-body dynamics (gravitational parameter $\mu = 1$). The state is the
 spacecraft's position and velocity in the orbital plane,
 
 ```math
 x = (x_1, x_2, x_3, x_4) = (\text{position}, \text{velocity}),
 ```
 
-and the control ``u = (u_1, u_2)`` is the thrust acceleration. The spacecraft starts on a
-circular orbit of radius ``r_0`` and must reach a circular orbit of radius ``r_f``: at the
-final time it has to be at the right radius, at the right (circular) speed, and with **zero
-radial velocity** — the final angular position is free. Along the way it minimises the thrust
-energy ``\int \|u\|^2``.
+and the control $u = (u_1, u_2)$ is the thrust acceleration. The spacecraft starts on a
+circular orbit of radius $r_0$ and must reach a circular orbit of radius $r_f$: at the final
+time it has to be at the right radius, at the right (circular) speed $1/\sqrt{r_f}$, and with
+**zero radial velocity**; the final angular position is free. Along the way it minimises the
+thrust energy $\int \|u\|^2$.
 
 ```@example logo
 using OptimalControl
@@ -55,14 +60,15 @@ ocp = @def begin
 
     ∫(u₁(t)^2 + u₂(t)^2) → min
 end
+nothing # hide
 ```
 
 ## Solving it
 
 Low-thrust transfers are hard to solve from a cold start, so we warm-start with a crude
-analytical spiral: let the radius grow linearly from ``r_0`` to ``r_f`` and advance the angle
-at the local Keplerian rate ``\dot\theta = r^{-3/2}``. (More on initial guesses in
-[Initial guess](@ref solve-initial-guess).)
+analytical spiral: the radius grows linearly from $r_0$ to $r_f$, and the angle advances at
+the local Keplerian rate $\dot\theta = r^{-3/2}$. The guess is a named tuple of functions of
+time (see [Initial guess](@ref solve-initial-guess)):
 
 ```@example logo
 k = (rf - r0) / tf
@@ -85,14 +91,23 @@ xf = state(sol)(tf)
  thrust_energy    = objective(sol))
 ```
 
-The insertion radius and speed reach their targets and the radial velocity is zero: the
-spacecraft arrives tangent to the outer orbit.
+The insertion radius and speed reach their targets, $r_f = 2.2$ and
+$1/\sqrt{2.2} \approx 0.674$, and the radial velocity is zero: the spacecraft arrives tangent
+to the outer orbit.
+
+```@example logo
+@assert successful(sol)                                                   # hide
+@assert isapprox(sqrt(xf[1]^2 + xf[2]^2), rf; atol=1e-6)                  # hide
+@assert isapprox(sqrt(xf[3]^2 + xf[4]^2), 1 / sqrt(rf); atol=1e-6)        # hide
+@assert abs(xf[1] * xf[3] + xf[2] * xf[4]) < 1e-6                         # hide
+nothing                                                                   # hide
+```
 
 ## Looking at the solution
 
-The site's documentation renders solution plots with [Plots.jl](https://docs.juliaplots.org);
-here we use the [Makie](https://docs.makie.org) backend instead — load a Makie package and the
-`Makie.plot` method for a solution becomes available.
+The other pages plot solutions with [Plots.jl](https://docs.juliaplots.org); this one uses
+[Makie](https://docs.makie.org) instead. Loading a Makie package makes `Makie.plot` available
+for a solution (see [Plot with Makie](@ref results-plot-makie)):
 
 ```@example logo
 using CairoMakie
@@ -100,13 +115,13 @@ using CairoMakie
 Makie.plot(sol)
 ```
 
-The thrust (``u_1, u_2``) stays small throughout — this is a *low-thrust* transfer, nudging
-the orbit rather than forcing it. The right-hand column is the costate, the adjoint of
-Pontryagin's Maximum Principle, which the solver returns alongside the state and control.
+The thrust $(u_1, u_2)$ stays small throughout: this is a *low-thrust* transfer, which nudges
+the orbit rather than forcing it. The right-hand column is the costate, which the solver
+returns with the state and the control (see [Solution object](@ref results-solution)).
 
 ## The trajectory in the plane
 
-The logo lives in the ``(x_1, x_2)`` plane. One transfer is a single spiral from the inner
+The logo lives in the $(x_1, x_2)$ plane. One transfer is a single spiral from the inner
 orbit to the outer one.
 
 ```@example logo
@@ -127,9 +142,10 @@ fig
 
 ## Three-fold symmetry
 
-Two-body dynamics are **rotation-equivariant**: if ``t \mapsto x(t)`` is an optimal transfer,
-so is the whole trajectory rotated by any fixed angle — same cost, same constraints. Rotating
-the solved spiral by ``0`` and ``\pm 2\pi/3`` gives three transfers for the price of one.
+Two-body dynamics are **rotation-equivariant**: if $t \mapsto x(t)$ is an optimal transfer,
+so is the whole trajectory rotated by any fixed angle, with the same cost and the same
+constraints. Rotating the solved spiral by $0$ and $\pm 2\pi/3$ gives three transfers for
+the price of one.
 
 Colour them with the Julia logo palette, drop a dot at each departure point, add the target
 orbit in Julia blue and the central body, and the logo is done.
@@ -168,14 +184,11 @@ scatter!(ax, Point2f(0, 0); color = jl.blue, markersize = 100)
 fig
 ```
 
-That is the figure the site uses as its logo (`docs/src/assets/logo.png`).
-
-The published asset is produced by a slightly more elaborate script — crisper strokes, a few
-tuning knobs — kept in the repository at `.extras/logos/logo-gagnant/`. The optimal control
-problem it solves is exactly the one above.
+That is the figure the site uses as its logo. The published file is drawn with a few more
+tuning knobs, from exactly this optimal control problem.
 
 ## See also
 
-- [Initial guess](@ref solve-initial-guess) — the warm-start used here, and the others.
-- [Plot](@ref results-plot) — the Plots backend, and what a solution plot shows.
-- [Example gallery](@ref examples-gallery) — the other worked problems.
+- [Initial guess](@ref solve-initial-guess): the warm start used here, and the other forms.
+- [Plot with Makie](@ref results-plot-makie) and [Plot](@ref results-plot): plotting a solution.
+- [Example gallery](@ref examples-gallery): the other worked problems.

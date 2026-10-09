@@ -69,7 +69,9 @@ Base.showable(::MIME"image/png", ::CairoMakie.Makie.Figure) = false
         isempty(str) || push!(rendered_contents, "{" * str * "}")
     end
     final_contents = join(rendered_contents, ",\n")
-    collapse = sidenav === Val(:sidebar) ? "collapsed: true," : ""
+    is_sidebar = sidenav === Val(:sidebar)
+    is_getting_started = lowercase(strip(name)) == "getting started"
+    collapse = is_sidebar && !is_getting_started ? "collapsed: true," : ""
     return "text: '$(replace(name, "'" => "\\'"))', $collapse items: [\n$(final_contents)\n]"
 end
 
@@ -112,15 +114,32 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 # Assets for reproducibility
 # ═══════════════════════════════════════════════════════════════════════════════
+# Each TOML is copied twice: into `src/assets/` so Documenter's link checker
+# resolves the `assets/…` download links (no `warnonly` since #952), and into
+# `src/public/assets/` so VitePress actually serves the file — it does not bundle
+# `.toml`, and DocumenterVitepress's assets→public copy only handles logo/favicon.
+# Creating `src/public/` also makes DVP skip that logo copy, so the logo is staged
+# into `src/public/` here as well. `src/public/` is git-ignored (build output);
+# `src/assets/Manifest.toml` stays tracked (the reviewable snapshot).
 mkpath(joinpath(@__DIR__, "src", "assets"))
-cp(
-    joinpath(@__DIR__, "Manifest.toml"),
-    joinpath(@__DIR__, "src", "assets", "Manifest.toml");
-    force=true,
+mkpath(joinpath(@__DIR__, "src", "public", "assets"))
+for f in ("Manifest.toml", "Project.toml")
+    cp(joinpath(@__DIR__, f), joinpath(@__DIR__, "src", "assets", f); force=true)
+    cp(joinpath(@__DIR__, f), joinpath(@__DIR__, "src", "public", "assets", f); force=true)
+end
+
+# Logo: `logo.svg` is the tracked light artwork; `logo-dark.svg` is the same file with
+# the white backdrop swapped for the VitePress dark surface (#1b1b1f), Julia mark colours
+# unchanged — generated here (git-ignored) and Vite-bundled from `src/assets/` for the
+# home-page <img> pair. `logo.svg` is also staged into `src/public/` for the navbar (DVP
+# fills `logo:` with the single `/logo.svg`; a `.dark` filter recolours it there).
+write(
+    joinpath(@__DIR__, "src", "assets", "logo-dark.svg"),
+    replace(read(joinpath(@__DIR__, "src", "assets", "logo.svg"), String), "#ffffff" => "#1b1b1f"),
 )
 cp(
-    joinpath(@__DIR__, "Project.toml"),
-    joinpath(@__DIR__, "src", "assets", "Project.toml");
+    joinpath(@__DIR__, "src", "assets", "logo.svg"),
+    joinpath(@__DIR__, "src", "public", "logo.svg");
     force=true,
 )
 
@@ -204,14 +223,14 @@ links = InterLinks(
         "https://jso.dev/NLPModelsIpopt.jl/stable/objects.inv",
     ),
     "ExaModels" => (
-        "https://exanauts.github.io/ExaModels.jl/stable/",
+        "https://madsuite-org.github.io/ExaModels.jl/stable/",
         joinpath(@__DIR__, "inventories", "ExaModels.toml"),
-        "https://exanauts.github.io/ExaModels.jl/stable/objects.inv",
+        "https://madsuite-org.github.io/ExaModels.jl/stable/objects.inv",
     ),
     "MadNLP" => (
-        "https://madnlp.github.io/MadNLP.jl/stable/",
+        "https://madsuite-org.github.io/MadNLP.jl/stable/",
         joinpath(@__DIR__, "inventories", "MadNLP.toml"),
-        "https://madnlp.github.io/MadNLP.jl/stable/objects.inv",
+        "https://madsuite-org.github.io/MadNLP.jl/stable/objects.inv",
     ),
     "Tutorials" => (
         "https://control-toolbox.org/Tutorials.jl/stable/",
@@ -227,10 +246,10 @@ using Literate
 
 LITERATE_DIR = joinpath(@__DIR__, "src-literate")
 MD_OUTPUT = joinpath(@__DIR__, "src", "getting-started")
-NB_OUTPUT = joinpath(@__DIR__, "src", "notebooks")
-JL_OUTPUT = joinpath(@__DIR__, "src", "scripts")
-mkpath(NB_OUTPUT)
-mkpath(JL_OUTPUT)
+# The notebook and the script are offered as downloads on the guided tour page, served by
+# VitePress from `src/public/assets/` (git-ignored). The page links them in raw HTML, so
+# Documenter's link checker does not need a copy in `src/assets/`.
+DOWNLOAD_DIR = joinpath(@__DIR__, "src", "public", "assets")
 
 for file in ["guided-tour.jl"]
     INPUT = joinpath(LITERATE_DIR, file)
@@ -238,8 +257,8 @@ for file in ["guided-tour.jl"]
     # `draft = false`. (It once carried an injected `Draft = false` override to run
     # under a `draft = true` default; that default is gone.)
     Literate.markdown(INPUT, MD_OUTPUT; name="guided-tour")
-    Literate.notebook(INPUT, NB_OUTPUT; name="guided-tour", execute=false)
-    Literate.script(INPUT, JL_OUTPUT; name="guided-tour")
+    Literate.notebook(INPUT, DOWNLOAD_DIR; name="guided-tour", execute=false)
+    Literate.script(INPUT, DOWNLOAD_DIR; name="guided-tour")
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -277,7 +296,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "Formulation" => "modelling/formulation.md",
                 "Abstract syntax (@def)" => "modelling/abstract-syntax.md",
                 "Functional API" => "modelling/functional-api.md",
-                "No control" => "modelling/without-control.md",
+                "Control-free problems" => "modelling/without-control.md",
                 "Inspect a problem" => "modelling/inspect.md",
                 "With AI" => "modelling/with-ai.md",
             ],
@@ -325,7 +344,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "The logo" => "examples/logo.md",
             ],
             "API Reference" => api_pages_final,
-            "Migrating to v2.1" => "migration.md",
+            "Migrating from v2.0" => "migration.md",
         ],
         plugins=[links],
     )

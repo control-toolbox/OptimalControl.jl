@@ -336,7 +336,7 @@ mjx-container svg path {
 }
 
 /* ============================================================================
-   Custom layout helpers (migrated from docs/src/assets/custom.css)
+   Custom layout helpers (two-column layouts used by the examples and the functional API)
    ============================================================================ */
 
 /* Responsive layout for two-column content */
@@ -414,3 +414,71 @@ mjx-container svg path {
         flex: 1 1 100%;
     }
 }
+
+/* 40 % / 60 % two-column layout (modelling/functional-api.md: the `@def` model beside its
+   functional-API twin). Both columns carry content, so narrow screens stack them rather
+   than hide one, unlike `.responsive-columns-left-priority` above. */
+.responsive-columns-40-60 {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1em;
+}
+
+.responsive-columns-40-60 > div:first-child {
+    flex: 4;
+    min-width: 0;
+}
+
+.responsive-columns-40-60 > div:last-child {
+    flex: 6;
+    min-width: 0;
+}
+
+@media (max-width: 700px) {
+    .responsive-columns-40-60 {
+        flex-direction: column;
+    }
+
+    .responsive-columns-40-60 > div:first-child,
+    .responsive-columns-40-60 > div:last-child {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+}
+
+/* ============================================================================
+   Dark mode: navbar logo. The home page swaps an exact light/dark SVG pair, but
+   the navbar logo is a single `<img>` (DocumenterVitepress fills `logo:` with one
+   src) at 24px, where the filter's ~10% desaturation is imperceptible. Same
+   `invert(0.894) hue-rotate(180deg)` recipe as the figures below.
+   ============================================================================ */
+.dark .VPNavBarTitle .VPImage {
+    filter: invert(0.894) hue-rotate(180deg);
+}
+
+/* ============================================================================
+   Dark mode: in-content images rendered on a white ground — figures that are
+   outputs of Julia `@example` / `@repl` blocks (Plots.jl and CairoMakie, both
+   forced to SVG in docs/make.jl) and the `examples/logo.md` hero. DocumenterVitepress
+   renders every *local* image (`![…](file)` and captured plot output alike) with an
+   empty `alt`, so `img[alt=""]` catches them all; an image that must NOT be flipped
+   (a photo, a screenshot) is written as `<img alt="…">` in a `@raw html` block —
+   the `rocket-def.png` pattern in modelling/with-ai.md — and keeps its real `alt`.
+   `invert(a)` maps white to `255·(1−a)`; a = 1 − 27/255 ≈ 0.894 lands it on the
+   VitePress dark surface (#1b1b1f). `hue-rotate(180deg)` leaves that neutral grey
+   untouched (its matrix rows sum to 1) and only rotates the coloured marks back
+   toward their hue — approximately; data colours come out ~10% flatter, an accepted
+   trade-off (see .reports/documentation-review-2026-09.md option A). The logo uses an
+   exact light/dark SVG pair instead (docs/make.jl, config.mts) and is not touched here.
+   ============================================================================ */
+.dark .vp-doc img[alt=""] {
+    filter: invert(0.894) hue-rotate(180deg);
+}
+
+/* Logo shown in the page body (home page, logo example): exact light/dark SVG pair */
+.oc-logo { width: 200px; margin: 1.5rem auto; }
+.oc-logo--light { display: block; }
+.oc-logo--dark  { display: none; }
+.dark .oc-logo--light { display: none; }
+.dark .oc-logo--dark  { display: block; }

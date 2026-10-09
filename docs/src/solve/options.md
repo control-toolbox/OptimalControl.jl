@@ -1,8 +1,8 @@
 # [Options](@id solve-options)
 
-Every keyword argument passed to `solve` ends up on exactly one strategy — the discretizer,
+Every keyword argument passed to `solve` ends up on exactly one strategy: the discretizer,
 the modeler, or the solver. This page covers how that routing works, the two escape hatches
-for the cases it doesn't handle automatically, and how to inspect where a value came from.
+for the cases it does not handle automatically, and how to inspect where a value came from.
 
 ```@example advanced
 using OptimalControl
@@ -31,10 +31,10 @@ the three strategies in play, or it's an error — never a silent no-op.
 
 ```@example advanced
 sol = solve(ocp;
-    grid_size=100,   # → Collocation (discretizer)
-    show_time=true,  # → ADNLP (modeler)
-    max_iter=500,    # → Ipopt (solver)
-    print_level=0,   # → Ipopt (solver)
+    grid_size=100,     # → Collocation (discretizer)
+    backend=:default,  # → ADNLP (modeler)
+    max_iter=500,      # → Ipopt (solver)
+    print_level=0,     # → Ipopt (solver)
 )
 nothing # hide
 ```
@@ -49,30 +49,13 @@ showerror(IOContext(stdout, :color => false), e) # hide
 end # hide
 ```
 
-## Ambiguous options
+## Explicit routing with `route_to`
 
-If two strategies from *different* families declare the same option name, using it bare is
-ambiguous — `solve` won't guess which one you meant. Disambiguate with `route_to`, which takes
-a strategy id and a value:
-
-```julia
-sol = solve(ocp, :exa, :madnlp;
-    common_option_name=route_to(:exa, 12),
-    max_iter=500,
-)
-```
-
-`route_to` also accepts alternating id/value pairs, to send the same option name to several
-strategies with different values at once:
-
-```julia
-sol = solve(ocp, :exa, :madnlp;
-    common_option_name=route_to(:exa, 12, :madnlp, true),
-)
-```
-
-`route_to` works even when there's no ambiguity to resolve — it's fine to use it just to be
-explicit:
+If two strategies of a method declared the same option name, using it bare would be
+ambiguous, and `solve` would not guess which one you meant. With the built-in strategies,
+this does not happen today: no two strategies of a method share an option name. `route_to`
+names the target strategy explicitly. It is required for an ambiguous name, and allowed
+everywhere, for instance to be explicit:
 
 ```@example advanced
 using MadNLP
@@ -81,6 +64,16 @@ sol = solve(ocp, :madnlp;
     max_iter=route_to(:madnlp, 1000), # explicitly routed
     print_level=MadNLP.ERROR,         # auto-routed to the solver
 )
+nothing # hide
+```
+
+`route_to` takes a strategy id and a value, or the same as a keyword argument,
+`route_to(madnlp=1000)`. It also accepts several id/value pairs, to send the same option name
+to several strategies with different values at once: `route_to(:id1, value1, :id2, value2)`.
+
+```@example advanced
+sol = solve(ocp, :madnlp; max_iter=route_to(madnlp=1000), display=false) # keyword form
+@assert successful(sol)  # hide
 nothing # hide
 ```
 
@@ -104,10 +97,6 @@ the strategy's declared options — `bypass` is what skips that check. `force` i
 for `bypass` (`force === bypass`); use whichever name reads better:
 `route_to(:ipopt, force(1))`.
 
-Both `bypass` and `route_to` return values of internal types (`BypassValue`, `RoutedOption`) —
-these types are imported but not exported, so only the functions ever appear in your code, not
-the type names.
-
 !!! warning "Use `bypass` sparingly"
 
     It skips type checking and validation entirely. Reach for it only when you're certain the
@@ -115,8 +104,8 @@ the type names.
 
 ## Where a value came from
 
-Every option on a built strategy instance knows whether it was set by you, left at its
-default, or computed from the problem:
+Every option on a built strategy instance knows whether it was set by you (`:user`), left at
+its default (`:default`), or computed from the `:cpu`/`:gpu` parameter (`:computed`):
 
 ```@example advanced
 s = OptimalControl.Ipopt(max_iter=200)
@@ -131,16 +120,25 @@ println(is_default(opts, :tol))        # true
 println(is_computed(opts, :max_iter))  # false
 ```
 
-`option_source` returns which of the three it was, as a `Symbol`:
+`option_source` returns which of the three it was, as a `Symbol`. MadNLP's linear solver is a
+computed option: its default depends on the parameter (MUMPS on CPU, cuDSS on GPU):
 
 ```@example advanced
 println(option_source(s, :max_iter))
 println(option_source(s, :tol))
+println(option_source(OptimalControl.MadNLP(), :linear_solver))
 ```
 
-This is the same provenance information the `📦 Configuration` table shows when `solve` prints
-its display (see [Overview](@ref solve-overview)) — these functions let you query it
-programmatically instead of reading it off the printout.
+```@example advanced
+@assert option_source(s, :max_iter) == :user                                   # hide
+@assert option_source(s, :tol) == :default                                     # hide
+@assert option_source(OptimalControl.MadNLP(), :linear_solver) == :computed    # hide
+nothing                                                                        # hide
+```
+
+The display of `solve` (see [Solve overview](@ref solve-overview)) shows the `:user` and
+`:computed` options of each strategy, the latter tagged `[cpu-dependent]` or
+`[gpu-dependent]`; the `:default` ones are not shown.
 
 ## Action options vs strategy options
 

@@ -1,11 +1,11 @@
 # [Turnpike (bang–singular–bang)](@id examples-turnpike)
 
-A scalar system, $\dot x = u$ with $u \in [-1,1]$, driven between two states over a fixed
-horizon while minimising $\int x^2$. Because the cost is linear in $u$, the optimal control is
-bang — $u = \pm 1$ — except on an interval where the switching function vanishes: a **singular
-arc**. This is the smallest problem that shows one, and unlike
-[Singular control](@ref examples-singular-control) the singular feedback falls straight out of
-the optimality conditions, with no Poisson brackets.
+A scalar system, $\dot x = u$ with $u \in [-1, 1]$, is driven between two states over a fixed
+horizon while minimising $\int x^2$. The dynamics are affine in $u$ and the cost does not
+depend on $u$, so the pseudo-Hamiltonian is linear in $u$: the optimal control is bang,
+$u = \pm 1$, except on an interval where the switching function vanishes, a **singular arc**.
+This is the smallest problem with one, and unlike [Singular control](@ref examples-singular-control),
+the singular control follows from the optimality conditions without Poisson brackets.
 
 ```@example main
 using OptimalControl
@@ -17,11 +17,13 @@ using Plots
 
 ## The problem
 
-State $x$, control $u \in [-1,1]$, dynamics $\dot x = u$, fixed horizon $t_f = 2$, transfer
-from $x(0) = 1$ to $x(t_f) = 1/2$ minimising $\int_0^{2} x(t)^2\,dt$. One dimension, so the
-state and the control are scalars, not length-1 vectors.
+The horizon is fixed, $t_f = 2$, and the transfer goes from $x(0) = 1$ to $x(2) = 1/2$. The
+state and the control are scalars, not vectors of length one:
 
-## Definition
+```@raw html
+<div class="responsive-columns-left-priority">
+<div>
+```
 
 ```@example main
 t0, tf = 0.0, 2.0
@@ -37,129 +39,161 @@ ocp = @def begin
     ẋ(t) == u(t)
     ∫(x(t)^2) → min
 end
+nothing # hide
 ```
 
-## Direct solution
+```@raw html
+</div>
+<div>
+```
+
+```math
+\begin{aligned}
+& \text{Minimise} && \int_0^2 x(t)^2 \,\mathrm{d}t \\
+& \text{subject to} && \dot x(t) = u(t), \\[0.5em]
+& && -1 \le u(t) \le 1, \\[0.5em]
+& && x(0) = 1, \quad x(2) = 1/2.
+\end{aligned}
+```
+
+```@raw html
+</div>
+</div>
+```
+
+## Direct method
 
 ```@example main
 direct_sol = solve(ocp; grid_size=100, display=false)
-plt = plot(direct_sol, :state, :control; label="Direct")
+plt = plot(direct_sol, :state, :control; label="direct", size=(800, 400))
 ```
 
-The state slides down to the origin, holds there, then climbs to the target. The flat middle
-stretch — the *turnpike* — is the singular arc, where $u$ leaves the bounds and sits at $0$.
+The state goes down to the origin as fast as it can, stays there, then climbs to the target.
+The flat middle part, the *turnpike*, is the singular arc, where the control is $0$, inside
+its bounds.
 
 ## The singular control
 
-The pseudo-Hamiltonian $H(x,p,u) = p\,u - x^2$ is linear in $u$, so the maximising control is
-bang, $u = \operatorname{sign}(p)$, driven by the sign of the costate. Where $p$ vanishes on a
-whole interval rather than at an isolated instant, that rule says nothing and the control is
-*singular*. Differentiate $p \equiv 0$: the adjoint equation is $\dot p = -\partial_x H = 2x$,
-so $p \equiv 0$ forces $x \equiv 0$, and then $\dot x = u$ forces
+With $p^0 = -1$ (see [Notation and conventions](@ref modelling-formulation-conventions)), the
+pseudo-Hamiltonian is
 
-$$u_{\text{sing}} = 0.$$
-
-The whole extremal is therefore bang–singular–bang:
-
-| arc | interval | $u$ | $x$ |
-| --- | --- | --- | --- |
-| bang down | $[0,\,t_1]$ | $-1$ | $1 \to 0$ |
-| singular | $[t_1,\,t_2]$ | $0$ | $0$ |
-| bang up | $[t_2,\,2]$ | $+1$ | $0 \to 1/2$ |
-
-with $t_1 = 1$, $t_2 = 3/2$ and $p_0 = -1$, all read off by integrating each arc by hand: $x$
-falls at unit rate from $1$, reaching $0$ at $t_1 = 1$; it rises at unit rate to $1/2$, so it
-must leave the arc at $t_2 = 3/2$.
-
-## Indirect solution
-
-Three constant-control flows, one per arc:
-
-```@example main
-f_minus = Flow(ocp, (x, p) -> -1.0)
-f_sing  = Flow(ocp, (x, p) ->  0.0)
-f_plus  = Flow(ocp, (x, p) -> +1.0)
+```math
+H(x, p, u) = p\, u - x^2 .
 ```
 
-The unknowns are the initial costate $p_0$ and the two switching times $t_1 < t_2$; the horizon
-is fixed. Three conditions close the system — the trajectory enters the singular arc at $x = 0$
-with the switching function already vanishing there ($p = 0$), and it hits the target at $t_f$:
+It is linear in $u$, and maximised by $u = \operatorname{sign}(p)$: the switching function is
+the costate $p$. Where $p$ vanishes on an interval, and not only at isolated times, this rule
+does not give the control, which is *singular*. On such an interval, $\dot p = 0$; the adjoint
+equation is $\dot p = -\partial_x H = 2x$, so $x = 0$ there, and then $\dot x = u$ gives
+
+```math
+u_{\text{sing}} = 0 .
+```
+
+The extremal is therefore bang–singular–bang:
+
+| Arc | Interval | $u$ | $x$ |
+| --- | --- | --- | --- |
+| bang | $[0, t_1]$ | $-1$ | from $1$ to $0$ |
+| singular | $[t_1, t_2]$ | $0$ | $0$ |
+| bang | $[t_2, 2]$ | $+1$ | from $0$ to $1/2$ |
+
+The state decreases at unit rate from $1$, so it reaches $0$ at $t_1 = 1$; it increases at unit
+rate to $1/2$, so it leaves the arc at $t_2 = 3/2$. On the first arc, $\dot p = 2x = 2(1 - t)$
+and $p(t_1) = 0$, so $p(t) = -(1 - t)^2$ and $p(0) = -1$. The cost is
+$\int_0^1 (1 - t)^2 \,\mathrm{d}t + \int_{3/2}^2 (t - 3/2)^2 \,\mathrm{d}t = 1/3 + 1/24 = 3/8$.
+
+## Indirect method
+
+Each arc has its flow, with a constant control:
 
 ```@example main
-function shoot!(s, ξ)
-    p0, t1, t2 = ξ[1], ξ[2], ξ[3]
+f_minus = Flow(ocp, (x, p) -> -1)
+f_sing = Flow(ocp, (x, p) -> 0)
+f_plus = Flow(ocp, (x, p) -> 1)
+nothing # hide
+```
+
+The unknowns are the initial costate $p_0$ and the two switching times; the horizon is fixed.
+Three conditions close the system: the trajectory enters the singular arc at $x = 0$, with the
+switching function $p = 0$, and it reaches the target at $t_f$:
+
+```@example main
+function shoot!(s, ξ, _)
+    p0, t1, t2 = ξ
     x1, p1 = f_minus(t0, x0, p0, t1)
     x2, p2 = f_sing(t1, x1, p1, t2)
-    xf_, _ = f_plus(t2, x2, p2, tf)
-    s[1] = x1        # enter the singular arc at x = 0
-    s[2] = p1        # switching function vanishes there
-    s[3] = xf_ - xf  # hit the target
+    x3, _ = f_plus(t2, x2, p2, tf)
+    s[1] = x1          # enter the singular arc at x = 0
+    s[2] = p1          # where the switching function vanishes
+    s[3] = x3 - xf     # reach the target
     return nothing
 end
+nothing # hide
 ```
 
-For a starting point, solve the same problem directly first, then read the singular arc off
-that solution. The switching function here is just the costate ($\partial_u H = p$), so the arc
-is where $|p|$ stays near zero — the same recipe as the
-[Goddard tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html#Initial-guess):
+The direct solution gives the initial guess. The singular arc is where its switching function,
+the costate, stays close to zero, as in the [Goddard tutorial](@extref Tutorials Initial-guess):
 
 ```@example main
-t = time_grid(direct_sol)
-p = costate(direct_sol)
+tg = time_grid(direct_sol)
+p_d = costate(direct_sol)
 
-φ(τ) = p(τ)                     # switching function ≡ costate
-η = 1e-3
-t12 = t[abs.(φ.(t)) .≤ η]       # grid points on the singular arc
-
-p0_guess = p(t0)
-t1_guess = minimum(t12)
-t2_guess = maximum(t12)
-(p0_guess, t1_guess, t2_guess)
+t12 = tg[abs.(p_d.(tg)) .≤ 1e-3]   # the grid points on the singular arc
+ξ_guess = [p_d(t0), minimum(t12), maximum(t12)]
 ```
 
 ```@example main
-nle!(s, ξ, _) = shoot!(s, ξ)
-prob = NonlinearProblem(nle!, [p0_guess, t1_guess, t2_guess])
+prob = NonlinearProblem(shoot!, ξ_guess)
 shooting_sol = NonlinearSolve.solve(prob; show_trace=Val(false))
 p0_sol, t1_sol, t2_sol = shooting_sol.u
 ```
 
+The solver finds the values computed by hand, $p_0 = -1$, $t_1 = 1$ and $t_2 = 3/2$, with a
+zero residual:
+
 ```@example main
 s = zeros(3)
-shoot!(s, shooting_sol.u)
+shoot!(s, shooting_sol.u, nothing)
 s
 ```
 
-The solver lands on $p_0 = -1$, $t_1 = 1$, $t_2 = 3/2$ — the hand computation above.
-
 ## Comparison
 
-Concatenating the three constant-control flows at the solved switching times rebuilds the whole
-trajectory:
+The concatenation of the three flows at the switching times gives the whole extremal, and its
+cost is $3/8$, as is the cost of the direct solution, up to the discretisation error:
 
 ```@example main
-φ_bsb = f_minus * (t1_sol, f_sing) * (t2_sol, f_plus)
-indirect_sol = φ_bsb((t0, tf), x0, p0_sol)
-plot!(plt, indirect_sol, :state, :control;
-    label="Indirect", linestyle=:dash)
+φ = f_minus * (t1_sol, f_sing) * (t2_sol, f_plus)
+indirect_sol = φ((t0, tf), x0, p0_sol)
+objective(direct_sol), objective(indirect_sol)
 ```
 
-The two curves overlap, and the objective is the expected $3/8$:
+For the plot, the flows are built with `saveat`, so that the trajectory has 201 points (see
+[Plotting a flow](@ref results-plot-flow)):
 
 ```@example main
-objective(direct_sol)
+fine = (saveat=range(t0, tf, 201), dense=false)
+φ_plot = Flow(ocp, (x, p) -> -1; fine...) *
+    (t1_sol, Flow(ocp, (x, p) -> 0; fine...)) *
+    (t2_sol, Flow(ocp, (x, p) -> 1; fine...))
+plot!(plt, φ_plot((t0, tf), x0, p0_sol), :state, :control; label="indirect", linestyle=:dash)
+```
+
+```@example main
+@assert isapprox(shooting_sol.u, [-1, 1, 3 / 2]; atol=1e-8) && maximum(abs, s) < 1e-10   # hide
+@assert isapprox(objective(indirect_sol), 3 / 8; atol=1e-6)                              # hide
+@assert isapprox(objective(direct_sol), 3 / 8; atol=1e-3)                                # hide
+nothing                                                                                  # hide
 ```
 
 ## See also
 
-- [Singular control](@ref examples-singular-control) — a 2-D drift system where the singular
-  control does need the `Lift`/`@Lie` Poisson-bracket chain.
-- [Shooting](@ref flows-shooting) — the shooting method in general; this page is a worked case
-  of *switching times as unknowns*.
-- [Time minimisation (bang–bang)](@ref examples-double-integrator-time) — the bang arcs on their
-  own, with no singular arc between them.
-- [Multi-phase flows](@ref flows-multi-phase) — concatenating arc flows with `*`.
-- [Goddard problem](https://control-toolbox.org/Tutorials.jl/stable/tutorial-goddard.html) —
-  the same direct-then-indirect workflow on a harder instance: a singular arc *and* a
-  state-constraint boundary arc.
-```
+- [Singular control](@ref examples-singular-control): a system with three states, where the
+  singular control needs Poisson brackets.
+- [Shooting](@ref flows-shooting): the shooting method, with switching times as unknowns.
+- [Time minimisation (bang–bang)](@ref examples-double-integrator-time): bang arcs, without a
+  singular arc between them.
+- [Multi-phase flows](@ref flows-multi-phase): the concatenation of flows.
+- The [Goddard tutorial](@extref Tutorials tutorial-goddard): the same workflow on a harder
+  problem, with a singular arc and a boundary arc.

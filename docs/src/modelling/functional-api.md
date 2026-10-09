@@ -6,7 +6,7 @@ The functional API uses `OptimalControl.PreModel` as a mutable builder, populate
 
 !!! note
 
-    When a problem is defined with the functional API, [`definition`](@ref)`(ocp)` returns an `EmptyDefinition` — no abstract expression is stored. This contrasts with `@def`, which records the full DSL expression for display and introspection.
+    When a problem is defined with the functional API, [`definition`](@ref)`(ocp)` is empty: no abstract expression is stored. This contrasts with `@def`, which records the full DSL expression for display and introspection.
 
 !!! warning "Modeler compatibility"
 
@@ -26,7 +26,7 @@ The functional API mirrors the [Formulation](@ref modelling-formulation). The co
 | :--- | :--- |
 | Dynamics $f(t, x, u)$ | `dyn!` passed to [`dynamics!`](@ref) |
 | Lagrange integrand $f^0(t, x, u)$ | `lag` passed to [`objective!`](@ref) |
-| Mayer terminal cost $g(x_0, x_f)$ | `may` passed to [`objective!`](@ref) |
+| Mayer (boundary) cost $g(x_0, x_f)$ | `may` passed to [`objective!`](@ref) |
 | Path constraint $c(t, x, u)$ | `p!` passed to [`constraint!`](@ref CTModels.Building.constraint!)`(pre, :path; ...)` |
 | Boundary constraint $b(x_0, x_f)$ | `b!` passed to [`constraint!`](@ref CTModels.Building.constraint!)`(pre, :boundary; ...)` |
 | Extra variable $v$ | [`variable!`](@ref) (extra argument to all the callbacks above) |
@@ -63,7 +63,7 @@ dynamics!(pre, dyn!)
 
 # Lagrange integrand — out-of-place, signature: lag(t, x, u, v) → scalar
 lag(t, x, u, v) = ...
-# Mayer terminal cost — out-of-place, signature: may(x0, xf, v) → scalar
+# Mayer (boundary) cost — out-of-place, signature: may(x0, xf, v) → scalar
 #   x0 : initial state (scalar if n=1, vector of length n otherwise)
 #   xf : final state   (scalar if n=1, vector of length n otherwise)
 may(x0, xf, v) = ...
@@ -81,7 +81,7 @@ constraint!(pre, :state;    rg=i:j, lb=..., ub=..., label=:name)
 constraint!(pre, :control;  rg=i:j, lb=..., ub=..., label=:name)
 constraint!(pre, :variable; rg=i:j, lb=..., ub=..., label=:name)
 #
-# (b) Non-linear constraints defined by a function — :boundary, :path
+# (b) General constraints defined by a function — :boundary, :path
 #     The constraint reads:  lb ≤ f(...) ≤ ub  (use lb=ub for equality).
 #
 #     Boundary — in-place: b!(val, x0, xf, v)   (same shape as Mayer)
@@ -122,6 +122,7 @@ The simplest case: fixed time interval, boundary constraints, autonomous dynamic
 ```@example ex-energy
 using OptimalControl
 using NLPModelsIpopt
+using Plots
 t0 = 0.0; tf = 1.0; x0 = [-1.0, 0.0]; xf = [0.0, 0.0]
 nothing # hide
 ```
@@ -136,16 +137,16 @@ nothing # hide
 ```@example ex-energy
 ocp_macro = @def begin
 
-t ∈ [t0, tf], time
-x = (q, v) ∈ R², state
-u ∈ R, control
+    t ∈ [t0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
 
-x(t0) == x0
-x(tf) == xf
+    x(t0) == x0
+    x(tf) == xf
 
-ẋ(t) == [v(t), u(t)]
+    ẋ(t) == [v(t), u(t)]
 
-0.5∫( u(t)^2 ) → min
+    0.5∫( u(t)^2 ) → min
 
 end
 nothing # hide
@@ -215,6 +216,12 @@ println(
     "Functional API: objective = ", objective(sol_func),
     ", iterations = ", iterations(sol_func),
 )
+```
+
+```@example ex-energy
+@assert isapprox(objective(sol_macro), objective(sol_func); rtol=1e-8)   # hide
+@assert isapprox(objective(sol_macro), 6; rtol=1e-3)                     # hide
+nothing                                                                  # hide
 ```
 
 ```@example ex-energy
@@ -335,11 +342,17 @@ println(
 )
 ```
 
-Full worked story (direct + indirect): [Time minimisation](@ref examples-double-integrator-time) · [example gallery](@ref examples-gallery).
+```@example ex-time
+@assert isapprox(objective(sol_macro), objective(sol_func); rtol=1e-6)   # hide
+@assert isapprox(objective(sol_macro), 2; rtol=1e-2)                     # hide
+nothing                                                                  # hide
+```
+
+Full worked story (direct + indirect): [Time minimisation (bang–bang)](@ref examples-double-integrator-time) · [example gallery](@ref examples-gallery).
 
 ### 3. Parameter estimation — no control
 
-No control anywhere: `control!` is simply never called (see [No control](@ref modelling-without-control)). Only a **variable** — the growth rate `λ` — is optimised, fitting the state to data. The Lagrange integrand reads `t` through `data(t)`, so the problem is **non-autonomous**.
+No control anywhere: `control!` is simply never called (see [Control-free problems](@ref modelling-without-control)). Only a **variable** — the growth rate `λ` — is optimised, fitting the state to data. The Lagrange integrand reads `t` through `data(t)`, so the problem is **non-autonomous**.
 
 ```@example ex-control-free
 using OptimalControl
@@ -428,11 +441,17 @@ println(
 )
 ```
 
-Full worked story (direct + indirect): [Parameter estimation without a control](@ref examples-control-free), [No control](@ref modelling-without-control) · [example gallery](@ref examples-gallery).
+```@example ex-control-free
+@assert isapprox(variable(sol_macro), variable(sol_func); rtol=1e-6)    # hide
+@assert isapprox(variable(sol_macro), 0.5; atol=5e-2)                    # hide
+nothing                                                                   # hide
+```
+
+Full worked story (direct + indirect): [Parameter estimation without a control](@ref examples-control-free), [Control-free problems](@ref modelling-without-control) · [example gallery](@ref examples-gallery).
 
 ### 4. Control and variable together
 
-The growth problem again, now with a control input and a quadratic control cost — a **variable** (`λ`) and a **control** (`u`) estimated at once.
+The growth problem again, now with a control input and a quadratic control cost — a **variable** (`λ`) and a **control** (`u`) optimised at once.
 
 ```@example ex-control-variable
 using OptimalControl
@@ -522,6 +541,11 @@ println(
     "objective: macro = ", objective(sol_macro),
     ", functional = ", objective(sol_func),
 )
+```
+
+```@example ex-control-variable
+@assert isapprox(objective(sol_macro), objective(sol_func); rtol=1e-6)   # hide
+nothing                                                                  # hide
 ```
 
 Full worked story (direct + indirect): [Control and variable together](@ref examples-control-and-variable) · [example gallery](@ref examples-gallery).
@@ -615,6 +639,11 @@ println(
     "objective: macro = ", objective(sol_macro),
     ", functional = ", objective(sol_func),
 )
+```
+
+```@example ex-turnpike
+@assert isapprox(objective(sol_macro), objective(sol_func); rtol=1e-6)   # hide
+nothing                                                                  # hide
 ```
 
 Full worked story (direct + indirect): [Turnpike (bang–singular–bang)](@ref examples-turnpike) · [example gallery](@ref examples-gallery).
@@ -719,11 +748,16 @@ println(
 )
 ```
 
+```@example ex-singular
+@assert isapprox(objective(sol_macro), objective(sol_func); rtol=1e-6)   # hide
+nothing                                                                  # hide
+```
+
 Full worked story (direct + indirect): [Singular control](@ref examples-singular-control) · [example gallery](@ref examples-gallery).
 
 ### 7. State constraint
 
-The energy-minimal transfer of problem 1, now with an upper bound on the velocity written as a nonlinear **path** constraint — so it carries a dual, reachable by its label — rather than a box on the state component.
+The energy-minimal transfer of problem 1, now with an upper bound on the velocity: a **box** constraint on the state component `v`, with the label `vmax` (its multiplier is then `dual(sol, ocp, :vmax)`, see [Labels](@ref modelling-abstract-syntax-labels)). Without it, the velocity would peak at 1.5.
 
 ```@example ex-state-constraint
 using OptimalControl
@@ -749,7 +783,7 @@ ocp_macro = @def begin
     x(t0) == x0
     x(tf) == xf
 
-    v(t) + 0.0 ≤ VMAX, (vmax)
+    v(t) ≤ VMAX, (vmax)
 
     ẋ(t) == [v(t), u(t)]
 
@@ -791,13 +825,7 @@ constraint!(pre,
     :boundary; f=boundary_sc!, lb=zeros(4), ub=zeros(4), label=:endpoint
 )
 
-function path_sc!(c, t, x, u, v)
-    c[1] = x[2]          # v(t) ≤ VMAX
-    return nothing
-end
-constraint!(pre,
-    :path; f=path_sc!, lb=[-Inf], ub=[VMAX], label=:vmax
-)
+constraint!(pre, :state; rg=2:2, lb=[-Inf], ub=[VMAX], label=:vmax)   # v(t) ≤ VMAX
 
 objective!(pre, :min; lagrange=(t, x, u, v) -> 0.5 * u^2)
 
@@ -821,6 +849,11 @@ println(
 )
 ```
 
+```@example ex-state-constraint
+@assert isapprox(objective(sol_macro), objective(sol_func); rtol=1e-6)   # hide
+nothing                                                                  # hide
+```
+
 Full worked story (direct + indirect): [State constraint](@ref examples-state-constraint) · [example gallery](@ref examples-gallery).
 
 ## [Shapes in callbacks](@id modelling-functional-api-shapes)
@@ -834,7 +867,7 @@ u_macro(t0), u_func(t0)
 ```
 
 ```@example ex-energy
-typeof(u_macro(t0)), typeof(u_func(t0))
+u_macro(t0) isa Real, u_func(t0) isa Real
 ```
 
 The **in-place output buffer is the one exception**: `dx` (dynamics), `val` (boundary/path constraints) is always a vector of its declared length, written by index, even when that length is 1 — a scalar cannot be mutated in place:
@@ -843,22 +876,20 @@ The **in-place output buffer is the one exception**: `dx` (dynamics), `val` (bou
 f!(r, t, x, u, v) = (r[1] = -x + u; nothing)  # r vector; x,u scalars
 ```
 
-This is the one place on the site where this is spelled out; every other page just follows it.
-
 ## Order and preconditions
 
 - `variable!` → before `time!` when using free-time indices (`indf`, `ind0`)
 - `variable!` → before `dynamics!` and `objective!`
 - `dynamics!` and `objective!` → after `time!` and `state!`
-- `control!` is optional and, when used, has no ordering constraint of its own beyond needing `state!` first (component-count validation) — see [No control](@ref modelling-without-control) for what omitting it means.
+- `control!` is optional and, when used, has no ordering constraint of its own beyond needing `state!` first (component-count validation) — see [Control-free problems](@ref modelling-without-control) for what omitting it means.
 
 ## Equivalence
 
-The abstract and functional forms are not just "meant to agree" — it's a tested contract. `test/suite/problems/test_forms_equivalent.jl` builds both forms for every problem in the shared test library and asserts they agree on dimensions, traits (`is_autonomous`, `is_variable`, `is_control_free`), time-horizon status, cost, dynamics, and constraint-dimension accessors. The one deliberate difference the test itself asserts: `has_abstract_definition` is `true` only for the `@def` form, as shown above.
+The abstract and functional forms are not just "meant to agree": it is a tested contract. The test suite of OptimalControl builds both forms for every problem of its problem library and checks that they agree on dimensions, traits (`is_autonomous`, `is_variable`, `is_control_free`), time horizon, cost, dynamics and constraint dimensions. The one deliberate difference: `has_abstract_definition` is `true` only for the `@def` form, as shown above. On this page, the build also checks that the two forms of each problem reach the same optimal cost.
 
 ## See also
 
 - [Formulation](@ref modelling-formulation) — the mathematics this API builds.
 - [Abstract syntax (`@def`)](@ref modelling-abstract-syntax) — the macro alternative.
-- [No control](@ref modelling-without-control) — omitting `control!` entirely.
+- [Control-free problems](@ref modelling-without-control) — omitting `control!` entirely.
 - [Inspect a problem](@ref modelling-inspect) — read a built model back.
