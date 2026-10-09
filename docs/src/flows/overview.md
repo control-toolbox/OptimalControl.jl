@@ -1,4 +1,4 @@
-# [Overview](@id flows-overview)
+# [Flows overview](@id flows-overview)
 
 `Flow` is one constructor that does three distinct jobs: **indirect optimal control** (build
 the Hamiltonian flow of the Pontryagin Maximum Principle, write a shooting function, solve it),
@@ -18,31 +18,34 @@ you designed independently of any optimization.
 
 ## The Pontryagin Maximum Principle, briefly
 
-For an OCP with dynamics $\dot x = f(t,x,u,v)$ and Lagrange cost $f^0$, the pseudo-Hamiltonian
-is
+The notation is the one of [Notation and conventions](@ref modelling-formulation-conventions).
+For a problem with dynamics $\dot x = f(t,x,u,v)$ and Lagrange cost $f^0$, the
+pseudo-Hamiltonian is
 
 ```math
-\tilde H(t, x, p, u, v) = p \cdot f(t,x,u,v) + p^0 f^0(t,x,u,v).
+H(t, x, p, u, v) = p \cdot f(t,x,u,v) + p^0 f^0(t,x,u,v),
 ```
 
-The maximisation condition picks, at each $(t,x,p,v)$, the control that extremises
-$\tilde H$ — a **control law** $u^*(t,x,p,v)$. Substituting it back gives the true Hamiltonian
-$H(t,x,p,v) = \tilde H(t,x,p,u^*(t,x,p,v),v)$, whose Hamiltonian system
+with $p^0 = -1$ in the normal case. Along an optimal trajectory, the control **maximises**
+$H$. When this maximisation gives the control in feedback form, a **control law**
+$u(t,x,p,v)$, substituting it gives the maximised Hamiltonian
+$\mathbf{H}(t,x,p,v) = H(t,x,p,u(t,x,p,v),v)$, whose Hamiltonian system
 
 ```math
-\dot x = \partial H/\partial p, \qquad \dot p = -\partial H/\partial x
+\dot x = \nabla_p \mathbf{H}, \qquad \dot p = -\nabla_x \mathbf{H}
 ```
 
-is the **Hamiltonian flow** this whole section builds and integrates. Boundary conditions on
-$(x,p)$ at $t_0$/$t_f$ (transversality) turn "integrate the flow" into "find the missing
-$p_0$" — [shooting](@ref flows-shooting).
+gives the extremals. Its flow, $t \mapsto (x(t), p(t))$ from $(x_0, p_0)$, is what `Flow`
+computes. The boundary and transversality conditions then turn "integrate the flow" into
+"find the missing $p_0$": that is [shooting](@ref flows-shooting).
 
 ## From the PMP to a flow
 
-You supply $u^*$ — worked out by hand, or read off a `@def` problem via
-[`Flow(ocp, ...)`](@ref flows-from-ocp) — and `Flow` gives you $\exp(t\vec H)$: an object
-callable at a point (endpoint only) or over a trajectory (the full path), integrated
-numerically.
+You supply the control law, worked out by hand, and `Flow` builds the Hamiltonian flow. For
+the energy-minimal double integrator below, $H = p_q v + p_v u - u^2/2$ is maximised by
+$u = p_v$, the second costate component: the control law is `(x, p) -> p[2]`.
+[From an OCP](@ref flows-from-ocp) explains how `Flow(ocp, law)` reads the dynamics and the
+cost from the problem.
 
 ## Three things this section does
 
@@ -65,7 +68,6 @@ Every flow needs an ODE integrator, and none is a hard dependency — load one, 
 ```@example main
 using OptimalControl
 using OrdinaryDiffEqTsit5
-using NLPModelsIpopt
 
 t0 = 0
 tf = 1
@@ -85,8 +87,30 @@ f = Flow(ocp, (x, p) -> p[2])
 nothing # hide
 ```
 
-Every page in this section opens with `using OrdinaryDiffEqTsit5` — no exceptions. Forget it
-and `Flow` says so at construction time, naming the `using` to add:
+A flow is called in two ways. At a point, it returns the state and the costate at the final
+time. From the exact initial costate $p(0) = (12, 6)$, it reaches the target $x(1) = (0, 0)$,
+with $p(1) = (12, -6)$:
+
+```@example main
+xf, pf = f(t0, x0, [12, 6], tf)
+```
+
+On a time span, it returns the whole trajectory, as a [`Solution`](@ref results-solution)
+that can be read and plotted like the solution of a direct solve:
+
+```@example main
+sol = f((t0, tf), x0, [12, 6])
+objective(sol)
+```
+
+```@example main
+@assert isapprox(xf, [0, 0]; atol=1e-8) && isapprox(pf, [12, -6]; atol=1e-8)   # hide
+@assert isapprox(objective(sol), 6; atol=1e-8)                                 # hide
+nothing                                                                        # hide
+```
+
+Every page in this section opens with `using OrdinaryDiffEqTsit5`. Without it, `Flow` raises
+an error at construction, naming the package to load:
 
 ```julia
 julia> f = Flow(ocp, (x, p) -> p[2])
@@ -101,47 +125,53 @@ ERROR: ExtensionError → top-level scope, REPL[6]:1
 └─
 ```
 
-!!! note "Why that block is not executed"
-
-    The documentation build loads `OrdinaryDiffEq` once, for the whole site, and a Julia
-    extension stays armed for the rest of the session — so no page here can demonstrate this
-    failure live. The transcript above comes from a session loading `OptimalControl` and
-    `NLPModelsIpopt` and nothing else.
-
 ## Choosing an integrator and its options
 
 `describe` covers the indirect side too, not just the direct-solve strategies from
 [Choosing a method](@ref solve-choosing-a-method): `:sciml` for the integrator family,
 `:di` for the automatic-differentiation backend that builds a Hamiltonian's vector field.
 
+::: details `describe(:sciml)`
+
 ```@example main
 describe(:sciml)
 ```
 
-Real option names worth knowing: `alg` (the ODE algorithm, default `Tsit5()`), `reltol`/
-`abstol` (default `1e-8` each), `saveat` (explicit save times), `dense` (dense output,
-`:auto` by default — resolves to `false` for a point call, `true` for a trajectory call).
-Pass any of them as keywords when constructing a flow, e.g.
-`Flow(ocp, law; reltol=1e-10, alg=Tsit5())`.
+:::
+
+The options used most are `alg` (the ODE algorithm, `Tsit5()` by default), `reltol` and
+`abstol` (`1e-8` each by default), `saveat` (the times at which to save the trajectory) and
+`dense` (dense output, `:auto` by default: `false` for a point call, `true` for a trajectory
+call). Pass them as keywords when you build a flow, for example
+`Flow(ocp, law; reltol=1e-10, alg=Tsit5())`. With `saveat`, also pass `dense=false`
+([CTFlows#434](https://github.com/control-toolbox/CTFlows.jl/issues/434)), see
+[Plot](@ref results-plot-flow).
+
+::: details `describe(:di)`
 
 ```@example main
 describe(:di)
 ```
 
-`OptimalControl.get_full_strategy_registry()` — internal, not re-exported — is what `describe`
-and the constructor completion machinery actually query for the indirect side: it merges the
-direct-solve registry with `CTFlows.Flows.flow_registry()`, so `:sciml`/`:di` show up alongside
-`:collocation`/`:adnlp`/`:ipopt` in the same introspection tools.
+:::
 
 ## CPU and GPU
 
-`method=:cpu`/`:gpu` — the same tokens as [`solve`](@ref solve-overview) — are passed **when
-constructing** a flow, not on the call:
+The parameters `:cpu` and `:gpu`, the same as for [`solve`](@ref solve-gpu), are passed with
+the `method` keyword **when you build** a flow. The call has no such keyword:
 
 ```julia
-f = Flow(ocp, law; method=:gpu)   # correct — a constructor keyword
-f(t0, x0, p0, tf; method=:gpu)    # wrong — no such call-time keyword
+f = Flow(ocp, law; method=:gpu)   # a keyword of the constructor
+f(t0, x0, p0, tf; method=:gpu)    # MethodError: not a keyword of the call
 ```
+
+`method=:gpu` selects the GPU variants of the integrator and of the automatic
+differentiation backend (Mooncake); the initial state and costate must then be device
+arrays (`CuArray`). See the
+[GPU flows page of CTFlows](https://control-toolbox.org/CTFlows.jl/stable/flows/gpu) for what
+it supports. On a machine without a GPU, or without Mooncake loaded, the error comes at the
+first call and does not name the cause yet
+([CTFlows#436](https://github.com/control-toolbox/CTFlows.jl/issues/436)).
 
 ## Where to go
 
@@ -155,3 +185,5 @@ f(t0, x0, p0, tf; method=:gpu)    # wrong — no such call-time keyword
 - [Shooting](@ref flows-shooting) — the payoff.
 - [Solve overview](@ref solve-overview) — the direct-method counterpart to everything here.
 - [Geometry](@ref geometry-overview) — the Lie-theoretic tools some of these constructors build on.
+- [Notation and conventions](@ref modelling-formulation-conventions) — the signs and symbols
+  used throughout this section.
