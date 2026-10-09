@@ -74,7 +74,7 @@ That is the whole program — model, solve, plot. Each step has its own guide:
 | [Geometry](@ref geometry-overview) | The Lie-theoretic tools (`Lift`, `ad`, `Poisson`, `@Lie`) behind singular-control problems. |
 | [Examples](@ref examples-gallery) | A gallery of complete problems worked end to end, direct and indirect, from energy minimisation to state constraints. |
 | [API reference](@ref api-modelling) | Every re-exported symbol, organised by theme. |
-| [Migrating to v2.1](@ref migration) | What changed since v2.0 and how to update your code. |
+| [Migrating from v2.0](@ref migration) | What changed since v2.0 and how to update your code. |
 
 ## Mathematical formulation
 
