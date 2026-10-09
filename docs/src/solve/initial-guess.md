@@ -44,9 +44,15 @@ end
 nothing # hide
 ```
 
-`@init` uses the **labels declared in `@def`**: for `ocp1` that's `x`, `x₁`, `x₂`, `u` (default
-subscripted names, since `x ∈ R²` doesn't name its components); for `ocp2` it's `x`, `q`, `v`,
-`u`, `tf`. It also uses the **time variable name** from `@def`: `t` for `ocp1`, `s` for `ocp2`.
+!!! note "Component labels and time variable in `@init`"
+
+    - `@init` uses the **labels** declared in `@def`. For `ocp1`, you can use `x`, `x₁`, `x₂`
+      and `u`; for `ocp2`, `x`, `q`, `v`, `u` and `tf`.
+    - When components are not named in `@def` (as in `ocp1` with `x ∈ R²`), they receive
+      **default labels** with subscripted indices, `x₁`, `x₂`, usable in `@init` like custom
+      labels.
+    - `@init` uses the **time variable name** of `@def`: `t` for `ocp1` (`x(t) := …`), `s` for
+      `ocp2` (`q(s) := …`).
 
 ## The default guess
 
@@ -83,30 +89,20 @@ ig = @init ocp begin
 end
 ```
 
-| Component | Has `(t)`? | Uses `:=`? | Example |
-| --- | --- | --- | --- |
-| State / control | yes | yes | `u(t) := 2` |
-| Variable | no | yes | `tf := 2.0` |
-| Alias | no | no (use `=`) | `a = 0.5` |
+| Component | Form | Example |
+| --- | --- | --- |
+| State / control, function of time | `label(t) := expression` | `u(t) := -0.2t` |
+| State / control, constant | `label(t) := value` or `label := value` | `u := 2` |
+| State / control, on a grid | `label(T) := data`, `T` a time vector | `u(T) := U` |
+| Variable | `label := value` | `tf := 2.0` |
+| Alias (local name) | `name = expression` | `a = 0.5` |
 
-1-D components take a scalar (`u(t) := 2`); multi-D components take a vector
-(`x(t) := [1, 2]`). The right-hand side of `:=` can be a constant, a function of the time
-variable, or a grid `label(T) := data` for a time vector `T`.
+1-D components take a scalar (`u(t) := 2`), following the
+[1-D is a scalar](@ref modelling-abstract-syntax-control) rule; multi-D components take a
+vector (`x(t) := [1, 2]`).
 
 The indexed syntax `x[1](t) := ...` is **not supported** — `@init` works at the level of
 declared labels, not array positions; use `x₁(t) := ...` or a component's own name instead.
-
-Whatever you pass as `init=`/`initial_guess=` — `@init` output, `nothing`, a `Solution`, a
-constant — `solve` normalizes it the same way internally, via `build_initial_guess(ocp, ...)`.
-Calling it yourself is occasionally useful to inspect what got built:
-
-```@example main
-ig = @init ocp1 begin
-    u(t) := -0.2
-end
-built = build_initial_guess(ocp1, ig)
-typeof(built)
-```
 
 ### Constant
 
@@ -120,14 +116,14 @@ sol = solve(ocp1; init=ig, display=false)
 println(iterations(sol), " iterations")
 ```
 
-Constant functions also accept the shorter form without the time argument
-(`u := 2` instead of `u(t) := 2`):
+Constants also accept the shorter form without the time argument (`u := 2` instead of
+`u(t) := 2`):
 
 ```@example main
 ig = @init ocp2 begin
-    q(s) := -0.2
-    v(s) := 0.0
-    u(s) := 0.1
+    q := -0.2
+    v := 0.0
+    u := 0.1
     tf := 2.0
 end
 
@@ -178,9 +174,16 @@ sol = solve(ocp2; init=ig, display=false)
 println(iterations(sol), " iterations")
 ```
 
-### Cross-spec references
+### [Cross-spec references](@id solve-initial-guess-cross-spec)
 
-A spec can reference a label defined earlier in the same block, and references chain:
+Specifications inside one `@init` block can **reference each other**, from top to bottom:
+
+- a reference only resolves to a label (or alias) defined **earlier** in the block;
+- substitution happens by name: the referenced label is replaced by its definition when the
+  later expression is evaluated;
+- grid specs are not substituted (see the note below).
+
+**Temporal → temporal, and chains.** `v` references `q`, and `u` references `v`, hence `q`:
 
 ```@example main
 ig = @init ocp2 begin
@@ -194,15 +197,64 @@ sol = solve(ocp2; init=ig, display=false)
 println(iterations(sol), " iterations")
 ```
 
-A grid-based spec (`label(T) := data`, see below) lives in a different evaluation context and
-is not substituted into a spec written with the plain time variable, or vice versa — keep one
-style per chain of references.
+**Constant → temporal.** A function of time can use a constant defined earlier:
 
-## Constants, vectors, functions
+```@example main
+ig = @init ocp2 begin
+    q    := -1.0
+    v(s) := q + sin(s)      # uses the constant value of q
+    u(s) := 0.0
+    tf   := 2.0
+end
 
-State and control 1-D reads through `@init` follow the "1-D is a scalar" rule, same as
-everywhere else — no special case to remember here beyond what's already true on
-[functional-API callbacks](@ref modelling-functional-api-shapes) and solutions.
+sol = solve(ocp2; init=ig, display=false)
+println(iterations(sol), " iterations")
+```
+
+**Constant → constant.** A constant can use another one, including between the components of
+a variable. Here the variable has two components, `(tf, a)`, and the guess is read back with
+`variable`:
+
+```@example main
+ocp_var2 = @def begin
+    w = (tf, a) ∈ R², variable
+    t ∈ [0, 1], time
+    x ∈ R, state
+    u ∈ R, control
+    x(0) == 0
+    x(1) - a == 0
+    ẋ(t) == u(t)
+    ∫(0.5u(t)^2) → min
+end
+
+ig = @init ocp_var2 begin
+    tf := 1.0
+    a  := tf + 0.5
+end
+
+variable(ig)
+```
+
+**With aliases.** Aliases (`=`) and references (`:=`) combine freely:
+
+```@example main
+ig = @init ocp2 begin
+    A    = 2.0              # alias
+    q(s) := A * sin(s)      # uses the alias
+    v(s) := q(s) + 1.0      # references q
+    u(s) := 0.0
+    tf   := 2.0
+end
+
+sol = solve(ocp2; init=ig, display=false)
+println(iterations(sol), " iterations")
+```
+
+!!! note "No substitution across grid specs"
+
+    A grid spec (`label(T) := data`, see below) lives in a different evaluation context: it is
+    not substituted into a spec written with the time variable, or vice versa. Keep one style
+    per chain of references.
 
 ## Vector initial guess (interpolated)
 
@@ -299,8 +351,35 @@ sol = solve(ocp1; init=ig, display=false)
 println(iterations(sol), " iterations")
 ```
 
-`state`, `costate`, and `control` on a solution return functions of time; `variable` returns a
-vector.
+`state`, `costate` and `control` on a solution return functions of time; `variable` returns the
+value of the variable (a scalar for a 1-D variable, a vector otherwise).
+
+## Without `@init`: a named tuple
+
+`init` also accepts a named tuple with the fields `state`, `control` and `variable`, each a
+constant or a function of time (any subset of them):
+
+```@example main
+sol = solve(ocp2; init=(state=s -> [-1 + s, 0.0], control=0.1, variable=2.0), display=false)
+println(iterations(sol), " iterations")
+```
+
+## Inspect a guess
+
+Whatever you pass as `init`, `solve` turns it into an initial guess with
+[`build_initial_guess`](@ref)`(ocp, init)`. You can call it yourself, and read the result back
+with `state`, `control` and `variable`, as on a solution. Components that are not specified
+take the default value `0.1`:
+
+```@example main
+ig = build_initial_guess(ocp2, @init(ocp2, begin
+    q(s) := sin(s)
+    tf := 2.0
+end))
+state(ig)(0.5), control(ig)(0.5), variable(ig)
+```
+
+The same holds for the output of `@init` itself, which is an initial guess already.
 
 ## Costate and multipliers
 
@@ -309,52 +388,13 @@ variable accept an initial guess.
 
 ## `init` or `initial_guess`
 
-`init` is an alias for `initial_guess`; use whichever reads better. **In explicit mode**,
-supplying both at once is rejected cleanly:
-
-```@repl main
-try # hide
-solve(
-    ocp1;
-    discretizer=OptimalControl.Collocation(),
-    init=1, initial_guess=2,
-    display=false,
-)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
-```
-
-!!! warning "Same conflict, worse message in descriptive mode"
-
-    In descriptive mode (the common case — no `discretizer=`/`modeler=`/`solver=`), supplying
-    both aliases does **not** raise this same clear error. `initial_guess` is consumed first,
-    and the leftover `init` falls through to strategy-option routing, where it's rejected as an
-    *unrecognized solver option* rather than as a conflicting alias — a much more confusing
-    message for the same mistake:
-
-    ```@repl main
-    try # hide
-    solve(ocp1; init=1, initial_guess=2, display=false)
-    catch e # hide
-    showerror(IOContext(stdout, :color => false), e) # hide
-    end # hide
-    ```
-
-    This is a real inconsistency between the two code paths, not intentional behavior — don't
-    rely on either message, just don't pass both.
-
-## Not (yet) part of the public API
-
-`CTModels.jl` has more initial-guess machinery than OptimalControl exposes:
-`initial_guess`, `pre_initial_guess`, `validate_initial_guess`, `initial_state`,
-`initial_control`, `initial_variable`, and `PreInitialGuess` all exist there but are not
-re-exported here — only [`build_initial_guess`](@ref) is. Whether some of these should surface
-under `using OptimalControl` is an open question, not a decision this page makes.
+`init` is an alias for `initial_guess`; use whichever reads better, but not both in the same
+call. In descriptive mode, passing both is reported as an unknown option `:init` rather than
+as a conflict ([OptimalControl#964](https://github.com/control-toolbox/OptimalControl.jl/issues/964)).
 
 ## See also
 
-- [Overview](@ref solve-overview) — the rest of what `solve` accepts.
+- [Solve overview](@ref solve-overview) — the rest of what `solve` accepts.
 - [Solution object](@ref results-solution) — `state`, `costate`, `control`, `variable` on a
   returned solution.
 - [Abstract syntax (`@def`)](@ref modelling-abstract-syntax) — where the labels `@init` uses come from.
