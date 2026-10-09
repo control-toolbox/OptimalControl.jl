@@ -153,10 +153,10 @@ cp(
 # the rest execute, add to its `@meta` block:
 #=
 ```@meta
-Draft = false
+Draft = true
 ```
 =#
-draft = true
+draft = false
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Load extensions
