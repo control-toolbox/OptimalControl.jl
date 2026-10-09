@@ -475,3 +475,10 @@ mjx-container svg path {
 .dark .vp-doc img[alt=""] {
     filter: invert(0.894) hue-rotate(180deg);
 }
+
+/* Logo shown in the page body (home page, logo example): exact light/dark SVG pair */
+.oc-logo { width: 200px; margin: 1.5rem auto; }
+.oc-logo--light { display: block; }
+.oc-logo--dark  { display: none; }
+.dark .oc-logo--light { display: none; }
+.dark .oc-logo--dark  { display: block; }

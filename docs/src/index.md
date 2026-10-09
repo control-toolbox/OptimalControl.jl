@@ -3,13 +3,6 @@
 The OptimalControl.jl package is the root package of the [control-toolbox ecosystem](https://github.com/control-toolbox). The control-toolbox ecosystem gathers Julia packages for mathematical control and applications. It aims to provide tools to model and solve optimal control problems with ordinary differential equations by direct and indirect methods, both on CPU and GPU.
 
 ```@raw html
-<style>
-.oc-logo { width: 200px; margin: 1.5rem auto; }
-.oc-logo--light { display: block; }
-.oc-logo--dark  { display: none; }
-.dark .oc-logo--light { display: none; }
-.dark .oc-logo--dark  { display: block; }
-</style>
 <img src="./assets/logo.svg"      alt="OptimalControl.jl logo" class="oc-logo oc-logo--light" />
 <img src="./assets/logo-dark.svg" alt="OptimalControl.jl logo" class="oc-logo oc-logo--dark" />
 ```
