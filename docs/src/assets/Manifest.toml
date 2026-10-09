@@ -2,7 +2,7 @@
 
 julia_version = "1.12.6"
 manifest_format = "2.0"
-project_hash = "a14c68496fdaa17672e818216e5678891cf15975"
+project_hash = "7cc6ba0d8258886de4bdb36930b6810e9d0d399e"
 
 [[deps.ADNLPModels]]
 deps = ["ADTypes", "DifferentiationInterface", "ForwardDiff", "LinearAlgebra", "NLPModels", "ReverseDiff", "SparseArrays", "SparseConnectivityTracer", "SparseMatrixColorings"]
@@ -257,9 +257,9 @@ version = "1.0.1+0"
 
 [[deps.CTBase]]
 deps = ["ADTypes", "DocStringExtensions"]
-git-tree-sha1 = "b09e22a9bb8884cbc416e5d258e40d609abc1e0b"
+git-tree-sha1 = "5fc0998b8071b07552d0ed721030c1fa9c7527e3"
 uuid = "54762871-cc72-4466-b8e8-f6c8b58076cd"
-version = "0.30.5"
+version = "0.30.6"
 
     [deps.CTBase.extensions]
     CTBaseDifferentiationInterface = ["DifferentiationInterface"]
@@ -307,9 +307,9 @@ version = "0.2.3"
 
 [[deps.CTModels]]
 deps = ["CTBase", "DocStringExtensions", "LinearAlgebra", "MLStyle", "MacroTools", "OrderedCollections", "Parameters", "RecipesBase"]
-git-tree-sha1 = "d652e0b512a6e2b526047f04335ccf3a61a66331"
+git-tree-sha1 = "5de55c28bac7630e10ddad883f77ef2c6ed84482"
 uuid = "34c4fa32-2049-4079-8329-de33c2a22e2d"
-version = "0.19.5"
+version = "0.19.6"
 weakdeps = ["JLD2", "JSON3", "Makie", "Plots"]
 
     [deps.CTModels.extensions]
@@ -330,9 +330,9 @@ weakdeps = ["ExaModels", "LinearAlgebra"]
 
 [[deps.CTSolvers]]
 deps = ["CTBase", "CTModels", "CommonSolve", "DocStringExtensions", "KernelAbstractions", "SolverCore"]
-git-tree-sha1 = "3c1574071021d1930a0a67c5478c8b92b1d5caf4"
+git-tree-sha1 = "50e6edf7726eb7d620323fb4cc3c2e87392022c3"
 uuid = "d3e8d392-8e4b-4d9b-8e92-d7d4e3650ef6"
-version = "0.5.7"
+version = "0.5.8"
 
     [deps.CTSolvers.extensions]
     CTSolversADNLPModels = "ADNLPModels"
