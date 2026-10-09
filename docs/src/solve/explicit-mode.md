@@ -1,7 +1,7 @@
 # [Explicit mode](@id solve-explicit-mode)
 
-Instead of symbolic tokens, pass `solve` typed strategy instances — full control over each
-component's configuration, no completion-order guessing.
+Instead of symbolic tokens, pass `solve` typed strategy instances: full control over each
+component's configuration, no completion to guess.
 
 ## When you want this
 
@@ -30,22 +30,18 @@ ocp = @def begin
     0.5∫(u(t)^2) → min
 end
 
-disc = OptimalControl.Collocation(grid_size=100, scheme=:trapeze)
-mod = OptimalControl.ADNLP(backend=:optimized)
-sol = OptimalControl.Ipopt(max_iter=1000, print_level=0)
+discretizer = OptimalControl.Collocation(grid_size=100, scheme=:trapeze)
+modeler = OptimalControl.ADNLP(backend=:optimized)
+solver = OptimalControl.Ipopt(max_iter=1000, print_level=0)
 
-result = solve(ocp; discretizer=disc, modeler=mod, solver=sol)
+sol = solve(ocp; discretizer=discretizer, modeler=modeler, solver=solver)
 nothing # hide
 ```
 
-`discretizer`, `modeler`, and `solver` are just three of many keyword names — mode detection
-never looks at names, only at whether a keyword's *value* is a typed component (see
-[Overview](@ref solve-overview)). Any keyword holding a typed instance triggers explicit mode.
-
-The component types are `import`ed but not `@reexport`ed by `OptimalControl`, which is why
-every constructor above is written `OptimalControl.Collocation(...)` rather than bare
-`Collocation(...)` — writing `using CTDirect: Collocation` yourself would also work, but the
-qualified spelling needs nothing extra loaded beyond `using OptimalControl`.
+Each component goes with its keyword: `discretizer`, `modeler`, `solver`. The component types
+are not exported, so they are written with the module name: `OptimalControl.Collocation(...)`,
+`OptimalControl.Ipopt(...)`. This needs nothing loaded beyond `using OptimalControl` (and the
+solver package, as always).
 
 ## Partial components
 
@@ -57,7 +53,7 @@ methods()[1]  # what a bare solve(ocp) completes to
 ```
 
 ```@example explicit
-result = solve(
+sol = solve(
     ocp;
     solver=OptimalControl.Ipopt(max_iter=2000, print_level=0),
     display=true,
@@ -70,7 +66,7 @@ modeler compatible with Ipopt) — visible in the printed configuration above. M
 component with defaults works the same way for any subset:
 
 ```@example explicit
-result = solve(ocp;
+sol = solve(ocp;
     discretizer=OptimalControl.Collocation(grid_size=200, scheme=:trapeze),
     solver=OptimalControl.Ipopt(max_iter=100, print_level=0),
     display=false,
@@ -80,17 +76,26 @@ nothing # hide
 
 ## Per-component options
 
-Every option a strategy accepts is set when it's constructed — never routed in from `solve`
-afterward, unlike descriptive mode:
+Every option a strategy accepts is set when it is constructed, never routed in from `solve`
+afterwards, unlike descriptive mode. Here, a fourth-order scheme on a coarser grid, and tighter
+Ipopt tolerances:
 
 ```@example explicit
-disc = OptimalControl.Collocation(grid_size=150, scheme=:gauss_legendre_2)
-mod = OptimalControl.ADNLP(backend=:optimized, show_time=true)
-sol = OptimalControl.Ipopt(
-    max_iter=1000, tol=1e-8, print_level=5, acceptable_tol=1e-6
-)
-nothing # hide
+discretizer = OptimalControl.Collocation(grid_size=50, scheme=:gauss_legendre_2)
+modeler = OptimalControl.ADNLP(backend=:optimized)
+solver = OptimalControl.Ipopt(max_iter=1000, tol=1e-10, acceptable_tol=1e-8, print_level=0)
+
+sol = solve(ocp; discretizer=discretizer, modeler=modeler, solver=solver)
+println("objective = ", objective(sol))   # the exact value is 6
 ```
+
+```@example explicit
+@assert isapprox(objective(sol), 6; rtol=1e-6)   # hide
+nothing                                          # hide
+```
+
+On 50 steps, the fourth-order scheme recovers the exact cost to about machine precision, where
+the default second-order scheme on 250 steps is off by about `1e-4`.
 
 Undeclared options still need `bypass` (or its alias `force`), same reasoning as in descriptive
 mode — but here it's passed straight into the constructor, not through `route_to`:
@@ -118,14 +123,14 @@ showerror(IOContext(stdout, :color => false), e) # hide
 end # hide
 ```
 
-The error names the strategy that owns the option and tells you exactly how to fix it:
-construct that strategy with the option set, and pass the configured instance in. `route_to`
-plays no role here — it only makes sense in descriptive mode, where options don't yet belong to
-a concrete instance.
+The error names the strategy that owns the option and tells you how to fix it: construct that
+strategy with the option set, and pass the configured instance in. `route_to` plays no role
+here: it only makes sense in descriptive mode, where options do not yet belong to a concrete
+instance.
 
 ## Mixing modes is forbidden
 
-Symbolic tokens and typed components can't appear in the same call:
+Symbolic tokens and typed components cannot appear in the same call:
 
 ```@repl explicit
 try # hide
@@ -165,8 +170,8 @@ collect(keys(opts))
 
 ## See also
 
-- [Overview](@ref solve-overview) — how mode detection decides between the two styles.
-- [Options and routing](@ref solve-options) — the descriptive-mode counterpart (`route_to`,
-  automatic routing) to per-component construction here.
+- [Solve overview](@ref solve-overview) — the two styles side by side.
+- [Options](@ref solve-options) — the descriptive-mode counterpart (`route_to`, automatic
+  routing) to per-component construction here.
 - [Choosing a method](@ref solve-choosing-a-method) — the full strategy catalogue these
   constructors build from.
