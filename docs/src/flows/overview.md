@@ -144,7 +144,9 @@ The options used most are `alg` (the ODE algorithm, `Tsit5()` by default), `relt
 `dense` (dense output, `:auto` by default: `false` for a point call, `true` for a trajectory
 call). Pass them as keywords when you build a flow, for example
 `Flow(ocp, law; reltol=1e-10, alg=Tsit5())`. With `saveat`, also pass `dense=false`
-([CTFlows#434](https://github.com/control-toolbox/CTFlows.jl/issues/434)), see
+([CTFlows#434](https://github.com/control-toolbox/CTFlows.jl/issues/434)), and use the flow
+for trajectories only: its point call returns the value at the last `saveat` time
+([CTFlows#441](https://github.com/control-toolbox/CTFlows.jl/issues/441)). See
 [Plot](@ref results-plot-flow).
 
 Another integrator only needs its package. Here the 9th-order Verner method, with tighter

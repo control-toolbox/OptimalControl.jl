@@ -398,7 +398,9 @@ nothing                                                # hide
 For a finer curve, pass `saveat` when you **build** the flow, together with `dense=false`. The
 call itself only accepts `variable`, `unsafe` and `variable_costate`. Do not leave out
 `dense=false`: without it, the call crashes the Julia session
-([CTFlows#434](https://github.com/control-toolbox/CTFlows.jl/issues/434)).
+([CTFlows#434](https://github.com/control-toolbox/CTFlows.jl/issues/434)). Use such a flow for trajectories only: its point call `f(t0, x0, p0, tf)` returns the
+value at the last `saveat` time before `tf`, not at `tf`
+([CTFlows#441](https://github.com/control-toolbox/CTFlows.jl/issues/441)).
 
 ```@example main
 fine_grid = range(t0, tf, 100)
