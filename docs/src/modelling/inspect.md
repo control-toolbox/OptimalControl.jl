@@ -61,8 +61,8 @@ initial_time(ocp)
 final_time(ocp, [1, 2])   # w = 1, tf = 2
 ```
 
-Asking for a free final time without the variable errors (the hint is not explicit yet, see
-[CTModels#431](https://github.com/control-toolbox/CTModels.jl/issues/431)):
+Asking for a free final time without the variable raises an error, whose hint says to pass
+the variable:
 
 ```@repl main
 final_time(ocp)
@@ -201,7 +201,7 @@ has_mayer_cost(ocp)
 has_lagrange_cost(ocp)
 ```
 
-Get the cost functions: `mayer` has signature `g(x0, xf, v)` and errors when there is no Mayer cost (with a hint that does not apply to a built model, see [CTModels#431](https://github.com/control-toolbox/CTModels.jl/issues/431)); `lagrange` has signature `f⁰(t, x, u, v)`:
+Get the cost functions: `mayer` has signature `g(x0, xf, v)` and raises an error when there is no Mayer cost (check first with `has_mayer_cost`); `lagrange` has signature `f⁰(t, x, u, v)`:
 
 ```@repl main
 mayer(ocp)

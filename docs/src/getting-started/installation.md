@@ -74,7 +74,7 @@ Loading this package enables the creation of a `Flow`. Without it, `Flow` raises
 
 !!! tip "Other integrators"
 
-    `Tsit5` is the default integrator, so keep `OrdinaryDiffEqTsit5` loaded in every case (see [CTSolvers#230](https://github.com/control-toolbox/CTSolvers.jl/issues/230)). To use another method from the [SciML ODE solvers](https://docs.sciml.ai/DiffEqDocs/stable/solvers/ode_solve/), load its package as well and pass it when you build the flow, for example `Flow(ocp, law; alg=Vern9())` after `using OrdinaryDiffEqVerner`. The umbrella packages `OrdinaryDiffEq` and `DifferentialEquations` include `Tsit5` and work too.
+    `Tsit5` is the default integrator. To use another method from the [SciML ODE solvers](https://docs.sciml.ai/DiffEqDocs/stable/solvers/ode_solve/), load its package and pass the algorithm when you build the flow, for example `Flow(ocp, law; alg=Vern9())` after `using OrdinaryDiffEqVerner`. `OrdinaryDiffEqTsit5` is then not needed; without it, a flow built without `alg` raises an error that shows how to pass one. The umbrella packages `OrdinaryDiffEq` and `DifferentialEquations` include `Tsit5` and work too.
 
 ## Optional: saving solutions
 
@@ -95,7 +95,7 @@ using CUDA
 using CUDSS
 ```
 
-`CUDSS` is the one people forget: `using MadNLPGPU` does not load it, and the GPU solvers do not work without it. If one of the three is missing, the `ExtensionError` names it.
+`CUDSS` is the one people forget: `using MadNLPGPU` does not load it, and the GPU solvers do not work without it. If one of the three is missing, the `ExtensionError` names it. One exception: when `MadNLPGPU` is the missing one, the error first asks for `MadNLP`, and names `MadNLPGPU` only once `MadNLP` is loaded ([CTSolvers#234](https://github.com/control-toolbox/CTSolvers.jl/issues/234)).
 
 `ExaModels`, the GPU-capable modeler, needs no `using`: it comes with `OptimalControl`, so `:exa` works out of the box.
 

@@ -147,6 +147,21 @@ call). Pass them as keywords when you build a flow, for example
 ([CTFlows#434](https://github.com/control-toolbox/CTFlows.jl/issues/434)), see
 [Plot](@ref results-plot-flow).
 
+Another integrator only needs its package. Here the 9th-order Verner method, with tighter
+tolerances:
+
+```@example main
+using OrdinaryDiffEqVerner
+f9 = Flow(ocp, (x, p) -> p[2]; alg=Vern9(), reltol=1e-12, abstol=1e-12)
+f9(t0, x0, [12, 6], tf)
+```
+
+```@example main
+xf9, pf9 = f9(t0, x0, [12, 6], tf)                                                # hide
+@assert isapprox(xf9, [0, 0]; atol=1e-10) && isapprox(pf9, [12, -6]; atol=1e-10)  # hide
+nothing                                                                           # hide
+```
+
 ::: details `describe(:di)`
 
 ```@example main
