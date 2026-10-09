@@ -100,7 +100,9 @@ residual is just large. On $\dot x = x^2$, which blows up before $t = 1$ from $x
 ```@repl main
 f_blowup = Flow(VectorField(x -> x^2));
 try # hide
+Base.CoreLogging.with_logger(Base.CoreLogging.NullLogger()) do # hide
 f_blowup(0, 10.0, 1)
+end # hide
 catch e # hide
 showerror(IOContext(stdout, :color => false), e) # hide
 end # hide
