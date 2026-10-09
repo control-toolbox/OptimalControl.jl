@@ -215,14 +215,14 @@ links = InterLinks(
         "https://jso.dev/NLPModelsIpopt.jl/stable/objects.inv",
     ),
     "ExaModels" => (
-        "https://exanauts.github.io/ExaModels.jl/stable/",
+        "https://madsuite-org.github.io/ExaModels.jl/stable/",
         joinpath(@__DIR__, "inventories", "ExaModels.toml"),
-        "https://exanauts.github.io/ExaModels.jl/stable/objects.inv",
+        "https://madsuite-org.github.io/ExaModels.jl/stable/objects.inv",
     ),
     "MadNLP" => (
-        "https://madnlp.github.io/MadNLP.jl/stable/",
+        "https://madsuite-org.github.io/MadNLP.jl/stable/",
         joinpath(@__DIR__, "inventories", "MadNLP.toml"),
-        "https://madnlp.github.io/MadNLP.jl/stable/objects.inv",
+        "https://madsuite-org.github.io/MadNLP.jl/stable/objects.inv",
     ),
     "Tutorials" => (
         "https://control-toolbox.org/Tutorials.jl/stable/",

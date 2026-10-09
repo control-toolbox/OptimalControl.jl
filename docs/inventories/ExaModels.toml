@@ -1,8 +1,759 @@
 # DocInventory version 1
-project = "ExaModels"
+project = "ExaModels.jl"
+version = "0.12.1"
 
-# Placeholder: exanauts.github.io/ExaModels.jl/stable/objects.inv currently 404s
-# (checked 2026-08-15), so there is no reachable source to harvest real entries
-# from. This empty inventory keeps the build green; @extref ExaModels ... will
-# report "not found" (not a build Error) until either the upstream site comes
-# back or this file is populated with real entries.
+[[jl.function]]
+name = "ExaModels._hess_reconstruct_via_hvp!"
+uri = "core/#ExaModels._hess_reconstruct_via_hvp%21"
+[[jl.function]]
+name = "ExaModels._jac_reconstruct_via_jvp!"
+uri = "core/#ExaModels._jac_reconstruct_via_jvp%21"
+
+[[jl.macro]]
+name = "ExaModels.@add_con!-Tuple"
+uri = "core/#ExaModels.%40add_con%21-Tuple"
+[[jl.macro]]
+name = "ExaModels.@add_con-Tuple"
+uri = "core/#ExaModels.%40add_con-Tuple"
+[[jl.macro]]
+name = "ExaModels.@add_expr-Tuple"
+uri = "core/#ExaModels.%40add_expr-Tuple"
+[[jl.macro]]
+name = "ExaModels.@add_obj-Tuple"
+uri = "core/#ExaModels.%40add_obj-Tuple"
+[[jl.macro]]
+name = "ExaModels.@add_par-Tuple"
+uri = "core/#ExaModels.%40add_par-Tuple"
+[[jl.macro]]
+name = "ExaModels.@add_var-Tuple"
+uri = "core/#ExaModels.%40add_var-Tuple"
+[[jl.macro]]
+name = "ExaModels.@register_bivariate-NTuple{6, Any}"
+uri = "core/#ExaModels.%40register_bivariate-NTuple%7B6%2C%20Any%7D"
+[[jl.macro]]
+name = "ExaModels.@register_univariate-Tuple{Any, Any, Any}"
+uri = "core/#ExaModels.%40register_univariate-Tuple%7BAny%2C%20Any%2C%20Any%7D"
+
+[[jl.method]]
+name = "ExaModels.CompressedNLPModel-Tuple{Any}"
+uri = "core/#ExaModels.CompressedNLPModel-Tuple%7BAny%7D"
+[[jl.method]]
+name = "ExaModels.TimedNLPModel-Tuple{Any}"
+uri = "core/#ExaModels.TimedNLPModel-Tuple%7BAny%7D"
+[[jl.method]]
+name = "ExaModels.TimedNLPModel-Tuple{ExaCore}"
+uri = "core/#ExaModels.TimedNLPModel-Tuple%7BExaCore%7D"
+[[jl.method]]
+name = "ExaModels.TwoStageExaCore-Tuple{Integer}"
+uri = "core/#ExaModels.TwoStageExaCore-Tuple%7BInteger%7D"
+[[jl.method]]
+name = "ExaModels.WrapperNLPModel-Tuple{Any, Any}"
+uri = "core/#ExaModels.WrapperNLPModel-Tuple%7BAny%2C%20Any%7D"
+[[jl.method]]
+name = "ExaModels.WrapperNLPModel-Tuple{Any}"
+uri = "core/#ExaModels.WrapperNLPModel-Tuple%7BAny%7D"
+[[jl.method]]
+name = "ExaModels._anyarg-Tuple{}"
+uri = "core/#ExaModels._anyarg-Tuple%7B%7D"
+[[jl.method]]
+name = "ExaModels._needs_overload-Tuple{Any, Any}"
+uri = "core/#ExaModels._needs_overload-Tuple%7BAny%2C%20Any%7D"
+[[jl.method]]
+name = "ExaModels._with_args-Tuple{Any, Val{0}}"
+uri = "core/#ExaModels._with_args-Tuple%7BAny%2C%20Val%7B0%7D%7D"
+[[jl.method]]
+name = "ExaModels.add_con!-Union{Tuple{C}, Tuple{T}, Tuple{C, Any, Base.Generator}} where {T, C<:(ExaCore{T})}"
+uri = "core/#ExaModels.add_con%21-Union%7BTuple%7BC%7D%2C%20Tuple%7BT%7D%2C%20Tuple%7BC%2C%20Any%2C%20Base.Generator%7D%7D%20where%20%7BT%2C%20C%3C%3A%28ExaCore%7BT%7D%29%7D"
+[[jl.method]]
+name = "ExaModels.add_con!-Union{Tuple{T}, Tuple{ExaCore{T}, Base.Generator}} where T"
+uri = "core/#ExaModels.add_con%21-Union%7BTuple%7BT%7D%2C%20Tuple%7BExaCore%7BT%7D%2C%20Base.Generator%7D%7D%20where%20T"
+[[jl.method]]
+name = "ExaModels.add_con-Union{Tuple{C}, Tuple{S}, Tuple{B}, Tuple{VT}, Tuple{T}, Tuple{C, EachScenario, Vararg{Any}}} where {T, VT<:AbstractVector{T}, B, S<:ExaModels.TwoStageExaModelTag, C<:(TwoStageExaCore{T, VT, B, S})}"
+uri = "core/#ExaModels.add_con-Union%7BTuple%7BC%7D%2C%20Tuple%7BS%7D%2C%20Tuple%7BB%7D%2C%20Tuple%7BVT%7D%2C%20Tuple%7BT%7D%2C%20Tuple%7BC%2C%20EachScenario%2C%20Vararg%7BAny%7D%7D%7D%20where%20%7BT%2C%20VT%3C%3AAbstractVector%7BT%7D%2C%20B%2C%20S%3C%3AExaModels.TwoStageExaModelTag%2C%20C%3C%3A%28TwoStageExaCore%7BT%2C%20VT%2C%20B%2C%20S%7D%29%7D"
+[[jl.method]]
+name = "ExaModels.add_con-Union{Tuple{C}, Tuple{S}, Tuple{B}, Tuple{VT}, Tuple{T}, Tuple{C, Vararg{Any}}} where {T, VT<:AbstractVector{T}, B, S<:ExaModels.TwoStageExaModelTag, C<:(TwoStageExaCore{T, VT, B, S})}"
+uri = "core/#ExaModels.add_con-Union%7BTuple%7BC%7D%2C%20Tuple%7BS%7D%2C%20Tuple%7BB%7D%2C%20Tuple%7BVT%7D%2C%20Tuple%7BT%7D%2C%20Tuple%7BC%2C%20Vararg%7BAny%7D%7D%7D%20where%20%7BT%2C%20VT%3C%3AAbstractVector%7BT%7D%2C%20B%2C%20S%3C%3AExaModels.TwoStageExaModelTag%2C%20C%3C%3A%28TwoStageExaCore%7BT%2C%20VT%2C%20B%2C%20S%7D%29%7D"
+[[jl.method]]
+name = "ExaModels.add_con-Union{Tuple{C}, Tuple{T}, Tuple{C, Vararg{Any}}} where {T, C<:(ExaCore{T})}"
+uri = "core/#ExaModels.add_con-Union%7BTuple%7BC%7D%2C%20Tuple%7BT%7D%2C%20Tuple%7BC%2C%20Vararg%7BAny%7D%7D%7D%20where%20%7BT%2C%20C%3C%3A%28ExaCore%7BT%7D%29%7D"
+[[jl.method]]
+name = "ExaModels.add_eval-Tuple{ExaCore, Tuple, Tuple, Any}"
+uri = "core/#ExaModels.add_eval-Tuple%7BExaCore%2C%20Tuple%2C%20Tuple%2C%20Any%7D"
+[[jl.method]]
+name = "ExaModels.add_expr-Union{Tuple{C}, Tuple{T}, Tuple{C, Base.Generator}} where {T, C<:(ExaCore{T})}"
+uri = "core/#ExaModels.add_expr-Union%7BTuple%7BC%7D%2C%20Tuple%7BT%7D%2C%20Tuple%7BC%2C%20Base.Generator%7D%7D%20where%20%7BT%2C%20C%3C%3A%28ExaCore%7BT%7D%29%7D"
+[[jl.method]]
+name = "ExaModels.add_obj-Union{Tuple{C}, Tuple{T}, Tuple{C, Any}} where {T, C<:(ExaCore{T})}"
+uri = "core/#ExaModels.add_obj-Union%7BTuple%7BC%7D%2C%20Tuple%7BT%7D%2C%20Tuple%7BC%2C%20Any%7D%7D%20where%20%7BT%2C%20C%3C%3A%28ExaCore%7BT%7D%29%7D"
+[[jl.method]]
+name = "ExaModels.add_obj-Union{Tuple{N}, Tuple{C}, Tuple{T}, Tuple{C, N}, Tuple{C, N, Any}} where {T, C<:(ExaCore{T}), N<:ExaModels.AbstractNode}"
+uri = "core/#ExaModels.add_obj-Union%7BTuple%7BN%7D%2C%20Tuple%7BC%7D%2C%20Tuple%7BT%7D%2C%20Tuple%7BC%2C%20N%7D%2C%20Tuple%7BC%2C%20N%2C%20Any%7D%7D%20where%20%7BT%2C%20C%3C%3A%28ExaCore%7BT%7D%29%2C%20N%3C%3AExaModels.AbstractNode%7D"
+[[jl.method]]
+name = "ExaModels.add_par-Union{Tuple{B}, Tuple{VT}, Tuple{T}, Tuple{TwoStageExaCore{T, VT, B}, AbstractArray}} where {T, VT<:AbstractVector{T}, B}"
+uri = "core/#ExaModels.add_par-Union%7BTuple%7BB%7D%2C%20Tuple%7BVT%7D%2C%20Tuple%7BT%7D%2C%20Tuple%7BTwoStageExaCore%7BT%2C%20VT%2C%20B%7D%2C%20AbstractArray%7D%7D%20where%20%7BT%2C%20VT%3C%3AAbstractVector%7BT%7D%2C%20B%7D"
+[[jl.method]]
+name = "ExaModels.add_par-Union{Tuple{B}, Tuple{VT}, Tuple{T}, Tuple{TwoStageExaCore{T, VT, B}, EachScenario, AbstractVector}} where {T, VT<:AbstractVector{T}, B}"
+uri = "core/#ExaModels.add_par-Union%7BTuple%7BB%7D%2C%20Tuple%7BVT%7D%2C%20Tuple%7BT%7D%2C%20Tuple%7BTwoStageExaCore%7BT%2C%20VT%2C%20B%7D%2C%20EachScenario%2C%20AbstractVector%7D%7D%20where%20%7BT%2C%20VT%3C%3AAbstractVector%7BT%7D%2C%20B%7D"
+[[jl.method]]
+name = "ExaModels.add_par-Union{Tuple{C}, Tuple{T}, Tuple{C, AbstractArray}} where {T, C<:(ExaCore{T})}"
+uri = "core/#ExaModels.add_par-Union%7BTuple%7BC%7D%2C%20Tuple%7BT%7D%2C%20Tuple%7BC%2C%20AbstractArray%7D%7D%20where%20%7BT%2C%20C%3C%3A%28ExaCore%7BT%7D%29%7D"
+[[jl.method]]
+name = "ExaModels.add_var-Union{Tuple{B}, Tuple{VT}, Tuple{T}, Tuple{TwoStageExaCore{T, VT, B}, EachScenario, Vararg{Any}}} where {T, VT<:AbstractVector{T}, B}"
+uri = "core/#ExaModels.add_var-Union%7BTuple%7BB%7D%2C%20Tuple%7BVT%7D%2C%20Tuple%7BT%7D%2C%20Tuple%7BTwoStageExaCore%7BT%2C%20VT%2C%20B%7D%2C%20EachScenario%2C%20Vararg%7BAny%7D%7D%7D%20where%20%7BT%2C%20VT%3C%3AAbstractVector%7BT%7D%2C%20B%7D"
+[[jl.method]]
+name = "ExaModels.add_var-Union{Tuple{B}, Tuple{VT}, Tuple{T}, Tuple{TwoStageExaCore{T, VT, B}, Vararg{Any}}} where {T, VT<:AbstractVector{T}, B}"
+uri = "core/#ExaModels.add_var-Union%7BTuple%7BB%7D%2C%20Tuple%7BVT%7D%2C%20Tuple%7BT%7D%2C%20Tuple%7BTwoStageExaCore%7BT%2C%20VT%2C%20B%7D%2C%20Vararg%7BAny%7D%7D%7D%20where%20%7BT%2C%20VT%3C%3AAbstractVector%7BT%7D%2C%20B%7D"
+[[jl.method]]
+name = "ExaModels.add_var-Union{Tuple{C}, Tuple{T}, Tuple{C, Base.Generator}} where {T, C<:(ExaCore{T})}"
+uri = "core/#ExaModels.add_var-Union%7BTuple%7BC%7D%2C%20Tuple%7BT%7D%2C%20Tuple%7BC%2C%20Base.Generator%7D%7D%20where%20%7BT%2C%20C%3C%3A%28ExaCore%7BT%7D%29%7D"
+[[jl.method]]
+name = "ExaModels.add_var-Union{Tuple{C}, Tuple{T}, Tuple{C, Vararg{Any}}} where {T, C<:(ExaCore{T})}"
+uri = "core/#ExaModels.add_var-Union%7BTuple%7BC%7D%2C%20Tuple%7BT%7D%2C%20Tuple%7BC%2C%20Vararg%7BAny%7D%7D%7D%20where%20%7BT%2C%20C%3C%3A%28ExaCore%7BT%7D%29%7D"
+[[jl.method]]
+name = "ExaModels.constraint-Tuple{ExaCore, VectorNonlinearOracle}"
+uri = "core/#ExaModels.constraint-Tuple%7BExaCore%2C%20VectorNonlinearOracle%7D"
+[[jl.method]]
+name = "ExaModels.drpass-Union{Tuple{D}, Tuple{D, Any, Any}} where D<:Union{Real, AdjointNull}"
+uri = "core/#ExaModels.drpass-Union%7BTuple%7BD%7D%2C%20Tuple%7BD%2C%20Any%2C%20Any%7D%7D%20where%20D%3C%3AUnion%7BReal%2C%20AdjointNull%7D"
+[[jl.method]]
+name = "ExaModels.embed_oracle-Tuple{ExaCore, ExaModels.AbstractVariable, Int64}"
+uri = "core/#ExaModels.embed_oracle-Tuple%7BExaCore%2C%20ExaModels.AbstractVariable%2C%20Int64%7D"
+[[jl.method]]
+name = "ExaModels.exa_prod-Tuple{Any, Tuple{}}"
+uri = "core/#ExaModels.exa_prod-Tuple%7BAny%2C%20Tuple%7B%7D%7D"
+[[jl.method]]
+name = "ExaModels.exa_sum-Tuple{Any, Tuple{}}"
+uri = "core/#ExaModels.exa_sum-Tuple%7BAny%2C%20Tuple%7B%7D%7D"
+[[jl.method]]
+name = "ExaModels.fulltype-Tuple{Any}"
+uri = "core/#ExaModels.fulltype-Tuple%7BAny%7D"
+[[jl.method]]
+name = "ExaModels.fulltype_display!-Tuple{Bool}"
+uri = "core/#ExaModels.fulltype_display%21-Tuple%7BBool%7D"
+[[jl.method]]
+name = "ExaModels.get_con_scen-Tuple{TwoStageExaModel}"
+uri = "core/#ExaModels.get_con_scen-Tuple%7BTwoStageExaModel%7D"
+[[jl.method]]
+name = "ExaModels.get_cons-Tuple{Union{ExaCore, ExaModel}, Symbol}"
+uri = "core/#ExaModels.get_cons-Tuple%7BUnion%7BExaCore%2C%20ExaModel%7D%2C%20Symbol%7D"
+[[jl.method]]
+name = "ExaModels.get_cons-Tuple{Union{ExaCore, ExaModel}}"
+uri = "core/#ExaModels.get_cons-Tuple%7BUnion%7BExaCore%2C%20ExaModel%7D%7D"
+[[jl.method]]
+name = "ExaModels.get_lcon-Tuple{ExaModel, ExaModels.Constraint}"
+uri = "core/#ExaModels.get_lcon-Tuple%7BExaModel%2C%20ExaModels.Constraint%7D"
+[[jl.method]]
+name = "ExaModels.get_lvar-Tuple{ExaModel, ExaModels.Variable}"
+uri = "core/#ExaModels.get_lvar-Tuple%7BExaModel%2C%20ExaModels.Variable%7D"
+[[jl.method]]
+name = "ExaModels.get_nscen-Tuple{TwoStageExaModel}"
+uri = "core/#ExaModels.get_nscen-Tuple%7BTwoStageExaModel%7D"
+[[jl.method]]
+name = "ExaModels.get_pars-Tuple{Union{ExaCore, ExaModel}, Symbol}"
+uri = "core/#ExaModels.get_pars-Tuple%7BUnion%7BExaCore%2C%20ExaModel%7D%2C%20Symbol%7D"
+[[jl.method]]
+name = "ExaModels.get_pars-Tuple{Union{ExaCore, ExaModel}}"
+uri = "core/#ExaModels.get_pars-Tuple%7BUnion%7BExaCore%2C%20ExaModel%7D%7D"
+[[jl.method]]
+name = "ExaModels.get_start-Tuple{ExaModel, ExaModels.Variable}"
+uri = "core/#ExaModels.get_start-Tuple%7BExaModel%2C%20ExaModels.Variable%7D"
+[[jl.method]]
+name = "ExaModels.get_start-Tuple{TwoStageExaModel, ExaModels.Constraint{F, I, O, S, <:SecondStageConstraintTag} where {F, I, O, S}, Integer}"
+uri = "core/#ExaModels.get_start-Tuple%7BTwoStageExaModel%2C%20ExaModels.Constraint%7BF%2C%20I%2C%20O%2C%20S%2C%20%3C%3ASecondStageConstraintTag%7D%20where%20%7BF%2C%20I%2C%20O%2C%20S%7D%2C%20Integer%7D"
+[[jl.method]]
+name = "ExaModels.get_start-Tuple{TwoStageExaModel, SecondStageVariable, Integer}"
+uri = "core/#ExaModels.get_start-Tuple%7BTwoStageExaModel%2C%20SecondStageVariable%2C%20Integer%7D"
+[[jl.method]]
+name = "ExaModels.get_ucon-Tuple{ExaModel, ExaModels.Constraint}"
+uri = "core/#ExaModels.get_ucon-Tuple%7BExaModel%2C%20ExaModels.Constraint%7D"
+[[jl.method]]
+name = "ExaModels.get_uvar-Tuple{ExaModel, ExaModels.Variable}"
+uri = "core/#ExaModels.get_uvar-Tuple%7BExaModel%2C%20ExaModels.Variable%7D"
+[[jl.method]]
+name = "ExaModels.get_value-Tuple{ExaCore, ExaModels.Parameter}"
+uri = "core/#ExaModels.get_value-Tuple%7BExaCore%2C%20ExaModels.Parameter%7D"
+[[jl.method]]
+name = "ExaModels.get_value-Tuple{ExaModel, ExaModels.Parameter}"
+uri = "core/#ExaModels.get_value-Tuple%7BExaModel%2C%20ExaModels.Parameter%7D"
+[[jl.method]]
+name = "ExaModels.get_value-Tuple{TwoStageExaModel, ExaModels.Parameter{S, O, <:SecondStageTag} where {S, O}, Integer}"
+uri = "core/#ExaModels.get_value-Tuple%7BTwoStageExaModel%2C%20ExaModels.Parameter%7BS%2C%20O%2C%20%3C%3ASecondStageTag%7D%20where%20%7BS%2C%20O%7D%2C%20Integer%7D"
+[[jl.method]]
+name = "ExaModels.get_var_scen-Tuple{TwoStageExaModel}"
+uri = "core/#ExaModels.get_var_scen-Tuple%7BTwoStageExaModel%7D"
+[[jl.method]]
+name = "ExaModels.get_vars-Tuple{Union{ExaCore, ExaModel}}"
+uri = "core/#ExaModels.get_vars-Tuple%7BUnion%7BExaCore%2C%20ExaModel%7D%7D"
+[[jl.method]]
+name = "ExaModels.gradient!-NTuple{5, Any}"
+uri = "core/#ExaModels.gradient%21-NTuple%7B5%2C%20Any%7D"
+[[jl.method]]
+name = "ExaModels.grpass-Union{Tuple{D}, Tuple{D, Vararg{Any, 5}}} where D<:Union{Real, AdjointNull, DataIndexed{…}}"
+uri = "core/#ExaModels.grpass-Union%7BTuple%7BD%7D%2C%20Tuple%7BD%2C%20Vararg%7BAny%2C%205%7D%7D%7D%20where%20D%3C%3AUnion%7BReal%2C%20AdjointNull%2C%20DataIndexed%7B%E2%80%A6%7D%7D"
+[[jl.method]]
+name = "ExaModels.has_matfree_hess-Tuple{VectorNonlinearOracle}"
+uri = "core/#ExaModels.has_matfree_hess-Tuple%7BVectorNonlinearOracle%7D"
+[[jl.method]]
+name = "ExaModels.has_matfree_jac-Tuple{VectorNonlinearOracle}"
+uri = "core/#ExaModels.has_matfree_jac-Tuple%7BVectorNonlinearOracle%7D"
+[[jl.method]]
+name = "ExaModels.hdrpass-Union{Tuple{T2}, Tuple{T1}, Tuple{T1, T2, Vararg{Any, 6}}} where {T1<:SecondAdjointNode1{…}, T2<:SecondAdjointNode1{…}}"
+uri = "core/#ExaModels.hdrpass-Union%7BTuple%7BT2%7D%2C%20Tuple%7BT1%7D%2C%20Tuple%7BT1%2C%20T2%2C%20Vararg%7BAny%2C%206%7D%7D%7D%20where%20%7BT1%3C%3ASecondAdjointNode1%7B%E2%80%A6%7D%2C%20T2%3C%3ASecondAdjointNode1%7B%E2%80%A6%7D%7D"
+[[jl.method]]
+name = "ExaModels.instantiate-Union{Tuple{N}, Tuple{Any, Vararg{Any, N}}} where N"
+uri = "core/#ExaModels.instantiate-Union%7BTuple%7BN%7D%2C%20Tuple%7BAny%2C%20Vararg%7BAny%2C%20N%7D%7D%7D%20where%20N"
+[[jl.method]]
+name = "ExaModels.jrpass-Union{Tuple{D}, Tuple{D, Vararg{Any, 7}}} where D<:Union{Real, AdjointNull}"
+uri = "core/#ExaModels.jrpass-Union%7BTuple%7BD%7D%2C%20Tuple%7BD%2C%20Vararg%7BAny%2C%207%7D%7D%7D%20where%20D%3C%3AUnion%7BReal%2C%20AdjointNull%7D"
+[[jl.method]]
+name = "ExaModels.multipliers-Tuple{SolverCore.AbstractExecutionStats, ExaModels.Constraint}"
+uri = "core/#ExaModels.multipliers-Tuple%7BSolverCore.AbstractExecutionStats%2C%20ExaModels.Constraint%7D"
+[[jl.method]]
+name = "ExaModels.multipliers_L-Tuple{SolverCore.AbstractExecutionStats, Any}"
+uri = "core/#ExaModels.multipliers_L-Tuple%7BSolverCore.AbstractExecutionStats%2C%20Any%7D"
+[[jl.method]]
+name = "ExaModels.multipliers_U-Tuple{SolverCore.AbstractExecutionStats, Any}"
+uri = "core/#ExaModels.multipliers_U-Tuple%7BSolverCore.AbstractExecutionStats%2C%20Any%7D"
+[[jl.method]]
+name = "ExaModels.objective-Tuple{ExaCore, ScalarNonlinearOracle}"
+uri = "core/#ExaModels.objective-Tuple%7BExaCore%2C%20ScalarNonlinearOracle%7D"
+[[jl.method]]
+name = "ExaModels.set_lcon!-Tuple{ExaModel, ExaModels.Constraint, Any}"
+uri = "core/#ExaModels.set_lcon%21-Tuple%7BExaModel%2C%20ExaModels.Constraint%2C%20Any%7D"
+[[jl.method]]
+name = "ExaModels.set_lvar!-Tuple{ExaModel, ExaModels.Variable, Any}"
+uri = "core/#ExaModels.set_lvar%21-Tuple%7BExaModel%2C%20ExaModels.Variable%2C%20Any%7D"
+[[jl.method]]
+name = "ExaModels.set_start!-Tuple{ExaModel, ExaModels.Variable, Any}"
+uri = "core/#ExaModels.set_start%21-Tuple%7BExaModel%2C%20ExaModels.Variable%2C%20Any%7D"
+[[jl.method]]
+name = "ExaModels.set_start!-Tuple{TwoStageExaModel, ExaModels.Constraint{F, I, O, S, <:SecondStageConstraintTag} where {F, I, O, S}, Integer, Any}"
+uri = "core/#ExaModels.set_start%21-Tuple%7BTwoStageExaModel%2C%20ExaModels.Constraint%7BF%2C%20I%2C%20O%2C%20S%2C%20%3C%3ASecondStageConstraintTag%7D%20where%20%7BF%2C%20I%2C%20O%2C%20S%7D%2C%20Integer%2C%20Any%7D"
+[[jl.method]]
+name = "ExaModels.set_start!-Tuple{TwoStageExaModel, SecondStageVariable, Integer, Any}"
+uri = "core/#ExaModels.set_start%21-Tuple%7BTwoStageExaModel%2C%20SecondStageVariable%2C%20Integer%2C%20Any%7D"
+[[jl.method]]
+name = "ExaModels.set_ucon!-Tuple{ExaModel, ExaModels.Constraint, Any}"
+uri = "core/#ExaModels.set_ucon%21-Tuple%7BExaModel%2C%20ExaModels.Constraint%2C%20Any%7D"
+[[jl.method]]
+name = "ExaModels.set_uvar!-Tuple{ExaModel, ExaModels.Variable, Any}"
+uri = "core/#ExaModels.set_uvar%21-Tuple%7BExaModel%2C%20ExaModels.Variable%2C%20Any%7D"
+[[jl.method]]
+name = "ExaModels.set_value!-Tuple{ExaCore, ExaModels.Parameter, AbstractArray}"
+uri = "core/#ExaModels.set_value%21-Tuple%7BExaCore%2C%20ExaModels.Parameter%2C%20AbstractArray%7D"
+[[jl.method]]
+name = "ExaModels.set_value!-Tuple{ExaModel, ExaModels.Parameter, Any}"
+uri = "core/#ExaModels.set_value%21-Tuple%7BExaModel%2C%20ExaModels.Parameter%2C%20Any%7D"
+[[jl.method]]
+name = "ExaModels.set_value!-Tuple{TwoStageExaModel, ExaModels.Parameter{S, O, <:SecondStageTag} where {S, O}, Integer, Any}"
+uri = "core/#ExaModels.set_value%21-Tuple%7BTwoStageExaModel%2C%20ExaModels.Parameter%7BS%2C%20O%2C%20%3C%3ASecondStageTag%7D%20where%20%7BS%2C%20O%7D%2C%20Integer%2C%20Any%7D"
+[[jl.method]]
+name = "ExaModels.sgradient!-NTuple{5, Any}"
+uri = "core/#ExaModels.sgradient%21-NTuple%7B5%2C%20Any%7D"
+[[jl.method]]
+name = "ExaModels.shessian!-NTuple{7, Any}"
+uri = "core/#ExaModels.shessian%21-NTuple%7B7%2C%20Any%7D"
+[[jl.method]]
+name = "ExaModels.sjacobian!-NTuple{6, Any}"
+uri = "core/#ExaModels.sjacobian%21-NTuple%7B6%2C%20Any%7D"
+[[jl.method]]
+name = "ExaModels.solution-Tuple{SolverCore.AbstractExecutionStats, Any}"
+uri = "core/#ExaModels.solution-Tuple%7BSolverCore.AbstractExecutionStats%2C%20Any%7D"
+
+[[jl.module]]
+name = "ExaModels.ExaModels"
+uri = "core/#$"
+
+[[jl.type]]
+name = "ExaModels.AbstractAdjointNode"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.AbstractArgNode"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.AbstractExaModel"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.AbstractNode"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.AbstractSecondAdjointNode"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.AdjointNode1"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.AdjointNode2"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.AdjointNodeSource"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.AdjointNodeVar"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.AdjointNull"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.ArgCall"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.ArgIndexed"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.ArgLeaf"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.ArgNode1"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.ArgNode2"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.ArgSource"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.CompressedNLPModel"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.Compressor"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.ConAugPair"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.Constant"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.Constraint"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.ConstraintAugmentation"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.ConstraintSlot"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.DataIndexed"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.DataSource"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.EachScenario"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.ExaModelWithOracle"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.Expression"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.Node1"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.Node2"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.Null"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.Objective"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.OracleEvaluator"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.Parameter"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.ProdNode"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.SIMDFunction"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.ScalarNonlinearOracle"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.SecondAdjointNode1"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.SecondAdjointNode2"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.SecondAdjointNodeSource"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.SecondAdjointNodeVar"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.SecondAdjointNull"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.SumNode"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.TimedNLPModel"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.TwoStageExaCore"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.TwoStageExaModel"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.Var"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.VarSource"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.VectorNonlinearOracle"
+uri = "core/#$"
+[[jl.type]]
+name = "ExaModels.WrapperNLPModel"
+uri = "core/#$"
+
+[[std.doc]]
+dispname = "Constraint Augmentation with add_con!"
+name = "constraint_augmentation"
+uri = "constraint_augmentation/"
+[[std.doc]]
+dispname = "API Manual"
+name = "core"
+uri = "core/"
+[[std.doc]]
+dispname = "Developing Extensions"
+name = "develop"
+uri = "develop/"
+[[std.doc]]
+dispname = "Example: Distillation Column"
+name = "distillation"
+uri = "distillation/"
+[[std.doc]]
+dispname = "CPU and GPU acceleration"
+name = "gpu"
+uri = "gpu/"
+[[std.doc]]
+dispname = "Getting Started"
+name = "guide"
+uri = "guide/"
+[[std.doc]]
+dispname = "Introduction"
+name = "index"
+uri = ""
+[[std.doc]]
+dispname = "JuMP Interface (experimental)"
+name = "jump"
+uri = "jump/"
+[[std.doc]]
+dispname = "Example: Optimal Power Flow"
+name = "opf"
+uri = "opf/"
+[[std.doc]]
+dispname = "Oracle Constraints"
+name = "oracle"
+uri = "oracle/"
+[[std.doc]]
+dispname = "Parameters"
+name = "parameters"
+uri = "parameters/"
+[[std.doc]]
+dispname = "Macro Behavior: Returning core from Functions"
+name = "patterns"
+uri = "patterns/"
+[[std.doc]]
+dispname = "Performance Tips"
+name = "performance"
+uri = "performance/"
+[[std.doc]]
+dispname = "Example: Quadrotor"
+name = "quad"
+uri = "quad/"
+[[std.doc]]
+dispname = "Model recipes: building once, instantiating with data"
+name = "recipe"
+uri = "recipe/"
+[[std.doc]]
+dispname = "References"
+name = "ref"
+uri = "ref/"
+[[std.doc]]
+dispname = "Mathematical Abstraction"
+name = "simd"
+uri = "simd/"
+[[std.doc]]
+dispname = "Upgrading from v0.9 to v0.10"
+name = "upgrade"
+uri = "upgrade/"
+
+[[std.label]]
+dispname = "1. Model-building function and macro renames"
+name = "1.-Model-building-function-and-macro-renames"
+uri = "upgrade/#$"
+[[std.label]]
+dispname = "2. ExaCore is immutable"
+name = "2.-ExaCore-is-immutable"
+uri = "upgrade/#$"
+[[std.label]]
+dispname = "3. Mechanical substitution rules"
+name = "3.-Mechanical-substitution-rules"
+uri = "upgrade/#$"
+[[std.label]]
+dispname = "4. Complete before/after example"
+name = "4.-Complete-before/after-example"
+uri = "upgrade/#4.-Complete-before%2Fafter-example"
+[[std.label]]
+dispname = "Accessing the ExaModel"
+name = "Accessing-the-ExaModel"
+uri = "jump/#$"
+[[std.label]]
+dispname = "Argument placeholders"
+name = "Argument-placeholders"
+uri = "recipe/#$"
+[[std.label]]
+dispname = "As an Optimizer"
+name = "As-an-Optimizer"
+uri = "jump/#$"
+[[std.label]]
+name = "Backends"
+uri = "jump/#$"
+[[std.label]]
+dispname = "Background: Expression Patterns and Compilation"
+name = "Background:-Expression-Patterns-and-Compilation"
+uri = "constraint_augmentation/#Background%3A-Expression-Patterns-and-Compilation"
+[[std.label]]
+dispname = "CPU and GPU acceleration"
+name = "CPU-and-GPU-acceleration"
+uri = "gpu/#$"
+[[std.label]]
+dispname = "Citing ExaModels.jl"
+name = "Citing-ExaModels.jl"
+uri = "#$"
+[[std.label]]
+dispname = "Comparison Results"
+name = "Comparison-Results"
+uri = "distillation/#$"
+[[std.label]]
+dispname = "Compiling a recipe into a shared library"
+name = "Compiling-a-recipe-into-a-shared-library"
+uri = "recipe/#$"
+[[std.label]]
+name = "Constraints"
+uri = "guide/#$"
+[[std.label]]
+dispname = "Consuming the library"
+name = "Consuming-the-library"
+uri = "recipe/#$"
+[[std.label]]
+dispname = "Creating Parametric Models"
+name = "Creating-Parametric-Models"
+uri = "parameters/#$"
+[[std.label]]
+dispname = "Developing Extensions"
+name = "Developing-Extensions"
+uri = "develop/#$"
+[[std.label]]
+dispname = "Documentation Structure"
+name = "Documentation-Structure"
+uri = "#$"
+[[std.label]]
+name = "ExaCore"
+uri = "guide/#$"
+[[std.label]]
+name = "ExaModel"
+uri = "guide/#$"
+[[std.label]]
+name = "ExaModels"
+uri = "core/#$"
+[[std.label]]
+name = "Example"
+uri = "oracle/#$"
+[[std.label]]
+dispname = "Example: Data-Driven Dynamics (Reducing Compilation Blowup)"
+name = "Example:-Data-Driven-Dynamics-(Reducing-Compilation-Blowup)"
+uri = "constraint_augmentation/#Example%3A-Data-Driven-Dynamics-%28Reducing-Compilation-Blowup%29"
+[[std.label]]
+dispname = "Example: Power Balance in Optimal Power Flow"
+name = "Example:-Power-Balance-in-Optimal-Power-Flow"
+uri = "constraint_augmentation/#Example%3A-Power-Balance-in-Optimal-Power-Flow"
+[[std.label]]
+name = "GPUs"
+uri = "jump/#$"
+[[std.label]]
+dispname = "High-level API: embed_oracle"
+name = "High-level-API:-embed_oracle"
+uri = "oracle/#High-level-API%3A-embed_oracle"
+[[std.label]]
+dispname = "How the Macros Work"
+name = "How-the-Macros-Work"
+uri = "patterns/#$"
+[[std.label]]
+dispname = "Instantiating it"
+name = "Instantiating-it"
+uri = "recipe/#$"
+[[std.label]]
+name = "Introduction"
+uri = "#$"
+[[std.label]]
+dispname = "JuMP Interface"
+name = "JuMP-Interface"
+uri = "jump/#$"
+[[std.label]]
+dispname = "Key differences from other algebraic modeling tools"
+name = "Key-differences-from-other-algebraic-modeling-tools"
+uri = "#$"
+[[std.label]]
+dispname = "Low-level API: VectorNonlinearOracle"
+name = "Low-level-API:-VectorNonlinearOracle"
+uri = "oracle/#Low-level-API%3A-VectorNonlinearOracle"
+[[std.label]]
+dispname = "Make sure your array's eltype is concrete"
+name = "Make-sure-your-array's-eltype-is-concrete"
+uri = "performance/#Make-sure-your-array%27s-eltype-is-concrete"
+[[std.label]]
+dispname = "Model with Lifted Subexpressions"
+name = "Model-with-Lifted-Subexpressions"
+uri = "distillation/#$"
+[[std.label]]
+name = "Objective"
+uri = "guide/#$"
+[[std.label]]
+dispname = "Original Model (without subexpressions)"
+name = "Original-Model-(without-subexpressions)"
+uri = "distillation/#Original-Model-%28without-subexpressions%29"
+[[std.label]]
+dispname = "Performance Highlights"
+name = "Performance-Highlights"
+uri = "#$"
+[[std.label]]
+dispname = "Performance Tips"
+name = "Performance-Tips"
+uri = "performance/#$"
+[[std.label]]
+name = "References"
+uri = "ref/#$"
+[[std.label]]
+dispname = "Returning core for Further Composition"
+name = "Returning-core-for-Further-Composition"
+uri = "patterns/#$"
+[[std.label]]
+dispname = "Running the Models"
+name = "Running-the-Models"
+uri = "distillation/#$"
+[[std.label]]
+name = "Solutions"
+uri = "guide/#$"
+[[std.label]]
+name = "Subexpressions"
+uri = "guide/#$"
+[[std.label]]
+dispname = "Subexpressions in ExaModels"
+name = "Subexpressions-in-ExaModels"
+uri = "distillation/#$"
+[[std.label]]
+name = "Summary"
+uri = "constraint_augmentation/#$"
+[[std.label]]
+dispname = "Summary for an automated migration agent"
+name = "Summary-for-an-automated-migration-agent"
+uri = "upgrade/#$"
+[[std.label]]
+dispname = "Supported Solvers"
+name = "Supported-Solvers"
+uri = "#$"
+[[std.label]]
+dispname = "Supporting ExaModels.jl"
+name = "Supporting-ExaModels.jl"
+uri = "#$"
+[[std.label]]
+name = "Syntax"
+uri = "constraint_augmentation/#$"
+[[std.label]]
+dispname = "The Pitfall: Functions That Forget to Return core"
+name = "The-Pitfall:-Functions-That-Forget-to-Return-core"
+uri = "patterns/#The-Pitfall%3A-Functions-That-Forget-to-Return-core"
+[[std.label]]
+dispname = "Upgrading from v0.9 to v0.10"
+name = "Upgrading-from-v0.9-to-v0.10"
+uri = "upgrade/#$"
+[[std.label]]
+dispname = "Use a function to create a model"
+name = "Use-a-function-to-create-a-model"
+uri = "performance/#$"
+[[std.label]]
+name = "Variables"
+uri = "guide/#$"
+[[std.label]]
+dispname = "What add_con! Does"
+name = "What-add_con!-Does"
+uri = "constraint_augmentation/#What-add_con%21-Does"
+[[std.label]]
+dispname = "What can be deferred, and what should just be data"
+name = "What-can-be-deferred,-and-what-should-just-be-data"
+uri = "recipe/#What-can-be-deferred%2C-and-what-should-just-be-data"
+[[std.label]]
+dispname = "What is ExaModels.jl?"
+name = "What-is-ExaModels.jl?"
+uri = "#What-is-ExaModels.jl%3F"
+[[std.label]]
+dispname = "What is SIMD abstraction?"
+name = "What-is-SIMD-abstraction?"
+uri = "simd/#What-is-SIMD-abstraction%3F"
+[[std.label]]
+dispname = "Why SIMD abstraction?"
+name = "Why-SIMD-abstraction?"
+uri = "simd/#Why-SIMD-abstraction%3F"
+[[std.label]]
+dispname = "Why bother"
+name = "Why-bother"
+uri = "recipe/#$"
+[[std.label]]
+dispname = "Writing a recipe"
+name = "Writing-a-recipe"
+uri = "recipe/#$"
+[[std.label]]
+dispname = "Constraint Augmentation with add_con!"
+name = "constraint-augmentation"
+uri = "constraint_augmentation/#$"
+[[std.label]]
+dispname = "Example: Distillation Column"
+name = "distillation"
+uri = "distillation/#$"
+[[std.label]]
+dispname = "Getting Started"
+name = "guide"
+uri = "guide/#$"
+[[std.label]]
+dispname = "Macro Behavior: Returning core from Functions"
+name = "macro-behavior"
+uri = "patterns/#$"
+[[std.label]]
+dispname = "Example: Optimal Power Flow"
+name = "opf"
+uri = "opf/#$"
+[[std.label]]
+dispname = "Oracle Constraints"
+name = "oracle"
+uri = "oracle/#$"
+[[std.label]]
+dispname = "Parameters"
+name = "parameters"
+uri = "parameters/#$"
+[[std.label]]
+dispname = "Example: Quadrotor"
+name = "quad"
+uri = "quad/#$"
+[[std.label]]
+dispname = "Model recipes: building once, instantiating with data"
+name = "recipe"
+uri = "recipe/#$"
+[[std.label]]
+dispname = "SIMD Abstraction"
+name = "simd"
+uri = "simd/#$"
+[[std.label]]
+dispname = "Two-Stage Optimization"
+name = "two_stage"
+uri = "two_stage/#$"

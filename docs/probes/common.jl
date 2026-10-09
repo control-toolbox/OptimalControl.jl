@@ -3,9 +3,11 @@
 # A probe checks a claim of the documentation that the docs build cannot execute (see
 # README.md). It throws on failure; `run.jl` runs every probe in a fresh Julia process.
 
-# Use the OptimalControl of this repository, as docs/make.jl does.
+# Same load path as docs/make.jl: the docs environment first (its Manifest decides every
+# version), then this repository for OptimalControl itself.
 const REPO_ROOT = normpath(joinpath(@__DIR__, "..", ".."))
 pushfirst!(LOAD_PATH, REPO_ROOT)
+pushfirst!(LOAD_PATH, joinpath(REPO_ROOT, "docs"))
 
 """
     error_text(f) -> String
@@ -36,8 +38,8 @@ end
 """
     temp_env(pkgs...)
 
-Activate a temporary environment holding `pkgs` and stack the docs environment behind it,
-for claims about packages the docs environment does not have. The first call downloads
+Activate a temporary environment holding `pkgs`, for claims about packages the docs
+environment does not have. The docs environment stays first in the load path. The first call downloads
 and precompiles them.
 """
 function temp_env(pkgs::AbstractString...)
@@ -45,7 +47,6 @@ function temp_env(pkgs::AbstractString...)
     # Pkg is loaded just above, in a newer world: call it through invokelatest.
     Base.invokelatest(Pkg.activate; temp=true, io=devnull)
     Base.invokelatest(Pkg.add, collect(pkgs); io=devnull)
-    push!(LOAD_PATH, joinpath(REPO_ROOT, "docs"))
     return nothing
 end
 

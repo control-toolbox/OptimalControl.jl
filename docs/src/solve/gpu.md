@@ -1,7 +1,7 @@
 # [GPU](@id solve-gpu)
 
-GPU support runs through [ExaModels.jl](https://exanauts.github.io/ExaModels.jl/stable) and
-[MadNLPGPU.jl](https://github.com/MadNLP/MadNLP.jl), NVIDIA GPUs only, via
+GPU support runs through [ExaModels.jl](https://madsuite-org.github.io/ExaModels.jl/stable/) and
+[MadNLPGPU.jl](https://madsuite-org.github.io/MadNLP.jl/stable/), NVIDIA GPUs only, via
 [CUDA.jl](https://github.com/JuliaGPU/CUDA.jl).
 
 !!! note "What you are reading depends on the machine that built this page"
@@ -23,31 +23,23 @@ println("CUDA.functional() = ", CUDA.functional())
 
 Check `CUDA.functional()` before assuming a `:gpu` solve will actually run on the device.
 
-!!! warning "All three — and `CUDSS` is the one you will forget"
+!!! warning "All three, and `CUDSS` is the one you will forget"
 
-    The `CTSolversMadNLPGPU` extension is armed by `MadNLPGPU`, `CUDA` **and** `CUDSS`
-    together. Load only the first two — the pair every GPU tutorial shows — and the extension
-    does not load, so the GPU solver strategies are never registered.
+    The GPU solvers need `MadNLPGPU`, `CUDA` **and** `CUDSS`, loaded together. `CUDSS` (the
+    sparse linear solver on the GPU) is a weak dependency of `MadNLPGPU`: `using MadNLPGPU`
+    does not load it. Load only the first two, and the GPU solve fails with an
+    `ExtensionError` that reports `Missing CUDSS`, with the hint `using CUDSS`.
 
-    It used to work by accident. Up to MadNLPGPU 0.8, `CUDSS` was a hard dependency, so
-    `using MadNLPGPU` pulled it in and the third trigger was satisfied without anyone asking.
-    From 0.9 onward it is a weak dependency and you must load it yourself.
+`ExaModels` needs no `using` of its own: it comes with OptimalControl, and `:exa` works
+without it. Importing it explicitly would also bring its `objective` and `constraint` into
+scope, which collide with the accessors of the same name. If you need ExaModels' own API,
+import it qualified: `using ExaModels: ExaModels`.
 
-    The error names exactly which one is missing — load `MadNLPGPU` and `CUDA` but not
-    `CUDSS`, and it reports `Missing CUDSS` with the hint `using CUDSS`.
+## The problem
 
-`ExaModels` needs no `using` of its own. It is a dependency of OptimalControl, so the module is
-already bound after `using OptimalControl` and `:exa` works without it. Importing it explicitly
-also brings its `objective` and `constraint` into scope, both of which collide with the
-accessors of the same name — see
-[#882](https://github.com/control-toolbox/OptimalControl.jl/issues/882). If you do need
-ExaModels' own API, import it qualified: `using ExaModels: ExaModels`.
-
-## The problem must be coordinatewise
-
-`:exa` — the only GPU-capable modeler — requires dynamics (and any path constraint) written
-one coordinate at a time, `∂(x₁)(t) == ...`, not `ẋ(t) == [...]`. See
-[Abstract syntax (`@def`)](@ref modelling-abstract-syntax) for the two forms side by side.
+`:exa`, the only GPU-capable modeler, needs a problem written with
+[`@def`](@ref modelling-abstract-syntax). The dynamics and the path constraints can be written
+in vector form, as here, or coordinate by coordinate:
 
 ```@example gpu
 ocp = @def begin
@@ -57,8 +49,7 @@ ocp = @def begin
     v ∈ R, variable
     x(0) == [0, 1]
     x(1) == [0, -1]
-    ∂(x₁)(t) == x₂(t)   # coordinatewise
-    ∂(x₂)(t) == u(t)    # — not ẋ(t) == [x₂(t), u(t)]
+    ẋ(t) == [x₂(t), u(t)]
     0 ≤ x₁(t) + v^2 ≤ 1.1
     -10 ≤ u(t) ≤ 10
     1 ≤ v ≤ 2
@@ -97,23 +88,46 @@ Solver verbosity is a separate concern: `display=false` above silences the Optim
 report, and the underlying solver takes its own options — `print_level=MadNLP.ERROR` for
 MadNLP, which needs `using MadNLP` in scope. See [Options](@ref solve-options).
 
-`:gpu` changes what a strategy's own defaults are: `Exa{GPU}` uses a CUDA differentiation
-backend, `MadNLP{GPU}` uses the `CUDSSSolver` linear solver instead of MUMPS. `describe(:gpu)`
-lists every strategy with a GPU-parameterized variant — this call needs nothing GPU-specific
-and runs fine on CPU alone:
+## What `:gpu` changes
+
+`describe(:gpu)` lists every strategy with a GPU variant. It needs nothing GPU-specific and
+runs on CPU alone:
 
 ```@example gpu
 describe(:gpu)
 ```
+
+Only `:exa`, `:madnlp` and `:madncl` have one. The parameter changes the defaults of their
+options. Constructing the strategies does not touch the device, so this runs anywhere:
+
+```@example gpu
+Base.CoreLogging.disable_logging(Base.CoreLogging.Warn) # hide
+modeler = OptimalControl.Exa{GPU}()
+solver = OptimalControl.MadNLP{GPU}()
+println("Exa{GPU} backend:          ", options(modeler)[:backend])
+println("MadNLP{GPU} linear_solver: ", options(solver)[:linear_solver])
+Base.CoreLogging.disable_logging(Base.CoreLogging.BelowMinLevel) # hide
+nothing # hide
+```
+
+```@example gpu
+modeler = OptimalControl.Exa()      # same as OptimalControl.Exa{CPU}()
+solver = OptimalControl.MadNLP()    # same as OptimalControl.MadNLP{CPU}()
+println("Exa{CPU} backend:          ", options(modeler)[:backend])
+println("MadNLP{CPU} linear_solver: ", options(solver)[:linear_solver])
+```
+
+On the GPU, ExaModels evaluates the model with a CUDA backend, and MadNLP factorizes its linear
+systems with cuDSS instead of MUMPS.
 
 ## Explicit mode
 
 Constructing the components does not touch the device, so this block runs anywhere:
 
 ```@example gpu
-disc = OptimalControl.Collocation(; grid_size=100, scheme=:midpoint)
-mod = OptimalControl.Exa{GPU}()
-slv = OptimalControl.MadNLP{GPU}()
+discretizer = OptimalControl.Collocation(; grid_size=100, scheme=:midpoint)
+modeler = OptimalControl.Exa{GPU}()
+solver = OptimalControl.MadNLP{GPU}()
 nothing # hide
 ```
 
@@ -121,8 +135,8 @@ Running them is what needs the hardware:
 
 ```@example gpu
 try
-    global result = solve(ocp; discretizer=disc, modeler=mod, solver=slv)
-    println("objective = ", objective(result))
+    global sol = solve(ocp; discretizer=discretizer, modeler=modeler, solver=solver)
+    println("objective = ", objective(sol))
 catch e
     println("Exception: ", first(sprint(showerror, e), 400))
 end
@@ -168,30 +182,40 @@ end # hide
 
 ## Performance notes
 
-GPU solving amortizes best on large-scale problems (thousands of variables/constraints) or
-repeated solves in a loop, where the per-call setup overhead is paid once. For small problems,
-plain CPU solving is typically faster.
+GPU solving is beneficial for:
 
-The idiomatic guard is `CUDA.functional()` — pick the strategy, then solve:
+- **large-scale problems**: thousands of variables and constraints, for instance fine grids;
+- **dense computations**: problems with many nonlinear constraints;
+- **repeated solves**: the GPU initialization overhead is paid once.
+
+For small problems, CPU solving is usually faster.
+
+The idiomatic guard is `CUDA.functional()`: pick the parameter, then solve:
 
 ```@example gpu
-strategy = CUDA.functional() ? :gpu : :cpu
-println("strategy = ", strategy)
+parameter = CUDA.functional() ? :gpu : :cpu
+println("parameter = ", parameter)
 ```
 
+On a machine with a functional GPU, this block compares the same method on CPU and GPU, on a
+fine grid (each solve is run once first, so that compilation is not timed):
+
 ```@example gpu
+using MadNLP
 if CUDA.functional()
-    t = @elapsed solve(ocp, :gpu; grid_size=1000, display=false)
-    println("GPU solve at grid_size=1000: ", round(t; digits=2), " s")
+    for p in (:cpu, :gpu)
+        solve(ocp, :exa, :madnlp, p; grid_size=1000, display=false, print_level=MadNLP.ERROR)
+        t = @elapsed solve(ocp, :exa, :madnlp, p; grid_size=1000, display=false, print_level=MadNLP.ERROR)
+        println(p, " at grid_size=1000: ", round(t; digits=3), " s")
+    end
 else
-    println("No functional device here, so there is no GPU timing to report.")
-    println("On a CUDA machine this block prints the :gpu solve time at grid_size=1000.")
+    println("No functional GPU on the machine that built this page: no timing to compare.")
 end
 ```
 
 ## See also
 
-- [Overview](@ref solve-overview) — CPU solving basics.
+- [Solve overview](@ref solve-overview) — CPU solving basics.
 - [Choosing a method](@ref solve-choosing-a-method) — the full method list, GPU entries included.
 - [Explicit mode](@ref solve-explicit-mode) — typed components in general.
 - The same `:cpu`/`:gpu` distinction applies to `Flow`; see [Flows overview](@ref flows-overview).
