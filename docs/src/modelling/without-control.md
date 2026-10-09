@@ -1,26 +1,29 @@
-# [No control](@id modelling-without-control)
+# [Control-free problems](@id modelling-without-control)
 
 ## What this is for
 
-Control-free problems are optimal control problems without a control variable — used for **optimising constant parameters in dynamical systems**, such as:
+Control-free problems are optimal control problems without a control. They are used to
+**optimise constant parameters of a dynamical system**, for instance to
 
-- identifying unknown parameters from observed data (parameter estimation),
-- finding optimal parameters for a given performance criterion.
+- identify unknown parameters from observed data (parameter estimation),
+- find the parameters that are best for a given performance criterion.
 
-This page is the modelling-side guide: how to declare such a problem and the traps around it.
-For the full worked story — both examples below solved **direct and indirect** — see
+This page shows how to declare and solve such problems. For the full story of the two
+examples below, solved by both the direct and the indirect method, see
 [Parameter estimation without a control](@ref examples-control-free).
 
 ## How to declare it
 
-There is no dedicated syntax for "no control": simply never declare one. Declare a `variable`, a time, a state, dynamics, and a cost, and omit the control line entirely (on the [abstract syntax](@ref modelling-abstract-syntax)) or never call `control!` (on the [functional API](@ref modelling-functional-api)). The [functional API](@ref modelling-functional-api) page shows the parameter-estimation problem below built both ways, side by side.
+There is no dedicated syntax: simply never declare a control. Declare a `variable` (the
+parameters), a time, a state, the dynamics and a cost, and omit the control line with
+[`@def`](@ref modelling-abstract-syntax), or never call `control!` with the
+[functional API](@ref modelling-functional-api). The functional API page builds the
+parameter-estimation problem below both ways, side by side.
 
-!!! warning "`control!(pre, 0)` is an error, not a spelling for \"no control\""
+!!! warning "`control!(pre, 0)` is an error"
 
-    A control-free problem is reached purely by omission. `control!(pre, 0)` throws
-    `IncorrectArgument` — a dimension must be positive. Internally, a `PreModel` that never
-    called `control!` keeps its default `EmptyControlModel`, and `is_control_free`/`has_control`
-    read that from the *type* of the built model's control field, not from a dimension check.
+    With the functional API, a control-free problem is obtained by omission only.
+    `control!(pre, 0)` throws an `IncorrectArgument`: a dimension must be positive.
 
 ```@example main
 using OptimalControl
@@ -31,15 +34,15 @@ using Plots
 ## Example: parameter estimation
 
 A system with exponential growth, $\dot{x}(t) = \lambda\, x(t)$, $x(0) = 2$, where $\lambda$
-is an unknown growth rate. We have noisy observed data and estimate $\lambda$ by minimising
-the squared error:
+is an unknown growth rate. We have noisy observed data $x_{\text{obs}}$ and estimate
+$\lambda$ by minimising the squared error:
 
 ```math
-\min_{\lambda} \int_0^{2} (x(t) - x_{\text{obs}}(t))^2 \, \mathrm{d}t
+\min_{\lambda} \int_0^{2} (x(t) - x_{\text{obs}}(t))^2 \, \mathrm{d}t.
 ```
 
-The underlying model has $\lambda = 0.5$; the data adds a perturbation. Note there is **no
-control line** — only a `variable`:
+The data come from the model with $\lambda = 0.5$, plus a perturbation. There is **no
+control line**, only a `variable`:
 
 ```@example main
 # observed data (analytical solution with λ = 0.5, plus a perturbation)
@@ -60,13 +63,27 @@ end
 nothing # hide
 ```
 
-It solves like any other problem:
+The model knows it has no control:
+
+```@example main
+is_control_free(ocp)
+```
+
+It solves like any other problem. The estimated parameter is the optimal value of the
+variable:
 
 ```@example main
 sol = solve(ocp; grid_size=20, display=false)
 println("estimated λ = ", variable(sol), "   (true value: ", λ_true, ")")
 nothing # hide
 ```
+
+```@example main
+@assert isapprox(variable(sol), λ_true; atol=5e-2)   # hide
+nothing                                              # hide
+```
+
+The fitted state follows the data, up to the perturbation:
 
 ```@example main
 plt = plot(sol, :state; size=(800, 400), label="Direct")
@@ -77,13 +94,11 @@ plot!(
 )
 ```
 
-The estimate is close to $\lambda \approx 0.5$. The indirect (PMP shooting) solution of the
-same problem is worked in full in [Parameter estimation without a control](@ref examples-control-free).
-
 ## Example: harmonic oscillator
 
-The same shape with a Mayer cost — minimise the pulsation $\omega$ of $\ddot q = -\omega^2 q$
-under $q(0) = 1$, $\dot q(0) = 0$, $q(1) = 0$ (analytical solution $\omega = \pi/2$):
+The same shape with a Mayer cost: minimise the pulsation $\omega$ of $\ddot q = -\omega^2 q$
+under $q(0) = 1$, $\dot q(0) = 0$ and $q(1) = 0$. The solution is $q(t) = \cos(\omega t)$, and
+the smallest pulsation such that $\cos(\omega) = 0$ is $\omega = \pi/2$:
 
 ```@example main
 ocp = @def begin
@@ -102,32 +117,18 @@ end
 nothing # hide
 ```
 
-Both the direct and indirect solutions of this one are in
-[Parameter estimation without a control](@ref examples-control-free).
+Solving it recovers $\pi/2$:
 
-## How the package knows
+```@example main
+sol = solve(ocp; display=false)
+println("ω = ", variable(sol), "   (π/2 = ", π / 2, ")")
+nothing # hide
+```
 
-`is_control_free(ocp)` and `has_control(ocp)` don't check a dimension — they read the *type*
-of the built model's control field. A `PreModel` that never called `control!` keeps its
-default `EmptyControlModel`; `build` copies that straight into the immutable `Model`, and
-`is_control_free` dispatches on that type. There is nothing to configure: reaching
-`ControlFree` is purely a consequence of never calling `control!`.
-
-## Adding a control back
-
-To turn either of these examples into a controlled problem, declare a control and give
-`Flow` a control law: `Flow(ocp, law)`. Two guards are worth knowing before you try:
-
-- `Flow(ocp)` — no law — only works on a control-free model. On a model **with** a control
-  it throws `PreconditionError("Flow from a with-control OCP is not supported")`, suggesting
-  `Flow(ocp, law)`.
-- `constraint=`/`multiplier=` on a control-free `Flow(ocp)` are rejected — `PreconditionError
-  ("constrained flows are not supported for control-free problems")` — there is no control
-  law and so no pseudo-Hamiltonian to carry a $\mu \cdot g$ term. Use
-  `Flow(ocp, law; constraint=…, multiplier=…)` instead.
-
-See [Control and variable together](@ref examples-control-and-variable) for a worked example
-with both.
+```@example main
+@assert isapprox(variable(sol), π / 2; atol=1e-3)   # hide
+nothing                                             # hide
+```
 
 ## See also
 
@@ -135,4 +136,4 @@ with both.
 - [Abstract syntax (`@def`)](@ref modelling-abstract-syntax) — the control-free syntax.
 - [Functional API](@ref modelling-functional-api) — the control-free functional-API form.
 - [Parameter estimation without a control](@ref examples-control-free) — both problems above, direct **and** indirect, in full.
-- [From an OCP](@ref flows-from-ocp) — building flows in general.
+- [From an OCP](@ref flows-from-ocp) — building flows, including `Flow(ocp)` for a control-free problem.

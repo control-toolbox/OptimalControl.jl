@@ -288,7 +288,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "Formulation" => "modelling/formulation.md",
                 "Abstract syntax (@def)" => "modelling/abstract-syntax.md",
                 "Functional API" => "modelling/functional-api.md",
-                "No control" => "modelling/without-control.md",
+                "Control-free problems" => "modelling/without-control.md",
                 "Inspect a problem" => "modelling/inspect.md",
                 "With AI" => "modelling/with-ai.md",
             ],
