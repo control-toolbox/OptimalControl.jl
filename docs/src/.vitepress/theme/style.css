@@ -336,7 +336,7 @@ mjx-container svg path {
 }
 
 /* ============================================================================
-   Custom layout helpers (migrated from docs/src/assets/custom.css)
+   Custom layout helpers (two-column layouts used by the examples and the functional API)
    ============================================================================ */
 
 /* Responsive layout for two-column content */
@@ -412,6 +412,38 @@ mjx-container svg path {
 
     .responsive-columns-40-60 > div:first-child {
         flex: 1 1 100%;
+    }
+}
+
+/* 40 % / 60 % two-column layout (modelling/functional-api.md: the `@def` model beside its
+   functional-API twin). Both columns carry content, so narrow screens stack them rather
+   than hide one, unlike `.responsive-columns-left-priority` above. */
+.responsive-columns-40-60 {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1em;
+}
+
+.responsive-columns-40-60 > div:first-child {
+    flex: 4;
+    min-width: 0;
+}
+
+.responsive-columns-40-60 > div:last-child {
+    flex: 6;
+    min-width: 0;
+}
+
+@media (max-width: 700px) {
+    .responsive-columns-40-60 {
+        flex-direction: column;
+    }
+
+    .responsive-columns-40-60 > div:first-child,
+    .responsive-columns-40-60 > div:last-child {
+        flex: 1 1 auto;
+        width: 100%;
     }
 }
 
