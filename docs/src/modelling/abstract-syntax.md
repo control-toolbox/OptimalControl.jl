@@ -323,9 +323,6 @@ nothing # hide
 !!! note
     The vector fields `F₀` and `F₁` are defined after the block: functions are only called when the dynamics is evaluated, during `solve` (see [Structure of a definition](@ref modelling-abstract-syntax-structure)).
 
-!!! warning "A constant component"
-    With the default modeler `:adnlp`, a component of the dynamics that is a constant, such as the `0` in `ẋ(t) == [x₂(t), u(t), 0]`, makes `solve` fail with "Cannot determine ordering of Dual tags" ([OptimalControl#481](https://github.com/control-toolbox/OptimalControl.jl/issues/481)). Write `0 * u(t)` instead, or solve with `:exa`.
-
 While it is also possible to declare the dynamics component after component (see below), one may equivalently use *aliases* (check the relevant [aliases](@ref modelling-abstract-syntax-aliases) section below):
 
 ```@example abs
