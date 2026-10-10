@@ -20,18 +20,31 @@ function gpu_error(pkgs::AbstractString...)
         print(sprint(showerror, e))
     end
     """
-    return read(pipeline(`$(Base.julia_cmd()) --startup-file=no -e $code`; stderr=devnull), String)
+    return read(
+        pipeline(`$(Base.julia_cmd()) --startup-file=no -e $code`; stderr=devnull), String
+    )
 end
 missing_pkg(msg) = match(r"Missing\s+(\w+)", msg)
 
 msg = gpu_error()
-check(occursin("ExtensionError", msg) && !occursin("MadNLP{CPU}", msg),
-    "with no GPU package, an ExtensionError that no longer mentions MadNLP{CPU}")
+check(
+    occursin("ExtensionError", msg) && !occursin("MadNLP{CPU}", msg),
+    "with no GPU package, an ExtensionError that no longer mentions MadNLP{CPU}",
+)
 check(missing_pkg(msg)[1] == "CUDA", "with no GPU package, the error asks for CUDA")
-check(missing_pkg(gpu_error("MadNLPGPU"))[1] == "CUDA", "with MadNLPGPU only, the error asks for CUDA")
-check(missing_pkg(gpu_error("MadNLPGPU", "CUDA"))[1] == "CUDSS",
-    "with MadNLPGPU and CUDA, the error asks for CUDSS")
-check(missing_pkg(gpu_error("CUDA", "CUDSS"))[1] == "MadNLP",
-    "known bug CTSolvers.jl#234: with CUDA and CUDSS but not MadNLPGPU, the error asks for MadNLP")
-check(missing_pkg(gpu_error("CUDA", "CUDSS", "MadNLP"))[1] == "MadNLPGPU",
-    "then, with MadNLP loaded, it asks for MadNLPGPU")
+check(
+    missing_pkg(gpu_error("MadNLPGPU"))[1] == "CUDA",
+    "with MadNLPGPU only, the error asks for CUDA",
+)
+check(
+    missing_pkg(gpu_error("MadNLPGPU", "CUDA"))[1] == "CUDSS",
+    "with MadNLPGPU and CUDA, the error asks for CUDSS",
+)
+check(
+    missing_pkg(gpu_error("CUDA", "CUDSS"))[1] == "MadNLP",
+    "known bug CTSolvers.jl#234: with CUDA and CUDSS but not MadNLPGPU, the error asks for MadNLP",
+)
+check(
+    missing_pkg(gpu_error("CUDA", "CUDSS", "MadNLP"))[1] == "MadNLPGPU",
+    "then, with MadNLP loaded, it asks for MadNLPGPU",
+)

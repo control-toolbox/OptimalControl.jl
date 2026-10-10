@@ -12,28 +12,32 @@ using OptimalControl
 using NLPModelsIpopt
 
 for (name, ocp) in [
-    "x(0) - [-1, v] == [0, 0]" => @def(begin
-        v ∈ R, variable
-        t ∈ [0, 1], time
-        x ∈ R², state
-        u ∈ R, control
-        -1 ≤ v ≤ 1
-        x(0) - [-1, v] == [0, 0]
-        x(1) == [0, 0]
-        ẋ(t) == [x₂(t), u(t)]
-        ∫(0.5u(t)^2) → min
-    end),
-    "x(0) - [-one(v), v] == [0, 0]" => @def(begin
-        v ∈ R, variable
-        t ∈ [0, 1], time
-        x ∈ R², state
-        u ∈ R, control
-        -1 ≤ v ≤ 1
-        x(0) - [-one(v), v] == [0, 0]
-        x(1) == [0, 0]
-        ẋ(t) == [x₂(t), u(t)]
-        ∫(0.5u(t)^2) → min
-    end),
+    "x(0) - [-1, v] == [0, 0]" => @def(
+        begin
+            v ∈ R, variable
+            t ∈ [0, 1], time
+            x ∈ R², state
+            u ∈ R, control
+            -1 ≤ v ≤ 1
+            x(0) - [-1, v] == [0, 0]
+            x(1) == [0, 0]
+            ẋ(t) == [x₂(t), u(t)]
+            ∫(0.5u(t)^2) → min
+        end
+    ),
+    "x(0) - [-one(v), v] == [0, 0]" => @def(
+        begin
+            v ∈ R, variable
+            t ∈ [0, 1], time
+            x ∈ R², state
+            u ∈ R, control
+            -1 ≤ v ≤ 1
+            x(0) - [-one(v), v] == [0, 0]
+            x(1) == [0, 0]
+            ẋ(t) == [x₂(t), u(t)]
+            ∫(0.5u(t)^2) → min
+        end
+    ),
 ]
     sol = solve(ocp; display=false)
     check(successful(sol), "a constant component in `$name` solves with :adnlp")
@@ -61,7 +65,12 @@ workaround = @def begin
 end
 
 msg = error_text(() -> solve(constant; display=false))
-check(occursin("ordering of Dual tags", msg),
-    "known bug OptimalControl.jl#481: ẋ(t) == [x₂(t), u(t), 0] fails with :adnlp")
+check(
+    occursin("ordering of Dual tags", msg),
+    "known bug OptimalControl.jl#481: ẋ(t) == [x₂(t), u(t), 0] fails with :adnlp",
+)
 check(successful(solve(workaround; display=false)), "with 0 * u(t), it solves with :adnlp")
-check(successful(solve(constant, :exa; display=false)), "with :exa, the constant component solves")
+check(
+    successful(solve(constant, :exa; display=false)),
+    "with :exa, the constant component solves",
+)

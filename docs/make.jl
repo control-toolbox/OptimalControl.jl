@@ -135,7 +135,10 @@ end
 # fills `logo:` with the single `/logo.svg`; a `.dark` filter recolours it there).
 write(
     joinpath(@__DIR__, "src", "assets", "logo-dark.svg"),
-    replace(read(joinpath(@__DIR__, "src", "assets", "logo.svg"), String), "#ffffff" => "#1b1b1f"),
+    replace(
+        read(joinpath(@__DIR__, "src", "assets", "logo.svg"), String),
+        "#ffffff" => "#1b1b1f",
+    ),
 )
 cp(
     joinpath(@__DIR__, "src", "assets", "logo.svg"),

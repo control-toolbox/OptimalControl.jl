@@ -18,15 +18,18 @@ for dir in (joinpath(REPO_ROOT, "docs", "src"), joinpath(REPO_ROOT, "docs", "src
 end
 
 urls = Set{String}()
-for file in sources, m in eachmatch(r"https://control-toolbox\.org/[^\s\)\]\"'<>`]*", read(file, String))
+for file in sources,
+    m in eachmatch(r"https://control-toolbox\.org/[^\s\)\]\"'<>`]*", read(file, String))
+
     push!(urls, rstrip(m.match, ['.', ',', ';', ':']))
 end
 
-status(url) = try
-    Downloads.request(url; method="HEAD", timeout=30).status
-catch
-    0
-end
+status(url) =
+    try
+        Downloads.request(url; method="HEAD", timeout=30).status
+    catch
+        0
+    end
 
 for url in sort!(collect(urls))
     code = status(url)
