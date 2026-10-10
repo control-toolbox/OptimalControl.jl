@@ -374,8 +374,11 @@ println(
     ")",
 )
 
-println("Extra altitude gain of the optimal strategy: ",
-    round(100 * (objective(sol_cold) - rf_bang) / (rf_bang - r0); digits=1), " %")
+println(
+    "Extra altitude gain of the optimal strategy: ",
+    round(100 * (objective(sol_cold) - rf_bang) / (rf_bang - r0); digits=1),
+    " %",
+)
 
 # The optimal strategy climbs about 2.7 % higher above $r_0$ than the naive one. It does not simply push at the maximum: after a full-thrust phase it throttles along a **singular arc**, where pushing harder would mostly be lost to drag, then coasts. Overlaying the altitude of both strategies against time makes the difference visible:
 
@@ -392,8 +395,17 @@ r_bang = [sol_bang1[1, :]; sol_bang2[1, :]]
 t_opt = time_grid(sol_cold)
 r_opt = [state(sol_cold)(t)[1] for t in t_opt]
 
-plot(t_opt, r_opt; label="optimal", linewidth=2, xlabel="time", ylabel="altitude",
-    legend=:bottomright, size=(800, 400), left_margin=5Plots.mm)
+plot(
+    t_opt,
+    r_opt;
+    label="optimal",
+    linewidth=2,
+    xlabel="time",
+    ylabel="altitude",
+    legend=:bottomright,
+    size=(800, 400),
+    left_margin=5Plots.mm,
+)
 plot!(t_bang, r_bang; label="bang-bang", linestyle=:dash, linewidth=2)
 
 # The bang-bang rocket climbs faster at first, but it burns all its fuel at full speed in the densest air. The optimal one holds back, keeps fuel for later, and ends higher.

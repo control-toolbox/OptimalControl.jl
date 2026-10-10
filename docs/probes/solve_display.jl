@@ -14,7 +14,7 @@ function captured_output(f)
     path, io = mktemp()
     redirect_stdout(io) do
         f()
-        Base.Libc.flush_cstdio()
+        return Base.Libc.flush_cstdio()
     end
     close(io)
     return read(path, String)
@@ -24,5 +24,7 @@ out = captured_output(() -> solve(ocp; display=false))
 check(isempty(strip(out)), "display=false prints nothing, Ipopt log included")
 
 out = captured_output(() -> solve(ocp))
-check(occursin("Configuration", out) && occursin("Ipopt", out),
-    "the default display prints the configuration box and Ipopt's log")
+check(
+    occursin("Configuration", out) && occursin("Ipopt", out),
+    "the default display prints the configuration box and Ipopt's log",
+)
