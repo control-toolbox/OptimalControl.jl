@@ -389,8 +389,8 @@ variable accept an initial guess.
 ## `init` or `initial_guess`
 
 `init` is an alias for `initial_guess`; use whichever reads better, but not both in the same
-call. In descriptive mode, passing both is reported as an unknown option `:init` rather than
-as a conflict ([OptimalControl#964](https://github.com/control-toolbox/OptimalControl.jl/issues/964)).
+call. Passing both raises an `IncorrectArgument` "Conflicting aliases for the same option", in
+descriptive and explicit mode alike.
 
 ## See also
 
