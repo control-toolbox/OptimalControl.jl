@@ -10,6 +10,10 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### 📚 Documentation
+
+- **Initial guess: check a guess before solving with `build_initial_guess`** ([#965](https://github.com/control-toolbox/OptimalControl.jl/issues/965)). It builds and validates the guess against the problem. The other initial-guess helpers of CTModels (`initial_guess`, `pre_initial_guess`, `validate_initial_guess`, `initial_state`, `initial_control`, `initial_variable`, `PreInitialGuess`) stay unexported, and a test now records that choice.
+
 ### 🐛 Bug Fixes
 
 - **`init` and `initial_guess` together raise "Conflicting aliases" in descriptive mode too** ([#964](https://github.com/control-toolbox/OptimalControl.jl/issues/964)). Explicit mode already reported the conflict; descriptive mode, the common case, routed the leftover `init` to the strategies and rejected it as an unknown option, with unrelated suggestions. Both modes now run the same check before any routing.
