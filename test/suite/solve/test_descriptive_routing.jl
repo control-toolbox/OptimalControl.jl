@@ -254,6 +254,23 @@ function test_descriptive_routing()
             )
         end
 
+        Test.@testset "_route_descriptive_options - error on init and initial_guess" begin
+            # Regression test for #964: the leftover alias used to be routed to the
+            # strategies and reported as an unknown option.
+            err = try
+                OptimalControl._route_descriptive_options(
+                    MOCK_METHOD, MOCK_REGISTRY, pairs((; init=1, initial_guess=2))
+                )
+                nothing
+            catch e
+                e
+            end
+            Test.@test err isa CTBase.IncorrectArgument
+            message = sprint(showerror, err)
+            Test.@test occursin("Conflicting aliases", message)
+            Test.@test !occursin("Unknown option", message)
+        end
+
         Test.@testset "_route_descriptive_options - error on ambiguous option" begin
             Test.@test_throws CTBase.IncorrectArgument OptimalControl._route_descriptive_options(
                 MOCK_METHOD, MOCK_REGISTRY, pairs((; backend=:sparse))
@@ -563,6 +580,27 @@ function test_descriptive_routing()
                 registry=MOCK_REGISTRY,
             )
             Test.@test sol isa MockSolution2
+        end
+
+        Test.@testset "solve_descriptive - init and initial_guess together" begin
+            ocp = MockOCP2()
+            err = try
+                OptimalControl.solve_descriptive(
+                    ocp,
+                    :collocation,
+                    :adnlp,
+                    :ipopt;
+                    init=MockInit2(),
+                    initial_guess=MockInit2(),
+                    display=false,
+                    registry=MOCK_REGISTRY,
+                )
+                nothing
+            catch e
+                e
+            end
+            Test.@test err isa CTBase.IncorrectArgument
+            Test.@test occursin("Conflicting aliases", sprint(showerror, err))
         end
     end
 end

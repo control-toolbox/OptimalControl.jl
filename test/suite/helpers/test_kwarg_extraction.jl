@@ -163,6 +163,41 @@ function test_kwarg_extraction()
         end
 
         # ====================================================================
+        # UNIT TESTS - Action alias conflict check
+        # ====================================================================
+
+        Test.@testset "_check_action_aliases" begin
+            names = OptimalControl._INITIAL_GUESS_ALIASES
+
+            Test.@testset "No alias present" begin
+                present = OptimalControl._check_action_aliases(
+                    pairs((; display=false)), names
+                )
+                Test.@test present == Symbol[]
+            end
+
+            Test.@testset "One alias present" begin
+                present = OptimalControl._check_action_aliases(
+                    pairs((; init=1, display=false)), names
+                )
+                Test.@test present == [:init]
+            end
+
+            Test.@testset "Both aliases present" begin
+                err = try
+                    OptimalControl._check_action_aliases(
+                        pairs((; init=1, initial_guess=2)), names
+                    )
+                    nothing
+                catch e
+                    e
+                end
+                Test.@test err isa CTBase.IncorrectArgument
+                Test.@test occursin("Conflicting aliases", sprint(showerror, err))
+            end
+        end
+
+        # ====================================================================
         # PERFORMANCE TESTS
         # ====================================================================
 
