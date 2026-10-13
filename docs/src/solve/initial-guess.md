@@ -364,7 +364,7 @@ sol = solve(ocp2; init=(state=s -> [-1 + s, 0.0], control=0.1, variable=2.0), di
 println(iterations(sol), " iterations")
 ```
 
-## Inspect a guess
+## Inspect or check a guess
 
 Whatever you pass as `init`, `solve` turns it into an initial guess with
 [`build_initial_guess`](@ref)`(ocp, init)`. You can call it yourself, and read the result back
@@ -381,6 +381,24 @@ state(ig)(0.5), control(ig)(0.5), variable(ig)
 
 The same holds for the output of `@init` itself, which is an initial guess already.
 
+`build_initial_guess` also checks the guess against the problem: a component of the wrong
+dimension raises an `IncorrectArgument`. To check a guess before solving, build it:
+
+```@example main
+err = try
+    build_initial_guess(ocp2, (state=[-1.0, 0.0, 0.0],))   # ocp2 has a 2-D state
+    nothing
+catch e
+    e
+end
+err isa IncorrectArgument
+```
+
+```@example main
+@assert err isa IncorrectArgument # hide
+nothing # hide
+```
+
 ## Costate and multipliers
 
 There is currently no way to seed the costate or the multipliers — only state, control, and
@@ -389,8 +407,8 @@ variable accept an initial guess.
 ## `init` or `initial_guess`
 
 `init` is an alias for `initial_guess`; use whichever reads better, but not both in the same
-call. In descriptive mode, passing both is reported as an unknown option `:init` rather than
-as a conflict ([OptimalControl#964](https://github.com/control-toolbox/OptimalControl.jl/issues/964)).
+call. Passing both raises an `IncorrectArgument` "Conflicting aliases for the same option", in
+descriptive and explicit mode alike.
 
 ## See also
 
