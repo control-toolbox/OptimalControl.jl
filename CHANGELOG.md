@@ -8,6 +8,20 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [Unreleased]
+
+### ⚠️ Breaking
+
+- **`using OptimalControl` no longer brings the module name `CTLie` into scope** ([#966](https://github.com/control-toolbox/OptimalControl.jl/issues/966)). It was exported only because the expansion of `@Lie` named `CTLie` and `CTBase` in the caller's module. Since CTLie 0.3 the expansion holds the modules themselves ([CTLie#40](https://github.com/control-toolbox/CTLie.jl/issues/40)), so `@Lie` now also works after `import OptimalControl` or `using OptimalControl: @Lie`. `ad`, `Lift`, `Poisson`, `∂ₜ`, `@Lie`, `dg_ad_backend` and `dg_ad_backend!` are still exported. See [BREAKING.md](BREAKING.md).
+
+### 📚 Documentation
+
+- The page "The `@Lie` macro" drops its section "`using OptimalControl` is needed".
+
+### 📦 Dependencies
+
+- **CTLie `0.3`** (was `0.2`), in the package and the docs environment.
+
 ## [2.2.1-beta] — 2026-09-02
 
 Documentation-infrastructure follow-up to the 2.2.0-beta site rewrite. No change to OptimalControl's API or runtime behaviour; nothing to migrate — see [BREAKING.md](BREAKING.md).
