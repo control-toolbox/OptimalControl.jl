@@ -76,15 +76,49 @@ true
 See also: [`_extract_kwarg`](@ref), [`solve_explicit`](@ref), [`solve_descriptive`](@ref)
 """
 function _extract_action_kwarg(kwargs::Base.Pairs, names::Tuple{Vararg{Symbol}}, default)
-    present = [n for n in names if haskey(kwargs, n)]
+    present = _check_action_aliases(kwargs, names)
     if isempty(present)
         return default, kwargs
-    elseif length(present) == 1
+    else
         name = present[1]
         value = kwargs[name]
         remaining = Base.pairs(NamedTuple(k => v for (k, v) in kwargs if k != name))
         return value, remaining
-    else
+    end
+end
+
+"""
+$(TYPEDSIGNATURES)
+
+Return the names of `names` present in `kwargs`, and raise if there is more than one.
+
+`names` lists the primary name of an action option and its aliases. Passing two of them
+at once is ambiguous, whichever mode the call uses: the check is shared by
+[`_extract_action_kwarg`](@ref) (explicit mode) and [`_route_descriptive_options`](@ref)
+(descriptive mode), so both modes raise the same error.
+
+# Arguments
+- `kwargs`: Keyword arguments from a `solve` call
+- `names::Tuple{Vararg{Symbol}}`: Primary name and aliases of one action option
+
+# Returns
+- `Vector{Symbol}`: The names found in `kwargs`, empty or of length one
+
+# Throws
+- [`CTBase.Exceptions.IncorrectArgument`](@extref): If more than one alias is provided at the same time
+
+# Example
+```julia
+julia> OptimalControl._check_action_aliases(pairs((; init=1, display=false)), (:initial_guess, :init))
+1-element Vector{Symbol}:
+ :init
+```
+
+See also: [`_extract_action_kwarg`](@ref), [`_route_descriptive_options`](@ref)
+"""
+function _check_action_aliases(kwargs, names::Tuple{Vararg{Symbol}})::Vector{Symbol}
+    present = Symbol[n for n in names if haskey(kwargs, n)]
+    if length(present) > 1
         throw(
             CTBase.IncorrectArgument(
                 "Conflicting aliases for the same option";
@@ -95,4 +129,5 @@ function _extract_action_kwarg(kwargs::Base.Pairs, names::Tuple{Vararg{Symbol}},
             ),
         )
     end
+    return present
 end
