@@ -10,9 +10,18 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### ⚠️ Breaking
+
+- **`using OptimalControl` no longer brings the module name `CTLie` into scope** ([#966](https://github.com/control-toolbox/OptimalControl.jl/issues/966)). It was exported only because the expansion of `@Lie` named `CTLie` and `CTBase` in the caller's module. Since CTLie 0.3 the expansion holds the modules themselves ([CTLie#40](https://github.com/control-toolbox/CTLie.jl/issues/40)), so `@Lie` now also works after `import OptimalControl` or `using OptimalControl: @Lie`. `ad`, `Lift`, `Poisson`, `∂ₜ`, `@Lie`, `dg_ad_backend` and `dg_ad_backend!` are still exported. See [BREAKING.md](BREAKING.md).
+
 ### 📚 Documentation
 
+- The page "The `@Lie` macro" drops its section "`using OptimalControl` is needed".
 - **Initial guess: check a guess before solving with `build_initial_guess`** ([#965](https://github.com/control-toolbox/OptimalControl.jl/issues/965)). It builds and validates the guess against the problem. The other initial-guess helpers of CTModels (`initial_guess`, `pre_initial_guess`, `validate_initial_guess`, `initial_state`, `initial_control`, `initial_variable`, `PreInitialGuess`) stay unexported, and a test now records that choice.
+
+### 📦 Dependencies
+
+- **CTLie `0.3`** (was `0.2`), in the package and the docs environment.
 
 ### 🐛 Bug Fixes
 
