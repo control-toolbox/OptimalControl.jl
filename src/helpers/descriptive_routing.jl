@@ -254,6 +254,9 @@ function _route_descriptive_options(
     registry::CTBase.Strategies.StrategyRegistry,
     kwargs,
 )
+    # `route_all_options` consumes the first alias it finds and routes the other one to
+    # the strategies, where it is reported as an unknown option: check the conflict first.
+    _check_action_aliases(kwargs, _INITIAL_GUESS_ALIASES)
     families = _descriptive_families()
     action_defs = _descriptive_action_defs()
     return CTBase.Orchestration.route_all_options(
