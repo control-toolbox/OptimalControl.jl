@@ -50,3 +50,6 @@ Manifest.toml
 .save/
 .devin/
 .reports/
+
+# ct-conventions, cloned at the tag pinned in AGENTS.md
+.conventions/

@@ -1,8 +1,8 @@
 # ============================================================================
 # Test-environment contract
 # ============================================================================
-# Central enforcement of the Handbook's capability-gated-test policy
-# (philosophy/testing.md §"Capability-gated tests"). Mirrors the equivalent
+# Central enforcement of the capability-gated-test policy (ct-conventions
+# `TST6`). Mirrors the equivalent
 # file in CTSolvers (control-toolbox/CTSolvers.jl#190/#223).
 #
 # Three things are pinned here so they cannot regress silently:
@@ -68,8 +68,8 @@ Recursively find, under `test/suite/` (located via `@__DIR__`, not `pwd()`), lin
 an `if` block directly on a CUDA-device predicate — a local `is_cuda_on()` call or a bare
 `CUDA.functional()` call — the anti-pattern that makes a correctly-skipped run (no device,
 as expected on a developer machine) and a silently-broken run (device *should* be present
-but isn't) produce the same output: a green testset with zero assertions (Handbook
-`philosophy/testing.md` §"Capability-gated tests", control-toolbox/CTSolvers.jl#189).
+but isn't) produce the same output: a green testset with zero assertions (ct-conventions
+`TST6`, control-toolbox/CTSolvers.jl#189).
 
 The sanctioned form is `if Main.TestCapabilities.CUDA_FUNCTIONAL ... else Test.@test_skip
 ... end`, with the device tier made *required* on the GPU runners centrally, in the testset

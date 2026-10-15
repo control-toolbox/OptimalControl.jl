@@ -12,3 +12,11 @@ If you want to ask a question, feel free to start a discussion [here](https://gi
 
 >[!NOTE]
 > If you want to add an application or a package to the control-toolbox ecosystem, please follow this [set up tutorial](https://github.com/orgs/control-toolbox/discussions/65).
+
+---
+
+## Developer Resources
+
+The [ct-conventions](https://github.com/control-toolbox/ct-conventions) repository (coding rules, method, plan template) is pinned to a SemVer release tag in `AGENTS.md` ("Pinned version"). Read it from a local clone in `.conventions/`, which git ignores; `AGENTS.md` gives the clone command.
+
+It is not a git submodule: `Pkg.add` on Julia 1.10 fails on a package whose tree contains one (`cannot get submodules without a working tree`). To bump it, change the tag in `AGENTS.md` (the "Pinned version" line and the clone command), then re-clone.

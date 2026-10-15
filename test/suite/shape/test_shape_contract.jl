@@ -22,7 +22,7 @@
 #      way it is solved, and nothing upstream can check that: it is precisely
 #      the seam between CTDirect and CTFlows that OptimalControl owns.
 #
-# The recording fakes live at module top level, per the Handbook recipe: a
+# The recording fakes live at module top level, per ct-conventions `TST3`: a
 # closure would be recompiled per call site and the recorded types would say
 # more about the closure than about the coercion.
 
