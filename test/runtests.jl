@@ -30,8 +30,8 @@ using .TestOptions: VERBOSE, SHOWTIMING
 #   CUDA_FUNCTIONAL     — is there a functional GPU *device*? The suite's single device
 #                         predicate — never define a local `is_cuda_on()` in a test file.
 #                         Guard device runs with `Test.@test_skip` on the `else`, never a
-#                         silent `if CUDA_FUNCTIONAL` with no branch (see Handbook
-#                         philosophy/testing.md §"Capability-gated tests").
+#                         silent `if CUDA_FUNCTIONAL` with no branch (see ct-conventions
+#                         `TST6`, capability-gated tests skip visibly).
 #   ON_GPU_RUNNER       — turns the device tier from *skipped* into *required* on the
 #                         self-hosted GPU runners. `RUNNER_NAME` is set by the GitHub Actions
 #                         runner agent itself (no CI.yml change needed) to the runner's

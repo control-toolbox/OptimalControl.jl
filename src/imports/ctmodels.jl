@@ -1,7 +1,7 @@
 # CTModels reexports
 #
 # Re-pointed at the owning submodules (`Components`, `Models`, `Solutions`,
-# `Building`, `Init`, `Serialization`), per the Handbook `modules.md` rule.
+# `Building`, `Init`, `Serialization`), per ct-conventions `MOD4`.
 #
 # Two names that used to be here are gone:
 #   - `time`    — it is `Base.time`, extended (but not exported) by
