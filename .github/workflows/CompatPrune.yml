@@ -18,5 +18,9 @@ jobs:
   call:
     uses: control-toolbox/CTActions/.github/workflows/compat-prune.yml@main
     with:
-      # Dry run on every trigger until the publishing job is enabled (CTActions#95).
+      # Dry run on every trigger until the GitHub App is set up (CTActions#95); then the
+      # schedule publishes: `github.event_name == 'workflow_dispatch' && inputs.dry_run`.
       dry_run: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run }}
+    secrets:
+      CT_APP_CLIENT_ID: ${{ secrets.CT_APP_CLIENT_ID }}
+      CT_APP_PRIVATE_KEY: ${{ secrets.CT_APP_PRIVATE_KEY }}
