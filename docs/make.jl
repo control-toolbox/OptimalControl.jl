@@ -355,8 +355,12 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 bases_file = joinpath(@__DIR__, "build", "bases.txt")
 if isfile(bases_file)
+    # PR previews are opt-in: CTActions sets DOCUMENTER_PUSH_PREVIEW to "true" only on a
+    # PR carrying the `documentation push preview` label.
     DocumenterVitepress.deploydocs(;
-        repo=repo_url * ".git", devbranch="main", push_preview=true
+        repo=repo_url * ".git",
+        devbranch="main",
+        push_preview=get(ENV, "DOCUMENTER_PUSH_PREVIEW", "false") == "true",
     )
 else
     @info "Skipping deployment: no bases were built (prerelease with existing higher stable release)."
