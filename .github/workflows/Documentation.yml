@@ -13,24 +13,28 @@ on:
 # can take up to `gpu_timeout_minutes`. Without this, two pushes to `main` in quick
 # succession could leave an older run's GPU pass finishing — and redeploying — after a
 # newer run's CPU build has already published, showing older content over newer.
-# `cancel-in-progress` cancels the whole older run, its queued/running GPU job
-# included. Tags carry distinct refs (the tag name, not `main`), so a release build is
-# never cancelled by an unrelated push to `main`, and vice versa.
+# Push and tag runs queue (GitHub keeps only the newest pending one), so the GPU pass
+# on the self-hosted runner is never killed and the newest content deploys last; PR runs
+# are GitHub-hosted only and are cancelled. Tags carry distinct refs (the tag name, not
+# `main`), so a release build never waits for an unrelated push to `main`.
 concurrency:
   group: documentation-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   call:
-    # A 'labeled' event fires once per label added, and re-evaluates against the PR's
-    # *current* full label set — so adding several labels in a row would otherwise
-    # re-run this job on every subsequent label add. Only react to 'labeled' when it's
-    # this specific label; for other trigger types (opened/synchronize/reopened), fall
-    # back to checking the current label set as before.
+    # On a PR, `run documentation` is the only trigger. `documentation push preview` is a
+    # modifier: with `run documentation` present, the build also deploys its preview
+    # (CTActions sets DOCUMENTER_PUSH_PREVIEW from it); on its own it does nothing. Adding
+    # it to a PR that already has `run documentation` re-runs the build with the preview.
+    # A 'labeled' event fires once per label added, so it reacts only to these two labels;
+    # synchronize/reopened check the current label set.
     if: >
       github.event_name != 'pull_request' ||
-      (github.event.action == 'labeled' && github.event.label.name == 'run documentation') ||
-      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run documentation'))
+      (contains(github.event.pull_request.labels.*.name, 'run documentation') &&
+        (github.event.action != 'labeled' ||
+         github.event.label.name == 'run documentation' ||
+         github.event.label.name == 'documentation push preview'))
     uses: control-toolbox/CTActions/.github/workflows/documentation.yml@main
     with:
       use_ct_registry: true

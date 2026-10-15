@@ -1,0 +1,20 @@
+name: Documentation preview cleanup
+
+# Removes from gh-pages the documentation previews of closed pull requests
+# (CTActions documentation-preview-cleanup.yml, see its docs/WORKFLOWS.md §3.1).
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+
+jobs:
+  call:
+    # A PR from a fork gets a read-only token, and its build never deployed a preview.
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: write
+      pull-requests: read
+    uses: control-toolbox/CTActions/.github/workflows/documentation-preview-cleanup.yml@main
