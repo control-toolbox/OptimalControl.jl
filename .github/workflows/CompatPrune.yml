@@ -1,0 +1,22 @@
+name: CompatPrune
+
+# Monthly audit of the [compat] entries of the control-toolbox packages, from the top of
+# the dependency graph: drops the specifiers no supported Julia version selects (one PR
+# per repository, one tracking issue here). See CTActions/docs/WORKFLOWS.md.
+
+on:
+  schedule:
+    - cron: '0 4 1 * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Only audit and report: no PR, no issue'
+        type: boolean
+        default: true
+
+jobs:
+  call:
+    uses: control-toolbox/CTActions/.github/workflows/compat-prune.yml@main
+    with:
+      # Dry run on every trigger until the publishing job is enabled (CTActions#95).
+      dry_run: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run }}
