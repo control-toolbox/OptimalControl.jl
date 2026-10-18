@@ -35,10 +35,10 @@ is not the pinned tag, (re)create it:
 
 ```bash
 rm -rf .conventions
-git -c advice.detachedHead=false clone --quiet --depth 1 --branch v0.5.0 https://github.com/control-toolbox/ct-conventions.git .conventions
+git -c advice.detachedHead=false clone --quiet --depth 1 --branch v0.5.2 https://github.com/control-toolbox/ct-conventions.git .conventions
 ```
 
-**Pinned version: ct-conventions v0.5.0.** Cite rules by identifier (`MOD3`, `TST1`), and
+**Pinned version: ct-conventions v0.5.2.** Cite rules by identifier (`MOD3`, `TST1`), and
 state the version you applied in plans and reports.
 
 Read in this order:
