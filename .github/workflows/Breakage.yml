@@ -1,6 +1,7 @@
 name: Breakage
 
-# The packages that depend on OptimalControl, tested against it; one report per run. On push to
+# The packages that depend on OptimalControl (derived from the Project.toml files) and the
+# tutorials, then the applications, tested against it; one report per group. On push to
 # main and by hand, the run is the baseline the next release PR compares with (REL1); see
 # CTActions docs/workflows/breakage-suite.md.
 
@@ -25,8 +26,9 @@ jobs:
     uses: control-toolbox/CTActions/.github/workflows/breakage-suite.yml@main
     with:
       group: packages
+      # the packages that load OptimalControl are derived; the tutorials build their docs
       targets: >-
-        [{"name": "OptimalControlProblems"}, {"name": "Tutorials", "break": "doc"}]
+        [{"name": "Tutorials", "break": "doc"}]
       use_ct_registry: true
     secrets:
       SSH_KEY: ${{ secrets.SSH_KEY }}
@@ -45,6 +47,7 @@ jobs:
     uses: control-toolbox/CTActions/.github/workflows/breakage-suite.yml@main
     with:
       group: applications
+      consumers: false
       targets: >-
         [{"name": "OptimalControlProblems"}, {"name": "Tutorials", "break": "doc"},
          {"name": "CalculusOfVariations", "break": "doc"},
