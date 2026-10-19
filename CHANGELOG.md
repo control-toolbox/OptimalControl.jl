@@ -17,6 +17,10 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (`GEN2`) replaces the `markdownlint-disable MD024` comment of this changelog (`CHG2`).
 - ct-conventions pinned at `v0.7.0` in `AGENTS.md`: the release rules `REL1`–`REL7` in the
   index, and a *Recurring tasks* section pointing to the release recipe of ct-agents.
+- ct-agents pinned at `v0.2.0` and ct-conventions at `v0.7.1` in `AGENTS.md`: the recipes (the
+  release) are read from a git-ignored clone in `.ct-agents/` at that tag, not from `main`
+  of ct-agents, and the proposal of a release states the versions applied. The clone of the
+  conventions is now `.ct-conventions/` (it was `.conventions/`), like `.ct-agents/`.
 
 ### 📚 Documentation
 
