@@ -1,0 +1,12 @@
+name: Release gate
+
+# REL1-REL7 of ct-conventions on every PR (a PR that does not change the version passes at
+# once); see CTActions docs/workflows/release-gate.md.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled, edited]
+
+jobs:
+  call:
+    uses: control-toolbox/CTActions/.github/workflows/release-gate.yml@main

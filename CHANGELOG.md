@@ -15,6 +15,8 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `.conventions/`); `AGENTS.md` cites rules by identifier, `CLAUDE.md` redirects to it, and
   the references to the former Handbook become rule identifiers. One `.markdownlint.json`
   (`GEN2`) replaces the `markdownlint-disable MD024` comment of this changelog (`CHG2`).
+- ct-conventions pinned at `v0.7.0` in `AGENTS.md`: the release rules `REL1`–`REL7` in the
+  index, and a *Recurring tasks* section pointing to the release recipe of ct-agents.
 
 ### 📚 Documentation
 
@@ -23,6 +25,13 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### 🐛 Bug Fixes
 
 - **`init` and `initial_guess` together raise "Conflicting aliases" in descriptive mode too** ([#964](https://github.com/control-toolbox/OptimalControl.jl/issues/964)). Explicit mode already reported the conflict; descriptive mode, the common case, routed the leftover `init` to the strategies and rejected it as an unknown option, with unrelated suggestions. Both modes now run the same check before any routing.
+
+### 🧪 Testing
+
+- Release workflows: `ReleaseGate.yml` (the gate of a release PR, `REL1`–`REL7`) and
+  `ReleaseTag.yml` (tag and GitHub release of a merged release PR) call CTActions;
+  `Breakage.yml` moves to `breakage-suite.yml` (one report, the `REL1` check of a release
+  PR) and also runs on push to `main`; `Documentation.yml` accepts `workflow_dispatch`.
 
 ## [2.2.1-beta] — 2026-09-02
 

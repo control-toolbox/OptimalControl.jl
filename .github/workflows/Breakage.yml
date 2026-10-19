@@ -1,87 +1,61 @@
-# Ref: https://securitylab.github.com/research/github-actions-preventing-pwn-requests
 name: Breakage
 
-# read-only repo token
-# no access to secrets
+# The packages that depend on OptimalControl, tested against it; one report per run. On push to
+# main and by hand, the run is the baseline the next release PR compares with (REL1); see
+# CTActions docs/workflows/breakage-suite.md.
+
 on:
   pull_request:
     types: [labeled, synchronize, reopened]
+  push:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
-  break-pkg:
+  packages:
     # A 'labeled' event fires once per label added, and re-evaluates against the PR's
     # *current* full label set — so adding several labels in a row would otherwise
     # re-run this job on every subsequent label add. Only react to 'labeled' when it's
-    # this specific label; for other trigger types (opened/synchronize/reopened), fall
-    # back to checking the current label set as before.
+    # this specific label; for other trigger types (synchronize/reopened), fall back to
+    # checking the current label set as before. On push to main and by hand, always.
     if: >
+      github.event_name != 'pull_request' ||
       (github.event.action == 'labeled' && github.event.label.name == 'run breakage') ||
       (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run breakage'))
-    strategy:
-      fail-fast: false
-      matrix:
-        pkgname: 
-          - OptimalControlProblems
-          - Tutorials
-        pkgversion: 
-          - latest
-          - stable
-        include:
-          - pkgbreak: test
-          - pkgbreak: doc
-            pkgname: Tutorials
-          - pkgpath: control-toolbox
-    uses: control-toolbox/CTActions/.github/workflows/breakage.yml@main
+    uses: control-toolbox/CTActions/.github/workflows/breakage-suite.yml@main
     with:
-      pkgname: ${{ matrix.pkgname }}
-      pkgpath: ${{ matrix.pkgpath }}
-      pkgversion: ${{ matrix.pkgversion }}
-      pkgbreak: ${{ matrix.pkgbreak }}
+      group: packages
+      targets: >-
+        [{"name": "OptimalControlProblems"}, {"name": "Tutorials", "break": "doc"}]
       use_ct_registry: true
     secrets:
       SSH_KEY: ${{ secrets.SSH_KEY }}
-  break-pkg-app:
-    # See the comment on break-pkg above.
+
+  applications:
+    # The applications and tutorials, some of them owned outside control-toolbox.
+    # A 'labeled' event fires once per label added, and re-evaluates against the PR's
+    # *current* full label set — so adding several labels in a row would otherwise
+    # re-run this job on every subsequent label add. Only react to 'labeled' when it's
+    # this specific label; for other trigger types (synchronize/reopened), fall back to
+    # checking the current label set as before. On push to main and by hand, always.
     if: >
+      github.event_name != 'pull_request' ||
       (github.event.action == 'labeled' && github.event.label.name == 'run breakage applications') ||
       (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run breakage applications'))
-    strategy:
-      fail-fast: false
-      matrix:
-        pkgname: 
-          - OptimalControlProblems
-          - Tutorials
-          - CalculusOfVariations
-          - LossControl
-          - GeometricPreconditioner
-          - MedicalResonanceImaging
-          - Kepler
-          - PWLdynamics
-          - SIRcontrol
-          - DiauxicGrowth
-          - CTMembraneFiltration
-        pkgversion: 
-          - latest
-          - stable
-        include:
-          - pkgbreak: doc
-          - pkgbreak: test
-            pkgname: OptimalControlProblems
-          - pkgpath: control-toolbox
-          - pkgpath: agustinyabo
-            pkgname: PWLdynamics
-          - pkgpath: AnasXbouali
-            pkgname: SIRcontrol
-          - pkgpath: agustinyabo
-            pkgname: DiauxicGrowth
-          - pkgpath: remydutto
-            pkgname: CTMembraneFiltration
-    uses: control-toolbox/CTActions/.github/workflows/breakage.yml@main
+    uses: control-toolbox/CTActions/.github/workflows/breakage-suite.yml@main
     with:
-      pkgname: ${{ matrix.pkgname }}
-      pkgpath: ${{ matrix.pkgpath }}
-      pkgversion: ${{ matrix.pkgversion }}
-      pkgbreak: ${{ matrix.pkgbreak }}
+      group: applications
+      targets: >-
+        [{"name": "OptimalControlProblems"}, {"name": "Tutorials", "break": "doc"},
+         {"name": "CalculusOfVariations", "break": "doc"},
+         {"name": "LossControl", "break": "doc"},
+         {"name": "GeometricPreconditioner", "break": "doc"},
+         {"name": "MedicalResonanceImaging", "break": "doc"},
+         {"name": "Kepler", "break": "doc"},
+         {"name": "PWLdynamics", "owner": "agustinyabo", "break": "doc"},
+         {"name": "SIRcontrol", "owner": "AnasXbouali", "break": "doc"},
+         {"name": "DiauxicGrowth", "owner": "agustinyabo", "break": "doc"},
+         {"name": "CTMembraneFiltration", "owner": "remydutto", "break": "doc"}]
       use_ct_registry: true
     secrets:
       SSH_KEY: ${{ secrets.SSH_KEY }}
