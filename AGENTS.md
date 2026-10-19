@@ -18,6 +18,7 @@ src/solve/     # `solve` dispatch: mode detection, descriptive/explicit paths
 test/suite/    # Test suite: organised by functionality, not by src/ layout
 docs/          # Documentation site (DocumenterVitepress)
 .conventions/  # ct-conventions, cloned at the pinned tag (git-ignored)
+.ct-agents/    # ct-agents, cloned at the pinned tag (git-ignored)
 ```
 
 There is no `ext/`: optional backends (ADNLPModels, ExaModels, AD) are armed by
@@ -78,8 +79,21 @@ trigger labels are described in
 
 ## Recurring tasks
 
+How a recurring task is done lives in [ct-agents](https://github.com/control-toolbox/ct-agents),
+pinned below to a SemVer release tag (`vX.Y.Z`). Read it from a local clone in `.ct-agents/`
+(git-ignored, not a submodule). If it is missing, or `git -C .ct-agents describe --tags` is
+not the pinned tag, (re)create it:
+
+```bash
+rm -rf .ct-agents
+git -c advice.detachedHead=false clone --quiet --depth 1 --branch v0.1.0 https://github.com/control-toolbox/ct-agents.git .ct-agents
+```
+
+**Pinned version: ct-agents v0.1.0.** State it, with the ct-conventions version, in
+plans and reports.
+
 - **Release.** When asked, in any language, to prepare a release, follow
-  [`recipes/release.md`](https://github.com/control-toolbox/ct-agents/blob/main/recipes/release.md)
-  of ct-agents (rules `REL1`–`REL7`). Read it with
-  `gh api repos/control-toolbox/ct-agents/contents/recipes/release.md -H "Accept: application/vnd.github.raw"`.
-  Stable or beta is the human's choice: if the request does not say, ask; never infer it.
+  [`recipes/release.md`](.ct-agents/recipes/release.md) (rules `REL1`–`REL7`). Stable or
+  beta is the human's choice: if the request does not say, ask; never infer it. State in
+  the proposal the versions you apply: ct-agents, ct-conventions, and the commit of the
+  CTActions clone `release.jl` runs from.
