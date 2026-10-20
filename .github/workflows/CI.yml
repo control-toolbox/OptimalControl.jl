@@ -31,9 +31,9 @@ jobs:
   test-gpu-occidata:
     # See the comment on test-cpu-github above.
     if: >
-      github.event_name != 'pull_request' ||
-      (github.event.action == 'labeled' && github.event.label.name == 'run ci occidata-runner') ||
-      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run ci occidata-runner'))
+      github.event_name == 'pull_request' &&
+      ((github.event.action == 'labeled' && github.event.label.name == 'run ci occidata-runner') ||
+      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run ci occidata-runner')))
     uses: control-toolbox/CTActions/.github/workflows/ci.yml@main
     with:
       runs_on: '[["occidata"]]'
@@ -41,3 +41,33 @@ jobs:
       use_ct_registry: true
     secrets:
       SSH_KEY: ${{ secrets.SSH_KEY }}
+
+  # Job for the self-hosted kkt runner (GPU/CUDA), on its label only (a pull request can
+  # always ask for either GPU runner; a push picks one, see test-gpu-main).
+  test-gpu-kkt:
+    # See the comment on test-cpu-github above.
+    if: >
+      github.event_name == 'pull_request' &&
+      ((github.event.action == 'labeled' && github.event.label.name == 'run ci kkt-runner') ||
+      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run ci kkt-runner')))
+    uses: control-toolbox/CTActions/.github/workflows/ci.yml@main
+    with:
+      versions: '["1.10","1.13"]'
+      runs_on: '[["kkt"]]'
+      runner_type: 'self-hosted'
+      use_ct_registry: true
+    secrets:
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+
+  # On a push (main, tags): a single GPU run, on kkt unless it is offline, else occidata
+  # (CTActions ci-gpu.yml). A busy kkt is waited for.
+  test-gpu-main:
+    if: github.event_name != 'pull_request'
+    uses: control-toolbox/CTActions/.github/workflows/ci-gpu.yml@main
+    with:
+      versions: '["1.10","1.13"]'
+      use_ct_registry: true
+    secrets:
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+      CT_RUNNERS_CLIENT_ID: ${{ secrets.CT_RUNNERS_CLIENT_ID }}
+      CT_RUNNERS_PRIVATE_KEY: ${{ secrets.CT_RUNNERS_PRIVATE_KEY }}
