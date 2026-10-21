@@ -21,6 +21,8 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   release) are read from a git-ignored clone in `.ct-agents/` at that tag, not from `main`
   of ct-agents, and the proposal of a release states the versions applied. The clone of the
   conventions is now `.ct-conventions/` (it was `.conventions/`), like `.ct-agents/`.
+- ct-agents pinned at `v0.3.0` in `AGENTS.md`: at the close of a release the agent runs
+  `release.jl audit`, which checks the trail the release left.
 
 ### 📚 Documentation
 
