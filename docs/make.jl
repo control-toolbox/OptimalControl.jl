@@ -2,8 +2,11 @@
 # julia --project=. docs/make.jl
 # to serve the documentation:
 #   npx serve docs/build/1 --listen 5173
-pushfirst!(LOAD_PATH, joinpath(@__DIR__, ".."))
-pushfirst!(LOAD_PATH, joinpath(@__DIR__))
+# Append (not prepend): docs/Manifest.toml must win for shared deps; the repo root is only
+# needed to find the local OptimalControl. Prepending it lets the root environment shadow docs/ and
+# breaks the precompilation of extensions on weak dependencies installed only in docs/.
+push!(LOAD_PATH, joinpath(@__DIR__))
+push!(LOAD_PATH, joinpath(@__DIR__, ".."))
 
 # control-toolbox packages
 using OptimalControl
