@@ -86,10 +86,10 @@ not the pinned tag, (re)create it:
 
 ```bash
 rm -rf .ct-agents
-git -c advice.detachedHead=false clone --quiet --depth 1 --branch v0.3.0 https://github.com/control-toolbox/ct-agents.git .ct-agents
+git -c advice.detachedHead=false clone --quiet --depth 1 --branch v0.4.0 https://github.com/control-toolbox/ct-agents.git .ct-agents
 ```
 
-**Pinned version: ct-agents v0.3.0.** State it, with the ct-conventions version, in
+**Pinned version: ct-agents v0.4.0.** State it, with the ct-conventions version, in
 plans and reports.
 
 - **Release.** When asked, in any language, to prepare a release, follow
