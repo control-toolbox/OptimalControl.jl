@@ -14,7 +14,7 @@ const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 function test_solve_mode()
-    Test.@testset "SolveMode Types" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "SolveMode Types" verbose = VERBOSE showtiming = SHOWTIMING begin
 
         # ====================================================================
         # UNIT TESTS - Type hierarchy

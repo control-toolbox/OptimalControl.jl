@@ -41,7 +41,7 @@ CTBase.Strategies.id(::Type{MockModeler}) = :mock_mod
 CTBase.Strategies.id(::Type{MockSolver}) = :mock_sol
 
 function test_strategy_builders()
-    Test.@testset "Strategy Builders Tests" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "Strategy Builders Tests" verbose = VERBOSE showtiming = SHOWTIMING begin
 
         # Create mock instances
         disc = MockDiscretizer(CTBase.Strategies.StrategyOptions())

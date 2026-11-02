@@ -14,7 +14,7 @@ const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 function test_methods()
-    Test.@testset "methods Tests" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "methods Tests" verbose = VERBOSE showtiming = SHOWTIMING begin
 
         # ====================================================================
         # UNIT TESTS

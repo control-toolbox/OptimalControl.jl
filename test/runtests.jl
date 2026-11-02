@@ -72,7 +72,7 @@ CTBase.run_tests(;
     funcname_builder=name -> Symbol(:test_, name),
     verbose=VERBOSE,
     showtiming=SHOWTIMING,
-    test_dir=@__DIR__,
+    test_dir=@__DIR__
 )
 
 # If running with coverage enabled, remind the user to run the post-processing script
