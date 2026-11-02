@@ -252,11 +252,11 @@ const b = 2
 F0(x) = begin
     r, v, m = x
     D = Cd * v^2 * exp(-β * (r - 1))
-    [v, -D/m - 1/r^2, 0]
+    [v, -D / m - 1 / r^2, 0]
 end
 F1(x) = begin
     r, v, m = x
-    [0, Tmax/m, -b*Tmax]
+    [0, Tmax / m, -b * Tmax]
 end
 
 goddard = @def begin

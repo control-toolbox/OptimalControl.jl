@@ -26,7 +26,7 @@ const MOD = MockModeler()
 const SOL = MockSolver()
 
 function test_kwarg_extraction()
-    Test.@testset "KwargExtraction" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "KwargExtraction" verbose = VERBOSE showtiming = SHOWTIMING begin
 
         # ====================================================================
         # UNIT TESTS - Basic extraction

@@ -34,7 +34,7 @@ struct MockSolver <: CTSolvers.Solvers.AbstractNLPSolver
 end
 
 function test_component_checks()
-    Test.@testset "Component Checks Tests" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "Component Checks Tests" verbose = VERBOSE showtiming = SHOWTIMING begin
 
         # Create mock instances
         disc = MockDiscretizer(CTBase.Strategies.StrategyOptions())
