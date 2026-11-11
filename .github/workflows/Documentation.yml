@@ -1,4 +1,8 @@
 name: Documentation
+run-name: "Documentation${{ inputs.pr && format(' #{0}', inputs.pr) || '' }}"
+
+# On a pull request, a label starts its own run through Labels.yml
+# (CTActions docs/workflows/label-dispatch.md).
 
 on:
   push:
@@ -6,10 +10,17 @@ on:
       - main
     tags:
       - 'v[0-9]+\.[0-9]+\.[0-9]+'
-  pull_request:
-    types: [labeled, synchronize, reopened]
   # run on a tag by ReleaseTag.yml: a tag it creates triggers no push event
   workflow_dispatch:
+    inputs:
+      pr:
+        description: 'Pull request number, set by label-dispatch.yml'
+        required: false
+        default: ''
+      preview:
+        description: 'Deploy the preview of the pull request (label documentation push preview)'
+        required: false
+        default: 'false'
 
 # A GPU-attempt job now runs behind every push/tag build (see `gpu_runner` below) and
 # can take up to `gpu_timeout_minutes`. Without this, two pushes to `main` in quick
@@ -21,22 +32,10 @@ on:
 # `main`), so a release build never waits for an unrelated push to `main`.
 concurrency:
   group: documentation-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.pr != '') }}
 
 jobs:
   call:
-    # On a PR, `run documentation` is the only trigger. `documentation push preview` is a
-    # modifier: with `run documentation` present, the build also deploys its preview
-    # (CTActions sets DOCUMENTER_PUSH_PREVIEW from it); on its own it does nothing. Adding
-    # it to a PR that already has `run documentation` re-runs the build with the preview.
-    # A 'labeled' event fires once per label added, so it reacts only to these two labels;
-    # synchronize/reopened check the current label set.
-    if: >
-      github.event_name != 'pull_request' ||
-      (contains(github.event.pull_request.labels.*.name, 'run documentation') &&
-        (github.event.action != 'labeled' ||
-         github.event.label.name == 'run documentation' ||
-         github.event.label.name == 'documentation push preview'))
     uses: control-toolbox/CTActions/.github/workflows/documentation.yml@main
     with:
       use_ct_registry: true
