@@ -37,7 +37,7 @@ for (name, ocp) in [
             ẋ(t) == [x₂(t), u(t)]
             ∫(0.5u(t)^2) → min
         end
-    )
+    ),
 ]
     sol = solve(ocp; display=false)
     check(successful(sol), "a constant component in `$name` solves with :adnlp")
