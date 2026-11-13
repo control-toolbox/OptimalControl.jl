@@ -11,6 +11,10 @@ change or be aware of.
 
 ---
 
+## Non-breaking note (Unreleased)
+
+- **No breaking change recorded** in `[Unreleased]` so far. The pins of ct-conventions and ct-agents and the `Release` caller are documentation and CI only.
+
 ## Non-breaking notes (2.2.1-beta)
 
 Documentation infrastructure only. **Nothing to migrate** — OptimalControl's API and runtime

@@ -36,10 +36,10 @@ is not the pinned tag, (re)create it:
 
 ```bash
 rm -rf .ct-conventions
-git -c advice.detachedHead=false clone --quiet --depth 1 --branch v0.10.0 https://github.com/control-toolbox/ct-conventions.git .ct-conventions
+git -c advice.detachedHead=false clone --quiet --depth 1 --branch v0.13.0 https://github.com/control-toolbox/ct-conventions.git .ct-conventions
 ```
 
-**Pinned version: ct-conventions v0.10.0.** Cite rules by identifier (`MOD3`, `TST1`), and
+**Pinned version: ct-conventions v0.13.0.** Cite rules by identifier (`MOD3`, `TST1`), and
 state the version you applied in plans and reports.
 
 Read in this order:
@@ -86,10 +86,10 @@ not the pinned tag, (re)create it:
 
 ```bash
 rm -rf .ct-agents
-git -c advice.detachedHead=false clone --quiet --depth 1 --branch v0.4.0 https://github.com/control-toolbox/ct-agents.git .ct-agents
+git -c advice.detachedHead=false clone --quiet --depth 1 --branch v0.5.0 https://github.com/control-toolbox/ct-agents.git .ct-agents
 ```
 
-**Pinned version: ct-agents v0.4.0.** State it, with the ct-conventions version, in
+**Pinned version: ct-agents v0.5.0.** State it, with the ct-conventions version, in
 plans and reports.
 
 - **Release.** When asked, in any language, to prepare a release, follow
