@@ -1,0 +1,35 @@
+name: Release
+
+# A release from its request (`release.jl request`) to its close; see CTActions
+# docs/workflows/release.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The version whose request starts the release (empty: a wake-up)'
+        required: false
+        type: string
+  pull_request:
+    types: [labeled]
+  workflow_run:
+    workflows: [CI, Documentation, Breakage, Release gate, Release tag]
+    types: [completed]
+    branches: ['release/v*', main]
+  schedule:
+    - cron: '23 * * * *'
+
+jobs:
+  call:
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: read
+      actions: write
+      checks: read
+    uses: control-toolbox/CTActions/.github/workflows/release.yml@main
+    with:
+      version: ${{ inputs.version }}
+    # the App's key is a secret of the environment `release`: it reaches the reusable
+    # workflow's jobs only when inherited (CTActions docs/workflows/release.md#caller)
+    secrets: inherit

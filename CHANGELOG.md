@@ -9,6 +9,17 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### 🐛 Bug Fixes
+
+- **`init` and `initial_guess` together raise "Conflicting aliases" in descriptive mode too** ([#964](https://github.com/control-toolbox/OptimalControl.jl/issues/964)). Explicit mode already reported the conflict; descriptive mode, the common case, routed the leftover `init` to the strategies and rejected it as an unknown option, with unrelated suggestions. Both modes now run the same check before any routing.
+
+### 🧪 Testing
+
+- Release workflows: `ReleaseGate.yml` (the gate of a release PR, `REL1`–`REL7`) and
+  `ReleaseTag.yml` (tag and GitHub release of a merged release PR) call CTActions;
+  `Breakage.yml` moves to `breakage-suite.yml` (one report, the `REL1` check of a release
+  PR) and also runs on push to `main`; `Documentation.yml` accepts `workflow_dispatch`.
+
 ### 📚 Documentation
 
 - ct-conventions pinned at 0.5.0 in `AGENTS.md` (read from a git-ignored clone in
@@ -24,20 +35,12 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ct-agents pinned at `v0.3.0` in `AGENTS.md`: at the close of a release the agent runs
   `release.jl audit`, which checks the trail the release left.
 
-### 📚 Documentation
-
 - **Initial guess: check a guess before solving with `build_initial_guess`** ([#965](https://github.com/control-toolbox/OptimalControl.jl/issues/965)). It builds and validates the guess against the problem. The other initial-guess helpers of CTModels (`initial_guess`, `pre_initial_guess`, `validate_initial_guess`, `initial_state`, `initial_control`, `initial_variable`, `PreInitialGuess`) stay unexported, and a test now records that choice.
+- ct-conventions pinned at `v0.13.0` and ct-agents at `v0.5.0` in `AGENTS.md`; the `Release` workflow of CTActions is called from `.github/workflows/Release.yml`.
 
-### 🐛 Bug Fixes
+### ✅ Compatibility
 
-- **`init` and `initial_guess` together raise "Conflicting aliases" in descriptive mode too** ([#964](https://github.com/control-toolbox/OptimalControl.jl/issues/964)). Explicit mode already reported the conflict; descriptive mode, the common case, routed the leftover `init` to the strategies and rejected it as an unknown option, with unrelated suggestions. Both modes now run the same check before any routing.
-
-### 🧪 Testing
-
-- Release workflows: `ReleaseGate.yml` (the gate of a release PR, `REL1`–`REL7`) and
-  `ReleaseTag.yml` (tag and GitHub release of a merged release PR) call CTActions;
-  `Breakage.yml` moves to `breakage-suite.yml` (one report, the `REL1` check of a release
-  PR) and also runs on push to `main`; `Documentation.yml` accepts `workflow_dispatch`.
+- **No breaking change recorded** in this section. See [BREAKING.md](BREAKING.md).
 
 ## [2.2.1-beta] — 2026-09-02
 
