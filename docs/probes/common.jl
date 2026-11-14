@@ -21,7 +21,7 @@ function error_text(f)
     catch e
         return sprint(showerror, e)
     end
-    error("expected an exception, got none")
+    return error("expected an exception, got none")
 end
 
 """

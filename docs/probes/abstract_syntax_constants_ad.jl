@@ -10,28 +10,32 @@ using OptimalControl
 using NLPModelsIpopt
 
 for (name, ocp) in [
-    "x(0) - [-1, v] == [0, 0]" => @def(begin
-        v ∈ R, variable
-        t ∈ [0, 1], time
-        x ∈ R², state
-        u ∈ R, control
-        -1 ≤ v ≤ 1
-        x(0) - [-1, v] == [0, 0]
-        x(1) == [0, 0]
-        ẋ(t) == [x₂(t), u(t)]
-        ∫(0.5u(t)^2) → min
-    end),
-    "x(0) - [-one(v), v] == [0, 0]" => @def(begin
-        v ∈ R, variable
-        t ∈ [0, 1], time
-        x ∈ R², state
-        u ∈ R, control
-        -1 ≤ v ≤ 1
-        x(0) - [-one(v), v] == [0, 0]
-        x(1) == [0, 0]
-        ẋ(t) == [x₂(t), u(t)]
-        ∫(0.5u(t)^2) → min
-    end),
+    "x(0) - [-1, v] == [0, 0]" => @def(
+        begin
+            v ∈ R, variable
+            t ∈ [0, 1], time
+            x ∈ R², state
+            u ∈ R, control
+            -1 ≤ v ≤ 1
+            x(0) - [-1, v] == [0, 0]
+            x(1) == [0, 0]
+            ẋ(t) == [x₂(t), u(t)]
+            ∫(0.5u(t)^2) → min
+        end
+    ),
+    "x(0) - [-one(v), v] == [0, 0]" => @def(
+        begin
+            v ∈ R, variable
+            t ∈ [0, 1], time
+            x ∈ R², state
+            u ∈ R, control
+            -1 ≤ v ≤ 1
+            x(0) - [-one(v), v] == [0, 0]
+            x(1) == [0, 0]
+            ẋ(t) == [x₂(t), u(t)]
+            ∫(0.5u(t)^2) → min
+        end
+    ),
 ]
     sol = solve(ocp; display=false)
     check(successful(sol), "a constant component in `$name` solves with :adnlp")

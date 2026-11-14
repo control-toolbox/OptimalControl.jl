@@ -3,7 +3,7 @@
 # Since the ecosystem-wide restructuring, CTBase owns the strategy/option layer
 # (previously in CTSolvers) and the `Data` type vocabulary `Flow` dispatches on
 # (previously in CTFlows). Every import below points at the *owning* submodule,
-# per the Handbook `modules.md` rule.
+# per ct-conventions `MOD4`.
 
 # Generated code — `@Lie` expands to `CTBase.Traits.*` prefixes, so `CTBase`
 # itself must stay in scope at every call site.

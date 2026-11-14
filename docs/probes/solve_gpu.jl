@@ -12,10 +12,16 @@ using CUDA
 ocp = eval(ENERGY_DEF)
 
 msg = error_text(() -> solve(ocp, :gpu; display=false))
-check(occursin("ExtensionError", msg) && occursin("CUDSS", msg) && occursin("using CUDSS", msg),
-    "without CUDSS, the :gpu solve reports Missing CUDSS with the hint `using CUDSS`")
+check(
+    occursin("ExtensionError", msg) &&
+        occursin("CUDSS", msg) &&
+        occursin("using CUDSS", msg),
+    "without CUDSS, the :gpu solve reports Missing CUDSS with the hint `using CUDSS`",
+)
 
 using ExaModels
 msg = error_text(() -> @eval Main objective)
-check(occursin("UndefVarError", msg) || occursin("ambigu", msg),
-    "`using ExaModels` makes `objective` ambiguous with OptimalControl's accessor")
+check(
+    occursin("UndefVarError", msg) || occursin("ambigu", msg),
+    "`using ExaModels` makes `objective` ambiguous with OptimalControl's accessor",
+)

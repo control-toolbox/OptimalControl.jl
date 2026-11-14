@@ -190,7 +190,7 @@ end
 # ============================================================================
 
 function test_dispatch_logic()
-    Test.@testset "Dispatch Logic & Completion" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "Dispatch Logic & Completion" verbose = VERBOSE showtiming = SHOWTIMING begin
         ocp = MockOCP()
         init = MockInit()
         mock_registry = build_mock_registry_from_methods()

@@ -97,17 +97,22 @@ OptimalControl.jl is the umbrella package of a multi-repository ecosystem with a
 
 If you use OptimalControl.jl in your work, please cite us:
 
-> Caillau, J.-B., Cots, O., Gergaud, J., Martinon, P., & Sed, S. *OptimalControl.jl: a Julia package to model and solve optimal control problems with ODE's* [Computer software]. https://doi.org/10.5281/zenodo.13336563
+> Caillau, J.-B., Cots, O., Gergaud, J., Martinon, P., & Sed, S. *OptimalControl.jl: a Julia package to model and solve optimal control problems with ODEs*. Journal of Open Source Software, 11(126), 10630, [doi.org/10.21105/joss.10630](https://doi.org/10.21105/joss.10630)
 
-or in BibTeX format:
+or in bibtex format:
 
 ```bibtex
-@software{OptimalControl_jl,
-author = {Caillau, Jean-Baptiste and Cots, Olivier and Gergaud, Joseph and Martinon, Pierre and Sed, Sophia},
-doi = {10.5281/zenodo.13336563},
-license = {["MIT"]},
-title = {{OptimalControl.jl: a Julia package to model and solve optimal control problems with ODE's}},
-url = {https://control-toolbox.org/OptimalControl.jl}
+@article{Caillau2026, 
+  doi = {10.21105/joss.10630}, 
+  url = {https://doi.org/10.21105/joss.10630}, 
+  year = {2026}, 
+  publisher = {The Open Journal}, 
+  volume = {11}, 
+  number = {126}, 
+  pages = {10630}, 
+  author = {Caillau, Jean-Baptiste and Cots, Olivier and Gergaud, Joseph and Martinon, Pierre and Sed, Sophia}, 
+  title = {OptimalControl.jl: a Julia package to model and solve optimal control problems with ODEs}, 
+  journal = {Journal of Open Source Software} 
 }
 ```
 
@@ -125,3 +130,11 @@ If you want to ask a question, feel free to start a discussion [here](https://gi
 
 >[!NOTE]
 > If you want to add an application or a package to the control-toolbox ecosystem, please follow this [set up tutorial](https://github.com/orgs/control-toolbox/discussions/65).
+
+---
+
+## Developer Resources
+
+The [ct-conventions](https://github.com/control-toolbox/ct-conventions) repository (coding rules, method, plan template) is pinned to a SemVer release tag in `AGENTS.md` ("Pinned version"). Read it from a local clone in `.ct-conventions/`, which git ignores; `AGENTS.md` gives the clone command.
+
+It is not a git submodule: `Pkg.add` on Julia 1.10 fails on a package whose tree contains one (`cannot get submodules without a working tree`). To bump it, change the tag in `AGENTS.md` (the "Pinned version" line and the clone command), then re-clone.

@@ -18,7 +18,7 @@ const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 function test_registry()
-    Test.@testset "Strategy Registry Tests" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "Strategy Registry Tests" verbose = VERBOSE showtiming = SHOWTIMING begin
 
         # ====================================================================
         # UNIT TESTS

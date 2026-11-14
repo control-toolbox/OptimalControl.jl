@@ -66,7 +66,8 @@ include(joinpath(@__DIR__, "..", "..", "problems", "TestProblems.jl"))
 import .TestProblems
 
 function test_orchestration()
-    Test.@testset "Orchestration - CommonSolve.solve" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "Orchestration - CommonSolve.solve" verbose = VERBOSE showtiming =
+        SHOWTIMING begin
 
         # ====================================================================
         # UNIT TESTS - Mode detection

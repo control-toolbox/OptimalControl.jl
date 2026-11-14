@@ -154,14 +154,14 @@ nothing                                                         # hide
 ## Checking the solution
 
 The two arcs, concatenated at the switching time found, reach the target. The point call of
-a concatenation returns `[x; p]` (see [Multi-phase flows](@ref flows-multi-phase)):
+a concatenation returns the pair `(x, p)` (see [Multi-phase flows](@ref flows-multi-phase)):
 
 ```@example main
 p0_s, t1_s, tf_s = sol.u[1:2], sol.u[3], sol.u[4]
 
 f_bb = f_max * (t1_s, f_min)
 zf = f_bb(t0, x0, p0_s, tf_s; variable=tf_s)
-zf[1:2]
+zf[1]
 ```
 
 The final time is the cost, so the indirect and the direct solutions agree when their final
@@ -172,7 +172,7 @@ tf_s, objective(sol_d)
 ```
 
 ```@example main
-@assert isapprox(zf[1:2], xf; atol=1e-8) && isapprox(objective(sol_d), tf_s; atol=1e-6)   # hide
+@assert isapprox(zf[1], xf; atol=1e-8) && isapprox(objective(sol_d), tf_s; atol=1e-6)   # hide
 nothing                                                                                   # hide
 ```
 

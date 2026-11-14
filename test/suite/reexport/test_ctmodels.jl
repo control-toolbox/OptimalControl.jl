@@ -161,6 +161,24 @@ function test_ctmodels()
             end
             Test.@test reexports(OptimalControl, :build_initial_guess, CTModels.Init)
             Test.@test isdefined(CurrentModule, :build_initial_guess)
+
+            # Deliberately not exported (#965): `build_initial_guess` already builds and
+            # validates a guess, `@init` and named tuples cover construction, and
+            # `state`/`control`/`variable` cover inspection.
+            for f in (
+                :initial_guess,
+                :pre_initial_guess,
+                :validate_initial_guess,
+                :initial_state,
+                :initial_control,
+                :initial_variable,
+                :PreInitialGuess,
+            )
+                Test.@testset "$f not exported" begin
+                    Test.@test !is_exported(OptimalControl, f)
+                    Test.@test !isdefined(CurrentModule, f)
+                end
+            end
         end
 
         Test.@testset "Serialization" begin

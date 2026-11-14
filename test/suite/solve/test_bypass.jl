@@ -133,7 +133,7 @@ end
 # ============================================================================
 
 function test_bypass()
-    Test.@testset "Bypass Mechanism Tests" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "Bypass Mechanism Tests" verbose = VERBOSE showtiming = SHOWTIMING begin
         registry = build_bypass_mock_registry()
         ocp = MockBypassOCP()
         init = MockBypassInit()

@@ -14,7 +14,7 @@ Bang-bang shooting derivation for [`DoubleIntegratorTime`](@ref). Flat vector
 residuals (target state, switching condition, free-time transversality).
 """
 function _di_time_shoot_builder(ocp, d)
-    return function (; hamiltonian_type::Symbol=:total)
+    return function shoot(; hamiltonian_type::Symbol=:total)
         t0, x0, xf = d.t0, d.x0, d.xf
         u_max, u_min = d.u_max, d.u_min
 
@@ -49,7 +49,7 @@ vector `ξ = p0 (2)` — the cheapest fixture in the library: one arc, no
 switching times, so the whole target-state residual is the shooting function.
 """
 function _di_energy_shoot_builder(ocp, d)
-    return function (; hamiltonian_type::Symbol=:total)
+    return function shoot(; hamiltonian_type::Symbol=:total)
         t0, tf, x0, xf = d.t0, d.tf, d.x0, d.xf
 
         f = OptimalControl.Flow(ocp, (x, p) -> p[2]; hamiltonian_type)
@@ -76,7 +76,7 @@ Flat vector `ξ = [p0 (2); t1; t2]` — entry/exit of the boundary arc where
 at entry, switching condition).
 """
 function _di_energy_cons_shoot_builder(ocp, d)
-    return function (; hamiltonian_type::Symbol=:total)
+    return function shoot(; hamiltonian_type::Symbol=:total)
         t0, tf, x0, xf, v_max = d.t0, d.tf, d.x0, d.xf, d.v_max
 
         g(x) = v_max - x[2]

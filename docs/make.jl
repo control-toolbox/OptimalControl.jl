@@ -2,8 +2,11 @@
 # julia --project=. docs/make.jl
 # to serve the documentation:
 #   npx serve docs/build/1 --listen 5173
-pushfirst!(LOAD_PATH, joinpath(@__DIR__, ".."))
-pushfirst!(LOAD_PATH, joinpath(@__DIR__))
+# Append (not prepend): docs/Manifest.toml must win for shared deps; the repo root is only
+# needed to find the local OptimalControl. Prepending it lets the root environment shadow docs/ and
+# breaks the precompilation of extensions on weak dependencies installed only in docs/.
+push!(LOAD_PATH, joinpath(@__DIR__))
+push!(LOAD_PATH, joinpath(@__DIR__, ".."))
 
 # control-toolbox packages
 using OptimalControl
@@ -48,7 +51,7 @@ using CairoMakie: CairoMakie   # `import`, not `using`: keeps Makie's `plot`/`pl
 # prefers SVG. Both Plots.jl and CairoMakie respond to `image/png`, so PNG wins for
 # every figure unless it is disabled. Set once here, before any @example block runs,
 # so it covers every page present or future — not just the ones plotting today. See
-# Handbook/VITEPRESS-DOC.md "Plot image format — SVG vs PNG".
+# ct-conventions SITE12.
 Base.showable(::MIME"image/png", ::Plots.Plot) = false
 CairoMakie.activate!(; type="svg")
 Base.showable(::MIME"image/png", ::CairoMakie.Makie.Figure) = false
@@ -135,7 +138,10 @@ end
 # fills `logo:` with the single `/logo.svg`; a `.dark` filter recolours it there).
 write(
     joinpath(@__DIR__, "src", "assets", "logo-dark.svg"),
-    replace(read(joinpath(@__DIR__, "src", "assets", "logo.svg"), String), "#ffffff" => "#1b1b1f"),
+    replace(
+        read(joinpath(@__DIR__, "src", "assets", "logo.svg"), String),
+        "#ffffff" => "#1b1b1f",
+    ),
 )
 cp(
     joinpath(@__DIR__, "src", "assets", "logo.svg"),

@@ -4,12 +4,68 @@ Chronological, newest first. Each `CHANGELOG.md` entry links back here for the f
 record; this file never duplicates a release's own compat table, only what a caller must
 change or be aware of.
 
+- [Breaking changes (Unreleased)](#breaking-changes-unreleased)
 - [Non-breaking notes (2.2.1-beta)](#non-breaking-notes-221-beta)
 - [Non-breaking notes (2.2.0-beta)](#non-breaking-notes-220-beta)
 - [Breaking changes: v2.0 → v2.1.0-beta](#breaking-changes-v20--v210-beta)
 - [Breaking changes: v1.x → v2.0](#breaking-changes-v1x--v20)
 
 ---
+
+## Breaking changes (Unreleased)
+
+### The multipliers follow one sign convention
+
+The dependencies move to CTModels `0.21`, CTSolvers `0.7` and CTDirect `2`, which apply the sign
+convention of ct-conventions `SGN1`–`SGN3` to the multipliers. What `dual(sol, ocp, :label)` and
+`costate(sol)` return changes in three cases:
+
+- a constraint with **two** finite bounds, box or path, has μ = μ_ub − μ_lb: positive where
+  the upper bound is active, negative where the lower bound is active (a box returned
+  μ_lb − μ_ub);
+- a constraint with a **single** finite bound has a non-negative multiplier;
+- a `→ max` problem has the costate and the duals of the equivalent `→ min` problem (`min J`
+  and `max -J` give the same values), the opposite of what the previous releases returned.
+  A `→ min` problem is unchanged apart from the two cases above.
+
+**Migration**: drop any sign compensation.
+
+```julia
+# Before: two finite bounds, the upper bound active
+dual(sol, ocp, :u_box)(t) < 0
+# After
+dual(sol, ocp, :u_box)(t) > 0
+
+# Before: a max problem gave the opposite of the equivalent min problem
+costate(sol_max)(t) == -costate(sol_min)(t)
+# After
+costate(sol_max)(t) == costate(sol_min)(t)
+```
+
+### `:exa`: the path and boundary duals are unknown, not zero
+
+With the `:exa` modeler, `dual(sol, ocp, :label)` of a path or boundary constraint throws a
+`PreconditionError`; it returned `0`, a value that was never computed
+([CTParser#414](https://github.com/control-toolbox/CTParser.jl/issues/414)).
+
+**Migration**:
+
+```julia
+# Before: a 0 with :exa
+d = dual(sol, ocp, :c)
+
+# After: solve with :adnlp to read the multipliers
+sol = solve(ocp, :adnlp)
+d = dual(sol, ocp, :c)
+```
+
+### Non-breaking notes
+
+- `ad` and `Lift` on a `HamiltonianVectorField`, and `ad` and `∂ₜ` on an in-place vector
+  field, throw `IncorrectArgument` instead of `NotImplemented` (CTLie `0.3`). Code that
+  caught `NotImplemented` for these calls catches `IncorrectArgument`.
+- The pins of ct-conventions and ct-agents and the `Release` caller are documentation and CI
+  only.
 
 ## Non-breaking notes (2.2.1-beta)
 

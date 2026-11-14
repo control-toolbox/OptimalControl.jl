@@ -5,7 +5,8 @@
 
 include("common.jl")
 
-script(dense) = """
+function script(dense)
+    return """
 pushfirst!(LOAD_PATH, $(repr(REPO_ROOT))); pushfirst!(LOAD_PATH, $(repr(joinpath(REPO_ROOT, "docs"))))
 using OptimalControl, OrdinaryDiffEqTsit5
 ocp = @def begin
@@ -21,8 +22,21 @@ f = Flow(ocp, (x, p) -> p[2]; saveat=range(0, 1, 11)$(dense ? "" : ", dense=fals
 sol = f((0, 1), [-1, 0], [12, 6])
 abs(objective(sol) - 6) < 1e-6 || error("wrong objective")
 """
+end
 
-run_child(code) = success(pipeline(`$(Base.julia_cmd()) --startup-file=no -e $code`; stdout=devnull, stderr=devnull))
+function run_child(code)
+    return success(
+        pipeline(
+            `$(Base.julia_cmd()) --startup-file=no -e $code`; stdout=devnull, stderr=devnull
+        ),
+    )
+end
 
-check(!run_child(script(true)), "with saveat and the default dense, the trajectory call crashes")
-check(run_child(script(false)), "with saveat and dense=false, the trajectory call works (objective 6)")
+check(
+    !run_child(script(true)),
+    "with saveat and the default dense, the trajectory call crashes",
+)
+check(
+    run_child(script(false)),
+    "with saveat and dense=false, the trajectory call works (objective 6)",
+)

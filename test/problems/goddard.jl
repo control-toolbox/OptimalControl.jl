@@ -79,7 +79,7 @@ Flat shooting vector: `ξ = [p0 (3); t1; t2; t3; tf]`, 7 unknowns for 7 residual
 `tf`, transversality on `(p_r, p_v)`, and the four switching/boundary conditions between arcs.
 """
 function _goddard_shoot_builder(ocp, c)
-    return function (; hamiltonian_type::Symbol=:total)
+    return function shoot(; hamiltonian_type::Symbol=:total)
         t0 = 0.0
         vmax, mf, x0, F0, F1 = c.vmax, c.mf, c.x0, c.F0, c.F1
 

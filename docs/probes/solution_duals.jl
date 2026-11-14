@@ -40,22 +40,34 @@ end
 μ_box_100, μ_box_400 = μ(box, 100), μ(box, 400)
 μ_path_100, μ_path_400 = μ(path, 100), μ(path, 400)
 
-check(μ_box_100 < 0 && μ_path_100 > 0,
+check(
+    μ_box_100 < 0 && μ_path_100 > 0,
     "box and path multipliers have opposite signs where the upper bound is active " *
-    "(box $(round(μ_box_100; sigdigits=3)), path $(round(μ_path_100; sigdigits=3)))")
-check(isapprox(μ_box_100 / μ_box_400, 4; rtol=0.1),
-    "the box multiplier scales with the time step (÷ 4 when the grid is 4 times finer)")
-check(isapprox(μ_path_100, 0.5; atol=0.02) && isapprox(μ_path_400, 0.5; atol=0.01),
-    "the path multiplier converges to p₂(0.5) = 0.5")
+    "(box $(round(μ_box_100; sigdigits=3)), path $(round(μ_path_100; sigdigits=3)))",
+)
+check(
+    isapprox(μ_box_100 / μ_box_400, 4; rtol=0.1),
+    "the box multiplier scales with the time step (÷ 4 when the grid is 4 times finer)",
+)
+check(
+    isapprox(μ_path_100, 0.5; atol=0.02) && isapprox(μ_path_400, 0.5; atol=0.01),
+    "the path multiplier converges to p₂(0.5) = 0.5",
+)
 
 sol_exa = solve(box, :exa; display=false)
-check(all(iszero, dual(sol_exa, box, :start)),
-    "with :exa, the multiplier of the initial condition is zero")
-check(all(iszero, boundary_constraints_dual(sol_exa)),
-    "with :exa, all boundary multipliers are zero")
+check(
+    all(iszero, dual(sol_exa, box, :start)),
+    "with :exa, the multiplier of the initial condition is zero",
+)
+check(
+    all(iszero, boundary_constraints_dual(sol_exa)),
+    "with :exa, all boundary multipliers are zero",
+)
 sol_adnlp = solve(box, :adnlp; display=false)
-check(isapprox(dual(sol_adnlp, box, :start), [1, 1]; atol=1e-2),
-    "with :adnlp, the multiplier of the initial condition is p(0) = (1, 1)")
+check(
+    isapprox(dual(sol_adnlp, box, :start), [1, 1]; atol=1e-2),
+    "with :adnlp, the multiplier of the initial condition is p(0) = (1, 1)",
+)
 
 # Note "The costate is shifted by half a step": p(t_i) ≈ p(t_i + h/2) with :midpoint, and
 # p(t_i + h) with Gauss–Legendre (CTDirect#640, known bug).
@@ -68,8 +80,15 @@ energy = @def begin
     ẋ(t) == [v(t), u(t)]
     0.5∫(u(t)^2) → min
 end
-offset(scheme) = let s = solve(energy; scheme, grid_size=100, display=false)
-    ((6 - costate(s)(0.5)[2]) / 12 - 0.5) / 0.01   # p₂(t) = 6 - 12t, h = 0.01
-end
-check(isapprox(offset(:midpoint), 0.5; atol=0.02), "with :midpoint, the costate at t is p(t + h/2)")
-check(isapprox(offset(:gauss_legendre_2), 1; atol=0.02), "with :gauss_legendre_2, the costate at t is p(t + h)")
+offset(scheme) =
+    let s = solve(energy; scheme, grid_size=100, display=false)
+        ((6 - costate(s)(0.5)[2]) / 12 - 0.5) / 0.01   # p₂(t) = 6 - 12t, h = 0.01
+    end
+check(
+    isapprox(offset(:midpoint), 0.5; atol=0.02),
+    "with :midpoint, the costate at t is p(t + h/2)",
+)
+check(
+    isapprox(offset(:gauss_legendre_2), 1; atol=0.02),
+    "with :gauss_legendre_2, the costate at t is p(t + h)",
+)

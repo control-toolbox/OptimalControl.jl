@@ -8,10 +8,13 @@
 const HERE = @__DIR__
 const DOCS_ENV = normpath(joinpath(HERE, ".."))
 
-probes = sort!(filter(readdir(HERE)) do f
-    endswith(f, ".jl") && f ∉ ("run.jl", "common.jl") &&
-        (isempty(ARGS) || any(a -> occursin(a, f), ARGS))
-end)
+probes = sort!(
+    filter(readdir(HERE)) do f
+        return endswith(f, ".jl") &&
+               f ∉ ("run.jl", "common.jl") &&
+               (isempty(ARGS) || any(a -> occursin(a, f), ARGS))
+    end,
+)
 
 failed = String[]
 for probe in probes

@@ -15,7 +15,10 @@ msg = error_text(() -> @eval @def begin
     ẋ(t) == u(t)
     ∫(u(t)^2) → min
 end)
-check(occursin("UndefVarError", msg), "a constant in the time bounds must be defined before the block")
+check(
+    occursin("UndefVarError", msg),
+    "a constant in the time bounds must be defined before the block",
+)
 
 msg = error_text(() -> @eval @def begin
     t ∈ [0, 1], time
@@ -25,7 +28,10 @@ msg = error_text(() -> @eval @def begin
     ẋ(t) == u(t)
     ∫(u(t)^2) → min
 end)
-check(occursin("UndefVarError", msg), "a constant in a boundary condition must be defined before the block")
+check(
+    occursin("UndefVarError", msg),
+    "a constant in a boundary condition must be defined before the block",
+)
 
 ocp = @def begin
     t ∈ [0, 1], time
@@ -47,7 +53,10 @@ msg = error_text(() -> @eval @def begin
     ẋ(t) == u(t)
     tf → min
 end)
-check(occursin("UndefVarError", msg), "the variable must come before the time when the time bounds use it")
+check(
+    occursin("UndefVarError", msg),
+    "the variable must come before the time when the time bounds use it",
+)
 
 ocp = @def begin
     x ∈ R, state
@@ -56,7 +65,10 @@ ocp = @def begin
     ẋ(t) == u(t)
     ∫(u(t)^2) → min
 end
-check(state_dimension(ocp) == 1, "other declarations may come in any order (state before time)")
+check(
+    state_dimension(ocp) == 1,
+    "other declarations may come in any order (state before time)",
+)
 
 ocp = @def begin
     t in [0, 1], time
@@ -68,4 +80,7 @@ ocp = @def begin
     u(t) <= 10
     0.5integral(u(t)^2) => min
 end
-check(state_dimension(ocp) == 2, "the ASCII alternatives (in, R^2, derivative, <=, integral, =>) are accepted")
+check(
+    state_dimension(ocp) == 2,
+    "the ASCII alternatives (in, R^2, derivative, <=, integral, =>) are accepted",
+)
