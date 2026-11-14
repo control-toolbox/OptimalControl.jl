@@ -41,7 +41,11 @@ function test_extensions_armed()
             # The imports layer must make the trigger modules reachable.
             Test.@test isdefined(OptimalControl, :ADNLPModels)
             Test.@test isdefined(OptimalControl, :ExaModels)
-            Test.@test isdefined(OptimalControl, :DifferentiationInterface)
+            # The package is bound as `DifferentiationInterfacePkg`: the name
+            # `DifferentiationInterface` is the AD backend strategy of CTBase (#967).
+            Test.@test OptimalControl.DifferentiationInterfacePkg isa Module
+            Test.@test nameof(OptimalControl.DifferentiationInterfacePkg) ===
+                :DifferentiationInterface
             Test.@test isdefined(OptimalControl, :ForwardDiff)
         end
 

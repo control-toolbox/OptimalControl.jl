@@ -87,7 +87,7 @@ accepted ones.
 
 ```@example main
 err = try eval(:(@Lie [F1, F2] autonomous=false)); nothing catch e; e end   # hide
-@assert err isa CTBase.Exceptions.IncorrectArgument                       # hide
+@assert err isa OptimalControl.IncorrectArgument                       # hide
 nothing                                                                   # hide
 ```
 

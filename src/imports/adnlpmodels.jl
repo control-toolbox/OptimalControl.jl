@@ -9,5 +9,5 @@
 #
 # Guarded by test/suite/extensions/test_extensions_armed.jl.
 
-# Generated code
-@reexport import ADNLPModels: ADNLPModels # arms CTSolversADNLPModels
+# The module name is not exported (#967): loading the package is what arms the extension.
+using ADNLPModels: ADNLPModels # arms CTSolversADNLPModels

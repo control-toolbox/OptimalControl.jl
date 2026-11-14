@@ -28,15 +28,18 @@ describe(:di)
 
 ## Choosing a backend
 
-A backend is built with `CTBase.Differentiation.DifferentiationInterface`, whose option
-`ad_backend` is a backend type of [ADTypes](https://github.com/SciML/ADTypes.jl).
-DifferentiationInterface re-exports these types; add it to your environment to use them. For
-example, ForwardDiff with a chunk size of one:
+A backend is built with `OptimalControl.DifferentiationInterface`, whose option
+`ad_backend` is a backend type of [ADTypes](https://github.com/SciML/ADTypes.jl). Like the
+modelers and solvers (`OptimalControl.ADNLP`, `OptimalControl.Ipopt`), it is written with
+the module name, since it is not exported: it has the name of the package it relies on. The
+package [DifferentiationInterface](https://github.com/JuliaDiff/DifferentiationInterface.jl)
+re-exports the ADTypes backend types; add it to your environment to use them. For example,
+ForwardDiff with a chunk size of one:
 
 ```@example main
 using DifferentiationInterface: AutoForwardDiff
 
-backend = CTBase.Differentiation.DifferentiationInterface(; ad_backend=AutoForwardDiff(chunksize=1))
+backend = OptimalControl.DifferentiationInterface(; ad_backend=AutoForwardDiff(chunksize=1))
 ```
 
 Every operation accepts `ad_backend=` for one call:
@@ -75,7 +78,7 @@ The GPU backend is built with the parameter `GPU`. Its default is Mooncake, sinc
 does not run on GPU arrays:
 
 ```@example main
-CTBase.Differentiation.DifferentiationInterface{GPU}()
+OptimalControl.DifferentiationInterface{GPU}()
 ```
 
 It differentiates functions of `CuArray`s, and needs CUDA and Mooncake to be loaded, as

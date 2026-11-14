@@ -29,10 +29,10 @@ const CurrentModule = TestCtflows
 
 function test_ctflows()
     Test.@testset "CTFlows reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
-        Test.@testset "Generated Code Prefix" begin
-            Test.@test isdefined(OptimalControl, :CTFlows)
-            Test.@test isdefined(CurrentModule, :CTFlows)
-            Test.@test CTFlows isa Module
+        Test.@testset "Module name not exported" begin
+            # Used internally, no longer exported (#967).
+            Test.@test OptimalControl.CTFlows === CTFlows
+            Test.@test !is_exported(OptimalControl, :CTFlows)
         end
 
         Test.@testset "Flows" begin
@@ -78,12 +78,11 @@ function test_ctflows()
                 end
             end
 
-            # `system`/`integrator` deliberately stay unexported — too generic for
-            # a DSL surface — but must still resolve when qualified through Flows.
+            # The two accessors of a flow itself: what it integrates and how (#967).
             for f in (:system, :integrator)
-                Test.@testset "$f stays unexported" begin
-                    Test.@test !is_exported(OptimalControl, f)
-                    Test.@test isdefined(CTFlows.Flows, f)
+                Test.@testset "$f" begin
+                    Test.@test reexports(OptimalControl, f, CTFlows.Flows)
+                    Test.@test isdefined(CurrentModule, f)
                 end
             end
         end
@@ -143,6 +142,8 @@ function test_ctflows()
                 xf, pf = f(0.0, [1.0, 0.0], [0.0, 1.0], 1.0)
                 Test.@test xf isa AbstractVector
                 Test.@test pf isa AbstractVector
+                Test.@test integrator(f) isa AbstractIntegrator
+                Test.@test system(f) === CTFlows.Flows.system(f)
             end
 
             Test.@testset "Flow from a VectorField" begin
