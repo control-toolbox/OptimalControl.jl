@@ -128,6 +128,7 @@ See [BREAKING.md](BREAKING.md).
 
 ### 📦 Dependencies
 
+- ADNLPModels `0.8` → `0.8.15`, in `Project.toml` and `docs/Project.toml`: the first release where a constant in a vector expression of `@def` no longer breaks the `:adnlp` modeler ([#481](https://github.com/control-toolbox/OptimalControl.jl/issues/481)), now guarded by `test/suite/problems/test_constant_components.jl`.
 - `[compat]` of `Project.toml` and `docs/Project.toml` moves to the current releases of the
   ecosystem, all in General: CTBase `0.30` → `0.30.13`, CTModels `0.19` → `0.21.1`, CTParser
   `0.9` → `0.9.6`, CTSolvers `0.5` → `0.7`, CTDirect `1` → `2`, CTFlows `0.18` → `0.18.3`,
