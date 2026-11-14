@@ -116,16 +116,16 @@ plot(sol, :state, :costate, :control;
 )
 ```
 
-Three attributes are the exception: `title`, `xlabel` and `ylabel` are set by `plot` itself,
-from the names in the problem, and the values you pass are ignored without a warning
-([CTBase#569](https://github.com/control-toolbox/CTBase.jl/issues/569)). To change them,
-edit the subplot afterwards, for instance `xlabel!(plt[3], "s")` (see
+Three attributes are set by `plot` itself, from the names in the problem: `title`,
+`xlabel` and `ylabel`. `xlabel` replaces the x label of the subplots that carry one, and
+`title` replaces the overall title. `ylabel` is ignored with a warning, as there is one name
+per component
+([CTBase#569](https://github.com/control-toolbox/CTBase.jl/issues/569)). To change a y label,
+edit the subplot afterwards, for instance `ylabel!(plt[2], "speed")` (see
 [Custom plots](@ref results-plot-custom)).
 
 ```@example main
 plt_check = plot(sol, :state; xlabel="s")                     # hide
-@assert plt_check.subplots[end][:xaxis][:guide] == "t"        # hide
-xlabel!(plt_check[end], "s")                                  # hide
 @assert plt_check.subplots[end][:xaxis][:guide] == "s"        # hide
 nothing                                                       # hide
 ```

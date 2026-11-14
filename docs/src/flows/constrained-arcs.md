@@ -81,7 +81,7 @@ p0 = -0.982237546583301
 zf = f(t0, x0, p0, tf)
 ```
 
-The concatenation reaches $x(2) = 1/2$ (its point call returns `[x; p]`, see
+The concatenation reaches $x(2) = 1/2$ (its point call returns `(x, p)`, see
 [Multi-phase flows](@ref flows-multi-phase)). The direct method finds the same boundary arc,
 $[0.9, 1.6]$, and the same cost:
 
@@ -209,7 +209,7 @@ nothing # hide
 ```
 
 ```@example main
-@assert isapprox(zf_bd[1:2], [0, -1]; atol=1e-8)                    # hide
+@assert isapprox(zf_bd[1], [0, -1]; atol=1e-8)                    # hide
 @assert isapprox(objective(sol_bd_flow), 4 / (9l); atol=1e-5)       # hide
 @assert isapprox(objective(sol_bd), 4 / (9l); atol=1e-3)            # hide
 nothing                                                             # hide

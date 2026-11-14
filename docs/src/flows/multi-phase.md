@@ -77,14 +77,12 @@ n_phases(f), get_switching_times(f), get_flow(f, 1) === f1
 `get_flows`, `get_switching_time(f, i)`, `get_jump(f, i)` and `get_jumps(f)` read back the
 other parts.
 
-## The point call returns one vector
+## The point call returns the pair `(x, p)`
 
 A concatenation is called like any flow: `f((t0, tf), x0, p0)` for the trajectory, and
-`f(t0, x0, p0, tf)` for the final point, with `variable=` on a problem with a variable. One
-difference: on Hamiltonian flows, the point call of a concatenation returns **one vector**
-`[x; p]`, where a single flow returns the pair `(x, p)`
-([CTFlows#439](https://github.com/control-toolbox/CTFlows.jl/issues/439)). Write
-`zf = f(…)`, then `zf[1:n]` for the state and `zf[n+1:2n]` for the costate.
+`f(t0, x0, p0, tf)` for the final point, with `variable=` on a problem with a variable. On
+Hamiltonian flows, the point call returns the pair `(x, p)`, as a single flow does: write
+`xf, pf = f(t0, x0, p0, tf)`.
 
 ## Example: minimum time, bang–bang
 
@@ -115,7 +113,7 @@ f_minus = Flow(ocp, (x, p, v) -> -1)
 t1, tf = 1, 2
 f_bb = f_plus * (t1, f_minus)
 zf = f_bb(0, [-1, 0], [1, 1], tf; variable=tf)
-xf, pf = zf[1:2], zf[3:4]
+xf, pf = zf
 ```
 
 The concatenation reaches the target, with $p(t_f) = (1, -1)$.

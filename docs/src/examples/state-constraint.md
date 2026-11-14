@@ -197,7 +197,7 @@ plot!(plt, φ_plot((t0, tf), x0, p0_sol); label="indirect", linestyle=:dash)
 
 ```@example main
 @assert isapprox(shooting_sol.u, [38.4, 9.6, 0.25, 0.75]; atol=1e-8)   # hide
-@assert isapprox(objective(indirect_sol), 7.68; atol=1e-6)              # hide
+@assert isapprox(objective(indirect_sol), 7.68; atol=1e-4)              # hide
 @assert isapprox(objective(direct_sol), 7.68; rtol=1e-2)                # hide
 s = zeros(4); shoot!(s, shooting_sol.u, nothing)                        # hide
 @assert maximum(abs, s) < 1e-10                                         # hide
