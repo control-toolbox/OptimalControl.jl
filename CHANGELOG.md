@@ -51,6 +51,28 @@ See [BREAKING.md](BREAKING.md).
 
 ### 🐛 Bug Fixes
 
+- **A constant component of the dynamics solves with the default modeler `:adnlp`** ([#481](https://github.com/control-toolbox/OptimalControl.jl/issues/481)). A problem whose dynamics has a component that is a constant, such as the `0` below, used to fail with `Cannot determine ordering of Dual tags` (ADNLPModels 0.8.13 and 0.8.14), and had to be written `0 * u(t)` or solved with `:exa`. Fixed upstream in [ADNLPModels 0.8.15](https://github.com/JuliaSmoothOptimizers/ADNLPModels.jl/releases/tag/v0.8.15):
+
+  ```julia
+  using OptimalControl, NLPModelsIpopt
+
+  ocp = @def begin
+      t ∈ [0, 1], time
+      x ∈ R³, state
+      u ∈ R, control
+      x(0) == [-1, 0, 2]
+      x₁(1) == 0
+      x₂(1) == 0
+      ẋ(t) == [x₂(t), u(t), 0]    # a constant component
+      0.5∫(u(t)^2) → min
+  end
+
+  solve(ocp)    # before: ERROR: Cannot determine ordering of Dual tags …
+                # now: solves, J = 6.000096 (as with `0 * u(t)` and with `:exa`)
+  ```
+
+  The compat `ADNLPModels = "0.8"` is unchanged: update the package (`Pkg.update("ADNLPModels")`) to get 0.8.15. The two boundary-constraint cases of the same issue, `x(0) - [-1, v] == [0, 0]` and `x(0) - [-one(v), v] == [0, 0]`, were fixed by 0.8.14.
+
 - **`init` and `initial_guess` together raise "Conflicting aliases" in descriptive mode too** ([#964](https://github.com/control-toolbox/OptimalControl.jl/issues/964)). Explicit mode already reported the conflict; descriptive mode, the common case, routed the leftover `init` to the strategies and rejected it as an unknown option, with unrelated suggestions. Both modes now run the same check before any routing.
 
 ### 🧪 Testing
@@ -64,6 +86,8 @@ See [BREAKING.md](BREAKING.md).
   PR) and also runs on push to `main`; `Documentation.yml` accepts `workflow_dispatch`.
 
 ### 📚 Documentation
+
+- The warning "A constant component" is removed from the Abstract syntax page, and the probe `docs/probes/abstract_syntax_constants_ad.jl`, which recorded the bug, now checks that it stays fixed.
 
 - ct-conventions pinned at 0.5.0 in `AGENTS.md` (read from a git-ignored clone in
   `.conventions/`); `AGENTS.md` cites rules by identifier, `CLAUDE.md` redirects to it, and
