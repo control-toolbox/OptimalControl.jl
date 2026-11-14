@@ -107,7 +107,7 @@ function CommonSolve.solve(
 end
 
 function test_solve_dispatch()
-    Test.@testset "Solve Dispatch" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "Solve Dispatch" verbose = VERBOSE showtiming = SHOWTIMING begin
         ocp = MockOCP()
         init = MockInit()
         disc = MockDiscretizer(CTBase.Strategies.StrategyOptions())

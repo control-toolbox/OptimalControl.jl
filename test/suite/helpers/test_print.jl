@@ -26,7 +26,8 @@ struct FakeSolverNoParam <: OptimalControl.CTSolvers.Solvers.AbstractNLPSolver e
 
 # Entry point
 function test_print()
-    Test.@testset "UNIT TESTS - Parameter Extraction" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "UNIT TESTS - Parameter Extraction" verbose = VERBOSE showtiming =
+        SHOWTIMING begin
         Test.@testset "_extract_strategy_parameters - no parameters" begin
             disc = FakeDiscretizerNoParam()
             mod = FakeModelerNoParam()
@@ -55,7 +56,8 @@ function test_print()
         end
     end
 
-    Test.@testset "UNIT TESTS - Display Strategy Determination" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "UNIT TESTS - Display Strategy Determination" verbose = VERBOSE showtiming =
+        SHOWTIMING begin
         Test.@testset "_determine_parameter_display_strategy - empty params" begin
             result = OptimalControl._determine_parameter_display_strategy([])
 
@@ -87,7 +89,8 @@ function test_print()
         end
     end
 
-    Test.@testset "UNIT TESTS - Source Tag Building" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "UNIT TESTS - Source Tag Building" verbose = VERBOSE showtiming =
+        SHOWTIMING begin
         Test.@testset "_build_source_tag - user option without show_sources" begin
             tag = OptimalControl._build_source_tag(:user, :cpu, [:cpu], false)
             Test.@test tag == ""
@@ -125,7 +128,8 @@ function test_print()
         end
     end
 
-    Test.@testset "UNIT TESTS - Component Formatting" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "UNIT TESTS - Component Formatting" verbose = VERBOSE showtiming =
+        SHOWTIMING begin
         Test.@testset "_print_component_with_param - no param" begin
             io = IOBuffer()
             OptimalControl._print_component_with_param(io, :collocation, false, nothing)
@@ -158,7 +162,8 @@ function test_print()
     # INTEGRATION TESTS - Display Configuration
     # ====================================================================
 
-    Test.@testset "INTEGRATION TESTS - Display Configuration" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "INTEGRATION TESTS - Display Configuration" verbose = VERBOSE showtiming =
+        SHOWTIMING begin
         Test.@testset "Display helper - compact default" begin
             disc = OptimalControl.Collocation(grid_size=5, scheme=:midpoint)
             mod = OptimalControl.ADNLP()

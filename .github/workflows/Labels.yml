@@ -1,0 +1,16 @@
+name: Labels
+
+# A label added to a pull request starts the workflow of that label, and only that one
+# (CTActions docs/workflows/label-dispatch.md): CI, Documentation and Breakage are
+# dispatched, they no longer listen to pull_request.
+
+on:
+  pull_request:
+    types: [labeled, synchronize, reopened]
+
+jobs:
+  call:
+    permissions:
+      contents: read
+      actions: write
+    uses: control-toolbox/CTActions/.github/workflows/label-dispatch.yml@main

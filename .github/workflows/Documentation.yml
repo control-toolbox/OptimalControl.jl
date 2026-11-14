@@ -1,4 +1,8 @@
 name: Documentation
+run-name: "Documentation${{ inputs.pr && format(' #{0}', inputs.pr) || '' }}"
+
+# On a pull request, a label starts its own run through Labels.yml
+# (CTActions docs/workflows/label-dispatch.md).
 
 on:
   push:
@@ -6,31 +10,32 @@ on:
       - main
     tags:
       - 'v[0-9]+\.[0-9]+\.[0-9]+'
-  pull_request:
-    types: [labeled, synchronize, reopened]
+  # run on a tag by ReleaseTag.yml: a tag it creates triggers no push event
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: 'Pull request number, set by label-dispatch.yml'
+        required: false
+        default: ''
+      preview:
+        description: 'Deploy the preview of the pull request (label documentation push preview)'
+        required: false
+        default: 'false'
 
 # A GPU-attempt job now runs behind every push/tag build (see `gpu_runner` below) and
 # can take up to `gpu_timeout_minutes`. Without this, two pushes to `main` in quick
 # succession could leave an older run's GPU pass finishing — and redeploying — after a
 # newer run's CPU build has already published, showing older content over newer.
-# `cancel-in-progress` cancels the whole older run, its queued/running GPU job
-# included. Tags carry distinct refs (the tag name, not `main`), so a release build is
-# never cancelled by an unrelated push to `main`, and vice versa.
+# Push and tag runs queue (GitHub keeps only the newest pending one), so the GPU pass
+# on the self-hosted runner is never killed and the newest content deploys last; PR runs
+# are GitHub-hosted only and are cancelled. Tags carry distinct refs (the tag name, not
+# `main`), so a release build never waits for an unrelated push to `main`.
 concurrency:
   group: documentation-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.pr != '') }}
 
 jobs:
   call:
-    # A 'labeled' event fires once per label added, and re-evaluates against the PR's
-    # *current* full label set — so adding several labels in a row would otherwise
-    # re-run this job on every subsequent label add. Only react to 'labeled' when it's
-    # this specific label; for other trigger types (opened/synchronize/reopened), fall
-    # back to checking the current label set as before.
-    if: >
-      github.event_name != 'pull_request' ||
-      (github.event.action == 'labeled' && github.event.label.name == 'run documentation') ||
-      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run documentation'))
     uses: control-toolbox/CTActions/.github/workflows/documentation.yml@main
     with:
       use_ct_registry: true
@@ -42,7 +47,8 @@ jobs:
       # real GPU on occidata, a `:gpu` solve in 205s, full docs build 2265s, push via
       # GITHUB_TOKEN/HTTPS confirmed). `build-gpu`'s own `if` already restricts it to
       # push/tag — inert on PR-preview builds regardless of what's passed here.
-      gpu_runner: '["occidata"]'
+      # `auto`: kkt unless it is offline, else occidata (CTActions select-gpu-runner.yml).
+      gpu_runner: 'auto'
       # Measured cold build on occidata: 2265s (~38 min). occidata is a single shared
       # box — other repos' CI (e.g. CTDirect's test-gpu-occidata job) can queue ahead
       # of this one, and Monday mornings add the occidata-runner-maintenance.yml cache
@@ -51,3 +57,5 @@ jobs:
       gpu_timeout_minutes: 180
     secrets:
       SSH_KEY: ${{ secrets.SSH_KEY }}
+      CT_RUNNERS_CLIENT_ID: ${{ secrets.CT_RUNNERS_CLIENT_ID }}
+      CT_RUNNERS_PRIVATE_KEY: ${{ secrets.CT_RUNNERS_PRIVATE_KEY }}

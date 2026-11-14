@@ -1,0 +1,18 @@
+name: Release tag
+
+# Tags the merge commit of a release PR, creates its GitHub release and runs the
+# documentation on the tag; see CTActions docs/workflows/release-tag.md.
+
+on:
+  push:
+    branches: [main]
+    paths: [Project.toml]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  call:
+    uses: control-toolbox/CTActions/.github/workflows/release-tag.yml@main

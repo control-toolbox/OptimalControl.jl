@@ -31,7 +31,8 @@ const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 function test_descriptive()
-    Test.@testset "solve_descriptive (contract and integration tests)" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "solve_descriptive (contract and integration tests)" verbose = VERBOSE showtiming =
+        SHOWTIMING begin
         registry = OptimalControl.get_strategy_registry()
 
         # ====================================================================
@@ -88,7 +89,8 @@ function test_descriptive()
                 )
                 Test.@test result isa CTModels.AbstractSolution
                 Test.@test OptimalControl.successful(result)
-                Test.@test OptimalControl.objective(result) ≈ TestProblems.Beam().objective rtol=1e-2
+                Test.@test OptimalControl.objective(result) ≈ TestProblems.Beam().objective rtol =
+                    1e-2
             end
 
             Test.@testset "Partial description - Beam" begin
@@ -115,7 +117,7 @@ function test_descriptive()
                 Test.@test result isa CTModels.AbstractSolution
                 Test.@test OptimalControl.successful(result)
                 Test.@test OptimalControl.objective(result) ≈
-                    TestProblems.Goddard().objective rtol=1e-2
+                    TestProblems.Goddard().objective rtol = 1e-2
             end
 
             Test.@testset "Partial description - Goddard" begin
@@ -139,7 +141,7 @@ function test_descriptive()
                 Test.@test result isa CTModels.AbstractSolution
                 Test.@test OptimalControl.successful(result)
                 Test.@test OptimalControl.objective(result) ≈
-                    TestProblems.Goddard().objective rtol=1e-2
+                    TestProblems.Goddard().objective rtol = 1e-2
             end
         end
 

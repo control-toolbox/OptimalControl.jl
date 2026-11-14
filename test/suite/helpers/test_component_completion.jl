@@ -19,7 +19,7 @@ const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
 
 function test_component_completion()
-    Test.@testset "Component Completion Tests" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "Component Completion Tests" verbose = VERBOSE showtiming = SHOWTIMING begin
 
         # Create registry for tests
         registry = OptimalControl.get_strategy_registry()

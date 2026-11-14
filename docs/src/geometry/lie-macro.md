@@ -113,6 +113,27 @@ function instead of a Boolean, without an error.
 nothing                                                           # hide
 ```
 
+## `@Lie` works from any module
+
+The expansion of `@Lie` uses module-qualified references, so it does not depend on what the
+calling module has in scope: `import OptimalControl` or `using OptimalControl: @Lie` is
+enough. Before CTLie 0.3, the expansion named `CTLie` and `CTBase` and failed with an
+`UndefVarError` outside `using OptimalControl`
+([CTLie#40](https://github.com/control-toolbox/CTLie.jl/issues/40)).
+
+```@example main
+m = Module()                                                                  # hide
+Core.eval(m, :(import OptimalControl))                                        # hide
+err = try                                                                     # hide
+    Core.eval(m, :((OptimalControl.@Lie [x -> [x[2], -x[1]], x -> x])([1.0, 2.0])))   # hide
+    nothing                                                                   # hide
+catch e                                                                       # hide
+    e                                                                         # hide
+end                                                                           # hide
+@assert err === nothing                                                       # hide
+nothing                                                                       # hide
+```
+
 ## See also
 
 - [Lie derivative and Lie bracket](@ref geometry-ad): `ad`, called by `@Lie [X, Y]`.

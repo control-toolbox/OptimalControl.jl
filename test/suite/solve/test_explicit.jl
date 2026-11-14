@@ -106,7 +106,8 @@ CommonSolve.solve(
 )::MockSolution = MockSolution()
 
 function test_explicit()
-    Test.@testset "solve_explicit (contract tests with mocks)" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "solve_explicit (contract tests with mocks)" verbose = VERBOSE showtiming =
+        SHOWTIMING begin
         ocp = MockOCP()
         init = MockInit()
         disc = MockDiscretizer(CTBase.Strategies.StrategyOptions())
@@ -279,7 +280,8 @@ function test_explicit()
                         )
                         Test.@test result isa CTModels.AbstractSolution
                         Test.@test OptimalControl.successful(result)
-                        Test.@test OptimalControl.objective(result) ≈ pb.objective rtol=1e-2
+                        Test.@test OptimalControl.objective(result) ≈ pb.objective rtol =
+                            1e-2
                     end
 
                     Test.@testset "Partial components - completion" begin

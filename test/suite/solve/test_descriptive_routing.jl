@@ -159,7 +159,7 @@ CommonSolve.solve(
 # ============================================================================
 
 function test_descriptive_routing()
-    Test.@testset "Descriptive Routing Helpers" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "Descriptive Routing Helpers" verbose = VERBOSE showtiming = SHOWTIMING begin
 
         # ====================================================================
         # UNIT TESTS — _descriptive_families

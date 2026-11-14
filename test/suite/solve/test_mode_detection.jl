@@ -27,7 +27,7 @@ const MOD = MockModeler()
 const SOL = MockSolver()
 
 function test_mode_detection()
-    Test.@testset "Mode Detection" verbose=VERBOSE showtiming=SHOWTIMING begin
+    Test.@testset "Mode Detection" verbose = VERBOSE showtiming = SHOWTIMING begin
 
         # ====================================================================
         # UNIT TESTS - ExplicitMode detection

@@ -1,24 +1,28 @@
 name: CI
+run-name: "CI ${{ inputs.target }}${{ inputs.pr && format(' #{0}', inputs.pr) || '' }}"
+
+# On a pull request, a label starts its own run through Labels.yml
+# (CTActions docs/workflows/label-dispatch.md).
 
 on:
   push:
     branches:
       - main
     tags: '*'
-  pull_request:
-    types: [labeled, synchronize, reopened]
-    
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: 'Pull request number, set by label-dispatch.yml'
+        required: false
+        default: ''
+      target:
+        description: 'github, occidata or kkt'
+        required: false
+        default: ''
+
 jobs:
   test-cpu-github:
-    # A 'labeled' event fires once per label added, and re-evaluates against the PR's
-    # *current* full label set — so adding several labels in a row would otherwise
-    # re-run this job on every subsequent label add. Only react to 'labeled' when it's
-    # this specific label; for other trigger types (opened/synchronize/reopened), fall
-    # back to checking the current label set as before.
-    if: >
-      github.event_name != 'pull_request' ||
-      (github.event.action == 'labeled' && github.event.label.name == 'run ci github-runner') ||
-      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run ci github-runner'))
+    if: github.event_name == 'push' || inputs.target == 'github'
     uses: control-toolbox/CTActions/.github/workflows/ci.yml@main
     with:
       runs_on: '["ubuntu-latest", "macos-latest", "windows-latest"]'
@@ -29,11 +33,7 @@ jobs:
 
   # Job for the self-hosted occidata runner (GPU/CUDA)
   test-gpu-occidata:
-    # See the comment on test-cpu-github above.
-    if: >
-      github.event_name != 'pull_request' ||
-      (github.event.action == 'labeled' && github.event.label.name == 'run ci occidata-runner') ||
-      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run ci occidata-runner'))
+    if: inputs.target == 'occidata'
     uses: control-toolbox/CTActions/.github/workflows/ci.yml@main
     with:
       runs_on: '[["occidata"]]'
@@ -41,3 +41,29 @@ jobs:
       use_ct_registry: true
     secrets:
       SSH_KEY: ${{ secrets.SSH_KEY }}
+
+  # Job for the self-hosted kkt runner (GPU/CUDA), on its label only (a pull request can
+  # always ask for either GPU runner; a push picks one, see test-gpu-main).
+  test-gpu-kkt:
+    if: inputs.target == 'kkt'
+    uses: control-toolbox/CTActions/.github/workflows/ci.yml@main
+    with:
+      versions: '["1.10","1.13"]'
+      runs_on: '[["kkt"]]'
+      runner_type: 'self-hosted'
+      use_ct_registry: true
+    secrets:
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+
+  # On a push (main, tags): a single GPU run, on kkt unless it is offline, else occidata
+  # (CTActions ci-gpu.yml). A busy kkt is waited for.
+  test-gpu-main:
+    if: github.event_name == 'push'
+    uses: control-toolbox/CTActions/.github/workflows/ci-gpu.yml@main
+    with:
+      versions: '["1.10","1.13"]'
+      use_ct_registry: true
+    secrets:
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+      CT_RUNNERS_CLIENT_ID: ${{ secrets.CT_RUNNERS_CLIENT_ID }}
+      CT_RUNNERS_PRIVATE_KEY: ${{ secrets.CT_RUNNERS_PRIVATE_KEY }}

@@ -154,8 +154,8 @@ extremal (see [Poisson bracket](@ref geometry-poisson-total)).
 | --- | --- |
 | a `Hamiltonian` given to `ad` | `IncorrectArgument`, pointing to `Poisson` |
 | operands with different dependences on time or on the variable | `PreconditionError` |
-| an in-place `VectorField` | `NotImplemented` |
-| a `HamiltonianVectorField` | `NotImplemented` |
+| an in-place `VectorField` | `IncorrectArgument` |
+| a `HamiltonianVectorField` | `IncorrectArgument` |
 
 ```@repl main
 H = Hamiltonian((x, p) -> x[1] + p[1]);
