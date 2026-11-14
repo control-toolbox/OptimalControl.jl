@@ -56,6 +56,10 @@ dual(sol, ocp, :label)
 
 See [BREAKING.md](BREAKING.md).
 
+### ✨ New Features
+
+- **`show_trace` is an alias of the `display` option of `solve`** ([#785](https://github.com/control-toolbox/OptimalControl.jl/issues/785)), the name NonlinearSolve and Optim use, in descriptive and explicit mode alike. Giving both `display` and `show_trace` raises an `IncorrectArgument`, as `init` and `initial_guess` do; the message now names the aliases of the option at fault.
+
 ### 🐛 Bug Fixes
 
 - **A constant component of the dynamics solves with the default modeler `:adnlp`** ([#481](https://github.com/control-toolbox/OptimalControl.jl/issues/481)). A problem whose dynamics has a component that is a constant, such as the `0` below, used to fail with `Cannot determine ordering of Dual tags` (ADNLPModels 0.8.13 and 0.8.14), and had to be written `0 * u(t)` or solved with `:exa`. Fixed upstream in [ADNLPModels 0.8.15](https://github.com/JuliaSmoothOptimizers/ADNLPModels.jl/releases/tag/v0.8.15):

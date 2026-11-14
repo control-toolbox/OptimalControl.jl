@@ -142,8 +142,9 @@ The display of `solve` (see [Solve overview](@ref solve-overview)) shows the `:u
 
 ## Action options vs strategy options
 
-Two keywords — `init`/`initial_guess` and `display` — are handled *before* routing even
-starts; they're never sent to a strategy. If a strategy happens to declare an option with the
+Two keywords — `init`/`initial_guess` and `display`/`show_trace` — are handled *before*
+routing even starts; they're never sent to a strategy. In each pair the two names are
+aliases: use either, but not both in the same call (an `IncorrectArgument`). If a strategy happens to declare an option with the
 same name, the action option wins by default. `route_to` is the way around that, if you ever
 need to target the strategy's own option of that name explicitly instead.
 

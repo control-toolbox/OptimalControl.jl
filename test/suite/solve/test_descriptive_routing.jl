@@ -189,6 +189,7 @@ function test_descriptive_routing()
             Test.@test defs[1].name == :initial_guess
             Test.@test defs[1].aliases == OptimalControl._INITIAL_GUESS_ALIASES_ONLY
             Test.@test defs[2].name == :display
+            Test.@test defs[2].aliases == OptimalControl._DISPLAY_ALIASES_ONLY
         end
 
         # ====================================================================
@@ -260,6 +261,32 @@ function test_descriptive_routing()
             err = try
                 OptimalControl._route_descriptive_options(
                     MOCK_METHOD, MOCK_REGISTRY, pairs((; init=1, initial_guess=2))
+                )
+                nothing
+            catch e
+                e
+            end
+            Test.@test err isa CTBase.IncorrectArgument
+            message = sprint(showerror, err)
+            Test.@test occursin("Conflicting aliases", message)
+            Test.@test !occursin("Unknown option", message)
+        end
+
+        Test.@testset "_route_descriptive_options - show_trace is display (#785)" begin
+            for value in (false, true)
+                routed = OptimalControl._route_descriptive_options(
+                    MOCK_METHOD, MOCK_REGISTRY, pairs((; show_trace=value))
+                )
+                Test.@test OptimalControl._unwrap_option(
+                    routed.action.display, OptimalControl._DEFAULT_DISPLAY
+                ) === value
+            end
+        end
+
+        Test.@testset "_route_descriptive_options - error on display and show_trace" begin
+            err = try
+                OptimalControl._route_descriptive_options(
+                    MOCK_METHOD, MOCK_REGISTRY, pairs((; display=false, show_trace=true))
                 )
                 nothing
             catch e

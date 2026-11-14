@@ -124,7 +124,7 @@ function _check_action_aliases(kwargs, names::Tuple{Vararg{Symbol}})::Vector{Sym
                 "Conflicting aliases for the same option";
                 got="multiple aliases $(present) provided simultaneously",
                 expected="at most one of $(names)",
-                suggestion="Use only one alias at a time, e.g. `init=x0` or `initial_guess=x0`",
+                suggestion="Use only one of $(join(("`$n`" for n in names), ", ", " or ")) at a time",
                 context="solve - action option extraction",
             ),
         )

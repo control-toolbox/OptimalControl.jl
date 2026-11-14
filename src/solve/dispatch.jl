@@ -11,7 +11,7 @@ This function orchestrates the complete solve workflow by:
 # Arguments
 - `ocp::CTModels.AbstractModel`: The optimal control problem to solve
 - `description::Symbol...`: Symbolic description tokens (e.g., `:collocation`, `:adnlp`, `:ipopt`)
-- `kwargs...`: All keyword arguments. Action options (`initial_guess`/`init`, `display`)
+- `kwargs...`: All keyword arguments. Action options (`initial_guess`/`init`, `display`/`show_trace`)
   are extracted by the appropriate Layer 2 function. Explicit components (`discretizer`,
   `modeler`, `solver`) are identified by abstract type. A `registry` keyword can be
   provided to override the default strategy registry.

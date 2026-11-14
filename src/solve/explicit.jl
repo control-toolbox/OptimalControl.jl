@@ -34,7 +34,7 @@ function solve_explicit(
     init_raw, kwargs1 = _extract_action_kwarg(
         kwargs, _INITIAL_GUESS_ALIASES, _DEFAULT_INITIAL_GUESS
     )
-    display_val, kwargs2 = _extract_action_kwarg(kwargs1, (:display,), _DEFAULT_DISPLAY)
+    display_val, kwargs2 = _extract_action_kwarg(kwargs1, _DISPLAY_ALIASES, _DEFAULT_DISPLAY)
 
     # Normalize initial guess
     normalized_init = CTModels.build_initial_guess(ocp, init_raw)

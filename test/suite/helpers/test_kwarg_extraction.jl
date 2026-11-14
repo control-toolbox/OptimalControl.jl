@@ -162,6 +162,49 @@ function test_kwarg_extraction()
             end
         end
 
+        Test.@testset "Display aliases (#785)" begin
+            Test.@test OptimalControl._DISPLAY_ALIASES == (:display, :show_trace)
+            Test.@test OptimalControl._DISPLAY_ALIASES_ONLY == (:show_trace,)
+
+            for (name, value) in ((:display, false), (:show_trace, false), (:show_trace, true))
+                Test.@testset "$name=$value" begin
+                    kw = pairs(NamedTuple{(name, :init)}((value, 42)))
+                    val, rest = OptimalControl._extract_action_kwarg(
+                        kw, OptimalControl._DISPLAY_ALIASES, true
+                    )
+                    Test.@test val === value
+                    Test.@test !haskey(rest, name)
+                    Test.@test haskey(rest, :init)
+                end
+            end
+
+            Test.@testset "Default when absent" begin
+                val, _ = OptimalControl._extract_action_kwarg(
+                    pairs((; init=42)), OptimalControl._DISPLAY_ALIASES, true
+                )
+                Test.@test val === true
+            end
+
+            Test.@testset "display and show_trace together" begin
+                err = try
+                    OptimalControl._extract_action_kwarg(
+                        pairs((; display=false, show_trace=true)),
+                        OptimalControl._DISPLAY_ALIASES,
+                        true,
+                    )
+                    nothing
+                catch e
+                    e
+                end
+                Test.@test err isa CTBase.IncorrectArgument
+                message = sprint(showerror, err)
+                Test.@test occursin("Conflicting aliases", message)
+                # The suggestion names the aliases of this option, not those of `init`.
+                Test.@test occursin("`display` or `show_trace`", message)
+                Test.@test !occursin("init", message)
+            end
+        end
+
         # ====================================================================
         # UNIT TESTS - Action alias conflict check
         # ====================================================================
@@ -194,6 +237,7 @@ function test_kwarg_extraction()
                 end
                 Test.@test err isa CTBase.IncorrectArgument
                 Test.@test occursin("Conflicting aliases", sprint(showerror, err))
+                Test.@test occursin("`initial_guess` or `init`", sprint(showerror, err))
             end
         end
 
