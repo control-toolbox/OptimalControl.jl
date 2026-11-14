@@ -145,21 +145,13 @@ nothing                                # hide
 Without it, the call raises an error:
 
 ```@repl main
-try # hide
 fc(0, 0, p0c, tf_val)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 and so does passing `variable` to the flow of a problem without a variable:
 
 ```@repl main
-try # hide
 f(t0, x0, p0, tf; variable=1)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ### Two other formulations of a free final time
@@ -277,11 +269,7 @@ nothing                                    # hide
 raises an error that asks for a law:
 
 ```@repl main
-try # hide
 Flow(ocp)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ## [Total or partial Hamiltonian](@id flows-from-ocp-total-partial)

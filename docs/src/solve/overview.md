@@ -99,11 +99,7 @@ Use one style or the other in a call, not both: a typed component together with 
 tokens is rejected.
 
 ```@repl main
-try # hide
 solve(ocp, :collocation; solver=OptimalControl.MadNLP())
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ## When it fails

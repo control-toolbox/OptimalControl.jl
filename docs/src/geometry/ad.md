@@ -108,11 +108,7 @@ Typed operands carry these traits, and must agree:
 ```@repl main
 Xa = VectorField(x -> [x[2], -x[1]]);
 Xb = VectorField((t, x) -> [t + x[2], -x[1]]; is_autonomous=false);
-try # hide
 ad(Xa, Xb)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ## [Partial time derivative](@id geometry-ad-time)
@@ -159,20 +155,12 @@ extremal (see [Poisson bracket](@ref geometry-poisson-total)).
 
 ```@repl main
 H = Hamiltonian((x, p) -> x[1] + p[1]);
-try # hide
 ad(H, x -> x)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ```@repl main
 Xip = VectorField((dx, x) -> (dx .= [x[2], -x[1]]); is_inplace=true);
-try # hide
 ad(Xip, x -> x[1]^2)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ## See also

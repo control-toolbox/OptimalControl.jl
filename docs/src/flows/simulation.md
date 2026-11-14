@@ -41,11 +41,7 @@ but the call then fails with a `MethodError`
 ([CTBase#570](https://github.com/control-toolbox/CTBase.jl/issues/570)):
 
 ```@repl main
-try # hide
 Flow(ControlledVectorField(fc), OpenLoop(() -> 1))(0, 0.0, 1)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ## Closed loop
@@ -67,11 +63,7 @@ A law of the state and the costate, `DynClosedLoop`, is rejected here: the flow 
 controlled vector field has no costate.
 
 ```@repl main
-try # hide
 Flow(ControlledVectorField(fc), DynClosedLoop((x, p) -> p))
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ## Evaluating a control on a problem
@@ -134,11 +126,7 @@ There is no costate: `costate(traj)` raises an error, and so does `objective` on
 without a problem.
 
 ```@repl main
-try # hide
 objective(f_ol((0, 1), 0.0))
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ## [What a flow returns](@id flows-simulation-returns)

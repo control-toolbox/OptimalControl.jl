@@ -227,11 +227,7 @@ nothing                                           # hide
     solution raises an error that points to `successful`:
 
     ```@repl main
-    try # hide
     success(sol)
-    catch e # hide
-    showerror(IOContext(stdout, :color => false), e) # hide
-    end # hide
     ```
 
     See [Migrating from v2.0](@ref migration) for every renamed function.

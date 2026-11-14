@@ -42,11 +42,7 @@ nothing # hide
 An option nobody recognizes is rejected with a "did you mean" suggestion:
 
 ```@repl advanced
-try # hide
 solve(ocp, :ipopt; max_iter=100, mumps_print_level=1, display=false)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ## Explicit routing with `route_to`
