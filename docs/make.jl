@@ -1,5 +1,5 @@
 # to run the documentation generation:
-# julia --project=. docs/make.jl
+# julia --project=docs docs/make.jl
 # to serve the documentation:
 #   npx serve docs/build/1 --listen 5173
 # Append (not prepend): docs/Manifest.toml must win for shared deps; the repo root is only
