@@ -80,7 +80,7 @@ Loading this package enables the creation of a `Flow`. Without it, `Flow` raises
 
 ```julia
 using JLD2   # format=:JLD (default)
-using JSON3  # format=:JSON
+using JSON   # format=:JSON
 ```
 
 Loading either of these packages enables `export_ocp_solution` and `import_ocp_solution` in the matching format. Without it, these functions raise an `ExtensionError` that names the package to load. See [Save & load](@ref results-save-load).

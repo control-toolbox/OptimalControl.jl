@@ -38,7 +38,7 @@ using Markdown
 using MarkdownAST: MarkdownAST
 
 # data serialization
-using JSON3
+using JSON
 using JLD2
 
 # plotting

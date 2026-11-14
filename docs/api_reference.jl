@@ -22,7 +22,7 @@ const EXCLUDE_SYMBOLS = [:include, :eval, :OptimalControl]
 # all of them — not worth transcluding). Described in prose on qualified.md
 # instead of `@docs`, so they need an explicit exemption from the
 # completeness check below.
-const MODULE_ALIASES = [:CTBase, :CTLie, :CTFlows, :CTModels, :ADNLPModels, :ExaModels]
+const MODULE_ALIASES = [:CTBase, :CTFlows, :CTModels, :ADNLPModels, :ExaModels]
 
 const API_THEMES = [
     (
@@ -404,7 +404,7 @@ function _generate_theme_page(docs_src, theme)
             println(
                 io,
                 "A handful of module names are re-exported purely as escape hatches for " *
-                "generated code and cross-package qualification — `CTBase`, `CTLie`, " *
+                "generated code and cross-package qualification — `CTBase`, " *
                 "`CTFlows`, `CTModels`, `ADNLPModels`, `ExaModels`. They carry no " *
                 "documentation of their own; see [Ecosystem](@ref api-ecosystem) for what " *
                 "each package is for.",
