@@ -113,11 +113,12 @@ function instead of a Boolean, without an error.
 nothing                                                           # hide
 ```
 
-## `using OptimalControl` is needed
+## `@Lie` works from any module
 
-The expansion of `@Lie` refers to the modules `CTLie` and `CTBase` by name, which
-`using OptimalControl` brings into scope. With `import OptimalControl` or
-`using OptimalControl: @Lie` only, the expanded code fails with an `UndefVarError`
+The expansion of `@Lie` uses module-qualified references, so it does not depend on what the
+calling module has in scope: `import OptimalControl` or `using OptimalControl: @Lie` is
+enough. Before CTLie 0.3, the expansion named `CTLie` and `CTBase` and failed with an
+`UndefVarError` outside `using OptimalControl`
 ([CTLie#40](https://github.com/control-toolbox/CTLie.jl/issues/40)).
 
 ```@example main
@@ -129,7 +130,7 @@ err = try                                                                     # 
 catch e                                                                       # hide
     e                                                                         # hide
 end                                                                           # hide
-@assert err isa UndefVarError                                                 # hide
+@assert err === nothing                                                       # hide
 nothing                                                                       # hide
 ```
 

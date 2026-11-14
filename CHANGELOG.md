@@ -9,12 +9,51 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### 💥 Breaking Changes
+
+#### The multipliers follow one sign convention (CTModels 0.21, CTSolvers 0.7)
+
+- **`dual(sol, ocp, :label)` and `costate(sol)` change sign in two cases**, inherited from
+  CTModels `0.21` and CTSolvers `0.7` (ct-conventions `SGN1`–`SGN3`):
+  - a constraint with **two** finite bounds (such as `-1 ≤ u(t) ≤ 1`) has the multiplier
+    μ = μ_ub − μ_lb, positive where the upper bound is active; boxes returned μ_lb − μ_ub;
+  - a constraint with a **single** finite bound has a non-negative multiplier;
+  - a `→ max` problem has the multipliers (costate, path and boundary duals) of the equivalent
+    `→ min` problem: `min J` and `max -J` give the same values, the opposite of before.
+- **With `:exa`, `dual(sol, ocp, :label)` of a path or boundary constraint throws a
+  `PreconditionError`** instead of returning `0`, a value that was never computed (CTDirect `2`).
+- **Why**: one convention for every solver, modeler, kind of constraint and sense of the
+  objective.
+
+**Migration**:
+
+```julia
+# Before: two finite bounds, the upper bound active
+dual(sol, ocp, :u_box)(t) < 0
+# After
+dual(sol, ocp, :u_box)(t) > 0
+
+# Before: a max problem gave the opposite of the equivalent min problem
+costate(sol_max)(t) == -costate(sol_min)(t)
+# After: the same; drop any sign compensation
+costate(sol_max)(t) == costate(sol_min)(t)
+
+# :exa, path or boundary duals: solve with :adnlp to read them
+sol = solve(ocp, :adnlp)
+dual(sol, ocp, :label)
+```
+
+See [BREAKING.md](BREAKING.md).
+
 ### 🐛 Bug Fixes
 
 - **`init` and `initial_guess` together raise "Conflicting aliases" in descriptive mode too** ([#964](https://github.com/control-toolbox/OptimalControl.jl/issues/964)). Explicit mode already reported the conflict; descriptive mode, the common case, routed the leftover `init` to the strategies and rejected it as an unknown option, with unrelated suggestions. Both modes now run the same check before any routing.
 
 ### 🧪 Testing
 
+- The shooting builders of `test/problems/` (`goddard.jl`, `double_integrator.jl`) return a named
+  closure, `function shoot(; hamiltonian_type::Symbol=:total)`: Julia 1.13 rejects an anonymous
+  `function (; kw::T=default)` (`invalid assignment location`), which broke 9 test files on 1.13.
 - Release workflows: `ReleaseGate.yml` (the gate of a release PR, `REL1`–`REL7`) and
   `ReleaseTag.yml` (tag and GitHub release of a merged release PR) call CTActions;
   `Breakage.yml` moves to `breakage-suite.yml` (one report, the `REL1` check of a release
@@ -38,9 +77,22 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Initial guess: check a guess before solving with `build_initial_guess`** ([#965](https://github.com/control-toolbox/OptimalControl.jl/issues/965)). It builds and validates the guess against the problem. The other initial-guess helpers of CTModels (`initial_guess`, `pre_initial_guess`, `validate_initial_guess`, `initial_state`, `initial_control`, `initial_variable`, `PreInitialGuess`) stay unexported, and a test now records that choice.
 - ct-conventions pinned at `v0.13.0` and ct-agents at `v0.5.0` in `AGENTS.md`; the `Release` workflow of CTActions is called from `.github/workflows/Release.yml`.
 
+- *Dual variables* (`results/solution.md`): the note on the sign of the multipliers follows the
+  new convention, and the `:exa` duals of the path and boundary constraints throw instead of
+  returning zeros. *Automatic differentiation* (`geometry/ad.md`): `ad` on an in-place
+  `VectorField` or a `HamiltonianVectorField` throws `IncorrectArgument` (CTLie `0.3`).
+
+### 📦 Dependencies
+
+- `[compat]` of `Project.toml` and `docs/Project.toml` moves to the current releases of the
+  ecosystem, all in General: CTBase `0.30` → `0.30.13`, CTModels `0.19` → `0.21.1`, CTParser
+  `0.9` → `0.9.6`, CTSolvers `0.5` → `0.7`, CTDirect `1` → `2`, CTFlows `0.18` → `0.18.3`,
+  CTLie `0.2` → `0.3`. The lower bounds are the ones CTDirect `2` and CTFlows `0.18.3` require.
+
 ### ✅ Compatibility
 
-- **No breaking change recorded** in this section. See [BREAKING.md](BREAKING.md).
+- **Breaking**: the sign of the multipliers and the `:exa` duals, see
+  `### 💥 Breaking Changes` above and [BREAKING.md](BREAKING.md).
 
 ## [2.2.1-beta] — 2026-09-02
 

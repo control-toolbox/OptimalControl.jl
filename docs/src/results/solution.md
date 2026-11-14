@@ -291,32 +291,37 @@ plot(time_grid(sol_free), [μ_u, μ_v]; label=["μ_u" "μ_v"], xlabel="t")
 ```
 
 ```@example main
-@assert μ_u(0.3) < -1e-3 && μ_u(1.8) > 1e-3 && abs(μ_u(1.0)) < 1e-6   # hide
-@assert μ_v(1.0) < -1e-3 && abs(μ_v(0.3)) < 1e-6                       # hide
+@assert μ_u(0.3) > 1e-3 && μ_u(1.8) < -1e-3 && abs(μ_u(1.0)) < 1e-6   # hide
+@assert μ_v(1.0) > 1e-3 && abs(μ_v(0.3)) < 1e-6                        # hide
 nothing                                                                # hide
 ```
 
 !!! note "Sign and scale of the multipliers"
 
-    For a box constraint, on a state, control or variable component, the solver returns
-    separate non-negative multipliers for the lower and the upper bound. `dual` returns
-    their difference μ = μ_lb − μ_ub: μ > 0 where the lower bound is active, μ < 0 where
-    the upper bound is active, μ = 0 where the constraint is inactive. Above, u = 1 on
-    the first arc, so μ_u < 0, and u = −1 on the last one, so μ_u > 0.
+    The multipliers follow one sign convention, the same for a box and for a path
+    constraint, and for `→ min` and `→ max` (a problem written `max -J` has the same
+    multipliers as `min J`):
+
+    - a constraint with a **single** finite bound, such as `v(t) ≤ 0.75`, has a
+      non-negative multiplier, positive where it is active;
+    - a constraint with **two** finite bounds, such as `-1 ≤ u(t) ≤ 1`, and an equality
+      have a signed multiplier μ = μ_ub − μ_lb, the difference of the non-negative
+      multipliers of the two sides: μ > 0 where the upper bound is active, μ < 0 where
+      the lower bound is active, μ = 0 where the constraint is inactive.
+
+    Above, u = 1 on the first arc, so μ_u > 0, u = −1 on the last one, so μ_u < 0, and the
+    speed bound is active while coasting, so μ_v > 0 there.
 
     The multipliers of the **path constraints**, those that are not boxes (such as
-    `v(t) + u(t) ≤ 1`), differ in two ways
-    ([CTDirect#639](https://github.com/control-toolbox/CTDirect.jl/issues/639)):
+    `v(t) + u(t) ≤ 1`), are divided by the time step, whereas the multipliers of box
+    constraints are not
+    ([CTDirect#639](https://github.com/control-toolbox/CTDirect.jl/issues/639)). So box
+    multipliers are of the order of the step, and decrease when the grid is refined.
 
-    - they keep the solver's sign, which is the opposite: positive where the upper bound is
-      active;
-    - they are divided by the time step, whereas the multipliers of box constraints are not.
-      So box multipliers are of the order of the step, and decrease when the grid is
-      refined.
-
-    With `:exa`, the multipliers of the path and boundary constraints are not
-    available yet, and come back as zeros
-    ([CTDirect#405](https://github.com/control-toolbox/CTDirect.jl/issues/405)).
+    With `:exa`, the multipliers of the path and boundary constraints are not available
+    yet: `dual(sol, ocp, :label)` for such a constraint throws a `PreconditionError`
+    ([CTParser#414](https://github.com/control-toolbox/CTParser.jl/issues/414)). Use the
+    `:adnlp` modeler to read them.
 
 The box multipliers can also be read per group, without a label: one function for the lower
 bounds and one for the upper bounds, for the state, the control and the variable. For the
