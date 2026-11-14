@@ -105,11 +105,7 @@ nothing                                                                 # hide
 `constraint` and `multiplier` go together: one without the other is rejected.
 
 ```@repl main
-try # hide
 Flow(ocp, u_b; constraint=c)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ## Other ways to give the constraint
@@ -245,11 +241,7 @@ ocp_cf = @def begin
     ẋ(t) == -x(t)
     ∫(x(t)^2) → min
 end;
-try # hide
 Flow(ocp_cf; constraint=(x, u) -> 1, multiplier=(x, p) -> 1)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ## See also

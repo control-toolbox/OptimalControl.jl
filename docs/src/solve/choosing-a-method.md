@@ -90,11 +90,7 @@ one quadruplet. No method contains both, so `solve` raises an error rather than 
 picking one. It lists the available methods and the closest matches:
 
 ```@repl main
-try # hide
 solve(ocp, :adnlp, :exa; display=false)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ## What each solver needs installed
@@ -210,8 +206,8 @@ For the complete list of each package's options, see:
 | `:midpoint` | midpoint rule, second-order, **default** | ✅ | ✅ |
 | `:euler` | explicit Euler, first-order | ✅ | ✅ |
 | `:euler_implicit` | implicit Euler, first-order, more stable for stiff problems | ✅ | ✅ |
-| `:euler_explicit`, `:euler_forward` | aliases of `:euler` | ✅ | ✗ |
-| `:euler_backward` | alias of `:euler_implicit` | ✅ | ✗ |
+| `:euler_explicit`, `:euler_forward` | aliases of `:euler` | ✅ | ✅ |
+| `:euler_backward` | alias of `:euler_implicit` | ✅ | ✅ |
 | `:gauss_legendre_2` | 2-point Gauss–Legendre collocation, fourth-order | ✅ | ✗ |
 | `:gauss_legendre_3` | 3-point Gauss–Legendre collocation, sixth-order | ✅ | ✗ |
 
@@ -220,19 +216,20 @@ The grid is set by `grid_size` (default `250`), or, with `:adnlp`, by an explici
 non-uniform, `time_grid` (with `:exa`, `time_grid` is not supported yet:
 [CTDirect#638](https://github.com/control-toolbox/CTDirect.jl/issues/638)).
 
-!!! warning "Under `:exa`, only the four canonical names work"
+!!! warning "Under `:exa`, no Gauss–Legendre scheme"
 
-    `:exa` takes `:trapeze`, `:midpoint`, `:euler` and `:euler_implicit`, and nothing else.
-    Both Gauss–Legendre schemes are out, and so are the aliases: `:euler_forward` is rejected
-    where `:euler` is accepted, though under `:adnlp` the two name the same scheme
-    ([CTParser#355](https://github.com/control-toolbox/CTParser.jl/issues/355)):
+    `:exa` takes `:trapeze`, `:midpoint`, `:euler` and `:euler_implicit`, and the aliases of
+    the last two (`:euler_forward`, `:euler_backward`, …; since CTParser 0.9.6,
+    [CTParser#355](https://github.com/control-toolbox/CTParser.jl/issues/355)). Both
+    Gauss–Legendre schemes are available with `:adnlp` only:
 
     ```@repl main
-    try # hide
-    solve(ocp, :exa; scheme=:euler_forward, display=false)
-    catch e # hide
-    showerror(IOContext(stdout, :color => false), e) # hide
-    end # hide
+    solve(ocp, :exa; scheme=:gauss_legendre_2, display=false)
+    ```
+
+    ```@example main
+    @assert successful(solve(ocp, :exa; scheme=:euler_forward, display=false))   # hide
+    nothing                                                                      # hide
     ```
 
 ## See also

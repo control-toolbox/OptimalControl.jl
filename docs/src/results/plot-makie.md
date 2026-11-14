@@ -38,11 +38,7 @@ nothing # hide
 ```
 
 ```@repl main
-try # hide
 plot
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 Julia's hint lists the modules that export a `plot`: OptimalControl and CairoMakie, and
@@ -129,11 +125,7 @@ The `*_style` keywords hold backend attributes, not a shared vocabulary — a Pl
 raises instead of being silently dropped:
 
 ```@repl main
-try # hide
 Makie.plot(sol, :state; state_style=(markershape=:circle,))
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ## Annotating the figure

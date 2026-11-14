@@ -122,11 +122,7 @@ An accessor that does not apply raises an error. For a Hamiltonian flow, the err
 the flow holds and what to use instead:
 
 ```@repl main
-try # hide
 hamiltonian(Flow(HamiltonianVectorField((x, p) -> ([x[2], p[2]], [0, -p[1]]))))
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 On a flow of the state, it is a `MethodError` for now

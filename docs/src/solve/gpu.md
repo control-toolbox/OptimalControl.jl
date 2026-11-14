@@ -152,32 +152,20 @@ hardware-dependent ones, so they raise identically on every machine:
 `ADNLP`'s parameter is constrained to `<:CPU`:
 
 ```@repl gpu
-try # hide
 OptimalControl.ADNLP{GPU}()
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 Same for `Ipopt`:
 
 ```@repl gpu
-try # hide
 OptimalControl.Ipopt{GPU}()
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 Descriptively, the same combinations fail earlier still — no entry in `methods()` carries
 `:adnlp` together with `:gpu`, so completion cannot resolve the description at all:
 
 ```@repl gpu
-try # hide
 solve(ocp, :adnlp, :gpu)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ## Performance notes

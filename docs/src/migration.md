@@ -176,93 +176,49 @@ g(x, u, v) = x[1]
 ```
 
 ```@repl migration
-try # hide
 Lie(X, f)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ```@repl migration
-try # hide
 X ⋅ f
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ```@repl migration
-try # hide
 HamiltonianLift(f)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ```@repl migration
-try # hide
 time(ocp)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ```@repl migration
-try # hide
 time(sol)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ```@repl migration
-try # hide
 success(sol)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ```@repl migration
-try # hide
 Flow(f)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ```@repl migration
-try # hide
 Flow(ocp, (x, p, v) -> 0, g, μ)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 On the flow `fh` of the problem, and on the flow `fs` of a state with a variable:
 
 ```@repl migration
-try # hide
 fh(t0, x0, p0, tf, λ)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ```@repl migration
-try # hide
 fs(t0, 1.0, tf, λ)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ```@repl migration
-try # hide
 fh(t0, x0, p0, tf; variable=λ, augment=true)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 `X ⋅ f` is caught when `X` is a `VectorField`. With a plain function `X`, as in v2.0, it raises

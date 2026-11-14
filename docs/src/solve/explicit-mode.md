@@ -111,16 +111,12 @@ A flat option keyword handed to `solve` itself, rather than to the component con
 rejected — even one a completed default component would otherwise recognize:
 
 ```@repl explicit
-try # hide
 solve(
     ocp;
     discretizer=OptimalControl.Collocation(),
     backend=:generic,
     display=false,
 )
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 The error names the strategy that owns the option and tells you how to fix it: construct that
@@ -133,15 +129,11 @@ instance.
 Symbolic tokens and typed components cannot appear in the same call:
 
 ```@repl explicit
-try # hide
 solve(
     ocp, :adnlp, :ipopt;
     discretizer=OptimalControl.Collocation(),
     display=false,
 )
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 Pick one: `solve(ocp, :collocation, :adnlp, :ipopt; options...)` or

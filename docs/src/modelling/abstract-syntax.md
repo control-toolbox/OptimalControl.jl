@@ -451,7 +451,6 @@ nothing # hide
     in the case of equalities or of one-sided inequalities, the control and / or the state must belong to the *left-hand side*. The following errors, and the message gives the form to write, `x₂(t) ≥ 1`:
 
     ```@repl abs
-    try # hide
     @def begin
         t ∈ [0, 2], time
         x ∈ R², state
@@ -462,16 +461,12 @@ nothing # hide
         1 ≤ x₂(t)
         -1 ≤ u(t) ≤ 1
     end
-    catch e # hide
-    showerror(IOContext(stdout, :color => false), e) # hide
-    end # hide
     ```
 
 !!! warning
     A constraint *bound* must be constant — it may not depend on the variable, the state, the control or the time. The following is rejected, with a message naming the cause:
 
     ```@repl abs
-    try # hide
     @def begin
         v ∈ R, variable
         t ∈ [0, 1], time
@@ -484,9 +479,6 @@ nothing # hide
         ẋ(t) == [x₂(t), u(t)]
         ∫(0.5u(t)^2) → min
     end
-    catch e # hide
-    showerror(IOContext(stdout, :color => false), e) # hide
-    end # hide
     ```
 
     Write instead a boundary constraint, moving the term to the constrained side — that side *may* involve the variable:
@@ -542,7 +534,6 @@ Conversely, the following declares an empty feasible set and raises an error at 
 
 ```@repl abs
 quiet_location() do # hide
-try # hide
 @def begin
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
@@ -552,9 +543,6 @@ try # hide
     ẋ(t) == [v(t), u(t)]
     ∫(u(t)^2) → min
 end
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 end # hide
 ```
 
@@ -671,7 +659,6 @@ nothing # hide
     The expression must be the sum of two terms (plus, possibly, a scalar factor before the integral), not *more*, so mind the parentheses. For instance, the following errors:
 
     ```@repl abs
-    try # hide
     @def begin
         p = (t0, tf) ∈ R², variable
         t ∈ [t0, tf], time
@@ -680,9 +667,6 @@ nothing # hide
         ẋ(t) == [v(t), u(t)]
         (tf - t0) + q(tf) + 0.5∫(c(t) * u(t)^2) → min
     end
-    catch e # hide
-    showerror(IOContext(stdout, :color => false), e) # hide
-    end # hide
     ```
 
     The correct syntax is
@@ -743,7 +727,6 @@ nothing # hide
     The dynamics of an OCP is a constraint: use `==`, not a single `=`, which defines an alias. The error says so:
 
     ```@repl abs
-    try # hide
     double_integrator = @def begin
         tf ∈ R, variable
         t ∈ [0, tf], time
@@ -754,9 +737,6 @@ nothing # hide
         ẋ(t) = [q̇, v̇]
         tf → min
     end
-    catch e # hide
-    showerror(IOContext(stdout, :color => false), e) # hide
-    end # hide
     ```
 
 ## [Labels](@id modelling-abstract-syntax-labels)
@@ -807,7 +787,6 @@ else than intended. Each one is explained in the CTParser documentation.
 For instance, a scalar control given a name, and a control used without its time:
 
 ```@repl abs
-try # hide
 @def begin
     t ∈ [0, 1], time
     x ∈ R, state
@@ -815,13 +794,9 @@ try # hide
     ẋ(t) == z(t)
     ∫(z(t)^2) → min
 end
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ```@repl abs
-try # hide
 @def begin
     t ∈ [0, 1], time
     x ∈ R², state
@@ -829,15 +804,11 @@ try # hide
     ẋ(t) == [x₂(t), u]
     ∫(u(t)^2) → min
 end
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 and a control evaluated at the initial time:
 
 ```@repl abs
-try # hide
 @def begin
     t ∈ [0, 1], time
     x ∈ R, state
@@ -846,9 +817,6 @@ try # hide
     ẋ(t) == u(t)
     ∫(u(t)^2) → min
 end
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ```@example abs

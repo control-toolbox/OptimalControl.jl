@@ -117,11 +117,7 @@ law, and `hamiltonian_type` is not an option of this flow. Passing it raises an 
 reads as an unknown integrator option:
 
 ```@repl main
-try # hide
 Flow(PseudoHamiltonianVectorField(Hpv), DynClosedLoop(law); hamiltonian_type=:partial)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ## From a vector field
@@ -165,11 +161,7 @@ So the keyword is required even when the function does not use `p`: pass
 `variable=nothing`. Without it, the call raises an error:
 
 ```@repl main
-try # hide
 f_ode(0, [1.0], 1)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 An `ODEProblem` works the same way:

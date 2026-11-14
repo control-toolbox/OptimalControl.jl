@@ -153,11 +153,7 @@ and the same with `JSON` for `format=:JSON`. A format other than `:JLD` and `:JS
 rejected before any package is needed:
 
 ```@repl main
-try # hide
 export_ocp_solution(sol; format=:XML)
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ## See also

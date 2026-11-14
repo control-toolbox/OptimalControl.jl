@@ -99,11 +99,7 @@ message names `ad` instead of `Lift`
 ([CTLie#41](https://github.com/control-toolbox/CTLie.jl/issues/41)):
 
 ```@repl main
-try # hide
 Lift(HamiltonianVectorField((x, p) -> (p, -x)))
-catch e # hide
-showerror(IOContext(stdout, :color => false), e) # hide
-end # hide
 ```
 
 ## See also
