@@ -101,9 +101,15 @@ function MockSolver(; kwargs...)
     return MockSolver(CTBase.Strategies.build_strategy_options(MockSolver; kwargs...))
 end
 
-CommonSolve.solve(
+# The `display` value the canonical solve received, to check the action option aliases.
+const LAST_DISPLAY = Ref{Union{Nothing,Bool}}(nothing)
+
+function CommonSolve.solve(
     ::MockOCP, ::MockInit, ::MockDiscretizer, ::MockModeler, ::MockSolver; display::Bool
-)::MockSolution = MockSolution()
+)::MockSolution
+    LAST_DISPLAY[] = display
+    return MockSolution()
+end
 
 function test_explicit()
     Test.@testset "solve_explicit (contract tests with mocks)" verbose = VERBOSE showtiming =
@@ -145,6 +151,57 @@ function test_explicit()
                 registry=registry,
             )
             Test.@test result isa MockSolution
+        end
+
+        Test.@testset "show_trace is an alias of display (#785)" begin
+            for value in (false, true)
+                LAST_DISPLAY[] = nothing
+                result = OptimalControl.solve_explicit(
+                    ocp;
+                    initial_guess=init,
+                    discretizer=disc,
+                    modeler=mod,
+                    solver=sol,
+                    show_trace=value,
+                    registry=registry,
+                )
+                Test.@test result isa MockSolution
+                Test.@test LAST_DISPLAY[] === value
+            end
+
+            err = try
+                OptimalControl.solve_explicit(
+                    ocp;
+                    initial_guess=init,
+                    discretizer=disc,
+                    modeler=mod,
+                    solver=sol,
+                    display=false,
+                    show_trace=false,
+                    registry=registry,
+                )
+                nothing
+            catch e
+                e
+            end
+            Test.@test err isa CTBase.IncorrectArgument
+            Test.@test occursin("Conflicting aliases", sprint(showerror, err))
+
+            # Through the dispatcher, whose validation of the leftover options must
+            # accept the alias as an action option.
+            Test.@test "show_trace" in OptimalControl._explicit_option_names()
+            LAST_DISPLAY[] = nothing
+            result = CommonSolve.solve(
+                ocp;
+                initial_guess=init,
+                discretizer=disc,
+                modeler=mod,
+                solver=sol,
+                show_trace=false,
+                registry=registry,
+            )
+            Test.@test result isa MockSolution
+            Test.@test LAST_DISPLAY[] === false
         end
 
         Test.@testset "Dispatcher validates explicit options" begin

@@ -80,6 +80,36 @@ See also: [`_INITIAL_GUESS_ALIASES_ONLY`](@ref), [`_extract_action_kwarg`](@ref)
 """
 const _INITIAL_GUESS_ALIASES::Tuple{Symbol,Symbol} = (:initial_guess, :init)
 
+# Aliases for display, same two forms as for initial_guess.
+
+"""
+    _DISPLAY_ALIASES_ONLY::Tuple{Symbol}
+
+Aliases for the `display` parameter, excluding the primary name.
+
+Used in [`CTBase.Options.OptionDefinition`](@extref) where the primary name is specified separately.
+
+# Value
+- `(:show_trace,)`: Alias for `display`, the name used by NonlinearSolve and Optim
+
+See also: [`_DISPLAY_ALIASES`](@ref), [`_route_descriptive_options`](@ref)
+"""
+const _DISPLAY_ALIASES_ONLY::Tuple{Symbol} = (:show_trace,)
+
+"""
+    _DISPLAY_ALIASES::Tuple{Symbol, Symbol}
+
+All valid names for the display parameter, including the primary name and aliases.
+
+Used in `_extract_action_kwarg` to extract the display flag from keyword arguments.
+
+# Value
+- `(:display, :show_trace)`: Primary name and alias
+
+See also: [`_DISPLAY_ALIASES_ONLY`](@ref), [`_extract_action_kwarg`](@ref)
+"""
+const _DISPLAY_ALIASES::Tuple{Symbol,Symbol} = (:display, :show_trace)
+
 # Unwrap an OptionValue (from route_all_options) to its raw value.
 # Falls back to `fallback` if `opt` is not an OptionValue.
 
@@ -197,7 +227,7 @@ function _descriptive_action_defs()::Vector{CTBase.Options.OptionDefinition}
         ),
         CTBase.Options.OptionDefinition(;
             name=:display,
-            aliases=(),
+            aliases=_DISPLAY_ALIASES_ONLY,
             type=Bool,
             default=_DEFAULT_DISPLAY,
             description="Display solve configuration",
@@ -257,6 +287,7 @@ function _route_descriptive_options(
     # `route_all_options` consumes the first alias it finds and routes the other one to
     # the strategies, where it is reported as an unknown option: check the conflict first.
     _check_action_aliases(kwargs, _INITIAL_GUESS_ALIASES)
+    _check_action_aliases(kwargs, _DISPLAY_ALIASES)
     families = _descriptive_families()
     action_defs = _descriptive_action_defs()
     return CTBase.Orchestration.route_all_options(
