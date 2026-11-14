@@ -17,7 +17,7 @@ using Test: Test
 using OptimalControl
 using CTModels: CTModels
 using CTBase: CTBase
-import OrdinaryDiffEqTsit5: OrdinaryDiffEqTsit5 # `Flow` needs an integrator
+using OrdinaryDiffEqTsit5: OrdinaryDiffEqTsit5 # `Flow` needs an integrator
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true

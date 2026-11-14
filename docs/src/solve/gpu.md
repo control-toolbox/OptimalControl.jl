@@ -33,7 +33,7 @@ Check `CUDA.functional()` before assuming a `:gpu` solve will actually run on th
 `ExaModels` needs no `using` of its own: it comes with OptimalControl, and `:exa` works
 without it. Importing it explicitly would also bring its `objective` and `constraint` into
 scope, which collide with the accessors of the same name. If you need ExaModels' own API,
-import it qualified: `using ExaModels: ExaModels`.
+bring only its name into scope: `using ExaModels: ExaModels`.
 
 ## The problem
 
