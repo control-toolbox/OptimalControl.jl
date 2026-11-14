@@ -54,11 +54,11 @@ objective(sol_jld) == objective(sol)
 
 ## JSON
 
-[JSON3](https://github.com/quinnj/JSON3.jl) writes a text file, `solution.json`, which other
+[JSON](https://github.com/JuliaIO/JSON.jl) writes a text file, `solution.json`, which other
 languages and tools can read:
 
 ```@example main
-using JSON3
+using JSON
 export_ocp_solution(sol; format=:JSON, filename="solution")
 
 sol_json = import_ocp_solution(ocp; format=:JSON, filename="solution")
@@ -132,7 +132,7 @@ rm.(["sol.jld2", "solution.jld2", "solution.json"])         # hide
 nothing                                                     # hide
 ```
 
-## Without JLD2 or JSON3
+## Without JLD2 or JSON
 
 Both formats need their package. Without it, the call raises an error that names the
 package to load:
@@ -149,7 +149,7 @@ ERROR: ExtensionError
 └─
 ```
 
-and the same with `JSON3` for `format=:JSON`. A format other than `:JLD` and `:JSON` is
+and the same with `JSON` for `format=:JSON`. A format other than `:JLD` and `:JSON` is
 rejected before any package is needed:
 
 ```@repl main
