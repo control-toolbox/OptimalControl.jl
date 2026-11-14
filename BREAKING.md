@@ -4,7 +4,7 @@ Chronological, newest first. Each `CHANGELOG.md` entry links back here for the f
 record; this file never duplicates a release's own compat table, only what a caller must
 change or be aware of.
 
-- [Breaking changes (Unreleased)](#breaking-changes-unreleased)
+- [Unreleased](#unreleased)
 - [Non-breaking notes (2.2.1-beta)](#non-breaking-notes-221-beta)
 - [Non-breaking notes (2.2.0-beta)](#non-breaking-notes-220-beta)
 - [Breaking changes: v2.0 → v2.1.0-beta](#breaking-changes-v20--v210-beta)
@@ -12,7 +12,7 @@ change or be aware of.
 
 ---
 
-## Breaking changes (Unreleased)
+## Unreleased
 
 ### No module name is exported
 

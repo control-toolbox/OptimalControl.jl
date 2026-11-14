@@ -125,6 +125,7 @@ See [BREAKING.md](BREAKING.md).
   new convention, and the `:exa` duals of the path and boundary constraints throw instead of
   returning zeros. *Automatic differentiation* (`geometry/ad.md`): `ad` on an in-place
   `VectorField` or a `HamiltonianVectorField` throws `IncorrectArgument` (CTLie `0.3`).
+- ct-conventions pinned at `v0.14.0` in `AGENTS.md`; the header of `docs/make.jl` gives the docs build command `julia --project=docs docs/make.jl`, the command of CI, instead of `--project=.`, which let the root environment shadow `docs/` (`SITE18`, [ct-conventions#63](https://github.com/control-toolbox/ct-conventions/issues/63)).
 
 ### 📦 Dependencies
 
