@@ -102,7 +102,7 @@ nothing # hide
 ```
 
 !!! warning
-    Aliases during definition of variable, state or control are only allowed for multidimensional (dimension two or more) cases. Something like `u = T ∈ R, control` is not allowed... and useless (directly write `T ∈ R, control`).
+    Aliases during definition of variable, state or control are only allowed for multidimensional (dimension two or more) cases. Something like `u = T ∈ R, control` or `u = (T,) ∈ R, control` is rejected... and useless (directly write `T ∈ R, control`). See [What `@def` rejects](@ref modelling-abstract-syntax-rejected).
 
 ## Time
 
@@ -170,6 +170,27 @@ As for the variable, there are automatic aliases (`x₁` and `x1` for `x[1]`, *e
 end
 nothing # hide
 ```
+
+The dimension is written `R²` to `R²⁰`, or `R^n` for any dimension. In `R^n`, `n` can be any
+expression known when the block is evaluated, such as a constant defined before it or
+`n + 1`:
+
+```@example abs
+n = 3
+@def begin
+    t ∈ [0, 1], time                        # hide
+    x ∈ R^n, state
+    u ∈ R, control                          # hide
+    ẋ(t) == [x₂(t), x₃(t), u(t)]            # hide
+    ∫(u(t)^2) → min                         # hide
+end
+nothing # hide
+```
+
+Only digit exponents are recognised: `R²¹` and `Rⁿ` are rejected, write `R^21` and `R^n`.
+The automatic aliases go from `x₁` to `x₉`; beyond, write `x[10]`, or name the components in
+the declaration. See [Dimensions](@extref CTParser syntax/dimensions) in the CTParser
+documentation.
 
 ## [Control](@id modelling-abstract-syntax-control)
 
@@ -427,7 +448,7 @@ nothing # hide
 
 !!! warning
     Write either `u(t)^2` or `(u^2)(t)`, not `u^2(t)` since in Julia the latter means `u^(2t)`. Moreover,
-    in the case of equalities or of one-sided inequalities, the control and / or the state must belong to the *left-hand side*. The following errors (the example quoted in the message is generic, see [CTParser#352](https://github.com/control-toolbox/CTParser.jl/issues/352); here, write `x₂(t) ≥ 1`):
+    in the case of equalities or of one-sided inequalities, the control and / or the state must belong to the *left-hand side*. The following errors, and the message gives the form to write, `x₂(t) ≥ 1`:
 
     ```@repl abs
     try # hide
@@ -703,7 +724,7 @@ nothing # hide
     Such aliases do *not* define any additional function and are just replaced textually by the parser. In particular, they cannot be used outside the `@def` `begin ... end` block. Conversely, the constants and functions used within the block are ordinary Julia names, defined outside it (see [Structure of a definition](@ref modelling-abstract-syntax-structure) for when).
 
 !!! hint
-    You can rely on a trace mode for the macro `@def` to look at your code after expansions of the aliases using the `@def ocp ...` syntax and adding `true` after your `begin ... end` block. The trace still shows some internal names, such as `var"u##…"[1]` for `u` ([CTParser#354](https://github.com/control-toolbox/CTParser.jl/issues/354)):
+    You can rely on a trace mode for the macro `@def` to look at your code after expansions of the aliases using the `@def ocp ...` syntax and adding `true` after your `begin ... end` block (see [Trace mode](@extref CTParser syntax/trace) in the CTParser documentation):
 
     ```@repl abs
     @def damped_integrator begin
@@ -719,7 +740,7 @@ nothing # hide
     ```
 
 !!! warning
-    The dynamics of an OCP is a constraint: use `==`, not a single `=`, which would try to define an alias. The error does not say so explicitly yet ([CTParser#353](https://github.com/control-toolbox/CTParser.jl/issues/353)):
+    The dynamics of an OCP is a constraint: use `==`, not a single `=`, which defines an alias. The error says so:
 
     ```@repl abs
     try # hide
@@ -728,9 +749,10 @@ nothing # hide
         t ∈ [0, tf], time
         x = (q, v) ∈ R², state
         u ∈ R, control
-        q̇ = v
-        v̇ = u
+        q̇ = v(t)
+        v̇ = u(t)
         ẋ(t) = [q̇, v̇]
+        tf → min
     end
     catch e # hide
     showerror(IOContext(stdout, :color => false), e) # hide
@@ -765,6 +787,85 @@ Here the labels are `:eq1`, `:♡` and `:state_con`.
 
 Parsing errors report the line of the `begin … end` block where they occur. For complete
 problems written with this syntax, see the [example gallery](@ref examples-gallery).
+
+## [What `@def` rejects](@id modelling-abstract-syntax-rejected)
+
+`@def` refuses some forms on purpose, with a `ParsingError` that names the line, the reason
+and the form to write instead. They are either ambiguous or would silently mean something
+else than intended. Each one is explained in the CTParser documentation.
+
+| Rejected | Write instead | Why | CTParser |
+| --- | --- | --- | --- |
+| `u = (z,) ∈ R, control` | `u ∈ R, control` | a scalar is declared one way, without names | [Declarations](@extref CTParser syntax/declarations) |
+| `ẋ(t) = u(t)` | `ẋ(t) == u(t)` | a single `=` defines an alias, not an equation | [Aliases and equations](@extref CTParser syntax/equations) |
+| `x ∈ Rⁿ`, `x ∈ R²¹` | `x ∈ R^n`, `x ∈ R^21` | only digit exponents up to `²⁰` are recognised | [Dimensions](@extref CTParser syntax/dimensions) |
+| `ẋ(t) == [x₂(t), u]`, `x₁ → min` | `u(t)`, `x₁(1) → min` | a state or a control is a function of time | [State and control in time](@extref CTParser syntax/time) |
+| `x(0.5)`, `x₁(0.5) → min` | `x(t)`, `x(0)`, `x(1)` | a state is evaluated at `t`, the initial or the final time | [State and control in time](@extref CTParser syntax/time) |
+| `u(0)`, `u(1)` | `u(t)` | a control has no value to give at the initial or final time | [State and control in time](@extref CTParser syntax/time) |
+| `1 ≤ x₂(t)`, `x₂(0) == v` | `x₂(t) ≥ 1`, `x₂(0) - v == 0` | a bound is constant: it is evaluated once, when the model is built | [Constraints](@extref CTParser syntax/constraints) |
+
+For instance, a scalar control given a name, and a control used without its time:
+
+```@repl abs
+try # hide
+@def begin
+    t ∈ [0, 1], time
+    x ∈ R, state
+    u = (z,) ∈ R, control
+    ẋ(t) == z(t)
+    ∫(z(t)^2) → min
+end
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
+```
+
+```@repl abs
+try # hide
+@def begin
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    ẋ(t) == [x₂(t), u]
+    ∫(u(t)^2) → min
+end
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
+```
+
+and a control evaluated at the initial time:
+
+```@repl abs
+try # hide
+@def begin
+    t ∈ [0, 1], time
+    x ∈ R, state
+    u ∈ R, control
+    u(0) == 1
+    ẋ(t) == u(t)
+    ∫(u(t)^2) → min
+end
+catch e # hide
+showerror(IOContext(stdout, :color => false), e) # hide
+end # hide
+```
+
+```@example abs
+for ex in (                                                                       # hide
+    :(@def begin t ∈ [0, 1], time; x ∈ R, state; u = (z,) ∈ R, control; ẋ(t) == z(t); ∫(z(t)^2) → min end),   # hide
+    :(@def begin t ∈ [0, 1], time; x ∈ R, state; u ∈ R, control; ẋ(t) = u(t); ∫(u(t)^2) → min end),          # hide
+    :(@def begin t ∈ [0, 1], time; x ∈ Rⁿ, state; u ∈ R, control; ẋ(t) == u(t); ∫(u(t)^2) → min end),        # hide
+    :(@def begin t ∈ [0, 1], time; x ∈ R², state; u ∈ R, control; ẋ(t) == [x₂(t), u]; ∫(u(t)^2) → min end),  # hide
+    :(@def begin t ∈ [0, 1], time; x ∈ R, state; u ∈ R, control; x(0.5) == 1; ẋ(t) == u(t); ∫(u(t)^2) → min end), # hide
+    :(@def begin t ∈ [0, 1], time; x ∈ R, state; u ∈ R, control; u(0) == 1; ẋ(t) == u(t); ∫(u(t)^2) → min end),   # hide
+    :(@def begin t ∈ [0, 1], time; x ∈ R², state; u ∈ R, control; ẋ(t) == [x₂(t), u(t)]; 1 ≤ x₂(t); ∫(u(t)^2) → min end), # hide
+)                                                                                 # hide
+    err = try eval(ex); nothing catch e; e isa LoadError ? e.error : e end        # hide
+    @assert err isa OptimalControl.ParsingError                                   # hide
+end                                                                               # hide
+nothing                                                                           # hide
+```
 
 ## See also
 
