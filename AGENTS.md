@@ -12,7 +12,7 @@ CTLie, CTDirect, CTSolvers, CTFlows). It does not follow the "one submodule per
 responsibility" layout used by sibling packages.
 
 ```text
-src/imports/   # Per-dependency reexports (`@reexport import Pkg: sym`) — builds the public API
+src/imports/   # Per-dependency imports — builds the public API (exported and qualified levels)
 src/helpers/   # Internal helpers (routing, completion, registry, printing)
 src/solve/     # `solve` dispatch: mode detection, descriptive/explicit paths
 test/suite/    # Test suite: organised by functionality, not by src/ layout
@@ -64,9 +64,13 @@ trigger labels are described in
 - **Exports a curated public API** — unlike sibling packages (`MOD8`: no top-level
   exports), OptimalControl is the ecosystem's DSL entry point: it re-exports selected
   symbols from CTBase, CTModels, CTLie, CTDirect, CTSolvers, CTFlows.
-- **`@reexport import Pkg: sym`** — the one place `import` is intentional in this
-  ecosystem (an exemption from `MOD3`): `src/imports/*.jl` builds the exported surface
-  this way; everywhere else, qualified `using` only (`using Pkg: Pkg`, `MOD4`).
+- **`src/imports/*.jl` uses `import`** — the one place it is intentional in this
+  ecosystem (an exemption from `MOD3`). That folder builds the two public levels of the
+  API (see the API levels page of the docs): `@reexport import Pkg: sym` for the exported
+  names, and `import Pkg.Sub: sym` for the names reached as `OptimalControl.X` (strategies,
+  types, exceptions), which no `using` form can bind without the dotted path forbidden by
+  `MOD4`. Everywhere else, qualified `using` only (`using Pkg: Pkg`, `MOD4`); the guard
+  `test/suite/meta/test_no_import.jl` checks it.
 - **Fake types at module top-level** — never inside test functions (`TST3`).
 - **Structured errors** — seven typed exceptions; pick by the choice rule (`EXC1`).
 - **Type stability enforced** — hot paths `@inferred`-clean, verified with JET (`TYP8`, `PERF1`–`PERF5`).
