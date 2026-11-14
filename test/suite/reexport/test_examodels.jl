@@ -18,10 +18,11 @@ const CurrentModule = TestExamodels
 
 function test_examodels()
     Test.@testset "ExaModels reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
-        Test.@testset "Generated Code Prefix" begin
-            Test.@test isdefined(OptimalControl, :ExaModels)
-            Test.@test isdefined(CurrentModule, :ExaModels)
-            Test.@test ExaModels isa Module
+        Test.@testset "Module name not exported" begin
+            # Loaded for the `:exa` backend, no longer exported: `@def` is hygienic
+            # since CTParser 0.9.6 (#967).
+            Test.@test OptimalControl.ExaModels === ExaModels
+            Test.@test :ExaModels ∉ names(OptimalControl)
         end
 
         # --------------------------------------------------------------------

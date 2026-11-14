@@ -138,10 +138,11 @@ const BUILDING = (
 
 function test_ctmodels()
     Test.@testset "CTModels reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
-        Test.@testset "Generated Code Prefix" begin
-            Test.@test isdefined(OptimalControl, :CTModels)
-            Test.@test isdefined(CurrentModule, :CTModels)
-            Test.@test CTModels isa Module
+        Test.@testset "Module name not exported" begin
+            # Used internally, no longer exported: `@def` and `@init` are hygienic
+            # since CTParser 0.9.6 (#967).
+            Test.@test OptimalControl.CTModels === CTModels
+            Test.@test !is_exported(OptimalControl, :CTModels)
         end
 
         Test.@testset "Display" begin

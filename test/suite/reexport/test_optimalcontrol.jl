@@ -27,6 +27,16 @@ function test_optimalcontrol()
             end
         end
 
+        Test.@testset "No module name exported" begin
+            # `using OptimalControl` brings no implementation package into the user's
+            # namespace (#966, #967): the generated code of `@def`, `@init` and `@Lie`
+            # holds the modules themselves.
+            exported_modules = filter(
+                n -> getglobal(OptimalControl, n) isa Module, names(OptimalControl)
+            )
+            Test.@test exported_modules == [:OptimalControl]
+        end
+
         Test.@testset "Method Signatures" begin
             Test.@testset "solve - Layer 1 (dispatch)" begin
                 Test.@test hasmethod(

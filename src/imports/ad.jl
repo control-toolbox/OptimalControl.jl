@@ -10,6 +10,10 @@
 #   we do not control.
 #
 # Guarded by test/suite/extensions/test_extensions_armed.jl.
+#
+# The package is bound as `DifferentiationInterfacePkg`: the name
+# `OptimalControl.DifferentiationInterface` is the AD backend strategy of
+# `CTBase.Differentiation` (imports/ctbase.jl), like `OptimalControl.ADNLP`.
 
-import DifferentiationInterface: DifferentiationInterface # arms CTBaseDifferentiationInterface
-import ForwardDiff: ForwardDiff                           # arms CTSolversForwardDiff
+using DifferentiationInterface: DifferentiationInterface as DifferentiationInterfacePkg # arms CTBaseDifferentiationInterface
+using ForwardDiff: ForwardDiff # arms CTSolversForwardDiff
