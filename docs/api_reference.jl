@@ -298,6 +298,7 @@ const API_THEMES = [
         title="Qualified access",
         symbols=[
             Symbol("CTModels.Building.PreModel"),
+            Symbol("CTModels.Models.AbstractModel"),
             Symbol("CTModels.Models.Model"),
             Symbol("CTModels.Solutions.Solution"),
             Symbol("CTModels.Solutions.AbstractSolution"),
@@ -387,6 +388,191 @@ let
     end
 end
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# API levels (api/levels.md)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Three levels: exported (level 1, `names(OptimalControl)`), qualified (level 2, the
+# names OptimalControl imports from the packages it builds on without exporting them,
+# reached as `OptimalControl.X`) and internal (level 3, the package modules it binds).
+# Every list on the page is computed from the module; the checks below fail the build
+# when a name is not classified, so a new import must be placed in a level by hand.
+
+# Level 2 names left out of the `qualified` theme's `@docs` block. `Collocation`'s
+# docstring links to `CTDirect.Scheme`, which CTDirect does not document, so
+# transcluding it breaks the cross-references of the build.
+const QUALIFIED_WITHOUT_DOCS = [:Collocation]
+
+# Level 3: every package module OptimalControl binds, with the reason it is bound.
+const MODULE_ROLES = [
+    :ADNLPModels => "loaded to arm the `:adnlp` modeler (extension `CTSolversADNLPModels`)",
+    :CTBase => "strategies, options, exceptions, the `Data` types of flows",
+    :CTDirect => "the direct method: the `Collocation` discretizer",
+    :CTFlows => "flows and their accessors",
+    :CTLie => "differential geometry: `ad`, `Lift`, `Poisson`, `@Lie`",
+    :CTModels => "problems, solutions, initial guesses, plots and I/O",
+    :CTSolvers => "modelers, NLP solvers, integrators",
+    :CommonSolve => "the generic function `solve`",
+    :DifferentiationInterfacePkg =>
+        "the package DifferentiationInterface, loaded to arm the AD of the geometry " *
+        "(extension `CTBaseDifferentiationInterface`)",
+    :DocStringExtensions => "docstrings",
+    :ExaModels => "loaded for the `:exa` modeler",
+    :ForwardDiff => "loaded to arm the AD of `solve` (extension `CTSolversForwardDiff`)",
+    :LinearAlgebra => "loaded to arm the linear algebra of ExaModels",
+    :Reexport => "builds the exported names",
+]
+
+# The package modules bound in OptimalControl: top-level modules other than Julia's own.
+function _bound_package_modules()
+    ns = names(OptimalControl; all=true, imported=true, usings=true)
+    return sort!([
+        n for n in ns if n !== :OptimalControl &&
+        isdefined(OptimalControl, n) &&
+        (m = getglobal(OptimalControl, n)) isa Module &&
+        Base.moduleroot(m) === m &&
+        m ∉ (Base, Core, Main)
+    ])
+end
+
+# The module that owns a value: its own for a function or a type, its type's otherwise
+# (`NotProvided` is an instance).
+_owner(v) = parentmodule(v isa Union{Function,Type} ? v : typeof(v))
+
+# Level 2 candidates: the non-exported names OptimalControl imports from another package.
+function _qualified_names()
+    exported = Set(names(OptimalControl))
+    ns = names(OptimalControl; all=true, imported=true)
+    return sort!([
+        n for n in ns if n ∉ exported &&
+        n ∉ EXCLUDE_SYMBOLS &&
+        isdefined(OptimalControl, n) &&
+        !startswith(String(n), "_") &&
+        !startswith(String(n), "#") &&
+        !((v = getglobal(OptimalControl, n)) isa Module) &&
+        Base.moduleroot(_owner(v)) !== OptimalControl
+    ])
+end
+
+let
+    qualified_theme = Set(
+        _bare_name(s) for s in first(t.symbols for t in API_THEMES if t.id == "qualified")
+    )
+    qualified = Set(_qualified_names())
+    unclassified = setdiff(qualified, qualified_theme, QUALIFIED_WITHOUT_DOCS)
+    isempty(unclassified) || error(
+        "API levels: names imported but not exported, missing from the `qualified` " *
+        "theme: $unclassified",
+    )
+    roles = Set(first.(MODULE_ROLES))
+    bound = Set(_bound_package_modules())
+    isempty(setdiff(bound, roles)) ||
+        error("API levels: modules bound without a role in MODULE_ROLES: $(setdiff(bound, roles))")
+    isempty(setdiff(roles, bound)) ||
+        error("API levels: MODULE_ROLES lists modules no longer bound: $(setdiff(roles, bound))")
+end
+
+# A link to the docstring of a theme entry; a `Pair` entry (an explicit signature) links
+# to its theme page instead.
+_level_link(s::Symbol, _) = "[`$(_bare_name(s))`](@ref $(s))"
+_level_link(p::Pair, theme) = "[`$(_bare_name(p))`](@ref api-$(theme.id))"
+
+function _level_list(io, theme; qualify=false)
+    seen = Set{Symbol}()
+    links = String[]
+    for s in theme.symbols
+        bare = _bare_name(s)
+        bare in seen && continue
+        push!(seen, bare)
+        link = _level_link(s, theme)
+        qualify && (link = replace(link, "[`" => "[`OptimalControl."; count=1))
+        push!(links, link)
+    end
+    println(io, join(links, ", "))
+    return nothing
+end
+
+function _generate_levels_page(docs_src)
+    page = joinpath(docs_src, "api", "levels.md")
+    level1 = [t for t in API_THEMES if t.id ∉ ("qualified",)]
+    qualified = first(t for t in API_THEMES if t.id == "qualified")
+    open(page, "w") do io
+        println(io, "# [API levels](@id api-levels)")
+        println(io)
+        println(
+            io,
+            """
+OptimalControl builds on several packages (see [Ecosystem](@ref api-ecosystem)) and gives
+access to what a user needs from them at two levels. A third level holds what it uses
+internally. The lists below are generated from the package itself, and each name links to
+its documentation.
+
+| Level | Reached as | What |
+| --- | --- | --- |
+| 1. Exported | `using OptimalControl`, then `name` | the vocabulary of the package: problems, `solve`, solutions, flows, geometry |
+| 2. Qualified | `OptimalControl.Name` | strategies (modelers, solvers, discretizer, AD backend), types, exceptions |
+| 3. Internal | not for users | the modules of the packages OptimalControl builds on |
+
+**Why these choices.**
+
+- *Exported*: the names a user writes in every script, so that `using OptimalControl` is
+  enough.
+- *Qualified*: the strategies have the names of the packages they rely on (`Ipopt`,
+  `MadNLP`, `DifferentiationInterface`): exporting them would clash with these packages in
+  the user's session. The exceptions are rarely written, only to check what a call
+  raised, and the types mostly appear in signatures. Writing `OptimalControl.Ipopt()`
+  says where the name comes from.
+- *Internal*: no module name is exported. `@def`, `@init` and `@Lie` work after
+  `import OptimalControl` alone, so a user never needs `CTModels` or `CTBase` in scope.""",
+        )
+        println(io)
+        n1 = sum(length(Set(_bare_name(s) for s in t.symbols)) for t in level1)
+        println(io, "## Level 1: exported ($n1 names)")
+        println(io)
+        for t in level1
+            n = length(Set(_bare_name(s) for s in t.symbols))
+            println(io, "::: details $(t.title) ($n)")
+            println(io)
+            println(io, "Documented on the page [$(t.title)](@ref api-$(t.id)).")
+            println(io)
+            _level_list(io, t)
+            println(io)
+            println(io, ":::")
+            println(io)
+        end
+        n2 = length(Set(_bare_name(s) for s in qualified.symbols))
+        println(io, "## Level 2: qualified ($n2 names)")
+        println(io)
+        println(io, "Documented on the page [Qualified access](@ref api-qualified).")
+        println(io)
+        println(io, "::: details Names")
+        println(io)
+        _level_list(io, qualified; qualify=true)
+        println(io)
+        println(
+            io,
+            "Without a documentation entry: " *
+            join(["`OptimalControl.$n`" for n in QUALIFIED_WITHOUT_DOCS], ", ") * ".",
+        )
+        println(io)
+        println(io, ":::")
+        println(io)
+        println(io, "## Level 3: internal")
+        println(io)
+        println(
+            io,
+            "The modules OptimalControl binds, for its own use. They are reachable as " *
+            "`OptimalControl.Module`, but a user should not need them.",
+        )
+        println(io)
+        println(io, "| Module | Why OptimalControl binds it |")
+        println(io, "| --- | --- |")
+        for (m, role) in MODULE_ROLES
+            println(io, "| `$m` | $role |")
+        end
+    end
+    return "API levels" => "api/levels.md"
+end
+
 function _generate_theme_page(docs_src, theme)
     page = joinpath(docs_src, "api", "$(theme.id).md")
     mkpath(dirname(page))
@@ -406,14 +592,6 @@ function _generate_theme_page(docs_src, theme)
                 "packages it builds on into scope, and `@def`, `@init` and `@Lie` work " *
                 "after `import OptimalControl` alone. See [Ecosystem](@ref api-ecosystem) " *
                 "for what each package is for.",
-            )
-            println(io)
-            println(
-                io,
-                "`CTDirect.Collocation` (the ADNLP/Exa discretizer, selected via " *
-                "`discretizer=CTDirect.Collocation()`) has no docstring upstream yet — " *
-                "tracked in [control-toolbox/CTDirect.jl#623]" *
-                "(https://github.com/control-toolbox/CTDirect.jl/issues/623).",
             )
             println(io)
         end
@@ -451,7 +629,8 @@ function generate_api_reference(src_dir::String, ext_dir::String)
     src(files...) = [abspath(joinpath(src_dir, f)) for f in files]
     mkpath(joinpath(docs_src, "api"))
 
-    pages = [_generate_theme_page(docs_src, t) for t in API_THEMES]
+    pages = [_generate_levels_page(docs_src)]
+    append!(pages, [_generate_theme_page(docs_src, t) for t in API_THEMES])
 
     helpers = src(
         joinpath("helpers", "component_checks.jl"),
