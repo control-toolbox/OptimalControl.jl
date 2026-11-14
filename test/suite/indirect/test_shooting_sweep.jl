@@ -32,12 +32,6 @@ using NonlinearSolve: NonlinearProblem, SimpleNewtonRaphson, solve
 import LinearAlgebra: norm
 import OrdinaryDiffEqTsit5: OrdinaryDiffEqTsit5 # `Flow` needs an integrator
 
-# `@Lie` (used by the Goddard shoot_builder) expands to bare `CTLie.*` /
-# `CTBase.Traits.*` prefixes — both modules must be in scope here too, for the
-# same reason `test/problems/goddard.jl` needs them via `TestProblems`' own
-# `using OptimalControl`.
-import CTLie: CTLie
-import CTBase: CTBase
 
 include(joinpath(@__DIR__, "..", "..", "problems", "TestProblems.jl"))
 using .TestProblems

@@ -11,6 +11,10 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### 💥 Breaking Changes
 
+#### The module name `CTLie` is no longer exported (CTLie 0.3)
+
+- **`using OptimalControl` no longer brings the module name `CTLie` into scope** ([#966](https://github.com/control-toolbox/OptimalControl.jl/issues/966)). It was exported only because the expansion of `@Lie` named `CTLie` and `CTBase` in the caller's module. Since CTLie 0.3 the expansion holds the modules themselves ([CTLie#40](https://github.com/control-toolbox/CTLie.jl/issues/40)), so `@Lie` now also works after `import OptimalControl` or `using OptimalControl: @Lie`. `ad`, `Lift`, `Poisson`, `∂ₜ`, `@Lie`, `dg_ad_backend` and `dg_ad_backend!` are still exported. See [BREAKING.md](BREAKING.md).
+
 #### The multipliers follow one sign convention (CTModels 0.21, CTSolvers 0.7)
 
 - **`dual(sol, ocp, :label)` and `costate(sol)` change sign in two cases**, inherited from

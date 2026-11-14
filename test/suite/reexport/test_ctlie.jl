@@ -36,15 +36,53 @@ const CurrentModule = TestCtlie
 const LIE_X1 = VectorField(x -> [x[2], -x[1]])
 const LIE_X2 = VectorField(x -> [x[1], x[2]])
 
+# `@Lie` called from modules that have neither `CTLie` nor `CTBase` in scope (#966). The
+# expansion holds the modules themselves since CTLie 0.3, so it needs no name at the call site.
+module LieImportOnly
+import OptimalControl
+X(x) = [x[2], -x[1]]
+Y(x) = [x[1], x[2]]
+Xt(t, x) = [t + x[2], -x[1]]
+Yt(t, x) = [x[1], t * x[2]]
+const H1 = OptimalControl.Hamiltonian((x, p) -> x[1] * p[1])
+const H2 = OptimalControl.Hamiltonian((x, p) -> x[2] * p[2])
+bracket() = OptimalControl.@Lie [X, Y]
+bracket_nonautonomous() = OptimalControl.@Lie [Xt, Yt] is_autonomous = false
+poisson() = OptimalControl.@Lie {H1, H2}
+end
+
+module LieMacroOnly
+using OptimalControl: @Lie
+X(x) = [x[2], -x[1]]
+Y(x) = [x[1], x[2]]
+bracket() = @Lie [X, Y]
+end
+
 function test_ctlie()
     Test.@testset "CTLie reexports" verbose = VERBOSE showtiming = SHOWTIMING begin
-        Test.@testset "Generated Code Prefix" begin
-            # `@Lie` emits both `CTLie.*` and `CTBase.Traits.*` in its expansion,
-            # so both modules must reach the call site.
+        Test.@testset "Module name not exported" begin
+            # OptimalControl uses CTLie internally, but no longer exports its name (#966).
             Test.@test isdefined(OptimalControl, :CTLie)
-            Test.@test isdefined(CurrentModule, :CTLie)
-            Test.@test CTLie isa Module
-            Test.@test isdefined(CurrentModule, :CTBase)
+            Test.@test !is_exported(OptimalControl, :CTLie)
+        end
+
+        Test.@testset "@Lie is hygienic" begin
+            Test.@testset "after import OptimalControl" begin
+                Test.@test !isdefined(LieImportOnly, :CTLie)
+                Test.@test !isdefined(LieImportOnly, :CTBase)
+                y = [1.0, 2.0]
+                Z = LieImportOnly.bracket()
+                Test.@test Z isa VectorField
+                Test.@test Z(y) ≈ ad(VectorField(LieImportOnly.X), VectorField(LieImportOnly.Y))(y)
+                Test.@test LieImportOnly.bracket_nonautonomous() isa VectorField
+                Test.@test LieImportOnly.poisson() isa Hamiltonian
+            end
+
+            Test.@testset "after using OptimalControl: @Lie" begin
+                Test.@test !isdefined(LieMacroOnly, :CTLie)
+                Test.@test !isdefined(LieMacroOnly, :CTBase)
+                Test.@test LieMacroOnly.bracket()([1.0, 2.0]) ≈ LieImportOnly.bracket()([1.0, 2.0])
+            end
         end
 
         Test.@testset "Differential geometry" begin

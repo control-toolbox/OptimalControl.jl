@@ -8,9 +8,8 @@
 # CTBase's `CTBaseDifferentiationInterface` extension to be *armed*.
 # That is what `imports/ad.jl` is for.
 
-# Generated code — the `@Lie` macro emits `CTLie.*` and `CTBase.Traits.*`
-# prefixes in its expansion, so both modules must be in scope at the call site.
-@reexport import CTLie: CTLie # for generated code (prefix)
+# The module name `CTLie` is not exported: since CTLie 0.3 the expansion of `@Lie` holds the
+# modules themselves, not their names, so it works from any caller (#966).
 
 # Differential geometry
 @reexport import CTLie: ad, Lift, Poisson, ∂ₜ, @Lie
