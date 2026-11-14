@@ -391,11 +391,11 @@ err = try
 catch e
     e
 end
-err isa CTBase.Exceptions.IncorrectArgument
+err isa OptimalControl.IncorrectArgument
 ```
 
 ```@example main
-@assert err isa CTBase.Exceptions.IncorrectArgument # hide
+@assert err isa OptimalControl.IncorrectArgument # hide
 nothing # hide
 ```
 

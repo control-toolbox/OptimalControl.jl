@@ -135,10 +135,19 @@ On a flow of the state, it is a `MethodError` for now
 ## The system and the integrator
 
 A flow is made of a **system**, the mathematical object it integrates, and an
-**integrator**. Both are reached with qualified names, since they are not exported:
+**integrator**, returned by `system` and `integrator`:
 
 ```@example main
-CTFlows.Flows.integrator(f)
+integrator(f)
+```
+
+```@example main
+system(f)
+```
+
+```@example main
+@assert integrator(f) isa AbstractIntegrator   # hide
+nothing                                        # hide
 ```
 
 The options of the integrator are those of [Flows overview](@ref flows-overview), given when
