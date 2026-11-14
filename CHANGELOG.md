@@ -95,6 +95,7 @@ See [BREAKING.md](BREAKING.md).
 ### 📚 Documentation
 
 - The docs load `JSON` instead of the deprecated `JSON3` ([#993](https://github.com/control-toolbox/OptimalControl.jl/issues/993)): since CTModels 0.20, `format=:JSON` is enabled by `using JSON`. The Save & load and Installation pages say so, and the docs environment depends on `JSON` (`"1"`).
+- The Abstract syntax page says what `@def` rejects since CTParser 0.9.6, why, and what to write instead, with links to the CTParser syntax pages ([#1046](https://github.com/control-toolbox/OptimalControl.jl/issues/1046), [#1047](https://github.com/control-toolbox/OptimalControl.jl/issues/1047)): named scalar components, `=` for an equation, `Rⁿ` and `R²¹`, a state or a control without its time or at another time, a bound that depends on the model. The State section explains `R^n` and the automatic names `x₁` to `x₉`; the notes on CTParser#352, #353 and #354, now fixed, are updated.
 - The warning "A constant component" is removed from the Abstract syntax page, and the probe `docs/probes/abstract_syntax_constants_ad.jl`, which recorded the bug, now checks that it stays fixed.
 
 - ct-conventions pinned at 0.5.0 in `AGENTS.md` (read from a git-ignored clone in
