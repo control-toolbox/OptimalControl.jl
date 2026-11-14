@@ -51,6 +51,9 @@ See [BREAKING.md](BREAKING.md).
 
 ### 🧪 Testing
 
+- The shooting builders of `test/problems/` (`goddard.jl`, `double_integrator.jl`) return a named
+  closure, `function shoot(; hamiltonian_type::Symbol=:total)`: Julia 1.13 rejects an anonymous
+  `function (; kw::T=default)` (`invalid assignment location`), which broke 9 test files on 1.13.
 - Release workflows: `ReleaseGate.yml` (the gate of a release PR, `REL1`–`REL7`) and
   `ReleaseTag.yml` (tag and GitHub release of a merged release PR) call CTActions;
   `Breakage.yml` moves to `breakage-suite.yml` (one report, the `REL1` check of a release
