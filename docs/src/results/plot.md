@@ -231,13 +231,14 @@ for (tf, sol) in zip(tfs, solutions)
     )
 end
 
-using Plots.PlotMeasures
+using Plots: PlotMeasures
 px1 = plot(plt[1]; legend=false)  # x₁
 px2 = plot(plt[2]; legend=true)   # x₂
 pu = plot(plt[3]; legend=false)   # u
 plot(
     px1, px2, pu;
-    layout=(1, 3), size=(800, 300), leftmargin=5mm, bottommargin=5mm,
+    layout=(1, 3), size=(800, 300),
+    leftmargin=5 * PlotMeasures.mm, bottommargin=5 * PlotMeasures.mm,
 )
 ```
 

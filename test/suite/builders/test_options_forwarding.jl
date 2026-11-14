@@ -16,7 +16,7 @@ using CUDA: CUDA
 
 # Include shared test problems via TestProblems module
 include(joinpath(@__DIR__, "..", "..", "problems", "TestProblems.jl"))
-import .TestProblems
+using .TestProblems: TestProblems
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true

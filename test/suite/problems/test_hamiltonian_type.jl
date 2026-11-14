@@ -30,7 +30,7 @@ module TestHamiltonianType
 using Test: Test
 using OptimalControl
 using NonlinearSolve: NonlinearProblem, SimpleNewtonRaphson, solve
-import OrdinaryDiffEqTsit5: OrdinaryDiffEqTsit5 # `Flow` needs an integrator
+using OrdinaryDiffEqTsit5: OrdinaryDiffEqTsit5 # `Flow` needs an integrator
 
 include(joinpath(@__DIR__, "..", "..", "problems", "TestProblems.jl"))
 using .TestProblems

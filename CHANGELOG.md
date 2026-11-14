@@ -88,6 +88,7 @@ See [BREAKING.md](BREAKING.md).
 
 ### 🧪 Testing
 
+- `using`, never `import` (`MOD3`, `MOD4`, [#831](https://github.com/control-toolbox/OptimalControl.jl/issues/831)): the tests and the docs no longer use `import` or the dotted `using Pkg.Sub`, and `test/suite/meta/test_no_import.jl` checks every tracked `.jl` and `.md` file, reporting each forbidden line. `src/imports/`, which builds the API, keeps its intentional `import`s.
 - The shooting builders of `test/problems/` (`goddard.jl`, `double_integrator.jl`) return a named
   closure, `function shoot(; hamiltonian_type::Symbol=:total)`: Julia 1.13 rejects an anonymous
   `function (; kw::T=default)` (`invalid assignment location`), which broke 9 test files on 1.13.

@@ -29,8 +29,8 @@ module TestShootingSweep
 using Test: Test
 using OptimalControl: OptimalControl
 using NonlinearSolve: NonlinearProblem, SimpleNewtonRaphson, solve
-import LinearAlgebra: norm
-import OrdinaryDiffEqTsit5: OrdinaryDiffEqTsit5 # `Flow` needs an integrator
+using LinearAlgebra: LinearAlgebra
+using OrdinaryDiffEqTsit5: OrdinaryDiffEqTsit5 # `Flow` needs an integrator
 
 
 include(joinpath(@__DIR__, "..", "..", "problems", "TestProblems.jl"))
@@ -54,7 +54,7 @@ function test_shooting_sweep()
                         #    reference is (near) zero.
                         s = zeros(length(ξ_exact))
                         shoot!(s, ξ_exact)
-                        Test.@test norm(s) < 1e-6
+                        Test.@test LinearAlgebra.norm(s) < 1e-6
 
                         # 2. The problem is actually solvable from a realistic
                         #    guess — Newton from `ξ_guess` converges back to

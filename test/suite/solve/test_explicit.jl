@@ -41,7 +41,7 @@ CTModels.build_initial_guess(::MockOCP, init::MockInit) = init
 
 # Include shared test problems via TestProblems module
 include(joinpath(@__DIR__, "..", "..", "problems", "TestProblems.jl"))
-import .TestProblems
+using .TestProblems: TestProblems
 
 struct MockDiscretizer <: CTSolvers.DOCP.AbstractDiscretizer
     options::CTBase.Strategies.StrategyOptions

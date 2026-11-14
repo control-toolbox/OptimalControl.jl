@@ -39,7 +39,7 @@ const LIE_X2 = VectorField(x -> [x[1], x[2]])
 # `@Lie` called from modules that have neither `CTLie` nor `CTBase` in scope (#966). The
 # expansion holds the modules themselves since CTLie 0.3, so it needs no name at the call site.
 module LieImportOnly
-import OptimalControl
+using OptimalControl: OptimalControl # the module name only, as `import OptimalControl`
 X(x) = [x[2], -x[1]]
 Y(x) = [x[1], x[2]]
 Xt(t, x) = [t + x[2], -x[1]]

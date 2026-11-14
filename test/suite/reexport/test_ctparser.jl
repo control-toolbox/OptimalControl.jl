@@ -21,7 +21,7 @@ const CurrentModule = TestCtparser
 # `CTBase` in scope. Since CTParser 0.9.6 the generated code holds the modules themselves,
 # so it needs no name at the call site (#967).
 module DefImportOnly
-import OptimalControl
+using OptimalControl: OptimalControl # the module name only, as `import OptimalControl`
 const OCP = OptimalControl.@def begin
     t ∈ [0, 1], time
     x ∈ R², state
