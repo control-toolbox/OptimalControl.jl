@@ -180,6 +180,23 @@ repo_url = "github.com/control-toolbox/OptimalControl.jl"
 src_dir = abspath(joinpath(@__DIR__, "..", "src"))
 ext_dir = abspath(joinpath(@__DIR__, "..", "ext"))
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# Deploy decision (SITE13)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Where the site is deployed, decided once. DocumenterVitepress builds the site for the
+# base of this decision; without it, it decides with `push_preview=true` and builds a pull
+# request for `previews/PR<n>`, announcing a deployment that `deploydocs` then refuses
+# (#1042). A pull request deploys its preview only with the label `documentation push
+# preview`, which sets `DOCUMENTER_PUSH_PREVIEW` (CTActions).
+push_preview = get(ENV, "DOCUMENTER_PUSH_PREVIEW", "false") == "true"
+deploy_decision = Documenter.deploy_folder(
+    Documenter.auto_detect_deploy_system();
+    repo=repo_url,
+    devbranch="main",
+    devurl="dev",
+    push_preview=push_preview,
+)
+
 # Include the API reference manager
 include("api_reference.jl")
 
@@ -289,7 +306,11 @@ with_api_reference(src_dir, ext_dir) do api_pages
         # CI). See .reports/campaign/D-api-reference.md.
         sitename="OptimalControl.jl",
         format=DocumenterVitepress.MarkdownVitepress(;
-            repo=repo_url, devbranch="main", devurl="dev", sidebar_drawer=true
+            repo=repo_url,
+            devbranch="main",
+            devurl="dev",
+            sidebar_drawer=true,
+            deploy_decision=deploy_decision,
         ),
         pages=[
             # index.md is the VitePress root — not listed here
@@ -360,14 +381,17 @@ end
 # Deploy documentation to GitHub Pages
 # ═══════════════════════════════════════════════════════════════════════════════
 bases_file = joinpath(@__DIR__, "build", "bases.txt")
-if isfile(bases_file)
-    # PR previews are opt-in: CTActions sets DOCUMENTER_PUSH_PREVIEW to "true" only on a
-    # PR carrying the `documentation push preview` label.
-    DocumenterVitepress.deploydocs(;
-        repo=repo_url * ".git",
-        devbranch="main",
-        push_preview=get(ENV, "DOCUMENTER_PUSH_PREVIEW", "false") == "true",
-    )
-else
+if !deploy_decision.all_ok
+    reason = if get(ENV, "GITHUB_EVENT_NAME", "") == "pull_request" && !push_preview
+        "no preview requested (label `documentation push preview` absent)"
+    else
+        "the deployment criteria above are not met"
+    end
+    @info "Skipping deployment: $(reason)."
+elseif !isfile(bases_file)
     @info "Skipping deployment: no bases were built (prerelease with existing higher stable release)."
+else
+    DocumenterVitepress.deploydocs(;
+        repo=repo_url * ".git", devbranch="main", push_preview=push_preview
+    )
 end
