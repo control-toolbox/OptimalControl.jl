@@ -37,17 +37,21 @@ See [Choosing a method](@ref solve-choosing-a-method) to learn how these package
 
 If you call `solve` before loading the appropriate package, it raises an `ExtensionError` that names the missing package and the `using` statement to add:
 
-```julia
-julia> solve(ocp)
-ERROR: ExtensionError → _route_descriptive_options, descriptive_routing.jl:259
-│
-│  missing dependencies to access Ipopt{CPU} options metadata
-│
-│  Missing  NLPModelsIpopt
-│
-│  Context  Load NLPModelsIpopt extension first: using NLPModelsIpopt
-│  Hint     Run: using NLPModelsIpopt
-└─
+```@eval
+Main.CTBase.DevTools.repl_without_extensions(
+    :OptimalControl,
+    "using OptimalControl",
+    """
+    ocp = @def begin
+        t ∈ [0, 1], time
+        x ∈ R, state
+        u ∈ R, control
+        x(0) == 1
+        ẋ(t) == u(t)
+        ∫(u(t)^2) → min
+    end""",
+    "solve(ocp)",
+)
 ```
 
 The same mechanism covers every optional feature described on this page.
