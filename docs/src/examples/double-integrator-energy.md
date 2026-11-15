@@ -157,12 +157,8 @@ indirect_sol = f((t0, tf), x0, p0_sol)
 objective(direct_sol), objective(indirect_sol)
 ```
 
-For the plot, the flow is built with `saveat`, so that the trajectory has 101 points (see
-[Plotting a flow](@ref results-plot-flow)):
-
 ```@example main
-f_plot = Flow(ocp, u_max; saveat=range(t0, tf, 101), dense=false)
-plot!(plt, f_plot((t0, tf), x0, p0_sol); label="indirect", linestyle=:dash)
+plot!(plt, indirect_sol; label="indirect", linestyle=:dash)
 ```
 
 The indirect cost is the exact value, $6$. The direct cost differs by the discretisation error
