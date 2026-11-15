@@ -74,6 +74,16 @@ end
 struct GalleryThumbnails <: Documenter.Plugin end
 DocumenterVitepress.vitepress_assets(::GalleryThumbnails) = [GALLERY_STAGING]
 
+# The rocket animation of the guided tour: an HTML template with `@@name@@` placeholders,
+# filled in with the trajectories of the page. The template is a file of its own, not a
+# string in the page: JavaScript does not survive the `# hide` markers of a Literate block.
+const GODDARD_TEMPLATE = joinpath(@__DIR__, "src-literate", "goddard-animation.html")
+_js(x::AbstractVector) = "[" * join(round.(x; digits=6), ",") * "]"
+_js(x::Real) = string(round(x; digits=6))
+_js(c::Plots.Colorant) = "#" * Plots.Colors.hex(c)
+goddard_animation(; kwargs...) =
+    reduce((html, (k, v)) -> replace(html, "@@$k@@" => _js(v)), kwargs; init=read(GODDARD_TEMPLATE, String))
+
 # DocumenterVitepress (0.3.5) hard-codes `collapsed: false` on every sidebar group
 # (`vitepress_config.jl`'s `pagelist2str` for a nested `name => children` entry), so the
 # whole navigation tree renders fully expanded and there is no `MarkdownVitepress` option

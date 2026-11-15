@@ -402,223 +402,24 @@ annotate!(plt[2], t_ref + 0.0008, (rf_bang + r_opt_f) / 2, text("+$(round(gain; 
 
 # The bang-bang rocket climbs faster at first, but it burns all its fuel at full speed in the densest air. The optimal one holds back, keeps fuel for later, and ends higher.
 
+#src The rocket animation (HTML only): the template is docs/src-literate/goddard-animation.html,
+#src filled in by `Main.goddard_animation` (docs/make.jl), shown as the `text/html` output.
 #md struct TourRawHTML                                                                      # hide
 #md     raw::String                                                                          # hide
 #md end                                                                                      # hide
 #md Base.show(io::IO, ::MIME"text/html", h::TourRawHTML) = print(io, h.raw)                 # hide
-#md                                                                                          # hide
 #md let                                                                                      # hide
 #md     X_opt = state(sol_cold).(t_opt)                                                      # hide
-#md     u_opt = control(sol_cold).(t_opt)                                                    # hide
-#md     r_opt_a = [x[1] for x in X_opt]                                                      # hide
-#md     v_opt_a = [x[2] for x in X_opt]                                                      # hide
-#md     m_opt_a = [x[3] for x in X_opt]                                                      # hide
-#md                                                                                          # hide
 #md     X_bang = [[state(traj_bang1)(t) for t in t1_grid]; [state(traj_bang2)(t) for t in t2_grid]] # hide
-#md     r_bang_a = [x[1] for x in X_bang]                                                    # hide
-#md     v_bang_a = [x[2] for x in X_bang]                                                    # hide
-#md     m_bang_a = [x[3] for x in X_bang]                                                    # hide
-#md     u_bang_a = [fill(1.0, length(t1_grid)); fill(0.0, length(t2_grid))]                  # hide
-#md                                                                                          # hide
-#md     j(a) = "[" * join(string.(round.(a; digits=6)), ",") * "]"                           # hide
-#md     pal = palette(:default)                                                              # hide
-#md     c_opt = "#" * hex(pal[1])                                                            # hide
-#md     c_bang = "#" * hex(pal[2])                                                           # hide
-#md     t_max_g = max(t_opt[end], t_bang[end])                                               # hide
-#md                                                                                          # hide
-#md     html_anim = """                                                                      # hide
-#md <div style="display: flex; justify-content: center; margin: 20px 0;">                    # hide
-#md     <canvas id="goddardTourCanvas" width="760" height="520"                              # hide
-#md             style="border: 1px solid #ddd; border-radius: 8px; max-width: 100%;">        # hide
-#md     </canvas>                                                                            # hide
-#md </div>                                                                                   # hide
-#md <script>                                                                                 # hide
-#md (function() {                                                                             # hide
-#md     const t1 = $(j(t_opt)), r1 = $(j(r_opt_a)), v1 = $(j(v_opt_a)), m1 = $(j(m_opt_a)), u1 = $(j(u_opt));     # hide
-#md     const t2 = $(j(t_bang)), r2 = $(j(r_bang_a)), v2 = $(j(v_bang_a)), m2 = $(j(m_bang_a)), u2 = $(j(u_bang_a)); # hide
-#md     const t_max_global = $t_max_g;                                                       # hide
-#md     const m0 = $m0, mf = $mf, r0 = $r0;                                                  # hide
-#md     const rf_opt = $(round(r_opt_f; digits=6)), rf_bang = $(round(rf_bang; digits=6));   # hide
-#md     const tf_opt = $(round(t_opt[end]; digits=6)), tf_bang = $(round(tf_bang; digits=6)); # hide
-#md     const color_opt = '$c_opt', color_bang = '$c_bang';                                  # hide
-#md                                                                                          # hide
-#md     const canvas = document.getElementById('goddardTourCanvas');                         # hide
-#md     if (!canvas) return;                                                                 # hide
-#md     const ctx = canvas.getContext('2d');                                                 # hide
-#md                                                                                          # hide
-#md     const flight_duration = 7.0;                                                         # hide
-#md     const pause_duration = 2.0;                                                          # hide
-#md     const total_duration = flight_duration + pause_duration;                             # hide
-#md     const zone_width = canvas.width / 2;                                                 # hide
-#md     const top_margin = 55;                                                               # hide
-#md     const bottom_margin = 105;                                                           # hide
-#md     const baseline = canvas.height - bottom_margin;                                      # hide
-#md     const r_max_all = Math.max(...r1, ...r2);                                            # hide
-#md     const altitude_scale = (baseline - top_margin) / (r_max_all - r0);                   # hide
-#md     const v_max_all = Math.max(...v1, ...v2);                                            # hide
-#md     let start_time = null;                                                               # hide
-#md                                                                                          # hide
-#md     function getColors() {                                                               # hide
-#md         const isDark = document.documentElement.classList.contains('dark') ||            # hide
-#md             (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); # hide
-#md         return isDark ? {                                                                # hide
-#md             bg: '#1e1e2e', ground: '#555', gauge_bg: '#3a3a4a',                          # hide
-#md             gauge_high: '#2ecc71', gauge_mid: '#f39c12', gauge_low: '#e74c3c',           # hide
-#md             text: '#ecf0f1', text_sec: '#a6adc8',                                        # hide
-#md             flame_outer: '#e67e22', flame_inner: '#f1c40f',                              # hide
-#md             win_fill: 'rgba(255,255,255,0.3)', win_stroke: 'rgba(255,255,255,0.65)',     # hide
-#md             progress: color_opt                                                          # hide
-#md         } : {                                                                            # hide
-#md             bg: '#fafafa', ground: '#bbb', gauge_bg: '#e6e9ec',                          # hide
-#md             gauge_high: '#2ecc71', gauge_mid: '#f39c12', gauge_low: '#e74c3c',           # hide
-#md             text: '#2c3e50', text_sec: '#7f8c8d',                                        # hide
-#md             flame_outer: '#e67e22', flame_inner: '#f1c40f',                              # hide
-#md             win_fill: 'rgba(255,255,255,0.55)', win_stroke: 'rgba(255,255,255,0.85)',    # hide
-#md             progress: color_opt                                                          # hide
-#md         };                                                                               # hide
-#md     }                                                                                    # hide
-#md                                                                                          # hide
-#md     function interpolate(t, data_t, data_y) {                                            # hide
-#md         let i = 0;                                                                       # hide
-#md         while (i < data_t.length - 1 && data_t[i + 1] < t) { i++; }                      # hide
-#md         if (i >= data_t.length - 1) return data_y[data_y.length - 1];                    # hide
-#md         const dt = data_t[i + 1] - data_t[i];                                            # hide
-#md         const alpha = dt > 0 ? (t - data_t[i]) / dt : 0;                                 # hide
-#md         return data_y[i] + alpha * (data_y[i + 1] - data_y[i]);                          # hide
-#md     }                                                                                    # hide
-#md                                                                                          # hide
-#md     function drawRocket(zone_idx, t_anim, t_end, r, v, m, u, color, label, colors) {     # hide
-#md         const zone_x = zone_idx * zone_width;                                            # hide
-#md         const cx = zone_x + zone_width / 2 - 20;                                         # hide
-#md         const ry = baseline - altitude_scale * (r - r0);                                 # hide
-#md                                                                                          # hide
-#md         // Ground line                                                                   # hide
-#md         ctx.beginPath();                                                                 # hide
-#md         ctx.moveTo(zone_x + 30, baseline + 20);                                          # hide
-#md         ctx.lineTo(zone_x + zone_width - 30, baseline + 20);                             # hide
-#md         ctx.lineWidth = 2;                                                               # hide
-#md         ctx.strokeStyle = colors.ground;                                                 # hide
-#md         ctx.stroke();                                                                    # hide
-#md                                                                                          # hide
-#md         // Fuel gauge                                                                    # hide
-#md         const fx = cx + 95, fh = 180, fy = baseline - fh;                                # hide
-#md         const fuel = Math.max(0, Math.min(1, (m - mf) / (m0 - mf)));                     # hide
-#md         ctx.fillStyle = colors.gauge_bg;                                                 # hide
-#md         ctx.fillRect(fx - 9, fy, 18, fh);                                                # hide
-#md         ctx.fillStyle = fuel > 0.5 ? colors.gauge_high : (fuel > 0.2 ? colors.gauge_mid : colors.gauge_low); # hide
-#md         ctx.fillRect(fx - 9, fy + (fh - fuel * fh), 18, fuel * fh);                      # hide
-#md         ctx.fillStyle = colors.text_sec;                                                 # hide
-#md         ctx.font = '12px sans-serif';                                                    # hide
-#md         ctx.textAlign = 'center';                                                        # hide
-#md         ctx.fillText('Fuel', fx, fy - 8);                                                # hide
-#md                                                                                          # hide
-#md         // Thrust gauge (u)                                                              # hide
-#md         const ux = fx + 40;                                                              # hide
-#md         const u_clamped = Math.max(0, Math.min(1, u));                                   # hide
-#md         ctx.fillStyle = colors.gauge_bg;                                                 # hide
-#md         ctx.fillRect(ux - 9, fy, 18, fh);                                                # hide
-#md         ctx.fillStyle = color;                                                           # hide
-#md         ctx.fillRect(ux - 9, fy + (fh - u_clamped * fh), 18, u_clamped * fh);            # hide
-#md         ctx.fillStyle = colors.text_sec;                                                 # hide
-#md         ctx.fillText('Thrust', ux, fy - 8);                                              # hide
-#md                                                                                          # hide
-#md         // Rocket body                                                                   # hide
-#md         const r_bot = ry + 18;                                                           # hide
-#md         ctx.fillStyle = color;                                                           # hide
-#md         ctx.beginPath();                                                                 # hide
-#md         ctx.moveTo(cx, ry - 36); ctx.lineTo(cx - 11, ry - 10); ctx.lineTo(cx + 11, ry - 10); # hide
-#md         ctx.closePath(); ctx.fill();                                                     # hide
-#md         ctx.fillRect(cx - 11, ry - 10, 22, 28);                                          # hide
-#md         ctx.beginPath();                                                                 # hide
-#md         ctx.moveTo(cx - 11, ry + 6); ctx.lineTo(cx - 22, ry + 21); ctx.lineTo(cx - 11, ry + 18); # hide
-#md         ctx.closePath(); ctx.fill();                                                     # hide
-#md         ctx.beginPath();                                                                 # hide
-#md         ctx.moveTo(cx + 11, ry + 6); ctx.lineTo(cx + 22, ry + 21); ctx.lineTo(cx + 11, ry + 18); # hide
-#md         ctx.closePath(); ctx.fill();                                                     # hide
-#md         ctx.beginPath();                                                                 # hide
-#md         ctx.arc(cx, ry + 2, 4.5, 0, 2 * Math.PI);                                        # hide
-#md         ctx.fillStyle = colors.win_fill; ctx.fill();                                     # hide
-#md         ctx.strokeStyle = colors.win_stroke; ctx.lineWidth = 1.5; ctx.stroke();          # hide
-#md                                                                                          # hide
-#md         // Flame                                                                         # hide
-#md         if (t_anim < t_end && u_clamped > 0.05) {                                        # hide
-#md             const fl = 8 + 22 * u_clamped;                                               # hide
-#md             ctx.fillStyle = colors.flame_outer;                                          # hide
-#md             ctx.beginPath();                                                             # hide
-#md             ctx.moveTo(cx - 9, r_bot); ctx.lineTo(cx, r_bot + fl); ctx.lineTo(cx + 9, r_bot); # hide
-#md             ctx.closePath(); ctx.fill();                                                 # hide
-#md             ctx.fillStyle = colors.flame_inner;                                          # hide
-#md             ctx.beginPath();                                                             # hide
-#md             ctx.moveTo(cx - 4.5, r_bot); ctx.lineTo(cx, r_bot + fl * 0.6); ctx.lineTo(cx + 4.5, r_bot); # hide
-#md             ctx.closePath(); ctx.fill();                                                 # hide
-#md         }                                                                                # hide
-#md                                                                                          # hide
-#md         // Altitude readout                                                              # hide
-#md         ctx.fillStyle = colors.text;                                                     # hide
-#md         ctx.font = 'bold 13px sans-serif';                                               # hide
-#md         ctx.fillText('r = ' + r.toFixed(5), cx, ry - 42);                                # hide
-#md                                                                                          # hide
-#md         // Velocity bar                                                                  # hide
-#md         const vw = 56, vh = 7, vx = cx - vw / 2, vy = ry + 48;                           # hide
-#md         const vl = Math.min(1, Math.abs(v) / v_max_all);                                 # hide
-#md         ctx.fillStyle = colors.gauge_bg; ctx.fillRect(vx, vy, vw, vh);                   # hide
-#md         ctx.fillStyle = vl > 0.7 ? colors.gauge_low : (vl > 0.4 ? colors.gauge_mid : colors.gauge_high); # hide
-#md         ctx.fillRect(vx, vy, vl * vw, vh);                                               # hide
-#md         ctx.fillStyle = colors.text_sec; ctx.font = '11px sans-serif';                   # hide
-#md         ctx.fillText('v', cx, vy + 18);                                                  # hide
-#md                                                                                          # hide
-#md         // Strategy label                                                                # hide
-#md         ctx.fillStyle = color;                                                           # hide
-#md         ctx.font = 'bold 16px sans-serif';                                               # hide
-#md         ctx.fillText(label, zone_x + zone_width / 2, baseline + 70);                     # hide
-#md     }                                                                                    # hide
-#md                                                                                          # hide
-#md     function draw(time) {                                                                # hide
-#md         if (!start_time) start_time = time;                                              # hide
-#md         const colors = getColors();                                                      # hide
-#md         const elapsed = ((time - start_time) / 1000.0) % total_duration;                 # hide
-#md         const progress = Math.min(1.0, elapsed / flight_duration);                       # hide
-#md         const t_anim = progress * t_max_global;                                          # hide
-#md                                                                                          # hide
-#md         ctx.fillStyle = colors.bg;                                                       # hide
-#md         ctx.fillRect(0, 0, canvas.width, canvas.height);                                 # hide
-#md                                                                                          # hide
-#md         ctx.fillStyle = colors.text;                                                     # hide
-#md         ctx.font = 'bold 16px sans-serif';                                               # hide
-#md         ctx.textAlign = 'center';                                                        # hide
-#md         ctx.fillText('t = ' + t_anim.toFixed(3), canvas.width / 2, 28);                  # hide
-#md                                                                                          # hide
-#md         // Reference apogee lines once reached                                           # hide
-#md         if (t_anim >= tf_bang) {                                                         # hide
-#md             const y_bang = baseline - altitude_scale * (rf_bang - r0);                   # hide
-#md             ctx.save(); ctx.setLineDash([5, 5]); ctx.strokeStyle = color_bang; ctx.lineWidth = 1.2; # hide
-#md             ctx.beginPath(); ctx.moveTo(30, y_bang); ctx.lineTo(canvas.width - 30, y_bang); ctx.stroke(); # hide
-#md             ctx.restore();                                                               # hide
-#md         }                                                                                # hide
-#md         if (t_anim >= tf_opt) {                                                          # hide
-#md             const y_opt = baseline - altitude_scale * (rf_opt - r0);                     # hide
-#md             ctx.save(); ctx.setLineDash([5, 5]); ctx.strokeStyle = color_opt; ctx.lineWidth = 1.2; # hide
-#md             ctx.beginPath(); ctx.moveTo(30, y_opt); ctx.lineTo(canvas.width - 30, y_opt); ctx.stroke(); # hide
-#md             ctx.restore();                                                               # hide
-#md         }                                                                                # hide
-#md                                                                                          # hide
-#md         drawRocket(0, t_anim, tf_opt, interpolate(t_anim, t1, r1), interpolate(t_anim, t1, v1), # hide
-#md                    interpolate(t_anim, t1, m1), interpolate(t_anim, t1, u1), color_opt, 'optimal', colors); # hide
-#md         drawRocket(1, t_anim, tf_bang, interpolate(t_anim, t2, r2), interpolate(t_anim, t2, v2), # hide
-#md                    interpolate(t_anim, t2, m2), interpolate(t_anim, t2, u2), color_bang, 'bang-bang', colors); # hide
-#md                                                                                          # hide
-#md         ctx.fillStyle = colors.gauge_bg;                                                 # hide
-#md         ctx.fillRect(0, canvas.height - 4, canvas.width, 4);                             # hide
-#md         ctx.fillStyle = colors.progress;                                                 # hide
-#md         ctx.fillRect(0, canvas.height - 4, canvas.width * progress, 4);                  # hide
-#md                                                                                          # hide
-#md         requestAnimationFrame(draw);                                                     # hide
-#md     }                                                                                    # hide
-#md     requestAnimationFrame(draw);                                                         # hide
-#md })();                                                                                    # hide
-#md </script>                                                                                # hide
-#md """                                                                                      # hide
-#md     TourRawHTML(html_anim)                                                               # hide
+#md     col(X, i) = [x[i] for x in X]                                                        # hide
+#md     TourRawHTML(Main.goddard_animation(;                                                 # hide
+#md         t1=t_opt, r1=col(X_opt, 1), v1=col(X_opt, 2), m1=col(X_opt, 3),                  # hide
+#md         u1=control(sol_cold).(t_opt),                                                    # hide
+#md         t2=t_bang, r2=col(X_bang, 1), v2=col(X_bang, 2), m2=col(X_bang, 3),              # hide
+#md         u2=[fill(1.0, length(t1_grid)); fill(0.0, length(t2_grid))],                     # hide
+#md         t_max=max(t_opt[end], t_bang[end]), m0=m0, mf=mf, r0=r0,                         # hide
+#md         rf_opt=r_opt_f, rf_bang=rf_bang, tf_opt=t_opt[end], tf_bang=tf_bang,             # hide
+#md         color_opt=palette(:default)[1], color_bang=palette(:default)[2]))                # hide
 #md end                                                                                      # hide
 
 #src ============================================================================
