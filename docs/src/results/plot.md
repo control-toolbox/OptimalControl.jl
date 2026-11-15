@@ -119,8 +119,7 @@ plot(sol, :state, :costate, :control;
 Three attributes are set by `plot` itself, from the names in the problem: `title`,
 `xlabel` and `ylabel`. `xlabel` replaces the x label of the subplots that carry one, and
 `title` replaces the overall title. `ylabel` is ignored with a warning, as there is one name
-per component
-([CTBase#569](https://github.com/control-toolbox/CTBase.jl/issues/569)). To change a y label,
+per component. To change a y label,
 edit the subplot afterwards, for instance `ylabel!(plt[2], "speed")` (see
 [Custom plots](@ref results-plot-custom)).
 
@@ -383,31 +382,53 @@ sol_flow = f((t0, tf), x0, p0)
 plot(sol_flow)
 ```
 
-The solution of a flow is kept at the steps of the integrator only, which are few on a smooth
-problem ([CTFlows#435](https://github.com/control-toolbox/CTFlows.jl/issues/435)). Here
-there are 5 points, so the curves above are polygons:
+The solution of a flow is sampled on 250 times by default, denser where the curves bend, so
+the curves are smooth even when the integrator takes few steps:
 
 ```@example main
-time_grid(sol_flow)
+length(time_grid(sol_flow))
 ```
 
 ```@example main
 @assert isapprox(state(sol_flow)(tf), xf; atol=1e-8)   # hide
+@assert length(time_grid(sol_flow)) == 250             # hide
 nothing                                                # hide
 ```
 
-For a finer curve, pass `saveat` when you **build** the flow, together with `dense=false`. The
-call itself only accepts `variable`, `unsafe` and `variable_costate`. Do not leave out
-`dense=false`: without it, the call crashes the Julia session
-([CTFlows#434](https://github.com/control-toolbox/CTFlows.jl/issues/434)). Use such a flow for trajectories only: its point call `f(t0, x0, p0, tf)` returns the
-value at the last `saveat` time before `tf`, not at `tf`
-([CTFlows#441](https://github.com/control-toolbox/CTFlows.jl/issues/441)).
+!!! note "How the times are chosen"
+
+    On a smooth problem, the integrator takes few steps, but it can evaluate the solution at
+    any time with its own accuracy. When it returns fewer than 250 times, the flow generates
+    250, placed to draw the curves best: denser where the state, the costate and the control
+    bend, with a uniform share. 250 is the default `grid_size` of the direct methods, so the
+    solutions of a flow and of a direct method have the same size. The times only shape the
+    output: the integration and the objective are the same whatever the grid. See
+    [Output grid and accuracy](https://control-toolbox.org/CTFlows.jl/stable/flows/integrating#Output-grid-and-accuracy)
+    in the CTFlows documentation.
+
+The `grid` keyword of the call changes this: `grid=n` gives `n` times, and `grid=nothing`
+keeps the steps of the integrator only, here 5, so the curves become polygons:
 
 ```@example main
-fine_grid = range(t0, tf, 100)
-f2 = Flow(ocp, (x, p) -> p[2]; saveat=fine_grid, dense=false)
+sol_steps = f((t0, tf), x0, p0; grid=nothing)
+length(time_grid(sol_steps))
+```
+
+To get the trajectory at given times, call the flow with these times instead of the span,
+`f(range(t0, tf, 11), x0, p0)`, or pass `saveat` when you **build** the flow. The point call
+`f(t0, x0, p0, tf)` of such a flow still returns the value at `tf`:
+
+```@example main
+f2 = Flow(ocp, (x, p) -> p[2]; saveat=range(t0, tf, 11))
 sol_flow2 = f2((t0, tf), x0, p0)
 plot(sol_flow2)
+```
+
+```@example main
+@assert length(time_grid(sol_steps)) < 20                         # hide
+@assert length(time_grid(sol_flow2)) == 11                        # hide
+@assert isapprox(f2(t0, x0, p0, tf)[1], xf; atol=1e-8)            # hide
+nothing                                                           # hide
 ```
 
 ## [Reference](@id results-plot-reference)
