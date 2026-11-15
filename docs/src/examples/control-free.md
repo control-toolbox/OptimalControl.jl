@@ -147,12 +147,8 @@ problem, on a grid of 20 steps, and the indirect method the problem itself.
 variable(growth_sol), λ_sol
 ```
 
-For the plot, the flow is built with `saveat`, so that the trajectory has 201 points (see
-[Plotting a flow](@ref results-plot-flow)):
-
 ```@example main
-f_growth_plot = Flow(ocp_growth; saveat=range(t0, tf, 201), dense=false)
-indirect_growth = f_growth_plot((t0, tf), x0, p0_growth; variable=λ_sol)
+indirect_growth = f_growth((t0, tf), x0, p0_growth; variable=λ_sol)
 plot!(plt_growth, indirect_growth, :state; label="indirect", linestyle=:dash)
 ```
 
@@ -293,8 +289,7 @@ variable(harmonic_sol), ω_sol, π / 2
 ```
 
 ```@example main
-f_harmonic_plot = Flow(ocp_harmonic; saveat=range(t0h, tfh, 101), dense=false)
-indirect_harmonic = f_harmonic_plot((t0h, tfh), [q0, v0], p0_harmonic; variable=ω_sol)
+indirect_harmonic = f_harmonic((t0h, tfh), [q0, v0], p0_harmonic; variable=ω_sol)
 plot!(plt_harmonic, indirect_harmonic, :state; label="indirect", linestyle=:dash)
 ```
 
