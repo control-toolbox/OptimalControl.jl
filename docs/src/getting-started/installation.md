@@ -13,9 +13,9 @@ Pkg.add("OptimalControl")
 
     If you are new to Julia, read [New to Julia: how to use OptimalControl](https://github.com/orgs/control-toolbox/discussions/64).
 
-`OptimalControl` alone is enough to define a problem with [`@def`](@ref modelling-abstract-syntax) and describe [solve strategies](@ref solve-choosing-a-method). The features below are optional: each requires an additional package, which you only need to load when you use that feature.
+`OptimalControl` alone is enough to define a problem with [`@def`](@ref modelling-abstract-syntax) and describe [solve strategies](@ref solve-choosing-a-method). To solve it, you need a solver, which comes in its own package. The other features are optional: each requires an additional package, which you only need to load when you use that feature.
 
-## You will also need a solver
+## A solver, to call `solve`
 
 `solve` requires an NLP solver backend to be loaded. `NLPModelsIpopt` is the default solver and is used throughout this documentation:
 
