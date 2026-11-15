@@ -215,7 +215,41 @@ For the complete list of each package's options, see:
 | `:gauss_legendre_2` | 2-point Gauss–Legendre collocation, fourth-order | ✅ | ✗ |
 | `:gauss_legendre_3` | 3-point Gauss–Legendre collocation, sixth-order | ✅ | ✗ |
 
-The higher-order Gauss–Legendre schemes are more accurate, at a higher cost per grid step.
+The order shows on a problem whose solution is known. For $\dot x = u$, $x(0) = 1$, and the
+cost $\int_0^1 (x^2 + u^2)\,\mathrm{d}t$, the Riccati equation gives the optimal cost
+$J^* = \tanh(1)$. Halving the step divides the error of a scheme of order $k$ by $2^k$:
+
+```@example main
+lq = @def begin
+    t ∈ [0, 1], time
+    x ∈ R, state
+    u ∈ R, control
+    x(0) == 1
+    ẋ(t) == u(t)
+    ∫(x(t)^2 + u(t)^2) → min
+end
+
+error_of(scheme, N) = abs(objective(solve(lq; scheme=scheme, grid_size=N, display=false)) - tanh(1))
+
+for scheme in (:euler, :euler_implicit, :trapeze, :midpoint, :gauss_legendre_2, :gauss_legendre_3)
+    e10, e20 = error_of(scheme, 10), error_of(scheme, 20)
+    println(rpad(scheme, 18), "error ", rpad(round(e10; sigdigits=2), 9),
+            "→ ", rpad(round(e20; sigdigits=2), 9), "observed order ", round(log2(e10 / e20); digits=1))
+end
+```
+
+```@example main
+for (scheme, k) in ((:euler, 1), (:trapeze, 2), (:midpoint, 2), (:gauss_legendre_2, 4))   # hide
+    @assert abs(log2(error_of(scheme, 10) / error_of(scheme, 20)) - k) < 0.2           # hide
+end                                                                                    # hide
+nothing                                                                                # hide
+```
+
+The higher-order schemes reach a given accuracy with far fewer steps, at a higher cost per
+step: a Gauss–Legendre scheme adds unknowns at the stages inside each step. The order is
+reached on a smooth solution. On a bang–bang control, the error is limited by the switching
+times, which fall between the points of the grid.
+
 The grid is set by `grid_size`, the number of uniform steps (default `250`), or by an
 explicit `time_grid`: the increasing times of the grid, from the initial to the final time,
 possibly non-uniform, to put more points where the solution varies fast. Here a grid twice
