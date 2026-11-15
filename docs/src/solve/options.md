@@ -4,8 +4,9 @@ Every keyword argument passed to `solve` ends up on exactly one strategy: the di
 the modeler, or the solver. This page covers how that routing works, the two escape hatches
 for the cases it does not handle automatically, and how to inspect where a value came from.
 
-The examples use the energy-minimal double integrator of
-[Your first problem](@ref getting-started-first-problem).
+The examples swing a pendulum up, from rest at the bottom to rest at the top, with the least
+effort. The dynamics are nonlinear, so the solver iterates, and its options change what it
+returns.
 
 ::: details The problem used on this page
 
@@ -13,18 +14,14 @@ The examples use the energy-minimal double integrator of
 using OptimalControl
 using NLPModelsIpopt
 
-t0 = 0
-tf = 1
-x0 = [-1, 0]
-
 ocp = @def begin
-    t ∈ [t0, tf], time
-    x = (q, v) ∈ R², state
+    t ∈ [0, 2], time
+    x = (θ, ω) ∈ R², state
     u ∈ R, control
-    x(t0) == x0
-    x(tf) == [0, 0]
-    ẋ(t) == [v(t), u(t)]
-    0.5∫(u(t)^2) → min
+    x(0) == [0, 0]
+    x(2) == [π, 0]
+    ẋ(t) == [ω(t), -sin(θ(t)) + u(t)]
+    ∫(u(t)^2) → min
 end
 nothing # hide
 ```
@@ -51,6 +48,33 @@ An option nobody recognises is rejected with a "did you mean" suggestion:
 ```@repl advanced
 solve(ocp, :ipopt; max_iter=100, mumps_print_level=1, display=false)
 ```
+
+## Options change the result
+
+The options of the solver decide when it stops. With the defaults, Ipopt stops at a tolerance
+of `1e-8`. A looser tolerance stops sooner, on a less accurate cost; a too small `max_iter`
+stops before convergence, and the solution says so:
+
+```@example advanced
+sol = solve(ocp; display=false)
+sol_tol = solve(ocp; tol=1e-2, display=false)
+sol_iter = solve(ocp; max_iter=2, display=false)
+
+for (name, s) in (("default", sol), ("tol=1e-2", sol_tol), ("max_iter=2", sol_iter))
+    println(rpad(name, 12), rpad(successful(s), 7), rpad(status(s), 13),
+            iterations(s), " iterations, cost ", objective(s))
+end
+```
+
+```@example advanced
+@assert successful(sol) && successful(sol_tol) && !successful(sol_iter)              # hide
+@assert iterations(sol_tol) < iterations(sol)                                        # hide
+@assert abs(objective(sol_tol) - objective(sol)) > 1e-3                               # hide
+nothing                                                                              # hide
+```
+
+Always check `successful(sol)` before using a solution (see
+[Solution object](@ref results-solution)).
 
 ## Explicit routing with `route_to`
 
