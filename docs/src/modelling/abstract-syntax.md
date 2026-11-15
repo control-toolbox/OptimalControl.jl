@@ -21,9 +21,6 @@ While the syntax will be transparent to those users familiar with Julia expressi
 
 ```@setup abs
 using OptimalControl
-using Logging: with_logger, ConsoleLogger
-# show warnings without the source location (a local package path)
-quiet_location(f) = with_logger(f, ConsoleLogger(stderr; meta_formatter=(level, args...) -> (:yellow, "Warning:", "")))
 data(t) = 2exp(0.5t)   # observed-data stub (parameter estimation)
 c(t) = 1.0             # damping coefficient (damped integrator)
 ```
@@ -514,7 +511,7 @@ When the **same scalar component** is targeted by several box-constraint declara
 For instance,
 
 ```@example abs
-quiet_location() do # hide
+Main.CTBase.DevTools.warnings_without_paths() do # hide
 @def begin
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
@@ -533,7 +530,7 @@ yields the effective constraint `1 ≤ q(t) ≤ 2`, with `aliases = [:q_wide, :q
 Conversely, the following declares an empty feasible set and raises an error at build time:
 
 ```@repl abs
-quiet_location() do # hide
+Main.CTBase.DevTools.warnings_without_paths() do # hide
 @def begin
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
@@ -707,7 +704,7 @@ nothing # hide
 !!! warning
     Such aliases do *not* define any additional function and are just replaced textually by the parser. In particular, they cannot be used outside the `@def` `begin ... end` block. Conversely, the constants and functions used within the block are ordinary Julia names, defined outside it (see [Structure of a definition](@ref modelling-abstract-syntax-structure) for when).
 
-!!! hint
+!!! tip "Trace mode"
     You can rely on a trace mode for the macro `@def` to look at your code after expansions of the aliases using the `@def ocp ...` syntax and adding `true` after your `begin ... end` block (see [Trace mode](@extref CTParser syntax/trace) in the CTParser documentation):
 
     ```@repl abs
