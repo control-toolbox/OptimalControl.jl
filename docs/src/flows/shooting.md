@@ -43,8 +43,8 @@ is $p_2$. As on [Multi-phase flows](@ref flows-multi-phase), the solution is $u 
 $u = -1$, with $p_0 = (1, 1)$, $t_1 = 1$ and $t_f = 2$. Shooting will find these values.
 
 ```@example main
-f_max = Flow(ocp, (x, p, v) -> 1)
-f_min = Flow(ocp, (x, p, v) -> -1)
+f_max = Flow(ocp, (x, p, v) -> 1; label="u = +1")
+f_min = Flow(ocp, (x, p, v) -> -1; label="u = -1")
 nothing # hide
 ```
 
