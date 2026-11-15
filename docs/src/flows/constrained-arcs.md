@@ -69,9 +69,9 @@ $t_2 = 1.6$ and $p(0) \approx -0.982237546583301$.
 u_b(x, p) = 0            # the control on the boundary arc
 μ(x, p) = 2x             # the multiplier on the boundary arc
 
-f_minus = Flow(ocp, (x, p) -> -1)
-f_boundary = Flow(ocp, u_b; constraint=:x_con, multiplier=μ)
-f_plus = Flow(ocp, (x, p) -> 1)
+f_minus = Flow(ocp, (x, p) -> -1; label="u = -1")
+f_boundary = Flow(ocp, u_b; constraint=:x_con, multiplier=μ, label="boundary")
+f_plus = Flow(ocp, (x, p) -> 1; label="u = +1")
 
 t1, t2 = 0.9, 1.6
 f = f_minus * (t1, f_boundary) * (t2, f_plus)
@@ -198,8 +198,9 @@ costate **jumps** at $t_1$ and $t_2$: $p_1$ increases by $18$. On a Hamiltonian 
 jump acts on the costate (see [Multi-phase flows](@ref flows-multi-phase)):
 
 ```@example main
-f_free = Flow(ocp_bd, (x, p) -> p[2])
-f_arc = Flow(ocp_bd, (x, p) -> 0; constraint=(x, u) -> l - x[1], multiplier=(x, p) -> 0)
+f_free = Flow(ocp_bd, (x, p) -> p[2]; label="interior")
+f_arc = Flow(ocp_bd, (x, p) -> 0; constraint=(x, u) -> l - x[1], multiplier=(x, p) -> 0,
+             label="boundary")
 
 ν = 18
 f_bd = f_free * (3l, [ν, 0], f_arc) * (1 - 3l, [ν, 0], f_free)
