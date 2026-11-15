@@ -33,21 +33,9 @@
 # ## The problem, and installing the tools
 #src ============================================================================
 #
-# An **optimal control problem** (OCP) in Bolza form reads
-#
-# ```math
-# J(x, u) = g(x(t_0), x(t_f)) + \int_{t_0}^{t_f} f^{0}(t, x(t), u(t))\,\mathrm{d}t \;\to\; \min,
-# ```
-#
-# subject to the controlled dynamics $\dot{x}(t) = f(t, x(t), u(t))$ and, possibly, box / path / boundary constraints. When $g = 0$ the cost is of **Lagrange** form; when $f^0 = 0$, of **Mayer** form.
-#
-# More generally, the times $t_0$ and $t_f$ may be free (optimisation variables), and a vector $v$ of additional parameters can enter the cost, dynamics and constraints. The full problem then reads
-#
-# ```math
-# \min_{x,u,v}\; g(x(t_0), x(t_f), v) + \int_{t_0}^{t_f} f^{0}(t, x(t), u(t), v)\,\mathrm{d}t,
-# ```
-#
-# subject to $\dot{x}(t) = f(t, x(t), u(t), v)$, box / path / boundary constraints.
+# We model and solve **optimal control problems** (OCP): minimise a cost, made of a function of the end points and an integral along the trajectory, subject to controlled dynamics $\dot{x}(t) = f(t, x(t), u(t))$ and constraints.
+#md # The general problem, with free times and optimisation variables, and the notation used throughout the documentation are on [Formulation](@ref modelling-formulation).
+#nb # The general problem, with free times and optimisation variables, and the notation used throughout the documentation are on [Formulation](https://control-toolbox.org/OptimalControl.jl/dev/modelling/formulation).
 #
 # OptimalControl.jl is the core of the [control-toolbox](https://control-toolbox.org) ecosystem, a modular suite of Julia packages — CTBase (base types & exceptions), CTParser (DSL parsing), CTModels (problem data structures), CTDirect (discretisation & NLP transcription), CTFlows (Hamiltonian flows for indirect methods), CTLie (Lie and Poisson brackets), and CTSolvers (solver orchestration) — that can also be used individually.
 #
@@ -217,23 +205,9 @@ println("iterations, @init guess:   ", iterations(sol))
 # ## Direct method in depth: Goddard
 #src ============================================================================
 #
-# ### Discretise optimal control problems
-#
-# The **direct** method turns the infinite-dimensional OCP into a finite-dimensional nonlinear program (NLP) by discretising time (Runge–Kutta / collocation) on a grid, then hands the NLP to a solver. It is robust and easy to use.
-#
-# Concretely, time is discretised on a uniform grid $t_0 < t_1 < \dots < t_N = t_f$ with step $h = (t_f - t_0)/N$. The (explicit) Euler scheme, for instance, replaces the dynamics by
-#
-# ```math
-# x_{i} = x_{i-1} + h\,f(t_{i-1}, x_{i-1}, u_{i-1}), \quad i = 1, \dots, N,
-# ```
-#
-# and the integral cost by the corresponding rectangle sum
-#
-# ```math
-# h\sum_{i=0}^{N-1} f^{0}(t_i, x_i, u_i).
-# ```
-#
-# The continuous OCP thus becomes a finite-dimensional NLP in the variables $X = (x_0, \dots, x_N, u_0, \dots, u_{N-1})$, which is passed to an NLP solver such as [Ipopt](https://coin-or.github.io/Ipopt). Higher-order schemes (midpoint, Gauss–Legendre collocation) follow the same principle with different quadrature and interpolation formulas — `solve` defaults to the second-order `:midpoint` scheme, not Euler.
+# The **direct** method turns the infinite-dimensional OCP into a finite-dimensional nonlinear program (NLP) by discretising time on a grid, then hands the NLP to a solver such as [Ipopt](https://coin-or.github.io/Ipopt). It is robust and easy to use.
+#md # How a scheme turns the dynamics and the cost into the equations of the NLP is on [The direct method, briefly](@ref solve-overview-direct-method).
+#nb # How a scheme turns the dynamics and the cost into the equations of the NLP is on [The direct method, briefly](https://control-toolbox.org/OptimalControl.jl/dev/solve/overview#the-direct-method-briefly).
 #
 # ### The Goddard rocket problem
 #

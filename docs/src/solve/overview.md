@@ -4,7 +4,7 @@
 solver, get a [`Solution`](@ref results-solution) back. This page shows the quickest way to
 call it, how to read what it prints, and the two ways to steer it away from its defaults.
 
-## The direct method, briefly
+## [The direct method, briefly](@id solve-overview-direct-method)
 
 The notation is the one of [Notation and conventions](@ref modelling-formulation-conventions).
 A direct method replaces the optimal control problem by a finite-dimensional one:
