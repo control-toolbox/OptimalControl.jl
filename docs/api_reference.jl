@@ -186,7 +186,6 @@ const API_THEMES = [
             :infos,
             :model,
             # Emptiness
-            :is_empty,
             :is_empty_time_grid,
             # Duals
             :dual,

@@ -302,8 +302,6 @@ built on the package, not scripts.
 - Integration results: `AbstractIntegrationResult` `final_state` `evaluate_at` (a flow's
   trajectory is called directly, `traj(t)`).
 - `get_build_examodel` (the ExaModels builder of a `@def` model).
-- `is_empty` acts on the time-grid model of a solution, not on a solution:
-  `is_empty_time_grid(sol)` is the user-facing form. Worth reconsidering its export.
 
 ## 15. How to use this file
 

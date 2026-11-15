@@ -56,8 +56,16 @@ dual(sol, ocp, :label)
 
 See [BREAKING.md](BREAKING.md).
 
+#### `is_empty` is no longer exported
+
+- **`is_empty` is no longer exported.** It reads the time-grid model inside a solution, not a solution, so no user object had a method for it. `is_empty_time_grid(sol)` is the user-facing form. See [BREAKING.md](BREAKING.md).
+
 ### ✨ New Features
 
+- **The switching structure of a solution is readable from OptimalControl** ([#1079](https://github.com/control-toolbox/OptimalControl.jl/issues/1079)): `switching_times`, `phase_labels`, `has_switching`, `left_limit` and `right_limit` are exported with the other `Solution` accessors.
+- **`OptimalControl.build_model` and `OptimalControl.BuiltModel`** ([#1077](https://github.com/control-toolbox/OptimalControl.jl/issues/1077)) close the staged direct method: `ocp_solution(built, stats, modeler)` turns the output of an NLP solver called by hand into a `Solution`.
+- **`OptimalControl.SolverFailure`** ([#1078](https://github.com/control-toolbox/OptimalControl.jl/issues/1078)), the exception a flow throws when an integration fails, is reachable like the six other exceptions.
+- **`OptimalControl.UniformGrid` and `OptimalControl.AdaptiveGrid`**, the values of the `grid` keyword of a flow's trajectory call, are reachable.
 - **`show_trace` is an alias of the `display` option of `solve`** ([#785](https://github.com/control-toolbox/OptimalControl.jl/issues/785)), the name NonlinearSolve and Optim use, in descriptive and explicit mode alike. Giving both `display` and `show_trace` raises an `IncorrectArgument`, as `init` and `initial_guess` do; the message now names the aliases of the option at fault.
 
 ### 🐛 Bug Fixes
