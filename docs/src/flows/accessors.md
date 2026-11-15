@@ -78,17 +78,26 @@ time and the variable: `H(t, x, p, v)`, `Hv(t, x, p, v)`, `Hp(t, x, p, u, v)`,
 `get_hamiltonian_gradient(f)` returns the gradient of $\mathbf{H}$ with respect to $x$ and
 $p$, and `get_variable_gradient(f)` its gradient with respect to the variable.
 `get_pseudo_hamiltonian_gradient` and `get_pseudo_variable_gradient` do the same for $H$,
-before the law is substituted. They only take the full form `(t, x, p, v)`
-([CTFlows#438](https://github.com/control-toolbox/CTFlows.jl/issues/438)):
+before the law is substituted. Like the functions above, the gradients of $\mathbf{H}$ and
+$H$ take the short form, `(x, p)` and `(x, p, u)`, or the full form, `(t, x, p, v)` and
+`(t, x, p, u, v)`:
 
 ```@example main
 ∇H = get_hamiltonian_gradient(f)
-∇H(0.0, x, p, Float64[])   # (∇ₓH, ∇ₚH) = ((0, 12), (0, 6))
+∇H(x, p)   # (∇ₓH, ∇ₚH) = ((0, 12), (0, 6))
 ```
 
 ```@example main
-@assert all(∇H(0.0, x, p, Float64[]) .≈ ([0, 12], [0, 6]))   # hide
-nothing                                                     # hide
+∇Hp = get_pseudo_hamiltonian_gradient(f)
+∇Hp(x, p, u(x, p))   # the same, at u = p₂
+```
+
+```@example main
+@assert all(∇H(x, p) .≈ ([0, 12], [0, 6]))                    # hide
+@assert all(∇H(0.0, x, p, Float64[]) .≈ ([0, 12], [0, 6]))    # hide
+@assert all(∇Hp(x, p, 6.0) .≈ ([0, 12], [0, 6]))              # hide
+@assert all(∇Hp(0.0, x, p, 6.0, Float64[]) .≈ ([0, 12], [0, 6]))   # hide
+nothing                                                       # hide
 ```
 
 ## Without a flow
@@ -118,15 +127,13 @@ Fx = vector_field(Flow(VectorField(x -> -x)))
 Fx(2.0)
 ```
 
-An accessor that does not apply raises an error. For a Hamiltonian flow, the error says what
-the flow holds and what to use instead:
+An accessor that does not apply raises an error that says what the flow holds and what to
+use instead, on a Hamiltonian flow as on a flow of the state:
 
 ```@repl main
 hamiltonian(Flow(HamiltonianVectorField((x, p) -> ([x[2], p[2]], [0, -p[1]]))))
+hamiltonian(Flow(VectorField(x -> -x)))
 ```
-
-On a flow of the state, it is a `MethodError` for now
-([CTFlows#438](https://github.com/control-toolbox/CTFlows.jl/issues/438)).
 
 ## The system and the integrator
 
