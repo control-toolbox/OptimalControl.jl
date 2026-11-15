@@ -336,10 +336,10 @@ with_api_reference(src_dir, ext_dir) do api_pages
             ],
             "Solve (direct)" => [
                 "Overview" => "solve/overview.md",
-                "Initial guess" => "solve/initial-guess.md",
                 "Choosing a method" => "solve/choosing-a-method.md",
                 "Options" => "solve/options.md",
                 "Explicit mode" => "solve/explicit-mode.md",
+                "Initial guess" => "solve/initial-guess.md",
                 "GPU" => "solve/gpu.md",
             ],
             "Results" => [
@@ -351,12 +351,12 @@ with_api_reference(src_dir, ext_dir) do api_pages
             "Flows (indirect)" => [
                 "Overview" => "flows/overview.md",
                 "From an OCP" => "flows/from-ocp.md",
-                "From Hamiltonians" => "flows/from-hamiltonians.md",
-                "Simulation" => "flows/simulation.md",
-                "Accessors" => "flows/accessors.md",
+                "Shooting" => "flows/shooting.md",
                 "Multi-phase flows" => "flows/multi-phase.md",
                 "Constrained arcs" => "flows/constrained-arcs.md",
-                "Shooting" => "flows/shooting.md",
+                "Simulation" => "flows/simulation.md",
+                "From Hamiltonians" => "flows/from-hamiltonians.md",
+                "Accessors" => "flows/accessors.md",
             ],
             "Geometry" => [
                 "Overview" => "geometry/overview.md",
@@ -377,9 +377,11 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "State constraint" => "examples/state-constraint.md",
                 "The logo" => "examples/logo.md",
             ],
-            "API Reference" => api_pages_final,
-            "Errors" => "errors.md",
-            "Migrating from v2.0" => "migration.md",
+            "Reference" => [
+                "API Reference" => api_pages_final,
+                "Errors" => "errors.md",
+                "Migrating from v2.0" => "migration.md",
+            ],
         ],
         plugins=[links],
     )

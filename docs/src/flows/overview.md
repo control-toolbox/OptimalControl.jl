@@ -49,9 +49,8 @@ cost from the problem.
 
 ## Three things this section does
 
-- **Indirect solving** — [From an OCP](@ref flows-from-ocp),
-  [Constrained arcs](@ref flows-constrained-arcs), [Multi-phase flows](@ref flows-multi-phase),
-  [Shooting](@ref flows-shooting).
+- **Indirect solving** — [From an OCP](@ref flows-from-ocp), [Shooting](@ref flows-shooting),
+  [Multi-phase flows](@ref flows-multi-phase), [Constrained arcs](@ref flows-constrained-arcs).
 - **Simulation** — [Simulation](@ref flows-simulation): integrate under a
   given control, no optimisation involved.
 - **Inspection** — [Accessors](@ref flows-accessors): the Hamiltonian,
@@ -189,13 +188,13 @@ first call an error that names the cause.
 ## Where to go
 
 - [From an OCP](@ref flows-from-ocp) — the main path for indirect optimal control.
-- [From Hamiltonians](@ref flows-from-hamiltonians) — building blocks below
-  the OCP layer.
-- [Simulation](@ref flows-simulation) — no optimisation, just integration.
-- [Accessors](@ref flows-accessors) — inspection.
+- [Shooting](@ref flows-shooting) — the payoff: solve the boundary value problem.
 - [Multi-phase flows](@ref flows-multi-phase) and [Constrained arcs](@ref flows-constrained-arcs)
   — assembling several arcs into one trajectory.
-- [Shooting](@ref flows-shooting) — the payoff.
+- [Simulation](@ref flows-simulation) — no optimisation, just integration.
+- [From Hamiltonians](@ref flows-from-hamiltonians) — building blocks below
+  the OCP layer.
+- [Accessors](@ref flows-accessors) — inspection.
 - [Solve overview](@ref solve-overview) — the direct-method counterpart to everything here.
 - [Geometry](@ref geometry-overview) — the Lie-theoretic tools some of these constructors build on.
 - [Notation and conventions](@ref modelling-formulation-conventions) — the signs and symbols
