@@ -37,8 +37,7 @@ with `t` for a non-autonomous problem and `v` for a problem with a variable.
 
 ## A constraint of order one
 
-This example comes from the v2.0.4 manual, after Bonnard, Faubourg, Launay and
-Trélat[^1]. Minimise $\int_0^2 x^2$ for $\dot x = u$, $|u| \le 1$, from $x(0) = 1$ to
+This example follows Bonnard, Faubourg, Launay and Trélat[^1]. Minimise $\int_0^2 x^2$ for $\dot x = u$, $|u| \le 1$, from $x(0) = 1$ to
 $x(2) = 1/2$, under the constraint $x \ge l_b = 0.1$:
 
 ```@example main
@@ -170,7 +169,7 @@ nothing                                                                         
 
 ## A costate jump: a constraint of order two
 
-This example also comes from the v2.0.4 manual. It is the Bryson–Denham problem: minimise
+This is the Bryson–Denham problem: minimise
 $\frac12\int_0^1 u^2$ for $\ddot x_1 = u$, from $x(0) = (0, 1)$ to $x(1) = (0, -1)$, with
 $x_1 \le l = 1/9$:
 

@@ -125,7 +125,7 @@ nothing                                                                       # 
 
 ## Example: off arc, then bang
 
-This example comes from the v2.0.4 manual. Minimise the $L^1$ norm of the control,
+Minimise the $L^1$ norm of the control,
 $\int_0^1 |u|$, for $\dot x = -x + u$, $u \in [-1, 1]$, from $x(0) = -1$ to $x(1) = 0$:
 
 ```@example main
