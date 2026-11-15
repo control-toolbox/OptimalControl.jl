@@ -94,7 +94,12 @@ vector, as everywhere else on the site ([functional-API callbacks](@ref modellin
 [abstract syntax](@ref modelling-abstract-syntax-control)):
 
 ```@example main
-typeof(u(0.25))
+u(0.25)
+```
+
+```@example main
+@assert u(0.25) isa Number   # hide
+nothing                      # hide
 ```
 
 `variable(sol)` is a value, not a function of time: a `Float64` for a 1-D variable, a vector
@@ -263,9 +268,7 @@ dual(sol_free, ocp_free, :start)
 ```
 
 The multiplier of the initial condition x(0) = x₀ is the initial costate p(t₀). Here the
-costate is p(t) = (4/3, 1 − 4t/3) on the first arc, so p(0) = (4/3, 1). This is a more
-accurate value than `costate(sol)(0)`, which is shifted by half a step (see
-[Trajectories](@ref results-solution-trajectories)).
+costate is p(t) = (4/3, 1 − 4t/3) on the first arc, so p(0) = (4/3, 1).
 
 ```@example main
 @assert isapprox(dual(sol_free, ocp_free, :tf_pos), 0; atol=1e-8)       # hide
