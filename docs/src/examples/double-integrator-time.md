@@ -122,8 +122,8 @@ The two arcs have their flows, with the control $+1$ and $-1$. The final time is
 so it is passed to the flows by keyword, `variable=tf`:
 
 ```@example main
-f_max = Flow(ocp, (x, p, v) -> 1)
-f_min = Flow(ocp, (x, p, v) -> -1)
+f_max = Flow(ocp, (x, p, v) -> 1; label="u = +1")
+f_min = Flow(ocp, (x, p, v) -> -1; label="u = -1")
 nothing # hide
 ```
 
