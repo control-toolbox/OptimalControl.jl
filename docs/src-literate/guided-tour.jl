@@ -188,8 +188,8 @@ sol_init = solve(ocp; init=nothing, max_iter=0, display=false)
 plot(sol_init; size=(800, 600))
 
 #md # !!! note "Notice the right-hand column: the costate is already there"
-#md #     Even though we only ever provide the state, control and (optional) variable, the solver initialises the **adjoint** internally. After optimisation, this right-column costate is exactly the **adjoint $p$ of Pontryagin's Maximum Principle** — the same $p$ we will reuse to start the indirect method in the indirect section. This closes the loop between the direct and indirect methods.
-#nb # **Notice the right-hand column: the costate is already there.** Even though we only ever provide the state, control and (optional) variable, the solver initialises the **adjoint** internally. After optimisation, this right-column costate is exactly the **adjoint $p$ of Pontryagin's Maximum Principle** — the same $p$ we will reuse to start the indirect method in the indirect section. This closes the loop between the direct and indirect methods.
+#md #     Even though we only ever provide the state, control and (optional) variable, the solution carries a costate: the multipliers of the discretised dynamics. It approximates the **adjoint $p$ of Pontryagin's Maximum Principle**, up to the step of the grid — the $p$ we will reuse to start the indirect method in the indirect section. This closes the loop between the direct and indirect methods.
+#nb # **Notice the right-hand column: the costate is already there.** Even though we only ever provide the state, control and (optional) variable, the solution carries a costate: the multipliers of the discretised dynamics. It approximates the **adjoint $p$ of Pontryagin's Maximum Principle**, up to the step of the grid — the $p$ we will reuse to start the indirect method in the indirect section. This closes the loop between the direct and indirect methods.
 
 # ### Providing our own initial guess
 #
