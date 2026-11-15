@@ -98,6 +98,34 @@ for `bypass` (`force === bypass`); use whichever name reads better:
     It skips type checking and validation entirely. Reach for it only when you're certain the
     option name and value are correct and the strategy genuinely doesn't declare it.
 
+## What a strategy accepts
+
+`describe` prints the options of a strategy (see [Choosing a method](@ref solve-choosing-a-method)).
+The same information can be read in code, on the type, before building an instance:
+
+```@example advanced
+:max_iter in option_names(OptimalControl.Ipopt)
+```
+
+```@example advanced
+option_default(OptimalControl.Ipopt, :max_iter), option_type(OptimalControl.Ipopt, :max_iter)
+```
+
+```@example advanced
+option_description(OptimalControl.Ipopt, :max_iter)
+```
+
+`option_defaults(OptimalControl.Ipopt)` gives all the defaults at once, as a named tuple. An
+option whose default is `NotProvided` is not passed to the solver, which then uses its own.
+
+```@example advanced
+@assert :max_iter in option_names(OptimalControl.Ipopt)                  # hide
+@assert option_default(OptimalControl.Ipopt, :max_iter) == 1000          # hide
+@assert option_type(OptimalControl.Ipopt, :max_iter) == Integer          # hide
+@assert option_defaults(OptimalControl.Ipopt).max_iter == 1000           # hide
+nothing                                                                  # hide
+```
+
 ## Where a value came from
 
 Every option on a built strategy instance knows whether it was set by you (`:user`), left at
