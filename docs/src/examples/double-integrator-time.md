@@ -192,13 +192,8 @@ indirect_sol = φ((t0, tf_sol), x0, p0_sol; variable=tf_sol)
 state(indirect_sol)(tf_sol)
 ```
 
-For the plot, the flows are built with `saveat`, so that the trajectory has 201 points (see
-[Plotting a flow](@ref results-plot-flow)):
-
 ```@example main
-fine = (saveat=range(t0, tf_sol, 201), dense=false)
-φ_plot = Flow(ocp, (x, p, v) -> 1; fine...) * (t1_sol, Flow(ocp, (x, p, v) -> -1; fine...))
-plot!(plt, φ_plot((t0, tf_sol), x0, p0_sol; variable=tf_sol); label="indirect", linestyle=:dash)
+plot!(plt, indirect_sol; label="indirect", linestyle=:dash)
 ```
 
 The two final times agree up to the discretisation error of the direct method:
