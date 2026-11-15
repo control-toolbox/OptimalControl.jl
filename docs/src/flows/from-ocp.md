@@ -6,6 +6,11 @@ Hamiltonian flow it defines. `Flow(ocp, law)` reads the dynamics and the cost fr
 problem, so you only write the law. The notation is the one of
 [Notation and conventions](@ref modelling-formulation-conventions).
 
+The examples use the energy-minimal double integrator of
+[Your first problem](@ref getting-started-first-problem).
+
+::: details The problem used on this page
+
 ```@example main
 using OptimalControl
 using OrdinaryDiffEqTsit5
@@ -25,6 +30,8 @@ ocp = @def begin
 end
 nothing # hide
 ```
+
+:::
 
 ## The idea
 
