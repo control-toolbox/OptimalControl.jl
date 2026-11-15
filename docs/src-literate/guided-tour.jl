@@ -492,6 +492,27 @@ end
 #
 # measures the miss at $t_f$: solving the BVP reduces to finding $p_0$ such that $S(p_0) = 0$.
 #
+#md # To picture what each iteration does, the animation below uses a basketball as a visual analogy. A player throws a ball, and the two unknowns are the **angle** and the **speed** of the throw, as $p_0$ has two components. The ball must be in the hoop at the fixed time $T$, as $x(t_f) = x_f$ must hold at the fixed time $t_f$: the position of the hoop is the boundary condition. Each throw is one trial value of $p_0$, and the **residual** is what the shooting function $S(p_0)$ measures: the gap between the ball and the hoop at time $T$. The animation draws it as a dashed arrow and lists its length, in metres, in a table. Newton's method uses how the gap changes with the angle and the speed to correct them. Close to the solution, the residual falls very fast, as the last column shows: the ball seems to be in the hoop one correction before the end, and the table tells how much accuracy is still gained. The shooting of the double integrator below is linear in $p_0$, so a single Newton step suffices there; the basketball is not linear, which is why it takes several.
+
+#src The basketball animation (HTML only): the template is
+#src docs/src-literate/shooting-animation.html, filled in by `Main.shooting_animation`
+#src (docs/make.jl), shown as the `text/html` output. Nothing appears in the notebook.
+#md using LinearAlgebra                                                                     # hide
+#md let                                                                                      # hide
+#md     g_b, T_b, h_b, x_t, y_t = 9.81, 1.1, 2.0, 4.6, 3.05                                  # hide
+#md     ball(u, t) = [u[2]*cos(u[1])*t, h_b + u[2]*sin(u[1])*t - g_b*t^2/2]                  # hide
+#md     S_b(u) = ball(u, T_b) - [x_t, y_t]                                                   # hide
+#md     J_b(u) = [-u[2]*sin(u[1])*T_b  cos(u[1])*T_b; u[2]*cos(u[1])*T_b  sin(u[1])*T_b]     # hide
+#md     tol_b = 1e-3                                                                         # hide
+#md     shots = [[deg2rad(34), 6.5]]                                                         # hide
+#md     while norm(S_b(shots[end])) > tol_b && length(shots) < 10                            # hide
+#md         push!(shots, shots[end] - J_b(shots[end]) \ S_b(shots[end]))                    # hide
+#md     end                                                                                  # hide
+#md     TourRawHTML(Main.shooting_animation(;                                                # hide
+#md         shots=shots, residuals=[norm(S_b(u)) for u in shots],                            # hide
+#md         xt=x_t, yt=y_t, h0=h_b, g=g_b, T=T_b, tol=tol_b, color=palette(:default)[1]))    # hide
+#md end                                                                                      # hide
+
 # For the energy problem, $H = p_1 v + p_2 u - u^2/2$, so the maximiser is $u = p_2$.
 
 using NonlinearSolve   # nonlinear equations (shooting); the ODE solver is already loaded

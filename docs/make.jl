@@ -79,10 +79,17 @@ DocumenterVitepress.vitepress_assets(::GalleryThumbnails) = [GALLERY_STAGING]
 # string in the page: JavaScript does not survive the `# hide` markers of a Literate block.
 const GODDARD_TEMPLATE = joinpath(@__DIR__, "src-literate", "goddard-animation.html")
 _js(x::AbstractVector) = "[" * join(round.(x; digits=6), ",") * "]"
+_js(x::AbstractVector{<:AbstractVector}) = "[" * join((_js(v) for v in x), ",") * "]"
 _js(x::Real) = string(round(x; digits=6))
 _js(c::Plots.Colorant) = "#" * Plots.Colors.hex(c)
 goddard_animation(; kwargs...) =
     reduce((html, (k, v)) -> replace(html, "@@$k@@" => _js(v)), kwargs; init=read(GODDARD_TEMPLATE, String))
+
+# The basketball animation of the guided tour, illustrating the shooting method: same
+# placeholder mechanism as `goddard_animation`, with the Newton iterates (angle, speed).
+const SHOOTING_TEMPLATE = joinpath(@__DIR__, "src-literate", "shooting-animation.html")
+shooting_animation(; kwargs...) =
+    reduce((html, (k, v)) -> replace(html, "@@$k@@" => _js(v)), kwargs; init=read(SHOOTING_TEMPLATE, String))
 
 # DocumenterVitepress (0.3.5) hard-codes `collapsed: false` on every sidebar group
 # (`vitepress_config.jl`'s `pagelist2str` for a nested `name => children` entry), so the
