@@ -324,6 +324,8 @@ const API_THEMES = [
             Symbol("CTSolvers.Modelers.AbstractNLPModeler"),
             Symbol("CTSolvers.Solvers.AbstractNLPSolver"),
             :LiftedHamiltonianFunction,
+            Symbol("CTFlows.Configs.UniformGrid"),
+            Symbol("CTFlows.Configs.AdaptiveGrid"),
             Symbol("CTBase.Exceptions.CTException"),
             Symbol("CTBase.Exceptions.IncorrectArgument"),
             Symbol("CTBase.Exceptions.PreconditionError"),

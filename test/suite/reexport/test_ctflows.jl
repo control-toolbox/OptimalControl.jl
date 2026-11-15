@@ -20,7 +20,7 @@ using CTFlows: CTFlows
 using OrdinaryDiffEqTsit5 # `Flow` needs an integrator loaded — the user's call now
 
 include(joinpath(@__DIR__, "..", "..", "helpers", "reexport.jl"))
-using .ReexportUtils: reexports, is_exported
+using .ReexportUtils: reexports, imports, is_exported
 
 const VERBOSE = isdefined(Main, :TestOptions) ? Main.TestOptions.VERBOSE : true
 const SHOWTIMING = isdefined(Main, :TestOptions) ? Main.TestOptions.SHOWTIMING : true
@@ -118,6 +118,33 @@ function test_ctflows()
             # `*` concatenates flows. It is `Base.:*`, extended by MultiPhase,
             # so it needs no re-export of its own — but the method must exist.
             Test.@test any(m -> parentmodule(m) === CTFlows.MultiPhase, methods(*))
+        end
+
+        Test.@testset "Output grids" begin
+            # Imported, not re-exported: the values of the `grid` keyword.
+            for T in (:UniformGrid, :AdaptiveGrid)
+                Test.@testset "$T" begin
+                    Test.@test imports(OptimalControl, T, CTFlows.Configs)
+                    Test.@test !isdefined(CurrentModule, T)
+                end
+            end
+            ocp = @def begin
+                t ∈ [0, 1], time
+                x = (q, v) ∈ R², state
+                u ∈ R, control
+                x(0) == [-1, 0]
+                x(1) == [0, 0]
+                ẋ(t) == [v(t), u(t)]
+                0.5∫(u(t)^2) → min
+            end
+            f = Flow(ocp, (x, p) -> p[2])
+            span, x0, p0 = (0.0, 1.0), [-1.0, 0.0], [12.0, 6.0]
+            Test.@test length(time_grid(f(span, x0, p0))) == 250   # the default
+            Test.@test time_grid(f(span, x0, p0; grid=OptimalControl.UniformGrid(11))) ≈
+                range(0, 1, 11)
+            sol_a = f(span, x0, p0; grid=OptimalControl.AdaptiveGrid(11))
+            Test.@test length(time_grid(sol_a)) == 11
+            Test.@test first(time_grid(sol_a)) == 0 && last(time_grid(sol_a)) == 1
         end
 
         Test.@testset "Moved away from CTFlows" begin

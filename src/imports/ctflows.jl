@@ -28,6 +28,12 @@ using CTFlows: CTFlows
     get_pseudo_hamiltonian_gradient,
     get_pseudo_variable_gradient
 
+# Output grids — the `grid` keyword of a trajectory call. `grid=n` covers the common
+# case; the types are reached qualified, like the other configuration objects
+# (`OptimalControl.AdaptiveGrid(50)`). `AbstractGrid` and `AutomaticGrid` (the default)
+# stay in CTFlows.
+import CTFlows.Configs: UniformGrid, AdaptiveGrid
+
 # Multi-phase flows — `Base.:*` is extended by `CTFlows.MultiPhase` to
 # concatenate flows, so it needs no re-export of its own.
 @reexport import CTFlows.MultiPhase:
