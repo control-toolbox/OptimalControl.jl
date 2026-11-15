@@ -176,7 +176,7 @@ types.
 
 ## See also
 
-- [Solution object](@ref results-solution) and [Plot](@ref results-plot): the functions used
+- [Solution object](@ref results-solution) and [Plot with Plots](@ref results-plot): the functions used
   above, in full.
 - [From an OCP](@ref flows-from-ocp): the indirect method, where the law comes from the
   maximum principle.

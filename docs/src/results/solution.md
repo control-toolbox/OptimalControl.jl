@@ -47,7 +47,7 @@ sol
 ```
 
 and plots in one line, once a plotting package is loaded (see
-[Plot](@ref results-plot)):
+[Plot with Plots](@ref results-plot)):
 
 ```@example main
 using Plots
@@ -434,6 +434,6 @@ nothing                                                                   # hide
 ## See also
 
 - [Inspect a problem](@ref modelling-inspect): the model-side mirror of this page.
-- [Plot](@ref results-plot): draw everything read here.
+- [Plot with Plots](@ref results-plot): draw everything read here.
 - [Save & load](@ref results-save-load): write a solution to disk and read it back.
 - [Migrating from v2.0](@ref migration): every renamed function, `success` → `successful` included.

@@ -1,4 +1,4 @@
-# [Plot](@id results-plot)
+# [Plot with Plots](@id results-plot)
 
 A [`Solution`](@ref results-solution) is drawn with `plot` and `plot!`, which extend
 [Plots.jl](https://docs.juliaplots.org). Use `plot` to create a new figure, and `plot!` to add

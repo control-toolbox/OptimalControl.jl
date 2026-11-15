@@ -62,7 +62,7 @@ The same mechanism covers every optional feature described on this page.
 using Plots
 ```
 
-Loading this package enables `plot(sol)`. Without it, `plot(sol)` raises an `ExtensionError` that asks for `using Plots`. See [Plot](@ref results-plot).
+Loading this package enables `plot(sol)`. Without it, `plot(sol)` raises an `ExtensionError` that asks for `using Plots`. See [Plot with Plots](@ref results-plot).
 
 [Makie](https://docs.makie.org) is supported too. Load `CairoMakie` for static figures or `GLMakie` for an interactive window, then call `Makie.plot(sol)`. See [Plot with Makie](@ref results-plot-makie).
 

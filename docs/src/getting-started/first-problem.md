@@ -107,7 +107,7 @@ state(sol)(0.5), control(sol)(0.25)
 ```
 
 See [Solution object](@ref results-solution) for everything else a solution carries, and
-[Plot](@ref results-plot) for what else `plot` can show.
+[Plot with Plots](@ref results-plot) for what else `plot` can show.
 
 ## Check it
 

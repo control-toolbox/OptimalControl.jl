@@ -104,7 +104,7 @@ state_components(ocp)
 ```
 
 !!! note
-    The component names are used when plotting the solution. See [Plot](@ref results-plot).
+    The component names are used when plotting the solution. See [Plot with Plots](@ref results-plot).
 
 ### State box constraints
 

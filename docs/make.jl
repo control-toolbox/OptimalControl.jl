@@ -348,6 +348,10 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "Installation" => "getting-started/installation.md",
                 "Your first problem" => "getting-started/first-problem.md",
                 "Guided tour" => "getting-started/guided-tour.md",
+                # The examples are reached from the gallery, which gives their reading
+                # order; each page links the previous and the next one
+                # (src/components/ExampleNav.vue).
+                "Examples" => "examples/gallery.md",
             ],
             "Modelling" => [
                 "Formulation" => "modelling/formulation.md",
@@ -367,7 +371,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
             ],
             "Results" => [
                 "Solution object" => "results/solution.md",
-                "Plot" => "results/plot.md",
+                "Plot with Plots" => "results/plot.md",
                 "Plot with Makie" => "results/plot-makie.md",
                 "Save & load" => "results/save-load.md",
             ],
@@ -389,15 +393,12 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "The @Lie macro" => "geometry/lie-macro.md",
                 "AD backend" => "geometry/ad-backend.md",
             ],
-            # The examples are reached from the gallery, which gives their reading order; each
-            # page links the previous and the next one (src/components/ExampleNav.vue).
-            "Examples" => "examples/gallery.md",
             "Reference" => [
                 "API Reference" => api_pages_final,
                 "Errors" => "errors.md",
                 "Migrating from v2.0" => "migration.md",
+                "About" => "about.md",
             ],
-            "About" => "about.md",
         ],
         plugins=[links, GalleryThumbnails()],
     )

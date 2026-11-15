@@ -194,7 +194,7 @@ tuning knobs, from exactly this optimal control problem.
 ## See also
 
 - [Initial guess](@ref solve-initial-guess): the warm start used here, and the other forms.
-- [Plot with Makie](@ref results-plot-makie) and [Plot](@ref results-plot): plotting a solution.
+- [Plot with Makie](@ref results-plot-makie) and [Plot with Plots](@ref results-plot): plotting a solution.
 - [Example gallery](@ref examples-gallery): the other worked problems.
 
 ```@raw html
