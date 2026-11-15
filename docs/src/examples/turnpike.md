@@ -108,9 +108,9 @@ $\int_0^1 (1 - t)^2 \,\mathrm{d}t + \int_{3/2}^2 (t - 3/2)^2 \,\mathrm{d}t = 1/3
 Each arc has its flow, with a constant control:
 
 ```@example main
-f_minus = Flow(ocp, (x, p) -> -1)
-f_sing = Flow(ocp, (x, p) -> 0)
-f_plus = Flow(ocp, (x, p) -> 1)
+f_minus = Flow(ocp, (x, p) -> -1; label="u = -1")
+f_sing = Flow(ocp, (x, p) -> 0; label="singular")
+f_plus = Flow(ocp, (x, p) -> 1; label="u = +1")
 nothing # hide
 ```
 
