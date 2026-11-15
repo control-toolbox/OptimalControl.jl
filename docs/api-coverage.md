@@ -114,7 +114,7 @@ All on `modelling-inspect` unless noted; API theme **problem**.
 | `get_build_examodel` | `solve-gpu` | solving |
 | `describe` | `solve-choosing-a-method`, `flows-overview`, `geometry-ad-backend` | options |
 
-## 6. Solution — 27
+## 6. Solution — 32
 
 All on `results-solution` unless noted; API theme **solution**.
 
@@ -129,6 +129,9 @@ All on `results-solution` unless noted; API theme **solution**.
 
 **Emptiness (2)**
 `is_empty` `is_empty_time_grid`
+
+**Switching structure (5)** — guide pending: #992 (`flows-multi-phase`, `results-solution`)
+`switching_times` `phase_labels` `has_switching` `left_limit` `right_limit`
 
 **Duals (12)**
 `dual` `path_constraints_dual` `boundary_constraints_dual`
@@ -240,8 +243,10 @@ find out which names those are, in one place.
 | `ADNLP` `Exa` | `solve-explicit-mode` | |
 | `Ipopt` `MadNLP` `MadNCL` `Knitro` `Uno` | `solve-explicit-mode` | |
 | `AbstractDiscretizer` `DiscretizedModel` `AbstractNLPModeler` `AbstractNLPSolver` | `solve-explicit-mode` | the types mode detection dispatches on |
+| `build_model` `BuiltModel` | `solve-explicit-mode-stages` | what `ocp_solution` takes (#1077) |
+| `UniformGrid` `AdaptiveGrid` | `results-plot-flow` | the values of the `grid` keyword of a flow call |
 | `LiftedHamiltonianFunction` | `geometry-lift` | the former `HamiltonianLift` |
-| `CTException` `IncorrectArgument` `PreconditionError` `NotImplemented` `ParsingError` `AmbiguousDescription` `ExtensionError` | `migration`, error demos across the site | `SolverFailure` is **not** imported at all — see §14 |
+| `CTException` `IncorrectArgument` `PreconditionError` `NotImplemented` `ParsingError` `AmbiguousDescription` `ExtensionError` `SolverFailure` | `migration`, error demos across the site | `SolverFailure` imported by #1078 |
 | `NotProvided` `NotProvidedType` `ctNumber` | — | reference only |
 | `AbstractStrategy` `StrategyRegistry` `StrategyMetadata` `StrategyOptions` `RoutedOption` `BypassValue` `AbstractStrategyParameter` `OptionDefinition` `OptionValue` | — | reference only; the functions are the API |
 
@@ -276,7 +281,7 @@ Recorded so they are decided, not forgotten.
 | `hamiltonian`, `hamiltonian_vector_field`, `vector_field`, `get_*_gradient` not re-exported, while `control_law` / `pseudo_hamiltonian` are | §8 | ✅ **implemented**: PR 8 re-exports the seven; `system`/`integrator` stay qualified |
 | CTModels serialization: how is the format selected? | §11 | ✅ **resolved**: `format::Symbol` = `:JLD` \| `:JSON`, plus `filename` without extension. The `*Tag` types are internal dispatch and must not appear in the docs |
 | `CTDirect.DirectShooting` exists but is in neither `methods()` nor the registry | §5 | ✅ **closed**: not functional yet — out of scope, do not mention it |
-| `SolverFailure` is exported by `CTBase.Exceptions` but imported nowhere in OptimalControl | §12 | open — PR 3: surface it or note the omission |
+| `SolverFailure` is exported by `CTBase.Exceptions` but imported nowhere in OptimalControl | §12 | ✅ **implemented**: #1078, level 2 |
 | CTModels init helpers not re-exported: `initial_guess`, `pre_initial_guess`, `validate_initial_guess`, `initial_state`, `initial_control`, `initial_variable`, `PreInitialGuess` | §3 | open — PR 5/6 |
 | `@def_exa` exists in CTParser but is not re-exported | §2 | open — PR 5 |
 | `time` and `success` are `Base` names with no OptimalControl binding | §13 | ✅ closed — PR 3 added throwing `Base.time`/`Base.success` methods (`src/deprecated.jl`) |
