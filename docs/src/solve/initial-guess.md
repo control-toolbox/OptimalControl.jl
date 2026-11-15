@@ -133,7 +133,7 @@ println(iterations(sol), " iterations")
 
 ### Partial
 
-Uninitialized components fall back to `0.1`:
+Uninitialised components fall back to `0.1`:
 
 ```@example main
 ig = @init ocp1 begin

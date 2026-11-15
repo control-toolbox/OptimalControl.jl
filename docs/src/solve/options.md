@@ -26,7 +26,7 @@ nothing # hide
 
 ## Option routing
 
-`solve` runs in **strict** mode: every keyword you pass must be recognized by exactly one of
+`solve` runs in **strict** mode: every keyword you pass must be recognised by exactly one of
 the three strategies in play, or it's an error — never a silent no-op.
 
 ```@example advanced
@@ -39,7 +39,7 @@ sol = solve(ocp;
 nothing # hide
 ```
 
-An option nobody recognizes is rejected with a "did you mean" suggestion:
+An option nobody recognises is rejected with a "did you mean" suggestion:
 
 ```@repl advanced
 solve(ocp, :ipopt; max_iter=100, mumps_print_level=1, display=false)

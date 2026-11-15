@@ -15,11 +15,11 @@ a gap in a landscape where existing tools are fragmented across programming lang
 paradigms, and are usually restricted to a single family of methods.
 
 The package provides a domain-specific language that closely matches mathematical
-notation, together with multiple discretization schemes and shooting methods, and planned
+notation, together with multiple discretisation schemes and shooting methods, and planned
 support for homotopy continuation methods.
 
 Its modeler–solver separation makes it agnostic to the underlying NLP modeling backend
-and optimization solver, and enables seamless execution on both CPU and GPU with minimal
+and optimisation solver, and enables seamless execution on both CPU and GPU with minimal
 user intervention.
 
 Combined with an ecosystem of domain-specific applications, tutorials, and benchmarking
@@ -68,7 +68,7 @@ That is the whole program — model, solve, plot. Each step has its own guide:
 | --- | --- |
 | [Getting started](@ref getting-started-installation) | Install, solve your first problem, then a longer guided tour covering both the direct and indirect methods. |
 | [Modelling](@ref modelling-formulation) | The `@def` DSL, the macro-free functional API, control-free (parameter estimation) problems, and problem introspection. |
-| [Solve (direct)](@ref solve-overview) | Discretize-and-transcribe methods: choosing a strategy, initial guesses, options, explicit mode, GPU. |
+| [Solve (direct)](@ref solve-overview) | Discretise-and-transcribe methods: choosing a strategy, initial guesses, options, explicit mode, GPU. |
 | [Results](@ref results-solution) | Read a `Solution` — trajectories, costate, duals, status — plot it, save it, reload it. |
 | [Flows (indirect)](@ref flows-overview) | The Pontryagin Maximum Principle as code: build, integrate, and shoot with Hamiltonian flows. |
 | [Geometry](@ref geometry-overview) | The Lie-theoretic tools (`Lift`, `ad`, `Poisson`, `@Lie`) behind singular-control problems. |
@@ -112,9 +112,9 @@ or in bibtex format:
 
 If you think you found a bug or if you have a feature request / suggestion, feel free to open an [issue](https://github.com/control-toolbox/OptimalControl.jl/issues). Before opening a pull request, please start an issue or a discussion on the topic. 
 
-Contributions are welcomed, check out [how to contribute to a Github project](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project). If it is your first contribution, you can also check [this first contribution tutorial](https://github.com/firstcontributions/first-contributions). You can find first good issues (if any 🙂) [here](https://github.com/control-toolbox/OptimalControl.jl/contribute). You may find other packages to contribute to at the [control-toolbox organization](https://github.com/control-toolbox).
+Contributions are welcomed, check out [how to contribute to a Github project](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project). If it is your first contribution, you can also check [this first contribution tutorial](https://github.com/firstcontributions/first-contributions). You can find first good issues (if any 🙂) [here](https://github.com/control-toolbox/OptimalControl.jl/contribute). You may find other packages to contribute to at the [control-toolbox organisation](https://github.com/control-toolbox).
 
-If you want to ask a question, feel free to start a discussion [here](https://github.com/orgs/control-toolbox/discussions). This forum is for general discussion about this repository and the [control-toolbox organization](https://github.com/control-toolbox).
+If you want to ask a question, feel free to start a discussion [here](https://github.com/orgs/control-toolbox/discussions). This forum is for general discussion about this repository and the [control-toolbox organisation](https://github.com/control-toolbox).
 
 !!! note
 
@@ -123,14 +123,14 @@ If you want to ask a question, feel free to start a discussion [here](https://gi
 ## Testing
 
 OptimalControl.jl is the umbrella package of a multi-repository ecosystem, and testing is
-organized in layers. Each sub-package (`CTBase`, `CTDirect`, `CTFlows`, `CTModels`, `CTLie`,
+organised in layers. Each sub-package (`CTBase`, `CTDirect`, `CTFlows`, `CTModels`, `CTLie`,
 `CTSolvers`, `CTParser`) has its own test suite combining unit tests, integration
 tests, and code-quality checks (e.g. with [Aqua.jl](https://github.com/JuliaTesting/Aqua.jl)).
 At the umbrella level, OptimalControl.jl adds strong end-to-end integration tests that
 solve complete optimal control problems with both direct and indirect methods.
 
 Continuous integration runs on Linux, macOS, and Windows, on both CPU and GPU (via a
-self-hosted CUDA runner), through reusable workflows centralized in
+self-hosted CUDA runner), through reusable workflows centralised in
 [CTActions](https://github.com/control-toolbox/CTActions). Code coverage is tracked on
 [Codecov](https://codecov.io), and downstream packages are guarded against regressions
 through dedicated breakage tests.

@@ -108,7 +108,7 @@ nothing # hide
 ```
 
 A flat option keyword handed to `solve` itself, rather than to the component constructor, is
-rejected — even one a completed default component would otherwise recognize:
+rejected — even one a completed default component would otherwise recognise:
 
 ```@repl explicit
 solve(
@@ -163,7 +163,7 @@ collect(keys(opts))
 ## [The stages behind `solve`](@id solve-explicit-mode-stages)
 
 `solve` chains three stages, one per component: the discretizer turns the problem into a
-discretized problem, the modeler builds from it a nonlinear program (NLP) for an initial
+discretised problem, the modeler builds from it a nonlinear program (NLP) for an initial
 guess, and the solver solves the NLP. The first two stages can be run on their own, to look
 at the NLP or to pass it to another tool:
 
@@ -179,7 +179,7 @@ nlp.meta.nvar, nlp.meta.ncon
 
 The NLP has 303 unknowns, the state and the control at the 101 points of the grid, and 204
 constraints, the 200 equations of the dynamics and the 4 boundary conditions. `solve` also
-takes the discretized problem, with the initial guess and the two other components:
+takes the discretised problem, with the initial guess and the two other components:
 
 ```@example explicit
 sol = solve(docp, init, modeler, solver; display=false)
