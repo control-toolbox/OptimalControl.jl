@@ -66,7 +66,7 @@ nothing                                                                         
 ```
 
 | You lift | You get | Called as |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | a function `X` | a function (`OptimalControl.LiftedHamiltonianFunction`) | `H(x, p)`, `H(t, x, p)`, `H(x, p, v)` or `H(t, x, p, v)`, from the keywords |
 | a `VectorField` | a `Hamiltonian` | the same, from the traits of the vector field |
 

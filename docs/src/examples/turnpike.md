@@ -90,7 +90,7 @@ u_{\text{sing}} = 0 .
 The extremal is therefore bang–singular–bang:
 
 | Arc | Interval | $u$ | $x$ |
-| --- | --- | --- | --- |
+| :--- | :--- | :--- | :--- |
 | bang | $[0, t_1]$ | $-1$ | from $1$ to $0$ |
 | singular | $[t_1, t_2]$ | $0$ | $0$ |
 | bang | $[t_2, 2]$ | $+1$ | from $0$ to $1/2$ |

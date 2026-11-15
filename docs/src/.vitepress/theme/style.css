@@ -180,10 +180,20 @@ font-feature-settings: "calt" off;
 
 mjx-container {
   display: inline-block;
-  padding: 0.5rem 0;
-  margin: auto 2px -2px;
   overflow: visible !important;  /* Override MathJax's overflow */
   text-align: left;
+}
+
+/* Inline math sits in the line of text: no padding, or every line holding a formula grows
+   taller than the others. Only display math gets room above and below. */
+mjx-container:not([display="true"]) {
+  padding: 0;
+  margin: 0 1px;
+}
+
+mjx-container[display="true"] {
+  padding: 0.5rem 0;
+  margin: auto 2px -2px;
 }
 
 mjx-container > svg {
@@ -472,3 +482,10 @@ mjx-container svg path {
     max-width: none;
   }
 }
+
+/* Lists: DocumenterVitepress separates the items of every list by a blank line, which makes
+   it a "loose" list, each item wrapped in a paragraph with its margins. Drop the outer
+   margins of those paragraphs so that a list reads as a list; an item of several
+   paragraphs keeps the space between them. */
+.vp-doc li > p:first-child { margin-top: 0; }
+.vp-doc li > p:last-child { margin-bottom: 0; }

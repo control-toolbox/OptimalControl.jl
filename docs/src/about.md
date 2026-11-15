@@ -64,7 +64,7 @@ single pinned environment. You can inspect that environment below, or download i
 rebuild it locally.
 
 | Download | Contents |
-| --- | --- |
+| :--- | :--- |
 | [`Project.toml`](assets/Project.toml) | the packages this documentation depends on directly |
 | [`Manifest.toml`](assets/Manifest.toml) | the exact version of every package in the resolved dependency tree |
 

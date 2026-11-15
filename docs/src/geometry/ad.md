@@ -147,7 +147,7 @@ extremal (see [Poisson bracket](@ref geometry-poisson-total)).
 ## Errors
 
 | Situation | Exception |
-| --- | --- |
+| :--- | :--- |
 | a `Hamiltonian` given to `ad` | `IncorrectArgument`, pointing to `Poisson` |
 | operands with different dependences on time or on the variable | `PreconditionError` |
 | an in-place `VectorField` | `IncorrectArgument` |

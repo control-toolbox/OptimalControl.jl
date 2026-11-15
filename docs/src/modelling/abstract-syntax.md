@@ -44,7 +44,7 @@ A definition is a `begin … end` block passed to `@def`:
 The symbols have plain ASCII alternatives:
 
 | Unicode | ASCII |
-| --- | --- |
+| :--- | :--- |
 | `t ∈ [0, 1]` | `t in [0, 1]` |
 | `R²` | `R^2` |
 | `ẋ(t)`, `∂(x)(t)` | `derivative(x)(t)` |
@@ -835,7 +835,7 @@ and the form to write instead. They are either ambiguous or would silently mean 
 else than intended. Each one is explained in the CTParser documentation.
 
 | Rejected | Write instead | Why | CTParser |
-| --- | --- | --- | --- |
+| :--- | :--- | :--- | :--- |
 | `u = (z,) ∈ R, control` | `u ∈ R, control` | a scalar is declared one way, without names | [Declarations](@extref CTParser syntax/declarations) |
 | `ẋ(t) = u(t)` | `ẋ(t) == u(t)` | a single `=` defines an alias, not an equation | [Aliases and equations](@extref CTParser syntax/equations) |
 | `x ∈ Rⁿ`, `x ∈ R²¹` | `x ∈ R^n`, `x ∈ R^21` | only digit exponents up to `²⁰` are recognised | [Dimensions](@extref CTParser syntax/dimensions) |

@@ -517,7 +517,7 @@ internally. The lists below are generated from the package itself, and each name
 its documentation.
 
 | Level | Reached as | What |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | 1. Exported | `using OptimalControl`, then `name` | the vocabulary of the package: problems, `solve`, solutions, flows, geometry |
 | 2. Qualified | `OptimalControl.Name` | strategies (modelers, solvers, discretizer, AD backend), types, exceptions |
 | 3. Internal | not for users | the modules of the packages OptimalControl builds on |
@@ -575,7 +575,7 @@ its documentation.
         )
         println(io)
         println(io, "| Module | Why OptimalControl binds it |")
-        println(io, "| --- | --- |")
+        println(io, "| :--- | :--- |")
         for (m, role) in MODULE_ROLES
             println(io, "| `$m` | $role |")
         end

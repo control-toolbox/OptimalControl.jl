@@ -118,7 +118,7 @@ Hv2(x, p)
 What a flow can give back depends on what it was built from:
 
 | Flow built from | `hamiltonian` | `hamiltonian_vector_field` | `pseudo_hamiltonian`, `control_law` | `vector_field` |
-| --- | :-: | :-: | :-: | :-: |
+| :--- | :-: | :-: | :-: | :-: |
 | `ocp, law` with a law `u(x, p)`, or `PseudoHamiltonian(Hp), law` | ✓ | ✓ | ✓ | ✓ |
 | `Hamiltonian(H)` | ✓ | ✓ | ✗ | ✓ |
 | `HamiltonianVectorField(Hv)` | ✗ | ✓ | ✗ | ✓ |

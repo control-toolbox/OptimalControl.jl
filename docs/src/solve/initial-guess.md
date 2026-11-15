@@ -150,7 +150,7 @@ end
 ```
 
 | Component | Form | Example |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | State / control, function of time | `label(t) := expression` | `u(t) := -0.2t` |
 | State / control, constant | `label(t) := value` or `label := value` | `u := 2` |
 | State / control, on a grid | `label(T) := data`, `T` a time vector | `u(T) := U` |

@@ -22,7 +22,7 @@ using OptimalControl
 ## Summary
 
 | Operation | Notation | Julia | Page |
-| --- | --- | --- | --- |
+| :--- | :--- | :--- | :--- |
 | Hamiltonian lift | $H_X(x, p) = \langle p, X(x) \rangle$ | `Lift(X)` | [Lift](@ref geometry-lift) |
 | Lie derivative | $(\mathcal{L}_X f)(x) = f'(x) \cdot X(x)$ | `ad(X, f)` | [Lie derivative and Lie bracket](@ref geometry-ad) |
 | Lie bracket | $[X, Y](x) = Y'(x) \cdot X(x) - X'(x) \cdot Y(x)$ | `ad(X, Y)` or `@Lie [X, Y]` | [Lie derivative and Lie bracket](@ref geometry-ad) |

@@ -26,7 +26,7 @@ using NLPModelsIpopt
 Other solvers are available through their respective packages:
 
 | Solver | Load |
-| --- | --- |
+| :--- | :--- |
 | `:ipopt` (default) | `using NLPModelsIpopt` |
 | `:madnlp` | `using MadNLP` (on GPU, see [below](@ref getting-started-installation-gpu)) |
 | `:uno` | `using UnoSolver` |

@@ -81,15 +81,15 @@ plot(sol)
 
 That is the whole program — model, solve, plot. Each step has its own guide:
 
-- For more details about the example, see the [energy minimisation page](@ref examples-double-integrator-energy).  
-- The `@def` macro defines the problem. See the [abstract syntax guide](@ref modelling-abstract-syntax).  
-- The `solve` function has many options. See the [solve overview](@ref solve-overview).  
+- For more details about the example, see the [energy minimisation page](@ref examples-double-integrator-energy).
+- The `@def` macro defines the problem. See the [abstract syntax guide](@ref modelling-abstract-syntax).
+- The `solve` function has many options. See the [solve overview](@ref solve-overview).
 - The `plot` function is flexible. See the [plot guide](@ref results-plot).
 
 ## Where to go next
 
 | Section | What's there |
-| --- | --- |
+| :--- | :--- |
 | [Getting started](@ref getting-started-installation) | Install, solve your first problem, then a longer guided tour covering both the direct and indirect methods. |
 | [Modelling](@ref modelling-formulation) | The `@def` DSL, the macro-free functional API, control-free (parameter estimation) problems, and problem introspection. |
 | [Solve (direct)](@ref solve-overview) | Discretise-and-transcribe methods: choosing a strategy, initial guesses, options, explicit mode, GPU. |
@@ -105,7 +105,7 @@ That is the whole program — model, solve, plot. Each step has its own guide:
 ## [Beyond this site](@id home-beyond)
 
 | Site | What's there |
-| --- | --- |
+| :--- | :--- |
 | [Tutorials](https://control-toolbox.org/Tutorials.jl/stable/) | Longer worked problems and techniques: continuation, initial guesses, MPC, NLP manipulation, … |
 | [OptimalControlProblems.jl](https://control-toolbox.org/OptimalControlProblems.jl/stable/) | A collection of optimal control problems, each modelled with OptimalControl and JuMP. |
 | [CTBenchmarks.jl](https://control-toolbox.org/CTBenchmarks.jl/stable/) | Benchmarks of solvers and modelling approaches on those problems: timings, memory, solver statistics. |

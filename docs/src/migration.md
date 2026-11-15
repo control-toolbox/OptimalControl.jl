@@ -35,7 +35,7 @@ method, `solve`, does not need it. See [Installation](@ref getting-started-insta
 ## What was renamed
 
 | v2.0 | Now | Notes |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | `OptimalControl.VectorField`, `OptimalControl.Hamiltonian`, … | `VectorField`, `Hamiltonian`, … | exported; the qualified form still works |
 | `Lie(X, f)` | `ad(X, f)` | `Lie` throws, naming `ad` |
 | `X ⋅ f` | `ad(X, f)` | no operator; `X ⋅ f` throws, naming `ad`, when `X` is a `VectorField` |
@@ -226,7 +226,7 @@ a `MethodError` about `iterate`.
 ## What raises another error
 
 | Spelling | What happens | Write instead |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | `f(t0, x0, p0, tf; saveat=…)`, and the other integrator options on a call | `MethodError`, "unsupported keyword argument" | `Flow(…; saveat=…)`, when the flow is built |
 | `CTSolvers.Modelers.ADNLP()`, `CTDirect.Collocation()` | `UndefVarError` on `CTSolvers` or `CTDirect` | `OptimalControl.ADNLP()`, `OptimalControl.Collocation()` |
 | `@Lie [X, Y] autonomous=false` | `IncorrectArgument`, with the accepted keywords | `@Lie [X, Y] is_autonomous=false` |

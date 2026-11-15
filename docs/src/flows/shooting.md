@@ -24,7 +24,7 @@ A shooting function has as many unknowns as conditions. Each unknown comes with 
 that fixes it:
 
 | Unknown | Condition |
-| --- | --- |
+| :--- | :--- |
 | initial costate $p_0$ | the final conditions on the state, and the transversality conditions on the costate for the components the problem leaves free |
 | a switching time $t_i$ | the switching function vanishes at $t_i$ |
 | the entry and exit times of a boundary arc | the junction conditions (see [Constrained arcs](@ref flows-constrained-arcs)) |

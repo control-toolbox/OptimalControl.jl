@@ -476,7 +476,7 @@ or the control is drawn as a vertical segment from its left to its right limit. 
 keywords change this:
 
 | Keyword | Values |
-| --- | --- |
+| :--- | :--- |
 | `jumps` | `:segment` (default), or `:none` to break the curve at a jump |
 | `switching_style` | a style for the vertical lines, such as `(linestyle=:dot,)`, or `:none` to hide them |
 | `phase_labels` | `:control` (default), `:all` to write them on every cell, or `:none` |

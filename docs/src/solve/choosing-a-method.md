@@ -100,7 +100,7 @@ solve(ocp, :adnlp, :exa; display=false)
 ## What each solver needs installed
 
 | Solver | Load |
-| --- | --- |
+| :--- | :--- |
 | `:ipopt` | `using NLPModelsIpopt` |
 | `:madnlp` | `using MadNLP` (CPU) |
 | `:uno` | `using UnoSolver` |
@@ -205,7 +205,7 @@ For the complete list of each package's options, see:
 `:collocation` accepts a `scheme` option (alias `disc_method`):
 
 | Value | Notes | `:adnlp` | `:exa` |
-| --- | --- | :-: | :-: |
+| :--- | :--- | :-: | :-: |
 | `:trapeze` | trapezoidal rule, second-order | ✅ | ✅ |
 | `:midpoint` | midpoint rule, second-order, **default** | ✅ | ✅ |
 | `:euler` | explicit Euler, first-order | ✅ | ✅ |

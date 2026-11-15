@@ -150,7 +150,7 @@ final state and costate), and `f((t0, tf), x0)` returns the trajectory. The traj
 depends on how the flow was built:
 
 | Flow | Trajectory | Costate | Objective |
-| --- | --- | :-: | :-: |
+| :--- | :--- | :-: | :-: |
 | `Flow(ocp, law)`, with a law `u(x, p)` ([From an OCP](@ref flows-from-ocp)) | a [`Solution`](@ref results-solution) | ✓ | ✓ |
 | `Flow(ocp, OpenLoop(…))`, `Flow(ocp, ClosedLoop(…))` | a trajectory of the state | ✗ | ✓ |
 | `Flow(ControlledVectorField(f), law)`, `Flow(VectorField(f))` | a trajectory of the state | ✗ | ✗ |

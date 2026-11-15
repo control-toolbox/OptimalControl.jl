@@ -140,7 +140,7 @@ nothing                                                            # hide
 ```
 
 | Function | Returns |
-| --- | --- |
+| :--- | :--- |
 | `state(sol)` | x(t), a function of time |
 | `control(sol)` | u(t), a function of time |
 | `costate(sol)` | p(t), a function of time |
@@ -248,7 +248,7 @@ What to do when a solve fails (a better initial guess, a finer grid, other toler
 subject of [Initial guess](@ref solve-initial-guess) and [Options](@ref solve-options).
 
 | Function | Returns |
-| --- | --- |
+| :--- | :--- |
 | `objective(sol)` | the value of the cost |
 | `successful(sol)` | `true` if the solver reported success |
 | `status(sol)` | the solver's status, a `Symbol` such as `:first_order` |
@@ -365,7 +365,7 @@ nothing                                                                         
 ```
 
 | Function | Returns |
-| --- | --- |
+| :--- | :--- |
 | `dual(sol, ocp, :label)` | the multiplier of a labelled constraint: a number, a vector, or a function of time |
 | `state_constraints_lb_dual(sol)`, `state_constraints_ub_dual(sol)` | the state box multipliers, functions of time |
 | `control_constraints_lb_dual(sol)`, `control_constraints_ub_dual(sol)` | the control box multipliers, functions of time |

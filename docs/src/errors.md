@@ -21,7 +21,7 @@ end
 ```
 
 | Exception | What it means | Usual cause |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | `IncorrectArgument` | an argument is invalid | a wrong value, size or name, an unknown option |
 | `AmbiguousDescription` | a method description matches no known method | a misspelt or unavailable token in `solve(ocp, :token)` |
 | `ParsingError` | a `@def` or `@init` block cannot be read | a syntax the macro does not know |

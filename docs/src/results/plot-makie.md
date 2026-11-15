@@ -115,7 +115,7 @@ the call itself, and how you customise beyond it, differ.
 ## What differs
 
 | | Plots | Makie |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | the call | `plot(sol)` | `Makie.plot(sol)` — always qualified |
 | returns | `Plots.Plot` | `Makie.Figure` |
 | reaching one panel | `plt[i]` | `f.content[i]` (an `Axis`) |

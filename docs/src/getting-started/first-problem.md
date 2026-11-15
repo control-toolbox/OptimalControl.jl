@@ -51,7 +51,7 @@ nothing # hide
 Each line mirrors the mathematics:
 
 | Line | Meaning |
-| --- | --- |
+| :--- | :--- |
 | `t ∈ [0, 1], time` | the time variable and its fixed interval |
 | `x = (q, v) ∈ R², state` | a two-dimensional state, whose components are named `q` and `v` |
 | `u ∈ R, control` | a scalar control |
