@@ -14,6 +14,8 @@ We take the flow of the energy-minimal double integrator, built from the problem
 control law $u = p_2$ (see [From an OCP](@ref flows-from-ocp)), and the point
 $x = (-1, 0)$, $p = (12, 6)$: the start of the optimal extremal.
 
+::: details The problem used on this page
+
 ```@example main
 ocp = @def begin
     t ∈ [0, 1], time
@@ -29,6 +31,8 @@ f = Flow(ocp, (x, p) -> p[2])
 x, p = [-1, 0], [12, 6]
 nothing # hide
 ```
+
+:::
 
 ## The Hamiltonian
 
