@@ -79,6 +79,8 @@ Built from an optimal control problem, the simulation also computes the cost of 
 On the energy-minimal double integrator, the optimal control is $u(t) = 6 - 12t$, with
 cost $6$ (see [Your first problem](@ref getting-started-first-problem)):
 
+::: details The problem
+
 ```@example main
 t0, tf = 0, 1
 x0 = [-1, 0]
@@ -92,7 +94,12 @@ ocp = @def begin
     ẋ(t) == [v(t), u(t)]
     0.5∫(u(t)^2) → min
 end
+nothing # hide
+```
 
+:::
+
+```@example main
 f_opt = Flow(ocp, OpenLoop(t -> 6 - 12t))
 traj = f_opt((t0, tf), x0)
 state(traj)(tf), objective(traj)
