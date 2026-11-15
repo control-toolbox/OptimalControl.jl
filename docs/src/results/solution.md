@@ -11,6 +11,8 @@ We take the energy-minimal double integrator, whose solution is known in closed 
 u(t) = 6 − 12t, q(t) = −1 + 3t² − 2t³, v(t) = 6t − 6t², and the cost is J = 6 (see
 [Your first problem](@ref getting-started-first-problem)).
 
+::: details The problem used on this page
+
 ```@example main
 using OptimalControl
 using NLPModelsIpopt
@@ -28,7 +30,12 @@ ocp = @def begin
     ẋ(t) == [v(t), u(t)]
     0.5∫(u(t)^2) → min
 end
+nothing # hide
+```
 
+:::
+
+```@example main
 sol = solve(ocp; display=false)
 nothing # hide
 ```
