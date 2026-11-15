@@ -427,10 +427,10 @@ function _bound_package_modules()
     ns = names(OptimalControl; all=true, imported=true, usings=true)
     return sort!([
         n for n in ns if n !== :OptimalControl &&
-        isdefined(OptimalControl, n) &&
-        (m = getglobal(OptimalControl, n)) isa Module &&
-        Base.moduleroot(m) === m &&
-        m ∉ (Base, Core, Main)
+            isdefined(OptimalControl, n) &&
+            (m = getglobal(OptimalControl, n)) isa Module &&
+            Base.moduleroot(m) === m &&
+            m ∉ (Base, Core, Main)
     ])
 end
 
@@ -444,12 +444,12 @@ function _qualified_names()
     ns = names(OptimalControl; all=true, imported=true)
     return sort!([
         n for n in ns if n ∉ exported &&
-        n ∉ EXCLUDE_SYMBOLS &&
-        isdefined(OptimalControl, n) &&
-        !startswith(String(n), "_") &&
-        !startswith(String(n), "#") &&
-        !((v = getglobal(OptimalControl, n)) isa Module) &&
-        Base.moduleroot(_owner(v)) !== OptimalControl
+            n ∉ EXCLUDE_SYMBOLS &&
+            isdefined(OptimalControl, n) &&
+            !startswith(String(n), "_") &&
+            !startswith(String(n), "#") &&
+            !((v = getglobal(OptimalControl, n)) isa Module) &&
+            Base.moduleroot(_owner(v)) !== OptimalControl
     ])
 end
 
@@ -465,10 +465,12 @@ let
     )
     roles = Set(first.(MODULE_ROLES))
     bound = Set(_bound_package_modules())
-    isempty(setdiff(bound, roles)) ||
-        error("API levels: modules bound without a role in MODULE_ROLES: $(setdiff(bound, roles))")
-    isempty(setdiff(roles, bound)) ||
-        error("API levels: MODULE_ROLES lists modules no longer bound: $(setdiff(roles, bound))")
+    isempty(setdiff(bound, roles)) || error(
+        "API levels: modules bound without a role in MODULE_ROLES: $(setdiff(bound, roles))",
+    )
+    isempty(setdiff(roles, bound)) || error(
+        "API levels: MODULE_ROLES lists modules no longer bound: $(setdiff(roles, bound))",
+    )
 end
 
 # A link to the docstring of a theme entry; a `Pair` entry (an explicit signature) links
@@ -551,7 +553,8 @@ its documentation.
         println(
             io,
             "Without a documentation entry: " *
-            join(["`OptimalControl.$n`" for n in QUALIFIED_WITHOUT_DOCS], ", ") * ".",
+            join(["`OptimalControl.$n`" for n in QUALIFIED_WITHOUT_DOCS], ", ") *
+            ".",
         )
         println(io)
         println(io, ":::")

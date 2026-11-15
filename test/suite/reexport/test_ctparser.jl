@@ -21,34 +21,34 @@ const CurrentModule = TestCtparser
 # `CTBase` in scope. Since CTParser 0.9.6 the generated code holds the modules themselves,
 # so it needs no name at the call site (#967).
 module DefImportOnly
-using OptimalControl: OptimalControl # the module name only, as `import OptimalControl`
-const OCP = OptimalControl.@def begin
-    t ∈ [0, 1], time
-    x ∈ R², state
-    u ∈ R, control
-    x(0) == [-1, 0]
-    x(1) == [0, 0]
-    ẋ(t) == [x₂(t), u(t)]
-    ∫(0.5u(t)^2) → min
-end
-guess() = OptimalControl.@init OCP begin
-    u(t) := 0.1
-end
+    using OptimalControl: OptimalControl # the module name only, as `import OptimalControl`
+    const OCP = OptimalControl.@def begin
+        t ∈ [0, 1], time
+        x ∈ R², state
+        u ∈ R, control
+        x(0) == [-1, 0]
+        x(1) == [0, 0]
+        ẋ(t) == [x₂(t), u(t)]
+        ∫(0.5u(t)^2) → min
+    end
+    guess() = OptimalControl.@init OCP begin
+        u(t) := 0.1
+    end
 end
 
 module DefMacroOnly
-using OptimalControl: @def, @init
-const OCP = @def begin
-    t ∈ [0, 1], time
-    x ∈ R, state
-    u ∈ R, control
-    x(0) == 1
-    ẋ(t) == u(t)
-    ∫(x(t)^2 + u(t)^2) → min
-end
-guess() = @init OCP begin
-    x(t) := 1 - t
-end
+    using OptimalControl: @def, @init
+    const OCP = @def begin
+        t ∈ [0, 1], time
+        x ∈ R, state
+        u ∈ R, control
+        x(0) == 1
+        ẋ(t) == u(t)
+        ∫(x(t)^2 + u(t)^2) → min
+    end
+    guess() = @init OCP begin
+        x(t) := 1 - t
+    end
 end
 
 function test_ctparser()

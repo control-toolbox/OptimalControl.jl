@@ -286,7 +286,9 @@ function test_descriptive_routing()
         Test.@testset "_route_descriptive_options - error on display and show_trace" begin
             err = try
                 OptimalControl._route_descriptive_options(
-                    MOCK_METHOD, MOCK_REGISTRY, pairs((; display=false, show_trace=true))
+                    MOCK_METHOD,
+                    MOCK_REGISTRY,
+                    pairs((; display=false, show_trace=true)),
                 )
                 nothing
             catch e
