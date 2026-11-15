@@ -12,6 +12,11 @@ component's configuration, no completion to guess.
 
 ## Basic usage
 
+The examples use the energy-minimal double integrator of
+[Your first problem](@ref getting-started-first-problem).
+
+::: details The problem used on this page
+
 ```@example explicit
 using OptimalControl
 using NLPModelsIpopt
@@ -29,7 +34,12 @@ ocp = @def begin
     ẋ(t) == [v(t), u(t)]
     0.5∫(u(t)^2) → min
 end
+nothing # hide
+```
 
+:::
+
+```@example explicit
 discretizer = OptimalControl.Collocation(grid_size=100, scheme=:trapeze)
 modeler = OptimalControl.ADNLP(backend=:optimized)
 solver = OptimalControl.Ipopt(max_iter=1000, print_level=0)
