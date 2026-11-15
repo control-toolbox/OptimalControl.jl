@@ -259,13 +259,8 @@ indirect_sol = f((t0, tf_sol), [0, 0, θ0_sol], p0_sol; variable=tf_sol)
 variable(direct_sol), tf_sol
 ```
 
-For the plot, the flow is built with `saveat`, so that the trajectory has 101 points (see
-[Plotting a flow](@ref results-plot-flow)):
-
 ```@example main
-f_plot = Flow(ocp, (q, p, tf) -> u_s(q); saveat=range(t0, tf_sol, 101), dense=false)
-plot!(plt, f_plot((t0, tf_sol), [0, 0, θ0_sol], p0_sol; variable=tf_sol);
-      label="indirect", linestyle=:dash, opt...)
+plot!(plt, indirect_sol; label="indirect", linestyle=:dash, opt...)
 ```
 
 Along the extremal, the switching function $H_1 = p_3$ stays zero, $\theta$ stays inside
