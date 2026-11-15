@@ -203,21 +203,28 @@ include("api_reference.jl")
 # ═══════════════════════════════════════════════════════════════════════════════
 # InterLinks
 # ═══════════════════════════════════════════════════════════════════════════════
-# CI never has the sibling control-toolbox repos checked out next to this one, so the
-# local sibling `objects.inv` path below can never resolve there — DocumenterInterLinks
-# tries it first, fails, and logs a Warning before falling back to the remote inventory,
-# 7 times on every single CI run (see #950). Only include the local path outside CI, so
-# the CI runner's tuple has just the 2 sources that can actually succeed. Order stays
-# local-first when present: a contributor with siblings cloned and built locally sees
-# their own in-progress docstring/@extref changes, not the last stable release.
-const IN_CI = get(ENV, "CI", "false") == "true"
+# Sibling inventories (SITE4): the published one, as on CI. With CT_LOCAL_INVENTORIES=true,
+# the sibling's local build is read first, so that a contributor developing across
+# repositories sees their in-progress docstring/@extref changes before a release:
+#   CT_LOCAL_INVENTORIES=true julia --project=docs docs/make.jl
+# Never by default: InterLinks takes the first source that loads for the whole package, so
+# an old local build shadows the published inventory and breaks every @extref added since
+# (CTModels 0.19.7 built next to this repo against 0.21.1 published; ct-conventions#69).
+# A missing local file falls back to the published inventory without a warning (#950).
+const LOCAL_INVENTORIES = get(ENV, "CT_LOCAL_INVENTORIES", "false") == "true"
 
 function sibling_inventory(dir_name::AbstractString, base_url::AbstractString)
     remote = (base_url, base_url * "objects.inv")
-    IN_CI && return remote
+    LOCAL_INVENTORIES || return remote
     local_inv = joinpath(
         @__DIR__, "..", "..", dir_name, "docs", "build", "1", "objects.inv"
     )
+    isfile(local_inv) || return remote
+    version = "?"
+    for line in Iterators.take(eachline(local_inv), 4)
+        startswith(line, "# Version: ") && (version = chopprefix(line, "# Version: "))
+    end
+    @info "InterLinks: local inventory of $dir_name (version $version)" local_inv
     return (base_url, local_inv, base_url * "objects.inv")
 end
 
