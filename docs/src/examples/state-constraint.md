@@ -127,12 +127,12 @@ Each arc has its flow. The flow on the boundary arc takes the constraint $c$ and
 multiplier $\mu$, both as functions (see [Constrained arcs](@ref flows-constrained-arcs)):
 
 ```@example main
-f_interior = Flow(ocp, (x, p) -> p[2])
+f_interior = Flow(ocp, (x, p) -> p[2]; label="interior")
 
 c(x) = v_max - x[2]   # the constraint, c ≥ 0
 μ(x, p) = p[1]        # the multiplier on the boundary arc
 
-f_boundary = Flow(ocp, (x, p) -> 0; constraint=(x, u) -> c(x), multiplier=μ)
+f_boundary = Flow(ocp, (x, p) -> 0; constraint=(x, u) -> c(x), multiplier=μ, label="boundary")
 nothing # hide
 ```
 
@@ -279,7 +279,7 @@ $v(t_1) = 0$ give four equations. A vector jump on a Hamiltonian flow is a jump 
 (see [Multi-phase flows](@ref flows-multi-phase)):
 
 ```@example main
-f_touch = Flow(ocp_touch, (x, p) -> p[2])
+f_touch = Flow(ocp_touch, (x, p) -> p[2]; label="interior")
 
 function shoot_touch!(s, ξ, _)
     p0, t1, Δpq = ξ[1:2], ξ[3], ξ[4]
@@ -351,8 +351,9 @@ p(0) = \Big( -\frac{2}{9a^2},\ -\frac{2}{3a} \Big), \quad
 The flow on the boundary arc takes the constraint and its multiplier, here zero:
 
 ```@example main
-f_free = Flow(ocp_arc, (x, p) -> p[2])
-f_arc = Flow(ocp_arc, (x, p) -> 0; constraint=(x, u) -> a_arc - x[1], multiplier=(x, p) -> 0)
+f_free = Flow(ocp_arc, (x, p) -> p[2]; label="interior")
+f_arc = Flow(ocp_arc, (x, p) -> 0; constraint=(x, u) -> a_arc - x[1], multiplier=(x, p) -> 0,
+             label="boundary")
 
 function shoot_arc!(s, ξ, _)
     p0, t1, t2, Δ1, Δ2 = ξ[1:2], ξ[3], ξ[4], ξ[5], ξ[6]
