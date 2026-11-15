@@ -378,6 +378,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "The logo" => "examples/logo.md",
             ],
             "API Reference" => api_pages_final,
+            "Errors" => "errors.md",
             "Migrating from v2.0" => "migration.md",
         ],
         plugins=[links],
