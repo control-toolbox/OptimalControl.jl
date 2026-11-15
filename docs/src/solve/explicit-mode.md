@@ -160,6 +160,59 @@ opts[:max_iter]
 collect(keys(opts))
 ```
 
+## [The stages behind `solve`](@id solve-explicit-mode-stages)
+
+`solve` chains three stages, one per component: the discretizer turns the problem into a
+discretized problem, the modeler builds from it a nonlinear program (NLP) for an initial
+guess, and the solver solves the NLP. The first two stages can be run on their own, to look
+at the NLP or to pass it to another tool:
+
+```@example explicit
+discretizer = OptimalControl.Collocation(grid_size=100, scheme=:trapeze)
+modeler = OptimalControl.ADNLP()
+
+docp = discretize(ocp, discretizer)
+init = build_initial_guess(ocp, nothing)   # the default initial guess
+nlp = nlp_model(docp, init, modeler)
+nlp.meta.nvar, nlp.meta.ncon
+```
+
+The NLP has 303 unknowns, the state and the control at the 101 points of the grid, and 204
+constraints, the 200 equations of the dynamics and the 4 boundary conditions. `solve` also
+takes the discretized problem, with the initial guess and the two other components:
+
+```@example explicit
+sol = solve(docp, init, modeler, solver; display=false)
+objective(sol)
+```
+
+To solve the NLP with a solver of your own and get a solution back, build it with
+`OptimalControl.build_model`: it returns the NLP, `built.nlp`, together with what the modeler
+needs to read its solution, and `ocp_solution` turns the output of the solver into a
+solution of the problem. Here with Ipopt, called directly:
+
+```@example explicit
+built = OptimalControl.build_model(docp, init, modeler)
+stats = NLPModelsIpopt.ipopt(built.nlp; print_level=0)
+sol_nlp = ocp_solution(built, stats, modeler)
+objective(sol_nlp)
+```
+
+```@example explicit
+@assert (nlp.meta.nvar, nlp.meta.ncon) == (303, 204)            # hide
+@assert isapprox(objective(sol), 6; rtol=1e-2)                  # hide
+@assert isapprox(objective(sol_nlp), objective(sol); rtol=1e-6) # hide
+nothing                                                         # hide
+```
+
+!!! warning "`discretize` and `OrdinaryDiffEqTsit5`"
+
+    `OrdinaryDiffEqTsit5`, needed for [flows](@ref flows-overview), also exports a function
+    named `discretize`. After `using OptimalControl` and `using OrdinaryDiffEqTsit5`, the
+    name is ambiguous, and calling `discretize` throws an `UndefVarError`. Write
+    `OptimalControl.discretize`, or load only the integrator from the package:
+    `using OrdinaryDiffEqTsit5: Tsit5`.
+
 ## See also
 
 - [Solve overview](@ref solve-overview) — the two styles side by side.
