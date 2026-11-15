@@ -94,9 +94,7 @@ $\{H_X, H_Y\} = H_{[X, Y]}$ (see [The bridge identity](@ref geometry-overview-br
 
 ## A Hamiltonian vector field cannot be lifted
 
-A `HamiltonianVectorField` already lives on the cotangent space, so `Lift` rejects it. The
-message names `ad` instead of `Lift`
-([CTLie#41](https://github.com/control-toolbox/CTLie.jl/issues/41)):
+A `HamiltonianVectorField` already lives on the cotangent space, so `Lift` rejects it:
 
 ```@repl main
 Lift(HamiltonianVectorField((x, p) -> (p, -x)))
