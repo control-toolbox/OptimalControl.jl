@@ -29,7 +29,7 @@ ocp = @def begin
     x = (q, v) ∈ R², state
     u ∈ R, control
     -1 ≤ u(t) ≤ 1
-    x(0) == x0, (start)
+    x(0) == x0
     x(tf) == xf
     ẋ(t) == [v(t), u(t)]
     tf → min
@@ -114,16 +114,16 @@ This is why `shoot!` above calls the flows with `unsafe=true`.
 
 A shooting method converges from a good initial guess. The direct method provides one:
 
-- the initial costate is the multiplier of the initial condition, `dual(sol, ocp, :start)`
-  (more accurate than `costate(sol)(0)`, see
-  [Solution object](@ref results-solution-duals));
+- the initial costate is the costate of the direct solution at the initial time,
+  `costate(sol)(t0)`: it is accurate to the step of the grid, which is enough for the
+  shooting to converge;
 - the switching time is read off the control, where it changes sign;
 - the final time is the variable.
 
 ```@example main
 sol_d = solve(ocp; display=false)
 
-p0_guess = dual(sol_d, ocp, :start)
+p0_guess = costate(sol_d)(t0)
 tg = time_grid(sol_d)
 t1_guess = tg[findfirst(t -> control(sol_d)(t) < 0, tg)]
 tf_guess = variable(sol_d)
