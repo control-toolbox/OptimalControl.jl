@@ -286,6 +286,25 @@ Recorded so they are decided, not forgotten.
 | `@def_exa` exists in CTParser but is not re-exported | §2 | open — PR 5 |
 | `time` and `success` are `Base` names with no OptimalControl binding | §13 | ✅ closed — PR 3 added throwing `Base.time`/`Base.success` methods (`src/deprecated.jl`) |
 
+### Reference only (checked 2026-11-15, review item B4 of #1063)
+
+Exported, but taught on no guide page, on purpose: they appear in signatures or serve tools
+built on the package, not scripts.
+
+- Type vocabulary: `AbstractControlLaw` `AbstractControlledVectorField`
+  `AbstractHamiltonianVectorField` `AbstractMultiplier` `AbstractPathConstraint`
+  `AbstractPseudoHamiltonian` `AbstractPseudoHamiltonianVectorField` `AbstractVectorField`
+  `ComposedHamiltonian` `ComposedVectorField` `ControlLaw` `Multiplier`
+  `controlled_vector_field` `AnyMultiPhaseFlow` `MultiPhaseFlow` `MultiPhaseHamiltonianFlow`
+  `MultiPhaseStateFlow`.
+- Registries and parameters: `strategy_ids` `type_from_id` `create_registry`
+  `available_parameters` `default_parameter`.
+- Integration results: `AbstractIntegrationResult` `final_state` `evaluate_at` (a flow's
+  trajectory is called directly, `traj(t)`).
+- `get_build_examodel` (the ExaModels builder of a `@def` model).
+- `is_empty` acts on the time-grid model of a solution, not on a solution:
+  `is_empty_time_grid(sol)` is the user-facing form. Worth reconsidering its export.
+
 ## 15. How to use this file
 
 1. When a docs page changes what it covers, update the *Guide* column to the page that
