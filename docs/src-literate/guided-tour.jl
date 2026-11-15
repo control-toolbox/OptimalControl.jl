@@ -49,11 +49,9 @@
 #md # The solvers, plotting and ODE integrators are separate packages, loaded only when needed: see [Installation](@ref getting-started-installation).
 #nb # The solvers, plotting and ODE integrators are separate packages, loaded only when needed: see [Installation](https://control-toolbox.org/OptimalControl.jl/dev/getting-started/installation).
 #
-# We load OptimalControl.jl to model the problem, a solver backend ([NLPModelsIpopt.jl](https://jso.dev/NLPModelsIpopt.jl)), and [Plots.jl](https://docs.juliaplots.org).
+# We load OptimalControl.jl to model the problem; the other packages are loaded where they are first used.
 
 using OptimalControl
-using NLPModelsIpopt
-using Plots
 
 #src ============================================================================
 # ## Defining a problem: `@def` vs macro-free
@@ -70,18 +68,20 @@ using Plots
 # ```math
 # \dot{q}(t) = v(t), \qquad \dot{v}(t) = u(t).
 # ```
+#
+# The data of the problem: the time interval and the end points.
 
-t0 = 0;
-tf = 1;
-x0 = [-1, 0];
-xf = [0, 0];
+t0 = 0
+tf = 1
+x0 = [-1, 0]
+xf = [0, 0]
+#md nothing # hide
 
 # ### The `@def` macro
 #
-#md # The [`@def`](@ref modelling-abstract-syntax) macro lets us write the problem almost exactly as the mathematics:
-#nb # The [`@def`](https://control-toolbox.org/OptimalControl.jl/dev/modelling/abstract-syntax) macro lets us write the problem almost exactly as the mathematics:
-#
-# Each line of the `@def` block mirrors a piece of the mathematical formulation — time, state, control, dynamics, boundary conditions, then cost — in the same order one would write them on paper. Unicode symbols (`∈`, `R²`, `ẋ`, `∫`, `→`) make the code read like the maths; plain ASCII alternatives (`R^2`, `derivative`, `integral`, `=>`) are available for keyboards or workflows that prefer them.
+#md # The [`@def`](@ref modelling-abstract-syntax) macro lets us write the problem almost exactly as the mathematics.
+#nb # The [`@def`](https://control-toolbox.org/OptimalControl.jl/dev/modelling/abstract-syntax) macro lets us write the problem almost exactly as the mathematics.
+# Each line of the block mirrors a piece of the formulation — time, state, control, boundary conditions, dynamics, then cost — in the order one would write them on paper. Unicode symbols (`∈`, `R²`, `ẋ`, `∫`, `→`) make the code read like the maths; plain ASCII alternatives (`R^2`, `derivative`, `integral`, `=>`) are available for keyboards or workflows that prefer them:
 
 ocp = @def begin
     t ∈ [t0, tf], time
@@ -101,20 +101,14 @@ end
 #
 #md # The [functional API](@ref modelling-functional-api) builds the *same* model step by step with plain functions — useful for programmatic problem generation or macro-free library code.
 #nb # The [functional API](https://control-toolbox.org/OptimalControl.jl/dev/modelling/functional-api) builds the *same* model step by step with plain functions — useful for programmatic problem generation or macro-free library code.
+#
+# First, the functions of the problem: the dynamics, the boundary conditions and the integrand of the cost. The last argument of each is the optimisation variable, none here.
 
-pre = OptimalControl.PreModel()
-
-time!(pre; t0=t0, tf=tf)
-state!(pre, 2, "x", ["q", "v"])
-control!(pre, 1)
-
-## the last argument of every callback is the optimisation variable (none here)
 function f_energy!(dx, t, x, u, var)
     dx[1] = x[2]
     dx[2] = u          # scalar control: `u`, not `u[1]`
     return nothing
 end
-dynamics!(pre, f_energy!)
 
 function boundary_energy!(b, x0_, xf_, var)
     b[1] = x0_[1] - x0[1]
@@ -123,19 +117,26 @@ function boundary_energy!(b, x0_, xf_, var)
     b[4] = xf_[2] - xf[2]
     return nothing
 end
-constraint!(pre, :boundary; f=boundary_energy!, lb=zeros(4), ub=zeros(4), label=:endpoint)
 
 lagrange_energy(t, x, u, var) = 0.5 * u^2
+#md nothing # hide
+
+# Then the model, built one component at a time:
+
+pre = OptimalControl.PreModel()
+time!(pre; t0=t0, tf=tf)
+state!(pre, 2, "x", ["q", "v"])
+control!(pre, 1)
+dynamics!(pre, f_energy!)
+constraint!(pre, :boundary; f=boundary_energy!, lb=zeros(4), ub=zeros(4), label=:endpoint)
 objective!(pre, :min; lagrange=lagrange_energy)
-
 time_dependence!(pre; autonomous=true)
-
 ocp_func = build(pre)
 #md nothing # hide
 
 # ### What the macro actually does
 #
-# **Key message:** `@def` *translates the expression* into the very same functional calls, and **additionally records the symbolic definition**. We can see the difference directly: the macro keeps the DSL expression, whereas the functional API stores an empty definition.
+# `@def` *translates the expression* into the very same functional calls, and **additionally records the symbolic definition**. We can see the difference directly: the macro keeps the DSL expression, whereas the functional API stores an empty definition.
 
 definition(ocp)          # the macro records the full DSL expression
 
@@ -152,7 +153,10 @@ has_abstract_definition(ocp_func)   # false: no symbolic definition
 # ## First solve, initial guess, and the costate
 #src ============================================================================
 #
-# Solving is one call, plotting another.
+# Solving is one call, plotting another. Solving needs a solver backend, [NLPModelsIpopt.jl](https://jso.dev/NLPModelsIpopt.jl) for the default solver Ipopt, and plotting needs [Plots.jl](https://docs.juliaplots.org):
+
+using NLPModelsIpopt
+using Plots
 
 direct_sol = solve(ocp)
 #md nothing # hide
@@ -162,7 +166,7 @@ direct_sol = solve(ocp)
 
 #-
 
-plot(direct_sol; size=(800, 600))
+plot(direct_sol; size=(800, 710))
 
 #-
 #md @assert isapprox(objective(direct_sol), 6; rtol=1e-3)   # hide
@@ -173,7 +177,7 @@ plot(direct_sol; size=(800, 600))
 # With no initial guess, every variable is initialised to `0.1`. We can *see* the initial guess without optimising, by stopping the solver immediately with `max_iter=0`:
 
 sol_init = solve(ocp; init=nothing, max_iter=0, display=false)
-plot(sol_init; size=(800, 600))
+plot(sol_init; size=(800, 710))
 
 #md # !!! note "Notice the right-hand column: the costate is already there"
 #md #     Even though we only ever provide the state, control and (optional) variable, the solution carries a costate: the multipliers of the discretised dynamics. It approximates the **adjoint $p$ of Pontryagin's Maximum Principle**, up to the step of the grid — the $p$ we will reuse to start the indirect method in the indirect section. This closes the loop between the direct and indirect methods.
@@ -198,8 +202,8 @@ println("iterations, @init guess:   ", iterations(sol))
 #md # For all the ways to specify an initial guess, see [Initial guess](@ref solve-initial-guess).
 #nb # For all the ways to specify an initial guess, see [Initial guess](https://control-toolbox.org/OptimalControl.jl/dev/solve/initial-guess).
 #md # !!! note
-#md #     There is currently no way to initialise the costate directly — only state, control and variable can be provided through `@init`. The solver initialises the adjoint internally (as we saw above). Costate initialisation is a planned feature.
-#nb # **Note:** there is currently no way to initialise the costate directly — only state, control and variable can be provided through `@init`. The solver initialises the adjoint internally (as we saw above). Costate initialisation is a planned feature.
+#md #     An initial guess gives the state, the control and the variable, not the costate: it can neither be set in `@init` nor taken from a previous solution with `init=sol`. The costate drawn above with `max_iter=0` is the solver's own initial estimate of the multipliers. See [#1083](https://github.com/control-toolbox/OptimalControl.jl/issues/1083).
+#nb # **Note:** an initial guess gives the state, the control and the variable, not the costate: it can neither be set in `@init` nor taken from a previous solution with `init=sol`. The costate drawn above with `max_iter=0` is the solver's own initial estimate of the multipliers. See [#1083](https://github.com/control-toolbox/OptimalControl.jl/issues/1083).
 
 #src ============================================================================
 # ## Direct method in depth: Goddard
@@ -250,7 +254,7 @@ goddard = @def begin
 end
 #md nothing # hide
 
-# ### Choosing a solver is trivial
+# ### Changing the solver
 #
 #md # `solve` uses the defaults (collocation, ADNLP modeler, Ipopt, CPU). Switching solver is just loading a package and passing a token (see [Choosing a method](@ref solve-choosing-a-method)):
 #nb # `solve` uses the defaults (collocation, ADNLP modeler, Ipopt, CPU). Switching solver is just loading a package and passing a token (see [Choosing a method](https://control-toolbox.org/OptimalControl.jl/dev/solve/choosing-a-method)):
@@ -276,7 +280,7 @@ println("MadNLP : r(tf) = ", objective(sol_madnlp), ", ", iterations(sol_madnlp)
 #
 # A solution can be passed **directly** as the initial guess of another solve — it is interpolated onto the new grid. This makes discrete continuation trivial and ties back to the initialisation above. On this nonlinear problem it genuinely **pays**: we compare reaching a fine grid of 1000 two ways — a **cold start** (solve `grid_size=1000` directly) versus a **cascade** (solve `grid_size=50` first, then `grid_size=1000` warm-started with that solution).
 
-## computed once, reused for iteration counts and the overlay plot
+## cold start: grid 1000 directly (reused below, for the comparison with a bang-bang strategy)
 sol_cold = solve(goddard; grid_size=1000, display=false)
 
 ## warm cascade: grid 50 first, then grid 1000 initialised from it
@@ -295,64 +299,44 @@ println("cascade grid 1000 (warm) : ", iterations(s1000), " iters")
 
 # Overlay the two solutions to see that the coarse grid already captures the structure:
 
-plt = plot(s50; label="50", size=(800, 800))
+plt = plot(s50; label="50", size=(800, 1340), legend=false)
 plot!(plt, s1000; label="1000")
+plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 
 #md # This is grid-refinement warm-starting. The very same mechanism drives **parametric** continuation (homotopy on a physical parameter, e.g. maximum thrust): [Discrete continuation](@extref Tutorials tutorial-continuation).
 #nb # This is grid-refinement warm-starting. The very same mechanism drives **parametric** continuation (homotopy on a physical parameter, e.g. maximum thrust): <https://control-toolbox.org/Tutorials.jl/stable/tutorial-continuation.html>.
 
 # ### Comparison with a bang-bang strategy
 
-# How much better is the optimal solution compared to a naive strategy? We simulate **full thrust until fuel depletion, then coast to apogee** — a bang-bang profile with no optimisation, just two ODE integrations with callbacks.
+#md # How much better is the optimal solution compared to a naive strategy? We simulate **full thrust until fuel depletion, then coast to apogee** — a bang-bang profile with no optimisation, just two ODE integrations using [`Flow`](@ref flows-overview) (see also [Simulation](@ref flows-simulation)) with [OrdinaryDiffEq callbacks](https://docs.sciml.ai/DiffEqDocs/stable/features/callback_functions/) (`ContinuousCallback` and `terminate!` come from `OrdinaryDiffEqTsit5`).
+#nb # How much better is the optimal solution compared to a naive strategy? We simulate **full thrust until fuel depletion, then coast to apogee** — a bang-bang profile with no optimisation, just two ODE integrations using [`Flow`](https://control-toolbox.org/OptimalControl.jl/dev/flows/overview) (see also [Simulation](https://control-toolbox.org/OptimalControl.jl/dev/flows/simulation)) with [OrdinaryDiffEq callbacks](https://docs.sciml.ai/DiffEqDocs/stable/features/callback_functions/) (`ContinuousCallback` and `terminate!` come from `OrdinaryDiffEqTsit5`).
 
-using OrdinaryDiffEqTsit5   # ODE solver: bang-bang simulation here, Hamiltonian flows later
+using OrdinaryDiffEqTsit5   # ODE solver + callbacks (ContinuousCallback, terminate!)
 
 ## Phase 1: u = 1, stop when m = mf (fuel depleted)
-bang1!(dx, x, p, t) = (dx[:] = F0(x) + F1(x))
 cb_fuel = ContinuousCallback((u, t, int) -> u[3] - mf, terminate!)
-sol_bang1 = solve(
-    ODEProblem(bang1!, [r0, v0, m0], (t0, 100.0)),
-    Tsit5();
-    callback=cb_fuel,
-    reltol=1e-8,
-    abstol=1e-8,
-)
-t1_bang, x1_bang = sol_bang1.t[end], sol_bang1[:, end]
+flow_bang1 = Flow(VectorField(x -> F0(x) + F1(x)); callback=cb_fuel)
+traj_bang1 = flow_bang1((t0, 1.0), [r0, v0, m0]; grid=nothing)
+t1_bang = time_grid(traj_bang1)[end]
+x1_bang = state(traj_bang1)(t1_bang)
 
 ## Phase 2: u = 0, stop when v = 0 (apogee)
-bang2!(dx, x, p, t) = (dx[:] = F0(x))
 cb_apogee = ContinuousCallback((u, t, int) -> u[2], terminate!)
-sol_bang2 = solve(
-    ODEProblem(bang2!, x1_bang, (t1_bang, 1000.0)),
-    Tsit5();
-    callback=cb_apogee,
-    reltol=1e-8,
-    abstol=1e-8,
-)
-tf_bang, rf_bang = sol_bang2.t[end], sol_bang2[1, end]
+flow_bang2 = Flow(VectorField(F0); callback=cb_apogee)
+traj_bang2 = flow_bang2((t1_bang, 1.0), x1_bang; grid=nothing)
+tf_bang = time_grid(traj_bang2)[end]
+rf_bang = state(traj_bang2)(tf_bang)[1]
 
-println(
-    "Bang-bang: r(tf) = ",
-    round(rf_bang; digits=6),
-    "  (t1=",
-    round(t1_bang; digits=4),
-    ", tf=",
-    round(tf_bang; digits=4),
-    ")",
-)
-println(
-    "Optimal:   r(tf) = ",
-    round(objective(sol_cold); digits=6),
-    "  (           tf=",
-    round(variable(sol_cold); digits=4),
-    ")",
-)
+r_opt_f = objective(sol_cold)
+println("Bang-bang: r(tf) = ", round(rf_bang; digits=6), ", tf = ", round(tf_bang; digits=4))
+println("Optimal:   r(tf) = ", round(r_opt_f; digits=6), ", tf = ", round(variable(sol_cold); digits=4))
 
-println(
-    "Extra altitude gain of the optimal strategy: ",
-    round(100 * (objective(sol_cold) - rf_bang) / (rf_bang - r0); digits=1),
-    " %",
-)
+gain = 100 * (r_opt_f - rf_bang) / (rf_bang - r0)   # gain above r0, in %
+println("Extra altitude gain of the optimal strategy: ", round(gain; digits=1), " %")
+
+#md # !!! warning "Pass `grid=nothing` with terminating callbacks"
+#md #     When calling a `Flow` on a time span `(t0, tmax)`, `CTFlows` regrids the trajectory on `[t0, tmax]` by default — even if a `terminate!` callback stopped the integration earlier. Passing `grid=nothing` preserves the solver's actual time grid up to the callback event.
+#nb # **Warning:** when calling a `Flow` on a time span `(t0, tmax)`, `CTFlows` regrids the trajectory on `[t0, tmax]` by default — even if a `terminate!` callback stopped the integration earlier. Passing `grid=nothing` preserves the solver's actual time grid up to the callback event.
 
 # The optimal strategy climbs about 2.7 % higher above $r_0$ than the naive one. It does not simply push at the maximum: after a full-thrust phase it throttles along a **singular arc**, where pushing harder would mostly be lost to drag, then coasts. Overlaying the altitude of both strategies against time makes the difference visible:
 
@@ -361,28 +345,281 @@ println(
 #md @assert objective(sol_cold) > rf_bang                    # hide
 #md nothing                                                  # hide
 
-## assemble the bang-bang trajectory as (t, r, v, m) for plotting
-t_bang = [sol_bang1.t; sol_bang2.t]
-r_bang = [sol_bang1[1, :]; sol_bang2[1, :]]
+## assemble the bang-bang altitude as (t, r) for plotting
+t1_grid, t2_grid = time_grid(traj_bang1), time_grid(traj_bang2)
+t_bang = [t1_grid; t2_grid]
+r_bang = [[state(traj_bang1)(t)[1] for t in t1_grid]; [state(traj_bang2)(t)[1] for t in t2_grid]]
 
 ## the optimal altitude, read from the solution on its time grid
 t_opt = time_grid(sol_cold)
 r_opt = [state(sol_cold)(t)[1] for t in t_opt]
 
-plot(
+tf_opt = t_opt[end]
+
+plt = plot(
     t_opt,
     r_opt;
     label="optimal",
     linewidth=2,
     xlabel="time",
     ylabel="altitude",
-    legend=:bottomright,
+    legend=:topleft,
     size=(800, 400),
     left_margin=5Plots.mm,
 )
-plot!(t_bang, r_bang; label="bang-bang", linestyle=:dash, linewidth=2)
+plot!(plt, t_bang, r_bang; label="bang-bang", linestyle=:dash, linewidth=2)
+hline!(plt, [r0]; color=:gray, linewidth=0.8, label="")
+plot!(plt, [tf_opt, tf_opt], [r0, r_opt_f]; color=1, linestyle=:dot, linewidth=1.2, label="")
+plot!(plt, [tf_bang, tf_bang], [r0, rf_bang]; color=2, linestyle=:dot, linewidth=1.2, label="")
+scatter!(plt, [tf_opt], [r_opt_f]; color=1, markersize=5, label="")
+scatter!(plt, [tf_bang], [rf_bang]; color=2, markersize=5, label="")
+
+## Inset zoom around the two apogees
+plot!(
+    plt,
+    t_opt,
+    r_opt;
+    inset=(1, bbox(0.40, 0.40, 0.46, 0.45)),
+    subplot=2,
+    xlims=(0.178, 0.210),
+    ylims=(1.01238, 1.01292),
+    linewidth=2,
+    color=1,
+    legend=false,
+    title="apogee zoom",
+    titlefontsize=9,
+    tickfontsize=7,
+    framestyle=:box,
+)
+plot!(plt[2], t_bang, r_bang; linestyle=:dash, linewidth=2, color=2)
+scatter!(plt[2], [tf_opt], [r_opt_f]; color=1, markersize=4)
+scatter!(plt[2], [tf_bang], [rf_bang]; color=2, markersize=4)
+t_ref = 0.203
+plot!(plt[2], [tf_opt, t_ref], [r_opt_f, r_opt_f]; color=:gray, linestyle=:dot, linewidth=1)
+plot!(plt[2], [tf_bang, t_ref], [rf_bang, rf_bang]; color=:gray, linestyle=:dot, linewidth=1)
+plot!(plt[2], [t_ref, t_ref], [rf_bang, r_opt_f]; color=:black, linewidth=1.5)
+annotate!(plt[2], t_ref + 0.0008, (rf_bang + r_opt_f) / 2, text("+$(round(gain; digits=1)) %", 8, :left))
 
 # The bang-bang rocket climbs faster at first, but it burns all its fuel at full speed in the densest air. The optimal one holds back, keeps fuel for later, and ends higher.
+
+#md struct TourRawHTML                                                                      # hide
+#md     raw::String                                                                          # hide
+#md end                                                                                      # hide
+#md Base.show(io::IO, ::MIME"text/html", h::TourRawHTML) = print(io, h.raw)                 # hide
+#md                                                                                          # hide
+#md let                                                                                      # hide
+#md     X_opt = state(sol_cold).(t_opt)                                                      # hide
+#md     u_opt = control(sol_cold).(t_opt)                                                    # hide
+#md     r_opt_a = [x[1] for x in X_opt]                                                      # hide
+#md     v_opt_a = [x[2] for x in X_opt]                                                      # hide
+#md     m_opt_a = [x[3] for x in X_opt]                                                      # hide
+#md                                                                                          # hide
+#md     X_bang = [[state(traj_bang1)(t) for t in t1_grid]; [state(traj_bang2)(t) for t in t2_grid]] # hide
+#md     r_bang_a = [x[1] for x in X_bang]                                                    # hide
+#md     v_bang_a = [x[2] for x in X_bang]                                                    # hide
+#md     m_bang_a = [x[3] for x in X_bang]                                                    # hide
+#md     u_bang_a = [fill(1.0, length(t1_grid)); fill(0.0, length(t2_grid))]                  # hide
+#md                                                                                          # hide
+#md     j(a) = "[" * join(string.(round.(a; digits=6)), ",") * "]"                           # hide
+#md     pal = palette(:default)                                                              # hide
+#md     c_opt = "#" * hex(pal[1])                                                            # hide
+#md     c_bang = "#" * hex(pal[2])                                                           # hide
+#md     t_max_g = max(t_opt[end], t_bang[end])                                               # hide
+#md                                                                                          # hide
+#md     html_anim = """                                                                      # hide
+#md <div style="display: flex; justify-content: center; margin: 20px 0;">                    # hide
+#md     <canvas id="goddardTourCanvas" width="760" height="520"                              # hide
+#md             style="border: 1px solid #ddd; border-radius: 8px; max-width: 100%;">        # hide
+#md     </canvas>                                                                            # hide
+#md </div>                                                                                   # hide
+#md <script>                                                                                 # hide
+#md (function() {                                                                             # hide
+#md     const t1 = $(j(t_opt)), r1 = $(j(r_opt_a)), v1 = $(j(v_opt_a)), m1 = $(j(m_opt_a)), u1 = $(j(u_opt));     # hide
+#md     const t2 = $(j(t_bang)), r2 = $(j(r_bang_a)), v2 = $(j(v_bang_a)), m2 = $(j(m_bang_a)), u2 = $(j(u_bang_a)); # hide
+#md     const t_max_global = $t_max_g;                                                       # hide
+#md     const m0 = $m0, mf = $mf, r0 = $r0;                                                  # hide
+#md     const rf_opt = $(round(r_opt_f; digits=6)), rf_bang = $(round(rf_bang; digits=6));   # hide
+#md     const tf_opt = $(round(t_opt[end]; digits=6)), tf_bang = $(round(tf_bang; digits=6)); # hide
+#md     const color_opt = '$c_opt', color_bang = '$c_bang';                                  # hide
+#md                                                                                          # hide
+#md     const canvas = document.getElementById('goddardTourCanvas');                         # hide
+#md     if (!canvas) return;                                                                 # hide
+#md     const ctx = canvas.getContext('2d');                                                 # hide
+#md                                                                                          # hide
+#md     const flight_duration = 7.0;                                                         # hide
+#md     const pause_duration = 2.0;                                                          # hide
+#md     const total_duration = flight_duration + pause_duration;                             # hide
+#md     const zone_width = canvas.width / 2;                                                 # hide
+#md     const top_margin = 55;                                                               # hide
+#md     const bottom_margin = 105;                                                           # hide
+#md     const baseline = canvas.height - bottom_margin;                                      # hide
+#md     const r_max_all = Math.max(...r1, ...r2);                                            # hide
+#md     const altitude_scale = (baseline - top_margin) / (r_max_all - r0);                   # hide
+#md     const v_max_all = Math.max(...v1, ...v2);                                            # hide
+#md     let start_time = null;                                                               # hide
+#md                                                                                          # hide
+#md     function getColors() {                                                               # hide
+#md         const isDark = document.documentElement.classList.contains('dark') ||            # hide
+#md             (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); # hide
+#md         return isDark ? {                                                                # hide
+#md             bg: '#1e1e2e', ground: '#555', gauge_bg: '#3a3a4a',                          # hide
+#md             gauge_high: '#2ecc71', gauge_mid: '#f39c12', gauge_low: '#e74c3c',           # hide
+#md             text: '#ecf0f1', text_sec: '#a6adc8',                                        # hide
+#md             flame_outer: '#e67e22', flame_inner: '#f1c40f',                              # hide
+#md             win_fill: 'rgba(255,255,255,0.3)', win_stroke: 'rgba(255,255,255,0.65)',     # hide
+#md             progress: color_opt                                                          # hide
+#md         } : {                                                                            # hide
+#md             bg: '#fafafa', ground: '#bbb', gauge_bg: '#e6e9ec',                          # hide
+#md             gauge_high: '#2ecc71', gauge_mid: '#f39c12', gauge_low: '#e74c3c',           # hide
+#md             text: '#2c3e50', text_sec: '#7f8c8d',                                        # hide
+#md             flame_outer: '#e67e22', flame_inner: '#f1c40f',                              # hide
+#md             win_fill: 'rgba(255,255,255,0.55)', win_stroke: 'rgba(255,255,255,0.85)',    # hide
+#md             progress: color_opt                                                          # hide
+#md         };                                                                               # hide
+#md     }                                                                                    # hide
+#md                                                                                          # hide
+#md     function interpolate(t, data_t, data_y) {                                            # hide
+#md         let i = 0;                                                                       # hide
+#md         while (i < data_t.length - 1 && data_t[i + 1] < t) { i++; }                      # hide
+#md         if (i >= data_t.length - 1) return data_y[data_y.length - 1];                    # hide
+#md         const dt = data_t[i + 1] - data_t[i];                                            # hide
+#md         const alpha = dt > 0 ? (t - data_t[i]) / dt : 0;                                 # hide
+#md         return data_y[i] + alpha * (data_y[i + 1] - data_y[i]);                          # hide
+#md     }                                                                                    # hide
+#md                                                                                          # hide
+#md     function drawRocket(zone_idx, t_anim, t_end, r, v, m, u, color, label, colors) {     # hide
+#md         const zone_x = zone_idx * zone_width;                                            # hide
+#md         const cx = zone_x + zone_width / 2 - 20;                                         # hide
+#md         const ry = baseline - altitude_scale * (r - r0);                                 # hide
+#md                                                                                          # hide
+#md         // Ground line                                                                   # hide
+#md         ctx.beginPath();                                                                 # hide
+#md         ctx.moveTo(zone_x + 30, baseline + 20);                                          # hide
+#md         ctx.lineTo(zone_x + zone_width - 30, baseline + 20);                             # hide
+#md         ctx.lineWidth = 2;                                                               # hide
+#md         ctx.strokeStyle = colors.ground;                                                 # hide
+#md         ctx.stroke();                                                                    # hide
+#md                                                                                          # hide
+#md         // Fuel gauge                                                                    # hide
+#md         const fx = cx + 95, fh = 180, fy = baseline - fh;                                # hide
+#md         const fuel = Math.max(0, Math.min(1, (m - mf) / (m0 - mf)));                     # hide
+#md         ctx.fillStyle = colors.gauge_bg;                                                 # hide
+#md         ctx.fillRect(fx - 9, fy, 18, fh);                                                # hide
+#md         ctx.fillStyle = fuel > 0.5 ? colors.gauge_high : (fuel > 0.2 ? colors.gauge_mid : colors.gauge_low); # hide
+#md         ctx.fillRect(fx - 9, fy + (fh - fuel * fh), 18, fuel * fh);                      # hide
+#md         ctx.fillStyle = colors.text_sec;                                                 # hide
+#md         ctx.font = '12px sans-serif';                                                    # hide
+#md         ctx.textAlign = 'center';                                                        # hide
+#md         ctx.fillText('Fuel', fx, fy - 8);                                                # hide
+#md                                                                                          # hide
+#md         // Thrust gauge (u)                                                              # hide
+#md         const ux = fx + 40;                                                              # hide
+#md         const u_clamped = Math.max(0, Math.min(1, u));                                   # hide
+#md         ctx.fillStyle = colors.gauge_bg;                                                 # hide
+#md         ctx.fillRect(ux - 9, fy, 18, fh);                                                # hide
+#md         ctx.fillStyle = color;                                                           # hide
+#md         ctx.fillRect(ux - 9, fy + (fh - u_clamped * fh), 18, u_clamped * fh);            # hide
+#md         ctx.fillStyle = colors.text_sec;                                                 # hide
+#md         ctx.fillText('Thrust', ux, fy - 8);                                              # hide
+#md                                                                                          # hide
+#md         // Rocket body                                                                   # hide
+#md         const r_bot = ry + 18;                                                           # hide
+#md         ctx.fillStyle = color;                                                           # hide
+#md         ctx.beginPath();                                                                 # hide
+#md         ctx.moveTo(cx, ry - 36); ctx.lineTo(cx - 11, ry - 10); ctx.lineTo(cx + 11, ry - 10); # hide
+#md         ctx.closePath(); ctx.fill();                                                     # hide
+#md         ctx.fillRect(cx - 11, ry - 10, 22, 28);                                          # hide
+#md         ctx.beginPath();                                                                 # hide
+#md         ctx.moveTo(cx - 11, ry + 6); ctx.lineTo(cx - 22, ry + 21); ctx.lineTo(cx - 11, ry + 18); # hide
+#md         ctx.closePath(); ctx.fill();                                                     # hide
+#md         ctx.beginPath();                                                                 # hide
+#md         ctx.moveTo(cx + 11, ry + 6); ctx.lineTo(cx + 22, ry + 21); ctx.lineTo(cx + 11, ry + 18); # hide
+#md         ctx.closePath(); ctx.fill();                                                     # hide
+#md         ctx.beginPath();                                                                 # hide
+#md         ctx.arc(cx, ry + 2, 4.5, 0, 2 * Math.PI);                                        # hide
+#md         ctx.fillStyle = colors.win_fill; ctx.fill();                                     # hide
+#md         ctx.strokeStyle = colors.win_stroke; ctx.lineWidth = 1.5; ctx.stroke();          # hide
+#md                                                                                          # hide
+#md         // Flame                                                                         # hide
+#md         if (t_anim < t_end && u_clamped > 0.05) {                                        # hide
+#md             const fl = 8 + 22 * u_clamped;                                               # hide
+#md             ctx.fillStyle = colors.flame_outer;                                          # hide
+#md             ctx.beginPath();                                                             # hide
+#md             ctx.moveTo(cx - 9, r_bot); ctx.lineTo(cx, r_bot + fl); ctx.lineTo(cx + 9, r_bot); # hide
+#md             ctx.closePath(); ctx.fill();                                                 # hide
+#md             ctx.fillStyle = colors.flame_inner;                                          # hide
+#md             ctx.beginPath();                                                             # hide
+#md             ctx.moveTo(cx - 4.5, r_bot); ctx.lineTo(cx, r_bot + fl * 0.6); ctx.lineTo(cx + 4.5, r_bot); # hide
+#md             ctx.closePath(); ctx.fill();                                                 # hide
+#md         }                                                                                # hide
+#md                                                                                          # hide
+#md         // Altitude readout                                                              # hide
+#md         ctx.fillStyle = colors.text;                                                     # hide
+#md         ctx.font = 'bold 13px sans-serif';                                               # hide
+#md         ctx.fillText('r = ' + r.toFixed(5), cx, ry - 42);                                # hide
+#md                                                                                          # hide
+#md         // Velocity bar                                                                  # hide
+#md         const vw = 56, vh = 7, vx = cx - vw / 2, vy = ry + 48;                           # hide
+#md         const vl = Math.min(1, Math.abs(v) / v_max_all);                                 # hide
+#md         ctx.fillStyle = colors.gauge_bg; ctx.fillRect(vx, vy, vw, vh);                   # hide
+#md         ctx.fillStyle = vl > 0.7 ? colors.gauge_low : (vl > 0.4 ? colors.gauge_mid : colors.gauge_high); # hide
+#md         ctx.fillRect(vx, vy, vl * vw, vh);                                               # hide
+#md         ctx.fillStyle = colors.text_sec; ctx.font = '11px sans-serif';                   # hide
+#md         ctx.fillText('v', cx, vy + 18);                                                  # hide
+#md                                                                                          # hide
+#md         // Strategy label                                                                # hide
+#md         ctx.fillStyle = color;                                                           # hide
+#md         ctx.font = 'bold 16px sans-serif';                                               # hide
+#md         ctx.fillText(label, zone_x + zone_width / 2, baseline + 70);                     # hide
+#md     }                                                                                    # hide
+#md                                                                                          # hide
+#md     function draw(time) {                                                                # hide
+#md         if (!start_time) start_time = time;                                              # hide
+#md         const colors = getColors();                                                      # hide
+#md         const elapsed = ((time - start_time) / 1000.0) % total_duration;                 # hide
+#md         const progress = Math.min(1.0, elapsed / flight_duration);                       # hide
+#md         const t_anim = progress * t_max_global;                                          # hide
+#md                                                                                          # hide
+#md         ctx.fillStyle = colors.bg;                                                       # hide
+#md         ctx.fillRect(0, 0, canvas.width, canvas.height);                                 # hide
+#md                                                                                          # hide
+#md         ctx.fillStyle = colors.text;                                                     # hide
+#md         ctx.font = 'bold 16px sans-serif';                                               # hide
+#md         ctx.textAlign = 'center';                                                        # hide
+#md         ctx.fillText('t = ' + t_anim.toFixed(3), canvas.width / 2, 28);                  # hide
+#md                                                                                          # hide
+#md         // Reference apogee lines once reached                                           # hide
+#md         if (t_anim >= tf_bang) {                                                         # hide
+#md             const y_bang = baseline - altitude_scale * (rf_bang - r0);                   # hide
+#md             ctx.save(); ctx.setLineDash([5, 5]); ctx.strokeStyle = color_bang; ctx.lineWidth = 1.2; # hide
+#md             ctx.beginPath(); ctx.moveTo(30, y_bang); ctx.lineTo(canvas.width - 30, y_bang); ctx.stroke(); # hide
+#md             ctx.restore();                                                               # hide
+#md         }                                                                                # hide
+#md         if (t_anim >= tf_opt) {                                                          # hide
+#md             const y_opt = baseline - altitude_scale * (rf_opt - r0);                     # hide
+#md             ctx.save(); ctx.setLineDash([5, 5]); ctx.strokeStyle = color_opt; ctx.lineWidth = 1.2; # hide
+#md             ctx.beginPath(); ctx.moveTo(30, y_opt); ctx.lineTo(canvas.width - 30, y_opt); ctx.stroke(); # hide
+#md             ctx.restore();                                                               # hide
+#md         }                                                                                # hide
+#md                                                                                          # hide
+#md         drawRocket(0, t_anim, tf_opt, interpolate(t_anim, t1, r1), interpolate(t_anim, t1, v1), # hide
+#md                    interpolate(t_anim, t1, m1), interpolate(t_anim, t1, u1), color_opt, 'optimal', colors); # hide
+#md         drawRocket(1, t_anim, tf_bang, interpolate(t_anim, t2, r2), interpolate(t_anim, t2, v2), # hide
+#md                    interpolate(t_anim, t2, m2), interpolate(t_anim, t2, u2), color_bang, 'bang-bang', colors); # hide
+#md                                                                                          # hide
+#md         ctx.fillStyle = colors.gauge_bg;                                                 # hide
+#md         ctx.fillRect(0, canvas.height - 4, canvas.width, 4);                             # hide
+#md         ctx.fillStyle = colors.progress;                                                 # hide
+#md         ctx.fillRect(0, canvas.height - 4, canvas.width * progress, 4);                  # hide
+#md                                                                                          # hide
+#md         requestAnimationFrame(draw);                                                     # hide
+#md     }                                                                                    # hide
+#md     requestAnimationFrame(draw);                                                         # hide
+#md })();                                                                                    # hide
+#md </script>                                                                                # hide
+#md """                                                                                      # hide
+#md     TourRawHTML(html_anim)                                                               # hide
+#md end                                                                                      # hide
 
 #src ============================================================================
 # ## Solving on a GPU
@@ -456,7 +693,7 @@ using NonlinearSolve   # nonlinear equations (shooting); the ODE solver is alrea
 u_feedback(x, p) = p[2]
 
 ## Hamiltonian flow of the OCP
-φ = Flow(ocp, u_feedback);
+φ = Flow(ocp, u_feedback)
 
 ## state projection π(x, p) = x
 proj((x, p)) = x
@@ -489,10 +726,11 @@ println("shoot S(p0) = ", S(p0_sol))
 
 indirect_sol = φ((t0, tf), x0, p0_sol)
 
-plt_compare = plot(direct_sol; label="direct", size=(800, 600))
+plt_compare = plot(direct_sol; label="direct", size=(800, 710), legend=false)
 plot!(plt_compare, indirect_sol; label="indirect")
+plot!(plt_compare; subplot=1, legend=:best)   # one legend, on the first subplot
 
-#md # See [From an OCP](@ref flows-from-ocp) for the flow construction, and the [indirect simple shooting tutorial](@extref tutorial-indirect-simple-shooting).
+#md # See [From an OCP](@ref flows-from-ocp) for the flow construction, and the [indirect simple shooting tutorial](@extref Tutorials tutorial-indirect-simple-shooting).
 #nb # See [From an OCP](https://control-toolbox.org/OptimalControl.jl/dev/flows/from-ocp) for the flow construction, and the [indirect simple shooting tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-iss.html).
 
 #src ============================================================================
