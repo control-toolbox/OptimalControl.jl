@@ -1,11 +1,9 @@
 using OptimalControl
-using NLPModelsIpopt
-using Plots
 
-t0 = 0;
-tf = 1;
-x0 = [-1, 0];
-xf = [0, 0];
+t0 = 0
+tf = 1
+x0 = [-1, 0]
+xf = [0, 0]
 
 ocp = @def begin
     t ∈ [t0, tf], time
@@ -20,19 +18,11 @@ ocp = @def begin
     0.5∫(u(t)^2) → min
 end
 
-pre = OptimalControl.PreModel()
-
-time!(pre; t0=t0, tf=tf)
-state!(pre, 2, "x", ["q", "v"])
-control!(pre, 1)
-
-# the last argument of every callback is the optimisation variable (none here)
 function f_energy!(dx, t, x, u, var)
     dx[1] = x[2]
     dx[2] = u          # scalar control: `u`, not `u[1]`
     return nothing
 end
-dynamics!(pre, f_energy!)
 
 function boundary_energy!(b, x0_, xf_, var)
     b[1] = x0_[1] - x0[1]
@@ -41,25 +31,32 @@ function boundary_energy!(b, x0_, xf_, var)
     b[4] = xf_[2] - xf[2]
     return nothing
 end
-constraint!(pre, :boundary; f=boundary_energy!, lb=zeros(4), ub=zeros(4), label=:endpoint)
 
 lagrange_energy(t, x, u, var) = 0.5 * u^2
+
+pre = OptimalControl.PreModel()
+time!(pre; t0=t0, tf=tf)
+state!(pre, 2, "x", ["q", "v"])
+control!(pre, 1)
+dynamics!(pre, f_energy!)
+constraint!(pre, :boundary; f=boundary_energy!, lb=zeros(4), ub=zeros(4), label=:endpoint)
 objective!(pre, :min; lagrange=lagrange_energy)
-
 time_dependence!(pre; autonomous=true)
-
 ocp_func = build(pre)
 
 definition(ocp)          # the macro records the full DSL expression
 
 has_abstract_definition(ocp_func)   # false: no symbolic definition
 
+using NLPModelsIpopt
+using Plots
+
 direct_sol = solve(ocp)
 
-plot(direct_sol; size=(800, 600))
+plot(direct_sol; size=(800, 710))
 
 sol_init = solve(ocp; init=nothing, max_iter=0, display=false)
-plot(sol_init; size=(800, 600))
+plot(sol_init; size=(800, 710))
 
 ig = @init ocp begin
     q(t) := -1 + t
@@ -115,7 +112,7 @@ sol_madnlp = solve(goddard, :madnlp; grid_size=250, display=false)
 println("Ipopt  : r(tf) = ", objective(sol_ipopt), ", ", iterations(sol_ipopt), " iters")
 println("MadNLP : r(tf) = ", objective(sol_madnlp), ", ", iterations(sol_madnlp), " iters")
 
-# computed once, reused for iteration counts and the overlay plot
+# cold start: grid 1000 directly (reused below, for the comparison with a bang-bang strategy)
 sol_cold = solve(goddard; grid_size=1000, display=false)
 
 # warm cascade: grid 50 first, then grid 1000 initialised from it
@@ -126,78 +123,87 @@ println("cold    grid 1000        : ", iterations(sol_cold), " iters")
 println("cascade grid 50 (warm-up): ", iterations(s50), " iters")
 println("cascade grid 1000 (warm) : ", iterations(s1000), " iters")
 
-plt = plot(s50; label="50", size=(800, 800))
+plt = plot(s50; label="50", size=(800, 1340), legend=false)
 plot!(plt, s1000; label="1000")
+plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 
-using OrdinaryDiffEqTsit5   # ODE solver: bang-bang simulation here, Hamiltonian flows later
+using OrdinaryDiffEqTsit5   # ODE solver + callbacks (ContinuousCallback, terminate!)
 
 # Phase 1: u = 1, stop when m = mf (fuel depleted)
-bang1!(dx, x, p, t) = (dx[:] = F0(x) + F1(x))
 cb_fuel = ContinuousCallback((u, t, int) -> u[3] - mf, terminate!)
-sol_bang1 = solve(
-    ODEProblem(bang1!, [r0, v0, m0], (t0, 100.0)),
-    Tsit5();
-    callback=cb_fuel,
-    reltol=1e-8,
-    abstol=1e-8,
-)
-t1_bang, x1_bang = sol_bang1.t[end], sol_bang1[:, end]
+flow_bang1 = Flow(VectorField(x -> F0(x) + F1(x)); callback=cb_fuel)
+traj_bang1 = flow_bang1((t0, 1.0), [r0, v0, m0]; grid=nothing)
+t1_bang = time_grid(traj_bang1)[end]
+x1_bang = state(traj_bang1)(t1_bang)
 
 # Phase 2: u = 0, stop when v = 0 (apogee)
-bang2!(dx, x, p, t) = (dx[:] = F0(x))
 cb_apogee = ContinuousCallback((u, t, int) -> u[2], terminate!)
-sol_bang2 = solve(
-    ODEProblem(bang2!, x1_bang, (t1_bang, 1000.0)),
-    Tsit5();
-    callback=cb_apogee,
-    reltol=1e-8,
-    abstol=1e-8,
-)
-tf_bang, rf_bang = sol_bang2.t[end], sol_bang2[1, end]
+flow_bang2 = Flow(VectorField(F0); callback=cb_apogee)
+traj_bang2 = flow_bang2((t1_bang, 1.0), x1_bang; grid=nothing)
+tf_bang = time_grid(traj_bang2)[end]
+rf_bang = state(traj_bang2)(tf_bang)[1]
 
-println(
-    "Bang-bang: r(tf) = ",
-    round(rf_bang; digits=6),
-    "  (t1=",
-    round(t1_bang; digits=4),
-    ", tf=",
-    round(tf_bang; digits=4),
-    ")",
-)
-println(
-    "Optimal:   r(tf) = ",
-    round(objective(sol_cold); digits=6),
-    "  (           tf=",
-    round(variable(sol_cold); digits=4),
-    ")",
-)
+r_opt_f = objective(sol_cold)
+println("Bang-bang: r(tf) = ", round(rf_bang; digits=6), ", tf = ", round(tf_bang; digits=4))
+println("Optimal:   r(tf) = ", round(r_opt_f; digits=6), ", tf = ", round(variable(sol_cold); digits=4))
 
-println(
-    "Extra altitude gain of the optimal strategy: ",
-    round(100 * (objective(sol_cold) - rf_bang) / (rf_bang - r0); digits=1),
-    " %",
-)
+gain = 100 * (r_opt_f - rf_bang) / (rf_bang - r0)   # gain above r0, in %
+println("Extra altitude gain of the optimal strategy: ", round(gain; digits=1), " %")
 
-# assemble the bang-bang trajectory as (t, r, v, m) for plotting
-t_bang = [sol_bang1.t; sol_bang2.t]
-r_bang = [sol_bang1[1, :]; sol_bang2[1, :]]
+# assemble the bang-bang altitude as (t, r) for plotting
+t1_grid, t2_grid = time_grid(traj_bang1), time_grid(traj_bang2)
+t_bang = [t1_grid; t2_grid]
+r_bang = [[state(traj_bang1)(t)[1] for t in t1_grid]; [state(traj_bang2)(t)[1] for t in t2_grid]]
 
 # the optimal altitude, read from the solution on its time grid
 t_opt = time_grid(sol_cold)
 r_opt = [state(sol_cold)(t)[1] for t in t_opt]
 
-plot(
+tf_opt = t_opt[end]
+
+plt = plot(
     t_opt,
     r_opt;
     label="optimal",
     linewidth=2,
     xlabel="time",
     ylabel="altitude",
-    legend=:bottomright,
+    legend=:topleft,
     size=(800, 400),
     left_margin=5Plots.mm,
 )
-plot!(t_bang, r_bang; label="bang-bang", linestyle=:dash, linewidth=2)
+plot!(plt, t_bang, r_bang; label="bang-bang", linestyle=:dash, linewidth=2)
+hline!(plt, [r0]; color=:gray, linewidth=0.8, label="")
+plot!(plt, [tf_opt, tf_opt], [r0, r_opt_f]; color=1, linestyle=:dot, linewidth=1.2, label="")
+plot!(plt, [tf_bang, tf_bang], [r0, rf_bang]; color=2, linestyle=:dot, linewidth=1.2, label="")
+scatter!(plt, [tf_opt], [r_opt_f]; color=1, markersize=5, label="")
+scatter!(plt, [tf_bang], [rf_bang]; color=2, markersize=5, label="")
+
+# Inset zoom around the two apogees
+plot!(
+    plt,
+    t_opt,
+    r_opt;
+    inset=(1, bbox(0.40, 0.40, 0.46, 0.45)),
+    subplot=2,
+    xlims=(0.178, 0.210),
+    ylims=(1.01238, 1.01292),
+    linewidth=2,
+    color=1,
+    legend=false,
+    title="apogee zoom",
+    titlefontsize=9,
+    tickfontsize=7,
+    framestyle=:box,
+)
+plot!(plt[2], t_bang, r_bang; linestyle=:dash, linewidth=2, color=2)
+scatter!(plt[2], [tf_opt], [r_opt_f]; color=1, markersize=4)
+scatter!(plt[2], [tf_bang], [rf_bang]; color=2, markersize=4)
+t_ref = 0.203
+plot!(plt[2], [tf_opt, t_ref], [r_opt_f, r_opt_f]; color=:gray, linestyle=:dot, linewidth=1)
+plot!(plt[2], [tf_bang, t_ref], [rf_bang, rf_bang]; color=:gray, linestyle=:dot, linewidth=1)
+plot!(plt[2], [t_ref, t_ref], [rf_bang, r_opt_f]; color=:black, linewidth=1.5)
+annotate!(plt[2], t_ref + 0.0008, (rf_bang + r_opt_f) / 2, text("+$(round(gain; digits=1)) %", 8, :left))
 
 using MadNLPGPU
 using CUDA
@@ -217,7 +223,7 @@ using NonlinearSolve   # nonlinear equations (shooting); the ODE solver is alrea
 u_feedback(x, p) = p[2]
 
 # Hamiltonian flow of the OCP
-φ = Flow(ocp, u_feedback);
+φ = Flow(ocp, u_feedback)
 
 # state projection π(x, p) = x
 proj((x, p)) = x
@@ -239,7 +245,8 @@ println("shoot S(p0) = ", S(p0_sol))
 
 indirect_sol = φ((t0, tf), x0, p0_sol)
 
-plt_compare = plot(direct_sol; label="direct", size=(800, 600))
+plt_compare = plot(direct_sol; label="direct", size=(800, 710), legend=false)
 plot!(plt_compare, indirect_sol; label="indirect")
+plot!(plt_compare; subplot=1, legend=:best)   # one legend, on the first subplot
 
 # This file was generated using Literate.jl, https://github.com/fredrikekre/Literate.jl

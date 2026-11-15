@@ -271,9 +271,9 @@ version = "1.0.3+0"
 
 [[deps.CTBase]]
 deps = ["ADTypes", "DocStringExtensions"]
-git-tree-sha1 = "1edcb390da5df28434590dc8b204e525cd6068c5"
+git-tree-sha1 = "887b45ffef1667e5745286b324567be52ac41602"
 uuid = "54762871-cc72-4466-b8e8-f6c8b58076cd"
-version = "0.30.13"
+version = "0.30.14"
 
     [deps.CTBase.extensions]
     CTBaseAqua = ["Aqua", "Test"]
