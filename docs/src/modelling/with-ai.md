@@ -91,7 +91,7 @@ so that I can compare them with the numerical solution.
 !!! warning "Run the code, and check what the assistant says"
 
     An assistant does not run the code it writes, and its explanations may be wrong even
-    when its code is right. In our tries:
+    when its code is right. In our tries, with ChatGPT in November 2026:
 
     - for the problem above, the code was right, but the assistant announced $t_f = 3$, with
       $u = 1$ on the whole interval: then $q(3) = -1/2$, not $3$. The solution is
@@ -104,8 +104,6 @@ so that I can compare them with the numerical solution.
 
     Run the code, check `successful(sol)`, compare with a value you know, and plot the
     solution (see [Solution object](@ref results-solution)).
-
-These prompts were tried with ChatGPT, without an account, on 15 November 2026.
 
 ## See also
 
