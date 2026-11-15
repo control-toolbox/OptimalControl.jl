@@ -492,7 +492,7 @@ end
 #
 # measures the miss at $t_f$: solving the BVP reduces to finding $p_0$ such that $S(p_0) = 0$.
 #
-#md # To picture what each iteration does, the animation below uses a basketball as a visual analogy. A player throws a ball, and the two unknowns are the **angle** and the **speed** of the throw, as $p_0$ has two components. The ball must be in the hoop at the fixed time $T$, as $x(t_f) = x_f$ must hold at the fixed time $t_f$: the position of the hoop is the boundary condition. Each throw is one trial value of $p_0$, and the **residual** is what the shooting function $S(p_0)$ measures: the gap between the ball and the hoop at time $T$. The animation draws it as a dashed arrow and lists its length, in metres, in a table. Newton's method uses how the gap changes with the angle and the speed to correct them. Close to the solution, the residual falls very fast, as the last column shows: the ball seems to be in the hoop one correction before the end, and the table tells how much accuracy is still gained. The shooting of the double integrator below is linear in $p_0$, so a single Newton step suffices there; the basketball is not linear, which is why it takes several.
+#md # To picture what each iteration does, here is an analogy: a player throws a ball. The two unknowns are the **angle** and the **speed** of the throw, as $p_0$ has two components, and the ball must be in the hoop at a fixed time $T$, as $x(t_f) = x_f$ must hold at the fixed time $t_f$. Each throw is one trial value of $p_0$.
 
 #src The basketball animation (HTML only): the template is
 #src docs/src-literate/shooting-animation.html, filled in by `Main.shooting_animation`
@@ -512,6 +512,11 @@ end
 #md         shots=shots, residuals=[norm(S_b(u)) for u in shots],                            # hide
 #md         xt=x_t, yt=y_t, h0=h_b, g=g_b, T=T_b, tol=tol_b, color=palette(:default)[1]))    # hide
 #md end                                                                                      # hide
+
+#md # !!! note "Reading the animation"
+#md #     - The **residual** is what the shooting function $S(p_0)$ measures: the gap between the ball and the hoop at time $T$. The dashed arrow draws it, and the table gives its length in metres.
+#md #     - Newton's method uses how this gap changes with the angle and the speed to correct them. Close to the solution the residual falls very fast, as the last column shows.
+#md #     - The ball seems to be in the hoop one correction before the end: the table tells how much accuracy is still gained.
 
 # For the energy problem, $H = p_1 v + p_2 u - u^2/2$, so the maximiser is $u = p_2$.
 
@@ -544,7 +549,7 @@ p0_sol = shooting_sol.u
 println("costate p0 = ", p0_sol)
 println("shoot S(p0) = ", S(p0_sol))
 
-# The shooting converges to $p_0 = (12, 6)$, the exact initial costate: the costate of the direct solution was already very close to it.
+# The shooting converges to $p_0 = (12, 6)$, the exact initial costate: the costate of the direct solution was already very close to it. The shooting of the double integrator is linear in $p_0$, so a single Newton step suffices, as the trace above shows; the basketball is not linear, which is why it took several corrections.
 
 #-
 #md @assert isapprox(p0_sol, [12, 6]; atol=1e-8)   # hide
