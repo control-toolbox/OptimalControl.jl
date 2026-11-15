@@ -439,6 +439,46 @@ plot(sol_flow2)
 nothing                                                           # hide
 ```
 
+## [Switching times and phases](@id results-plot-switching)
+
+The solution of a concatenation of flows keeps its switching times and the labels of its
+phases (see [Multi-phase flows](@ref flows-multi-phase-switching)). Here the bang–bang
+extremal of the time-minimal double integrator, with one switch at $t = 1$:
+
+```@example main
+ocp_bb = @def begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    -1 ≤ u(t) ≤ 1
+    x(0) == [-1, 0]
+    x(tf) == [0, 0]
+    ẋ(t) == [v(t), u(t)]
+    tf → min
+end
+f_bb = Flow(ocp_bb, (x, p, v) -> 1; label="u = +1") *
+    (1, Flow(ocp_bb, (x, p, v) -> -1; label="u = -1"))
+sol_bb = f_bb((0, 2), [-1, 0], [1, 1]; variable=2)
+plot(sol_bb)
+```
+
+The switching times are drawn as vertical lines, styled like the initial and final times,
+and the labels of the phases are written on the control. A jump of the state, the costate
+or the control is drawn as a vertical segment from its left to its right limit. Four
+keywords change this:
+
+| Keyword | Values |
+| --- | --- |
+| `jumps` | `:segment` (default), or `:none` to break the curve at a jump |
+| `switching_style` | a style for the vertical lines, such as `(linestyle=:dot,)`, or `:none` to hide them |
+| `phase_labels` | `:control` (default), `:all` to write them on every cell, or `:none` |
+| `phase_labels_style` | a style for the labels, such as `(color=:red,)` |
+
+```@example main
+plot(sol_bb; jumps=:none, switching_style=:none, phase_labels=:none)
+```
+
 ## [Reference](@id results-plot-reference)
 
 ```@docs; canonical=false

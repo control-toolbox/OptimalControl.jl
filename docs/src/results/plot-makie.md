@@ -107,7 +107,9 @@ Makie.plot(sol_c, :state, :costate, :control, :path, :dual)
 ```
 
 Every keyword documented on [Plot](@ref results-plot) — `layout`, `control`, `time`, the
-`*_style`/`*_bounds_style` keywords, `size`, `plot!` for overlay — works here unchanged. Only
+`*_style`/`*_bounds_style` keywords, the [switching keywords](@ref results-plot-switching)
+(`jumps`, `switching_style`, `phase_labels`, `phase_labels_style`), `size`, `plot!` for
+overlay — works here unchanged. Only
 the call itself, and how you customise beyond it, differ.
 
 ## What differs
