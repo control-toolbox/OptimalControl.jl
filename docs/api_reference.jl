@@ -201,6 +201,12 @@ const API_THEMES = [
             :dim_dual_state_constraints_box,
             :dim_dual_control_constraints_box,
             :dim_dual_variable_constraints_box,
+            # Switching structure
+            :switching_times,
+            :phase_labels,
+            :has_switching,
+            :left_limit,
+            :right_limit,
         ],
     ),
     (

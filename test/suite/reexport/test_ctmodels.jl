@@ -110,6 +110,12 @@ const SOLUTIONS = (
     :is_empty,
     :is_empty_time_grid,
     :model,
+    # switching structure
+    :switching_times,
+    :phase_labels,
+    :has_switching,
+    :left_limit,
+    :right_limit,
     # dual constraint accessors
     :path_constraints_dual,
     :boundary_constraints_dual,

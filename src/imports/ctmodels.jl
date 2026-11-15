@@ -138,6 +138,13 @@ import CTModels.Solutions: Solution, AbstractSolution
     is_empty_time_grid,
     model,
 
+    # Switching structure of a multi-phase solution
+    switching_times,
+    phase_labels,
+    has_switching,
+    left_limit,
+    right_limit,
+
     # Dual constraints accessors
     path_constraints_dual,
     boundary_constraints_dual,
