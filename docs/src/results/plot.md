@@ -36,6 +36,8 @@ your own figure from the trajectories, see [Custom plots](@ref results-plot-cust
 We take the energy-minimal double integrator, whose solution is u(t) = 6 − 12t (see
 [Your first problem](@ref getting-started-first-problem)):
 
+::: details The problem used on this page
+
 ```@example main
 using OptimalControl
 using NLPModelsIpopt
@@ -54,7 +56,12 @@ ocp = @def begin
     ẋ(t) == [x₂(t), u(t)]
     ∫(0.5u(t)^2) → min
 end
+nothing # hide
+```
 
+:::
+
+```@example main
 sol = solve(ocp; display=false)
 nothing # hide
 ```
