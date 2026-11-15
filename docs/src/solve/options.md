@@ -4,6 +4,11 @@ Every keyword argument passed to `solve` ends up on exactly one strategy: the di
 the modeler, or the solver. This page covers how that routing works, the two escape hatches
 for the cases it does not handle automatically, and how to inspect where a value came from.
 
+The examples use the energy-minimal double integrator of
+[Your first problem](@ref getting-started-first-problem).
+
+::: details The problem used on this page
+
 ```@example advanced
 using OptimalControl
 using NLPModelsIpopt
@@ -23,6 +28,8 @@ ocp = @def begin
 end
 nothing # hide
 ```
+
+:::
 
 ## Option routing
 
