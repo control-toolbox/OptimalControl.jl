@@ -15,17 +15,18 @@ a gap in a landscape where existing tools are fragmented across programming lang
 paradigms, and are usually restricted to a single family of methods.
 
 The package provides a domain-specific language that closely matches mathematical
-notation, together with multiple discretisation schemes and shooting methods, and planned
-support for homotopy continuation methods.
+notation, together with multiple discretisation schemes and shooting methods. A solution
+can warm-start the next solve, which makes discrete continuation (on the grid or on a
+parameter of the problem) a loop of a few lines.
 
 Its modeler–solver separation makes it agnostic to the underlying NLP modeling backend
 and optimisation solver, and enables seamless execution on both CPU and GPU with minimal
 user intervention.
 
 Combined with an ecosystem of domain-specific applications, tutorials, and benchmarking
-tools, this design targets researchers and engineers working in optimal control, control
-theorists developing new algorithms, and students learning the field through interactive
-tutorials.
+tools (see [Beyond this site](@ref home-beyond)), this design targets researchers and
+engineers working in optimal control, control theorists developing new algorithms, and
+students learning the field through interactive tutorials.
 
 ## Installation
 
@@ -74,7 +75,18 @@ That is the whole program — model, solve, plot. Each step has its own guide:
 | [Geometry](@ref geometry-overview) | The Lie-theoretic tools (`Lift`, `ad`, `Poisson`, `@Lie`) behind singular-control problems. |
 | [Examples](@ref examples-gallery) | A gallery of complete problems worked end to end, direct and indirect, from energy minimisation to state constraints. |
 | [API reference](@ref api-modelling) | Every re-exported symbol, organised by theme. |
+| [Errors](@ref errors) | The exceptions OptimalControl raises, and how to read them. |
 | [Migrating from v2.0](@ref migration) | What changed since v2.0 and how to update your code. |
+
+## [Beyond this site](@id home-beyond)
+
+| Site | What's there |
+| --- | --- |
+| [Tutorials](https://control-toolbox.org/Tutorials.jl/stable/) | Longer worked problems and techniques: continuation, initial guesses, MPC, NLP manipulation, … |
+| [OptimalControlProblems.jl](https://control-toolbox.org/OptimalControlProblems.jl/stable/) | A collection of optimal control problems, each modelled with OptimalControl and JuMP. |
+| [CTBenchmarks.jl](https://control-toolbox.org/CTBenchmarks.jl/stable/) | Benchmarks of solvers and modelling approaches on those problems: timings, memory, solver statistics. |
+| [Applications](https://control-toolbox.org/applications/) | Applications built on the ecosystem, from bacterial growth and MRI to orbit transfer. |
+| [control-toolbox](https://control-toolbox.org) | The ecosystem: every package, and the discussions. |
 
 ## Mathematical formulation
 
