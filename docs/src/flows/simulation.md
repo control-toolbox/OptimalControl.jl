@@ -37,12 +37,19 @@ nothing                                                     # hide
 
 An open-loop law is always a function of time, `u(t)`, or `u(t, v)` with a variable. A
 function without argument, such as `OpenLoop(() -> 1)`, is accepted when the law is built,
-but the call then fails with a `MethodError`
-([CTBase#570](https://github.com/control-toolbox/CTBase.jl/issues/570)):
+and the call then fails with a `MethodError`:
 
 ```@repl main
 Flow(ControlledVectorField(fc), OpenLoop(() -> 1))(0, 0.0, 1)
 ```
+
+!!! note "Why the law is not checked when it is built"
+
+    A Julia function has no fixed number of arguments: it is a set of methods, which can
+    still grow, and whose argument types are only known at the call. A check at
+    construction would reject valid laws, such as `t::Float64 -> …` or a callable struct.
+    The `MethodError` names the function and its methods: look for the one that takes the
+    time.
 
 ## Closed loop
 
