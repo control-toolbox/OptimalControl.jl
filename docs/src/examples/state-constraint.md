@@ -85,7 +85,7 @@ guess of the indirect method:
 
 ```@example main
 direct_sol = solve(ocp; grid_size=50, display=false)
-plt = plot(direct_sol; label="direct", size=(800, 600))
+plt = plot(direct_sol; label="direct", size=(800, 920), legend=false)
 ```
 
 The solution has three arcs: an unconstrained arc, a **boundary arc** where $v = v_{\max}$,
@@ -183,6 +183,7 @@ objective(direct_sol), objective(indirect_sol)
 
 ```@example main
 plot!(plt, indirect_sol; label="indirect", linestyle=:dash)
+plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
 ```@example main
@@ -251,9 +252,9 @@ ocp_touch, ocp_arc = bryson_denham(a_touch), bryson_denham(a_arc)
 sol_touch = solve(ocp_touch; grid_size=100, display=false)
 sol_arc = solve(ocp_arc; grid_size=100, display=false)
 
-legend_off = (state_style=(legend=false,), costate_style=(legend=false,))
-plt_bd = plot(sol_touch; label="a = 0.2", size=(800, 600), legend_off...)
-plot!(plt_bd, sol_arc; label="a = 0.1", linestyle=:dash, legend_off...)
+plt_bd = plot(sol_touch; label="a = 0.2", size=(800, 920), legend=false)
+plot!(plt_bd, sol_arc; label="a = 0.1", linestyle=:dash)
+plot!(plt_bd; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
 ### [The touch point](@id examples-state-constraint-touch)
@@ -408,8 +409,9 @@ nothing                                                                         
 The two indirect solutions:
 
 ```@example main
-plt_ind = plot(indirect_touch; label="a = 0.2", size=(800, 600), legend_off...)
-plot!(plt_ind, indirect_arc; label="a = 0.1", linestyle=:dash, legend_off...)
+plt_ind = plot(indirect_touch; label="a = 0.2", size=(800, 710), legend=false)
+plot!(plt_ind, indirect_arc; label="a = 0.1", linestyle=:dash)
+plot!(plt_ind; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
 The costate $p_q$ jumps once at the touch point, and twice around the boundary arc, where the

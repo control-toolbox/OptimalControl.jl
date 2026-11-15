@@ -81,7 +81,7 @@ variable(direct_sol)
 ```
 
 ```@example main
-plt = plot(direct_sol; label="direct", size=(800, 600))
+plt = plot(direct_sol; label="direct", size=(800, 920), legend=false)
 ```
 
 The control is $+1$, then $-1$: the wagon accelerates as much as it can, then brakes as much
@@ -191,6 +191,7 @@ state(indirect_sol)(tf_sol)
 
 ```@example main
 plot!(plt, indirect_sol; label="indirect", linestyle=:dash)
+plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
 The two final times agree up to the discretisation error of the direct method:

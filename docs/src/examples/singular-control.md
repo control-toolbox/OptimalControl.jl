@@ -82,7 +82,7 @@ variable(direct_sol)
 
 ```@example main
 opt = (state_bounds_style=:none, control_bounds_style=:none)
-plt = plot(direct_sol; label="direct", size=(800, 800), opt...)
+plt = plot(direct_sol; label="direct", size=(800, 1340), legend=false, opt...)
 ```
 
 The control stays strictly inside $[-1, 1]$: the arc is singular.
@@ -165,7 +165,7 @@ control:
 ```@example main
 tg = time_grid(direct_sol)
 θ(t) = state(direct_sol)(t)[3]
-plt_u = plot(direct_sol, :control; label="direct", size=(800, 300), opt...)
+plt_u = plot(direct_sol, :control; label="direct", size=(800, 320), opt...)
 plot!(plt_u, tg, t -> sin(θ(t))^2; label="sin²θ", linestyle=:dash)
 ```
 
@@ -265,6 +265,7 @@ variable(direct_sol), tf_sol
 
 ```@example main
 plot!(plt, indirect_sol; label="indirect", linestyle=:dash, opt...)
+plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
 Along the extremal, the switching function $H_1 = p_3$ stays zero, $\theta$ stays inside

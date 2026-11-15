@@ -62,7 +62,7 @@ nothing # hide
 
 ```@example main
 direct_sol = solve(ocp; grid_size=100, display=false)
-plt = plot(direct_sol, :state, :control; label="direct", size=(800, 400))
+plt = plot(direct_sol, :state, :control; label="direct", size=(800, 560), legend=false)
 ```
 
 The state goes down to the origin as fast as it can, stays there, then climbs to the target.
@@ -168,6 +168,7 @@ objective(direct_sol), objective(indirect_sol)
 
 ```@example main
 plot!(plt, indirect_sol, :state, :control; label="indirect", linestyle=:dash)
+plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
 ```@example main

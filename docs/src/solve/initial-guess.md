@@ -121,7 +121,7 @@ With no initial guess, every component defaults to `0.1`. To see it without solv
 
 ```@example main
 sol_init = solve(ocp1; init=nothing, max_iter=0, display=false)
-plot(sol_init, :state, :control; size=(600, 450))
+plot(sol_init, :state, :control; size=(800, 800))
 ```
 
 Solving with no guess at all, `init=nothing`, and `init=()` are all equivalent — all three skip

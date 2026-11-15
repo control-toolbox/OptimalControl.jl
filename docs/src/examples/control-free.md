@@ -76,7 +76,7 @@ variable(growth_sol), objective(growth_sol)
 
 ```@example main
 t_grid = range(t0, tf, 201)
-plt_growth = plot(growth_sol, :state; label="direct", size=(800, 300))
+plt_growth = plot(growth_sol, :state; label="direct", size=(800, 320))
 plot!(plt_growth, t_grid, x_obs.(t_grid); line=:dot, color=:black, label="data")
 ```
 
@@ -219,7 +219,7 @@ The direct solution is close to the exact one, $q(t) = \cos(\pi t/2)$ and
 $v(t) = -\frac{\pi}{2}\sin(\pi t/2)$:
 
 ```@example main
-plt_harmonic = plot(harmonic_sol, :state; label="direct", size=(800, 300))
+plt_harmonic = plot(harmonic_sol, :state; label="direct", size=(800, 560), legend=false)
 plot!(plt_harmonic, t -> cos(π * t / 2), 0, 1; subplot=1, label="exact", color=:black, line=:dot)
 plot!(plt_harmonic, t -> -π / 2 * sin(π * t / 2), 0, 1; subplot=2, label="exact", color=:black, line=:dot)
 ```
@@ -281,6 +281,7 @@ variable(harmonic_sol), ω_sol, π / 2
 ```@example main
 indirect_harmonic = f_harmonic((t0h, tfh), [q0, v0], p0_harmonic; variable=ω_sol)
 plot!(plt_harmonic, indirect_harmonic, :state; label="indirect", linestyle=:dash)
+plot!(plt_harmonic; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
 ```@example main

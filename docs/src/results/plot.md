@@ -343,8 +343,9 @@ ocp2 = @def begin
 end
 sol2 = solve(ocp2; display=false)
 
-plt = plot(sol, :state, :costate, :control; label="sol1", size=(700, 500))
+plt = plot(sol, :state, :costate, :control; label="sol1", size=(800, 710), legend=false)
 plot!(plt, sol2, :state, :costate, :control; label="sol2", linestyle=:dash)
+plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
 ## [Custom plots](@id results-plot-custom)

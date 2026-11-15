@@ -227,8 +227,9 @@ nothing                                                             # hide
 ```
 
 ```@example main
-plt = plot(sol_bd; label="direct", size=(800, 600))
+plt = plot(sol_bd; label="direct", size=(800, 920), legend=false)
 plot!(plt, sol_bd_flow; label="flow", linestyle=:dash)
+plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
 ## Partial Hamiltonian

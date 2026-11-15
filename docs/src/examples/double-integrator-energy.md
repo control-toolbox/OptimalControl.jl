@@ -86,7 +86,7 @@ objective(direct_sol)
 ```
 
 ```@example main
-plt = plot(direct_sol; label="direct", size=(800, 600))
+plt = plot(direct_sol; label="direct", size=(800, 710), legend=false)
 ```
 
 ## The exact solution
@@ -156,6 +156,7 @@ objective(direct_sol), objective(indirect_sol)
 
 ```@example main
 plot!(plt, indirect_sol; label="indirect", linestyle=:dash)
+plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
 The indirect cost is the exact value, $6$. The direct cost differs by the discretisation error

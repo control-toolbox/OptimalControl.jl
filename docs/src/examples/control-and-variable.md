@@ -73,7 +73,7 @@ variable(growth_sol), objective(growth_sol)
 ```
 
 ```@example main
-plt_growth = plot(growth_sol, :state, :control; label="direct", size=(800, 400))
+plt_growth = plot(growth_sol, :state, :control; label="direct", size=(800, 560), legend=false)
 ```
 
 ### [Indirect method](@id examples-control-and-variable-growth-indirect)
@@ -127,6 +127,7 @@ indirect_growth = f_growth((t0, tf), x0, p0_growth; variable=λ_sol)
 
 ```@example main
 plot!(plt_growth, indirect_growth, :state, :control; label="indirect", linestyle=:dash)
+plot!(plt_growth; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
 The two methods agree, up to the discretisation error of the 20-step grid.
@@ -196,7 +197,7 @@ variable(harmonic_sol), objective(harmonic_sol)
 ```
 
 ```@example main
-plt_harmonic = plot(harmonic_sol, :state, :control; label="direct", size=(800, 400))
+plt_harmonic = plot(harmonic_sol, :state, :control; label="direct", size=(800, 800), legend=false)
 ```
 
 ### [Indirect method](@id examples-control-and-variable-harmonic-indirect)
@@ -239,6 +240,7 @@ indirect_harmonic = f_harmonic((t0h, tfh), [q0, v0], p0_harmonic; variable=ω_so
 
 ```@example main
 plot!(plt_harmonic, indirect_harmonic, :state, :control; label="indirect", linestyle=:dash)
+plot!(plt_harmonic; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
 The optimal pulsation is $|\omega| \approx 0.654$, well below $\pi/2$, for a cost of
