@@ -1,5 +1,9 @@
 # [State constraint](@id examples-state-constraint)
 
+```@raw html
+<ExampleFacts id="state-constraint" />
+```
+
 This example shows how state constraints of different orders shape the solutions of the
 energy-minimal double integrator, and how to compute them by the direct and the indirect
 methods. Bryson et al.[^1] and Jacobson et al.[^2] solve such problems analytically.
@@ -32,10 +36,9 @@ The wagon goes from rest at $q = -1$ to rest at $q = 0$, as in the energy exampl
 velocity is bounded, $v(t) \le v_{\max} = 1.2$. Without the bound, the velocity
 $v(t) = 6t - 6t^2$ reaches $1.5$ at $t = 1/2$, so the bound is active.
 
-```@raw html
-<div class="responsive-columns-left-priority">
-<div>
-```
+:::tabs key:example-problem
+
+== @def
 
 ```@example main
 t0, tf = 0, 1
@@ -59,10 +62,7 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
+== Mathematics
 
 ```math
 \begin{aligned}
@@ -73,10 +73,7 @@ nothing # hide
 \end{aligned}
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 The constraint is of **first order**: with $c(x) = v_{\max} - v \ge 0$, the first derivative
 already involves the control, $\frac{\mathrm{d}}{\mathrm{d}t} c(x(t)) = -u(t)$.
@@ -431,3 +428,12 @@ costate is zero.
 [^2]: D. H. Jacobson, M. M. Lele and J. L. Speyer, *New necessary conditions of optimality for control problems with state-variable inequality constraints*, Journal of Mathematical Analysis and Applications 35 (1971), 255–284.
 
 [^3]: A. E. Bryson and Y.-C. Ho, *Applied Optimal Control: Optimization, Estimation and Control*, CRC Press, 1975.
+
+```@raw html
+<ExampleNav id="state-constraint" />
+```
+
+```@example main
+Main.gallery_thumbnail(plot(indirect_sol, :state; size=(480, 300), legend=false), "state-constraint")  # hide
+nothing  # hide
+```

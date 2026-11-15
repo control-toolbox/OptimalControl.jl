@@ -1,5 +1,9 @@
 # [Parameter estimation without a control](@id examples-control-free)
 
+```@raw html
+<ExampleFacts id="control-free" />
+```
+
 A problem without a control optimises **constant parameters** of a dynamical system: the
 parameters that make a model fit observed data, or the best parameters for a performance
 criterion. This page solves two such problems, by the direct and the indirect methods: the
@@ -24,10 +28,9 @@ rate $\lambda$. We observe it on $[0, 2]$, and the observations $x_{\text{obs}}$
 with $\lambda = 0.5$, perturbed by a small oscillation. We estimate $\lambda$ by least
 squares. The estimate is close to $0.5$, but not equal, because of the perturbation.
 
-```@raw html
-<div class="responsive-columns-left-priority">
-<div>
-```
+:::tabs key:example-problem
+
+== @def
 
 ```@example main
 λ_true = 0.5
@@ -49,10 +52,7 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
+== Mathematics
 
 ```math
 \begin{aligned}
@@ -63,10 +63,7 @@ nothing # hide
 \end{aligned}
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ### [Direct method](@id examples-control-free-growth-direct)
 
@@ -174,10 +171,9 @@ pulsation $\omega$ for which it reaches $q = 0$ at $t = 1$. The solution is
 $q(t) = \cos(\omega t)$, so $\cos\omega = 0$, and the smallest pulsation is $\omega = \pi/2$,
 with $\omega^2 = \pi^2/4 \approx 2.4674$ and $q(t) = \cos(\pi t/2)$.
 
-```@raw html
-<div class="responsive-columns-left-priority">
-<div>
-```
+:::tabs key:example-problem
+
+== @def
 
 ```@example main
 q0, v0 = 1, 0
@@ -199,10 +195,7 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
+== Mathematics
 
 ```math
 \begin{aligned}
@@ -213,10 +206,7 @@ nothing # hide
 \end{aligned}
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ### [Direct method](@id examples-control-free-harmonic-direct)
 
@@ -319,3 +309,12 @@ Problems without a control appear in many contexts:
   with a control.
 - [From an OCP](@ref flows-from-ocp): the flow of a problem without a control, and the costate
   of the variable.
+
+```@raw html
+<ExampleNav id="control-free" />
+```
+
+```@example main
+Main.gallery_thumbnail(plt_growth, "control-free")  # hide
+nothing  # hide
+```

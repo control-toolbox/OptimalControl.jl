@@ -1,5 +1,9 @@
 # [Control and variable together](@id examples-control-and-variable)
 
+```@raw html
+<ExampleFacts id="control-and-variable" />
+```
+
 Some problems optimise a control and constant parameters at the same time: to identify a
 parameter and the input that explains the data, or to find a parameter and the control law
 that go best together. This page takes the two systems of
@@ -23,10 +27,9 @@ The growth model gets an additive control, $\dot x = \lambda x + u$, and the cos
 $\frac12 u^2$: the control can explain the part of the data that the model does not, at a
 price.
 
-```@raw html
-<div class="responsive-columns-left-priority">
-<div>
-```
+:::tabs key:example-problem
+
+== @def
 
 ```@example main
 λ_true = 0.5
@@ -49,10 +52,7 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
+== Mathematics
 
 ```math
 \begin{aligned}
@@ -63,10 +63,7 @@ nothing # hide
 \end{aligned}
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ### [Direct method](@id examples-control-and-variable-growth-direct)
 
@@ -153,10 +150,9 @@ any $\omega$ can reach the target, with the help of the control, and the optimum
 trade-off: a larger $\omega$ costs more, but the oscillator then does more of the work. Only
 $\omega^2$ appears in the problem, so $\omega$ and $-\omega$ give the same cost.
 
-```@raw html
-<div class="responsive-columns-left-priority">
-<div>
-```
+:::tabs key:example-problem
+
+== @def
 
 ```@example main
 q0, v0 = 1, 0
@@ -179,10 +175,7 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
+== Mathematics
 
 ```math
 \begin{aligned}
@@ -193,10 +186,7 @@ nothing # hide
 \end{aligned}
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ### [Direct method](@id examples-control-and-variable-harmonic-direct)
 
@@ -293,3 +283,12 @@ Problems with a control and parameters appear in many contexts:
 - [Parameter estimation without a control](@ref examples-control-free): the same two systems,
   without a control, and the derivation of the augmented system.
 - [From an OCP](@ref flows-from-ocp): flows with a control law and a variable.
+
+```@raw html
+<ExampleNav id="control-and-variable" />
+```
+
+```@example main
+Main.gallery_thumbnail(plt_growth, "control-and-variable")  # hide
+nothing  # hide
+```

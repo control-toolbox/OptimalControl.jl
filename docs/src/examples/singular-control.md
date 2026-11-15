@@ -1,5 +1,9 @@
 # [Singular control](@id examples-singular-control)
 
+```@raw html
+<ExampleFacts id="singular-control" />
+```
+
 For a control-affine system
 
 ```math
@@ -290,3 +294,12 @@ nothing                                                                         
 - [Shooting](@ref flows-shooting): the shooting method.
 - The [Goddard tutorial](@extref Tutorials tutorial-goddard): a problem with bang, singular
   and boundary arcs.
+
+```@raw html
+<ExampleNav id="singular-control" />
+```
+
+```@example main
+Main.gallery_thumbnail(plot(indirect_sol, :control; size=(480, 300), legend=false), "singular-control")  # hide
+nothing  # hide
+```

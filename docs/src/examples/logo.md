@@ -1,5 +1,9 @@
 # [The logo](@id examples-logo)
 
+```@raw html
+<ExampleFacts id="logo" />
+```
+
 The OptimalControl.jl logo is not a drawing. It is the solution of an optimal control
 problem, an **energy-minimal low-thrust orbit transfer**, solved once and repeated by
 symmetry.
@@ -192,3 +196,12 @@ tuning knobs, from exactly this optimal control problem.
 - [Initial guess](@ref solve-initial-guess): the warm start used here, and the other forms.
 - [Plot with Makie](@ref results-plot-makie) and [Plot](@ref results-plot): plotting a solution.
 - [Example gallery](@ref examples-gallery): the other worked problems.
+
+```@raw html
+<ExampleNav id="logo" />
+```
+
+```@example logo
+Main.gallery_thumbnail(fig, "logo")  # hide
+nothing  # hide
+```

@@ -1,5 +1,9 @@
 # [Energy minimisation](@id examples-double-integrator-energy)
 
+```@raw html
+<ExampleFacts id="double-integrator-energy" />
+```
+
 A wagon moves along a rail, and we control its acceleration with a force $u$. Its state is
 $x = (q, v)$, where $q$ is the position and $v$ the velocity.
 
@@ -32,10 +36,9 @@ using Plots
 
 ## The problem
 
-```@raw html
-<div class="responsive-columns-left-priority">
-<div>
-```
+:::tabs key:example-problem
+
+== @def
 
 ```@example main
 t0, tf = 0, 1
@@ -56,10 +59,7 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
+== Mathematics
 
 ```math
 \begin{aligned}
@@ -70,10 +70,7 @@ nothing # hide
 \end{aligned}
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 See [Abstract syntax (`@def`)](@ref modelling-abstract-syntax) for every form these lines can
 take.
@@ -185,3 +182,12 @@ nothing                                                                         
   position to this problem.
 
 [^1]: J. T. Betts, *Practical methods for optimal control using nonlinear programming*, SIAM, Philadelphia, PA, 2001.
+
+```@raw html
+<ExampleNav id="double-integrator-energy" />
+```
+
+```@example main
+Main.gallery_thumbnail(plot(indirect_sol, :control; size=(480, 300), legend=false), "double-integrator-energy")  # hide
+nothing  # hide
+```

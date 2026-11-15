@@ -1,5 +1,9 @@
 # [Turnpike (bang–singular–bang)](@id examples-turnpike)
 
+```@raw html
+<ExampleFacts id="turnpike" />
+```
+
 A scalar system, $\dot x = u$ with $u \in [-1, 1]$, is driven between two states over a fixed
 horizon while minimising $\int x^2$. The dynamics are affine in $u$ and the cost does not
 depend on $u$, so the pseudo-Hamiltonian is linear in $u$: the optimal control is bang,
@@ -20,10 +24,9 @@ using Plots
 The horizon is fixed, $t_f = 2$, and the transfer goes from $x(0) = 1$ to $x(2) = 1/2$. The
 state and the control are scalars, not vectors of length one:
 
-```@raw html
-<div class="responsive-columns-left-priority">
-<div>
-```
+:::tabs key:example-problem
+
+== @def
 
 ```@example main
 t0, tf = 0.0, 2.0
@@ -42,10 +45,7 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
+== Mathematics
 
 ```math
 \begin{aligned}
@@ -56,10 +56,7 @@ nothing # hide
 \end{aligned}
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ## Direct method
 
@@ -190,3 +187,12 @@ nothing                                                                         
 - [Multi-phase flows](@ref flows-multi-phase): the concatenation of flows.
 - The [Goddard tutorial](@extref Tutorials tutorial-goddard): the same workflow on a harder
   problem, with a singular arc and a boundary arc.
+
+```@raw html
+<ExampleNav id="turnpike" />
+```
+
+```@example main
+Main.gallery_thumbnail(plot(indirect_sol, :control; size=(480, 300), legend=false), "turnpike")  # hide
+nothing  # hide
+```

@@ -1,5 +1,9 @@
 # [Time minimisation (bang–bang)](@id examples-double-integrator-time)
 
+```@raw html
+<ExampleFacts id="double-integrator-time" />
+```
+
 The wagon of [Energy minimisation](@ref examples-double-integrator-energy) again, with a
 bounded force this time, $|u| \le 1$: we transfer it from rest at $q = -1$ to rest at $q = 0$
 **as fast as possible**. The dynamics are those of the double integrator,
@@ -27,10 +31,9 @@ using Plots
 
 The final time is a variable of the problem, and the cost:
 
-```@raw html
-<div class="responsive-columns-left-priority">
-<div>
-```
+:::tabs key:example-problem
+
+== @def
 
 ```@example main
 t0 = 0
@@ -54,10 +57,7 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
+== Mathematics
 
 ```math
 \begin{aligned}
@@ -69,10 +69,7 @@ nothing # hide
 \end{aligned}
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ## Direct method
 
@@ -211,3 +208,12 @@ variable(direct_sol), tf_sol
   NonlinearSolve to solve the shooting equations.
 - The [Goddard tutorial](@extref Tutorials tutorial-goddard) uses the same steps on a problem
   with bang, singular and boundary arcs.
+
+```@raw html
+<ExampleNav id="double-integrator-time" />
+```
+
+```@example main
+Main.gallery_thumbnail(plot(indirect_sol, :control; size=(480, 300), legend=false), "double-integrator-time")  # hide
+nothing  # hide
+```
