@@ -95,7 +95,7 @@ using CUDA
 using CUDSS
 ```
 
-`CUDSS` is the one people forget: `using MadNLPGPU` does not load it, and the GPU solvers do not work without it. If one of the three is missing, the `ExtensionError` names it. One exception: when `MadNLPGPU` is the missing one, the error first asks for `MadNLP`, and names `MadNLPGPU` only once `MadNLP` is loaded ([CTSolvers#234](https://github.com/control-toolbox/CTSolvers.jl/issues/234)).
+`CUDSS` is the one people forget: `using MadNLPGPU` does not load it, and the GPU solvers do not work without it. If one of the three is missing, the `ExtensionError` names it.
 
 `ExaModels`, the GPU-capable modeler, needs no `using`: it comes with `OptimalControl`, so `:exa` works out of the box.
 
