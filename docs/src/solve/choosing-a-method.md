@@ -219,8 +219,7 @@ non-uniform, `time_grid` (with `:exa`, `time_grid` is not supported yet:
 !!! warning "Under `:exa`, no Gauss–Legendre scheme"
 
     `:exa` takes `:trapeze`, `:midpoint`, `:euler` and `:euler_implicit`, and the aliases of
-    the last two (`:euler_forward`, `:euler_backward`, …; since CTParser 0.9.6,
-    [CTParser#355](https://github.com/control-toolbox/CTParser.jl/issues/355)). Both
+    the last two (`:euler_forward`, `:euler_backward`, …). Both
     Gauss–Legendre schemes are available with `:adnlp` only:
 
     ```@repl main
