@@ -68,16 +68,23 @@ plot(sol)
 
 Without Plots, the call raises an error that names the package to load:
 
-```julia
-julia> plot(sol)
-ERROR: ExtensionError
-│
-│  missing dependencies to plot solutions
-│
-│  Missing  Plots
-│
-│  Hint     Run: using Plots
-└─
+```@eval
+Main.CTBase.DevTools.repl_without_extensions(
+    :OptimalControl,
+    "using OptimalControl",
+    "using NLPModelsIpopt",
+    """
+    ocp = @def begin
+        t ∈ [0, 1], time
+        x ∈ R, state
+        u ∈ R, control
+        x(0) == 1
+        ẋ(t) == u(t)
+        ∫(u(t)^2) → min
+    end""",
+    "sol = solve(ocp; display=false)",
+    "plot(sol)",
+)
 ```
 
 ## [What gets drawn](@id results-plot-basic)
@@ -406,7 +413,8 @@ nothing                                                # hide
     [Output grid and accuracy](https://control-toolbox.org/CTFlows.jl/stable/flows/integrating#Output-grid-and-accuracy)
     in the CTFlows documentation.
 
-The `grid` keyword of the call changes this: `grid=n` gives `n` times, and `grid=nothing`
+The `grid` keyword of the call changes this: `grid=n` gives `n` evenly spaced times,
+`grid=OptimalControl.AdaptiveGrid(n)` gives `n` times placed as above, and `grid=nothing`
 keeps the steps of the integrator only, here 5, so the curves become polygons:
 
 ```@example main
