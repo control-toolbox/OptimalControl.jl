@@ -24,7 +24,8 @@ import CTBase.Exceptions:
     NotImplemented,
     ParsingError,
     AmbiguousDescription,
-    ExtensionError
+    ExtensionError,
+    SolverFailure
 
 # ---------------------------------------------------------------------------
 # Traits

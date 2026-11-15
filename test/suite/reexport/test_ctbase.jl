@@ -112,6 +112,7 @@ function test_ctbase()
                 :ParsingError,
                 :AmbiguousDescription,
                 :ExtensionError,
+                :SolverFailure,
             )
                 Test.@testset "$T" begin
                     Test.@test imports(OptimalControl, T, CTBase.Exceptions)
@@ -129,6 +130,7 @@ function test_ctbase()
                 OptimalControl.ParsingError,
                 OptimalControl.AmbiguousDescription,
                 OptimalControl.ExtensionError,
+                OptimalControl.SolverFailure,
             )
                 Test.@test T <: OptimalControl.CTException
             end

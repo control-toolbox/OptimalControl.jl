@@ -323,6 +323,7 @@ const API_THEMES = [
             Symbol("CTBase.Exceptions.ParsingError"),
             Symbol("CTBase.Exceptions.AmbiguousDescription"),
             Symbol("CTBase.Exceptions.ExtensionError"),
+            Symbol("CTBase.Exceptions.SolverFailure"),
             Symbol("CTBase.Core.NotProvided"),
             Symbol("CTBase.Core.NotProvidedType"),
             Symbol("CTBase.Core.ctNumber"),
