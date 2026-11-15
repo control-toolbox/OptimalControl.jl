@@ -9,12 +9,12 @@ make sense.
 
 ## Why flows
 
-The direct methods ([Solve](@ref solve-overview)) discretize the whole problem into one large
+The direct methods ([Solve](@ref solve-overview)) discretise the whole problem into one large
 nonlinear program. Flows integrate instead: you supply a control law — from the PMP, from a
 feedback design, from anywhere — and get back an ODE solution. Direct methods win when you
 don't yet have a control law and want the solver to find one; flows win once you do, whether
 that law came from solving the PMP by hand, from a direct solve's costate, or from a controller
-you designed independently of any optimization.
+you designed independently of any optimisation.
 
 ## The Pontryagin Maximum Principle, briefly
 
@@ -53,7 +53,7 @@ cost from the problem.
   [Constrained arcs](@ref flows-constrained-arcs), [Multi-phase flows](@ref flows-multi-phase),
   [Shooting](@ref flows-shooting).
 - **Simulation** — [Simulation](@ref flows-simulation): integrate under a
-  given control, no optimization involved.
+  given control, no optimisation involved.
 - **Inspection** — [Accessors](@ref flows-accessors): the Hamiltonian,
   its vector field, the pseudo-Hamiltonian, the control law you passed in.
 
@@ -112,17 +112,21 @@ nothing                                                                        #
 Every page in this section opens with `using OrdinaryDiffEqTsit5`. Without it, `Flow` raises
 an error at construction, naming the package to load:
 
-```julia
-julia> f = Flow(ocp, (x, p) -> p[2])
-ERROR: ExtensionError → top-level scope, REPL[6]:1
-│
-│  missing dependencies to access SciML options metadata
-│
-│  Missing  OrdinaryDiffEqTsit5
-│
-│  Context  Load OrdinaryDiffEqTsit5, OrdinaryDiffEq, or DifferentialEquations to activate the CTSolversSciMLIntegrator extension.
-│  Hint     Run: using OrdinaryDiffEqTsit5
-└─
+```@eval
+Main.CTBase.DevTools.repl_without_extensions(
+    :OptimalControl,
+    "using OptimalControl",
+    """
+    ocp = @def begin
+        t ∈ [0, 1], time
+        x ∈ R, state
+        u ∈ R, control
+        x(0) == 1
+        ẋ(t) == u(t)
+        ∫(u(t)^2) → min
+    end""",
+    "Flow(ocp, (x, p) -> p / 2)",
+)
 ```
 
 ## Choosing an integrator and its options
@@ -172,12 +176,8 @@ describe(:di)
 ## CPU and GPU
 
 The parameters `:cpu` and `:gpu`, the same as for [`solve`](@ref solve-gpu), are passed with
-the `method` keyword **when you build** a flow. The call has no such keyword:
-
-```julia
-f = Flow(ocp, law; method=:gpu)   # a keyword of the constructor
-f(t0, x0, p0, tf; method=:gpu)    # MethodError: not a keyword of the call
-```
+the `method` keyword **when you build** a flow, `Flow(ocp, law; method=:gpu)`. The call
+has no such keyword: `f(t0, x0, p0, tf; method=:gpu)` is rejected.
 
 `method=:gpu` selects the GPU variants of the integrator and of the automatic
 differentiation backend (Mooncake); the initial state and costate must then be device
@@ -191,7 +191,7 @@ first call an error that names the cause.
 - [From an OCP](@ref flows-from-ocp) — the main path for indirect optimal control.
 - [From Hamiltonians](@ref flows-from-hamiltonians) — building blocks below
   the OCP layer.
-- [Simulation](@ref flows-simulation) — no optimization, just integration.
+- [Simulation](@ref flows-simulation) — no optimisation, just integration.
 - [Accessors](@ref flows-accessors) — inspection.
 - [Multi-phase flows](@ref flows-multi-phase) and [Constrained arcs](@ref flows-constrained-arcs)
   — assembling several arcs into one trajectory.
