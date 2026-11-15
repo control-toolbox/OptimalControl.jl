@@ -1,6 +1,8 @@
 <div style="display: flex; justify-content: center; margin: 20px 0;">
-    <canvas id="goddardTourCanvas" width="760" height="520"
-            style="border: 1px solid #ddd; border-radius: 8px; max-width: 100%;">
+    <canvas id="goddardTourCanvas" width="760" height="520" role="img"
+            aria-label="Animation of the Goddard rocket: the optimal strategy and the bang-bang strategy, side by side, with their fuel and thrust gauges; the optimal rocket ends higher."
+            style="border: 1px solid #ddd; border-radius: 8px; max-width: 100%; height: auto;">
+        Animation: the optimal and the bang-bang Goddard rockets side by side; the optimal one ends higher.
     </canvas>
 </div>
 <script>
@@ -16,22 +18,25 @@
     const canvas = document.getElementById('goddardTourCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
+    // drawing is done in a 760 x 520 space; the pixel grid follows the screen, for sharp text on a high-density display
+    const CW = 760, CH = 520, dpr = Math.max(1, window.devicePixelRatio || 1);
+    canvas.width = Math.round(CW * dpr); canvas.height = Math.round(CH * dpr);
+    canvas.style.width = CW + 'px';
 
     const flight_duration = 7.0;
     const pause_duration = 2.0;
     const total_duration = flight_duration + pause_duration;
-    const zone_width = canvas.width / 2;
+    const zone_width = CW / 2;
     const top_margin = 55;
     const bottom_margin = 105;
-    const baseline = canvas.height - bottom_margin;
+    const baseline = CH - bottom_margin;
     const r_max_all = Math.max(...r1, ...r2);
     const altitude_scale = (baseline - top_margin) / (r_max_all - r0);
     const v_max_all = Math.max(...v1, ...v2);
-    let start_time = null;
 
     function getColors() {
-        const isDark = document.documentElement.classList.contains('dark') ||
-            (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        // VitePress sets the class `dark` on <html>: the system preference alone must not decide
+        const isDark = document.documentElement.classList.contains('dark');
         return isDark ? {
             bg: '#1e1e2e', ground: '#555', gauge_bg: '#3a3a4a',
             gauge_high: '#2ecc71', gauge_mid: '#f39c12', gauge_low: '#e74c3c',
@@ -144,32 +149,31 @@
         ctx.fillText(label, zone_x + zone_width / 2, baseline + 70);
     }
 
-    function draw(time) {
-        if (!start_time) start_time = time;
+    function render(elapsed) {
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         const colors = getColors();
-        const elapsed = ((time - start_time) / 1000.0) % total_duration;
         const progress = Math.min(1.0, elapsed / flight_duration);
         const t_anim = progress * t_max_global;
 
         ctx.fillStyle = colors.bg;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, CW, CH);
 
         ctx.fillStyle = colors.text;
         ctx.font = 'bold 16px sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('t = ' + t_anim.toFixed(3), canvas.width / 2, 28);
+        ctx.fillText('t = ' + t_anim.toFixed(3), CW / 2, 28);
 
         // Reference apogee lines once reached
         if (t_anim >= tf_bang) {
             const y_bang = baseline - altitude_scale * (rf_bang - r0);
             ctx.save(); ctx.setLineDash([5, 5]); ctx.strokeStyle = color_bang; ctx.lineWidth = 1.2;
-            ctx.beginPath(); ctx.moveTo(30, y_bang); ctx.lineTo(canvas.width - 30, y_bang); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(30, y_bang); ctx.lineTo(CW - 30, y_bang); ctx.stroke();
             ctx.restore();
         }
         if (t_anim >= tf_opt) {
             const y_opt = baseline - altitude_scale * (rf_opt - r0);
             ctx.save(); ctx.setLineDash([5, 5]); ctx.strokeStyle = color_opt; ctx.lineWidth = 1.2;
-            ctx.beginPath(); ctx.moveTo(30, y_opt); ctx.lineTo(canvas.width - 30, y_opt); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(30, y_opt); ctx.lineTo(CW - 30, y_opt); ctx.stroke();
             ctx.restore();
         }
 
@@ -179,12 +183,29 @@
                    interpolate(t_anim, t2, m2), interpolate(t_anim, t2, u2), color_bang, 'bang-bang', colors);
 
         ctx.fillStyle = colors.gauge_bg;
-        ctx.fillRect(0, canvas.height - 4, canvas.width, 4);
+        ctx.fillRect(0, CH - 4, CW, 4);
         ctx.fillStyle = colors.progress;
-        ctx.fillRect(0, canvas.height - 4, canvas.width * progress, 4);
-
-        requestAnimationFrame(draw);
+        ctx.fillRect(0, CH - 4, CW * progress, 4);
     }
-    requestAnimationFrame(draw);
+
+    // the loop stops when the page is left (VitePress navigates without reloading), when the
+    // canvas is off screen, and does not start at all if the reader asks for reduced motion
+    let running = false, visible = true, clock = 0, last = null;
+    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function frame(now) {
+        if (!canvas.isConnected || !running) return;
+        if (last !== null) clock += Math.min(0.1, (now - last) / 1000);
+        last = now;
+        render(clock % total_duration);
+        requestAnimationFrame(frame);
+    }
+    function start() { if (reduced || running || !visible) return; running = true; last = null; requestAnimationFrame(frame); }
+    render(reduced ? flight_duration : 0);
+    start();
+    if (window.IntersectionObserver) {
+        new IntersectionObserver(entries => { visible = entries[0].isIntersecting; if (visible) start(); else running = false; }).observe(canvas);
+    }
+    new MutationObserver(() => { if (canvas.isConnected && !running) render(reduced ? flight_duration : clock % total_duration); })
+        .observe(document.documentElement, {attributes: true, attributeFilter: ['class']});
 })();
 </script>
