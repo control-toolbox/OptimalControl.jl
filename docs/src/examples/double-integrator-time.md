@@ -204,8 +204,9 @@ variable(direct_sol), tf_sol
 
 ## Notes
 
-- [Shooting](@ref flows-shooting) solves this problem step by step, starting from the
-  multipliers of the direct solution.
+- [Shooting](@ref flows-shooting) explains the method on this problem: which unknown goes
+  with which condition, `unsafe=true`, and how to check that a zero of the shooting function
+  is an extremal.
 - [MINPACK.jl](@extref Tutorials Resolution-of-the-shooting-equation) can replace
   NonlinearSolve to solve the shooting equations.
 - The [Goddard tutorial](@extref Tutorials tutorial-goddard) uses the same steps on a problem
