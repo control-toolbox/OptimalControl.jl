@@ -223,7 +223,11 @@ nothing                                                         # hide
     named `discretize`. After `using OptimalControl` and `using OrdinaryDiffEqTsit5`, the
     name is ambiguous, and calling `discretize` throws an `UndefVarError`. Write
     `OptimalControl.discretize`, or load only the integrator from the package:
-    `using OrdinaryDiffEqTsit5: Tsit5`.
+
+    ```julia
+    using OrdinaryDiffEqTsit5          # [!code --]
+    using OrdinaryDiffEqTsit5: Tsit5   # [!code ++]
+    ```
 
 ## See also
 
