@@ -28,13 +28,11 @@ control.
 
 ## Define it
 
-We load `OptimalControl` to write the problem and `NLPModelsIpopt` to solve it (see
-[Installation](@ref getting-started-installation)), then transcribe the formulation with
+We load `OptimalControl`, then transcribe the formulation with
 [`@def`](@ref modelling-abstract-syntax):
 
 ```@example main
 using OptimalControl
-using NLPModelsIpopt
 
 ocp = @def begin
     t ∈ [0, 1], time
@@ -65,9 +63,11 @@ take.
 ## Solve it
 
 `solve` discretises the problem in time and hands the resulting finite-dimensional problem to
-Ipopt:
+a solver. The default one, Ipopt, comes with the package `NLPModelsIpopt`, loaded first (see
+[Installation](@ref getting-started-installation)):
 
 ```@example main
+using NLPModelsIpopt
 sol = solve(ocp)
 nothing # hide
 ```
@@ -79,7 +79,7 @@ the dynamics are linear and the cost is quadratic.
 
 ## Look at it
 
-`Plots` draws the solution:
+The package `Plots` draws the solution, once loaded:
 
 ```@example main
 using Plots
