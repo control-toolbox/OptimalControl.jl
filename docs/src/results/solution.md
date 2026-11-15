@@ -398,8 +398,9 @@ nothing                                                    # hide
 ```
 
 The trajectories, `objective`, `time_grid`, `model` and `plot` work as above. What comes from a
-solver does not: a flow's solution carries no multipliers, so `dual` raises an error, and
-`iterations` and `constraints_violation` are `NotProvided`.
+solver does not: `iterations` and `constraints_violation` are `NotProvided`, and `dual` raises
+an error, except for a path constraint given to the flow by its label (see
+[Constrained arcs](@ref flows-constrained-arcs)).
 
 ```@example main
 iterations(sol_flow), constraints_violation(sol_flow)
@@ -408,6 +409,19 @@ iterations(sol_flow), constraints_violation(sol_flow)
 ```@example main
 @assert iterations(sol_flow) isa OptimalControl.NotProvidedType   # hide
 nothing                                                            # hide
+```
+
+The solution of a concatenation of flows also keeps its switching structure, read with
+`switching_times`, `phase_labels`, `has_switching`, `left_limit` and `right_limit` (see
+[Multi-phase flows](@ref flows-multi-phase-switching)). A single flow, as here, has none:
+
+```@example main
+has_switching(sol_flow), switching_times(sol_flow)
+```
+
+```@example main
+@assert !has_switching(sol_flow) && isempty(switching_times(sol_flow))   # hide
+nothing                                                                   # hide
 ```
 
 ## See also

@@ -68,8 +68,9 @@ objective(sol_json) == objective(sol)
 ## What comes back
 
 Both formats give back the same solution, value for value: the time grid, the state, control
-and costate on that grid, the variable, the multipliers, and the solver's status, message and
-iteration count. The model is the one you pass:
+and costate on that grid, the variable, the multipliers, the solver's status, message and
+iteration count, and, for the solution of a concatenation of flows, its
+[switching structure](@ref flows-multi-phase-switching). The model is the one you pass:
 
 ```@example main
 tg = time_grid(sol)
