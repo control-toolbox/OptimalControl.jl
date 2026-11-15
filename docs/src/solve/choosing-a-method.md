@@ -37,6 +37,8 @@ nothing                                                            # hide
 Every `solve` call on this page uses the same problem, the double integrator. Both modelers
 accept it as written, with the dynamics in vector form:
 
+::: details The problem used on this page
+
 ```@example main
 ocp = @def begin
     t ∈ [0, 1], time
@@ -49,6 +51,8 @@ ocp = @def begin
 end
 nothing # hide
 ```
+
+:::
 
 ## Partial descriptions
 
