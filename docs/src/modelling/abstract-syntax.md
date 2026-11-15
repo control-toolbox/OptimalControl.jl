@@ -16,8 +16,8 @@ While the syntax will be transparent to those users familiar with Julia expressi
     Every other block is executed when the documentation is built. A problem definition must
     include at least time, state, dynamics and cost (the control declaration is optional —
     see [Problems without a control](@ref modelling-abstract-syntax-control-free)); in the
-    blocks that illustrate a single clause, the other required clauses are present but hidden
-    so that the block still builds a complete model.
+    blocks that illustrate a single clause, the other required clauses are present but hidden,
+    shown as `# ...`, so that the block still builds a complete model.
 
 ```@setup abs
 using OptimalControl
@@ -108,9 +108,10 @@ A variable (only one is allowed) is a finite dimensional vector of reals that wi
 
 ```@example abs
 @def begin
+    v ∈ R², variable
+    # ...
     t ∈ [0, 1], time            # hide
     x ∈ R, state                # hide
-    v ∈ R², variable
     ẋ(t) == v₁ * x(t) + v₂      # hide
     ∫(x(t)^2) → min             # hide
 end
@@ -121,9 +122,10 @@ Aliases `v₁`, `v₂` (and `v1`, `v2`) are automatically defined and can be use
 
 ```@example abs
 @def begin
+    v = (a, b) ∈ R², variable
+    # ...
     t ∈ [0, 1], time            # hide
     x ∈ R, state                # hide
-    v = (a, b) ∈ R², variable
     ẋ(t) == a * x(t) + b        # hide
     ∫(x(t)^2) → min             # hide
 end
@@ -134,9 +136,10 @@ A one dimensional variable can be declared according to
 
 ```@example abs
 @def begin
+    v ∈ R, variable
+    # ...
     t ∈ [0, 1], time            # hide
     x ∈ R, state                # hide
-    v ∈ R, variable
     ẋ(t) == v * x(t)            # hide
     ∫(x(t)^2) → min             # hide
 end
@@ -159,6 +162,7 @@ t0 = 1
 tf = 5
 @def begin
     t ∈ [t0, tf], time
+    # ...
     x ∈ R, state                # hide
     u ∈ R, control              # hide
     ẋ(t) == u(t)                # hide
@@ -173,6 +177,7 @@ One bound (or both) can be variable, typically for minimum time problems (see [M
 @def begin
     v = (T, λ) ∈ R², variable
     t ∈ [0, T], time
+    # ...
     x ∈ R, state                # hide
     ẋ(t) == λ * x(t)            # hide
     T → min                     # hide
@@ -191,8 +196,10 @@ The state declaration defines the name and the dimension of the state:
 
 ```@example abs
 @def begin
+    # ...
     t ∈ [0, 1], time                       # hide
     x ∈ R⁴, state
+    # ...
     u ∈ R, control                         # hide
     ẋ(t) == [x₂(t), x₃(t), x₄(t), u(t)]    # hide
     ∫(u(t)^2) → min                        # hide
@@ -204,8 +211,10 @@ As for the variable, there are automatic aliases (`x₁` and `x1` for `x[1]`, *e
 
 ```@example abs
 @def begin
+    # ...
     t ∈ [0, 1], time                        # hide
     x = (q₁, q₂, v₁, v₂) ∈ R⁴, state
+    # ...
     u ∈ R², control                         # hide
     ẋ(t) == [v₁(t), v₂(t), u₁(t), u₂(t)]    # hide
     ∫(u₁(t)^2 + u₂(t)^2) → min              # hide
@@ -220,8 +229,10 @@ expression known when the block is evaluated, such as a constant defined before 
 ```@example abs
 n = 3
 @def begin
+    # ...
     t ∈ [0, 1], time                        # hide
     x ∈ R^n, state
+    # ...
     u ∈ R, control                          # hide
     ẋ(t) == [x₂(t), x₃(t), u(t)]            # hide
     ∫(u(t)^2) → min                         # hide
@@ -245,9 +256,11 @@ The control declaration defines the name and the dimension of the control:
 
 ```@example abs
 @def begin
+    # ...
     t ∈ [0, 1], time                # hide
     x ∈ R², state                   # hide
     u ∈ R², control
+    # ...
     ẋ(t) == u(t)                    # hide
     ∫(u₁(t)^2 + u₂(t)^2) → min      # hide
 end
@@ -258,9 +271,11 @@ As before, there are automatic aliases (`u₁` and `u1` for `u[1]`, *etc.*) and 
 
 ```@example abs
 @def begin
+    # ...
     t ∈ [0, 1], time                # hide
     x ∈ R², state                   # hide
     u = (α, β) ∈ R², control
+    # ...
     ẋ(t) == [α(t), β(t)]            # hide
     ∫(α(t)^2 + β(t)^2) → min        # hide
 end
@@ -635,6 +650,7 @@ Lagrange (integral) costs are defined using the symbol `∫`, *with parentheses*
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
     u ∈ R, control
+    # ...
     ẋ(t) == [v(t), u(t)]           # hide
     0.5∫(q(t) + u(t)^2) → min
 end
@@ -648,6 +664,7 @@ or
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
     u ∈ R, control
+    # ...
     ẋ(t) == [v(t), u(t)]                  # hide
     0.5integral(q(t) + u(t)^2) → min
 end
@@ -691,6 +708,7 @@ Quite readily, Mayer and Lagrange costs can be combined into general Bolza costs
     t ∈ [t0, tf], time
     x = (q, v) ∈ R², state
     u ∈ R, control
+    # ...
     ẋ(t) == [v(t), u(t)]                    # hide
     (tf - t0) + 0.5∫(c(t) * u(t)^2) → min
 end
