@@ -212,9 +212,24 @@ For the complete list of each package's options, see:
 | `:gauss_legendre_3` | 3-point Gauss–Legendre collocation, sixth-order | ✅ | ✗ |
 
 The higher-order Gauss–Legendre schemes are more accurate, at a higher cost per grid step.
-The grid is set by `grid_size` (default `250`), or, with `:adnlp`, by an explicit, possibly
-non-uniform, `time_grid` (with `:exa`, `time_grid` is not supported yet:
-[CTDirect#638](https://github.com/control-toolbox/CTDirect.jl/issues/638)).
+The grid is set by `grid_size`, the number of uniform steps (default `250`), or by an
+explicit `time_grid`: the increasing times of the grid, from the initial to the final time,
+possibly non-uniform, to put more points where the solution varies fast. Here a grid twice
+as fine on the second half of the interval:
+
+```@example main
+grid = [range(0, 0.5, 21); range(0.5, 1, 41)[2:end]]
+sol_grid = solve(ocp; time_grid=grid, display=false)
+length(time_grid(sol_grid)), objective(sol_grid)
+```
+
+```@example main
+@assert isapprox(time_grid(sol_grid), grid) && isapprox(objective(sol_grid), 6; rtol=1e-2)   # hide
+nothing                                                                              # hide
+```
+
+`time_grid` works with `:adnlp` only: with `:exa`, it is not supported yet
+([CTDirect#638](https://github.com/control-toolbox/CTDirect.jl/issues/638)).
 
 !!! warning "Under `:exa`, no Gauss–Legendre scheme"
 
