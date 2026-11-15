@@ -15,10 +15,6 @@ bounded force this time, $|u| \le 1$: we transfer it from rest at $q = -1$ to re
 with the limit conditions $x(0) = (-1, 0)$ and $x(t_f) = (0, 0)$, where $x = (q, v)$ and the
 final time $t_f$ is free.
 
-```@raw html
-<img src="../assets/chariot.svg" alt="" style="display: block; margin: 0 auto 20px auto;" width="400px">
-```
-
 ```@example main
 using OptimalControl
 using NLPModelsIpopt
