@@ -259,8 +259,7 @@ nothing                                    # hide
 ```
 
 `variable_costate=true` works on the point call only. On a trajectory call
-`fω((0, 1), …)`, it raises a `MethodError` that does not say so yet
-([CTFlows#437](https://github.com/control-toolbox/CTFlows.jl/issues/437)).
+`fω((0, 1), …)`, it raises a `PreconditionError` that says so.
 
 ## Control-free problems
 
