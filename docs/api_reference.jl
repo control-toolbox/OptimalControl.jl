@@ -319,6 +319,8 @@ const API_THEMES = [
             Symbol("CTSolvers.Solvers.Uno"),
             Symbol("CTSolvers.DOCP.AbstractDiscretizer"),
             Symbol("CTSolvers.DOCP.DiscretizedModel"),
+            Symbol("CTSolvers.Optimization.build_model"),
+            Symbol("CTSolvers.Optimization.BuiltModel"),
             Symbol("CTSolvers.Modelers.AbstractNLPModeler"),
             Symbol("CTSolvers.Solvers.AbstractNLPSolver"),
             :LiftedHamiltonianFunction,
