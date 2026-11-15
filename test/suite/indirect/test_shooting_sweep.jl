@@ -32,7 +32,6 @@ using NonlinearSolve: NonlinearProblem, SimpleNewtonRaphson, solve
 using LinearAlgebra: LinearAlgebra
 using OrdinaryDiffEqTsit5: OrdinaryDiffEqTsit5 # `Flow` needs an integrator
 
-
 include(joinpath(@__DIR__, "..", "..", "problems", "TestProblems.jl"))
 using .TestProblems
 

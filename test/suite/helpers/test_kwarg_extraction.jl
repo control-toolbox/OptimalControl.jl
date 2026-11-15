@@ -166,7 +166,8 @@ function test_kwarg_extraction()
             Test.@test OptimalControl._DISPLAY_ALIASES == (:display, :show_trace)
             Test.@test OptimalControl._DISPLAY_ALIASES_ONLY == (:show_trace,)
 
-            for (name, value) in ((:display, false), (:show_trace, false), (:show_trace, true))
+            for (name, value) in
+                ((:display, false), (:show_trace, false), (:show_trace, true))
                 Test.@testset "$name=$value" begin
                     kw = pairs(NamedTuple{(name, :init)}((value, 42)))
                     val, rest = OptimalControl._extract_action_kwarg(

@@ -95,7 +95,8 @@ function test_ctbase()
             end
             # The name is the strategy, not the package of the same name (#967).
             Test.@test OptimalControl.DifferentiationInterface isa UnionAll
-            Test.@test OptimalControl.DifferentiationInterface <: OptimalControl.AbstractADBackend
+            Test.@test OptimalControl.DifferentiationInterface <:
+                OptimalControl.AbstractADBackend
             Test.@test OptimalControl.DifferentiationInterface{GPU}() isa
                 OptimalControl.AbstractADBackend
         end

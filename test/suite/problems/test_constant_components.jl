@@ -97,7 +97,8 @@ end
 _solve(ocp, modeler::Symbol) = solve(ocp, modeler; display=false)
 
 function test_constant_components()
-    Test.@testset "Constants in expressions (#481)" verbose = VERBOSE showtiming = SHOWTIMING begin
+    Test.@testset "Constants in expressions (#481)" verbose = VERBOSE showtiming =
+        SHOWTIMING begin
         Test.@testset "boundary constraint with the variable, :adnlp" begin
             ref = _solve(BOUNDARY_WORKAROUND, :adnlp)
             Test.@test successful(ref)
@@ -119,7 +120,8 @@ function test_constant_components()
             # The double integrator from -1 to 0 in unit time: J = 6, up to the
             # discretisation error.
             Test.@test objective(ref) ≈ 6 rtol = 1e-3
-            for (name, ocp) in ("[x₂(t), u(t), 0]" => DYNAMICS_ZERO, "[x₂(t), u(t), 1.0]" => DYNAMICS_ONE)
+            for (name, ocp) in
+                ("[x₂(t), u(t), 0]" => DYNAMICS_ZERO, "[x₂(t), u(t), 1.0]" => DYNAMICS_ONE)
                 for modeler in (:adnlp, :exa)
                     Test.@testset "$name, $modeler" begin
                         sol = _solve(ocp, modeler)

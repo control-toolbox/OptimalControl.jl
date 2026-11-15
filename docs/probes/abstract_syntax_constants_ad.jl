@@ -53,6 +53,12 @@ constant = @def begin
 end
 
 sol = solve(constant; display=false)
-check(successful(sol), "a constant component of the dynamics, ẋ(t) == [x₂(t), u(t), 0], solves with :adnlp")
-check(isapprox(objective(sol), 6; rtol=1e-3), "its cost is the one of the double integrator, 6")
+check(
+    successful(sol),
+    "a constant component of the dynamics, ẋ(t) == [x₂(t), u(t), 0], solves with :adnlp",
+)
+check(
+    isapprox(objective(sol), 6; rtol=1e-3),
+    "its cost is the one of the double integrator, 6",
+)
 check(successful(solve(constant, :exa; display=false)), "and with :exa")
