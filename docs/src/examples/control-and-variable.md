@@ -128,13 +128,8 @@ indirect_growth = f_growth((t0, tf), x0, p0_growth; variable=λ_sol)
 (variable(growth_sol), λ_sol), (objective(growth_sol), objective(indirect_growth))
 ```
 
-For the plot, the flow is built with `saveat`, so that the trajectory has 201 points (see
-[Plotting a flow](@ref results-plot-flow)):
-
 ```@example main
-f_growth_plot = Flow(ocp_growth, u_growth; saveat=range(t0, tf, 201), dense=false)
-plot!(plt_growth, f_growth_plot((t0, tf), x0, p0_growth; variable=λ_sol), :state, :control;
-      label="indirect", linestyle=:dash)
+plot!(plt_growth, indirect_growth, :state, :control; label="indirect", linestyle=:dash)
 ```
 
 The two methods agree, up to the discretisation error of the 20-step grid.
@@ -253,9 +248,7 @@ indirect_harmonic = f_harmonic((t0h, tfh), [q0, v0], p0_harmonic; variable=ω_so
 ```
 
 ```@example main
-f_harmonic_plot = Flow(ocp_harmonic, u_harmonic; saveat=range(t0h, tfh, 101), dense=false)
-plot!(plt_harmonic, f_harmonic_plot((t0h, tfh), [q0, v0], p0_harmonic; variable=ω_sol), :state, :control;
-      label="indirect", linestyle=:dash)
+plot!(plt_harmonic, indirect_harmonic, :state, :control; label="indirect", linestyle=:dash)
 ```
 
 The optimal pulsation is $|\omega| \approx 0.654$, well below $\pi/2$, for a cost of
