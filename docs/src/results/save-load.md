@@ -137,16 +137,23 @@ nothing                                                     # hide
 Both formats need their package. Without it, the call raises an error that names the
 package to load:
 
-```julia
-julia> export_ocp_solution(sol; format=:JLD)
-ERROR: ExtensionError
-│
-│  missing dependencies to export solutions to JLD2 format
-│
-│  Missing  JLD2
-│
-│  Hint     Run: using JLD2
-└─
+```@eval
+Main.CTBase.DevTools.repl_without_extensions(
+    :OptimalControl,
+    "using OptimalControl",
+    "using NLPModelsIpopt",
+    """
+    ocp = @def begin
+        t ∈ [0, 1], time
+        x ∈ R, state
+        u ∈ R, control
+        x(0) == 1
+        ẋ(t) == u(t)
+        ∫(u(t)^2) → min
+    end""",
+    "sol = solve(ocp; display=false)",
+    "export_ocp_solution(sol; format=:JLD)",
+)
 ```
 
 and the same with `JSON` for `format=:JSON`. A format other than `:JLD` and `:JSON` is
