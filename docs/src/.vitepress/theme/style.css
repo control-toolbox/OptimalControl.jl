@@ -375,12 +375,11 @@ mjx-container svg path {
    example (components/ExampleFacts.vue). VitePress tokens only, so both themes follow. */
 .oc-gallery {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr)); /* two columns at most */
+  /* As many columns of at least 340px as fit: two on a laptop, three or more when the
+     content is wide (sidebar collapsed, full width), one on a phone. */
+  grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
   gap: 16px;
   margin: 24px 0;
-}
-@media (max-width: 640px) {
-  .oc-gallery { grid-template-columns: minmax(0, 1fr); }
 }
 .vp-doc a.oc-card {
   display: flex;
