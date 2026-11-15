@@ -143,11 +143,8 @@ The options used most are `alg` (the ODE algorithm, `Tsit5()` by default), `relt
 `abstol` (`1e-8` each by default), `saveat` (the times at which to save the trajectory) and
 `dense` (dense output, `:auto` by default: `false` for a point call, `true` for a trajectory
 call). Pass them as keywords when you build a flow, for example
-`Flow(ocp, law; reltol=1e-10, alg=Tsit5())`. With `saveat`, also pass `dense=false`
-([CTFlows#434](https://github.com/control-toolbox/CTFlows.jl/issues/434)), and use the flow
-for trajectories only: its point call returns the value at the last `saveat` time
-([CTFlows#441](https://github.com/control-toolbox/CTFlows.jl/issues/441)). See
-[Plot](@ref results-plot-flow).
+`Flow(ocp, law; reltol=1e-10, alg=Tsit5())`. See [Plot](@ref results-plot-flow) for the
+grid of a trajectory and `saveat`.
 
 Another integrator only needs its package. Here the 9th-order Verner method, with tighter
 tolerances:
@@ -186,9 +183,8 @@ f(t0, x0, p0, tf; method=:gpu)    # MethodError: not a keyword of the call
 differentiation backend (Mooncake); the initial state and costate must then be device
 arrays (`CuArray`). See the
 [GPU flows page of CTFlows](https://control-toolbox.org/CTFlows.jl/stable/flows/gpu) for what
-it supports. On a machine without a GPU, or without Mooncake loaded, the error comes at the
-first call and does not name the cause yet
-([CTFlows#436](https://github.com/control-toolbox/CTFlows.jl/issues/436)).
+it supports. Called with host arrays, or without Mooncake loaded, the flow raises at the
+first call an error that names the cause.
 
 ## Where to go
 
