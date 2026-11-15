@@ -4,6 +4,11 @@ A solution can be written to disk and read back later: to keep the result of an 
 solve, to restart from it in another session, or to share it with someone who does not have
 the code that produced it.
 
+The examples use the energy-minimal double integrator of
+[Your first problem](@ref getting-started-first-problem).
+
+::: details The problem used on this page
+
 ```@example main
 using OptimalControl
 using NLPModelsIpopt
@@ -21,7 +26,12 @@ ocp = @def begin
     ẋ(t) == [v(t), u(t)]
     0.5∫(u(t)^2) → min
 end
+nothing # hide
+```
 
+:::
+
+```@example main
 sol = solve(ocp; display=false)
 nothing # hide
 ```
