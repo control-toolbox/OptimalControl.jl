@@ -169,15 +169,8 @@ indirect_sol = φ((t0, tf), x0, p0_sol)
 objective(direct_sol), objective(indirect_sol)
 ```
 
-For the plot, the flows are built with `saveat`, so that the trajectory has 201 points (see
-[Plotting a flow](@ref results-plot-flow)):
-
 ```@example main
-fine = (saveat=range(t0, tf, 201), dense=false)
-φ_plot = Flow(ocp, (x, p) -> -1; fine...) *
-    (t1_sol, Flow(ocp, (x, p) -> 0; fine...)) *
-    (t2_sol, Flow(ocp, (x, p) -> 1; fine...))
-plot!(plt, φ_plot((t0, tf), x0, p0_sol), :state, :control; label="indirect", linestyle=:dash)
+plot!(plt, indirect_sol, :state, :control; label="indirect", linestyle=:dash)
 ```
 
 ```@example main
