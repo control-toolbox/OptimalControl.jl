@@ -184,15 +184,8 @@ indirect_sol = φ((t0, tf), x0, p0_sol)
 objective(direct_sol), objective(indirect_sol)
 ```
 
-For the plot, the flows are built with `saveat`, so that the trajectory has 101 points (see
-[Plotting a flow](@ref results-plot-flow)):
-
 ```@example main
-fine = (saveat=range(t0, tf, 101), dense=false)
-φ_plot = Flow(ocp, (x, p) -> p[2]; fine...) *
-    (t1_sol, Flow(ocp, (x, p) -> 0; constraint=(x, u) -> c(x), multiplier=μ, fine...)) *
-    (t2_sol, Flow(ocp, (x, p) -> p[2]; fine...))
-plot!(plt, φ_plot((t0, tf), x0, p0_sol); label="indirect", linestyle=:dash)
+plot!(plt, indirect_sol; label="indirect", linestyle=:dash)
 ```
 
 ```@example main
@@ -414,18 +407,11 @@ nothing                                                                         
 
 ### [Comparison](@id examples-state-constraint-second-order-comparison)
 
-The two indirect solutions, plotted with flows built with `saveat`:
+The two indirect solutions:
 
 ```@example main
-fine = (saveat=range(t0, tf, 101), dense=false)
-ft = Flow(ocp_touch, (x, p) -> p[2]; fine...)
-ff = Flow(ocp_arc, (x, p) -> p[2]; fine...)
-fa = Flow(ocp_arc, (x, p) -> 0; constraint=(x, u) -> a_arc - x[1], multiplier=(x, p) -> 0, fine...)
-
-plt_ind = plot((ft * (t1_touch, [Δpq_touch, 0], ft))((t0, tf), x0_bd, p0_touch);
-               label="a = 0.2", size=(800, 600), legend_off...)
-plot!(plt_ind, (ff * (t1_arc, [Δ1, 0], fa) * (t2_arc, [Δ2, 0], ff))((t0, tf), x0_bd, p0_arc);
-      label="a = 0.1", linestyle=:dash, legend_off...)
+plt_ind = plot(indirect_touch; label="a = 0.2", size=(800, 600), legend_off...)
+plot!(plt_ind, indirect_arc; label="a = 0.1", linestyle=:dash, legend_off...)
 ```
 
 The costate $p_q$ jumps once at the touch point, and twice around the boundary arc, where the
