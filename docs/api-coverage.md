@@ -130,7 +130,7 @@ All on `results-solution` unless noted; API theme **solution**.
 **Emptiness (2)**
 `is_empty` `is_empty_time_grid`
 
-**Switching structure (5)** — guide pending: #992 (`flows-multi-phase`, `results-solution`)
+**Switching structure (5)** — `flows-multi-phase-switching`, also `results-solution-flows`, `results-plot-switching`
 `switching_times` `phase_labels` `has_switching` `left_limit` `right_limit`
 
 **Duals (12)**
