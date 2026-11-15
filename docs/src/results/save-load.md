@@ -37,8 +37,8 @@ import_ocp_solution(ocp; format=:JLD, filename="solution")
 `import_ocp_solution` takes the **model** as its positional argument: the file holds the
 values of the solution (grid, trajectories, multipliers, solver information), and the
 solution is rebuilt against the model. Pass the model the solution was computed from. With
-another model, the import fails with an error that does not say so yet
-([CTModels#435](https://github.com/control-toolbox/CTModels.jl/issues/435)).
+another model, the import fails with an `IncorrectArgument` that lists what differs between
+the file and the model (dimensions, constraints).
 
 ## JLD2
 
