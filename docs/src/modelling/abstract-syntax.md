@@ -52,6 +52,51 @@ The symbols have plain ASCII alternatives:
 | `≤`, `≥` | `<=`, `>=` |
 | `→ min` | `=> min` |
 
+The same problem in both, which give the same model:
+
+:::tabs key:abstract-syntax-symbols
+
+== Unicode
+
+```@example abs
+ocp_unicode = @def begin
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    -1 ≤ u(t) ≤ 1
+    x(0) == [-1, 0]
+    x(1) == [0, 0]
+    ẋ(t) == [x₂(t), u(t)]
+    ∫(0.5u(t)^2) → min
+end
+nothing # hide
+```
+
+== ASCII
+
+```@example abs
+ocp_ascii = @def begin
+    t in [0, 1], time
+    x in R^2, state
+    u in R, control
+    -1 <= u(t) <= 1
+    x(0) == [-1, 0]
+    x(1) == [0, 0]
+    derivative(x)(t) == [x2(t), u(t)]
+    integral(0.5u(t)^2) => min
+end
+nothing # hide
+```
+
+:::
+
+```@example abs
+using NLPModelsIpopt                                                       # hide
+@assert isapprox(objective(solve(ocp_unicode; display=false)),             # hide
+                 objective(solve(ocp_ascii; display=false)); rtol=1e-10)   # hide
+nothing                                                                    # hide
+```
+
 ## [Variable](@id modelling-abstract-syntax-variable)
 
 ```julia

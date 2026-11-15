@@ -163,6 +163,12 @@ f(t0, x0, p0, tf; variable=1)
 
 ### Two other formulations of a free final time
 
+The final time can also be taken out of the time interval, in two ways.
+
+:::tabs key:free-final-time
+
+== Change of time
+
 Since the variable is the final time, the change of time $t = s\,t_f$ gives a problem on
 $s \in [0, 1]$, where $t_f$ only appears as a parameter: $\mathrm{d}x/\mathrm{d}s = t_f^2\,u$,
 and the cost becomes $t_f + (t_f/2)\int_0^1 u^2\,\mathrm{d}s$. The control law is unchanged:
@@ -185,6 +191,8 @@ xf_s, _ = fs(0, 0, p0c, 1; variable=tf_val)
 xf_s
 ```
 
+== Final time as a state
+
 Or $t_f$ becomes a state, with zero dynamics, and the problem has no variable any more. The
 state is $y = (x, t_f)$, its costate $(p, p_{t_f})$, and the control law reads
 $u = t_f\,p$ from them:
@@ -206,6 +214,8 @@ yf, qf = fy(0, [0, tf_val], [p0c, 0], 1)
 
 The initial costate of $t_f$ is $0$, since $t_f(0)$ is free, and its final costate is
 $-1$: the transversality condition of the Mayer term $t_f(1)$, with $p^0 = -1$.
+
+:::
 
 ```@example main
 @assert isapprox(xf_s, 1; atol=1e-8)                                       # hide
