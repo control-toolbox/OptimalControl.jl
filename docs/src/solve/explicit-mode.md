@@ -178,7 +178,8 @@ nlp.meta.nvar, nlp.meta.ncon
 ```
 
 The NLP has 303 unknowns, the state and the control at the 101 points of the grid, and 204
-constraints, the 200 equations of the dynamics and the 4 boundary conditions. `solve` also
+constraints, the 200 equations of the dynamics and the 4 boundary conditions, and
+`ocp_model(docp)` gives back the problem it comes from. `solve` also
 takes the discretised problem, with the initial guess and the two other components:
 
 ```@example explicit
@@ -200,6 +201,7 @@ objective(sol_nlp)
 
 ```@example explicit
 @assert (nlp.meta.nvar, nlp.meta.ncon) == (303, 204)            # hide
+@assert ocp_model(docp) === ocp                                 # hide
 @assert isapprox(objective(sol), 6; rtol=1e-2)                  # hide
 @assert isapprox(objective(sol_nlp), objective(sol); rtol=1e-6) # hide
 nothing                                                         # hide

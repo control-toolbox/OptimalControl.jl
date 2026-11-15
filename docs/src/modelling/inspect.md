@@ -330,8 +330,8 @@ See [Migrating from v2.0](@ref migration).
 Every accessor on this page is listed with its full signature and return type in the
 [Problem API reference](@ref api-problem). Many predicates also have an `is_*` counterpart (equivalent, or its negation as for
 `has_control` / `is_control_free`): `has_variable` / `is_variable` / `is_nonvariable`,
-`is_autonomous` / `is_nonautonomous`, `has_fixed_final_time` / `is_final_time_fixed` (and the
-three other time variants), `has_mayer_cost` / `is_mayer_cost_defined`,
+`is_autonomous` / `is_nonautonomous`, `has_fixed_final_time` / `is_final_time_fixed` (and `is_final_time_free`,
+`is_initial_time_fixed`, `is_initial_time_free`), `has_mayer_cost` / `is_mayer_cost_defined`,
 `has_lagrange_cost` / `is_lagrange_cost_defined`, `has_abstract_definition` /
 `is_abstractly_defined`. Only the `has_*` and `is_autonomous` forms are shown above.
 
