@@ -114,12 +114,11 @@ Three changes do not raise an error.
     A test `isa AbstractHamiltonian` on it is now false. The lift of a `VectorField` is still a
     `Hamiltonian`. See [Lift](@ref geometry-lift).
 
-!!! warning "`OpenLoop` checks the arity of the law when the flow runs"
+!!! warning "An open-loop law is a function of time"
 
     An open-loop control is a function of time, `u(t)`, or `u(t, v)` with a variable. A
-    function without argument is accepted when the law is built, and fails only when the flow
-    runs, with a `MethodError` far from the mistake
-    ([CTBase#570](https://github.com/control-toolbox/CTBase.jl/issues/570)):
+    function without argument, as an autonomous open loop was written before, is accepted
+    when the law is built, and fails only when the flow runs, with a `MethodError`:
 
     ```julia
     bad_law = OpenLoop(() -> 1.0)                          # accepted
