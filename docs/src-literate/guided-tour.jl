@@ -316,14 +316,14 @@ using OrdinaryDiffEqTsit5   # ODE solver + callbacks (ContinuousCallback, termin
 ## Phase 1: u = 1, stop when m = mf (fuel depleted)
 cb_fuel = ContinuousCallback((u, t, int) -> u[3] - mf, terminate!)
 flow_bang1 = Flow(VectorField(x -> F0(x) + F1(x)); callback=cb_fuel)
-traj_bang1 = flow_bang1((t0, 1.0), [r0, v0, m0]; grid=nothing)
+traj_bang1 = flow_bang1((t0, 1.0), [r0, v0, m0])
 t1_bang = time_grid(traj_bang1)[end]
 x1_bang = state(traj_bang1)(t1_bang)
 
 ## Phase 2: u = 0, stop when v = 0 (apogee)
 cb_apogee = ContinuousCallback((u, t, int) -> u[2], terminate!)
 flow_bang2 = Flow(VectorField(F0); callback=cb_apogee)
-traj_bang2 = flow_bang2((t1_bang, 1.0), x1_bang; grid=nothing)
+traj_bang2 = flow_bang2((t1_bang, 1.0), x1_bang)
 tf_bang = time_grid(traj_bang2)[end]
 rf_bang = state(traj_bang2)(tf_bang)[1]
 
@@ -333,10 +333,6 @@ println("Optimal:   r(tf) = ", round(r_opt_f; digits=6), ", tf = ", round(variab
 
 gain = 100 * (r_opt_f - rf_bang) / (rf_bang - r0)   # gain above r0, in %
 println("Extra altitude gain of the optimal strategy: ", round(gain; digits=1), " %")
-
-#md # !!! warning "Pass `grid=nothing` with terminating callbacks"
-#md #     When calling a `Flow` on a time span `(t0, tmax)`, `CTFlows` regrids the trajectory on `[t0, tmax]` by default — even if a `terminate!` callback stopped the integration earlier. Passing `grid=nothing` preserves the solver's actual time grid up to the callback event.
-#nb # **Warning:** when calling a `Flow` on a time span `(t0, tmax)`, `CTFlows` regrids the trajectory on `[t0, tmax]` by default — even if a `terminate!` callback stopped the integration earlier. Passing `grid=nothing` preserves the solver's actual time grid up to the callback event.
 
 # The optimal strategy climbs about 2.7 % higher above $r_0$ than the naive one. It does not simply push at the maximum: after a full-thrust phase it throttles along a **singular arc**, where pushing harder would mostly be lost to drag, then coasts. Overlaying the altitude of both strategies against time makes the difference visible:
 
