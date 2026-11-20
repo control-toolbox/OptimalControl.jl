@@ -15,12 +15,14 @@ bounded force this time, $|u| \le 1$: we transfer it from rest at $q = -1$ to re
 with the limit conditions $x(0) = (-1, 0)$ and $x(t_f) = (0, 0)$, where $x = (q, v)$ and the
 final time $t_f$ is free.
 
+We load OptimalControl and the packages that the direct and indirect methods need:
+
 ```@example main
-using OptimalControl
-using NLPModelsIpopt
-using OrdinaryDiffEqTsit5
-using NonlinearSolve
-using Plots
+using OptimalControl        # define the problem, solve it, build the flows
+using NLPModelsIpopt        # NLP solver of the direct method
+using OrdinaryDiffEqTsit5   # integrator of the flows
+using NonlinearSolve        # solver of the shooting equations
+using Plots                 # plots of the solutions
 ```
 
 ## The problem
@@ -69,7 +71,7 @@ nothing # hide
 
 ## Direct method
 
-We solve it with 200 time steps:
+We solve it by the [direct method](@ref solve-overview-direct-method), with 200 time steps:
 
 ```@example main
 direct_sol = solve(ocp; grid_size=200, display=false)
@@ -101,7 +103,8 @@ On $[0, t_1]$, $v = t$ and $q = -1 + t^2/2$. On $[t_1, t_f]$, the wagon brakes, 
 $t_f = 2t_1$, at $q = -1 + t_1^2$. The target gives $t_1 = 1$ and $t_f = 2$.
 
 The switching condition $p_2(t_1) = 0$ gives $p_2(0) = p_1$. For a free final time with a Mayer
-cost, the transversality condition is $\mathbf{H}(t_f) = 1$, that is,
+cost, the transversality condition is $\mathbf{H}(t_f) = -p^0 = 1$ ($p^0 = -1$ in the normal
+case), that is,
 $p_2(t_f) \times (-1) = 1$, with $v(t_f) = 0$. Since $p_2(t_f) = p_2(0) - 2p_1 = -p_1$, we get
 $p_1 = 1$:
 
@@ -111,8 +114,8 @@ p(0) = (1, 1), \qquad t_1 = 1, \qquad t_f = 2.
 
 ## Indirect method
 
-The two arcs have their flows, with the control $+1$ and $-1$. The final time is a variable,
-so it is passed to the flows by keyword, `variable=tf`:
+We solve it by [shooting](@ref flows-shooting), the indirect method. The two arcs have their
+flows, with the control $+1$ and $-1$:
 
 ```@example main
 f_max = Flow(ocp, (x, p, v) -> 1; label="u = +1")
@@ -121,10 +124,11 @@ nothing # hide
 ```
 
 The shooting function has four unknowns, $p_0$, $t_1$ and $t_f$, and four conditions: the
-target, the switch, and the transversality condition:
+target, the switch, and the transversality condition. The final time is a variable of the
+problem, so it is passed to the flows when they are called, by the keyword `variable=tf`:
 
 ```@example main
-H(x, p, u) = p[1] * x[2] + p[2] * u   # pseudo-Hamiltonian, Mayer form
+H = hamiltonian(f_min)   # Hamiltonian of the last arc, H(x, p, tf)
 
 function shoot!(s, ξ, _)
     p0, t1, tf = ξ[1:2], ξ[3], ξ[4]
@@ -132,7 +136,7 @@ function shoot!(s, ξ, _)
     x2, p2 = f_min(t1, x1, p1, tf; variable=tf)
     s[1:2] = x2 - xf             # target
     s[3] = p1[2]                 # switching function at t1
-    s[4] = H(x2, p2, -1) - 1     # transversality, free final time
+    s[4] = H(x2, p2, tf) - 1     # transversality, free final time
     return nothing
 end
 nothing # hide
@@ -186,7 +190,8 @@ state(indirect_sol)(tf_sol)
 ```
 
 ```@example main
-plot!(plt, indirect_sol; label="indirect", linestyle=:dash)
+# switching_style=:none removes the vertical line drawn at the switching time t1
+plot!(plt, indirect_sol; label="indirect", linestyle=:dash, switching_style=:none)
 plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
