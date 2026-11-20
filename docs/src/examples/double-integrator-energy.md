@@ -77,8 +77,8 @@ take.
 
 ## Direct method
 
-The direct method[^1] discretises the problem in time and solves the resulting nonlinear
-program, here with Ipopt:
+The direct method, [described briefly](@ref solve-overview-direct-method), discretises the
+problem in time and solves the resulting nonlinear program, here with Ipopt:
 
 ```@example main
 direct_sol = solve(ocp; display=false)
@@ -108,16 +108,13 @@ p(0) = (12, 6), \qquad u(t) = 6 - 12t, \qquad J = \frac12 \int_0^1 (6 - 12t)^2 \
 
 ## Indirect method
 
-The indirect method, [indirect simple shooting](@extref Tutorials tutorial-iss), computes the
-extremal from its initial costate. The flow of the
-Hamiltonian system, with the maximising control in feedback form, integrates $(x, p)$ from
-$(x_0, p_0)$:
+The indirect method, by [shooting](@ref flows-shooting), computes the extremal from its
+initial costate. The flow of the Hamiltonian system, with the maximising control in feedback
+form, integrates $(x, p)$ from $(x_0, p_0)$:
 
 ```@example main
-# maximising control, H(x, p, u) = p₁v + p₂u - u²/2
-u_max(x, p) = p[2]
-
-f = Flow(ocp, u_max)
+u_max(x, p) = p[2]   # maximising control, H(x, p, u) = p₁v + p₂u - u²/2
+f = Flow(ocp, u_max) # Hamiltonian flow: (t0, x0, p0, tf) ↦ (x(tf), p(tf))
 nothing # hide
 ```
 
@@ -132,7 +129,6 @@ We solve $S(p_0) = 0$ with a Newton method, starting from the costate of the dir
 
 ```@example main
 nle!(s, p0, _) = (s .= S(p0))
-
 p0_guess = costate(direct_sol)(t0)
 prob = NonlinearProblem(nle!, p0_guess)
 shooting_sol = NonlinearSolve.solve(prob; show_trace=Val(false))
@@ -181,8 +177,6 @@ nothing                                                                         
   with bang, singular and boundary arcs.
 - [State constraint](@ref examples-state-constraint) adds a bound on the velocity or the
   position to this problem.
-
-[^1]: J. T. Betts, *Practical methods for optimal control using nonlinear programming*, SIAM, Philadelphia, PA, 2001.
 
 ```@raw html
 <ExampleNav id="double-integrator-energy" />
