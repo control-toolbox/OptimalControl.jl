@@ -67,6 +67,8 @@ nothing # hide
 
 ### [Direct method](@id examples-control-and-variable-growth-direct)
 
+We solve it by the [direct method](@ref solve-overview-direct-method), on a coarse grid:
+
 ```@example main
 growth_sol = solve(ocp_growth; grid_size=20, display=false)
 variable(growth_sol), objective(growth_sol)
@@ -78,7 +80,7 @@ plt_growth = plot(growth_sol, :state, :control; label="direct", size=(800, 560),
 
 ### [Indirect method](@id examples-control-and-variable-growth-indirect)
 
-The pseudo-Hamiltonian now depends on the control:
+The indirect method is [shooting](@ref flows-shooting). The pseudo-Hamiltonian now depends on the control:
 
 ```math
 H(t, x, p, u, \lambda) = p\,(\lambda x + u) - \big(x - x_{\text{obs}}(t)\big)^2 - \frac12 u^2 .

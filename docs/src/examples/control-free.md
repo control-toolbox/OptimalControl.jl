@@ -1,5 +1,9 @@
 # [Parameter estimation without a control](@id examples-control-free)
 
+```@meta
+Draft = false
+```
+
 ```@raw html
 <ExampleFacts id="control-free" />
 ```
@@ -67,7 +71,7 @@ nothing # hide
 
 ### [Direct method](@id examples-control-free-growth-direct)
 
-With a coarse grid of 20 steps:
+With the [direct method](@ref solve-overview-direct-method) on a coarse grid of 20 steps:
 
 ```@example main
 growth_sol = solve(ocp_growth; grid_size=20, display=false)
@@ -82,7 +86,7 @@ plot!(plt_growth, t_grid, x_obs.(t_grid); line=:dot, color=:black, label="data")
 
 ### [Indirect method](@id examples-control-free-growth-indirect)
 
-The problem has no control, so the maximum principle gives directly the **Hamiltonian**, with
+The indirect method is [shooting](@ref flows-shooting). The problem has no control, so the maximum principle gives directly the **Hamiltonian**, with
 $p^0 = -1$ (see [Notation and conventions](@ref modelling-formulation-conventions)):
 
 ```math

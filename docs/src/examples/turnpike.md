@@ -60,6 +60,8 @@ nothing # hide
 
 ## Direct method
 
+We solve it by the [direct method](@ref solve-overview-direct-method):
+
 ```@example main
 direct_sol = solve(ocp; grid_size=100, display=false)
 plt = plot(direct_sol, :state, :control; label="direct", size=(800, 560), legend=false)
@@ -102,7 +104,7 @@ $\int_0^1 (1 - t)^2 \,\mathrm{d}t + \int_{3/2}^2 (t - 3/2)^2 \,\mathrm{d}t = 1/3
 
 ## Indirect method
 
-Each arc has its flow, with a constant control:
+The indirect method is [shooting](@ref flows-shooting). Each arc has its flow, with a constant control:
 
 ```@example main
 f_minus = Flow(ocp, (x, p) -> -1; label="u = -1")

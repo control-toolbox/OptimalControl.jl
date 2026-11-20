@@ -80,7 +80,7 @@ already involves the control, $\frac{\mathrm{d}}{\mathrm{d}t} c(x(t)) = -u(t)$.
 
 ### [Direct method](@id examples-state-constraint-first-order-direct)
 
-A direct method on a coarse grid shows the structure of the solution, and gives the initial
+A [direct method](@ref solve-overview-direct-method) on a coarse grid shows the structure of the solution, and gives the initial
 guess of the indirect method:
 
 ```@example main
@@ -120,7 +120,7 @@ The cost is $\frac12 \cdot 2 \int_0^{t_1} p_1^2 (t_1 - t)^2 \,\mathrm{d}t = p_1^
 
 ### [Indirect method](@id examples-state-constraint-first-order-indirect)
 
-Each arc has its flow. The flow on the boundary arc takes the constraint $c$ and the
+The indirect method is [shooting](@ref flows-shooting). Each arc has its flow. The flow on the boundary arc takes the constraint $c$ and the
 multiplier $\mu$, both as functions (see [Constrained arcs](@ref flows-constrained-arcs)):
 
 ```@example main

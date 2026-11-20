@@ -75,6 +75,8 @@ f_1(q) = \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix}.
 
 ## Direct method
 
+We solve it by the [direct method](@ref solve-overview-direct-method):
+
 ```@example main
 direct_sol = solve(ocp; display=false)
 variable(direct_sol)
@@ -205,7 +207,7 @@ nothing                                                            # hide
 
 ## Indirect method
 
-Here the whole extremal is singular: the headings are free at both ends, so the
+The indirect method is [shooting](@ref flows-shooting). Here the whole extremal is singular: the headings are free at both ends, so the
 transversality conditions give $p_3(0) = p_3(t_f) = 0$, and $H_1 = p_3$ vanishes on the whole
 interval. The flow uses the singular control over the whole horizon:
 
