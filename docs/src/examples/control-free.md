@@ -1,9 +1,5 @@
 # [Parameter estimation without a control](@id examples-control-free)
 
-```@meta
-Draft = false
-```
-
 ```@raw html
 <ExampleFacts id="control-free" />
 ```
@@ -15,19 +11,21 @@ growth rate of an exponential model fitted to data, and the smallest pulsation o
 oscillator that reaches a target. [Control-free problems](@ref modelling-without-control)
 explains how to write them.
 
+We load OptimalControl and the packages that the direct and indirect methods need:
+
 ```@example main
-using OptimalControl
-using NLPModelsIpopt
-using OrdinaryDiffEqTsit5
-using NonlinearSolve
-using Plots
+using OptimalControl        # define the problem, solve it, build the flows
+using NLPModelsIpopt        # NLP solver of the direct method
+using OrdinaryDiffEqTsit5   # integrator of the flows
+using NonlinearSolve        # solver of the shooting equations
+using Plots                 # plots of the solutions
 ```
 
 ## [Growth rate](@id examples-control-free-growth)
 
 ### [The problem](@id examples-control-free-growth-problem)
 
-A quantity grows exponentially, $\dot x(t) = \lambda\, x(t)$, from $x(0) = 2$, at an unknown
+A quantity grows exponentially, $\dot x(t) = \lambda x(t)$, from $x(0) = 2$, at an unknown
 rate $\lambda$. We observe it on $[0, 2]$, and the observations $x_{\text{obs}}$ are the model
 with $\lambda = 0.5$, perturbed by a small oscillation. We estimate $\lambda$ by least
 squares. The estimate is close to $0.5$, but not equal, because of the perturbation.
@@ -60,8 +58,8 @@ nothing # hide
 
 ```math
 \begin{aligned}
-& \text{Minimise} && \int_0^2 \big(x(t) - x_{\text{obs}}(t)\big)^2 \,\mathrm{d}t \\
-& \text{subject to} && \dot x(t) = \lambda\, x(t), \\[0.5em]
+& \text{Minimise} && \int_0^2 \big(x(t) - x_{\text{obs}}(t)\big)^2 \,\mathrm{d}t \\[0.5em]
+& \text{subject to} && \dot x(t) = \lambda x(t), \\[0.5em]
 & && x(0) = 2, \\[0.5em]
 & && \lambda \in \mathbb{R}.
 \end{aligned}
@@ -90,7 +88,7 @@ The indirect method is [shooting](@ref flows-shooting). The problem has no contr
 $p^0 = -1$ (see [Notation and conventions](@ref modelling-formulation-conventions)):
 
 ```math
-H(t, x, p, \lambda) = p\, \lambda x - \big(x - x_{\text{obs}}(t)\big)^2 .
+H(t, x, p, \lambda) = p \lambda x - \big(x - x_{\text{obs}}(t)\big)^2 .
 ```
 
 The parameter $\lambda$ is treated as a state with zero dynamics, $\dot\lambda = 0$, and its
@@ -102,7 +100,7 @@ $(p, p_\lambda)$, is
 \dot x &= \frac{\partial H}{\partial p} = \lambda x, &
 \dot p &= -\frac{\partial H}{\partial x} = -p \lambda + 2\big(x - x_{\text{obs}}(t)\big), \\
 \dot \lambda &= 0, &
-\dot p_\lambda &= -\frac{\partial H}{\partial \lambda} = -p\, x .
+\dot p_\lambda &= -\frac{\partial H}{\partial \lambda} = -p x .
 \end{aligned}
 ```
 
@@ -233,7 +231,7 @@ plot!(plt_harmonic, t -> -π / 2 * sin(π * t / 2), 0, 1; subplot=2, label="exac
 The Hamiltonian has no integral term, since the cost is a Mayer cost:
 
 ```math
-H(x, p, \omega) = p_1 v - p_2\, \omega^2 q .
+H(x, p, \omega) = p_1 v - p_2 \omega^2 q .
 ```
 
 With the state $(q, v, \omega)$ and the costate $(p_1, p_2, p_\omega)$, the augmented system is
@@ -242,7 +240,7 @@ With the state $(q, v, \omega)$ and the costate $(p_1, p_2, p_\omega)$, the augm
 \begin{aligned}
 \dot q &= v, & \dot p_1 &= -\frac{\partial H}{\partial q} = \omega^2 p_2, \\
 \dot v &= -\omega^2 q, & \dot p_2 &= -\frac{\partial H}{\partial v} = -p_1, \\
-\dot \omega &= 0, & \dot p_\omega &= -\frac{\partial H}{\partial \omega} = 2\omega\, q\, p_2 .
+\dot \omega &= 0, & \dot p_\omega &= -\frac{\partial H}{\partial \omega} = 2\omega q p_2 .
 \end{aligned}
 ```
 
@@ -250,9 +248,15 @@ The final velocity is free, so $p_2(t_f) = 0$. For the Mayer cost $g(\omega) = \
 transversality condition of the parameter is $p_\omega(t_f) = p^0 g'(\omega) = -2\omega$,
 with $p_\omega(t_0) = 0$.
 
-At the solution, $\omega = \pi/2$, and the adjoint equations with $p_2(1) = 0$ give
-$p_2 = -A\cos(\pi t/2)$ and $p_1 = -\dot p_2 = -A\frac{\pi}{2}\sin(\pi t/2)$. Then
-$p_\omega(1) = 2\omega \int_0^1 q\,p_2 = -\omega A$, so $A = 2$, and the initial costate is
+At the solution, $\omega = \pi/2$ and $q(t) = \cos(\pi t/2)$. The adjoint equations with
+$p_2(1) = 0$ give $p_2 = -A\cos(\pi t/2)$ and $p_1 = -\dot p_2 = -A\frac{\pi}{2}\sin(\pi t/2)$.
+Since $p_\omega(0) = 0$ and $\dot p_\omega = 2\omega\, q\, p_2$,
+
+```math
+p_\omega(1) = 2\omega \int_0^1 q\,p_2\,\mathrm{d}t = -2\omega A \int_0^1 \cos^2\!\big(\tfrac{\pi t}{2}\big)\,\mathrm{d}t = -\omega A .
+```
+
+The transversality condition $p_\omega(1) = -2\omega$ gives $A = 2$, and the initial costate is
 $p(0) = (0, -2)$.
 
 ```@example main
