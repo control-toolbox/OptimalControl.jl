@@ -132,14 +132,14 @@ using OrdinaryDiffEqTsit5   # ODE solver + callbacks (ContinuousCallback, termin
 # Phase 1: u = 1, stop when m = mf (fuel depleted)
 cb_fuel = ContinuousCallback((u, t, int) -> u[3] - mf, terminate!)
 flow_bang1 = Flow(VectorField(x -> F0(x) + F1(x)); callback=cb_fuel)
-traj_bang1 = flow_bang1((t0, 1.0), [r0, v0, m0]; grid=nothing)
+traj_bang1 = flow_bang1((t0, 1.0), [r0, v0, m0])
 t1_bang = time_grid(traj_bang1)[end]
 x1_bang = state(traj_bang1)(t1_bang)
 
 # Phase 2: u = 0, stop when v = 0 (apogee)
 cb_apogee = ContinuousCallback((u, t, int) -> u[2], terminate!)
 flow_bang2 = Flow(VectorField(F0); callback=cb_apogee)
-traj_bang2 = flow_bang2((t1_bang, 1.0), x1_bang; grid=nothing)
+traj_bang2 = flow_bang2((t1_bang, 1.0), x1_bang)
 tf_bang = time_grid(traj_bang2)[end]
 rf_bang = state(traj_bang2)(tf_bang)[1]
 
