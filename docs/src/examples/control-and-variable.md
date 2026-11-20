@@ -58,8 +58,8 @@ nothing # hide
 
 ```math
 \begin{aligned}
-& \text{Minimise} && \int_0^2 \Big( \big(x(t) - x_{\text{obs}}(t)\big)^2 + \frac12 u(t)^2 \Big) \,\mathrm{d}t \\
-& \text{subject to} && \dot x(t) = \lambda\, x(t) + u(t), \\[0.5em]
+& \text{Minimise} && \int_0^2 \Big( \big(x(t) - x_{\text{obs}}(t)\big)^2 + \frac12 u(t)^2 \Big) \,\mathrm{d}t \\[0.5em]
+& \text{subject to} && \dot x(t) = \lambda x(t) + u(t), \\[0.5em]
 & && x(0) = 2, \\[0.5em]
 & && \lambda \in \mathbb{R}.
 \end{aligned}
@@ -85,7 +85,7 @@ plt_growth = plot(growth_sol, :state, :control; label="direct", size=(800, 560),
 The indirect method is [shooting](@ref flows-shooting). The pseudo-Hamiltonian now depends on the control:
 
 ```math
-H(t, x, p, u, \lambda) = p\,(\lambda x + u) - \big(x - x_{\text{obs}}(t)\big)^2 - \frac12 u^2 .
+H(t, x, p, u, \lambda) = p (\lambda x + u) - \big(x - x_{\text{obs}}(t)\big)^2 - \frac12 u^2 .
 ```
 
 It is maximised where $\partial H / \partial u = p - u = 0$, so the control in feedback form
@@ -97,7 +97,7 @@ the control:
 \dot x &= \lambda x + p, &
 \dot p &= -p \lambda + 2\big(x - x_{\text{obs}}(t)\big), \\
 \dot \lambda &= 0, &
-\dot p_\lambda &= -p\, x,
+\dot p_\lambda &= -p x,
 \end{aligned}
 ```
 
