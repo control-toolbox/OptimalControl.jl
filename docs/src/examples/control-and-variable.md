@@ -184,7 +184,7 @@ nothing # hide
 
 ```math
 \begin{aligned}
-& \text{Minimise} && \omega^2 + \frac12 \int_0^1 u(t)^2 \,\mathrm{d}t \\
+& \text{Minimise} && \omega^2 + \frac12 \int_0^1 u(t)^2 \,\mathrm{d}t \\[0.5em]
 & \text{subject to} && \ddot q(t) = -\omega^2 q(t) + u(t), \\[0.5em]
 & && q(0) = 1, \quad \dot q(0) = 0, \\[0.5em]
 & && q(1) = 0.

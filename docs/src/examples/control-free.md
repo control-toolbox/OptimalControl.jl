@@ -201,7 +201,7 @@ nothing # hide
 
 ```math
 \begin{aligned}
-& \text{Minimise} && \omega^2 \\
+& \text{Minimise} && \omega^2 \\[0.5em]
 & \text{subject to} && \ddot q(t) = -\omega^2 q(t), \\[0.5em]
 & && q(0) = 1, \quad \dot q(0) = 0, \\[0.5em]
 & && q(1) = 0.

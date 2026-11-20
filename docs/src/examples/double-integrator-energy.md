@@ -63,7 +63,7 @@ nothing # hide
 
 ```math
 \begin{aligned}
-& \text{Minimise} && \frac{1}{2}\int_0^1 u^2(t) \,\mathrm{d}t \\
+& \text{Minimise} && \frac{1}{2}\int_0^1 u^2(t) \,\mathrm{d}t \\[0.5em]
 & \text{subject to} && \dot{x}(t) = (v(t), u(t)), \\[0.5em]
 & && x(0) = (-1, 0), \\[0.5em]
 & && x(1) = (0, 0).
