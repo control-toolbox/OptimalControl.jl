@@ -11,12 +11,14 @@ that go best together. This page takes the two systems of
 their dynamics, with a quadratic cost. The method is the same; this page shows what the
 control changes.
 
+We load OptimalControl and the packages that the direct and indirect methods need:
+
 ```@example main
-using OptimalControl
-using NLPModelsIpopt
-using OrdinaryDiffEqTsit5
-using NonlinearSolve
-using Plots
+using OptimalControl        # define the problem, solve it, build the flows
+using NLPModelsIpopt        # NLP solver of the direct method
+using OrdinaryDiffEqTsit5   # integrator of the flows
+using NonlinearSolve        # solver of the shooting equations
+using Plots                 # plots of the solutions
 ```
 
 ## [Growth rate, with a control](@id examples-control-and-variable-growth)

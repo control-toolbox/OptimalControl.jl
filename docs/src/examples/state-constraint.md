@@ -20,12 +20,14 @@ The mass is one and there is no friction, so the dynamics are those of the
 $\dot q = v$, $\dot v = u$, and we minimise the energy $\frac12 \int_0^1 u^2(t)\,\mathrm{d}t$.
 Without a constraint, this is [Energy minimisation](@ref examples-double-integrator-energy).
 
+We load OptimalControl and the packages that the direct and indirect methods need:
+
 ```@example main
-using OptimalControl
-using NLPModelsIpopt
-using OrdinaryDiffEqTsit5
-using NonlinearSolve
-using Plots
+using OptimalControl        # define the problem, solve it, build the flows
+using NLPModelsIpopt        # NLP solver of the direct method
+using OrdinaryDiffEqTsit5   # integrator of the flows
+using NonlinearSolve        # solver of the shooting equations
+using Plots                 # plots of the solutions
 ```
 
 ## [A first-order constraint: a speed limit](@id examples-state-constraint-first-order)

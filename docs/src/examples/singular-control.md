@@ -21,12 +21,14 @@ This page computes a singular control by hand, then with the tools of
 For a simpler case, where the singular control follows from the optimality conditions without
 brackets, see [Turnpike (bang–singular–bang)](@ref examples-turnpike).
 
+We load OptimalControl and the packages that the direct and indirect methods need:
+
 ```@example main
-using OptimalControl
-using NLPModelsIpopt
-using OrdinaryDiffEqTsit5
-using NonlinearSolve
-using Plots
+using OptimalControl        # define the problem, solve it, build the flows
+using NLPModelsIpopt        # NLP solver of the direct method
+using OrdinaryDiffEqTsit5   # integrator of the flows
+using NonlinearSolve        # solver of the shooting equations
+using Plots                 # plots of the solutions
 ```
 
 ## The problem

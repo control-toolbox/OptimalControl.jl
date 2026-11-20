@@ -27,11 +27,11 @@ We use OptimalControl to define the problem, NLPModelsIpopt to solve it by a dir
 OrdinaryDiffEqTsit5 and NonlinearSolve for the indirect method, and Plots to see the result.
 
 ```@example main
-using OptimalControl
-using NLPModelsIpopt
-using OrdinaryDiffEqTsit5
-using NonlinearSolve
-using Plots
+using OptimalControl        # define the problem, solve it, build the flows
+using NLPModelsIpopt        # NLP solver of the direct method
+using OrdinaryDiffEqTsit5   # integrator of the flows
+using NonlinearSolve        # solver of the shooting equations
+using Plots                 # plots of the solutions
 ```
 
 ## The problem
