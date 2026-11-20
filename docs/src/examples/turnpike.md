@@ -51,7 +51,7 @@ nothing # hide
 
 ```math
 \begin{aligned}
-& \text{Minimise} && \int_0^2 x(t)^2 \,\mathrm{d}t \\
+& \text{Minimise} && \int_0^2 x(t)^2 \,\mathrm{d}t \\[0.5em]
 & \text{subject to} && \dot x(t) = u(t), \\[0.5em]
 & && -1 \le u(t) \le 1, \\[0.5em]
 & && x(0) = 1, \quad x(2) = 1/2.
@@ -106,7 +106,10 @@ $\int_0^1 (1 - t)^2 \,\mathrm{d}t + \int_{3/2}^2 (t - 3/2)^2 \,\mathrm{d}t = 1/3
 
 ## Indirect method
 
-The indirect method is [shooting](@ref flows-shooting). Each arc has its flow, with a constant control:
+The indirect method is [shooting](@ref flows-shooting). Each arc has its flow, with a constant
+control. The `label` names the phase that the flow integrates: the concatenation of the flows
+keeps the labels in order, and the solution shows them in its summary and on its plot (see
+[The switching structure of the solution](@ref flows-multi-phase-switching)):
 
 ```@example main
 f_minus = Flow(ocp, (x, p) -> -1; label="u = -1")
@@ -124,7 +127,7 @@ function shoot!(s, ξ, _)
     p0, t1, t2 = ξ
     x1, p1 = f_minus(t0, x0, p0, t1)
     x2, p2 = f_sing(t1, x1, p1, t2)
-    x3, _ = f_plus(t2, x2, p2, tf)
+    x3, _  = f_plus(t2, x2, p2, tf)
     s[1] = x1          # enter the singular arc at x = 0
     s[2] = p1          # where the switching function vanishes
     s[3] = x3 - xf     # reach the target
@@ -171,7 +174,8 @@ objective(direct_sol), objective(indirect_sol)
 ```
 
 ```@example main
-plot!(plt, indirect_sol, :state, :control; label="indirect", linestyle=:dash)
+# switching_style=:none removes the vertical lines drawn at the switching times t1 and t2
+plot!(plt, indirect_sol, :state, :control; label="indirect", linestyle=:dash, switching_style=:none)
 plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
