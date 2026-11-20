@@ -7,13 +7,12 @@ comparison of the two, checked against the exact values when they are known.
 
 Read them in order: each one uses something the previous ones introduced.
 
+!!! note "Tools and conventions"
+
+    The examples are built from the [Flows](@ref flows-overview) and
+    [Geometry](@ref geometry-overview) tools; the conventions of the derivations are in
+    [Notation and conventions](@ref modelling-formulation-conventions).
+
 ```@raw html
 <ExamplesGallery />
 ```
-
-## See also
-
-- [Flows overview](@ref flows-overview) and [Geometry overview](@ref geometry-overview): the
-  tools these examples are built from.
-- [Notation and conventions](@ref modelling-formulation-conventions): the conventions of the
-  derivations.
