@@ -115,7 +115,10 @@ p(0) = (1, 1), \qquad t_1 = 1, \qquad t_f = 2.
 ## Indirect method
 
 We solve it by [shooting](@ref flows-shooting), the indirect method. The two arcs have their
-flows, with the control $+1$ and $-1$:
+flows, with the control $+1$ and $-1$. The `label` names the phase that the flow integrates:
+the concatenation of the flows keeps the labels in order, and the solution shows them in its
+summary and on its plot (see
+[The switching structure of the solution](@ref flows-multi-phase-switching)):
 
 ```@example main
 f_max = Flow(ocp, (x, p, v) -> 1; label="u = +1")
