@@ -33,9 +33,10 @@ A definition is a `begin … end` block passed to `@def`:
   any), preferably in this order. The variable must come before the time when the time bounds
   use it, as in `t ∈ [0, tf], time`.
 - **Then, in any order:** the dynamics, the constraints and the cost.
-- **Two equivalent forms:** `ocp = @def begin … end` and `@def ocp begin … end` both bind the
-  model to `ocp`. The second form also accepts a trailing `true` that turns on the
-  [trace mode](@ref modelling-abstract-syntax-aliases).
+- **Two equivalent forms:** `ocp = @def begin … end` (recommended) and the legacy
+  `@def ocp begin … end` both bind the model to `ocp`. The legacy form also accepts a
+  trailing `true` that turns on the [trace mode](@ref modelling-abstract-syntax-aliases) —
+  its only advantage.
 - **When names are read:** constants used in the declarations or in the bounds of a
   constraint (`t0`, `tf`, `x0`, …) are read when the model is built, so they must be defined
   *before* the block. Functions called in the dynamics, the constraints or the cost are only
@@ -327,7 +328,7 @@ There is no dedicated syntax for "no control": omitting the control declaration 
 the syntax — do not declare a dummy `u ∈ R, control` with `u(t) == 0`, and never write
 `control!(pre, 0)` on the [functional API](@ref modelling-functional-api), which is rejected
 as an error. See [Control-free problems](@ref modelling-without-control) for the full
-worked examples above, solved both directly and indirectly.
+worked examples above, solved by both the direct and the indirect method.
 
 ## [Dynamics](@id modelling-abstract-syntax-dynamics)
 
@@ -338,11 +339,14 @@ worked examples above, solved both directly and indirectly.
 The dynamics is given in the standard vectorial ODE form:
 
 ```math
-    \dot{x}(t) = f([t, ]x(t)[, u(t)][, v])
+    \dot{x}(t) = f([t,]\; x(t)\; [, u(t)]\; [, v])
 ```
 
-depending on whether it is autonomous / with a variable or not (the parser will detect time and variable dependences,
-which entails that time, state and variable must be declared prior to dynamics - an error will be issued otherwise). The symbol `∂`, or the dotted state name
+where each of `t`, `u(t)` and `v` is optional: the dynamics may be autonomous or not, may
+involve a control or not (see [Problems without a control](@ref modelling-abstract-syntax-control-free)),
+and may use a variable or not. The parser detects these dependences, so time, state — and
+the control and variable when declared — must be declared prior to the dynamics; an error
+is issued otherwise. The symbol `∂`, or the dotted state name
 (`ẋ`), or the keyword `derivative` can be used:
 
 ```@example abs
@@ -556,7 +560,7 @@ nothing # hide
     nothing # hide
     ```
 
-### [Duplicate box constraints](@id modelling-abstract-syntax-box-dedup)
+## [Duplicate box constraints](@id modelling-abstract-syntax-box-dedup)
 
 **Box constraints** are linear range constraints on a single scalar component of the state, control or variable — that is, constraints of the form `lb ≤ x_i(t) ≤ ub`, `u_i(t) ≤ ub`, `v_i ≥ lb`, etc. (nonlinear path constraints are *not* concerned by this section).
 
