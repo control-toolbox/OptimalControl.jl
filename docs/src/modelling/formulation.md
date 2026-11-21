@@ -83,14 +83,33 @@ section rather than redefine them.
 **Dimensions.** $x(t) \in \mathbb{R}^n$, $u(t) \in \mathbb{R}^m$, $v \in \mathbb{R}^q$. A
 dimension-one quantity is a scalar, in the mathematics as in the code.
 
-**Pseudo-Hamiltonian.** With the costate $p(t) \in \mathbb{R}^n$ and the constant $p^0 \le 0$,
+**Pseudo-Hamiltonian.** With the costate $p(t) \in \mathbb{R}^n$ and the constant $p^0$,
 
 ```math
 H(t, x, p, u, v) = p \cdot f(t, x, u, v) + p^0 f^0(t, x, u, v).
 ```
 
-The normal case is $p^0 = -1$; $p^0 = 0$ is the abnormal case. In the code, $H$ is a
-`PseudoHamiltonian`.
+The sign of $p^0$ depends on the sense of the criterion: $p^0 \le 0$ for a minimisation and
+$p^0 \ge 0$ for a maximisation. The normal case is $p^0 = -1$ for `→ min` and $p^0 = +1$ for
+`→ max`; $p^0 = 0$ is the abnormal case. In the code, $H$ is a `PseudoHamiltonian`.
+
+!!! info "Sign conventions"
+
+    The pseudo-Hamiltonian is **always maximised**, for a minimisation as for a
+    maximisation: only $p^0$ changes with the sense of the criterion. Since $p^0 f^0$ is the
+    same for $\min \int f^0$ ($p^0 = -1$) and for $\max \int (-f^0)$ ($p^0 = +1$), the two
+    problems have the same control, the same costate and the same multipliers: **the costate
+    and the duals do not change sign with the sense of the criterion**. The other choice
+    ($p^0 = -1$ always, with $H$ minimised for a maximisation) would flip them.
+
+    The same convention holds for the constraints, whatever the method (direct or
+    indirect): an inequality has a non-negative multiplier, however it is written, while an
+    equality or a two-sided constraint has a signed multiplier (see *State constraints*
+    below for how a constraint is normalised, and
+    [Dual variables](@ref results-solution-duals) for the signs of the duals of a solution).
+
+    These are the conventions of the control-toolbox ecosystem
+    ([ct-conventions](https://github.com/control-toolbox/ct-conventions), rules `SGN1`–`SGN5`).
 
 **Maximum principle.** Along an optimal trajectory, the control **maximises** $H$. When this
 maximisation gives the control in feedback form $u(t, x, p, v)$, the **maximised Hamiltonian** is
@@ -108,13 +127,21 @@ $\vec{\mathbf{H}} = (\nabla_p \mathbf{H}, -\nabla_x \mathbf{H})$ gives the extre
 ```
 
 **State constraints.** A state constraint is a path constraint that does not depend on the
-control. It is written in the normalised form $c(x) \ge 0$. Along a boundary arc, where
-$c(x(t)) = 0$, the pseudo-Hamiltonian gains the term $+\,\mu\, c(x)$, with a multiplier
-$\mu \ge 0$:
+control. For the maximum principle, it is put in the normalised form $c(x) \ge 0$: a
+constraint declared as $c(x) \le 0$ or as an upper bound $x_i \le a$ becomes $-c(x) \ge 0$ or
+$a - x_i \ge 0$, and a lower bound $x_i \ge a$ becomes $x_i - a \ge 0$. Along a boundary
+arc, where $c(x(t)) = 0$, the pseudo-Hamiltonian gains the term $+\,\mu\, c(x)$, with a
+multiplier $\mu \ge 0$:
 
 ```math
 H(t, x, p, u, v) = p \cdot f(t, x, u, v) + p^0 f^0(t, x, u, v) + \mu\, c(x).
 ```
+
+The sign of $\mu$ does not depend on how the constraint is written, nor on the sense of the
+criterion. For a constraint with a single finite bound, $\mu$ is also the dual of the
+solution. An equality, or a constraint with two finite bounds, is adjoined with the signed
+multiplier $\mu_{\mathrm{ub}} - \mu_{\mathrm{lb}}$, which is also its dual: positive where the
+upper bound is active, negative where the lower bound is.
 
 **Minimal time.** A free final time to minimise is written as a Mayer cost, $t_f \to \min$.
 Then $f^0 = 0$, so $H = p \cdot f$, and the transversality condition reads
@@ -122,6 +149,10 @@ Then $f^0 = 0$, so $H = p \cdot f$, and the transversality condition reads
 ```math
 \mathbf{H}(t_f) = -p^0 = 1.
 ```
+
+(In general, the transversality condition on a free final time is
+$\mathbf{H}(t_f) = -p^0\, \partial_{t_f} g$, so it is the same for $\min t_f$ and for
+$\max (-t_f)$.)
 
 Writing the same cost in Lagrange form, $t_f = \int_{t_0}^{t_f} 1\,\mathrm{d}t$, gives instead
 $H = p \cdot f - 1$ and $\mathbf{H} \equiv 0$ for an autonomous problem. Both are correct; the
@@ -135,7 +166,8 @@ constant state ($\dot v = 0$) with its own costate $p_v$:
 ```
 
 for a Mayer term $g$ that depends on $v$ and no boundary condition that involves $v$. For
-instance, with the cost term $\omega^2$ and $p^0 = -1$, $p_\omega(t_f) = -2\omega$.
+instance, with the cost term $\omega^2$ and $p^0 = -1$, $p_\omega(t_f) = -2\omega$ (the same
+for $\max(-\omega^2)$, where $p^0 = +1$).
 
 ## See also
 

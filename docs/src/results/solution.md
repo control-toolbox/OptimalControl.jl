@@ -260,7 +260,8 @@ subject of [Initial guess](@ref solve-initial-guess) and [Options](@ref solve-op
 ## [Dual variables](@id results-solution-duals)
 
 The Lagrange multipliers of the constraints measure how much the cost would change if a
-constraint were relaxed. A constraint with a [label](@ref modelling-abstract-syntax) is read
+constraint were relaxed (for `→ max`, the multipliers are those of the equivalent
+minimisation of the opposite cost). A constraint with a [label](@ref modelling-abstract-syntax) is read
 with `dual(sol, ocp, :label)`. For a boundary or a variable constraint, the multiplier is a
 number or a vector:
 
@@ -306,7 +307,8 @@ nothing                                                                # hide
 
     The multipliers follow one sign convention, the same for a box and for a path
     constraint, and for `→ min` and `→ max` (a problem written `max -J` has the same
-    multipliers as `min J`):
+    multipliers as `min J`). The costate and the multipliers of the maximum principle follow
+    the same convention, see [Notation and conventions](@ref modelling-formulation-conventions):
 
     - a constraint with a **single** finite bound, such as `v(t) ≤ 0.75`, has a
       non-negative multiplier, positive where it is active;
