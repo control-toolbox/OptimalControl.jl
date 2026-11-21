@@ -178,13 +178,11 @@ font-feature-settings: "calt" off;
   text-align: center;
 }
 
-/* The template's padding gives display math its space; the shared stylesheet of
-   control-toolbox.org removes it from inline math (see ct-conventions, notes on the
-   VitePress backend). */
+/* The padding and the margin of the MathJax containers, inline and display, are reset by
+   the shared stylesheet of control-toolbox.org (see ct-conventions, notes on the
+   VitePress backend): nothing to set here. */
 mjx-container {
   display: inline-block;
-  padding: 0.5rem 0;
-  margin: auto 2px -2px;
   overflow: visible !important;  /* Override MathJax's overflow */
   text-align: left;
 }
