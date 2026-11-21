@@ -151,6 +151,8 @@ t12 = tg[abs.(p_d.(tg)) .≤ 1e-3]   # the grid points on the singular arc
 prob = NonlinearProblem(shoot!, ξ_guess)
 shooting_sol = NonlinearSolve.solve(prob; show_trace=Val(false))
 p0_sol, t1_sol, t2_sol = shooting_sol.u
+@show p0_sol t1_sol t2_sol # hide
+nothing # hide
 ```
 
 The solver finds the values computed by hand, $p_0 = -1$, $t_1 = 1$ and $t_2 = 3/2$, with a
@@ -170,7 +172,8 @@ cost is $3/8$, as is the cost of the direct solution, up to the discretisation e
 ```@example main
 φ = f_minus * (t1_sol, f_sing) * (t2_sol, f_plus)
 indirect_sol = φ((t0, tf), x0, p0_sol)
-objective(direct_sol), objective(indirect_sol)
+@show objective(direct_sol) objective(indirect_sol)
+nothing # hide
 ```
 
 ```@example main

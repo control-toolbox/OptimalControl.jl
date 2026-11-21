@@ -73,7 +73,8 @@ With the [direct method](@ref solve-overview-direct-method) on a coarse grid of 
 
 ```@example main
 growth_sol = solve(ocp_growth; grid_size=20, display=false)
-variable(growth_sol), objective(growth_sol)
+@show variable(growth_sol) objective(growth_sol)
+nothing # hide
 ```
 
 ```@example main
@@ -135,6 +136,8 @@ The direct solution gives the initial guess:
 ξ_guess = [costate(growth_sol)(t0), variable(growth_sol)]
 prob_growth = NonlinearProblem(shoot_growth!, ξ_guess)
 p0_growth, λ_sol = NonlinearSolve.solve(prob_growth; show_trace=Val(false)).u
+@show p0_growth λ_sol # hide
+nothing # hide
 ```
 
 ### [Comparison](@id examples-control-free-growth-comparison)
@@ -143,7 +146,8 @@ The two estimates differ in the third decimal: the direct method solves a discre
 problem, on a grid of 20 steps, and the indirect method the problem itself.
 
 ```@example main
-variable(growth_sol), λ_sol
+@show variable(growth_sol) λ_sol
+nothing # hide
 ```
 
 ```@example main
@@ -214,7 +218,8 @@ nothing # hide
 
 ```@example main
 harmonic_sol = solve(ocp_harmonic; grid_size=20, display=false)
-variable(harmonic_sol), objective(harmonic_sol)
+@show variable(harmonic_sol) objective(harmonic_sol)
+nothing # hide
 ```
 
 The direct solution is close to the exact one, $q(t) = \cos(\pi t/2)$ and
@@ -275,6 +280,8 @@ end
 prob_harmonic = NonlinearProblem(shoot_harmonic!, ξ_guess_h)
 shooting_harmonic = NonlinearSolve.solve(prob_harmonic; show_trace=Val(false))
 p0_harmonic, ω_sol = shooting_harmonic.u[1:2], shooting_harmonic.u[3]
+@show p0_harmonic ω_sol # hide
+nothing # hide
 ```
 
 ### [Comparison](@id examples-control-free-harmonic-comparison)
@@ -283,7 +290,8 @@ The indirect method finds $\omega = \pi/2$ and $p(0) = (0, -2)$; the direct meth
 on its grid of 20 steps:
 
 ```@example main
-variable(harmonic_sol), ω_sol, π / 2
+@show variable(harmonic_sol) ω_sol π/2
+nothing # hide
 ```
 
 ```@example main

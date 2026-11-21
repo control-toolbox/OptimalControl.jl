@@ -284,6 +284,8 @@ The direct solution gives the initial guess:
 prob = NonlinearProblem(shoot!, ξ_guess)
 shooting_sol = NonlinearSolve.solve(prob; show_trace=Val(false))
 p0_sol, θ0_sol, tf_sol = shooting_sol.u[1:3], shooting_sol.u[4], shooting_sol.u[5]
+@show p0_sol θ0_sol tf_sol # hide
+nothing # hide
 ```
 
 The residual is zero:
@@ -301,7 +303,8 @@ method:
 
 ```@example main
 indirect_sol = f((t0, tf_sol), [x0, y0, θ0_sol], p0_sol; variable=tf_sol)
-variable(direct_sol), tf_sol
+@show variable(direct_sol) tf_sol
+nothing # hide
 ```
 
 ```@example main

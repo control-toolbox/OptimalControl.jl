@@ -147,7 +147,8 @@ The extremal integrated from `p0_sol` is a solution of the problem, with its cos
 
 ```@example main
 indirect_sol = f((t0, tf), x0, p0_sol)
-objective(direct_sol), objective(indirect_sol)
+@show objective(direct_sol) objective(indirect_sol)
+nothing # hide
 ```
 
 ```@example main

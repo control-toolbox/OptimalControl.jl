@@ -165,6 +165,8 @@ We solve the shooting equations:
 prob = NonlinearProblem(shoot!, ξ_guess)
 shooting_sol = NonlinearSolve.solve(prob; show_trace=Val(false))
 p0_sol, t1_sol, tf_sol = shooting_sol.u[1:2], shooting_sol.u[3], shooting_sol.u[4]
+@show p0_sol t1_sol tf_sol # hide
+nothing # hide
 ```
 
 These are the exact values, $p_0 = (1, 1)$, $t_1 = 1$ and $t_f = 2$, and the residual is zero:
@@ -201,7 +203,8 @@ plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 The two final times agree up to the discretisation error of the direct method:
 
 ```@example main
-variable(direct_sol), tf_sol
+@show variable(direct_sol) tf_sol
+nothing # hide
 ```
 
 ## Notes

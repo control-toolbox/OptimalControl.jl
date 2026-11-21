@@ -177,6 +177,8 @@ active = findall(t -> 0 ≤ c(x_d(t)) ≤ 1e-3, tg)
 prob = NonlinearProblem(shoot!, ξ_guess)
 shooting_sol = NonlinearSolve.solve(prob; show_trace=Val(false))
 p0_sol, t1_sol, t2_sol = shooting_sol.u[1:2], shooting_sol.u[3], shooting_sol.u[4]
+@show p0_sol t1_sol t2_sol # hide
+nothing # hide
 ```
 
 The shooting finds the exact values, $p_0 = (38.4, 9.6)$, $t_1 = 0.25$ and $t_2 = 0.75$.
@@ -189,7 +191,8 @@ differs by the discretisation error:
 ```@example main
 φ = f_interior * (t1_sol, f_boundary) * (t2_sol, f_interior)
 indirect_sol = φ((t0, tf), x0, p0_sol)
-objective(direct_sol), objective(indirect_sol)
+@show objective(direct_sol) objective(indirect_sol)
+nothing # hide
 ```
 
 ```@example main
@@ -339,7 +342,8 @@ These are the exact values, and the cost is $2$:
 
 ```@example main
 indirect_free = f_none((t0, tf), x0_bd, p0_free)
-objective(sol_free), objective(indirect_free)
+@show objective(sol_free) objective(indirect_free)
+nothing # hide
 ```
 
 ```@example main
@@ -403,6 +407,8 @@ t1_guess = tg_t[argmin(abs.(a_touch .- first.(state(sol_touch).(tg_t))))]
 prob = NonlinearProblem(shoot_touch!, ξ_guess_t)
 shooting_touch = NonlinearSolve.solve(prob; show_trace=Val(false))
 p0_touch, t1_touch, Δpq_touch = shooting_touch.u[1:2], shooting_touch.u[3:4]...
+@show p0_touch t1_touch Δpq_touch # hide
+nothing # hide
 ```
 
 These are the exact values. The concatenation with the jump gives the extremal and its cost,
@@ -411,7 +417,8 @@ $2.24$:
 ```@example main
 φ_touch = f_touch * (t1_touch, [Δpq_touch, 0], f_touch)
 indirect_touch = φ_touch((t0, tf), x0_bd, p0_touch)
-objective(sol_touch), objective(indirect_touch)
+@show objective(sol_touch) objective(indirect_touch)
+nothing # hide
 ```
 
 ```@example main
@@ -498,7 +505,8 @@ prob = NonlinearProblem(shoot_arc!, ξ_guess_a)
 shooting_arc = NonlinearSolve.solve(prob; show_trace=Val(false))
 p0_arc, t1_arc, t2_arc = shooting_arc.u[1:2], shooting_arc.u[3], shooting_arc.u[4]
 Δ1, Δ2 = shooting_arc.u[5], shooting_arc.u[6]
-(t1_arc, t2_arc), (Δ1, Δ2)
+@show t1_arc t2_arc Δ1 Δ2 # hide
+nothing # hide
 ```
 
 The junction times are $3a$ and $1 - 3a$, and the two jumps are equal, $2/(9a^2) \approx 22.2$.
@@ -507,7 +515,8 @@ The cost is $4/(9a) \approx 4.44$:
 ```@example main
 φ_arc = f_free * (t1_arc, [Δ1, 0], f_arc) * (t2_arc, [Δ2, 0], f_free)
 indirect_arc = φ_arc((t0, tf), x0_bd, p0_arc)
-objective(sol_arc), objective(indirect_arc)
+@show objective(sol_arc) objective(indirect_arc)
+nothing # hide
 ```
 
 ```@example main

@@ -95,7 +95,8 @@ predicts (see the energy example below).
 The solution also carries the cost and a few solver diagnostics:
 
 ```@example main
-objective(sol), iterations(sol), successful(sol)
+@show objective(sol) iterations(sol) successful(sol)
+nothing # hide
 ```
 
 The state and the control are functions of time. Because the control is scalar, `control(sol)`
@@ -103,7 +104,8 @@ returns a `Number`, not a length-1 vector (see the
 [note on dimension one](@ref modelling-abstract-syntax-control)):
 
 ```@example main
-state(sol)(0.5), control(sol)(0.25)
+@show state(sol)(0.5) control(sol)(0.25)
+nothing # hide
 ```
 
 See [Solution object](@ref results-solution) for everything else a solution carries, and
@@ -116,7 +118,8 @@ mid-time is $x(1/2) = (-1/2, 3/2)$, and the minimal cost is $6$. The numerical s
 matches, up to the discretisation error of the default grid (250 steps):
 
 ```@example main
-objective(sol) - 6
+@show objective(sol) - 6
+nothing # hide
 ```
 
 ```@example main

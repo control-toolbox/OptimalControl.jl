@@ -73,7 +73,8 @@ We solve it by the [direct method](@ref solve-overview-direct-method), on a coar
 
 ```@example main
 growth_sol = solve(ocp_growth; grid_size=20, display=false)
-variable(growth_sol), objective(growth_sol)
+@show variable(growth_sol) objective(growth_sol)
+nothing # hide
 ```
 
 ```@example main
@@ -120,13 +121,17 @@ end
 ξ_guess = [costate(growth_sol)(t0), variable(growth_sol)]
 prob_growth = NonlinearProblem(shoot_growth!, ξ_guess)
 p0_growth, λ_sol = NonlinearSolve.solve(prob_growth; show_trace=Val(false)).u
+@show p0_growth λ_sol # hide
+nothing # hide
 ```
 
 ### [Comparison](@id examples-control-and-variable-growth-comparison)
 
 ```@example main
 indirect_growth = f_growth((t0, tf), x0, p0_growth; variable=λ_sol)
-(variable(growth_sol), λ_sol), (objective(growth_sol), objective(indirect_growth))
+@show variable(growth_sol) λ_sol
+@show objective(growth_sol) objective(indirect_growth)
+nothing # hide
 ```
 
 ```@example main
@@ -197,7 +202,8 @@ nothing # hide
 
 ```@example main
 harmonic_sol = solve(ocp_harmonic; grid_size=20, display=false)
-variable(harmonic_sol), objective(harmonic_sol)
+@show variable(harmonic_sol) objective(harmonic_sol)
+nothing # hide
 ```
 
 ```@example main
@@ -233,13 +239,17 @@ end
 prob_harmonic = NonlinearProblem(shoot_harmonic!, ξ_guess_h)
 shooting_harmonic = NonlinearSolve.solve(prob_harmonic; show_trace=Val(false))
 p0_harmonic, ω_sol = shooting_harmonic.u[1:2], shooting_harmonic.u[3]
+@show p0_harmonic ω_sol # hide
+nothing # hide
 ```
 
 ### [Comparison](@id examples-control-and-variable-harmonic-comparison)
 
 ```@example main
 indirect_harmonic = f_harmonic((t0h, tfh), [q0, v0], p0_harmonic; variable=ω_sol)
-(variable(harmonic_sol), ω_sol), (objective(harmonic_sol), objective(indirect_harmonic))
+@show variable(harmonic_sol) ω_sol
+@show objective(harmonic_sol) objective(indirect_harmonic)
+nothing # hide
 ```
 
 ```@example main
@@ -259,7 +269,9 @@ extremals selects the optimum.
 ```@example main
 s = zeros(3)
 shoot_harmonic!(s, [-3.0, -3.0, 0.0], nothing)
-s, objective(f_harmonic((t0h, tfh), [q0, v0], [-3.0, -3.0]; variable=0.0))
+J_zero = objective(f_harmonic((t0h, tfh), [q0, v0], [-3.0, -3.0]; variable=0.0))
+@show s J_zero
+nothing # hide
 ```
 
 ```@example main
