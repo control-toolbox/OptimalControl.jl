@@ -86,7 +86,7 @@ nothing                                              # hide
 The fitted state follows the data, up to the perturbation:
 
 ```@example main
-plt = plot(sol, :state; size=(800, 400), label="Direct")
+plt = plot(sol, :state; label="Direct", size=(800, 320))
 tg = time_grid(sol)
 plot!(
     plt, tg, data.(tg);

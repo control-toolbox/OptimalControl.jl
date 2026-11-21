@@ -106,14 +106,16 @@ sol_c = solve(ocp_c; display=false)
 Makie.plot(sol_c, :state, :costate, :control, :path, :dual)
 ```
 
-Every keyword documented on [Plot](@ref results-plot) — `layout`, `control`, `time`, the
-`*_style`/`*_bounds_style` keywords, `size`, `plot!` for overlay — works here unchanged. Only
+Every keyword documented on [Plot with Plots](@ref results-plot) — `layout`, `control`, `time`, the
+`*_style`/`*_bounds_style` keywords, the [switching keywords](@ref results-plot-switching)
+(`jumps`, `switching_style`, `phase_labels`, `phase_labels_style`), `size`, `plot!` for
+overlay — works here unchanged. Only
 the call itself, and how you customise beyond it, differ.
 
 ## What differs
 
 | | Plots | Makie |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | the call | `plot(sol)` | `Makie.plot(sol)` — always qualified |
 | returns | `Plots.Plot` | `Makie.Figure` |
 | reaching one panel | `plt[i]` | `f.content[i]` (an `Axis`) |
@@ -215,7 +217,7 @@ component's label — so you can check you grabbed the right one instead of coun
 [(title=string(ax.title[]), ylabel=string(ax.ylabel[])) for ax in f.content]
 ```
 
-Same ordering [Plot](@ref results-plot) documents for `plt[i]`.
+Same ordering [Plot with Plots](@ref results-plot) documents for `plt[i]`.
 
 ## Building a figure from scratch
 
@@ -271,7 +273,7 @@ CairoMakie.Makie.plot!(::CairoMakie.Makie.Figure, ::CTModels.Solution, ::Symbol.
 
 ## See also
 
-- [Plot](@ref results-plot) — the Plots backend and the full keyword reference; every keyword
+- [Plot with Plots](@ref results-plot) — the Plots backend and the full keyword reference; every keyword
   there applies here too.
 - [The logo](@ref examples-logo) — a whole figure built from the accessors, Makie throughout.
 - [Flows](@ref flows-overview) — building the `Flow` used in the last section.

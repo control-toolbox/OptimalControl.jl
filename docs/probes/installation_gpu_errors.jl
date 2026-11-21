@@ -1,9 +1,7 @@
 # Page: getting-started/installation.md, section "Optional: GPU"
 # Claim: when one of MadNLPGPU, CUDA, CUDSS is missing, `solve(ocp, :gpu)` raises an
-# ExtensionError that names it (CTBase.jl#565, fixed in CTBase 0.30.6).
-# Known upstream bug (CTSolvers.jl#234): with CUDA loaded but not MadNLPGPU, the first error
-# asks for `MadNLP`, and only the next one for `MadNLPGPU`. This part checks the current
-# behaviour, so it fails once the bug is fixed: then drop the one-line note and this part.
+# ExtensionError that names it (CTBase.jl#565, fixed in CTBase 0.30.6; CTSolvers.jl#234,
+# fixed in CTSolvers 0.6.0, for MadNLPGPU).
 
 include("common.jl")
 
@@ -41,10 +39,6 @@ check(
     "with MadNLPGPU and CUDA, the error asks for CUDSS",
 )
 check(
-    missing_pkg(gpu_error("CUDA", "CUDSS"))[1] == "MadNLP",
-    "known bug CTSolvers.jl#234: with CUDA and CUDSS but not MadNLPGPU, the error asks for MadNLP",
-)
-check(
-    missing_pkg(gpu_error("CUDA", "CUDSS", "MadNLP"))[1] == "MadNLPGPU",
-    "then, with MadNLP loaded, it asks for MadNLPGPU",
+    missing_pkg(gpu_error("CUDA", "CUDSS"))[1] == "MadNLPGPU",
+    "with CUDA and CUDSS, the error asks for MadNLPGPU",
 )

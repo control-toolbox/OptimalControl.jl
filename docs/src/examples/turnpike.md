@@ -1,5 +1,9 @@
 # [Turnpike (bang–singular–bang)](@id examples-turnpike)
 
+```@raw html
+<ExampleFacts id="turnpike" />
+```
+
 A scalar system, $\dot x = u$ with $u \in [-1, 1]$, is driven between two states over a fixed
 horizon while minimising $\int x^2$. The dynamics are affine in $u$ and the cost does not
 depend on $u$, so the pseudo-Hamiltonian is linear in $u$: the optimal control is bang,
@@ -7,12 +11,14 @@ $u = \pm 1$, except on an interval where the switching function vanishes, a **si
 This is the smallest problem with one, and unlike [Singular control](@ref examples-singular-control),
 the singular control follows from the optimality conditions without Poisson brackets.
 
+We load OptimalControl and the packages that the direct and indirect methods need:
+
 ```@example main
-using OptimalControl
-using NLPModelsIpopt
-using OrdinaryDiffEqTsit5
-using NonlinearSolve
-using Plots
+using OptimalControl        # define the problem, solve it, build the flows
+using NLPModelsIpopt        # NLP solver of the direct method
+using OrdinaryDiffEqTsit5   # integrator of the flows
+using NonlinearSolve        # solver of the shooting equations
+using Plots                 # plots of the solutions
 ```
 
 ## The problem
@@ -20,10 +26,9 @@ using Plots
 The horizon is fixed, $t_f = 2$, and the transfer goes from $x(0) = 1$ to $x(2) = 1/2$. The
 state and the control are scalars, not vectors of length one:
 
-```@raw html
-<div class="responsive-columns-left-priority">
-<div>
-```
+:::tabs key:example-problem
+
+== @def
 
 ```@example main
 t0, tf = 0.0, 2.0
@@ -42,30 +47,26 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
+== Mathematics
 
 ```math
 \begin{aligned}
-& \text{Minimise} && \int_0^2 x(t)^2 \,\mathrm{d}t \\
+& \text{Minimise} && \int_0^2 x(t)^2 \,\mathrm{d}t \\[0.5em]
 & \text{subject to} && \dot x(t) = u(t), \\[0.5em]
 & && -1 \le u(t) \le 1, \\[0.5em]
 & && x(0) = 1, \quad x(2) = 1/2.
 \end{aligned}
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ## Direct method
 
+We solve it by the [direct method](@ref solve-overview-direct-method):
+
 ```@example main
 direct_sol = solve(ocp; grid_size=100, display=false)
-plt = plot(direct_sol, :state, :control; label="direct", size=(800, 400))
+plt = plot(direct_sol, :state, :control; label="direct", size=(800, 560), legend=false)
 ```
 
 The state goes down to the origin as fast as it can, stays there, then climbs to the target.
@@ -93,7 +94,7 @@ u_{\text{sing}} = 0 .
 The extremal is therefore bang–singular–bang:
 
 | Arc | Interval | $u$ | $x$ |
-| --- | --- | --- | --- |
+| :--- | :--- | :--- | :--- |
 | bang | $[0, t_1]$ | $-1$ | from $1$ to $0$ |
 | singular | $[t_1, t_2]$ | $0$ | $0$ |
 | bang | $[t_2, 2]$ | $+1$ | from $0$ to $1/2$ |
@@ -105,12 +106,15 @@ $\int_0^1 (1 - t)^2 \,\mathrm{d}t + \int_{3/2}^2 (t - 3/2)^2 \,\mathrm{d}t = 1/3
 
 ## Indirect method
 
-Each arc has its flow, with a constant control:
+The indirect method is [shooting](@ref flows-shooting). Each arc has its flow, with a constant
+control. The `label` names the phase that the flow integrates: the concatenation of the flows
+keeps the labels in order, and the solution shows them in its summary and on its plot (see
+[The switching structure of the solution](@ref flows-multi-phase-switching)):
 
 ```@example main
-f_minus = Flow(ocp, (x, p) -> -1)
-f_sing = Flow(ocp, (x, p) -> 0)
-f_plus = Flow(ocp, (x, p) -> 1)
+f_minus = Flow(ocp, (x, p) -> -1; label="u = -1")
+f_sing = Flow(ocp, (x, p) -> 0; label="singular")
+f_plus = Flow(ocp, (x, p) -> 1; label="u = +1")
 nothing # hide
 ```
 
@@ -123,7 +127,7 @@ function shoot!(s, ξ, _)
     p0, t1, t2 = ξ
     x1, p1 = f_minus(t0, x0, p0, t1)
     x2, p2 = f_sing(t1, x1, p1, t2)
-    x3, _ = f_plus(t2, x2, p2, tf)
+    x3, _  = f_plus(t2, x2, p2, tf)
     s[1] = x1          # enter the singular arc at x = 0
     s[2] = p1          # where the switching function vanishes
     s[3] = x3 - xf     # reach the target
@@ -147,6 +151,8 @@ t12 = tg[abs.(p_d.(tg)) .≤ 1e-3]   # the grid points on the singular arc
 prob = NonlinearProblem(shoot!, ξ_guess)
 shooting_sol = NonlinearSolve.solve(prob; show_trace=Val(false))
 p0_sol, t1_sol, t2_sol = shooting_sol.u
+@show p0_sol t1_sol t2_sol # hide
+nothing # hide
 ```
 
 The solver finds the values computed by hand, $p_0 = -1$, $t_1 = 1$ and $t_2 = 3/2$, with a
@@ -166,18 +172,14 @@ cost is $3/8$, as is the cost of the direct solution, up to the discretisation e
 ```@example main
 φ = f_minus * (t1_sol, f_sing) * (t2_sol, f_plus)
 indirect_sol = φ((t0, tf), x0, p0_sol)
-objective(direct_sol), objective(indirect_sol)
+@show objective(direct_sol) objective(indirect_sol)
+nothing # hide
 ```
 
-For the plot, the flows are built with `saveat`, so that the trajectory has 201 points (see
-[Plotting a flow](@ref results-plot-flow)):
-
 ```@example main
-fine = (saveat=range(t0, tf, 201), dense=false)
-φ_plot = Flow(ocp, (x, p) -> -1; fine...) *
-    (t1_sol, Flow(ocp, (x, p) -> 0; fine...)) *
-    (t2_sol, Flow(ocp, (x, p) -> 1; fine...))
-plot!(plt, φ_plot((t0, tf), x0, p0_sol), :state, :control; label="indirect", linestyle=:dash)
+# switching_style=:none removes the vertical lines drawn at the switching times t1 and t2
+plot!(plt, indirect_sol, :state, :control; label="indirect", linestyle=:dash, switching_style=:none)
+plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
 ```@example main
@@ -197,3 +199,12 @@ nothing                                                                         
 - [Multi-phase flows](@ref flows-multi-phase): the concatenation of flows.
 - The [Goddard tutorial](@extref Tutorials tutorial-goddard): the same workflow on a harder
   problem, with a singular arc and a boundary arc.
+
+```@raw html
+<ExampleNav id="turnpike" />
+```
+
+```@example main
+Main.gallery_thumbnail(plot(indirect_sol, :control; size=(480, 300), legend=false), "turnpike")  # hide
+nothing  # hide
+```

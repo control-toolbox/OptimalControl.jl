@@ -127,12 +127,9 @@ t0 = 0.0; tf = 1.0; x0 = [-1.0, 0.0]; xf = [0.0, 0.0]
 nothing # hide
 ```
 
-```@raw html
-<div class="responsive-columns-40-60">
-<div>
-```
+:::tabs key:functional-api
 
-**Abstract syntax**
+== @def
 
 ```@example ex-energy
 ocp_macro = @def begin
@@ -152,12 +149,7 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
-
-**Functional API**
+== Functional API
 
 ```@example ex-energy
 pre = OptimalControl.PreModel()
@@ -197,10 +189,7 @@ ocp_func = build(pre)
 nothing # hide
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 Both formulations produce identical solutions. We solve both and plot them together for verification:
 
@@ -257,12 +246,9 @@ t0 = 0.0; x0 = [-1.0, 0.0]; xf = [0.0, 0.0]
 nothing # hide
 ```
 
-```@raw html
-<div class="responsive-columns-40-60">
-<div>
-```
+:::tabs key:functional-api
 
-**Abstract syntax**
+== @def
 
 ```@example ex-time
 ocp_macro = @def begin
@@ -285,12 +271,7 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
-
-**Functional API**
+== Functional API
 
 ```@example ex-time
 pre = OptimalControl.PreModel()
@@ -328,10 +309,7 @@ ocp_func = build(pre)
 nothing # hide
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ```@example ex-time
 sol_macro = solve(ocp_macro; grid_size=20, display=false)
@@ -366,12 +344,9 @@ t0 = 0.0; tf = 2.0; x0 = 2.0
 nothing # hide
 ```
 
-```@raw html
-<div class="responsive-columns-40-60">
-<div>
-```
+:::tabs key:functional-api
 
-**Abstract syntax**
+== @def
 
 ```@example ex-control-free
 ocp_macro = @def begin
@@ -390,12 +365,7 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
-
-**Functional API**
+== Functional API
 
 ```@example ex-control-free
 pre = OptimalControl.PreModel()
@@ -427,10 +397,7 @@ ocp_func = build(pre)
 nothing # hide
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ```@example ex-control-free
 sol_macro = solve(ocp_macro; grid_size=20, display=false)
@@ -465,12 +432,9 @@ t0 = 0.0; tf = 2.0; x0 = 2.0
 nothing # hide
 ```
 
-```@raw html
-<div class="responsive-columns-40-60">
-<div>
-```
+:::tabs key:functional-api
 
-**Abstract syntax**
+== @def
 
 ```@example ex-control-variable
 ocp_macro = @def begin
@@ -490,12 +454,7 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
-
-**Functional API**
+== Functional API
 
 ```@example ex-control-variable
 pre = OptimalControl.PreModel()
@@ -529,10 +488,7 @@ ocp_func = build(pre)
 nothing # hide
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ```@example ex-control-variable
 sol_macro = solve(ocp_macro; grid_size=20, display=false)
@@ -561,12 +517,9 @@ t0 = 0.0; tf = 2.0; x0 = 1.0; xf = 0.5
 nothing # hide
 ```
 
-```@raw html
-<div class="responsive-columns-40-60">
-<div>
-```
+:::tabs key:functional-api
 
-**Abstract syntax**
+== @def
 
 ```@example ex-turnpike
 ocp_macro = @def begin
@@ -588,12 +541,7 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
-
-**Functional API**
+== Functional API
 
 ```@example ex-turnpike
 pre = OptimalControl.PreModel()
@@ -627,10 +575,7 @@ ocp_func = build(pre)
 nothing # hide
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ```@example ex-turnpike
 sol_macro = solve(ocp_macro; grid_size=100, display=false)
@@ -658,12 +603,9 @@ using NLPModelsIpopt
 nothing # hide
 ```
 
-```@raw html
-<div class="responsive-columns-40-60">
-<div>
-```
+:::tabs key:functional-api
 
-**Abstract syntax**
+== @def
 
 ```@example ex-singular
 ocp_macro = @def begin
@@ -689,12 +631,7 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
-
-**Functional API**
+== Functional API
 
 ```@example ex-singular
 pre = OptimalControl.PreModel()
@@ -734,10 +671,7 @@ ocp_func = build(pre)
 nothing # hide
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ```@example ex-singular
 sol_macro = solve(ocp_macro; grid_size=50, display=false)
@@ -766,12 +700,9 @@ t0 = 0.0; tf = 1.0; x0 = [-1.0, 0.0]; xf = [0.0, 0.0]; VMAX = 1.2
 nothing # hide
 ```
 
-```@raw html
-<div class="responsive-columns-40-60">
-<div>
-```
+:::tabs key:functional-api
 
-**Abstract syntax**
+== @def
 
 ```@example ex-state-constraint
 ocp_macro = @def begin
@@ -793,12 +724,7 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
-
-**Functional API**
+== Functional API
 
 ```@example ex-state-constraint
 pre = OptimalControl.PreModel()
@@ -835,10 +761,7 @@ ocp_func = build(pre)
 nothing # hide
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ```@example ex-state-constraint
 sol_macro = solve(ocp_macro; grid_size=50, display=false)

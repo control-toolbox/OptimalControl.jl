@@ -37,6 +37,8 @@ nothing                                                            # hide
 Every `solve` call on this page uses the same problem, the double integrator. Both modelers
 accept it as written, with the dynamics in vector form:
 
+::: details The problem used on this page
+
 ```@example main
 ocp = @def begin
     t ∈ [0, 1], time
@@ -49,6 +51,8 @@ ocp = @def begin
 end
 nothing # hide
 ```
+
+:::
 
 ## Partial descriptions
 
@@ -96,7 +100,7 @@ solve(ocp, :adnlp, :exa; display=false)
 ## What each solver needs installed
 
 | Solver | Load |
-| --- | --- |
+| :--- | :--- |
 | `:ipopt` | `using NLPModelsIpopt` |
 | `:madnlp` | `using MadNLP` (CPU) |
 | `:uno` | `using UnoSolver` |
@@ -196,12 +200,12 @@ For the complete list of each package's options, see:
 - **MadNCL**: [repository](https://github.com/MadNLP/MadNCL.jl)
 - **Knitro**: [options](https://www.artelys.com/docs/knitro/3_referenceManual/userOptions.html)
 
-## Discretization schemes
+## Discretisation schemes
 
 `:collocation` accepts a `scheme` option (alias `disc_method`):
 
 | Value | Notes | `:adnlp` | `:exa` |
-| --- | --- | :-: | :-: |
+| :--- | :--- | :-: | :-: |
 | `:trapeze` | trapezoidal rule, second-order | ✅ | ✅ |
 | `:midpoint` | midpoint rule, second-order, **default** | ✅ | ✅ |
 | `:euler` | explicit Euler, first-order | ✅ | ✅ |
@@ -211,16 +215,64 @@ For the complete list of each package's options, see:
 | `:gauss_legendre_2` | 2-point Gauss–Legendre collocation, fourth-order | ✅ | ✗ |
 | `:gauss_legendre_3` | 3-point Gauss–Legendre collocation, sixth-order | ✅ | ✗ |
 
-The higher-order Gauss–Legendre schemes are more accurate, at a higher cost per grid step.
-The grid is set by `grid_size` (default `250`), or, with `:adnlp`, by an explicit, possibly
-non-uniform, `time_grid` (with `:exa`, `time_grid` is not supported yet:
-[CTDirect#638](https://github.com/control-toolbox/CTDirect.jl/issues/638)).
+The order shows on a problem whose solution is known. For $\dot x = u$, $x(0) = 1$, and the
+cost $\int_0^1 (x^2 + u^2)\,\mathrm{d}t$, the Riccati equation gives the optimal cost
+$J^* = \tanh(1)$. Halving the step divides the error of a scheme of order $k$ by $2^k$:
+
+```@example main
+lq = @def begin
+    t ∈ [0, 1], time
+    x ∈ R, state
+    u ∈ R, control
+    x(0) == 1
+    ẋ(t) == u(t)
+    ∫(x(t)^2 + u(t)^2) → min
+end
+
+error_of(scheme, N) = abs(objective(solve(lq; scheme=scheme, grid_size=N, display=false)) - tanh(1))
+
+for scheme in (:euler, :euler_implicit, :trapeze, :midpoint, :gauss_legendre_2, :gauss_legendre_3)
+    e10, e20 = error_of(scheme, 10), error_of(scheme, 20)
+    println(rpad(scheme, 18), "error ", rpad(round(e10; sigdigits=2), 9),
+            "→ ", rpad(round(e20; sigdigits=2), 9), "observed order ", round(log2(e10 / e20); digits=1))
+end
+```
+
+```@example main
+for (scheme, k) in ((:euler, 1), (:trapeze, 2), (:midpoint, 2), (:gauss_legendre_2, 4))   # hide
+    @assert abs(log2(error_of(scheme, 10) / error_of(scheme, 20)) - k) < 0.2           # hide
+end                                                                                    # hide
+nothing                                                                                # hide
+```
+
+The higher-order schemes reach a given accuracy with far fewer steps, at a higher cost per
+step: a Gauss–Legendre scheme adds unknowns at the stages inside each step. The order is
+reached on a smooth solution. On a bang–bang control, the error is limited by the switching
+times, which fall between the points of the grid.
+
+The grid is set by `grid_size`, the number of uniform steps (default `250`), or by an
+explicit `time_grid`: the increasing times of the grid, from the initial to the final time,
+possibly non-uniform, to put more points where the solution varies fast. Here a grid twice
+as fine on the second half of the interval:
+
+```@example main
+grid = [range(0, 0.5, 21); range(0.5, 1, 41)[2:end]]
+sol_grid = solve(ocp; time_grid=grid, display=false)
+length(time_grid(sol_grid)), objective(sol_grid)
+```
+
+```@example main
+@assert isapprox(time_grid(sol_grid), grid) && isapprox(objective(sol_grid), 6; rtol=1e-2)   # hide
+nothing                                                                              # hide
+```
+
+`time_grid` works with `:adnlp` only: with `:exa`, it is not supported yet
+([CTDirect#638](https://github.com/control-toolbox/CTDirect.jl/issues/638)).
 
 !!! warning "Under `:exa`, no Gauss–Legendre scheme"
 
     `:exa` takes `:trapeze`, `:midpoint`, `:euler` and `:euler_implicit`, and the aliases of
-    the last two (`:euler_forward`, `:euler_backward`, …; since CTParser 0.9.6,
-    [CTParser#355](https://github.com/control-toolbox/CTParser.jl/issues/355)). Both
+    the last two (`:euler_forward`, `:euler_backward`, …). Both
     Gauss–Legendre schemes are available with `:adnlp` only:
 
     ```@repl main

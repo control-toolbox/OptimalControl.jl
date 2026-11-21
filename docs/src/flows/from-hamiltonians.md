@@ -174,7 +174,7 @@ f_prob(0, [1.0], 1; variable=2)
 ## Summary
 
 | Constructor | You give | Automatic differentiation | Point call returns |
-| --- | --- | --- | --- |
+| :--- | :--- | :--- | :--- |
 | `Flow(Hamiltonian(H))` | $\mathbf{H}(x, p)$ | yes | `(x(tf), p(tf))` |
 | `Flow(HamiltonianVectorField(Hv))` | $(\nabla_p \mathbf{H}, -\nabla_x \mathbf{H})$ | no | `(x(tf), p(tf))` |
 | `Flow(PseudoHamiltonian(Hp), law)` | $H(x, p, u)$ and $u(x, p)$ | yes | `(x(tf), p(tf))` |

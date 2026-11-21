@@ -1,5 +1,9 @@
 # [State constraint](@id examples-state-constraint)
 
+```@raw html
+<ExampleFacts id="state-constraint" />
+```
+
 This example shows how state constraints of different orders shape the solutions of the
 energy-minimal double integrator, and how to compute them by the direct and the indirect
 methods. Bryson et al.[^1] and Jacobson et al.[^2] solve such problems analytically.
@@ -16,12 +20,14 @@ The mass is one and there is no friction, so the dynamics are those of the
 $\dot q = v$, $\dot v = u$, and we minimise the energy $\frac12 \int_0^1 u^2(t)\,\mathrm{d}t$.
 Without a constraint, this is [Energy minimisation](@ref examples-double-integrator-energy).
 
+We load OptimalControl and the packages that the direct and indirect methods need:
+
 ```@example main
-using OptimalControl
-using NLPModelsIpopt
-using OrdinaryDiffEqTsit5
-using NonlinearSolve
-using Plots
+using OptimalControl        # define the problem, solve it, build the flows
+using NLPModelsIpopt        # NLP solver of the direct method
+using OrdinaryDiffEqTsit5   # integrator of the flows
+using NonlinearSolve        # solver of the shooting equations
+using Plots                 # plots of the solutions
 ```
 
 ## [A first-order constraint: a speed limit](@id examples-state-constraint-first-order)
@@ -32,10 +38,9 @@ The wagon goes from rest at $q = -1$ to rest at $q = 0$, as in the energy exampl
 velocity is bounded, $v(t) \le v_{\max} = 1.2$. Without the bound, the velocity
 $v(t) = 6t - 6t^2$ reaches $1.5$ at $t = 1/2$, so the bound is active.
 
-```@raw html
-<div class="responsive-columns-left-priority">
-<div>
-```
+:::tabs key:example-problem
+
+== @def
 
 ```@example main
 t0, tf = 0, 1
@@ -59,36 +64,30 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
+== Mathematics
 
 ```math
 \begin{aligned}
-& \text{Minimise} && \frac{1}{2}\int_0^1 u^2(t) \,\mathrm{d}t \\
+& \text{Minimise} && \frac{1}{2}\int_0^1 u^2(t) \,\mathrm{d}t \\[0.5em]
 & \text{subject to} && \dot x(t) = (v(t), u(t)), \\[0.5em]
 & && v(t) \le v_{\max}, \\[0.5em]
 & && x(0) = (-1, 0), \quad x(1) = (0, 0).
 \end{aligned}
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 The constraint is of **first order**: with $c(x) = v_{\max} - v \ge 0$, the first derivative
 already involves the control, $\frac{\mathrm{d}}{\mathrm{d}t} c(x(t)) = -u(t)$.
 
 ### [Direct method](@id examples-state-constraint-first-order-direct)
 
-A direct method on a coarse grid shows the structure of the solution, and gives the initial
+A [direct method](@ref solve-overview-direct-method) on a coarse grid shows the structure of the solution, and gives the initial
 guess of the indirect method:
 
 ```@example main
 direct_sol = solve(ocp; grid_size=50, display=false)
-plt = plot(direct_sol; label="direct", size=(800, 600))
+plt = plot(direct_sol; label="direct", size=(800, 920), legend=false)
 ```
 
 The solution has three arcs: an unconstrained arc, a **boundary arc** where $v = v_{\max}$,
@@ -100,7 +99,7 @@ With the conventions of [Notation and conventions](@ref modelling-formulation-co
 the pseudo-Hamiltonian is
 
 ```math
-H(x, p, u, \mu) = p_1 v + p_2 u - \frac{u^2}{2} + \mu\, c(x), \qquad c(x) = v_{\max} - v,
+H(x, p, u, \mu) = p_1 v + p_2 u - \frac{u^2}{2} + \mu c(x), \qquad c(x) = v_{\max} - v,
 ```
 
 with $\mu = 0$ off the boundary arc. On an unconstrained arc, $u = p_2$. Along the boundary
@@ -115,7 +114,12 @@ $p_1 t_1^2 / 2 = v_{\max}$, and the last arc is symmetric. The distance covered,
 $1 = \frac23 p_1 t_1^3 + v_{\max} (1 - 2t_1)$, then gives
 
 ```math
-t_1 = \frac32 \Big( 1 - \frac{1}{v_{\max}} \Big) = 0.25, \qquad t_2 = 1 - t_1 = 0.75, \qquad
+t_1 = \frac32 \Big( 1 - \frac{1}{v_{\max}} \Big) = 0.25, \qquad t_2 = 1 - t_1 = 0.75,
+```
+
+and
+
+```math
 p(0) = (38.4,\ 9.6), \qquad \mu = 38.4 .
 ```
 
@@ -123,16 +127,20 @@ The cost is $\frac12 \cdot 2 \int_0^{t_1} p_1^2 (t_1 - t)^2 \,\mathrm{d}t = p_1^
 
 ### [Indirect method](@id examples-state-constraint-first-order-indirect)
 
-Each arc has its flow. The flow on the boundary arc takes the constraint $c$ and the
+The indirect method is [shooting](@ref flows-shooting). Each arc has its flow. The flow on the boundary arc takes the constraint $c$ and the
 multiplier $\mu$, both as functions (see [Constrained arcs](@ref flows-constrained-arcs)):
 
 ```@example main
-f_interior = Flow(ocp, (x, p) -> p[2])
+f_interior = Flow(ocp, (x, p) -> p[2]; label="interior")
 
 c(x) = v_max - x[2]   # the constraint, c ≥ 0
 μ(x, p) = p[1]        # the multiplier on the boundary arc
-
-f_boundary = Flow(ocp, (x, p) -> 0; constraint=(x, u) -> c(x), multiplier=μ)
+f_boundary = Flow(
+    ocp, (x, p) -> 0; 
+    constraint=(x, u) -> c(x), 
+    multiplier=μ, 
+    label="boundary"
+)
 nothing # hide
 ```
 
@@ -145,7 +153,7 @@ function shoot!(s, ξ, _)
     p0, t1, t2 = ξ[1:2], ξ[3], ξ[4]
     x1, p1 = f_interior(t0, x0, p0, t1)
     x2, p2 = f_boundary(t1, x1, p1, t2)
-    x3, _ = f_interior(t2, x2, p2, tf)
+    x3, _  = f_interior(t2, x2, p2, tf)
     s[1:2] = x3 - xf      # target
     s[3] = c(x1)          # entry on the boundary
     s[4] = p1[2]          # switching condition
@@ -169,6 +177,8 @@ active = findall(t -> 0 ≤ c(x_d(t)) ≤ 1e-3, tg)
 prob = NonlinearProblem(shoot!, ξ_guess)
 shooting_sol = NonlinearSolve.solve(prob; show_trace=Val(false))
 p0_sol, t1_sol, t2_sol = shooting_sol.u[1:2], shooting_sol.u[3], shooting_sol.u[4]
+@show p0_sol t1_sol t2_sol # hide
+nothing # hide
 ```
 
 The shooting finds the exact values, $p_0 = (38.4, 9.6)$, $t_1 = 0.25$ and $t_2 = 0.75$.
@@ -181,19 +191,23 @@ differs by the discretisation error:
 ```@example main
 φ = f_interior * (t1_sol, f_boundary) * (t2_sol, f_interior)
 indirect_sol = φ((t0, tf), x0, p0_sol)
-objective(direct_sol), objective(indirect_sol)
+@show objective(direct_sol) objective(indirect_sol)
+nothing # hide
 ```
-
-For the plot, the flows are built with `saveat`, so that the trajectory has 101 points (see
-[Plotting a flow](@ref results-plot-flow)):
 
 ```@example main
-fine = (saveat=range(t0, tf, 101), dense=false)
-φ_plot = Flow(ocp, (x, p) -> p[2]; fine...) *
-    (t1_sol, Flow(ocp, (x, p) -> 0; constraint=(x, u) -> c(x), multiplier=μ, fine...)) *
-    (t2_sol, Flow(ocp, (x, p) -> p[2]; fine...))
-plot!(plt, φ_plot((t0, tf), x0, p0_sol); label="indirect", linestyle=:dash)
+# switching_style=:none removes the vertical lines drawn at the switching times
+plot!(plt, indirect_sol; label="indirect", linestyle=:dash, switching_style=:none)
+plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
+
+!!! warning "The multiplier of the direct method"
+
+    On the boundary arc, the multiplier of the direct method is about $0.77$, not
+    $\mu = 38.4$. The constraint $v(t) \le v_{\max}$ is a bound on a component of the state,
+    and the direct method does not divide the multiplier of such a bound by the time step
+    $h = 1/50$: $38.4\, h \approx 0.77$. It goes to zero as the grid is refined (see
+    [CTDirect.jl#639](https://github.com/control-toolbox/CTDirect.jl/issues/639)).
 
 ```@example main
 @assert isapprox(shooting_sol.u, [38.4, 9.6, 0.25, 0.75]; atol=1e-8)   # hide
@@ -223,12 +237,21 @@ so along a boundary arc, $v = 0$ and $u = 0$.
 Without the constraint, $u = -2$ and $q(t) = t - t^2$, whose maximum is $1/4$, at $t = 1/2$.
 With the constraint, the solution depends on $a$[^3]:
 
-- for $a \ge 1/4$, the constraint is never active;
+- for $1/4 < a$, the constraint is never active;
 - for $1/6 \le a \le 1/4$, the trajectory **touches** $q = a$ at a single time, $t = 1/2$;
-- for $a \le 1/6$, the trajectory stays on $q = a$ along a **boundary arc**, on
+- for $a < 1/6$, the trajectory stays on $q = a$ along a **boundary arc**, on
   $[3a, 1 - 3a]$.
 
-We take $a = 0.2$ for a touch point, and $a = 0.1$ for a boundary arc:
+The limit cases join the regimes: at $a = 1/4$, the unconstrained trajectory touches $q = a$,
+and the jump of the costate at the touch point vanishes; at $a = 1/6$, the boundary arc
+shrinks to the single time $t = 1/2$.
+
+We take $a = 0.3$ for no contact, $a = 0.2$ for a touch point, and $a = 0.1$ for a
+boundary arc:
+
+:::tabs key:example-problem
+
+== @def
 
 ```@example main
 x0_bd, xf_bd = [0, 1], [0, -1]
@@ -252,21 +275,91 @@ end
 nothing # hide
 ```
 
+== Mathematics
+
+```math
+\begin{aligned}
+& \text{Minimise} && \frac{1}{2}\int_0^1 u^2(t) \,\mathrm{d}t \\[0.5em]
+& \text{subject to} && \dot x(t) = (v(t), u(t)), \\[0.5em]
+& && q(t) \le a, \\[0.5em]
+& && x(0) = (0, 1), \quad x(1) = (0, -1).
+\end{aligned}
+```
+
+:::
+
 ### [Direct method](@id examples-state-constraint-second-order-direct)
 
 ```@example main
-a_touch, a_arc = 0.2, 0.1
-ocp_touch, ocp_arc = bryson_denham(a_touch), bryson_denham(a_arc)
+a_free, a_touch, a_arc = 0.3, 0.2, 0.1
+ocp_free, ocp_touch, ocp_arc = bryson_denham(a_free), bryson_denham(a_touch), bryson_denham(a_arc)
 
+sol_free = solve(ocp_free; grid_size=100, display=false)
 sol_touch = solve(ocp_touch; grid_size=100, display=false)
 sol_arc = solve(ocp_arc; grid_size=100, display=false)
 
-legend_off = (state_style=(legend=false,), costate_style=(legend=false,))
-plt_bd = plot(sol_touch; label="a = 0.2", size=(800, 600), legend_off...)
-plot!(plt_bd, sol_arc; label="a = 0.1", linestyle=:dash, legend_off...)
+plt_bd = plot(sol_free; label="a = 0.3", linestyle=:dot, size=(800, 920), legend=false, switching_style=:none)
+plot!(plt_bd, sol_touch; label="a = 0.2", switching_style=:none)
+plot!(plt_bd, sol_arc; label="a = 0.1", linestyle=:dash, switching_style=:none)
+plot!(plt_bd; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
-### [The touch point](@id examples-state-constraint-touch)
+### [Indirect method](@id examples-state-constraint-second-order-indirect)
+
+The [shooting](@ref flows-shooting) depends on the structure of the solution, one tab per
+case:
+
+:::tabs key:bryson-denham
+
+== No contact, a = 0.3
+
+For $a = 0.3$, the constraint is never active: the solution is the unconstrained one,
+$u = -2$, with a single unconstrained arc. Since $u = p_v$, $p_v = -2$ is constant, and
+$\dot p_v = -p_q$ gives $p_q = 0$:
+
+```math
+p(0) = (0,\ -2), \qquad J = 2 .
+```
+
+The unknowns of the shooting are $p_0$, and the target gives the two equations:
+
+```@example main
+f_none = Flow(ocp_free, (x, p) -> p[2]; label="interior")
+
+function shoot_free!(s, p0, _)
+    x1, _ = f_none(t0, x0_bd, p0, tf)
+    s[1:2] = x1 - xf_bd      # target
+    return nothing
+end
+
+p0_guess_f = costate(sol_free)(t0)
+prob = NonlinearProblem(shoot_free!, p0_guess_f)
+shooting_free = NonlinearSolve.solve(prob; show_trace=Val(false))
+p0_free = shooting_free.u
+```
+
+These are the exact values, and the cost is $2$:
+
+```@example main
+indirect_free = f_none((t0, tf), x0_bd, p0_free)
+@show objective(sol_free) objective(indirect_free)
+nothing # hide
+```
+
+```@example main
+plt_free = plot(sol_free; label="direct", size=(800, 920), legend=false)
+plot!(plt_free, indirect_free; label="indirect", linestyle=:dash)
+plot!(plt_free; subplot=1, legend=:best)   # one legend, on the first subplot
+```
+
+```@example main
+@assert isapprox(p0_free, [0, -2]; atol=1e-8)                    # hide
+@assert isapprox(objective(indirect_free), 2; rtol=1e-5)         # hide
+@assert isapprox(objective(sol_free), 2; rtol=1e-2)              # hide
+nothing                                                          # hide
+```
+
+== Touch point, a = 0.2
 
 For $a = 0.2$, the solution has two unconstrained arcs, on $[0, t_1]$ and $[t_1, 1]$, joined
 at the contact time $t_1$, where $q(t_1) = a$ and $v(t_1) = 0$. At $t_1$, the costate
@@ -286,7 +379,7 @@ $v(t_1) = 0$ give four equations. A vector jump on a Hamiltonian flow is a jump 
 (see [Multi-phase flows](@ref flows-multi-phase)):
 
 ```@example main
-f_touch = Flow(ocp_touch, (x, p) -> p[2])
+f_touch = Flow(ocp_touch, (x, p) -> p[2]; label="interior")
 
 function shoot_touch!(s, ξ, _)
     p0, t1, Δpq = ξ[1:2], ξ[3], ξ[4]
@@ -311,8 +404,11 @@ t1_guess = tg_t[argmin(abs.(a_touch .- first.(state(sol_touch).(tg_t))))]
 Δpq_guess = p_t(t1_guess + 0.05)[1] - p_t(t1_guess - 0.05)[1]
 ξ_guess_t = [p_t(t0)..., t1_guess, Δpq_guess]
 
-shooting_touch = NonlinearSolve.solve(NonlinearProblem(shoot_touch!, ξ_guess_t); show_trace=Val(false))
-p0_touch, t1_touch, Δpq_touch = shooting_touch.u[1:2], shooting_touch.u[3], shooting_touch.u[4]
+prob = NonlinearProblem(shoot_touch!, ξ_guess_t)
+shooting_touch = NonlinearSolve.solve(prob; show_trace=Val(false))
+p0_touch, t1_touch, Δpq_touch = shooting_touch.u[1:2], shooting_touch.u[3:4]...
+@show p0_touch t1_touch Δpq_touch # hide
+nothing # hide
 ```
 
 These are the exact values. The concatenation with the jump gives the extremal and its cost,
@@ -321,8 +417,19 @@ $2.24$:
 ```@example main
 φ_touch = f_touch * (t1_touch, [Δpq_touch, 0], f_touch)
 indirect_touch = φ_touch((t0, tf), x0_bd, p0_touch)
-objective(sol_touch), objective(indirect_touch)
+@show objective(sol_touch) objective(indirect_touch)
+nothing # hide
 ```
+
+```@example main
+plt_touch = plot(sol_touch; label="direct", size=(800, 920), legend=false)
+plot!(plt_touch, indirect_touch; label="indirect", linestyle=:dash)
+plot!(plt_touch; subplot=1, legend=:best)   # one legend, on the first subplot
+```
+
+The multiplier of a second-order constraint is a measure: here, a single atom at the touch
+point, whose mass is the jump $\Delta p_q = 9.6$. The dual of the direct method is the mass
+carried by each grid point, so it has a single peak, of height $9.6$, at $t = 1/2$.
 
 ```@example main
 @assert isapprox(shooting_touch.u, [-4.8, -3.2, 0.5, 9.6]; atol=1e-8)   # hide
@@ -331,13 +438,13 @@ objective(sol_touch), objective(indirect_touch)
 nothing                                                                 # hide
 ```
 
-### [The boundary arc](@id examples-state-constraint-boundary-arc)
+== Boundary arc, a = 0.1
 
 For $a = 0.1$, the solution has three arcs: unconstrained on $[0, t_1]$, on the boundary
 $q = a$ on $[t_1, t_2]$, and unconstrained on $[t_2, 1]$. The pseudo-Hamiltonian is
 
 ```math
-H(x, p, u, \mu) = p_q v + p_v u - \frac{u^2}{2} + \mu\, (a - q).
+H(x, p, u, \mu) = p_q v + p_v u - \frac{u^2}{2} + \mu (a - q).
 ```
 
 Along the boundary arc, $u = 0$, so $p_v = 0$ by the maximisation condition. Then
@@ -358,8 +465,13 @@ p(0) = \Big( -\frac{2}{9a^2},\ -\frac{2}{3a} \Big), \quad
 The flow on the boundary arc takes the constraint and its multiplier, here zero:
 
 ```@example main
-f_free = Flow(ocp_arc, (x, p) -> p[2])
-f_arc = Flow(ocp_arc, (x, p) -> 0; constraint=(x, u) -> a_arc - x[1], multiplier=(x, p) -> 0)
+f_free = Flow(ocp_arc, (x, p) -> p[2]; label="interior")
+f_arc = Flow(
+    ocp_arc, (x, p) -> 0;
+    constraint=(x, u) -> a_arc - x[1],
+    multiplier=(x, p) -> 0,
+    label="boundary"
+)
 
 function shoot_arc!(s, ξ, _)
     p0, t1, t2, Δ1, Δ2 = ξ[1:2], ξ[3], ξ[4], ξ[5], ξ[6]
@@ -389,10 +501,12 @@ t1_g, t2_g = tg_a[first(active_a)], tg_a[last(active_a)]
 Δ2_g = p_a(t2_g + 0.1)[1] - p_a(t2_g - 0.1)[1]
 ξ_guess_a = [p_a(t0)..., t1_g, t2_g, Δ1_g, Δ2_g]
 
-shooting_arc = NonlinearSolve.solve(NonlinearProblem(shoot_arc!, ξ_guess_a); show_trace=Val(false))
+prob = NonlinearProblem(shoot_arc!, ξ_guess_a)
+shooting_arc = NonlinearSolve.solve(prob; show_trace=Val(false))
 p0_arc, t1_arc, t2_arc = shooting_arc.u[1:2], shooting_arc.u[3], shooting_arc.u[4]
 Δ1, Δ2 = shooting_arc.u[5], shooting_arc.u[6]
-(t1_arc, t2_arc), (Δ1, Δ2)
+@show t1_arc t2_arc Δ1 Δ2 # hide
+nothing # hide
 ```
 
 The junction times are $3a$ and $1 - 3a$, and the two jumps are equal, $2/(9a^2) \approx 22.2$.
@@ -401,8 +515,20 @@ The cost is $4/(9a) \approx 4.44$:
 ```@example main
 φ_arc = f_free * (t1_arc, [Δ1, 0], f_arc) * (t2_arc, [Δ2, 0], f_free)
 indirect_arc = φ_arc((t0, tf), x0_bd, p0_arc)
-objective(sol_arc), objective(indirect_arc)
+@show objective(sol_arc) objective(indirect_arc)
+nothing # hide
 ```
+
+```@example main
+plt_arc = plot(sol_arc; label="direct", size=(800, 920), legend=false)
+plot!(plt_arc, indirect_arc; label="indirect", linestyle=:dash)
+plot!(plt_arc; subplot=1, legend=:best)   # one legend, on the first subplot
+```
+
+The multiplier is a measure with no density on the boundary arc, where $\mu = 0$, and two
+atoms at the junctions, whose masses are the jumps $2/(9a^2) \approx 22.2$. The dual of the
+direct method is the mass carried by each grid point: it is zero along the arc, with a peak
+of height $22.2$ at the entry and at the exit.
 
 ```@example main
 a = a_arc                                                                         # hide
@@ -412,24 +538,23 @@ a = a_arc                                                                       
 nothing                                                                           # hide
 ```
 
+:::
+
 ### [Comparison](@id examples-state-constraint-second-order-comparison)
 
-The two indirect solutions, plotted with flows built with `saveat`:
+The three indirect solutions:
 
 ```@example main
-fine = (saveat=range(t0, tf, 101), dense=false)
-ft = Flow(ocp_touch, (x, p) -> p[2]; fine...)
-ff = Flow(ocp_arc, (x, p) -> p[2]; fine...)
-fa = Flow(ocp_arc, (x, p) -> 0; constraint=(x, u) -> a_arc - x[1], multiplier=(x, p) -> 0, fine...)
-
-plt_ind = plot((ft * (t1_touch, [Δpq_touch, 0], ft))((t0, tf), x0_bd, p0_touch);
-               label="a = 0.2", size=(800, 600), legend_off...)
-plot!(plt_ind, (ff * (t1_arc, [Δ1, 0], fa) * (t2_arc, [Δ2, 0], ff))((t0, tf), x0_bd, p0_arc);
-      label="a = 0.1", linestyle=:dash, legend_off...)
+# switching_style=:none and phase_labels=:none remove the switching lines and the phase names
+opt = (switching_style=:none, phase_labels=:none)
+plt_ind = plot(indirect_free; label="a = 0.3", linestyle=:dot, size=(800, 710), legend=false, opt...)
+plot!(plt_ind, indirect_touch; label="a = 0.2", opt...)
+plot!(plt_ind, indirect_arc; label="a = 0.1", linestyle=:dash, opt...)
+plot!(plt_ind; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
-The costate $p_q$ jumps once at the touch point, and twice around the boundary arc, where the
-costate is zero.
+The costate does not jump when the constraint is not active; $p_q$ jumps once at the touch
+point, and twice around the boundary arc, where the costate is zero.
 
 ## Notes
 
@@ -444,3 +569,12 @@ costate is zero.
 [^2]: D. H. Jacobson, M. M. Lele and J. L. Speyer, *New necessary conditions of optimality for control problems with state-variable inequality constraints*, Journal of Mathematical Analysis and Applications 35 (1971), 255–284.
 
 [^3]: A. E. Bryson and Y.-C. Ho, *Applied Optimal Control: Optimization, Estimation and Control*, CRC Press, 1975.
+
+```@raw html
+<ExampleNav id="state-constraint" />
+```
+
+```@example main
+Main.gallery_thumbnail(plot(indirect_sol, :state; size=(480, 300), legend=false), "state-constraint")  # hide
+nothing  # hide
+```

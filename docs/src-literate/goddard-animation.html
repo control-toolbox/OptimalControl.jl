@@ -1,0 +1,211 @@
+<div style="display: flex; justify-content: center; margin: 20px 0;">
+    <canvas id="goddardTourCanvas" width="760" height="520" role="img"
+            aria-label="Animation of the Goddard rocket: the optimal strategy and the bang-bang strategy, side by side, with their fuel and thrust gauges; the optimal rocket ends higher."
+            style="border: 1px solid #ddd; border-radius: 8px; max-width: 100%; height: auto;">
+        Animation: the optimal and the bang-bang Goddard rockets side by side; the optimal one ends higher.
+    </canvas>
+</div>
+<script>
+(function() {
+    const t1 = @@t1@@, r1 = @@r1@@, v1 = @@v1@@, m1 = @@m1@@, u1 = @@u1@@;
+    const t2 = @@t2@@, r2 = @@r2@@, v2 = @@v2@@, m2 = @@m2@@, u2 = @@u2@@;
+    const t_max_global = @@t_max@@;
+    const m0 = @@m0@@, mf = @@mf@@, r0 = @@r0@@;
+    const rf_opt = @@rf_opt@@, rf_bang = @@rf_bang@@;
+    const tf_opt = @@tf_opt@@, tf_bang = @@tf_bang@@;
+    const color_opt = '@@color_opt@@', color_bang = '@@color_bang@@';
+
+    const canvas = document.getElementById('goddardTourCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    // drawing is done in a 760 x 520 space; the pixel grid follows the screen, for sharp text on a high-density display
+    const CW = 760, CH = 520, dpr = Math.max(1, window.devicePixelRatio || 1);
+    canvas.width = Math.round(CW * dpr); canvas.height = Math.round(CH * dpr);
+    canvas.style.width = CW + 'px';
+
+    const flight_duration = 7.0;
+    const pause_duration = 2.0;
+    const total_duration = flight_duration + pause_duration;
+    const zone_width = CW / 2;
+    const top_margin = 55;
+    const bottom_margin = 105;
+    const baseline = CH - bottom_margin;
+    const r_max_all = Math.max(...r1, ...r2);
+    const altitude_scale = (baseline - top_margin) / (r_max_all - r0);
+    const v_max_all = Math.max(...v1, ...v2);
+
+    function getColors() {
+        // VitePress sets the class `dark` on <html>: the system preference alone must not decide
+        const isDark = document.documentElement.classList.contains('dark');
+        return isDark ? {
+            bg: '#1e1e2e', ground: '#555', gauge_bg: '#3a3a4a',
+            gauge_high: '#2ecc71', gauge_mid: '#f39c12', gauge_low: '#e74c3c',
+            text: '#ecf0f1', text_sec: '#a6adc8',
+            flame_outer: '#e67e22', flame_inner: '#f1c40f',
+            win_fill: 'rgba(255,255,255,0.3)', win_stroke: 'rgba(255,255,255,0.65)',
+            progress: color_opt
+        } : {
+            bg: '#fafafa', ground: '#bbb', gauge_bg: '#e6e9ec',
+            gauge_high: '#2ecc71', gauge_mid: '#f39c12', gauge_low: '#e74c3c',
+            text: '#2c3e50', text_sec: '#7f8c8d',
+            flame_outer: '#e67e22', flame_inner: '#f1c40f',
+            win_fill: 'rgba(255,255,255,0.55)', win_stroke: 'rgba(255,255,255,0.85)',
+            progress: color_opt
+        };
+    }
+
+    function interpolate(t, data_t, data_y) {
+        let i = 0;
+        while (i < data_t.length - 1 && data_t[i + 1] < t) { i++; }
+        if (i >= data_t.length - 1) return data_y[data_y.length - 1];
+        const dt = data_t[i + 1] - data_t[i];
+        const alpha = dt > 0 ? (t - data_t[i]) / dt : 0;
+        return data_y[i] + alpha * (data_y[i + 1] - data_y[i]);
+    }
+
+    function drawRocket(zone_idx, t_anim, t_end, r, v, m, u, color, label, colors) {
+        const zone_x = zone_idx * zone_width;
+        const cx = zone_x + zone_width / 2 - 20;
+        const ry = baseline - altitude_scale * (r - r0);
+
+        // Ground line
+        ctx.beginPath();
+        ctx.moveTo(zone_x + 30, baseline + 20);
+        ctx.lineTo(zone_x + zone_width - 30, baseline + 20);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = colors.ground;
+        ctx.stroke();
+
+        // Fuel gauge
+        const fx = cx + 95, fh = 180, fy = baseline - fh;
+        const fuel = Math.max(0, Math.min(1, (m - mf) / (m0 - mf)));
+        ctx.fillStyle = colors.gauge_bg;
+        ctx.fillRect(fx - 9, fy, 18, fh);
+        ctx.fillStyle = fuel > 0.5 ? colors.gauge_high : (fuel > 0.2 ? colors.gauge_mid : colors.gauge_low);
+        ctx.fillRect(fx - 9, fy + (fh - fuel * fh), 18, fuel * fh);
+        ctx.fillStyle = colors.text_sec;
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Fuel', fx, fy - 8);
+
+        // Thrust gauge (u)
+        const ux = fx + 40;
+        const u_clamped = Math.max(0, Math.min(1, u));
+        ctx.fillStyle = colors.gauge_bg;
+        ctx.fillRect(ux - 9, fy, 18, fh);
+        ctx.fillStyle = color;
+        ctx.fillRect(ux - 9, fy + (fh - u_clamped * fh), 18, u_clamped * fh);
+        ctx.fillStyle = colors.text_sec;
+        ctx.fillText('Thrust', ux, fy - 8);
+
+        // Rocket body
+        const r_bot = ry + 18;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(cx, ry - 36); ctx.lineTo(cx - 11, ry - 10); ctx.lineTo(cx + 11, ry - 10);
+        ctx.closePath(); ctx.fill();
+        ctx.fillRect(cx - 11, ry - 10, 22, 28);
+        ctx.beginPath();
+        ctx.moveTo(cx - 11, ry + 6); ctx.lineTo(cx - 22, ry + 21); ctx.lineTo(cx - 11, ry + 18);
+        ctx.closePath(); ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(cx + 11, ry + 6); ctx.lineTo(cx + 22, ry + 21); ctx.lineTo(cx + 11, ry + 18);
+        ctx.closePath(); ctx.fill();
+        ctx.beginPath();
+        ctx.arc(cx, ry + 2, 4.5, 0, 2 * Math.PI);
+        ctx.fillStyle = colors.win_fill; ctx.fill();
+        ctx.strokeStyle = colors.win_stroke; ctx.lineWidth = 1.5; ctx.stroke();
+
+        // Flame
+        if (t_anim < t_end && u_clamped > 0.05) {
+            const fl = 8 + 22 * u_clamped;
+            ctx.fillStyle = colors.flame_outer;
+            ctx.beginPath();
+            ctx.moveTo(cx - 9, r_bot); ctx.lineTo(cx, r_bot + fl); ctx.lineTo(cx + 9, r_bot);
+            ctx.closePath(); ctx.fill();
+            ctx.fillStyle = colors.flame_inner;
+            ctx.beginPath();
+            ctx.moveTo(cx - 4.5, r_bot); ctx.lineTo(cx, r_bot + fl * 0.6); ctx.lineTo(cx + 4.5, r_bot);
+            ctx.closePath(); ctx.fill();
+        }
+
+        // Altitude readout
+        ctx.fillStyle = colors.text;
+        ctx.font = 'bold 13px sans-serif';
+        ctx.fillText('r = ' + r.toFixed(5), cx, ry - 42);
+
+        // Velocity bar
+        const vw = 56, vh = 7, vx = cx - vw / 2, vy = ry + 48;
+        const vl = Math.min(1, Math.abs(v) / v_max_all);
+        ctx.fillStyle = colors.gauge_bg; ctx.fillRect(vx, vy, vw, vh);
+        ctx.fillStyle = vl > 0.7 ? colors.gauge_low : (vl > 0.4 ? colors.gauge_mid : colors.gauge_high);
+        ctx.fillRect(vx, vy, vl * vw, vh);
+        ctx.fillStyle = colors.text_sec; ctx.font = '11px sans-serif';
+        ctx.fillText('v', cx, vy + 18);
+
+        // Strategy label
+        ctx.fillStyle = color;
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillText(label, zone_x + zone_width / 2, baseline + 70);
+    }
+
+    function render(elapsed) {
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const colors = getColors();
+        const progress = Math.min(1.0, elapsed / flight_duration);
+        const t_anim = progress * t_max_global;
+
+        ctx.fillStyle = colors.bg;
+        ctx.fillRect(0, 0, CW, CH);
+
+        ctx.fillStyle = colors.text;
+        ctx.font = 'bold 16px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('t = ' + t_anim.toFixed(3), CW / 2, 28);
+
+        // Reference apogee lines once reached
+        if (t_anim >= tf_bang) {
+            const y_bang = baseline - altitude_scale * (rf_bang - r0);
+            ctx.save(); ctx.setLineDash([5, 5]); ctx.strokeStyle = color_bang; ctx.lineWidth = 1.2;
+            ctx.beginPath(); ctx.moveTo(30, y_bang); ctx.lineTo(CW - 30, y_bang); ctx.stroke();
+            ctx.restore();
+        }
+        if (t_anim >= tf_opt) {
+            const y_opt = baseline - altitude_scale * (rf_opt - r0);
+            ctx.save(); ctx.setLineDash([5, 5]); ctx.strokeStyle = color_opt; ctx.lineWidth = 1.2;
+            ctx.beginPath(); ctx.moveTo(30, y_opt); ctx.lineTo(CW - 30, y_opt); ctx.stroke();
+            ctx.restore();
+        }
+
+        drawRocket(0, t_anim, tf_opt, interpolate(t_anim, t1, r1), interpolate(t_anim, t1, v1),
+                   interpolate(t_anim, t1, m1), interpolate(t_anim, t1, u1), color_opt, 'optimal', colors);
+        drawRocket(1, t_anim, tf_bang, interpolate(t_anim, t2, r2), interpolate(t_anim, t2, v2),
+                   interpolate(t_anim, t2, m2), interpolate(t_anim, t2, u2), color_bang, 'bang-bang', colors);
+
+        ctx.fillStyle = colors.gauge_bg;
+        ctx.fillRect(0, CH - 4, CW, 4);
+        ctx.fillStyle = colors.progress;
+        ctx.fillRect(0, CH - 4, CW * progress, 4);
+    }
+
+    // the loop stops when the page is left (VitePress navigates without reloading), when the
+    // canvas is off screen, and does not start at all if the reader asks for reduced motion
+    let running = false, visible = true, clock = 0, last = null;
+    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function frame(now) {
+        if (!canvas.isConnected || !running) return;
+        if (last !== null) clock += Math.min(0.1, (now - last) / 1000);
+        last = now;
+        render(clock % total_duration);
+        requestAnimationFrame(frame);
+    }
+    function start() { if (reduced || running || !visible) return; running = true; last = null; requestAnimationFrame(frame); }
+    render(reduced ? flight_duration : 0);
+    start();
+    if (window.IntersectionObserver) {
+        new IntersectionObserver(entries => { visible = entries[0].isIntersecting; if (visible) start(); else running = false; }).observe(canvas);
+    }
+    new MutationObserver(() => { if (canvas.isConnected && !running) render(reduced ? flight_duration : clock % total_duration); })
+        .observe(document.documentElement, {attributes: true, attributeFilter: ['class']});
+})();
+</script>

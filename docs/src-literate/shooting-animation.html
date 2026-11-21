@@ -1,0 +1,384 @@
+<div style="display: flex; justify-content: center; margin: 20px 0;">
+    <canvas id="shootingTourCanvas" width="900" height="400" role="img"
+            aria-label="Animation of a basketball shot found by Newton's method: at each attempt the angle and the speed of the throw are corrected, and the table lists the residual, the distance from the ball to the hoop at the fixed time T, which shrinks at every attempt."
+            style="border: 1px solid #ddd; border-radius: 8px; max-width: 100%; height: auto; cursor: pointer;"
+            title="Click to pause or resume">
+        Animation: a basketball shot corrected by Newton's method until the ball reaches the hoop at the fixed time T.
+    </canvas>
+</div>
+<script>
+(function() {
+    const shots = @@shots@@;          // [[angle (rad), speed (m/s)], ...]: the guess, then the Newton iterates
+    const residuals = @@residuals@@;  // length of the residual (m) at each shot
+    const xt = @@xt@@, yt = @@yt@@;   // hoop position (m)
+    const h0 = @@h0@@;                // height of the release point (m)
+    const g = @@g@@, T = @@T@@;       // gravity (m/s^2), fixed flight time of the shooting function (s)
+    const tol = @@tol@@;              // tolerance of the stopping test
+    const color_main = '@@color@@';
+
+    const canvas = document.getElementById('shootingTourCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const N = shots.length;
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+
+    // ---------------------------------------------------------------- colours
+    // VitePress sets the class `dark` on <html>: the system preference alone must not decide.
+    function getColors() {
+        const dark = document.documentElement.classList.contains('dark');
+        return dark ? {
+            bg: '#1b1b1f', panel: '#26262d', line: '#3a3a44', floor: '#4a4a55', floor_top: '#6b6b78',
+            text: '#e8eaed', text_sec: '#a6adc8', pill: 'rgba(27,27,31,0.88)',
+            board: '#d9dde8', board_edge: '#8a90a2', rim: '#ff8a3d', net: 'rgba(220,225,240,0.7)', pole: '#6b6f80',
+            ball: '#ee8a45', ball_dark: '#b35a1f', seam: '#3a1f0c', past: 'rgba(166,173,200,0.45)',
+            aim: '#f5b041', skin: '#e3b894', jersey: '#4d8fd6', shorts: '#2f3f6b', shoe: '#e8eaed',
+            miss: '#ff7b72', ok: '#5fd68a', hl: 'rgba(77,143,214,0.22)'
+        } : {
+            bg: '#ffffff', panel: '#f4f6f8', line: '#d9dde3', floor: '#e9d9bd', floor_top: '#b89b6a',
+            text: '#2c3e50', text_sec: '#6b7785', pill: 'rgba(255,255,255,0.92)',
+            board: '#ffffff', board_edge: '#7f8c8d', rim: '#d35400', net: 'rgba(90,90,90,0.55)', pole: '#8a949c',
+            ball: '#e8793a', ball_dark: '#b35a1f', seam: '#5a2c0f', past: 'rgba(127,140,141,0.55)',
+            aim: '#e67e22', skin: '#e8be9a', jersey: '#2f6fb5', shorts: '#243b6b', shoe: '#2c3e50',
+            miss: '#c0392b', ok: '#1e8e4f', hl: 'rgba(47,111,181,0.14)'
+        };
+    }
+
+    // ---------------------------------------------------------------- the model
+    const ball = (shot, t) => [shot[1] * Math.cos(shot[0]) * t,
+                               h0 + shot[1] * Math.sin(shot[0]) * t - 0.5 * g * t * t];
+    const lerp = (a, b, s) => a + (b - a) * s;
+    const smooth = s => s * s * (3 - 2 * s);
+
+    // world extent: the arcs, the hoop and the player
+    let x_min = -1.1, x_max = xt + 1.3, y_top = Math.max(yt + 1.3, h0 + 0.8);
+    for (const shot of shots) {
+        for (let i = 0; i <= 40; i++) {
+            const [x, y] = ball(shot, T * i / 40);
+            x_max = Math.max(x_max, x + 0.5); y_top = Math.max(y_top, y + 0.4);
+        }
+    }
+
+    // ---------------------------------------------------------------- formatting
+    const SUP = {'-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+                 '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'};
+    function fmtRes(r) {                 // a length in metres, for the table and the tolerance
+        if (r >= 1e-2) return r.toPrecision(2);
+        const [m, e] = r.toExponential(1).split('e');
+        const sup = String(parseInt(e)).split('').map(c => SUP[c]).join('');
+        return (m === '1.0' ? '10' : m + '\u00B710') + sup;
+    }
+    const two = x => String(Number(x.toPrecision(2)));                  // two significant digits, no exponent
+    function fmtLen(r) {                 // the same length with a unit that reads well
+        if (r >= 1) return two(r) + ' m';
+        if (r >= 1e-2) return two(r * 100) + ' cm';
+        if (r >= 1e-4) return two(r * 1000) + ' mm';
+        return two(r * 1e6) + ' \u00B5m';
+    }
+    const deg = a => (a * 180 / Math.PI).toFixed(1) + '°';
+    const mps = v => v.toFixed(2) + ' m/s';
+
+    // ---------------------------------------------------------------- layout
+    let W, H, side, scene, table, s_px, fs;
+    const sx = x => scene.x + scene.pad + (x - x_min) * s_px;
+    const sy = y => scene.floor - y * s_px;
+    function layout() {
+        const wrap = canvas.parentElement;
+        W = Math.max(300, Math.min(980, Math.floor(wrap.clientWidth || 900)));
+        side = W >= 720;
+        fs = Math.max(0.82, Math.min(1.12, W / 900));
+        const rows = N + 3;                                  // header, the shots, the footer
+        const row_h = Math.round(33 * fs);
+        const table_h = rows * row_h + 20;
+        const head = Math.round(72 * fs), foot = Math.round(22 * fs), strip = 24;
+        if (side) {
+            const sw = Math.floor(W * 0.635);
+            scene = {x: 0, y: 0, w: sw, pad: 18, head: head, strip: strip};
+            s_px = Math.min((sw - 2 * scene.pad) / (x_max - x_min), 1e9);
+            const sh = head + Math.ceil(y_top * s_px) + strip + foot;
+            H = Math.max(sh, table_h + 8);
+            scene.h = H;
+            table = {x: sw + 12, y: 8, w: W - sw - 20, h: H - 16, row_h: row_h};
+        } else {
+            scene = {x: 0, y: 0, w: W, pad: 12, head: head, strip: strip};
+            s_px = (W - 2 * scene.pad) / (x_max - x_min);
+            const sh = head + Math.ceil(y_top * s_px) + strip + foot;
+            scene.h = sh;
+            table = {x: 8, y: sh + 6, w: W - 16, h: table_h, row_h: row_h};
+            H = sh + table_h + 14;
+        }
+        scene.floor = scene.y + scene.h - strip - (side ? foot : foot);
+        if (!side) scene.floor = scene.h - strip - foot;
+        canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+        canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    }
+
+    // ---------------------------------------------------------------- drawing helpers
+    function rrect(x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+    }
+    function text(str, x, y, o) {
+        ctx.font = (o.weight || 'normal') + ' ' + Math.round((o.size || 13) * fs) + 'px sans-serif';
+        ctx.fillStyle = o.color; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic';
+        ctx.fillText(str, x, y);
+    }
+    function pill(str, cx, cy, o, c) {         // a label on a plate, so that nothing is drawn through it
+        ctx.font = (o.weight || 'bold') + ' ' + Math.round((o.size || 13) * fs) + 'px sans-serif';
+        const w = ctx.measureText(str).width + 14 * fs, h = (o.size || 13) * fs + 9;
+        let x = cx - w / 2, y = cy - h / 2;
+        x = Math.max(scene.x + 4, Math.min(scene.x + scene.w - w - 4, x));
+        y = Math.max(scene.y + scene.head - 6, Math.min(scene.floor - h - 2, y));
+        ctx.fillStyle = c.pill; rrect(x, y, w, h, h / 2); ctx.fill();
+        ctx.strokeStyle = o.border || c.line; ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = o.color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(str, x + w / 2, y + h / 2 + 0.5);
+        return {x: x, y: y, w: w, h: h};
+    }
+    function arrow(x0, y0, x1, y1, color, width, dash) {
+        const a = Math.atan2(y1 - y0, x1 - x0), hl = 10 * fs;
+        ctx.save(); ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width;
+        ctx.setLineDash(dash || []);
+        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1 - 4 * Math.cos(a), y1 - 4 * Math.sin(a)); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.beginPath(); ctx.moveTo(x1, y1);
+        ctx.lineTo(x1 - hl * Math.cos(a - 0.4), y1 - hl * Math.sin(a - 0.4));
+        ctx.lineTo(x1 - hl * Math.cos(a + 0.4), y1 - hl * Math.sin(a + 0.4));
+        ctx.closePath(); ctx.fill(); ctx.restore();
+    }
+    function arc(shot, t_end, style, width, dash) {
+        ctx.save(); ctx.strokeStyle = style; ctx.lineWidth = width; ctx.setLineDash(dash || []);
+        ctx.beginPath();
+        const n = 80;
+        for (let i = 0; i <= n; i++) {
+            const [x, y] = ball(shot, t_end * i / n);
+            i === 0 ? ctx.moveTo(sx(x), sy(y)) : ctx.lineTo(sx(x), sy(y));
+        }
+        ctx.stroke(); ctx.restore();
+    }
+
+    function drawBall(x, y, c) {
+        const bx = sx(x), by = sy(y), r = Math.max(9, 0.21 * s_px);
+        const gr = ctx.createRadialGradient(bx - r * 0.35, by - r * 0.35, r * 0.1, bx, by, r);
+        gr.addColorStop(0, c.ball); gr.addColorStop(1, c.ball_dark);
+        ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(bx, by, r, 0, 2 * Math.PI); ctx.fill();
+        ctx.strokeStyle = c.seam; ctx.lineWidth = Math.max(1, r * 0.09);
+        ctx.beginPath(); ctx.arc(bx, by, r, 0, 2 * Math.PI); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(bx - r, by); ctx.lineTo(bx + r, by);
+        ctx.moveTo(bx, by - r); ctx.lineTo(bx, by + r); ctx.stroke();
+        ctx.beginPath(); ctx.ellipse(bx - r * 1.0, by, r * 0.62, r * 0.98, 0, -1.2, 1.2); ctx.stroke();
+        ctx.beginPath(); ctx.ellipse(bx + r * 1.0, by, r * 0.62, r * 0.98, 0, Math.PI - 1.2, Math.PI + 1.2); ctx.stroke();
+    }
+
+    function drawHoop(c) {
+        const hx = sx(xt), hy = sy(yt), rw = Math.max(22, 0.38 * s_px), rh = rw * 0.26;
+        const bx = sx(xt + 0.55), top = sy(yt + 0.95), bot = sy(yt - 0.15);
+        // support, backboard, and the arm that holds the rim
+        ctx.fillStyle = c.pole; ctx.fillRect(bx + 3, bot, 7, scene.floor - bot);
+        ctx.fillStyle = c.board; ctx.strokeStyle = c.board_edge; ctx.lineWidth = 2;
+        rrect(bx, top, 12, bot - top, 3); ctx.fill(); ctx.stroke();
+        ctx.strokeStyle = c.rim; ctx.lineWidth = 2; ctx.strokeRect(bx + 2.5, hy - 0.42 * s_px, 7, 0.4 * s_px);
+        ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(bx, hy); ctx.lineTo(hx + rw, hy); ctx.stroke();
+        // net: a diamond mesh under the rim
+        const nb = hy + Math.max(34, 0.55 * s_px), nw = rw * 0.62;
+        ctx.strokeStyle = c.net; ctx.lineWidth = 1.2;
+        for (let k = -3; k <= 3; k++) {
+            ctx.beginPath(); ctx.moveTo(hx + k * rw / 3, hy); ctx.lineTo(hx + k * nw / 3, nb); ctx.stroke();
+        }
+        for (let j = 1; j <= 3; j++) {
+            const yy = hy + (nb - hy) * j / 4, w = lerp(rw, nw, j / 4);
+            ctx.beginPath(); ctx.moveTo(hx - w, yy); ctx.lineTo(hx + w, yy); ctx.stroke();
+        }
+        ctx.strokeStyle = c.rim; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.ellipse(hx, hy, rw, rh, 0, 0, 2 * Math.PI); ctx.stroke();
+        return {x: hx, y: hy, rw: rw};
+    }
+
+    function drawPlayer(c) {
+        const px = sx(-0.5), fl = scene.floor, u = s_px;
+        const hip = fl - 0.95 * u, sh = fl - 1.5 * u;
+        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        // legs and shoes
+        ctx.strokeStyle = c.skin; ctx.lineWidth = Math.max(5, 0.11 * u);
+        ctx.beginPath(); ctx.moveTo(px - 0.07 * u, hip + 0.1 * u); ctx.lineTo(px - 0.13 * u, fl - 0.05 * u); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(px + 0.07 * u, hip + 0.1 * u); ctx.lineTo(px + 0.16 * u, fl - 0.05 * u); ctx.stroke();
+        ctx.fillStyle = c.shoe;
+        ctx.beginPath(); ctx.ellipse(px - 0.08 * u, fl - 0.03 * u, 0.12 * u, 0.045 * u, 0, 0, 2 * Math.PI); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(px + 0.23 * u, fl - 0.03 * u, 0.12 * u, 0.045 * u, 0, 0, 2 * Math.PI); ctx.fill();
+        // shorts and jersey
+        ctx.fillStyle = c.shorts;
+        ctx.beginPath(); ctx.moveTo(px - 0.2 * u, hip - 0.05 * u); ctx.lineTo(px + 0.2 * u, hip - 0.05 * u);
+        ctx.lineTo(px + 0.24 * u, hip + 0.3 * u); ctx.lineTo(px - 0.2 * u, hip + 0.3 * u); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = c.jersey;
+        ctx.beginPath(); ctx.moveTo(px - 0.2 * u, sh); ctx.lineTo(px + 0.2 * u, sh);
+        ctx.lineTo(px + 0.22 * u, hip); ctx.lineTo(px - 0.2 * u, hip); ctx.closePath(); ctx.fill();
+        // arms up to the ball, and the head
+        ctx.strokeStyle = c.skin; ctx.lineWidth = Math.max(4.5, 0.09 * u);
+        const hx = sx(0), hy = sy(h0) + 0.12 * u;
+        ctx.beginPath(); ctx.moveTo(px + 0.12 * u, sh + 0.08 * u); ctx.lineTo(px + 0.3 * u, fl - 1.8 * u); ctx.lineTo(hx - 0.02 * u, hy); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(px - 0.12 * u, sh + 0.08 * u); ctx.lineTo(px + 0.05 * u, fl - 1.75 * u); ctx.lineTo(hx - 0.1 * u, hy + 0.06 * u); ctx.stroke();
+        const hr = Math.max(9, 0.15 * u), hy0 = sh - 0.2 * u;
+        ctx.fillStyle = c.skin; ctx.beginPath(); ctx.arc(px, hy0, hr, 0, 2 * Math.PI); ctx.fill();
+        ctx.fillStyle = c.shorts; ctx.beginPath(); ctx.arc(px, hy0, hr, Math.PI * 0.95, Math.PI * 2.05); ctx.fill();   // hair
+        ctx.fillStyle = c.seam; ctx.beginPath(); ctx.arc(px + hr * 0.45, hy0 + hr * 0.1, Math.max(1.4, hr * 0.12), 0, 2 * Math.PI); ctx.fill();   // eye
+        ctx.lineCap = 'butt';
+    }
+
+    // ---------------------------------------------------------------- the table of the throws
+    function drawTable(c, idx, stage, cur, converged) {
+        const t0 = table;
+        ctx.fillStyle = c.panel; rrect(t0.x, t0.y, t0.w, t0.h, 10); ctx.fill();
+        const pad = 14 * fs, cw = [0.2, 0.26, 0.26, 0.28];                 // column shares
+        const xs = []; let acc = t0.x + pad;
+        for (const f of cw) { xs.push(acc); acc += f * (t0.w - 2 * pad); }
+        const right = k => xs[k] + cw[k] * (t0.w - 2 * pad) - 4;
+        let y = t0.y + t0.row_h * 0.75;
+        text('attempt', xs[0], y, {size: 13, weight: 'bold', color: c.text_sec});
+        text('angle', right(1), y, {size: 13, weight: 'bold', color: c.text_sec, align: 'right'});
+        text('speed', right(2), y, {size: 13, weight: 'bold', color: c.text_sec, align: 'right'});
+        text('residual (m)', right(3) + 2, y, {size: 13, weight: 'bold', color: c.text_sec, align: 'right'});
+        ctx.strokeStyle = c.line; ctx.lineWidth = 1; ctx.beginPath();
+        ctx.moveTo(t0.x + pad, y + 8 * fs); ctx.lineTo(t0.x + t0.w - pad, y + 8 * fs); ctx.stroke();
+        for (let i = 0; i < N; i++) {
+            const ry = y + t0.row_h * (i + 1);
+            if (i > idx) continue;
+            const known = i < idx || stage >= 2;                              // the residual of attempt i is known
+            const sel = i === idx && !converged;
+            if (sel) { ctx.fillStyle = c.hl; rrect(t0.x + 6, ry - t0.row_h * 0.68, t0.w - 12, t0.row_h * 0.92, 6); ctx.fill(); }
+            const [a, v] = i === idx ? cur : shots[i];
+            const col = (i === N - 1 && known) ? c.ok : c.text;
+            text(i === 0 ? 'guess' : String(i), xs[0], ry, {size: 15, color: c.text_sec});
+            text(deg(a), right(1), ry, {size: 15, color: col, align: 'right'});
+            text(v.toFixed(2), right(2), ry, {size: 15, color: col, align: 'right'});
+            text(known ? fmtRes(residuals[i]) : '…', right(3) + 2, ry,
+                 {size: 15, weight: known ? 'bold' : 'normal', color: known ? col : c.text_sec, align: 'right'});
+        }
+        const fy = y + t0.row_h * (N + 1.05);
+        ctx.strokeStyle = c.line; ctx.beginPath(); ctx.moveTo(t0.x + pad, fy - 14 * fs); ctx.lineTo(t0.x + t0.w - pad, fy - 14 * fs); ctx.stroke();
+        if (converged) text('residual < ' + fmtRes(tol) + ': stop', t0.x + pad, fy + 4 * fs, {size: 14, weight: 'bold', color: c.ok});
+        else text('stop when residual < ' + fmtRes(tol), t0.x + pad, fy + 4 * fs, {size: 14, color: c.text_sec});
+    }
+
+    // ---------------------------------------------------------------- one frame
+    const aim_d = 1.0, flight_d = 1.5, hold_d = 1.5, per_shot = aim_d + flight_d + hold_d, final_d = 3.0;
+    const total = per_shot * N + final_d;
+
+    function render(elapsed) {
+        const c = getColors();
+        const final_phase = elapsed >= per_shot * N;
+        const idx = Math.min(Math.floor(elapsed / per_shot), N - 1);
+        const ph = final_phase ? per_shot : elapsed - idx * per_shot;
+        const stage = ph < aim_d ? 0 : (ph < aim_d + flight_d ? 1 : 2);     // aiming, flying, measured
+        const prev = shots[Math.max(idx - 1, 0)], now = shots[idx];
+        const k = stage === 0 ? smooth(Math.min(1, ph / (aim_d * 0.8))) : 1;
+        const cur = [lerp(prev[0], now[0], k), lerp(prev[1], now[1], k)];
+        const converged = final_phase || (idx === N - 1 && stage === 2);
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.fillStyle = c.bg; ctx.fillRect(0, 0, W, H);
+
+        // ---- header of the scene
+        const hx0 = scene.x + 16;
+        text(idx === 0 ? 'Initial guess' : 'Correction ' + idx + ' of ' + (N - 1), hx0, scene.y + 26 * fs,
+             {size: 16, weight: 'bold', color: c.text});
+        text('angle ' + deg(cur[0]) + '   speed ' + mps(cur[1]), hx0, scene.y + 49 * fs, {size: 13, color: c.text_sec});
+        const t_now = stage === 0 ? 0 : (stage === 1 ? Math.min(1, (ph - aim_d) / flight_d) * T : T);
+        text('t = ' + t_now.toFixed(2) + ' s', scene.x + scene.w - 16, scene.y + 26 * fs,
+             {size: 16, weight: 'bold', color: c.text, align: 'right'});
+        text('fixed time T = ' + T.toFixed(2) + ' s', scene.x + scene.w - 16, scene.y + 49 * fs,
+             {size: 13, color: c.text_sec, align: 'right'});
+
+        // ---- floor
+        ctx.fillStyle = c.floor; ctx.fillRect(scene.x, scene.floor, scene.w, scene.h - scene.floor);
+        ctx.fillStyle = c.floor_top; ctx.fillRect(scene.x, scene.floor, scene.w, 3);
+        ctx.font = Math.round(11 * fs) + 'px sans-serif'; ctx.fillStyle = c.text_sec; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        for (let m = 0; m <= Math.floor(x_max); m += 2) {
+            const x = sx(m); ctx.fillStyle = c.floor_top; ctx.fillRect(x - 0.5, scene.floor, 1.5, 7);
+            ctx.fillStyle = c.text_sec; ctx.fillText(m + ' m', x, scene.floor + 9);
+        }
+
+        ctx.save(); ctx.beginPath(); ctx.rect(scene.x, scene.y + scene.head - 8, scene.w, scene.h); ctx.clip();
+
+        // ---- past attempts: their arcs and where each one was at time T
+        for (let i = 0; i < idx; i++) {
+            arc(shots[i], T, c.past, 1.6, [5, 4]);
+            const [x, y] = ball(shots[i], T);
+            ctx.strokeStyle = c.past; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(sx(x) - 5, sy(y) - 5); ctx.lineTo(sx(x) + 5, sy(y) + 5);
+            ctx.moveTo(sx(x) + 5, sy(y) - 5); ctx.lineTo(sx(x) - 5, sy(y) + 5); ctx.stroke();
+        }
+
+        const hoop = drawHoop(c);
+        drawPlayer(c);
+
+        // ---- the aim, then the flight, then the measure
+        const r = Math.max(9, 0.21 * s_px);
+        if (stage === 0) {
+            const len = 24 * fs + cur[1] * 8.5 * fs, ax = sx(0), ay = sy(h0);
+            const ex = ax + len * Math.cos(cur[0]), ey = ay - len * Math.sin(cur[0]);
+            arrow(ax + r * Math.cos(cur[0]), ay - r * Math.sin(cur[0]), ex, ey, c.aim, 2.5, [6, 4]);
+            drawBall(0, h0, c);
+        } else {
+            arc(now, t_now, color_main, 3);
+            const [bx, by] = ball(now, t_now);
+            drawBall(bx, by, c);
+        }
+        if (stage === 2) {
+            const [bx, by] = ball(now, T);
+            const x0 = sx(bx), y0 = sy(by), dx = hoop.x - x0, dy = hoop.y - y0, d = Math.hypot(dx, dy);
+            ctx.strokeStyle = c.miss; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.arc(hoop.x, hoop.y, 5, 0, 2 * Math.PI); ctx.stroke();       // the hoop centre
+            if (d > r + 14) arrow(x0 + dx / d * r, y0 + dy / d * r, hoop.x - dx / d * 6, hoop.y - dy / d * 6, c.miss, 2.5, [5, 4]);
+            const label = 'residual ' + fmtLen(residuals[idx]);
+            const nx = d > 1 ? -dy / d : 0, ny = d > 1 ? dx / d : -1;                          // a normal to the segment
+            const off = d > r + 14 ? 22 * fs : 0;
+            const near = d > r + 14 ? [(x0 + hoop.x) / 2 + nx * off, (y0 + hoop.y) / 2 + ny * off]
+                                    : [hoop.x - 6, hoop.y + Math.max(34, 0.55 * s_px) + 26 * fs];
+            pill(label, near[0], near[1], {size: 13, color: c.miss, border: c.miss}, c);
+        }
+        ctx.restore();
+
+        // ---- the table of the attempts
+        drawTable(c, idx, stage, cur, converged);
+
+        // a hint on the first frames
+        if (elapsed < 2.5 && !paused) text('click to pause', scene.x + scene.w - 16, scene.y + scene.h - 8, {size: 11, color: c.text_sec, align: 'right'});
+    }
+
+    // ---------------------------------------------------------------- the loop
+    let paused = false, running = false, visible = true, clock = 0, last = null;
+    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const still = () => render(per_shot * N + 0.01);
+
+    function frame(now) {
+        if (!canvas.isConnected) return;                  // the page was left: stop for good
+        if (!running) return;
+        if (last !== null && !paused) clock += Math.min(0.1, (now - last) / 1000);
+        last = now;
+        render(clock % total);
+        requestAnimationFrame(frame);
+    }
+    function start() {
+        if (reduced || running || !visible) return;
+        running = true; last = null; requestAnimationFrame(frame);
+    }
+    layout();
+    if (reduced) still(); else { render(0); start(); }
+
+    canvas.addEventListener('click', () => { paused = !paused; if (reduced) still(); });
+    if (window.ResizeObserver) {
+        new ResizeObserver(() => { if (!canvas.isConnected) return; layout(); reduced ? still() : render(clock % total); })
+            .observe(canvas.parentElement);
+    }
+    if (window.IntersectionObserver) {
+        new IntersectionObserver(entries => {
+            visible = entries[0].isIntersecting;
+            if (visible) start(); else running = false;
+        }).observe(canvas);
+    }
+    new MutationObserver(() => { if (canvas.isConnected && !running) reduced ? still() : render(clock % total); })
+        .observe(document.documentElement, {attributes: true, attributeFilter: ['class']});
+})();
+</script>

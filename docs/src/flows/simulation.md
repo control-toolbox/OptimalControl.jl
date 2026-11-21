@@ -37,12 +37,19 @@ nothing                                                     # hide
 
 An open-loop law is always a function of time, `u(t)`, or `u(t, v)` with a variable. A
 function without argument, such as `OpenLoop(() -> 1)`, is accepted when the law is built,
-but the call then fails with a `MethodError`
-([CTBase#570](https://github.com/control-toolbox/CTBase.jl/issues/570)):
+and the call then fails with a `MethodError`:
 
 ```@repl main
 Flow(ControlledVectorField(fc), OpenLoop(() -> 1))(0, 0.0, 1)
 ```
+
+!!! note "Why the law is not checked when it is built"
+
+    A Julia function has no fixed number of arguments: it is a set of methods, which can
+    still grow, and whose argument types are only known at the call. A check at
+    construction would reject valid laws, such as `t::Float64 -> …` or a callable struct.
+    The `MethodError` names the function and its methods: look for the one that takes the
+    time.
 
 ## Closed loop
 
@@ -72,6 +79,8 @@ Built from an optimal control problem, the simulation also computes the cost of 
 On the energy-minimal double integrator, the optimal control is $u(t) = 6 - 12t$, with
 cost $6$ (see [Your first problem](@ref getting-started-first-problem)):
 
+::: details The problem
+
 ```@example main
 t0, tf = 0, 1
 x0 = [-1, 0]
@@ -85,7 +94,12 @@ ocp = @def begin
     ẋ(t) == [v(t), u(t)]
     0.5∫(u(t)^2) → min
 end
+nothing # hide
+```
 
+:::
+
+```@example main
 f_opt = Flow(ocp, OpenLoop(t -> 6 - 12t))
 traj = f_opt((t0, tf), x0)
 state(traj)(tf), objective(traj)
@@ -136,7 +150,7 @@ final state and costate), and `f((t0, tf), x0)` returns the trajectory. The traj
 depends on how the flow was built:
 
 | Flow | Trajectory | Costate | Objective |
-| --- | --- | :-: | :-: |
+| :--- | :--- | :-: | :-: |
 | `Flow(ocp, law)`, with a law `u(x, p)` ([From an OCP](@ref flows-from-ocp)) | a [`Solution`](@ref results-solution) | ✓ | ✓ |
 | `Flow(ocp, OpenLoop(…))`, `Flow(ocp, ClosedLoop(…))` | a trajectory of the state | ✗ | ✓ |
 | `Flow(ControlledVectorField(f), law)`, `Flow(VectorField(f))` | a trajectory of the state | ✗ | ✗ |
@@ -162,7 +176,7 @@ types.
 
 ## See also
 
-- [Solution object](@ref results-solution) and [Plot](@ref results-plot): the functions used
+- [Solution object](@ref results-solution) and [Plot with Plots](@ref results-plot): the functions used
   above, in full.
 - [From an OCP](@ref flows-from-ocp): the indirect method, where the law comes from the
   maximum principle.

@@ -9,7 +9,67 @@ using NLPModelsIpopt
 using Plots
 ```
 
-Two running examples, to show both default and custom component labels:
+## [Why the guess matters](@id solve-initial-guess-why)
+
+The solver of the direct method finds a **local** solution, near where it starts. When the
+problem has several, the initial guess chooses which one it returns. Take a point that moves
+from $(-1, 0)$ to $(1, 0)$ with the least energy, around a disc of radius $1/2$ centred at
+$(0, 0.1)$: it can pass below the disc, or above it, a little longer.
+
+```@example main
+obstacle = @def begin
+    t ∈ [0, 1], time
+    x = (x₁, x₂) ∈ R², state
+    u ∈ R², control
+    x(0) == [-1, 0]
+    x(1) == [1, 0]
+    ẋ(t) == u(t)
+    x₁(t)^2 + (x₂(t) - 0.1)^2 ≥ 0.25
+    ∫(u₁(t)^2 + u₂(t)^2) → min
+end
+
+above = @init obstacle begin
+    x₁(t) := -1 + 2t
+    x₂(t) := sin(π * t)
+end
+below = @init obstacle begin
+    x₁(t) := -1 + 2t
+    x₂(t) := -sin(π * t)
+end
+
+sol_above = solve(obstacle; init=above, display=false)
+sol_below = solve(obstacle; init=below, display=false)
+objective(sol_above), objective(sol_below)
+```
+
+Both solves succeed, on two different solutions. The one below the disc costs less: started
+above, the solver stays on the other side.
+
+```@example main
+ts = range(0, 1; length=200)
+path(sol) = (t -> state(sol)(t)[1]).(ts), (t -> state(sol)(t)[2]).(ts)
+θ = range(0, 2π; length=200)
+plt = plot(0.5cos.(θ), 0.1 .+ 0.5sin.(θ); seriestype=:shape, fillalpha=0.2, label="obstacle",
+           aspect_ratio=1, size=(600, 400))
+plot!(plt, path(sol_above)...; label="started above")
+plot!(plt, path(sol_below)...; label="started below")
+```
+
+```@example main
+@assert successful(sol_above) && successful(sol_below)                          # hide
+@assert objective(sol_below) < objective(sol_above) - 0.5                       # hide
+@assert state(sol_above)(0.5)[2] > 0.5 && state(sol_below)(0.5)[2] < -0.3       # hide
+nothing                                                                         # hide
+```
+
+The default guess, `0.1` everywhere, gives the better solution here too, in more iterations;
+on another problem it may not. A guess built from what you know of the solution, its shape or
+a solution of a nearby problem, is how you choose.
+
+## Two running examples
+
+The rest of the page shows every way to write a guess, on two problems, to show both default
+and custom component labels:
 
 ```@example main
 t0 = 0; tf = 10; α = 5
@@ -61,7 +121,7 @@ With no initial guess, every component defaults to `0.1`. To see it without solv
 
 ```@example main
 sol_init = solve(ocp1; init=nothing, max_iter=0, display=false)
-plot(sol_init, :state, :control; size=(600, 450))
+plot(sol_init, :state, :control; size=(800, 800))
 ```
 
 Solving with no guess at all, `init=nothing`, and `init=()` are all equivalent — all three skip
@@ -90,7 +150,7 @@ end
 ```
 
 | Component | Form | Example |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | State / control, function of time | `label(t) := expression` | `u(t) := -0.2t` |
 | State / control, constant | `label(t) := value` or `label := value` | `u := 2` |
 | State / control, on a grid | `label(T) := data`, `T` a time vector | `u(T) := U` |
@@ -133,7 +193,7 @@ println(iterations(sol), " iterations")
 
 ### Partial
 
-Uninitialized components fall back to `0.1`:
+Uninitialised components fall back to `0.1`:
 
 ```@example main
 ig = @init ocp1 begin

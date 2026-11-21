@@ -49,6 +49,16 @@ function test_ctsolvers()
             end
         end
 
+        Test.@testset "Optimization" begin
+            # Imported, not re-exported: what `ocp_solution` needs (#1077).
+            for name in (:build_model, :BuiltModel)
+                Test.@testset "$name" begin
+                    Test.@test imports(OptimalControl, name, CTSolvers.Optimization)
+                    Test.@test !isdefined(CurrentModule, name)
+                end
+            end
+        end
+
         Test.@testset "Modeler Types" begin
             for T in (:AbstractNLPModeler, :ADNLP, :Exa)
                 Test.@testset "$T" begin
@@ -155,7 +165,7 @@ function test_ctsolvers()
                 Test.@test hasmethod(
                     ocp_solution,
                     Tuple{
-                        CTSolvers.Optimization.BuiltModel,
+                        OptimalControl.BuiltModel,
                         SolverCore.AbstractExecutionStats,
                         OptimalControl.AbstractNLPModeler,
                     },

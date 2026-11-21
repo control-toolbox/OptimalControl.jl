@@ -107,8 +107,8 @@ ocp = @def begin
     tf → min
 end
 
-f_plus = Flow(ocp, (x, p, v) -> 1)
-f_minus = Flow(ocp, (x, p, v) -> -1)
+f_plus = Flow(ocp, (x, p, v) -> 1; label="u = +1")
+f_minus = Flow(ocp, (x, p, v) -> -1; label="u = -1")
 
 t1, tf = 1, 2
 f_bb = f_plus * (t1, f_minus)
@@ -123,9 +123,61 @@ The concatenation reaches the target, with $p(t_f) = (1, -1)$.
 nothing                                                                       # hide
 ```
 
+### [The switching structure of the solution](@id flows-multi-phase-switching)
+
+`label=` names the phase a flow integrates, here `"u = +1"` and `"u = -1"`. It is accepted by
+every `Flow` constructor, and the concatenation keeps the labels in order. The trajectory
+call returns a solution that keeps the structure of the extremal: its switching times, the
+labels of its phases, shown in its summary, and the values on both sides of each switch.
+
+```@example main
+sol_bb = f_bb((0, tf), [-1, 0], [1, 1]; variable=tf)
+```
+
+```@example main
+switching_times(sol_bb), phase_labels(sol_bb)
+```
+
+`left_limit(sol, :control, i)` and `right_limit(sol, :control, i)` give the values just before
+and just after the `i`-th switch, for `:state`, `:costate` and `:control`. Here the control
+jumps from $+1$ to $-1$, and the state and the costate are continuous:
+
+```@example main
+left_limit(sol_bb, :control, 1), right_limit(sol_bb, :control, 1)
+```
+
+```@example main
+left_limit(sol_bb, :state, 1), right_limit(sol_bb, :state, 1)
+```
+
+```@example main
+@assert has_switching(sol_bb) && switching_times(sol_bb) == [t1]                     # hide
+@assert phase_labels(sol_bb) == ["u = +1", "u = -1"]                                 # hide
+@assert left_limit(sol_bb, :control, 1) ≈ 1 && right_limit(sol_bb, :control, 1) ≈ -1  # hide
+@assert isapprox(left_limit(sol_bb, :state, 1), [-0.5, 1]; atol=1e-8)                 # hide
+@assert isapprox(right_limit(sol_bb, :state, 1), [-0.5, 1]; atol=1e-8)                # hide
+@assert control(sol_bb)(t1) ≈ 1                                                       # hide
+nothing                                                                               # hide
+```
+
+The limits are not read from the time grid. The left limit is the end of the phase that
+finishes at the switch, and the right limit the start of the next phase, after its jump if
+there is one. The control on each side is the law of that phase, evaluated there. The
+functions of time of the solution are continuous on the left: `control(sol_bb)(1)` is the
+value before the switch, $+1$.
+
+The plot draws the switching times as vertical lines, and writes the labels of the phases on
+the control (see [Plot](@ref results-plot-switching) for the keywords that change this):
+
+```@example main
+plot(sol_bb)
+```
+
+The structure is saved and loaded with the solution (see [Save & load](@ref results-save-load)).
+
 ## Example: off arc, then bang
 
-This example comes from the v2.0.4 manual. Minimise the $L^1$ norm of the control,
+Minimise the $L^1$ norm of the control,
 $\int_0^1 |u|$, for $\dot x = -x + u$, $u \in [-1, 1]$, from $x(0) = -1$ to $x(1) = 0$:
 
 ```@example main

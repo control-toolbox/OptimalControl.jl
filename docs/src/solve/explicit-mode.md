@@ -12,6 +12,11 @@ component's configuration, no completion to guess.
 
 ## Basic usage
 
+The examples use the energy-minimal double integrator of
+[Your first problem](@ref getting-started-first-problem).
+
+::: details The problem used on this page
+
 ```@example explicit
 using OptimalControl
 using NLPModelsIpopt
@@ -29,7 +34,12 @@ ocp = @def begin
     ẋ(t) == [v(t), u(t)]
     0.5∫(u(t)^2) → min
 end
+nothing # hide
+```
 
+:::
+
+```@example explicit
 discretizer = OptimalControl.Collocation(grid_size=100, scheme=:trapeze)
 modeler = OptimalControl.ADNLP(backend=:optimized)
 solver = OptimalControl.Ipopt(max_iter=1000, print_level=0)
@@ -108,7 +118,7 @@ nothing # hide
 ```
 
 A flat option keyword handed to `solve` itself, rather than to the component constructor, is
-rejected — even one a completed default component would otherwise recognize:
+rejected — even one a completed default component would otherwise recognise:
 
 ```@repl explicit
 solve(
@@ -159,6 +169,65 @@ opts[:max_iter]
 ```@example explicit
 collect(keys(opts))
 ```
+
+## [The stages behind `solve`](@id solve-explicit-mode-stages)
+
+`solve` chains three stages, one per component: the discretizer turns the problem into a
+discretised problem, the modeler builds from it a nonlinear program (NLP) for an initial
+guess, and the solver solves the NLP. The first two stages can be run on their own, to look
+at the NLP or to pass it to another tool:
+
+```@example explicit
+discretizer = OptimalControl.Collocation(grid_size=100, scheme=:trapeze)
+modeler = OptimalControl.ADNLP()
+
+docp = discretize(ocp, discretizer)
+init = build_initial_guess(ocp, nothing)   # the default initial guess
+nlp = nlp_model(docp, init, modeler)
+nlp.meta.nvar, nlp.meta.ncon
+```
+
+The NLP has 303 unknowns, the state and the control at the 101 points of the grid, and 204
+constraints, the 200 equations of the dynamics and the 4 boundary conditions, and
+`ocp_model(docp)` gives back the problem it comes from. `solve` also
+takes the discretised problem, with the initial guess and the two other components:
+
+```@example explicit
+sol = solve(docp, init, modeler, solver; display=false)
+objective(sol)
+```
+
+To solve the NLP with a solver of your own and get a solution back, build it with
+`OptimalControl.build_model`: it returns the NLP, `built.nlp`, together with what the modeler
+needs to read its solution, and `ocp_solution` turns the output of the solver into a
+solution of the problem. Here with Ipopt, called directly:
+
+```@example explicit
+built = OptimalControl.build_model(docp, init, modeler)
+stats = NLPModelsIpopt.ipopt(built.nlp; print_level=0)
+sol_nlp = ocp_solution(built, stats, modeler)
+objective(sol_nlp)
+```
+
+```@example explicit
+@assert (nlp.meta.nvar, nlp.meta.ncon) == (303, 204)            # hide
+@assert ocp_model(docp) === ocp                                 # hide
+@assert isapprox(objective(sol), 6; rtol=1e-2)                  # hide
+@assert isapprox(objective(sol_nlp), objective(sol); rtol=1e-6) # hide
+nothing                                                         # hide
+```
+
+!!! warning "`discretize` and `OrdinaryDiffEqTsit5`"
+
+    `OrdinaryDiffEqTsit5`, needed for [flows](@ref flows-overview), also exports a function
+    named `discretize`. After `using OptimalControl` and `using OrdinaryDiffEqTsit5`, the
+    name is ambiguous, and calling `discretize` throws an `UndefVarError`. Write
+    `OptimalControl.discretize`, or load only the integrator from the package:
+
+    ```julia
+    using OrdinaryDiffEqTsit5          # [!code --]
+    using OrdinaryDiffEqTsit5: Tsit5   # [!code ++]
+    ```
 
 ## See also
 

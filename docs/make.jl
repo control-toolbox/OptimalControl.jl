@@ -56,6 +56,41 @@ Base.showable(::MIME"image/png", ::Plots.Plot) = false
 CairoMakie.activate!(; type="svg")
 Base.showable(::MIME"image/png", ::CairoMakie.Makie.Figure) = false
 
+# Thumbnails of the example gallery (src/components/ExamplesGallery.vue). Each example page
+# calls `Main.gallery_thumbnail(fig, id)` in a hidden block, which saves the figure in a
+# temporary staging folder (not under `build/`, whose content DocumenterVitepress moves
+# into `build/.documenter/` before rendering). The `GalleryThumbnails`
+# plugin hands that folder to DocumenterVitepress, which copies it into the VitePress
+# `public/` at render time, after it has rebuilt that folder: the figure is served at
+# `/gallery/<id>.svg`. A page built in draft mode saves nothing, and its card then shows no
+# image.
+const GALLERY_STAGING = mktempdir()
+function gallery_thumbnail(fig, id::AbstractString)
+    dir = mkpath(joinpath(GALLERY_STAGING, "gallery"))
+    path = joinpath(dir, id * ".svg")
+    fig isa Plots.Plot ? Plots.savefig(fig, path) : CairoMakie.save(path, fig)
+    return nothing
+end
+struct GalleryThumbnails <: Documenter.Plugin end
+DocumenterVitepress.vitepress_assets(::GalleryThumbnails) = [GALLERY_STAGING]
+
+# The rocket animation of the guided tour: an HTML template with `@@name@@` placeholders,
+# filled in with the trajectories of the page. The template is a file of its own, not a
+# string in the page: JavaScript does not survive the `# hide` markers of a Literate block.
+const GODDARD_TEMPLATE = joinpath(@__DIR__, "src-literate", "goddard-animation.html")
+_js(x::AbstractVector) = "[" * join(round.(x; digits=6), ",") * "]"
+_js(x::AbstractVector{<:AbstractVector}) = "[" * join((_js(v) for v in x), ",") * "]"
+_js(x::Real) = string(round(x; digits=6))
+_js(c::Plots.Colorant) = "#" * Plots.Colors.hex(c)
+goddard_animation(; kwargs...) =
+    reduce((html, (k, v)) -> replace(html, "@@$k@@" => _js(v)), kwargs; init=read(GODDARD_TEMPLATE, String))
+
+# The basketball animation of the guided tour, illustrating the shooting method: same
+# placeholder mechanism as `goddard_animation`, with the Newton iterates (angle, speed).
+const SHOOTING_TEMPLATE = joinpath(@__DIR__, "src-literate", "shooting-animation.html")
+shooting_animation(; kwargs...) =
+    reduce((html, (k, v)) -> replace(html, "@@$k@@" => _js(v)), kwargs; init=read(SHOOTING_TEMPLATE, String))
+
 # DocumenterVitepress (0.3.5) hard-codes `collapsed: false` on every sidebar group
 # (`vitepress_config.jl`'s `pagelist2str` for a nested `name => children` entry), so the
 # whole navigation tree renders fully expanded and there is no `MarkdownVitepress` option
@@ -133,9 +168,9 @@ end
 
 # Logo: `logo.svg` is the tracked light artwork; `logo-dark.svg` is the same file with
 # the white backdrop swapped for the VitePress dark surface (#1b1b1f), Julia mark colours
-# unchanged — generated here (git-ignored) and Vite-bundled from `src/assets/` for the
-# home-page <img> pair. `logo.svg` is also staged into `src/public/` for the navbar (DVP
-# fills `logo:` with the single `/logo.svg`; a `.dark` filter recolours it there).
+# unchanged — generated here (git-ignored). Both are staged into `src/public/`: the
+# home-page hero reads them from there (front matter, not bundled by Vite), and the navbar
+# uses `/logo.svg` (DVP fills `logo:` with it; a `.dark` filter recolours it there).
 write(
     joinpath(@__DIR__, "src", "assets", "logo-dark.svg"),
     replace(
@@ -146,6 +181,11 @@ write(
 cp(
     joinpath(@__DIR__, "src", "assets", "logo.svg"),
     joinpath(@__DIR__, "src", "public", "logo.svg");
+    force=true,
+)
+cp(
+    joinpath(@__DIR__, "src", "assets", "logo-dark.svg"),
+    joinpath(@__DIR__, "src", "public", "logo-dark.svg");
     force=true,
 )
 
@@ -325,6 +365,10 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "Installation" => "getting-started/installation.md",
                 "Your first problem" => "getting-started/first-problem.md",
                 "Guided tour" => "getting-started/guided-tour.md",
+                # The examples are reached from the gallery, which gives their reading
+                # order; each page links the previous and the next one
+                # (src/components/ExampleNav.vue).
+                "Examples" => "examples/gallery.md",
             ],
             "Modelling" => [
                 "Formulation" => "modelling/formulation.md",
@@ -336,27 +380,27 @@ with_api_reference(src_dir, ext_dir) do api_pages
             ],
             "Solve (direct)" => [
                 "Overview" => "solve/overview.md",
-                "Initial guess" => "solve/initial-guess.md",
                 "Choosing a method" => "solve/choosing-a-method.md",
                 "Options" => "solve/options.md",
                 "Explicit mode" => "solve/explicit-mode.md",
+                "Initial guess" => "solve/initial-guess.md",
                 "GPU" => "solve/gpu.md",
             ],
             "Results" => [
                 "Solution object" => "results/solution.md",
-                "Plot" => "results/plot.md",
+                "Plot with Plots" => "results/plot.md",
                 "Plot with Makie" => "results/plot-makie.md",
                 "Save & load" => "results/save-load.md",
             ],
             "Flows (indirect)" => [
                 "Overview" => "flows/overview.md",
                 "From an OCP" => "flows/from-ocp.md",
-                "From Hamiltonians" => "flows/from-hamiltonians.md",
-                "Simulation" => "flows/simulation.md",
-                "Accessors" => "flows/accessors.md",
+                "Shooting" => "flows/shooting.md",
                 "Multi-phase flows" => "flows/multi-phase.md",
                 "Constrained arcs" => "flows/constrained-arcs.md",
-                "Shooting" => "flows/shooting.md",
+                "Simulation" => "flows/simulation.md",
+                "From Hamiltonians" => "flows/from-hamiltonians.md",
+                "Accessors" => "flows/accessors.md",
             ],
             "Geometry" => [
                 "Overview" => "geometry/overview.md",
@@ -366,21 +410,14 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "The @Lie macro" => "geometry/lie-macro.md",
                 "AD backend" => "geometry/ad-backend.md",
             ],
-            "Examples" => [
-                "Example gallery" => "examples/gallery.md",
-                "Energy minimisation" => "examples/double-integrator-energy.md",
-                "Time minimisation (bang–bang)" => "examples/double-integrator-time.md",
-                "Parameter estimation without a control" => "examples/control-free.md",
-                "Control and variable together" => "examples/control-and-variable.md",
-                "Turnpike (bang–singular–bang)" => "examples/turnpike.md",
-                "Singular control" => "examples/singular-control.md",
-                "State constraint" => "examples/state-constraint.md",
-                "The logo" => "examples/logo.md",
+            "Reference" => [
+                "API Reference" => api_pages_final,
+                "Errors" => "errors.md",
+                "Migrating from v2.0" => "migration.md",
+                "About" => "about.md",
             ],
-            "API Reference" => api_pages_final,
-            "Migrating from v2.0" => "migration.md",
         ],
-        plugins=[links],
+        plugins=[links, GalleryThumbnails()],
     )
 end
 

@@ -35,7 +35,7 @@ method, `solve`, does not need it. See [Installation](@ref getting-started-insta
 ## What was renamed
 
 | v2.0 | Now | Notes |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | `OptimalControl.VectorField`, `OptimalControl.Hamiltonian`, … | `VectorField`, `Hamiltonian`, … | exported; the qualified form still works |
 | `Lie(X, f)` | `ad(X, f)` | `Lie` throws, naming `ad` |
 | `X ⋅ f` | `ad(X, f)` | no operator; `X ⋅ f` throws, naming `ad`, when `X` is a `VectorField` |
@@ -114,12 +114,11 @@ Three changes do not raise an error.
     A test `isa AbstractHamiltonian` on it is now false. The lift of a `VectorField` is still a
     `Hamiltonian`. See [Lift](@ref geometry-lift).
 
-!!! warning "`OpenLoop` checks the arity of the law when the flow runs"
+!!! warning "An open-loop law is a function of time"
 
     An open-loop control is a function of time, `u(t)`, or `u(t, v)` with a variable. A
-    function without argument is accepted when the law is built, and fails only when the flow
-    runs, with a `MethodError` far from the mistake
-    ([CTBase#570](https://github.com/control-toolbox/CTBase.jl/issues/570)):
+    function without argument, as an autonomous open loop was written before, is accepted
+    when the law is built, and fails only when the flow runs, with a `MethodError`:
 
     ```julia
     bad_law = OpenLoop(() -> 1.0)                          # accepted
@@ -227,7 +226,7 @@ a `MethodError` about `iterate`.
 ## What raises another error
 
 | Spelling | What happens | Write instead |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | `f(t0, x0, p0, tf; saveat=…)`, and the other integrator options on a call | `MethodError`, "unsupported keyword argument" | `Flow(…; saveat=…)`, when the flow is built |
 | `CTSolvers.Modelers.ADNLP()`, `CTDirect.Collocation()` | `UndefVarError` on `CTSolvers` or `CTDirect` | `OptimalControl.ADNLP()`, `OptimalControl.Collocation()` |
 | `@Lie [X, Y] autonomous=false` | `IncorrectArgument`, with the accepted keywords | `@Lie [X, Y] is_autonomous=false` |

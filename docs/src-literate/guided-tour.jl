@@ -33,21 +33,9 @@
 # ## The problem, and installing the tools
 #src ============================================================================
 #
-# An **optimal control problem** (OCP) in Bolza form reads
-#
-# ```math
-# J(x, u) = g(x(t_0), x(t_f)) + \int_{t_0}^{t_f} f^{0}(t, x(t), u(t))\,\mathrm{d}t \;\to\; \min,
-# ```
-#
-# subject to the controlled dynamics $\dot{x}(t) = f(t, x(t), u(t))$ and, possibly, box / path / boundary constraints. When $g = 0$ the cost is of **Lagrange** form; when $f^0 = 0$, of **Mayer** form.
-#
-# More generally, the times $t_0$ and $t_f$ may be free (optimisation variables), and a vector $v$ of additional parameters can enter the cost, dynamics and constraints. The full problem then reads
-#
-# ```math
-# \min_{x,u,v}\; g(x(t_0), x(t_f), v) + \int_{t_0}^{t_f} f^{0}(t, x(t), u(t), v)\,\mathrm{d}t,
-# ```
-#
-# subject to $\dot{x}(t) = f(t, x(t), u(t), v)$, box / path / boundary constraints.
+# We model and solve **optimal control problems** (OCP): minimise a cost, made of a function of the end points and an integral along the trajectory, subject to controlled dynamics $\dot{x}(t) = f(t, x(t), u(t))$ and constraints.
+#md # The general problem, with free times and optimisation variables, and the notation used throughout the documentation are on [Formulation](@ref modelling-formulation).
+#nb # The general problem, with free times and optimisation variables, and the notation used throughout the documentation are on [Formulation](https://control-toolbox.org/OptimalControl.jl/dev/modelling/formulation).
 #
 # OptimalControl.jl is the core of the [control-toolbox](https://control-toolbox.org) ecosystem, a modular suite of Julia packages — CTBase (base types & exceptions), CTParser (DSL parsing), CTModels (problem data structures), CTDirect (discretisation & NLP transcription), CTFlows (Hamiltonian flows for indirect methods), CTLie (Lie and Poisson brackets), and CTSolvers (solver orchestration) — that can also be used individually.
 #
@@ -61,11 +49,9 @@
 #md # The solvers, plotting and ODE integrators are separate packages, loaded only when needed: see [Installation](@ref getting-started-installation).
 #nb # The solvers, plotting and ODE integrators are separate packages, loaded only when needed: see [Installation](https://control-toolbox.org/OptimalControl.jl/dev/getting-started/installation).
 #
-# We load OptimalControl.jl to model the problem, a solver backend ([NLPModelsIpopt.jl](https://jso.dev/NLPModelsIpopt.jl)), and [Plots.jl](https://docs.juliaplots.org).
+# We load OptimalControl.jl to model the problem; the other packages are loaded where they are first used.
 
 using OptimalControl
-using NLPModelsIpopt
-using Plots
 
 #src ============================================================================
 # ## Defining a problem: `@def` vs macro-free
@@ -82,18 +68,20 @@ using Plots
 # ```math
 # \dot{q}(t) = v(t), \qquad \dot{v}(t) = u(t).
 # ```
+#
+# The data of the problem: the time interval and the end points.
 
-t0 = 0;
-tf = 1;
-x0 = [-1, 0];
-xf = [0, 0];
+t0 = 0
+tf = 1
+x0 = [-1, 0]
+xf = [0, 0]
+#md nothing # hide
 
 # ### The `@def` macro
 #
-#md # The [`@def`](@ref modelling-abstract-syntax) macro lets us write the problem almost exactly as the mathematics:
-#nb # The [`@def`](https://control-toolbox.org/OptimalControl.jl/dev/modelling/abstract-syntax) macro lets us write the problem almost exactly as the mathematics:
-#
-# Each line of the `@def` block mirrors a piece of the mathematical formulation — time, state, control, dynamics, boundary conditions, then cost — in the same order one would write them on paper. Unicode symbols (`∈`, `R²`, `ẋ`, `∫`, `→`) make the code read like the maths; plain ASCII alternatives (`R^2`, `derivative`, `integral`, `=>`) are available for keyboards or workflows that prefer them.
+#md # The [`@def`](@ref modelling-abstract-syntax) macro lets us write the problem almost exactly as the mathematics.
+#nb # The [`@def`](https://control-toolbox.org/OptimalControl.jl/dev/modelling/abstract-syntax) macro lets us write the problem almost exactly as the mathematics.
+# Each line of the block mirrors a piece of the formulation — time, state, control, boundary conditions, dynamics, then cost — in the order one would write them on paper. Unicode symbols (`∈`, `R²`, `ẋ`, `∫`, `→`) make the code read like the maths; plain ASCII alternatives (`R^2`, `derivative`, `integral`, `=>`) are available for keyboards or workflows that prefer them:
 
 ocp = @def begin
     t ∈ [t0, tf], time
@@ -113,20 +101,14 @@ end
 #
 #md # The [functional API](@ref modelling-functional-api) builds the *same* model step by step with plain functions — useful for programmatic problem generation or macro-free library code.
 #nb # The [functional API](https://control-toolbox.org/OptimalControl.jl/dev/modelling/functional-api) builds the *same* model step by step with plain functions — useful for programmatic problem generation or macro-free library code.
+#
+# First, the functions of the problem: the dynamics, the boundary conditions and the integrand of the cost. The last argument of each is the optimisation variable, none here.
 
-pre = OptimalControl.PreModel()
-
-time!(pre; t0=t0, tf=tf)
-state!(pre, 2, "x", ["q", "v"])
-control!(pre, 1)
-
-## the last argument of every callback is the optimisation variable (none here)
 function f_energy!(dx, t, x, u, var)
     dx[1] = x[2]
     dx[2] = u          # scalar control: `u`, not `u[1]`
     return nothing
 end
-dynamics!(pre, f_energy!)
 
 function boundary_energy!(b, x0_, xf_, var)
     b[1] = x0_[1] - x0[1]
@@ -135,19 +117,26 @@ function boundary_energy!(b, x0_, xf_, var)
     b[4] = xf_[2] - xf[2]
     return nothing
 end
-constraint!(pre, :boundary; f=boundary_energy!, lb=zeros(4), ub=zeros(4), label=:endpoint)
 
 lagrange_energy(t, x, u, var) = 0.5 * u^2
+#md nothing # hide
+
+# Then the model, built one component at a time:
+
+pre = OptimalControl.PreModel()
+time!(pre; t0=t0, tf=tf)
+state!(pre, 2, "x", ["q", "v"])
+control!(pre, 1)
+dynamics!(pre, f_energy!)
+constraint!(pre, :boundary; f=boundary_energy!, lb=zeros(4), ub=zeros(4), label=:endpoint)
 objective!(pre, :min; lagrange=lagrange_energy)
-
 time_dependence!(pre; autonomous=true)
-
 ocp_func = build(pre)
 #md nothing # hide
 
 # ### What the macro actually does
 #
-# **Key message:** `@def` *translates the expression* into the very same functional calls, and **additionally records the symbolic definition**. We can see the difference directly: the macro keeps the DSL expression, whereas the functional API stores an empty definition.
+# `@def` *translates the expression* into the very same functional calls, and **additionally records the symbolic definition**. We can see the difference directly: the macro keeps the DSL expression, whereas the functional API stores an empty definition.
 
 definition(ocp)          # the macro records the full DSL expression
 
@@ -164,7 +153,10 @@ has_abstract_definition(ocp_func)   # false: no symbolic definition
 # ## First solve, initial guess, and the costate
 #src ============================================================================
 #
-# Solving is one call, plotting another.
+# Solving is one call, plotting another. Solving needs a solver backend, [NLPModelsIpopt.jl](https://jso.dev/NLPModelsIpopt.jl) for the default solver Ipopt, and plotting needs [Plots.jl](https://docs.juliaplots.org):
+
+using NLPModelsIpopt
+using Plots
 
 direct_sol = solve(ocp)
 #md nothing # hide
@@ -174,7 +166,7 @@ direct_sol = solve(ocp)
 
 #-
 
-plot(direct_sol; size=(800, 600))
+plot(direct_sol; size=(800, 710))
 
 #-
 #md @assert isapprox(objective(direct_sol), 6; rtol=1e-3)   # hide
@@ -185,11 +177,11 @@ plot(direct_sol; size=(800, 600))
 # With no initial guess, every variable is initialised to `0.1`. We can *see* the initial guess without optimising, by stopping the solver immediately with `max_iter=0`:
 
 sol_init = solve(ocp; init=nothing, max_iter=0, display=false)
-plot(sol_init; size=(800, 600))
+plot(sol_init; size=(800, 710))
 
 #md # !!! note "Notice the right-hand column: the costate is already there"
-#md #     Even though we only ever provide the state, control and (optional) variable, the solver initialises the **adjoint** internally. After optimisation, this right-column costate is exactly the **adjoint $p$ of Pontryagin's Maximum Principle** — the same $p$ we will reuse to start the indirect method in the indirect section. This closes the loop between the direct and indirect methods.
-#nb # **Notice the right-hand column: the costate is already there.** Even though we only ever provide the state, control and (optional) variable, the solver initialises the **adjoint** internally. After optimisation, this right-column costate is exactly the **adjoint $p$ of Pontryagin's Maximum Principle** — the same $p$ we will reuse to start the indirect method in the indirect section. This closes the loop between the direct and indirect methods.
+#md #     Even though we only ever provide the state, control and (optional) variable, the solution carries a costate: the multipliers of the discretised dynamics. It approximates the **adjoint $p$ of Pontryagin's Maximum Principle**, up to the step of the grid — the $p$ we will reuse to start the indirect method in the indirect section. This closes the loop between the direct and indirect methods.
+#nb # **Notice the right-hand column: the costate is already there.** Even though we only ever provide the state, control and (optional) variable, the solution carries a costate: the multipliers of the discretised dynamics. It approximates the **adjoint $p$ of Pontryagin's Maximum Principle**, up to the step of the grid — the $p$ we will reuse to start the indirect method in the indirect section. This closes the loop between the direct and indirect methods.
 
 # ### Providing our own initial guess
 #
@@ -210,30 +202,16 @@ println("iterations, @init guess:   ", iterations(sol))
 #md # For all the ways to specify an initial guess, see [Initial guess](@ref solve-initial-guess).
 #nb # For all the ways to specify an initial guess, see [Initial guess](https://control-toolbox.org/OptimalControl.jl/dev/solve/initial-guess).
 #md # !!! note
-#md #     There is currently no way to initialise the costate directly — only state, control and variable can be provided through `@init`. The solver initialises the adjoint internally (as we saw above). Costate initialisation is a planned feature.
-#nb # **Note:** there is currently no way to initialise the costate directly — only state, control and variable can be provided through `@init`. The solver initialises the adjoint internally (as we saw above). Costate initialisation is a planned feature.
+#md #     An initial guess gives the state, the control and the variable, not the costate: it can neither be set in `@init` nor taken from a previous solution with `init=sol`. The costate drawn above with `max_iter=0` is the solver's own initial estimate of the multipliers. See [#1083](https://github.com/control-toolbox/OptimalControl.jl/issues/1083).
+#nb # **Note:** an initial guess gives the state, the control and the variable, not the costate: it can neither be set in `@init` nor taken from a previous solution with `init=sol`. The costate drawn above with `max_iter=0` is the solver's own initial estimate of the multipliers. See [#1083](https://github.com/control-toolbox/OptimalControl.jl/issues/1083).
 
 #src ============================================================================
 # ## Direct method in depth: Goddard
 #src ============================================================================
 #
-# ### Discretise optimal control problems
-#
-# The **direct** method turns the infinite-dimensional OCP into a finite-dimensional nonlinear program (NLP) by discretising time (Runge–Kutta / collocation) on a grid, then hands the NLP to a solver. It is robust and easy to use.
-#
-# Concretely, time is discretised on a uniform grid $t_0 < t_1 < \dots < t_N = t_f$ with step $h = (t_f - t_0)/N$. The (explicit) Euler scheme, for instance, replaces the dynamics by
-#
-# ```math
-# x_{i} = x_{i-1} + h\,f(t_{i-1}, x_{i-1}, u_{i-1}), \quad i = 1, \dots, N,
-# ```
-#
-# and the integral cost by the corresponding rectangle sum
-#
-# ```math
-# h\sum_{i=0}^{N-1} f^{0}(t_i, x_i, u_i).
-# ```
-#
-# The continuous OCP thus becomes a finite-dimensional NLP in the variables $X = (x_0, \dots, x_N, u_0, \dots, u_{N-1})$, which is passed to an NLP solver such as [Ipopt](https://coin-or.github.io/Ipopt). Higher-order schemes (midpoint, Gauss–Legendre collocation) follow the same principle with different quadrature and interpolation formulas — `solve` defaults to the second-order `:midpoint` scheme, not Euler.
+# The **direct** method turns the infinite-dimensional OCP into a finite-dimensional nonlinear program (NLP) by discretising time on a grid, then hands the NLP to a solver such as [Ipopt](https://coin-or.github.io/Ipopt). It is robust and easy to use.
+#md # How a scheme turns the dynamics and the cost into the equations of the NLP is on [The direct method, briefly](@ref solve-overview-direct-method).
+#nb # How a scheme turns the dynamics and the cost into the equations of the NLP is on [The direct method, briefly](https://control-toolbox.org/OptimalControl.jl/dev/solve/overview#the-direct-method-briefly).
 #
 # ### The Goddard rocket problem
 #
@@ -276,7 +254,7 @@ goddard = @def begin
 end
 #md nothing # hide
 
-# ### Choosing a solver is trivial
+# ### Changing the solver
 #
 #md # `solve` uses the defaults (collocation, ADNLP modeler, Ipopt, CPU). Switching solver is just loading a package and passing a token (see [Choosing a method](@ref solve-choosing-a-method)):
 #nb # `solve` uses the defaults (collocation, ADNLP modeler, Ipopt, CPU). Switching solver is just loading a package and passing a token (see [Choosing a method](https://control-toolbox.org/OptimalControl.jl/dev/solve/choosing-a-method)):
@@ -302,7 +280,7 @@ println("MadNLP : r(tf) = ", objective(sol_madnlp), ", ", iterations(sol_madnlp)
 #
 # A solution can be passed **directly** as the initial guess of another solve — it is interpolated onto the new grid. This makes discrete continuation trivial and ties back to the initialisation above. On this nonlinear problem it genuinely **pays**: we compare reaching a fine grid of 1000 two ways — a **cold start** (solve `grid_size=1000` directly) versus a **cascade** (solve `grid_size=50` first, then `grid_size=1000` warm-started with that solution).
 
-## computed once, reused for iteration counts and the overlay plot
+## cold start: grid 1000 directly (reused below, for the comparison with a bang-bang strategy)
 sol_cold = solve(goddard; grid_size=1000, display=false)
 
 ## warm cascade: grid 50 first, then grid 1000 initialised from it
@@ -321,94 +299,130 @@ println("cascade grid 1000 (warm) : ", iterations(s1000), " iters")
 
 # Overlay the two solutions to see that the coarse grid already captures the structure:
 
-plt = plot(s50; label="50", size=(800, 800))
+plt = plot(s50; label="50", size=(800, 1340), legend=false)
 plot!(plt, s1000; label="1000")
+plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 
 #md # This is grid-refinement warm-starting. The very same mechanism drives **parametric** continuation (homotopy on a physical parameter, e.g. maximum thrust): [Discrete continuation](@extref Tutorials tutorial-continuation).
 #nb # This is grid-refinement warm-starting. The very same mechanism drives **parametric** continuation (homotopy on a physical parameter, e.g. maximum thrust): <https://control-toolbox.org/Tutorials.jl/stable/tutorial-continuation.html>.
 
 # ### Comparison with a bang-bang strategy
 
-# How much better is the optimal solution compared to a naive strategy? We simulate **full thrust until fuel depletion, then coast to apogee** — a bang-bang profile with no optimisation, just two ODE integrations with callbacks.
+#md # How much better is the optimal solution compared to a naive strategy? We simulate **full thrust until fuel depletion, then coast to apogee** — a bang-bang profile with no optimisation, just two ODE integrations using [`Flow`](@ref flows-overview) (see also [Simulation](@ref flows-simulation)) with [OrdinaryDiffEq callbacks](https://docs.sciml.ai/DiffEqDocs/stable/features/callback_functions/) (`ContinuousCallback` and `terminate!` come from `OrdinaryDiffEqTsit5`).
+#nb # How much better is the optimal solution compared to a naive strategy? We simulate **full thrust until fuel depletion, then coast to apogee** — a bang-bang profile with no optimisation, just two ODE integrations using [`Flow`](https://control-toolbox.org/OptimalControl.jl/dev/flows/overview) (see also [Simulation](https://control-toolbox.org/OptimalControl.jl/dev/flows/simulation)) with [OrdinaryDiffEq callbacks](https://docs.sciml.ai/DiffEqDocs/stable/features/callback_functions/) (`ContinuousCallback` and `terminate!` come from `OrdinaryDiffEqTsit5`).
 
-using OrdinaryDiffEqTsit5   # ODE solver: bang-bang simulation here, Hamiltonian flows later
+using OrdinaryDiffEqTsit5   # ODE solver + callbacks (ContinuousCallback, terminate!)
 
 ## Phase 1: u = 1, stop when m = mf (fuel depleted)
-bang1!(dx, x, p, t) = (dx[:] = F0(x) + F1(x))
 cb_fuel = ContinuousCallback((u, t, int) -> u[3] - mf, terminate!)
-sol_bang1 = solve(
-    ODEProblem(bang1!, [r0, v0, m0], (t0, 100.0)),
-    Tsit5();
-    callback=cb_fuel,
-    reltol=1e-8,
-    abstol=1e-8,
-)
-t1_bang, x1_bang = sol_bang1.t[end], sol_bang1[:, end]
+flow_bang1 = Flow(VectorField(x -> F0(x) + F1(x)); callback=cb_fuel)
+traj_bang1 = flow_bang1((t0, 1.0), [r0, v0, m0])
+t1_bang = time_grid(traj_bang1)[end]
+x1_bang = state(traj_bang1)(t1_bang)
 
 ## Phase 2: u = 0, stop when v = 0 (apogee)
-bang2!(dx, x, p, t) = (dx[:] = F0(x))
 cb_apogee = ContinuousCallback((u, t, int) -> u[2], terminate!)
-sol_bang2 = solve(
-    ODEProblem(bang2!, x1_bang, (t1_bang, 1000.0)),
-    Tsit5();
-    callback=cb_apogee,
-    reltol=1e-8,
-    abstol=1e-8,
-)
-tf_bang, rf_bang = sol_bang2.t[end], sol_bang2[1, end]
+flow_bang2 = Flow(VectorField(F0); callback=cb_apogee)
+traj_bang2 = flow_bang2((t1_bang, 1.0), x1_bang)
+tf_bang = time_grid(traj_bang2)[end]
+rf_bang = state(traj_bang2)(tf_bang)[1]
 
-println(
-    "Bang-bang: r(tf) = ",
-    round(rf_bang; digits=6),
-    "  (t1=",
-    round(t1_bang; digits=4),
-    ", tf=",
-    round(tf_bang; digits=4),
-    ")",
-)
-println(
-    "Optimal:   r(tf) = ",
-    round(objective(sol_cold); digits=6),
-    "  (           tf=",
-    round(variable(sol_cold); digits=4),
-    ")",
-)
+r_opt_f = objective(sol_cold)
+println("Bang-bang: r(tf) = ", round(rf_bang; digits=6), ", tf = ", round(tf_bang; digits=4))
+println("Optimal:   r(tf) = ", round(r_opt_f; digits=6), ", tf = ", round(variable(sol_cold); digits=4))
 
-println(
-    "Extra altitude gain of the optimal strategy: ",
-    round(100 * (objective(sol_cold) - rf_bang) / (rf_bang - r0); digits=1),
-    " %",
-)
+gain = 100 * (r_opt_f - rf_bang) / (rf_bang - r0)   # gain above r0, in %
+println("Extra altitude gain of the optimal strategy: ", round(gain; digits=1), " %")
 
 # The optimal strategy climbs about 2.7 % higher above $r_0$ than the naive one. It does not simply push at the maximum: after a full-thrust phase it throttles along a **singular arc**, where pushing harder would mostly be lost to drag, then coasts. Overlaying the altitude of both strategies against time makes the difference visible:
 
+#md # ::: details The plotting code
 #-
 #md @assert isapprox(rf_bang, 1.012505; atol=1e-5)          # hide
 #md @assert objective(sol_cold) > rf_bang                    # hide
 #md nothing                                                  # hide
 
-## assemble the bang-bang trajectory as (t, r, v, m) for plotting
-t_bang = [sol_bang1.t; sol_bang2.t]
-r_bang = [sol_bang1[1, :]; sol_bang2[1, :]]
+## assemble the bang-bang altitude as (t, r) for plotting
+t1_grid, t2_grid = time_grid(traj_bang1), time_grid(traj_bang2)
+t_bang = [t1_grid; t2_grid]
+r_bang = [[state(traj_bang1)(t)[1] for t in t1_grid]; [state(traj_bang2)(t)[1] for t in t2_grid]]
 
 ## the optimal altitude, read from the solution on its time grid
 t_opt = time_grid(sol_cold)
 r_opt = [state(sol_cold)(t)[1] for t in t_opt]
 
-plot(
+tf_opt = t_opt[end]
+
+plt = plot(
     t_opt,
     r_opt;
     label="optimal",
     linewidth=2,
     xlabel="time",
     ylabel="altitude",
-    legend=:bottomright,
+    legend=:topleft,
     size=(800, 400),
     left_margin=5Plots.mm,
 )
-plot!(t_bang, r_bang; label="bang-bang", linestyle=:dash, linewidth=2)
+plot!(plt, t_bang, r_bang; label="bang-bang", linestyle=:dash, linewidth=2)
+hline!(plt, [r0]; color=:gray, linewidth=0.8, label="")
+plot!(plt, [tf_opt, tf_opt], [r0, r_opt_f]; color=1, linestyle=:dot, linewidth=1.2, label="")
+plot!(plt, [tf_bang, tf_bang], [r0, rf_bang]; color=2, linestyle=:dot, linewidth=1.2, label="")
+scatter!(plt, [tf_opt], [r_opt_f]; color=1, markersize=5, label="")
+scatter!(plt, [tf_bang], [rf_bang]; color=2, markersize=5, label="")
+
+## Inset zoom around the two apogees
+plot!(
+    plt,
+    t_opt,
+    r_opt;
+    inset=(1, bbox(0.40, 0.40, 0.46, 0.45)),
+    subplot=2,
+    xlims=(0.178, 0.210),
+    ylims=(1.01238, 1.01292),
+    linewidth=2,
+    color=1,
+    legend=false,
+    title="apogee zoom",
+    titlefontsize=9,
+    tickfontsize=7,
+    framestyle=:box,
+)
+plot!(plt[2], t_bang, r_bang; linestyle=:dash, linewidth=2, color=2)
+scatter!(plt[2], [tf_opt], [r_opt_f]; color=1, markersize=4)
+scatter!(plt[2], [tf_bang], [rf_bang]; color=2, markersize=4)
+t_ref = 0.203
+plot!(plt[2], [tf_opt, t_ref], [r_opt_f, r_opt_f]; color=:gray, linestyle=:dot, linewidth=1)
+plot!(plt[2], [tf_bang, t_ref], [rf_bang, rf_bang]; color=:gray, linestyle=:dot, linewidth=1)
+plot!(plt[2], [t_ref, t_ref], [rf_bang, r_opt_f]; color=:black, linewidth=1.5)
+annotate!(plt[2], t_ref + 0.0008, (rf_bang + r_opt_f) / 2, text("+$(round(gain; digits=1)) %", 8, :left))
+#nb plt
+#md nothing # hide
+
+#md # :::
+#md plt # hide
 
 # The bang-bang rocket climbs faster at first, but it burns all its fuel at full speed in the densest air. The optimal one holds back, keeps fuel for later, and ends higher.
+
+#src The rocket animation (HTML only): the template is docs/src-literate/goddard-animation.html,
+#src filled in by `Main.goddard_animation` (docs/make.jl), shown as the `text/html` output.
+#md struct TourRawHTML                                                                      # hide
+#md     raw::String                                                                          # hide
+#md end                                                                                      # hide
+#md Base.show(io::IO, ::MIME"text/html", h::TourRawHTML) = print(io, h.raw)                 # hide
+#md let                                                                                      # hide
+#md     X_opt = state(sol_cold).(t_opt)                                                      # hide
+#md     X_bang = [[state(traj_bang1)(t) for t in t1_grid]; [state(traj_bang2)(t) for t in t2_grid]] # hide
+#md     col(X, i) = [x[i] for x in X]                                                        # hide
+#md     TourRawHTML(Main.goddard_animation(;                                                 # hide
+#md         t1=t_opt, r1=col(X_opt, 1), v1=col(X_opt, 2), m1=col(X_opt, 3),                  # hide
+#md         u1=control(sol_cold).(t_opt),                                                    # hide
+#md         t2=t_bang, r2=col(X_bang, 1), v2=col(X_bang, 2), m2=col(X_bang, 3),              # hide
+#md         u2=[fill(1.0, length(t1_grid)); fill(0.0, length(t2_grid))],                     # hide
+#md         t_max=max(t_opt[end], t_bang[end]), m0=m0, mf=mf, r0=r0,                         # hide
+#md         rf_opt=r_opt_f, rf_bang=rf_bang, tf_opt=t_opt[end], tf_bang=tf_bang,             # hide
+#md         color_opt=palette(:default)[1], color_bang=palette(:default)[2]))                # hide
+#md end                                                                                      # hide
 
 #src ============================================================================
 # ## Solving on a GPU
@@ -474,6 +488,32 @@ end
 #
 # measures the miss at $t_f$: solving the BVP reduces to finding $p_0$ such that $S(p_0) = 0$.
 #
+#md # To picture what each iteration does, here is an analogy: a player throws a ball. The two unknowns are the **angle** and the **speed** of the throw, as $p_0$ has two components, and the ball must be in the hoop at a fixed time $T$, as $x(t_f) = x_f$ must hold at the fixed time $t_f$. Each throw is one trial value of $p_0$.
+
+#src The basketball animation (HTML only): the template is
+#src docs/src-literate/shooting-animation.html, filled in by `Main.shooting_animation`
+#src (docs/make.jl), shown as the `text/html` output. Nothing appears in the notebook.
+#md using LinearAlgebra                                                                     # hide
+#md let                                                                                      # hide
+#md     g_b, T_b, h_b, x_t, y_t = 9.81, 1.1, 2.0, 4.6, 3.05                                  # hide
+#md     ball(u, t) = [u[2]*cos(u[1])*t, h_b + u[2]*sin(u[1])*t - g_b*t^2/2]                  # hide
+#md     S_b(u) = ball(u, T_b) - [x_t, y_t]                                                   # hide
+#md     J_b(u) = [-u[2]*sin(u[1])*T_b  cos(u[1])*T_b; u[2]*cos(u[1])*T_b  sin(u[1])*T_b]     # hide
+#md     tol_b = 1e-3                                                                         # hide
+#md     shots = [[deg2rad(34), 6.5]]                                                         # hide
+#md     while norm(S_b(shots[end])) > tol_b && length(shots) < 10                            # hide
+#md         push!(shots, shots[end] - J_b(shots[end]) \ S_b(shots[end]))                    # hide
+#md     end                                                                                  # hide
+#md     TourRawHTML(Main.shooting_animation(;                                                # hide
+#md         shots=shots, residuals=[norm(S_b(u)) for u in shots],                            # hide
+#md         xt=x_t, yt=y_t, h0=h_b, g=g_b, T=T_b, tol=tol_b, color=palette(:default)[1]))    # hide
+#md end                                                                                      # hide
+
+#md # !!! note "Reading the animation"
+#md #     - The **residual** is what the shooting function $S(p_0)$ measures: the gap between the ball and the hoop at time $T$. The dashed arrow draws it, and the table gives its length in metres.
+#md #     - Newton's method uses how this gap changes with the angle and the speed to correct them. Close to the solution the residual falls very fast, as the last column shows.
+#md #     - The ball seems to be in the hoop one correction before the end: the table tells how much accuracy is still gained.
+
 # For the energy problem, $H = p_1 v + p_2 u - u^2/2$, so the maximiser is $u = p_2$.
 
 using NonlinearSolve   # nonlinear equations (shooting); the ODE solver is already loaded
@@ -482,7 +522,7 @@ using NonlinearSolve   # nonlinear equations (shooting); the ODE solver is alrea
 u_feedback(x, p) = p[2]
 
 ## Hamiltonian flow of the OCP
-φ = Flow(ocp, u_feedback);
+φ = Flow(ocp, u_feedback)
 
 ## state projection π(x, p) = x
 proj((x, p)) = x
@@ -505,7 +545,7 @@ p0_sol = shooting_sol.u
 println("costate p0 = ", p0_sol)
 println("shoot S(p0) = ", S(p0_sol))
 
-# The shooting converges to $p_0 = (12, 6)$, the exact initial costate: the costate of the direct solution was already very close to it.
+# The shooting converges to $p_0 = (12, 6)$, the exact initial costate: the costate of the direct solution was already very close to it. The shooting of the double integrator is linear in $p_0$, so a single Newton step suffices, as the trace above shows; the basketball is not linear, which is why it took several corrections.
 
 #-
 #md @assert isapprox(p0_sol, [12, 6]; atol=1e-8)   # hide
@@ -515,10 +555,11 @@ println("shoot S(p0) = ", S(p0_sol))
 
 indirect_sol = φ((t0, tf), x0, p0_sol)
 
-plt_compare = plot(direct_sol; label="direct", size=(800, 600))
+plt_compare = plot(direct_sol; label="direct", size=(800, 710), legend=false)
 plot!(plt_compare, indirect_sol; label="indirect")
+plot!(plt_compare; subplot=1, legend=:best)   # one legend, on the first subplot
 
-#md # See [From an OCP](@ref flows-from-ocp) for the flow construction, and the [indirect simple shooting tutorial](@extref tutorial-indirect-simple-shooting).
+#md # See [From an OCP](@ref flows-from-ocp) for the flow construction, and the [indirect simple shooting tutorial](@extref Tutorials tutorial-indirect-simple-shooting).
 #nb # See [From an OCP](https://control-toolbox.org/OptimalControl.jl/dev/flows/from-ocp) for the flow construction, and the [indirect simple shooting tutorial](https://control-toolbox.org/Tutorials.jl/stable/tutorial-iss.html).
 
 #src ============================================================================

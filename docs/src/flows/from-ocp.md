@@ -6,6 +6,11 @@ Hamiltonian flow it defines. `Flow(ocp, law)` reads the dynamics and the cost fr
 problem, so you only write the law. The notation is the one of
 [Notation and conventions](@ref modelling-formulation-conventions).
 
+The examples use the energy-minimal double integrator of
+[Your first problem](@ref getting-started-first-problem).
+
+::: details The problem used on this page
+
 ```@example main
 using OptimalControl
 using OrdinaryDiffEqTsit5
@@ -25,6 +30,8 @@ ocp = @def begin
 end
 nothing # hide
 ```
+
+:::
 
 ## The idea
 
@@ -156,6 +163,12 @@ f(t0, x0, p0, tf; variable=1)
 
 ### Two other formulations of a free final time
 
+The final time can also be taken out of the time interval, in two ways.
+
+:::tabs key:free-final-time
+
+== Change of time
+
 Since the variable is the final time, the change of time $t = s\,t_f$ gives a problem on
 $s \in [0, 1]$, where $t_f$ only appears as a parameter: $\mathrm{d}x/\mathrm{d}s = t_f^2\,u$,
 and the cost becomes $t_f + (t_f/2)\int_0^1 u^2\,\mathrm{d}s$. The control law is unchanged:
@@ -177,6 +190,8 @@ fs = Flow(ocp_s, (x, p, tf) -> tf * p)
 xf_s, _ = fs(0, 0, p0c, 1; variable=tf_val)
 xf_s
 ```
+
+== Final time as a state
 
 Or $t_f$ becomes a state, with zero dynamics, and the problem has no variable any more. The
 state is $y = (x, t_f)$, its costate $(p, p_{t_f})$, and the control law reads
@@ -200,6 +215,8 @@ yf, qf = fy(0, [0, tf_val], [p0c, 0], 1)
 The initial costate of $t_f$ is $0$, since $t_f(0)$ is free, and its final costate is
 $-1$: the transversality condition of the Mayer term $t_f(1)$, with $p^0 = -1$.
 
+:::
+
 ```@example main
 @assert isapprox(xf_s, 1; atol=1e-8)                                       # hide
 @assert isapprox(yf, [1, tf_val]; atol=1e-8) && isapprox(qf[2], -1; atol=1e-8)   # hide
@@ -208,7 +225,12 @@ nothing                                                                    # hid
 
 The constant `0` in the dynamics is fine for a flow. To solve this problem with the direct
 method and the default modeler, write `0 * u(s)` instead (see
-[Dynamics](@ref modelling-abstract-syntax-dynamics)).
+[Dynamics](@ref modelling-abstract-syntax-dynamics)):
+
+```julia
+ẏ(s) == [tf(s)^2 * u(s), 0]          # [!code --]
+ẏ(s) == [tf(s)^2 * u(s), 0 * u(s)]   # [!code ++]
+```
 
 ## [The costate of the variable](@id flows-from-ocp-variable-costate)
 
@@ -259,8 +281,7 @@ nothing                                    # hide
 ```
 
 `variable_costate=true` works on the point call only. On a trajectory call
-`fω((0, 1), …)`, it raises a `MethodError` that does not say so yet
-([CTFlows#437](https://github.com/control-toolbox/CTFlows.jl/issues/437)).
+`fω((0, 1), …)`, it raises a `PreconditionError` that says so.
 
 ## Control-free problems
 

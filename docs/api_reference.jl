@@ -186,7 +186,6 @@ const API_THEMES = [
             :infos,
             :model,
             # Emptiness
-            :is_empty,
             :is_empty_time_grid,
             # Duals
             :dual,
@@ -201,6 +200,12 @@ const API_THEMES = [
             :dim_dual_state_constraints_box,
             :dim_dual_control_constraints_box,
             :dim_dual_variable_constraints_box,
+            # Switching structure
+            :switching_times,
+            :phase_labels,
+            :has_switching,
+            :left_limit,
+            :right_limit,
         ],
     ),
     (
@@ -313,9 +318,13 @@ const API_THEMES = [
             Symbol("CTSolvers.Solvers.Uno"),
             Symbol("CTSolvers.DOCP.AbstractDiscretizer"),
             Symbol("CTSolvers.DOCP.DiscretizedModel"),
+            Symbol("CTSolvers.Optimization.build_model"),
+            Symbol("CTSolvers.Optimization.BuiltModel"),
             Symbol("CTSolvers.Modelers.AbstractNLPModeler"),
             Symbol("CTSolvers.Solvers.AbstractNLPSolver"),
             :LiftedHamiltonianFunction,
+            Symbol("CTFlows.Configs.UniformGrid"),
+            Symbol("CTFlows.Configs.AdaptiveGrid"),
             Symbol("CTBase.Exceptions.CTException"),
             Symbol("CTBase.Exceptions.IncorrectArgument"),
             Symbol("CTBase.Exceptions.PreconditionError"),
@@ -323,6 +332,7 @@ const API_THEMES = [
             Symbol("CTBase.Exceptions.ParsingError"),
             Symbol("CTBase.Exceptions.AmbiguousDescription"),
             Symbol("CTBase.Exceptions.ExtensionError"),
+            Symbol("CTBase.Exceptions.SolverFailure"),
             Symbol("CTBase.Core.NotProvided"),
             Symbol("CTBase.Core.NotProvidedType"),
             Symbol("CTBase.Core.ctNumber"),
@@ -509,7 +519,7 @@ internally. The lists below are generated from the package itself, and each name
 its documentation.
 
 | Level | Reached as | What |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | 1. Exported | `using OptimalControl`, then `name` | the vocabulary of the package: problems, `solve`, solutions, flows, geometry |
 | 2. Qualified | `OptimalControl.Name` | strategies (modelers, solvers, discretizer, AD backend), types, exceptions |
 | 3. Internal | not for users | the modules of the packages OptimalControl builds on |
@@ -568,7 +578,7 @@ its documentation.
         )
         println(io)
         println(io, "| Module | Why OptimalControl binds it |")
-        println(io, "| --- | --- |")
+        println(io, "| :--- | :--- |")
         for (m, role) in MODULE_ROLES
             println(io, "| `$m` | $role |")
         end

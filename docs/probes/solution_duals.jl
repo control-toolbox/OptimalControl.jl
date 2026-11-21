@@ -1,9 +1,9 @@
 # Page: results/solution.md, note "Sign and scale of the multipliers".
-# Claims: the same constraint, written as a box or as a path constraint, gets
-# multipliers of opposite signs, and only the path one is divided by the time step
-# (CTDirect#639); with :exa, the boundary and path multipliers come back as zeros
-# (CTDirect#405). Both are known bugs: this probe checks the current behaviour, and fails
-# when they are fixed.
+# Claims: the same constraint, written as a box or as a path constraint, gets multipliers
+# of the same sign, and only the path one is divided by the time step (CTDirect#639, known
+# bug); with :exa, the multiplier of a boundary constraint is not available, and `dual`
+# throws a PreconditionError (CTParser#414, known bug). The probe checks the current
+# behaviour, and fails when a bug is fixed.
 
 include("common.jl")
 using OptimalControl, NLPModelsIpopt
@@ -41,8 +41,8 @@ end
 μ_path_100, μ_path_400 = μ(path, 100), μ(path, 400)
 
 check(
-    μ_box_100 < 0 && μ_path_100 > 0,
-    "box and path multipliers have opposite signs where the upper bound is active " *
+    μ_box_100 > 0 && μ_path_100 > 0,
+    "box and path multipliers are both positive where the upper bound is active " *
     "(box $(round(μ_box_100; sigdigits=3)), path $(round(μ_path_100; sigdigits=3)))",
 )
 check(
@@ -56,12 +56,8 @@ check(
 
 sol_exa = solve(box, :exa; display=false)
 check(
-    all(iszero, dual(sol_exa, box, :start)),
-    "with :exa, the multiplier of the initial condition is zero",
-)
-check(
-    all(iszero, boundary_constraints_dual(sol_exa)),
-    "with :exa, all boundary multipliers are zero",
+    occursin("PreconditionError", error_text(() -> dual(sol_exa, box, :start))),
+    "with :exa, dual(sol, ocp, :start) throws a PreconditionError",
 )
 sol_adnlp = solve(box, :adnlp; display=false)
 check(

@@ -117,7 +117,7 @@ println("Exa{CPU} backend:          ", options(modeler)[:backend])
 println("MadNLP{CPU} linear_solver: ", options(solver)[:linear_solver])
 ```
 
-On the GPU, ExaModels evaluates the model with a CUDA backend, and MadNLP factorizes its linear
+On the GPU, ExaModels evaluates the model with a CUDA backend, and MadNLP factorises its linear
 systems with cuDSS instead of MUMPS.
 
 ## Explicit mode
@@ -174,7 +174,7 @@ GPU solving is beneficial for:
 
 - **large-scale problems**: thousands of variables and constraints, for instance fine grids;
 - **dense computations**: problems with many nonlinear constraints;
-- **repeated solves**: the GPU initialization overhead is paid once.
+- **repeated solves**: the GPU initialisation overhead is paid once.
 
 For small problems, CPU solving is usually faster.
 

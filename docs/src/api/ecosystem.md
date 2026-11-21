@@ -5,7 +5,7 @@ OptimalControl is the user-facing entry point of the control-toolbox ecosystem; 
 re-exports and wires together the lower-level packages below.
 
 | Package | Role |
-| --- | --- |
+| :--- | :--- |
 | [CTBase](@extref CTBase index) | the foundation: shared types (vector fields, Hamiltonians), exceptions, strategies |
 | [CTModels](@extref CTModels index) | the optimal control problem and its solution, with their accessors |
 | [CTParser](@extref CTParser index) | the abstract syntax, `@def` |

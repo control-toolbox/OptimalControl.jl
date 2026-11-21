@@ -121,6 +121,16 @@ sol = solve(ocp, :adnlp)
 d = dual(sol, ocp, :c)
 ```
 
+### `is_empty` is no longer exported
+
+`is_empty` tells whether the time-grid model held inside a solution is empty. It has no
+method for a `Solution` or for any other object a user handles, so a call such as
+`is_empty(sol)` already raised a `MethodError`. Write instead:
+
+```julia
+is_empty_time_grid(sol)
+```
+
 ### Non-breaking notes
 
 - `ad` and `Lift` on a `HamiltonianVectorField`, and `ad` and `∂ₜ` on an in-place vector
