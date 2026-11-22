@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress'
 import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs'
 import { mathjaxPlugin } from './mathjax-plugin'
 import { juliaReplTransformer } from './julia-repl-transformer'
+import { inspectModel, parseMarker } from './inspect-model'
 import footnote from "markdown-it-footnote";
 import path from 'path'
 
@@ -45,6 +46,16 @@ export default defineConfig({
       md.use(tabsMarkdownPlugin);
       md.use(footnote);
       mathjax.markdownConfig(md);
+      // Expand `@inspect-model <id> "fragment"...` marker lines inside ```julia fences into
+      // the problem tagged `<model: id>` on the page, with `# [!code warning]` on the lines
+      // containing a fragment (see inspect-model.ts).
+      const fence = md.renderer.rules.fence!;
+      md.renderer.rules.fence = (tokens, idx, options, env, self) => {
+        const token = tokens[idx];
+        const marker = token.info.trim() === 'julia' ? parseMarker(token.content) : null;
+        if (marker) token.content = inspectModel(marker[0], marker[1], env) + '\n';
+        return fence(tokens, idx, options, env, self);
+      };
     },
     theme: {
       light: "github-light",
