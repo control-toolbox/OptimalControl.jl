@@ -127,7 +127,7 @@ Solving without the matching package loaded raises an `ExtensionError` naming th
 statement to add; see [Installation](@ref getting-started-installation) and
 [GPU](@ref solve-gpu).
 
-## Inspecting a strategy
+## [Inspecting a strategy](@id solve-choosing-a-method-inspect)
 
 `describe` prints a strategy: its family, the parameters it supports, and every option with
 its type, its aliases and its default value:

@@ -158,7 +158,7 @@ for `bypass` (`force === bypass`); use whichever name reads better:
     It skips type checking and validation entirely. Reach for it only when you're certain the
     option name and value are correct and the strategy genuinely doesn't declare it.
 
-## What a strategy accepts
+## [What a strategy accepts](@id solve-options-accepts)
 
 `describe` prints the options of a strategy (see [Choosing a method](@ref solve-choosing-a-method)).
 The same information can be read in code, on the type, before building an instance:
