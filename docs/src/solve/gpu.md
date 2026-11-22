@@ -1,5 +1,9 @@
 # [GPU](@id solve-gpu)
 
+```@meta
+Draft = false
+```
+
 GPU support runs through [ExaModels.jl](https://madsuite-org.github.io/ExaModels.jl/stable/) and
 [MadNLPGPU.jl](https://madsuite-org.github.io/MadNLP.jl/stable/), NVIDIA GPUs only, via
 [CUDA.jl](https://github.com/JuliaGPU/CUDA.jl).
