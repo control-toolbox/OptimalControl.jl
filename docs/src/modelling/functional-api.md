@@ -1,5 +1,9 @@
 # [Functional API](@id modelling-functional-api)
 
+```@meta
+Draft = false
+```
+
 The [`@def`](@ref) macro provides a concise DSL to define optimal control problems. An alternative is the **functional API**, which builds the same problem step by step using plain Julia functions.
 
 The functional API uses `OptimalControl.PreModel` as a mutable builder, populated by setter calls, then frozen into an immutable `OptimalControl.Model` by [`build`](@ref). Both `PreModel` and `Model` are imported, not exported — write `OptimalControl.PreModel()`.
@@ -143,14 +147,37 @@ ocp = build(pre)
 
 Seven problems, each shown as [`@def`](@ref) (left) and the equivalent functional API (right). Every one has a full worked story — direct *and* indirect solution — on its [example gallery](@ref examples-gallery) page; here the focus is the model, built both ways and solved once to check the two agree. The callbacks follow the scalar convention of [Shapes in callbacks](@ref modelling-functional-api-shapes): a dimension-1 `x`, `u` or `v` is a `Real`, only the in-place output buffers (`dx`, `val`) are written by index.
 
-### 1. Double integrator — energy minimisation
+The examples load two packages:
 
-The simplest case: fixed time interval, boundary constraints, autonomous dynamics, Lagrange cost. We load OptimalControl, the NLP solver of the direct method and Plots (to overlay the two solutions):
-
-```@example ex-energy
+```julia
 using OptimalControl   # define the problem and solve it
 using NLPModelsIpopt   # NLP solver of the direct method
-using Plots            # plots of the two solutions
+```
+
+Browse the tabs below: each one defines a problem — [`@def`](@ref) and functional API side by side — and solves it once with the direct method. The labels are kept short for the tab bar; each maps to a worked example of the gallery:
+
+- **Energy** — [Energy minimisation](@ref examples-double-integrator-energy)
+- **Time** — [Time minimisation (bang–bang)](@ref examples-double-integrator-time)
+- **No u** — [Parameter estimation without a control](@ref examples-control-free)
+- **u + v** — [Control and variable together](@ref examples-control-and-variable)
+- **Turnpike** — [Turnpike (bang–singular–bang)](@ref examples-turnpike)
+- **Singular** — [Singular control](@ref examples-singular-control)
+- **State box** — [State constraint](@ref examples-state-constraint)
+
+::::tabs key:functional-api-examples
+
+=== 1. Energy
+
+### Energy minimisation
+
+The simplest case: fixed time interval, boundary constraints, autonomous dynamics, Lagrange cost.
+
+```@setup ex-energy
+using OptimalControl
+using NLPModelsIpopt
+```
+
+```@example ex-energy
 t0 = 0.0; tf = 1.0; x0 = [-1.0, 0.0]; xf = [0.0, 0.0]
 nothing # hide
 ```
@@ -198,7 +225,7 @@ lagrange_energy(t, x, u, v) = 0.5 * u^2
 # then the model, built one component at a time
 pre = OptimalControl.PreModel()
 time!(pre; t0=t0, tf=tf)
-state!(pre, 2, "x", ["q", "v"]) # state "x" with components "q" and "v"
+state!(pre, 2, "x", ["q", "v"]) # state "x", components "q" and "v"
 control!(pre, 1)
 dynamics!(pre, f_energy!)
 constraint!(pre,
@@ -215,7 +242,7 @@ nothing # hide
 
 :::
 
-Both formulations produce identical solutions. We solve both and plot them together for verification:
+Both formulations produce identical solutions. We solve both and compare the objectives:
 
 ```@example ex-energy
 sol_macro = solve(ocp_macro; display=false)
@@ -237,16 +264,6 @@ println(
 nothing                                                                  # hide
 ```
 
-```@example ex-energy
-plt = plot(
-    sol_macro, :state, :control; label="Macro", color=1, size=(800, 600)
-)
-plot!(
-    plt, sol_func, :state, :control;
-    label="Functional API", color=2, linestyle=:dash,
-)
-```
-
 The two models are functionally equivalent. The key difference is visible via [`definition`](@ref): the macro records the full DSL expression, whereas the functional API stores an empty definition.
 
 ```@example ex-energy
@@ -259,13 +276,18 @@ has_abstract_definition(ocp_func)
 
 Full worked story (direct + indirect): [Energy minimisation](@ref examples-double-integrator-energy) · [example gallery](@ref examples-gallery).
 
-### 2. Double integrator — time minimisation
+=== 2. Time
 
-The same wagon, transferred as fast as possible: the control is box-bounded and the final time `tf` is a free **variable** (`variable!` before `time!`, then `indf=1`). The cost is a Mayer term (`tf`), not a Lagrange integral. We load OptimalControl and the NLP solver of the direct method:
+### Time minimisation
+
+The same wagon, transferred as fast as possible: the control is box-bounded and the final time `tf` is a free **variable** (`variable!` before `time!`, then `indf=1`). The cost is a Mayer term (`tf`), not a Lagrange integral.
+
+```@setup ex-time
+using OptimalControl
+using NLPModelsIpopt
+```
 
 ```@example ex-time
-using OptimalControl   # define the problem and solve it
-using NLPModelsIpopt   # NLP solver of the direct method
 t0 = 0.0; x0 = [-1.0, 0.0]; xf = [0.0, 0.0]
 nothing # hide
 ```
@@ -320,7 +342,8 @@ state!(pre, 2, "x", ["q", "v"])
 control!(pre, 1)
 dynamics!(pre, f_time!)
 constraint!(pre,
-    :boundary; f=boundary_time!, lb=zeros(4), ub=zeros(4), label=:endpoint
+    :boundary; f=boundary_time!, 
+    lb=zeros(4), ub=zeros(4), label=:endpoint
 )
 constraint!(pre, :control; rg=1:1, lb=[-1.0], ub=[1.0], label=:u_box)
 objective!(pre, :min; mayer=(x0_, xf_, v) -> v)
@@ -348,14 +371,18 @@ nothing                                                                  # hide
 
 Full worked story (direct + indirect): [Time minimisation (bang–bang)](@ref examples-double-integrator-time) · [example gallery](@ref examples-gallery).
 
-### 3. Parameter estimation — no control
+=== 3. No u
 
-No control anywhere: `control!` is simply never called (see [Control-free problems](@ref modelling-without-control)). Only a **variable** — the growth rate `λ` — is optimised, fitting the state to data. The Lagrange integrand reads `t` through `data(t)`, so the problem is **non-autonomous**. We load OptimalControl and the NLP solver of the direct method:
+### Parameter estimation — no control
+
+No control anywhere: `control!` is simply never called (see [Control-free problems](@ref modelling-without-control)). Only a **variable** — the growth rate `λ` — is optimised, fitting the state to data. The Lagrange integrand reads `t` through `data(t)`, so the problem is **non-autonomous**.
+
+```@setup ex-control-free
+using OptimalControl
+using NLPModelsIpopt
+```
 
 ```@example ex-control-free
-using OptimalControl   # define the problem and solve it
-using NLPModelsIpopt   # NLP solver of the direct method
-
 λ_true = 0.5
 x_true(t) = 2 * exp(λ_true * t)
 data(t) = x_true(t) + 0.2 * sin(4π * t)
@@ -390,7 +417,7 @@ nothing # hide
 ```@example ex-control-free
 # the functions of the problem
 function f_cf!(dx, t, x, u, v)
-    dx[1] = v * x        # v: the scalar variable λ; x: the scalar state
+    dx[1] = v * x  # v: the scalar variable λ; x: the scalar state
     return nothing
 end
 function boundary_cf!(b, x0_, xf_, v)
@@ -433,14 +460,18 @@ nothing                                                                   # hide
 
 Full worked story (direct + indirect): [Parameter estimation without a control](@ref examples-control-free), [Control-free problems](@ref modelling-without-control) · [example gallery](@ref examples-gallery).
 
-### 4. Control and variable together
+=== 4. u + v
 
-The growth problem again, now with a control input and a quadratic control cost — a **variable** (`λ`) and a **control** (`u`) optimised at once. We load OptimalControl and the NLP solver of the direct method:
+### Control and variable together
+
+The growth problem again, now with a control input and a quadratic control cost — a **variable** (`λ`) and a **control** (`u`) optimised at once.
+
+```@setup ex-control-variable
+using OptimalControl
+using NLPModelsIpopt
+```
 
 ```@example ex-control-variable
-using OptimalControl   # define the problem and solve it
-using NLPModelsIpopt   # NLP solver of the direct method
-
 λ_true = 0.5
 x_true(t) = 2 * exp(λ_true * t)
 data(t) = x_true(t) + 0.2 * sin(4π * t)
@@ -520,13 +551,18 @@ nothing                                                                  # hide
 
 Full worked story (direct + indirect): [Control and variable together](@ref examples-control-and-variable) · [example gallery](@ref examples-gallery).
 
-### 5. Turnpike — bang–singular–bang
+=== 5. Turnpike
 
-The smallest problem with a singular arc: a scalar state *and* a scalar control, fixed horizon, one control box, a Lagrange cost. Nothing here is a length-1 vector — the callbacks are pure scalar arithmetic. We load OptimalControl and the NLP solver of the direct method:
+### Turnpike — bang–singular–bang
+
+The smallest problem with a singular arc: a scalar state *and* a scalar control, fixed horizon, one control box, a Lagrange cost. Nothing here is a length-1 vector — the callbacks are pure scalar arithmetic.
+
+```@setup ex-turnpike
+using OptimalControl
+using NLPModelsIpopt
+```
 
 ```@example ex-turnpike
-using OptimalControl   # define the problem and solve it
-using NLPModelsIpopt   # NLP solver of the direct method
 t0 = 0.0; tf = 2.0; x0 = 1.0; xf = 0.5
 nothing # hide
 ```
@@ -579,7 +615,7 @@ constraint!(pre,
     :boundary; f=boundary_turnpike!, 
     lb=zeros(2), ub=zeros(2), label=:endpoint
 )
-constraint!(pre, :control; rg=1:1, lb=[-1.0], ub=[1.0], label=:u_box)
+constraint!(pre, :control; rg=1:1, lb=[-1], ub=[1], label=:u_box)
 objective!(pre, :min; lagrange=(t, x, u, v) -> x^2)
 time_dependence!(pre; autonomous=true)
 ocp_func = build(pre)
@@ -604,14 +640,15 @@ nothing                                                                  # hide
 
 Full worked story (direct + indirect): [Turnpike (bang–singular–bang)](@ref examples-turnpike) · [example gallery](@ref examples-gallery).
 
-### 6. Singular control
+=== 6. Singular
 
-A planar vehicle with drift, time-optimal: three-dimensional state, free final time, and box bounds on both the control and one state component. The optimal control has a singular arc — the example page computes it with the Geometry toolkit. We load OptimalControl and the NLP solver of the direct method:
+### Singular control
 
-```@example ex-singular
-using OptimalControl   # define the problem and solve it
-using NLPModelsIpopt   # NLP solver of the direct method
-nothing # hide
+A planar vehicle with drift, time-optimal: three-dimensional state, free final time, and box bounds on both the control and one state component. The optimal control has a singular arc — the example page computes it with the Geometry toolkit.
+
+```@setup ex-singular
+using OptimalControl
+using NLPModelsIpopt
 ```
 
 :::tabs key:functional-api
@@ -671,8 +708,8 @@ constraint!(pre,
     :boundary; f=boundary_singular!, 
     lb=zeros(4), ub=zeros(4), label=:endpoint
 )
-constraint!(pre, :control; rg=1:1, lb=[-1.0], ub=[1.0], label=:u_box)
-constraint!(pre, :state; rg=3:3, lb=[-π / 2], ub=[π / 2], label=:θ_box)
+constraint!(pre, :control; rg=1:1, lb=[-1], ub=[1], label=:u_box)
+constraint!(pre, :state; rg=3:3, lb=[-π/2], ub=[π/2], label=:θ_box)
 objective!(pre, :min; mayer=(q0, qf, v) -> v)
 time_dependence!(pre; autonomous=true)
 ocp_func = build(pre)
@@ -697,13 +734,18 @@ nothing                                                                  # hide
 
 Full worked story (direct + indirect): [Singular control](@ref examples-singular-control) · [example gallery](@ref examples-gallery).
 
-### 7. State constraint
+=== 7. State box
 
-The energy-minimal transfer of problem 1, now with an upper bound on the velocity: a **box** constraint on the state component `v`, with the label `vmax` (its multiplier is then `dual(sol, ocp, :vmax)`, see [Labels](@ref modelling-abstract-syntax-labels)). Without it, the velocity would peak at 1.5. We load OptimalControl and the NLP solver of the direct method:
+### State constraint
+
+The energy-minimal transfer of problem 1, now with an upper bound on the velocity: a **box** constraint on the state component `v`, with the label `vmax` (its multiplier is then `dual(sol, ocp, :vmax)`, see [Labels](@ref modelling-abstract-syntax-labels)). Without it, the velocity would peak at 1.5.
+
+```@setup ex-state-constraint
+using OptimalControl
+using NLPModelsIpopt
+```
 
 ```@example ex-state-constraint
-using OptimalControl   # define the problem and solve it
-using NLPModelsIpopt   # NLP solver of the direct method
 t0 = 0.0; tf = 1.0; x0 = [-1.0, 0.0]; xf = [0.0, 0.0]; VMAX = 1.2
 nothing # hide
 ```
@@ -783,6 +825,8 @@ nothing                                                                  # hide
 ```
 
 Full worked story (direct + indirect): [State constraint](@ref examples-state-constraint) · [example gallery](@ref examples-gallery).
+
+::::
 
 ## [Shapes in callbacks](@id modelling-functional-api-shapes)
 
