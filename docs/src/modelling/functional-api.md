@@ -180,13 +180,12 @@ nothing # hide
 == Functional API
 
 ```@example ex-energy
-# the functions of the problem: dynamics, boundary conditions, cost integrand
+# the functions of the problem: dynamics, boundary, cost integrand
 function f_energy!(dx, t, x, u, v)
     dx[1] = x[2]
     dx[2] = u
     return nothing
 end
-
 function boundary_energy!(b, x0_, xf_, v)
     b[1] = x0_[1] - x0[1]
     b[2] = x0_[2] - x0[2]
@@ -194,30 +193,22 @@ function boundary_energy!(b, x0_, xf_, v)
     b[4] = xf_[2] - xf[2]
     return nothing
 end
-
 lagrange_energy(t, x, u, v) = 0.5 * u^2
 
 # then the model, built one component at a time
 pre = OptimalControl.PreModel()
-
 time!(pre; t0=t0, tf=tf)
-# state "x" with components "q" (position) and "v" (velocity)
-state!(pre, 2, "x", ["q", "v"])
+state!(pre, 2, "x", ["q", "v"]) # state "x" with components "q" and "v"
 control!(pre, 1)
-
 dynamics!(pre, f_energy!)
-
 constraint!(pre,
     :boundary;
     f=boundary_energy!,
     lb=zeros(4), ub=zeros(4),
     label=:endpoint
 )
-
 objective!(pre, :min; lagrange=lagrange_energy)
-
 time_dependence!(pre; autonomous=true)
-
 ocp_func = build(pre)
 nothing # hide
 ```
@@ -313,7 +304,6 @@ function f_time!(dx, t, x, u, v)
     dx[2] = u
     return nothing
 end
-
 function boundary_time!(b, x0_, xf_, v)
     b[1] = x0_[1] - x0[1]
     b[2] = x0_[2] - x0[2]
@@ -324,24 +314,17 @@ end
 
 # then the model, built one component at a time
 pre = OptimalControl.PreModel()
-
 variable!(pre, 1, "tf")            # free final time — before time!
 time!(pre; t0=t0, indf=1)          # tf is variable 1
 state!(pre, 2, "x", ["q", "v"])
 control!(pre, 1)
-
 dynamics!(pre, f_time!)
-
 constraint!(pre,
     :boundary; f=boundary_time!, lb=zeros(4), ub=zeros(4), label=:endpoint
 )
-
 constraint!(pre, :control; rg=1:1, lb=[-1.0], ub=[1.0], label=:u_box)
-
 objective!(pre, :min; mayer=(x0_, xf_, v) -> v)
-
 time_dependence!(pre; autonomous=true)
-
 ocp_func = build(pre)
 nothing # hide
 ```
@@ -410,7 +393,6 @@ function f_cf!(dx, t, x, u, v)
     dx[1] = v * x        # v: the scalar variable λ; x: the scalar state
     return nothing
 end
-
 function boundary_cf!(b, x0_, xf_, v)
     b[1] = x0_ - x0        # 1-D state ⇒ x0_ is a scalar
     return nothing
@@ -418,22 +400,16 @@ end
 
 # then the model, built one component at a time
 pre = OptimalControl.PreModel()
-
 variable!(pre, 1, "λ")
 time!(pre; t0=t0, tf=tf)
 state!(pre, 1, "x")
 # no control! — this problem is control-free
-
 dynamics!(pre, f_cf!)
-
 objective!(pre, :min; lagrange=(t, x, u, v) -> (x - data(t))^2)
-
 constraint!(pre,
     :boundary; f=boundary_cf!, lb=[0.0], ub=[0.0], label=:ic
 )
-
 time_dependence!(pre; autonomous=false)   # data(t) depends on t
-
 ocp_func = build(pre)
 nothing # hide
 ```
@@ -503,7 +479,6 @@ function f_cv!(dx, t, x, u, v)
     dx[1] = v * x + u
     return nothing
 end
-
 function boundary_cv!(b, x0_, xf_, v)
     b[1] = x0_ - x0
     return nothing
@@ -511,24 +486,18 @@ end
 
 # then the model, built one component at a time
 pre = OptimalControl.PreModel()
-
 variable!(pre, 1, "λ")
 time!(pre; t0=t0, tf=tf)
 state!(pre, 1, "x")
 control!(pre, 1)
-
 dynamics!(pre, f_cv!)
-
 objective!(pre, :min;
     lagrange=(t, x, u, v) -> (x - data(t))^2 + 0.5 * u^2,
 )
-
 constraint!(pre,
     :boundary; f=boundary_cv!, lb=[0.0], ub=[0.0], label=:ic
 )
-
 time_dependence!(pre; autonomous=false)
-
 ocp_func = build(pre)
 nothing # hide
 ```
@@ -594,7 +563,6 @@ function f_turnpike!(dx, t, x, u, v)
     dx[1] = u             # x, u both scalars
     return nothing
 end
-
 function boundary_turnpike!(b, x0_, xf_, v)
     b[1] = x0_ - x0       # 1-D state ⇒ x0_, xf_ are scalars
     b[2] = xf_ - xf
@@ -603,23 +571,17 @@ end
 
 # then the model, built one component at a time
 pre = OptimalControl.PreModel()
-
 time!(pre; t0=t0, tf=tf)
 state!(pre, 1, "x")
 control!(pre, 1)
-
 dynamics!(pre, f_turnpike!)
-
 constraint!(pre,
-    :boundary; f=boundary_turnpike!, lb=zeros(2), ub=zeros(2), label=:endpoint
+    :boundary; f=boundary_turnpike!, 
+    lb=zeros(2), ub=zeros(2), label=:endpoint
 )
-
 constraint!(pre, :control; rg=1:1, lb=[-1.0], ub=[1.0], label=:u_box)
-
 objective!(pre, :min; lagrange=(t, x, u, v) -> x^2)
-
 time_dependence!(pre; autonomous=true)
-
 ocp_func = build(pre)
 nothing # hide
 ```
@@ -690,7 +652,6 @@ function f_singular!(dq, t, q, u, v)
     dq[3] = u
     return nothing
 end
-
 function boundary_singular!(b, q0, qf, v)
     b[1] = q0[1]          # x(0) = 0
     b[2] = q0[2]          # y(0) = 0
@@ -701,25 +662,19 @@ end
 
 # then the model, built one component at a time
 pre = OptimalControl.PreModel()
-
 variable!(pre, 1, "tf")
 time!(pre; t0=0.0, indf=1)
 state!(pre, 3, "q", ["x", "y", "θ"])
 control!(pre, 1)
-
 dynamics!(pre, f_singular!)
-
 constraint!(pre,
-    :boundary; f=boundary_singular!, lb=zeros(4), ub=zeros(4), label=:endpoint
+    :boundary; f=boundary_singular!, 
+    lb=zeros(4), ub=zeros(4), label=:endpoint
 )
-
 constraint!(pre, :control; rg=1:1, lb=[-1.0], ub=[1.0], label=:u_box)
 constraint!(pre, :state; rg=3:3, lb=[-π / 2], ub=[π / 2], label=:θ_box)
-
 objective!(pre, :min; mayer=(q0, qf, v) -> v)
-
 time_dependence!(pre; autonomous=true)
-
 ocp_func = build(pre)
 nothing # hide
 ```
@@ -786,7 +741,6 @@ function f_sc!(dx, t, x, u, v)
     dx[2] = u
     return nothing
 end
-
 function boundary_sc!(b, x0_, xf_, v)
     b[1] = x0_[1] - x0[1]
     b[2] = x0_[2] - x0[2]
@@ -797,23 +751,17 @@ end
 
 # then the model, built one component at a time
 pre = OptimalControl.PreModel()
-
 time!(pre; t0=t0, tf=tf)
 state!(pre, 2, "x", ["q", "v"])
 control!(pre, 1)
-
 dynamics!(pre, f_sc!)
-
 constraint!(pre,
-    :boundary; f=boundary_sc!, lb=zeros(4), ub=zeros(4), label=:endpoint
+    :boundary; f=boundary_sc!, 
+    lb=zeros(4), ub=zeros(4), label=:endpoint
 )
-
-constraint!(pre, :state; rg=2:2, lb=[-Inf], ub=[VMAX], label=:vmax)   # v(t) ≤ VMAX
-
+constraint!(pre, :state; rg=2:2, lb=[-Inf], ub=[VMAX], label=:vmax)
 objective!(pre, :min; lagrange=(t, x, u, v) -> 0.5 * u^2)
-
 time_dependence!(pre; autonomous=true)
-
 ocp_func = build(pre)
 nothing # hide
 ```
