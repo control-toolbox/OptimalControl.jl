@@ -13,20 +13,23 @@ how to [solve](@ref solve-overview) a problem, and how to [read its solution](@r
 ```text
 Learn the syntax of the OptimalControl.jl DSL (Julia language) to translate math into this DSL,
 and how to solve a problem and read its solution, from these pages:
-https://control-toolbox.org/OptimalControl.jl/dev/modelling/abstract-syntax
-https://control-toolbox.org/OptimalControl.jl/dev/solve/overview
-https://control-toolbox.org/OptimalControl.jl/dev/results/solution
+https://control-toolbox.org/OptimalControl.jl/stable/modelling/abstract-syntax
+https://control-toolbox.org/OptimalControl.jl/stable/solve/overview
+https://control-toolbox.org/OptimalControl.jl/stable/results/solution
 ```
 
 ```@raw html
+<style>
+html.dark .ct-ai-chatgpt { background-color:#FAFAFA !important; color:#0F0F0F !important; }
+</style>
 <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:16px 0;">
   <span style="font-weight:600;">Open:</span>
-  <a href="https://chatgpt.com/?q=Learn+the+syntax+of+the+OptimalControl.jl+DSL+%28Julia+language%29+to+translate+math+into+this+DSL%2C+and+how+to+solve+a+problem+and+read+its+solution%2C+from+these+pages%3A+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fdev%2Fmodelling%2Fabstract-syntax+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fdev%2Fsolve%2Foverview+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fdev%2Fresults%2Fsolution" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#10A37F; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none;">ChatGPT</a>
-  <a href="https://claude.ai/new?q=Learn+the+syntax+of+the+OptimalControl.jl+DSL+%28Julia+language%29+to+translate+math+into+this+DSL%2C+and+how+to+solve+a+problem+and+read+its+solution%2C+from+these+pages%3A+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fdev%2Fmodelling%2Fabstract-syntax+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fdev%2Fsolve%2Foverview+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fdev%2Fresults%2Fsolution" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#CC9B7A; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none;">Claude</a>
-  <a href="https://copilot.microsoft.com/?q=Learn+the+syntax+of+the+OptimalControl.jl+DSL+%28Julia+language%29+to+translate+math+into+this+DSL%2C+and+how+to+solve+a+problem+and+read+its+solution%2C+from+these+pages%3A+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fdev%2Fmodelling%2Fabstract-syntax+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fdev%2Fsolve%2Foverview+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fdev%2Fresults%2Fsolution" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#0078D4; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none;">Copilot</a>
-  <a href="https://gemini.google.com/app" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#4285F4; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none;">Gemini</a>
-  <a href="https://chat.mistral.ai/chat?q=Learn+the+syntax+of+the+OptimalControl.jl+DSL+%28Julia+language%29+to+translate+math+into+this+DSL%2C+and+how+to+solve+a+problem+and+read+its+solution%2C+from+these+pages%3A+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fdev%2Fmodelling%2Fabstract-syntax+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fdev%2Fsolve%2Foverview+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fdev%2Fresults%2Fsolution" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#FF7000; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none;">Mistral</a>
-  <a href="https://www.perplexity.ai/search/new?q=Learn+the+syntax+of+the+OptimalControl.jl+DSL+%28Julia+language%29+to+translate+math+into+this+DSL%2C+and+how+to+solve+a+problem+and+read+its+solution%2C+from+these+pages%3A+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fdev%2Fmodelling%2Fabstract-syntax+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fdev%2Fsolve%2Foverview+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fdev%2Fresults%2Fsolution" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#9C4DE2; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none;">Perplexity</a>
+  <a href="https://chatgpt.com/?q=Learn+the+syntax+of+the+OptimalControl.jl+DSL+%28Julia+language%29+to+translate+math+into+this+DSL%2C+and+how+to+solve+a+problem+and+read+its+solution%2C+from+these+pages%3A+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fmodelling%2Fabstract-syntax+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fsolve%2Foverview+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fresults%2Fsolution" target="_blank" rel="nofollow noreferrer noopener" class="ct-ai-chatgpt" style="padding:4px 10px; background-color:#0F0F0F; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none;">ChatGPT</a>
+  <a href="https://claude.ai/new?q=Learn+the+syntax+of+the+OptimalControl.jl+DSL+%28Julia+language%29+to+translate+math+into+this+DSL%2C+and+how+to+solve+a+problem+and+read+its+solution%2C+from+these+pages%3A+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fmodelling%2Fabstract-syntax+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fsolve%2Foverview+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fresults%2Fsolution" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#D97757; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none;">Claude</a>
+  <a href="https://copilot.microsoft.com/?q=Learn+the+syntax+of+the+OptimalControl.jl+DSL+%28Julia+language%29+to+translate+math+into+this+DSL%2C+and+how+to+solve+a+problem+and+read+its+solution%2C+from+these+pages%3A+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fmodelling%2Fabstract-syntax+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fsolve%2Foverview+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fresults%2Fsolution" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#464FEB; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none;">Copilot</a>
+  <a href="https://gemini.google.com/app" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#3186FF; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none;">Gemini</a>
+  <a href="https://chat.mistral.ai/chat?q=Learn+the+syntax+of+the+OptimalControl.jl+DSL+%28Julia+language%29+to+translate+math+into+this+DSL%2C+and+how+to+solve+a+problem+and+read+its+solution%2C+from+these+pages%3A+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fmodelling%2Fabstract-syntax+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fsolve%2Foverview+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fresults%2Fsolution" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#FA500F; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none;">Mistral</a>
+  <a href="https://www.perplexity.ai/search/new?q=Learn+the+syntax+of+the+OptimalControl.jl+DSL+%28Julia+language%29+to+translate+math+into+this+DSL%2C+and+how+to+solve+a+problem+and+read+its+solution%2C+from+these+pages%3A+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fmodelling%2Fabstract-syntax+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fsolve%2Foverview+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fresults%2Fsolution" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#20808D; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none;">Perplexity</a>
 </div>
 ```
 
@@ -61,7 +64,7 @@ For instance, with the Goddard rocket problem, also solved in the
 [guided tour](@ref getting-started-guided-tour), in this image:
 
 ```@raw html
-<img src="../assets/rocket-def.png" alt="The Goddard rocket problem" style="display:block; margin:16px auto; width:100%; max-width:800px; height:auto;">
+<img src="../assets/rocket-def.png" alt="The Goddard rocket problem" style="display:block; margin:16px auto; width:100%; max-width:600px; height:auto;">
 ```
 
 ## Ask for more
@@ -91,7 +94,7 @@ so that I can compare them with the numerical solution.
 !!! warning "Run the code, and check what the assistant says"
 
     An assistant does not run the code it writes, and its explanations may be wrong even
-    when its code is right. In our tries, with ChatGPT in November 2026:
+    when its code is right. In our tests, with ChatGPT in November 2026:
 
     - for the problem above, the code was right, but the assistant announced $t_f = 3$, with
       $u = 1$ on the whole interval: then $q(3) = -1/2$, not $3$. The solution is
