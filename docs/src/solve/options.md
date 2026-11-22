@@ -1,5 +1,9 @@
 # [Options](@id solve-options)
 
+```@meta
+Draft = false
+```
+
 Every keyword argument passed to `solve` ends up on exactly one strategy: the discretizer,
 the modeler, or the solver. This page covers how that routing works, the two escape hatches
 for the cases it does not handle automatically, and how to inspect where a value came from.

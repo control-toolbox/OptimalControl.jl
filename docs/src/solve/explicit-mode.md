@@ -59,7 +59,7 @@ Give one component, and the other two are completed the same way descriptive mod
 partial token list — first match, top to bottom in [`methods`](@ref)`()`:
 
 ```@example explicit
-methods()[1]  # what a bare solve(ocp) completes to
+first(methods())  # what a bare solve(ocp) completes to
 ```
 
 ```@example explicit
