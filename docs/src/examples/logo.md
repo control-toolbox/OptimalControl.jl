@@ -91,7 +91,7 @@ nothing # hide
 
 ## Direct method
 
-We solve it by the [direct method](@ref solve-overview-direct-method), with 400 time steps.
+We solve it by the [direct method](@ref modelling-discretisation-direct-method), with 400 time steps.
 Low-thrust transfers are hard to solve from a cold start, so we warm-start with a crude
 analytical spiral: the radius grows linearly from $r_0$ to $r_f$, and the angle advances at
 the local Keplerian rate $\dot\theta = r^{-3/2}$. The guess is a named tuple of functions of

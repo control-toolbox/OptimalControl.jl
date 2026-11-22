@@ -82,7 +82,7 @@ already involves the control, $\frac{\mathrm{d}}{\mathrm{d}t} c(x(t)) = -u(t)$.
 
 ### [Direct method](@id examples-state-constraint-first-order-direct)
 
-A [direct method](@ref solve-overview-direct-method) on a coarse grid shows the structure of the solution, and gives the initial
+A [direct method](@ref modelling-discretisation-direct-method) on a coarse grid shows the structure of the solution, and gives the initial
 guess of the indirect method:
 
 ```@example main

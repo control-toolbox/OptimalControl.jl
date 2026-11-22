@@ -4,37 +4,20 @@
 solver, get a [`Solution`](@ref results-solution) back. This page shows the quickest way to
 call it, how to read what it prints, and the two ways to steer it away from its defaults.
 
-## [The direct method, briefly](@id solve-overview-direct-method)
+## The direct method
 
-The notation is the one of [Notation and conventions](@ref modelling-formulation-conventions).
-A direct method replaces the optimal control problem by a finite-dimensional one:
-
-- the time interval is cut by a grid $t_0 < t_1 < \dots < t_N = t_f$, with $N$ steps
-  (`grid_size`, 250 by default);
-- the unknowns are the values of the state and of the control on this grid, and the
-  variable if there is one;
-- the dynamics $\dot x = f(t, x, u, v)$ becomes, on each step, the equation of an integration
-  scheme, for instance $x_{i+1} = x_i + h_i\, f(t_i, x_i, u_i, v)$ with $h_i = t_{i+1} - t_i$
-  for the explicit Euler scheme (the default is the midpoint scheme, see
-  [Choosing a method](@ref solve-choosing-a-method) for the others);
-- the cost is computed with the same scheme, and the other constraints are written at the
-  points of the grid.
-
-This gives a nonlinear program (NLP) on the vector $X$ of all the unknowns,
-
-```math
-\min_X\ F(X) \quad \text{subject to} \quad LB \le C(X) \le UB,
-```
-
-solved by an NLP solver, Ipopt by default. Its multipliers give the dual variables of the
-solution: those of the discretised dynamics approximate the costate $p$ of the maximum
-principle (see [Solution object](@ref results-solution-trajectories)).
+A direct method replaces the optimal control problem by a finite-dimensional one: a grid cuts
+the time interval, the unknowns are the values of the state and of the control on the grid,
+and the dynamics becomes the equations of an integration scheme between consecutive points.
+This gives a nonlinear program (NLP), solved by an NLP solver, Ipopt by default; its
+multipliers give the costate of the solution. The equations are on
+[The direct method](@ref modelling-discretisation-direct-method).
 
 `solve` carries out these steps with three components: a **discretizer** (the grid and the
 scheme), a **modeler** that builds the NLP, and a **solver**. The rest of this section shows
-how to choose and configure them; the [Explicit mode](@ref solve-explicit-mode-stages) runs
-the steps one by one. The equations of each scheme are in the
-[CTDirect documentation](https://control-toolbox.org/CTDirect.jl/stable/).
+how to choose and configure them. [Discretisation](@ref modelling-discretisation) runs the
+steps one by one, and keeps the discretised problem and the NLP to inspect them or to hand them
+to another solver.
 
 ## Quick start
 
@@ -175,3 +158,5 @@ nothing                                       # hide
 - [Options](@ref solve-options) — routing, inspection with `describe`, disambiguation.
 - [Explicit mode](@ref solve-explicit-mode) — build and pass typed components directly.
 - [Initial guess](@ref solve-initial-guess) — every way to hand `solve` a starting point.
+- [Discretisation](@ref modelling-discretisation) — the discretised problem and the NLP, step
+  by step.

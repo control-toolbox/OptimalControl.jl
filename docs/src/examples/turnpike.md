@@ -62,7 +62,7 @@ nothing # hide
 
 ## Direct method
 
-We solve it by the [direct method](@ref solve-overview-direct-method):
+We solve it by the [direct method](@ref modelling-discretisation-direct-method):
 
 ```@example main
 direct_sol = solve(ocp; grid_size=100, display=false)

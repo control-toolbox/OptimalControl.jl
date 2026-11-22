@@ -99,7 +99,7 @@ f_1(q) = \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix}.
 
 ## Direct method
 
-We solve it by the [direct method](@ref solve-overview-direct-method):
+We solve it by the [direct method](@ref modelling-discretisation-direct-method):
 
 ```@example main
 direct_sol = solve(ocp; display=false)

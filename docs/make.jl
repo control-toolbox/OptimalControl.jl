@@ -376,6 +376,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "Functional API" => "modelling/functional-api.md",
                 "Control-free problems" => "modelling/without-control.md",
                 "Inspect a problem" => "modelling/inspect.md",
+                "Discretisation" => "modelling/discretisation.md",
                 "With AI" => "modelling/with-ai.md",
             ],
             "Solve (direct)" => [

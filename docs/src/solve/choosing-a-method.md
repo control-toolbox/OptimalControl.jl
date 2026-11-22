@@ -200,7 +200,7 @@ For the complete list of each package's options, see:
 - **MadNCL**: [repository](https://github.com/MadNLP/MadNCL.jl)
 - **Knitro**: [options](https://www.artelys.com/docs/knitro/3_referenceManual/userOptions.html)
 
-## Discretisation schemes
+## [Discretisation schemes](@id solve-choosing-a-method-schemes)
 
 `:collocation` accepts a `scheme` option (alias `disc_method`):
 

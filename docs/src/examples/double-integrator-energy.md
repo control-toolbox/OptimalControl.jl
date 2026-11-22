@@ -77,7 +77,7 @@ take.
 
 ## Direct method
 
-The direct method, [described briefly](@ref solve-overview-direct-method), discretises the
+The [direct method](@ref modelling-discretisation-direct-method) discretises the
 problem in time and solves the resulting nonlinear program, here with Ipopt:
 
 ```@example main

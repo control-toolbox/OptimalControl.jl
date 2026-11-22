@@ -69,7 +69,7 @@ nothing # hide
 
 ### [Direct method](@id examples-control-free-growth-direct)
 
-With the [direct method](@ref solve-overview-direct-method) on a coarse grid of 20 steps:
+With the [direct method](@ref modelling-discretisation-direct-method) on a coarse grid of 20 steps:
 
 ```@example main
 growth_sol = solve(ocp_growth; grid_size=20, display=false)

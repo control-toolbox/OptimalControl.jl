@@ -71,7 +71,7 @@ nothing # hide
 
 ## Direct method
 
-We solve it by the [direct method](@ref solve-overview-direct-method), with 200 time steps:
+We solve it by the [direct method](@ref modelling-discretisation-direct-method), with 200 time steps:
 
 ```@example main
 direct_sol = solve(ocp; grid_size=200, display=false)

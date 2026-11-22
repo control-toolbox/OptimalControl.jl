@@ -91,7 +91,7 @@ That is the whole program — model, solve, plot. Each step has its own guide:
 | Section | What's there |
 | :--- | :--- |
 | [Getting started](@ref getting-started-installation) | Install, solve your first problem, then a longer guided tour covering both the direct and indirect methods. |
-| [Modelling](@ref modelling-formulation) | The `@def` DSL, the macro-free functional API, control-free (parameter estimation) problems, and problem introspection. |
+| [Modelling](@ref modelling-formulation) | The `@def` DSL, the macro-free functional API, control-free (parameter estimation) problems, problem introspection, and the discretised problem and its NLP. |
 | [Solve (direct)](@ref solve-overview) | Discretise-and-transcribe methods: choosing a strategy, initial guesses, options, explicit mode, GPU. |
 | [Results](@ref results-solution) | Read a `Solution` — trajectories, costate, duals, status — plot it, save it, reload it. |
 | [Flows (indirect)](@ref flows-overview) | The Pontryagin Maximum Principle as code: build, integrate, and shoot with Hamiltonian flows. |
