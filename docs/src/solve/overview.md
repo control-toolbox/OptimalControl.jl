@@ -124,9 +124,10 @@ rather than assuming success. Here we stop Ipopt before its first iteration:
 
 ```@example main
 sol = solve(ocp; max_iter=0, display=false, print_level=0)
-println("successful: ", successful(sol))    # did the solver report success?
-println("status:     ", status(sol))        # a Symbol, e.g. :first_order, :max_iter
-println("violation:  ", constraints_violation(sol))
+@show successful(sol)              # did the solver report success?
+@show status(sol)                  # a Symbol, e.g. :first_order, :max_iter
+@show constraints_violation(sol)
+nothing # hide
 ```
 
 ```@example main
@@ -140,9 +141,10 @@ solve reports `successful(sol) == true`, the status `:first_order` and a negligi
 
 ```@example main
 sol = solve(ocp; display=false, print_level=0)
-println("successful: ", successful(sol))
-println("status:     ", status(sol))
-println("violation:  ", constraints_violation(sol))
+@show successful(sol)
+@show status(sol)
+@show constraints_violation(sol)
+nothing # hide
 ```
 
 ```@example main
