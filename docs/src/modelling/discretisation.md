@@ -79,10 +79,9 @@ nothing # hide
 `discretize` takes the problem and a discretizer, here a collocation on 100 steps with the
 trapezoidal scheme:
 
-```@example main
+```@repl main
 discretizer = OptimalControl.Collocation(grid_size=100, scheme=:trapeze)
-docp = discretize(ocp, discretizer)
-nothing # hide
+docp = discretize(ocp, discretizer);
 ```
 
 The result is a discretised optimal control problem, or DOCP, of type
@@ -90,7 +89,7 @@ The result is a discretised optimal control problem, or DOCP, of type
 scheme, but not yet how they are evaluated and differentiated: that is the job of the modeler,
 at the next step. It keeps the problem it comes from:
 
-```@example main
+```@repl main
 ocp_model(docp) === ocp
 ```
 
@@ -98,7 +97,7 @@ A DOCP is built once and serves as many times as needed. It gives NLPs, for any 
 any initial guess (next section), and `solve` takes it in place of the problem, with an
 initial guess and the three other components:
 
-```@example main
+```@repl main
 init = build_initial_guess(ocp, nothing)   # the default initial guess
 
 sol_ipopt = solve(docp, init, OptimalControl.ADNLP(), OptimalControl.Ipopt(print_level=0);
@@ -112,7 +111,7 @@ The two solvers solve the same discretised problem, and find the same value, up 
 tolerances. A solution is also a good initial guess for a nearby problem on the same grid, the
 start of a continuation (see [Initial guess](@ref solve-initial-guess)):
 
-```@example main
+```@repl main
 warm = build_initial_guess(ocp, sol_ipopt)
 sol = solve(docp, warm, OptimalControl.ADNLP(), OptimalControl.Ipopt(print_level=0);
             display=false)
@@ -129,6 +128,24 @@ nothing                                                                  # hide
 
 Started from the solution, Ipopt has nothing left to do.
 
+!!! note "A lower-level `solve`"
+
+    `solve(docp, init, modeler, solver)` is not the `solve` of a problem: it is the method of
+    CTSolvers that `solve(ocp, …)` calls once the problem is discretised. Its four arguments
+    are positional, required, and already built:
+
+    - no symbolic tokens and no defaults: `solve(docp)` or `solve(docp, :ipopt)` throw a
+      `MethodError`;
+    - no routing of options: each component carries its own, set in its constructor;
+    - the initial guess is the one [`build_initial_guess`](@ref) returns, not a raw `@init`,
+      named tuple or solution;
+    - `display` shows the log of the solver, not the configuration box.
+
+    It builds the NLP with `build_model`, solves it, and reads the solution back, as in
+    [Solving the NLP yourself](@ref modelling-discretisation-solve-nlp) below. The
+    [Data Flow](https://control-toolbox.org/CTSolvers.jl/stable/architecture#Data-Flow)
+    section of the CTSolvers documentation describes this pipeline.
+
 ## [The NLP models](@id modelling-discretisation-nlp)
 
 `nlp_model` builds the NLP of a DOCP, for an initial guess and a modeler. The modeler
@@ -136,7 +153,7 @@ Started from the solution, Ipopt has nothing left to do.
 [ADNLPModels.jl](https://jso.dev/ADNLPModels.jl/stable/), with derivatives computed by
 automatic differentiation:
 
-```@example main
+```@repl main
 nlp = nlp_model(docp, init, OptimalControl.ADNLP())
 nlp.meta.nvar, nlp.meta.ncon
 ```
@@ -150,7 +167,7 @@ The modeler `OptimalControl.Exa()` builds an `ExaModel`, from
 equations of the scheme in parallel, on CPU or on GPU (see [GPU](@ref solve-gpu)). Same
 unknowns, same constraints:
 
-```@example main
+```@repl main
 nlp_exa = nlp_model(docp, init, OptimalControl.Exa())
 nlp_exa.meta.nvar, nlp_exa.meta.ncon
 ```
@@ -163,14 +180,14 @@ of the JuliaSmoothOptimizers ecosystem: its functions evaluate the objective, th
 constraints and their derivatives at any point $X$. At the starting point, where the control is
 $0.1$ everywhere, both give the cost $\frac12 \int u^2 = 0.005$:
 
-```@example main
+```@repl main
 using NLPModels: obj, grad, cons, jac
 
 X = nlp.meta.x0
 obj(nlp, X), obj(nlp_exa, X)
 ```
 
-```@example main
+```@repl main
 size(jac(nlp, X))   # 204 constraints, 303 unknowns
 ```
 
@@ -192,7 +209,7 @@ sparsity, its conditioning, its derivatives, or to test an optimisation method o
 An NLP model is accepted by any solver of the NLPModels interface, not only by the ones
 `solve` knows. Here Ipopt, through `NLPModelsIpopt.ipopt`:
 
-```@example main
+```@repl main
 stats = ipopt(nlp; print_level=0)
 stats.status, stats.objective
 ```
@@ -204,9 +221,9 @@ the NLP with `OptimalControl.build_model` instead of `nlp_model`: it returns the
 `built.nlp`, together with what the modeler needs to read its solution. Then `ocp_solution`
 turns the output of the solver into a [`Solution`](@ref results-solution):
 
-```@example main
+```@repl main
 modeler = OptimalControl.ADNLP()
-built = OptimalControl.build_model(docp, init, modeler)
+built = OptimalControl.build_model(docp, init, modeler);
 stats = ipopt(built.nlp; print_level=0)
 sol = ocp_solution(built, stats, modeler)
 objective(sol), successful(sol)
@@ -214,9 +231,9 @@ objective(sol), successful(sol)
 
 The same with the `Exa` modeler and MadNLP, called through `MadNLP.madnlp`:
 
-```@example main
+```@repl main
 modeler = OptimalControl.Exa()
-built = OptimalControl.build_model(docp, init, modeler)
+built = OptimalControl.build_model(docp, init, modeler);
 stats = madnlp(built.nlp; print_level=MadNLP.ERROR)
 sol_exa = ocp_solution(built, stats, modeler)
 objective(sol_exa), successful(sol_exa)

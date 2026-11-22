@@ -190,7 +190,9 @@ objective(sol)
 nothing                                          # hide
 ```
 
-The problem is then discretised once, for as many solves as needed.
+The problem is then discretised once, for as many solves as needed. This `solve` is a
+lower-level method, with no completion and no routing of options: see
+[The discretised problem](@ref modelling-discretisation-docp) for how it differs.
 [Discretisation](@ref modelling-discretisation) runs each stage on its own: it builds the
 NLP, with `ADNLP` or `Exa`, evaluates it, and solves it with a solver called directly before
 turning its output into a solution.
