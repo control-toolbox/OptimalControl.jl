@@ -1,5 +1,9 @@
 # [Explicit mode](@id solve-explicit-mode)
 
+```@meta
+Draft = false
+```
+
 Instead of symbolic tokens, pass `solve` typed strategy instances: full control over each
 component's configuration, no completion to guess.
 

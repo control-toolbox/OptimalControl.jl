@@ -1,12 +1,19 @@
 # [Options](@id solve-options)
 
-```@meta
-Draft = false
-```
+Every keyword argument passed to `solve` does one of two things. Two **action options**
+control `solve` itself; they are handled before any strategy sees them:
 
-Every keyword argument passed to `solve` ends up on exactly one strategy: the discretizer,
-the modeler, or the solver. This page covers how that routing works, the two escape hatches
-for the cases it does not handle automatically, and how to inspect where a value came from.
+| Option | Alias | Role |
+| :--- | :--- | :--- |
+| `initial_guess` | `init` | the starting point of the solve (see [Initial guess](@ref solve-initial-guess)) |
+| `display` | `show_trace` | the configuration box and the solver's log |
+
+Every other keyword is a **strategy option**, routed to exactly one of the three strategies
+of the method — the discretizer, the modeler, or the solver (see
+[Choosing a method](@ref solve-choosing-a-method)). This page covers how that routing works,
+and the two escape hatches for the cases it does not handle automatically:
+[`route_to`](@ref solve-options-route-to), to name the target strategy explicitly, and
+[`bypass`](@ref solve-options-undeclared), to pass an option the strategy does not declare.
 
 The examples swing a pendulum up, from rest at the bottom to rest at the top, with the least
 effort. The dynamics are nonlinear, so the solver iterates, and its options change what it
@@ -37,14 +44,13 @@ nothing # hide
 `solve` runs in **strict** mode: every keyword you pass must be recognised by exactly one of
 the three strategies in play, or it's an error — never a silent no-op.
 
-```@example advanced
+```@repl advanced
 sol = solve(ocp;
     grid_size=100,     # → Collocation (discretizer)
     backend=:default,  # → ADNLP (modeler)
     max_iter=500,      # → Ipopt (solver)
     print_level=0,     # → Ipopt (solver)
-)
-nothing # hide
+);
 ```
 
 An option nobody recognises is rejected with a "did you mean" suggestion:
@@ -64,39 +70,58 @@ sol = solve(ocp; display=false)
 sol_tol = solve(ocp; tol=1e-2, display=false)
 sol_iter = solve(ocp; max_iter=2, display=false)
 
+println(
+    rpad("options", 12), 
+    rpad("successful", 11), 
+    rpad("status", 13), 
+    rpad("iterations", 11), 
+    "cost\n"
+)
 for (name, s) in (("default", sol), ("tol=1e-2", sol_tol), ("max_iter=2", sol_iter))
-    println(rpad(name, 12), rpad(successful(s), 7), rpad(status(s), 13),
-            iterations(s), " iterations, cost ", objective(s))
+    println(
+        rpad(name, 12),
+        rpad(successful(s), 11),
+        rpad(status(s), 13),
+        rpad(iterations(s), 11),
+        objective(s)
+    )
 end
 ```
 
 ```@example advanced
 @assert successful(sol) && successful(sol_tol) && !successful(sol_iter)              # hide
 @assert iterations(sol_tol) < iterations(sol)                                        # hide
-@assert abs(objective(sol_tol) - objective(sol)) > 1e-3                               # hide
+@assert abs(objective(sol_tol) - objective(sol)) > 1e-3                              # hide
 nothing                                                                              # hide
 ```
 
 Always check `successful(sol)` before using a solution (see
 [Solution object](@ref results-solution)).
 
-## Explicit routing with `route_to`
+## [Explicit routing with `route_to`](@id solve-options-route-to)
 
-If two strategies of a method declared the same option name, using it bare would be
-ambiguous, and `solve` would not guess which one you meant. With the built-in strategies,
-this does not happen today: no two strategies of a method share an option name. `route_to`
-names the target strategy explicitly. It is required for an ambiguous name, and allowed
-everywhere, for instance to be explicit:
+Routing can be made explicit: `route_to(:strategy, value)` wraps a value and names the
+strategy it goes to. It is what you reach for when a bare option name would be ambiguous —
+two strategies declaring the same name — and it is allowed everywhere else too, for instance
+simply to make the target visible in the call:
 
-```@example advanced
+```@repl advanced
 using MadNLP
 sol = solve(ocp, :madnlp;
     grid_size=50,                     # auto-routed to the discretizer
     max_iter=route_to(:madnlp, 1000), # explicitly routed
     print_level=MadNLP.ERROR,         # auto-routed to the solver
-)
-nothing # hide
+);
 ```
+
+!!! info "What the strategies declare — and what they don't"
+
+    Each strategy declares a curated set of options: the ones most users need, not the
+    package's full list. Today no two strategies of a method share an option name, so the
+    ambiguous case `route_to` is built for does not occur with the built-in strategies.
+    `describe` lists what a strategy declares (see
+    [Choosing a method](@ref solve-choosing-a-method)); for what it does not, see
+    [Undeclared solver options](@ref solve-options-undeclared) below.
 
 `route_to` takes a strategy id and a value, or the same as a keyword argument,
 `route_to(madnlp=1000)`. It also accepts several id/value pairs, to send the same option name
@@ -108,19 +133,19 @@ sol = solve(ocp, :madnlp; max_iter=route_to(madnlp=1000), display=false) # keywo
 nothing # hide
 ```
 
-## Undeclared solver options
+## [Undeclared solver options](@id solve-options-undeclared)
 
 The three strategies here declare their own options, but not every option the underlying
 solver accepts is declared — Ipopt's `mumps_print_level`, for instance, isn't in the strategy
 metadata, so it's rejected by strict validation (shown above). Combine `route_to` with
 `bypass` to force it through, unvalidated:
 
-```@example advanced
+```@repl advanced
 sol = solve(ocp, :ipopt;
     max_iter=100,
-    mumps_print_level=route_to(:ipopt, bypass(1)),
-)
-nothing # hide
+    print_level=0,
+    mumps_print_level=route_to(:ipopt, bypass(1)), # undeclared — bypass skips validation
+);
 ```
 
 `bypass` is needed in addition to `route_to` because `route_to` alone still validates against
@@ -138,20 +163,26 @@ for `bypass` (`force === bypass`); use whichever name reads better:
 `describe` prints the options of a strategy (see [Choosing a method](@ref solve-choosing-a-method)).
 The same information can be read in code, on the type, before building an instance:
 
-```@example advanced
+```@repl advanced
 :max_iter in option_names(OptimalControl.Ipopt)
-```
-
-```@example advanced
-option_default(OptimalControl.Ipopt, :max_iter), option_type(OptimalControl.Ipopt, :max_iter)
-```
-
-```@example advanced
+option_default(OptimalControl.Ipopt, :max_iter)
+option_type(OptimalControl.Ipopt, :max_iter)
 option_description(OptimalControl.Ipopt, :max_iter)
 ```
 
-`option_defaults(OptimalControl.Ipopt)` gives all the defaults at once, as a named tuple. An
-option whose default is `NotProvided` is not passed to the solver, which then uses its own.
+`option_defaults(OptimalControl.Ipopt)` gives all the defaults at once, as a named tuple.
+
+!!! note "`NotProvided` vs OptimalControl defaults"
+
+    The defaults shown by `describe` and `option_defaults` are the ones **OptimalControl**
+    sets. An option with an explicit value is always passed to the solver, overriding its
+    own default: `max_iter` is `1000` here, though Ipopt's own default is `3000`;
+    `mu_strategy` is `"adaptive"`, though Ipopt's is `"monotone"`. An option marked
+    `NotProvided` is *not passed at all* — the solver keeps its own default.
+    `hessian_approximation`, for instance, is `NotProvided`, so Ipopt uses `"exact"`.
+
+    The same holds for the modelers: `backend = :optimized` is OptimalControl's choice of AD
+    backend, while `jacobian_backend` is `NotProvided`, so ADNLPModels uses its own.
 
 ```@example advanced
 @assert :max_iter in option_names(OptimalControl.Ipopt)                  # hide
@@ -166,26 +197,28 @@ nothing                                                                  # hide
 Every option on a built strategy instance knows whether it was set by you (`:user`), left at
 its default (`:default`), or computed from the `:cpu`/`:gpu` parameter (`:computed`):
 
-```@example advanced
+```@repl advanced
 s = OptimalControl.Ipopt(max_iter=200)
-println(has_option(s, :max_iter))      # true — Ipopt declares this option
-println(has_option(s, :not_an_option)) # false
-println(option_value(s, :max_iter))    # 200 — what will actually be used
-println(option_value(s, :tol))         # 1.0e-8 — strategy default
+has_option(s, :max_iter)       # Ipopt declares this option
+has_option(s, :not_an_option)
+option_value(s, :max_iter)     # what will actually be used
+option_value(s, :tol)          # a strategy default
 
 opts = options(s)
-println(is_user(opts, :max_iter))      # true
-println(is_default(opts, :tol))        # true
-println(is_computed(opts, :max_iter))  # false
+is_user(opts, :max_iter)
+is_default(opts, :tol)
+is_computed(opts, :max_iter)
+nothing # hide
 ```
 
 `option_source` returns which of the three it was, as a `Symbol`. MadNLP's linear solver is a
 computed option: its default depends on the parameter (MUMPS on CPU, cuDSS on GPU):
 
-```@example advanced
-println(option_source(s, :max_iter))
-println(option_source(s, :tol))
-println(option_source(OptimalControl.MadNLP(), :linear_solver))
+```@repl advanced
+option_source(s, :max_iter)
+option_source(s, :tol)
+option_source(OptimalControl.MadNLP(), :linear_solver)
+nothing # hide
 ```
 
 ```@example advanced
@@ -201,11 +234,12 @@ The display of `solve` (see [Solve overview](@ref solve-overview)) shows the `:u
 
 ## Action options vs strategy options
 
-Two keywords — `init`/`initial_guess` and `display`/`show_trace` — are handled *before*
-routing even starts; they're never sent to a strategy. In each pair the two names are
-aliases: use either, but not both in the same call (an `IncorrectArgument`). If a strategy happens to declare an option with the
-same name, the action option wins by default. `route_to` is the way around that, if you ever
-need to target the strategy's own option of that name explicitly instead.
+The two action options of the introduction — `initial_guess`/`init` and
+`display`/`show_trace` — are never sent to a strategy. In each pair the two names are
+aliases: use either, but not both in the same call (an `IncorrectArgument`). If a strategy
+happens to declare an option with the same name, the action option wins by default.
+`route_to` is the way around that, if you ever need to target the strategy's own option of
+that name explicitly instead.
 
 ## See also
 
