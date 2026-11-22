@@ -168,7 +168,7 @@ Browse the tabs below: each one defines a problem — [`@def`](@ref) and functio
 
 === 1. Energy
 
-<h3>Energy minimisation</h3>
+**Energy minimisation**
 
 The simplest case: fixed time interval, boundary constraints, autonomous dynamics, Lagrange cost.
 
@@ -278,7 +278,7 @@ Full worked story (direct + indirect): [Energy minimisation](@ref examples-doubl
 
 === 2. Time
 
-<h3>Time minimisation</h3>
+**Time minimisation**
 
 The same wagon, transferred as fast as possible: the control is box-bounded and the final time `tf` is a free **variable** (`variable!` before `time!`, then `indf=1`). The cost is a Mayer term (`tf`), not a Lagrange integral.
 
@@ -373,7 +373,7 @@ Full worked story (direct + indirect): [Time minimisation (bang–bang)](@ref ex
 
 === 3. No u
 
-<h3>Parameter estimation — no control</h3>
+**Parameter estimation — no control**
 
 No control anywhere: `control!` is simply never called (see [Control-free problems](@ref modelling-without-control)). Only a **variable** — the growth rate `λ` — is optimised, fitting the state to data. The Lagrange integrand reads `t` through `data(t)`, so the problem is **non-autonomous**.
 
@@ -462,7 +462,7 @@ Full worked story (direct + indirect): [Parameter estimation without a control](
 
 === 4. u + v
 
-<h3>Control and variable together</h3>
+**Control and variable together**
 
 The growth problem again, now with a control input and a quadratic control cost — a **variable** (`λ`) and a **control** (`u`) optimised at once.
 
@@ -553,7 +553,7 @@ Full worked story (direct + indirect): [Control and variable together](@ref exam
 
 === 5. Turnpike
 
-<h3>Turnpike — bang–singular–bang</h3>
+**Turnpike — bang–singular–bang**
 
 The smallest problem with a singular arc: a scalar state *and* a scalar control, fixed horizon, one control box, a Lagrange cost. Nothing here is a length-1 vector — the callbacks are pure scalar arithmetic.
 
@@ -642,7 +642,7 @@ Full worked story (direct + indirect): [Turnpike (bang–singular–bang)](@ref 
 
 === 6. Singular
 
-<h3>Singular control</h3>
+**Singular control**
 
 A planar vehicle with drift, time-optimal: three-dimensional state, free final time, and box bounds on both the control and one state component. The optimal control has a singular arc — the example page computes it with the Geometry toolkit.
 
@@ -736,7 +736,7 @@ Full worked story (direct + indirect): [Singular control](@ref examples-singular
 
 === 7. State box
 
-<h3>State constraint</h3>
+**State constraint**
 
 The energy-minimal transfer of problem 1, now with an upper bound on the velocity: a **box** constraint on the state component `v`, with the label `vmax` (its multiplier is then `dual(sol, ocp, :vmax)`, see [Labels](@ref modelling-abstract-syntax-labels)). Without it, the velocity would peak at 1.5.
 
