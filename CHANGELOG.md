@@ -127,6 +127,7 @@ See [BREAKING.md](BREAKING.md).
   `VectorField` or a `HamiltonianVectorField` throws `IncorrectArgument` (CTLie `0.3`).
 - ct-conventions pinned at `v0.14.0` in `AGENTS.md`; the header of `docs/make.jl` gives the docs build command `julia --project=docs docs/make.jl`, the command of CI, instead of `--project=.`, which let the root environment shadow `docs/` (`SITE18`, [ct-conventions#63](https://github.com/control-toolbox/ct-conventions/issues/63)).
 - A local docs build resolves the sibling packages against their published inventories, as on CI ([ct-conventions#69](https://github.com/control-toolbox/ct-conventions/issues/69), `SITE4`). It used to read `../<Sibling>/docs/build/1/objects.inv` first, and an old build there (CTModels 0.19.7 against 0.21.1 published) broke the `@extref`s added since. The local builds are read only with `CT_LOCAL_INVENTORIES=true julia --project=docs docs/make.jl`, and the build then names each one and its version.
+- ct-conventions pinned at `v0.15.0` in `AGENTS.md`.
 
 ### 📦 Dependencies
 
