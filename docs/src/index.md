@@ -49,7 +49,7 @@ features:
 ## Installation
 
 ```julia
-import Pkg
+using Pkg
 Pkg.add("OptimalControl")
 ```
 
