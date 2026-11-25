@@ -10,9 +10,10 @@ using CTFlows: CTFlows
 # Flows
 @reexport import CTFlows.Flows: Flow
 
-# Systems — the `control_law` / `pseudo_hamiltonian` exported here are the
-# CTFlows ones (siblings of `hamiltonian(sys)`), not the `CTBase.Data` ones,
-# which act on a bare `ComposedHamiltonian`.
+# Systems — `control_law`, `pseudo_hamiltonian` and `hamiltonian` (below) are one
+# function each, owned by `CTBase.Data` and extended by CTModels (on a model:
+# `pseudo_hamiltonian(ocp)`, `hamiltonian(ocp, u)`) and by `CTFlows.Systems` (on a
+# system or a flow). Importing them from here or from `CTBase.Data` is the same.
 @reexport import CTFlows.Systems: control_law, pseudo_hamiltonian
 
 # Flow accessors — the system a flow integrates and its integrator.
