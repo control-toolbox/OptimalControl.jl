@@ -155,15 +155,18 @@ nothing                                                                         
     the same, but its solution carries no multiplier, and `dual(sol, ocp, :x_con)` throws an
     error that says so. When the problem has path constraints, building such a flow warns
     about it. In a multi-phase flow, one phase without a label is enough to lose the
-    multipliers of the whole solution. The multipliers of the bounds and of the boundary
-    conditions are not rebuilt by a flow: `dual` throws an error for them too.
+    multipliers of the whole solution.
 
-    A function is still needed when the constraint has no label to give: a bound on the
-    state or the control, such as `x(t) ≥ lb` or `x₁(t) ≤ l` in the next example, is not a
-    path constraint, nor is a constraint that is not in the problem.
+    A box on the state or on the control, such as `x(t) ≥ lb, (x_box)`, is given by its
+    label too, and has its dual in the solution. The duals of the boundary conditions, of
+    the boxes on the variable, and of the boxes that no phase adjoins are not rebuilt by a
+    flow: `dual` throws an error for them. A function is still needed for a constraint that
+    is not in the problem.
 
-    For a two-sided constraint or an equality, the side active on the arc is given with the
-    label, `constraint=:x_con => :upper`, and decides the sign of the multiplier: see
+    The multiplier follows the sign convention of the duals (see
+    [The sign of the multipliers](@ref modelling-hamiltonians-sign)): for a two-sided
+    constraint or an equality, the active side is read on its sign, $y > 0$ on the upper
+    bound and $y < 0$ on the lower one. See also
     [Constraint duals of a flow](https://control-toolbox.org/CTFlows.jl/stable/flows/constrained#Constraint-duals-of-a-flow)
     in the CTFlows documentation.
 
@@ -199,7 +202,7 @@ jump acts on the costate (see [Multi-phase flows](@ref flows-multi-phase)):
 
 ```@example main
 f_free = Flow(ocp_bd, (x, p) -> p[2]; label="interior")
-f_arc = Flow(ocp_bd, (x, p) -> 0; constraint=(x, u) -> l - x[1], multiplier=(x, p) -> 0,
+f_arc = Flow(ocp_bd, (x, p) -> 0; constraint=:x_con, multiplier=(x, p) -> 0,
              label="boundary")
 
 ν = 18

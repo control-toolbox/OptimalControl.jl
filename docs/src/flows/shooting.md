@@ -76,11 +76,13 @@ unknowns, $p_0 \in \mathbb{R}^2$, $t_1$ and $t_f$, and four conditions:
   maximised Hamiltonian equals $-p^0 = 1$ at $t_f$ (see
   [Notation and conventions](@ref modelling-formulation-conventions)).
 
-The shooting function integrates the two arcs and returns the four residuals. It is written in
-place, as `NonlinearSolve` expects:
+The pseudo-Hamiltonian is not written again: it is built from the problem (see
+[Hamiltonians of a problem](@ref modelling-hamiltonians)). The problem has a variable, $t_f$,
+so its natural call is `H(x, p, u, tf)`. The shooting function integrates the two arcs and
+returns the four residuals. It is written in place, as `NonlinearSolve` expects:
 
 ```@example main
-H(x, p, u) = p[1] * x[2] + p[2] * u   # p ⋅ f(x, u)
+H = pseudo_hamiltonian(ocp)   # H(x, p, u, tf) = p₁v + p₂u
 
 function shoot!(s, ξ, _)
     p0, t1, tf = ξ[1:2], ξ[3], ξ[4]
@@ -88,7 +90,7 @@ function shoot!(s, ξ, _)
     x2, p2 = f_min(t1, x1, p1, tf; variable=tf, unsafe=true)
     s[1:2] = x2 - xf             # target
     s[3] = p1[2]                 # switching function at t1
-    s[4] = H(x2, p2, -1) - 1     # transversality, free final time
+    s[4] = H(x2, p2, -1, tf) - 1 # transversality, free final time
     return nothing
 end
 nothing # hide

@@ -85,8 +85,8 @@ _js(c::Plots.Colorant) = "#" * Plots.Colors.hex(c)
 goddard_animation(; kwargs...) =
     reduce((html, (k, v)) -> replace(html, "@@$k@@" => _js(v)), kwargs; init=read(GODDARD_TEMPLATE, String))
 
-# The basketball animation of the guided tour, illustrating the shooting method: same
-# placeholder mechanism as `goddard_animation`, with the Newton iterates (angle, speed).
+# The slingshot animation of the guided tour, illustrating the shooting method: same
+# placeholder mechanism as `goddard_animation`, with the Newton iterates (angle, pull-back).
 const SHOOTING_TEMPLATE = joinpath(@__DIR__, "src-literate", "shooting-animation.html")
 shooting_animation(; kwargs...) =
     reduce((html, (k, v)) -> replace(html, "@@$k@@" => _js(v)), kwargs; init=read(SHOOTING_TEMPLATE, String))
@@ -376,6 +376,7 @@ with_api_reference(src_dir, ext_dir) do api_pages
                 "Functional API" => "modelling/functional-api.md",
                 "Control-free problems" => "modelling/without-control.md",
                 "Inspect a problem" => "modelling/inspect.md",
+                "Hamiltonians of a problem" => "modelling/hamiltonians.md",
                 "Discretisation" => "modelling/discretisation.md",
                 "With AI" => "modelling/with-ai.md",
             ],

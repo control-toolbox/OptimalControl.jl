@@ -52,7 +52,7 @@ ocp = @def begin
     x = (q, v) ∈ R², state
     u ∈ R, control
 
-    v(t) ≤ v_max
+    v(t) ≤ v_max, (v_con)
 
     x(t0) == x0
     x(tf) == xf
@@ -127,20 +127,16 @@ The cost is $\frac12 \cdot 2 \int_0^{t_1} p_1^2 (t_1 - t)^2 \,\mathrm{d}t = p_1^
 
 ### [Indirect method](@id examples-state-constraint-first-order-indirect)
 
-The indirect method is [shooting](@ref flows-shooting). Each arc has its flow. The flow on the boundary arc takes the constraint $c$ and the
-multiplier $\mu$, both as functions (see [Constrained arcs](@ref flows-constrained-arcs)):
+The indirect method is [shooting](@ref flows-shooting). Each arc has its flow. The flow on
+the boundary arc takes the constraint, by its label, and the multiplier $\mu$ in feedback
+form (see [Constrained arcs](@ref flows-constrained-arcs)):
 
 ```@example main
 f_interior = Flow(ocp, (x, p) -> p[2]; label="interior")
 
 c(x) = v_max - x[2]   # the constraint, c ≥ 0
 μ(x, p) = p[1]        # the multiplier on the boundary arc
-f_boundary = Flow(
-    ocp, (x, p) -> 0; 
-    constraint=(x, u) -> c(x), 
-    multiplier=μ, 
-    label="boundary"
-)
+f_boundary = Flow(ocp, (x, p) -> 0; constraint=:v_con, multiplier=μ, label="boundary")
 nothing # hide
 ```
 
@@ -162,14 +158,15 @@ end
 nothing # hide
 ```
 
-The direct solution gives the initial guess: its costate at $t_0$, and the first and last grid
-points where the constraint is active:
+The direct solution gives the initial guess: its costate at $t_0$, and the junction times.
+The dual of the constraint, read by its label, is positive exactly where the constraint is
+active, so its support gives the first and last grid points of the boundary arc:
 
 ```@example main
 tg = time_grid(direct_sol)
-x_d = state(direct_sol)
+y_d = dual(direct_sol, ocp, :v_con)   # the dual of the direct method
 
-active = findall(t -> 0 ≤ c(x_d(t)) ≤ 1e-3, tg)
+active = findall(t -> y_d(t) > 1e-3, tg)
 ξ_guess = [costate(direct_sol)(t0)..., tg[first(active)], tg[last(active)]]
 ```
 
@@ -201,12 +198,25 @@ plot!(plt, indirect_sol; label="indirect", linestyle=:dash, switching_style=:non
 plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
-!!! warning "The multiplier of the direct method"
+The constraint is given to the flow by its label, so the solution of the shooting has its
+dual too, the multiplier $\mu = p_1 = 38.4$ on the boundary arc and $0$ off it. The
+multipliers of the flows follow the sign convention of the duals (see
+[The sign of the multipliers](@ref modelling-hamiltonians-sign)), so the two duals compare
+directly, once the dual of the direct method is divided by the time step $h$:
 
-    On the boundary arc, the multiplier of the direct method is about $0.77$, not
-    $\mu = 38.4$. The constraint $v(t) \le v_{\max}$ is a bound on a component of the state,
-    and the direct method does not divide the multiplier of such a bound by the time step
-    $h = 1/50$: $38.4\, h \approx 0.77$. It goes to zero as the grid is refined (see
+```@example main
+y_i = dual(indirect_sol, ocp, :v_con)   # the dual of the indirect method
+h = tg[2] - tg[1]
+(y_i(0.1), y_i(0.5)), (y_d(0.1) / h, y_d(0.5) / h)
+```
+
+!!! warning "The dual of the direct method"
+
+    On the boundary arc, the dual of the direct method is about $0.77$, not $\mu = 38.4$.
+    The constraint $v(t) \le v_{\max}$ is a bound on a component of the state, and for
+    now the direct method does not divide the dual of such a bound by the time step
+    $h = 1/50$: $38.4\, h \approx 0.77$. It goes to zero as the grid is refined, so it must
+    be divided by $h$ (see
     [CTDirect.jl#639](https://github.com/control-toolbox/CTDirect.jl/issues/639)).
 
 ```@example main
@@ -215,6 +225,8 @@ plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 @assert isapprox(objective(direct_sol), 7.68; rtol=1e-2)                # hide
 s = zeros(4); shoot!(s, shooting_sol.u, nothing)                        # hide
 @assert maximum(abs, s) < 1e-10                                         # hide
+@assert y_i(0.1) == 0 && isapprox(y_i(0.5), 38.4; atol=1e-6)            # hide
+@assert isapprox(y_d(0.5) / h, 38.4; rtol=1e-2)                         # hide
 nothing                                                                 # hide
 ```
 
@@ -262,7 +274,7 @@ function bryson_denham(a)
         x = (q, v) ∈ R², state
         u ∈ R, control
 
-        q(t) ≤ a
+        q(t) ≤ a, (q_con)
 
         x(t0) == x0_bd
         x(tf) == xf_bd
@@ -393,16 +405,17 @@ end
 nothing # hide
 ```
 
-The direct solution gives the guess: the contact time is where $q$ is closest to $a$, and the
-jump is the variation of its costate $p_q$ around that time:
+The direct solution gives the guess, through the dual of the constraint. The multiplier of a
+second-order constraint is a measure: here, a single atom at the touch point, whose mass is
+the jump $\Delta p_q$. The dual of the direct method is the mass carried by each grid point,
+so it has a single peak: its time is the contact time, and its height the jump.
 
 ```@example main
 tg_t = time_grid(sol_touch)
-p_t = costate(sol_touch)
+y_t = dual(sol_touch, ocp_touch, :q_con).(tg_t)   # the dual on the grid
 
-t1_guess = tg_t[argmin(abs.(a_touch .- first.(state(sol_touch).(tg_t))))]
-Δpq_guess = p_t(t1_guess + 0.05)[1] - p_t(t1_guess - 0.05)[1]
-ξ_guess_t = [p_t(t0)..., t1_guess, Δpq_guess]
+t1_guess, Δpq_guess = tg_t[argmax(y_t)], maximum(y_t)
+ξ_guess_t = [costate(sol_touch)(t0)..., t1_guess, Δpq_guess]
 
 prob = NonlinearProblem(shoot_touch!, ξ_guess_t)
 shooting_touch = NonlinearSolve.solve(prob; show_trace=Val(false))
@@ -427,9 +440,7 @@ plot!(plt_touch, indirect_touch; label="indirect", linestyle=:dash)
 plot!(plt_touch; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
-The multiplier of a second-order constraint is a measure: here, a single atom at the touch
-point, whose mass is the jump $\Delta p_q = 9.6$. The dual of the direct method is the mass
-carried by each grid point, so it has a single peak, of height $9.6$, at $t = 1/2$.
+The guess was already close: the peak of the dual is at $t = 1/2$, of height about $9.6$.
 
 ```@example main
 @assert isapprox(shooting_touch.u, [-4.8, -3.2, 0.5, 9.6]; atol=1e-8)   # hide
@@ -466,12 +477,7 @@ The flow on the boundary arc takes the constraint and its multiplier, here zero:
 
 ```@example main
 f_free = Flow(ocp_arc, (x, p) -> p[2]; label="interior")
-f_arc = Flow(
-    ocp_arc, (x, p) -> 0;
-    constraint=(x, u) -> a_arc - x[1],
-    multiplier=(x, p) -> 0,
-    label="boundary"
-)
+f_arc = Flow(ocp_arc, (x, p) -> 0; constraint=:q_con, multiplier=(x, p) -> 0, label="boundary")
 
 function shoot_arc!(s, ξ, _)
     p0, t1, t2, Δ1, Δ2 = ξ[1:2], ξ[3], ξ[4], ξ[5], ξ[6]
@@ -489,17 +495,19 @@ end
 nothing # hide
 ```
 
-The guess comes from the direct solution, as before:
+The guess comes from the dual of the direct solution, as before. The multiplier is a measure
+with no density on the boundary arc, where $\mu = 0$, and two atoms at the junctions, whose
+masses are the jumps. So the dual is zero along the arc, with a peak at the entry and at the
+exit:
 
 ```@example main
 tg_a = time_grid(sol_arc)
-x_a, p_a = state(sol_arc), costate(sol_arc)
+y_a = dual(sol_arc, ocp_arc, :q_con).(tg_a)   # the dual on the grid
 
-active_a = findall(t -> 0 ≤ a_arc - x_a(t)[1] ≤ 1e-3, tg_a)
-t1_g, t2_g = tg_a[first(active_a)], tg_a[last(active_a)]
-Δ1_g = p_a(t1_g + 0.1)[1] - p_a(t1_g - 0.1)[1]
-Δ2_g = p_a(t2_g + 0.1)[1] - p_a(t2_g - 0.1)[1]
-ξ_guess_a = [p_a(t0)..., t1_g, t2_g, Δ1_g, Δ2_g]
+peaks = findall(y -> y > 1e-3 * maximum(y_a), y_a)
+t1_g, t2_g = tg_a[first(peaks)], tg_a[last(peaks)]
+Δ1_g, Δ2_g = y_a[first(peaks)], y_a[last(peaks)]
+ξ_guess_a = [costate(sol_arc)(t0)..., t1_g, t2_g, Δ1_g, Δ2_g]
 
 prob = NonlinearProblem(shoot_arc!, ξ_guess_a)
 shooting_arc = NonlinearSolve.solve(prob; show_trace=Val(false))
@@ -525,10 +533,16 @@ plot!(plt_arc, indirect_arc; label="indirect", linestyle=:dash)
 plot!(plt_arc; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
-The multiplier is a measure with no density on the boundary arc, where $\mu = 0$, and two
-atoms at the junctions, whose masses are the jumps $2/(9a^2) \approx 22.2$. The dual of the
-direct method is the mass carried by each grid point: it is zero along the arc, with a peak
-of height $22.2$ at the entry and at the exit.
+The peaks of the dual were at $0.3$ and $0.7$, of height about $22.2$.
+
+!!! note "The dual of a bound"
+
+    The constraint $q(t) \le a$ is a bound on a component of the state, whose dual the
+    direct method does not divide by the time step for now (see the warning of the
+    [first-order example](@ref examples-state-constraint-first-order-comparison) and
+    [CTDirect.jl#639](https://github.com/control-toolbox/CTDirect.jl/issues/639)). This is
+    why its peaks are the masses of the atoms. Once the dual is divided by the step, the
+    masses will be the peaks times the step.
 
 ```@example main
 a = a_arc                                                                         # hide
