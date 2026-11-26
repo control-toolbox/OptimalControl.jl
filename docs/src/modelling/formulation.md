@@ -160,6 +160,14 @@ Writing the same cost in Lagrange form, $t_f = \int_{t_0}^{t_f} 1\,\mathrm{d}t$,
 $H = p \cdot f - 1$ and $\mathbf{H} \equiv 0$ for an autonomous problem. Both are correct; the
 documentation uses the Mayer form.
 
+**The variable in the calls.** The functions of a problem, the dynamics, the costs, the
+constraints, the Hamiltonians, the control laws and the multipliers, take the variable $v$ as
+their **last positional argument**, as in the mathematics: `H(x, p, u, v)`, `u(t, x, p, v)`.
+Their uniform call takes every argument, `H(t, x, p, u, v)`, with `v = nothing` for a problem
+without a variable; arguments a function does not depend on are ignored. The calls of a
+[flow](@ref flows-overview), whose positions are taken by the times, the state and the
+costate, take it by **keyword**: `f(t0, x0, p0, tf; variable=v)`.
+
 **Variable costate.** When the variable $v$ is optimised, the indirect method treats it as a
 constant state ($\dot v = 0$) with its own costate $p_v$:
 
