@@ -77,13 +77,14 @@ Hp(x, p, u(x, p)), u(x, p)
 ```@example main
 @assert H(x, p) == 18 && Hp(x, p, 6) == 18 && u(x, p) == 6                       # hide
 @assert all(Hv(x, p) .≈ ([0, 6], [0, -12]))                                      # hide
-@assert H(0.0, x, p, Float64[]) == 18 && u(0.0, x, p, Float64[]) == 6            # hide
+@assert H(0.0, x, p, nothing) == 18 && u(0.0, x, p, nothing) == 6            # hide
 nothing                                                                          # hide
 ```
 
 These functions take the short form of their arguments, as above, or the full form with the
 time and the variable: `H(t, x, p, v)`, `Hv(t, x, p, v)`, `Hp(t, x, p, u, v)`,
-`u(t, x, p, v)`, with `v = Float64[]` for a problem without a variable.
+`u(t, x, p, v)`, with `v = nothing` for a problem without a variable: the argument is then
+ignored (see [Notation and conventions](@ref modelling-formulation-conventions)).
 
 ## Gradients
 
@@ -106,9 +107,9 @@ $H$ take the short form, `(x, p)` and `(x, p, u)`, or the full form, `(t, x, p, 
 
 ```@example main
 @assert all(∇H(x, p) .≈ ([0, 12], [0, 6]))                    # hide
-@assert all(∇H(0.0, x, p, Float64[]) .≈ ([0, 12], [0, 6]))    # hide
+@assert all(∇H(0.0, x, p, nothing) .≈ ([0, 12], [0, 6]))    # hide
 @assert all(∇Hp(x, p, 6.0) .≈ ([0, 12], [0, 6]))              # hide
-@assert all(∇Hp(0.0, x, p, 6.0, Float64[]) .≈ ([0, 12], [0, 6]))   # hide
+@assert all(∇Hp(0.0, x, p, 6.0, nothing) .≈ ([0, 12], [0, 6]))   # hide
 nothing                                                       # hide
 ```
 
