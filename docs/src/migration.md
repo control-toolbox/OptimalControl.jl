@@ -80,9 +80,10 @@ fb = Flow(ocp, u; constraint=g, multiplier=μ)   # [!code ++]
 ```
 
 One without the other is an `IncorrectArgument`. `constraint=` accepts a function, a typed
-constraint, or a `Symbol` naming a path constraint of the problem, `constraint=:vmax`. The
-`Symbol` form uses the constraint function stored in the problem, without its bound: see the
-caveat on [Constrained arcs](@ref flows-constrained-arcs).
+constraint, or the label of a constraint of the problem, `constraint=:vmax`: a path
+constraint or a box on the state or the control. The label takes the constraint with its
+bound and its side, and the solution of the flow then carries its multiplier: see
+[Constrained arcs](@ref flows-constrained-arcs).
 
 **Constructor keywords take an `is_` prefix**, on `VectorField`, `Hamiltonian`, `@Lie`, and the
 other constructors:
