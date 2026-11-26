@@ -118,7 +118,9 @@ maximisation gives the control in feedback form $u(t, x, p, v)$, the **maximised
 \mathbf{H}(t, x, p, v) = H(t, x, p, u(t, x, p, v), v),
 ```
 
-a `Hamiltonian` in the code. Its **Hamiltonian vector field**
+a `Hamiltonian` in the code. The same notation is used for the Hamiltonian of any control law
+$u(t, x, p, v)$, maximising or not (see [Hamiltonians of a problem](@ref modelling-hamiltonians)).
+Its **Hamiltonian vector field**
 $\vec{\mathbf{H}} = (\nabla_p \mathbf{H}, -\nabla_x \mathbf{H})$ gives the extremals:
 
 ```math
