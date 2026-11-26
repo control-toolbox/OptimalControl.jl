@@ -44,6 +44,12 @@ H = hamiltonian(f)
 H(x, p)   # 12 × 0 + 6²/2
 ```
 
+This is the Hamiltonian that [`hamiltonian(ocp, u)`](@ref modelling-hamiltonians) builds from
+the problem and the law, and the same object, whichever way the flow takes its derivatives
+(`hamiltonian_type=:total` or `:partial`, see
+[Total or partial Hamiltonian](@ref flows-from-ocp-total-partial)): `:total` and `:partial`
+differ in how the flow differentiates, not in what it holds.
+
 ## The Hamiltonian vector field
 
 `hamiltonian_vector_field(f)` returns
@@ -57,8 +63,10 @@ Hv(x, p)
 
 ## The pseudo-Hamiltonian and the control law
 
-`pseudo_hamiltonian(f)` returns $H(x, p, u) = p_1 v + p_2 u - u^2/2$, and `control_law(f)`
-the law you passed:
+`pseudo_hamiltonian(f)` returns $H(x, p, u) = p_1 v + p_2 u - u^2/2$, the one
+`pseudo_hamiltonian(ocp)` builds from the problem (see
+[Hamiltonians of a problem](@ref modelling-hamiltonians)), and `control_law(f)` the law you
+passed:
 
 ```@example main
 Hp = pseudo_hamiltonian(f)

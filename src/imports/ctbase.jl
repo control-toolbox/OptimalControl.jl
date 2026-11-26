@@ -45,9 +45,10 @@ import CTBase.Exceptions:
 # Data — the type vocabulary the user writes against
 #
 # `Flow` dispatches on these, so a user building a flow explicitly needs them
-# in scope. Note the two deliberate omissions: `control_law` and
-# `pseudo_hamiltonian` are exported from `CTFlows.Systems` instead (they are
-# siblings of `hamiltonian(sys)`); see imports/ctflows.jl.
+# in scope. `pseudo_hamiltonian`, `hamiltonian` and `control_law` are owned by
+# `CTBase.Data` too, but they are re-exported with the flow accessors in
+# imports/ctflows.jl (`CTFlows.Systems` extends the same functions, as CTModels
+# does for a model). `multiplier` and `freeze_multiplier` stay qualified.
 # ---------------------------------------------------------------------------
 @reexport import CTBase.Data:
 
