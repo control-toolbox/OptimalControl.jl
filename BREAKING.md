@@ -14,6 +14,24 @@ change or be aware of.
 
 ## Unreleased
 
+### Constrained flows take `multipliers=`; the accessors of a flow lose `get_` (CTFlows 0.20)
+
+`Flow(ocp, u; constraint=:c, multiplier=μ)` becomes `Flow(ocp, u; multipliers=:c => μ)`
+([CTFlows#543](https://github.com/control-toolbox/CTFlows.jl/issues/543)); the `get_*` accessors
+of a flow lose their prefix, and `switching_times` / `phase_labels` read a flow as they read a
+solution ([CTFlows#544](https://github.com/control-toolbox/CTFlows.jl/issues/544)). The old
+spellings throw with the rewrite.
+
+```julia
+# Before
+Flow(ocp, u; constraint=(:a, :b), multiplier=(μa, μb))
+get_switching_times(f), get_flows(f), get_pseudo_hamiltonian_gradient(f)
+
+# After
+Flow(ocp, u; multipliers=(:a => μa, :b => μb))
+switching_times(f), phase_flows(f), pseudo_hamiltonian_gradient(f)
+```
+
 ### No module name is exported
 
 `using OptimalControl` used to bring the modules `CTModels`, `ExaModels`, `CTBase`,

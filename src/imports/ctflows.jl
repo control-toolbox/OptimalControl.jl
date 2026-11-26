@@ -24,6 +24,14 @@ using CTFlows: CTFlows
     hamiltonian,
     hamiltonian_vector_field,
     vector_field,
+    hamiltonian_gradient,
+    variable_gradient,
+    pseudo_hamiltonian_gradient,
+    pseudo_variable_gradient
+
+# Removed in CTFlows 0.20 (control-toolbox/CTFlows.jl#544): kept exported so that the old
+# spelling throws a PreconditionError naming its replacement, not an UndefVarError.
+@reexport import CTFlows.Systems:
     get_hamiltonian_gradient,
     get_variable_gradient,
     get_pseudo_hamiltonian_gradient,
@@ -43,9 +51,19 @@ import CTFlows.Configs: UniformGrid, AdaptiveGrid
     MultiPhaseStateFlow,
     MultiPhaseHamiltonianFlow,
     n_phases,
+    phase_flows,
+    jumps
+
+# `switching_times` and `phase_labels` of a flow are the functions of `CTModels.Solutions`
+# (control-toolbox/CTFlows.jl#544): they come with the solution accessors, in ctmodels.jl.
+
+# Removed in CTFlows 0.20 (control-toolbox/CTFlows.jl#544): kept exported so that the old
+# spelling throws a PreconditionError naming its replacement, not an UndefVarError.
+@reexport import CTFlows.MultiPhase:
     get_flow,
     get_flows,
     get_jump,
     get_jumps,
     get_switching_time,
-    get_switching_times
+    get_switching_times,
+    get_labels

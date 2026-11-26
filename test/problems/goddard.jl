@@ -103,8 +103,7 @@ function _goddard_shoot_builder(ocp, c)
         fb = OptimalControl.Flow(
             ocp,
             (x, p, v) -> ub(x);
-            constraint=(x, u, v) -> g(x),
-            multiplier=(x, p, v) -> μ(x, p),
+            multipliers=((x, u, v) -> g(x)) => ((x, p, v) -> μ(x, p)),
             hamiltonian_type,
         )
 

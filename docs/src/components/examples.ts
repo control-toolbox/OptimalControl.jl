@@ -59,7 +59,7 @@ export const examples: Example[] = [
     id: 'state-constraint',
     title: 'State constraint',
     story: 'The wagon with a speed limit, then with a bound on its position (Bryson–Denham).',
-    introduces: 'boundary arcs, constraint= and multiplier=, touch points and costate jumps',
+    introduces: 'boundary arcs, multipliers=, touch points and costate jumps',
     facts: ['2 states', '1 control', 'fixed final time', 'Lagrange cost', 'state constraint'],
   },
   {

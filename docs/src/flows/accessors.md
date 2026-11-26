@@ -88,20 +88,20 @@ ignored (see [Notation and conventions](@ref modelling-formulation-conventions))
 
 ## Gradients
 
-`get_hamiltonian_gradient(f)` returns the gradient of $\mathbf{H}$ with respect to $x$ and
-$p$, and `get_variable_gradient(f)` its gradient with respect to the variable.
-`get_pseudo_hamiltonian_gradient` and `get_pseudo_variable_gradient` do the same for $H$,
+`hamiltonian_gradient(f)` returns the gradient of $\mathbf{H}$ with respect to $x$ and
+$p$, and `variable_gradient(f)` its gradient with respect to the variable.
+`pseudo_hamiltonian_gradient` and `pseudo_variable_gradient` do the same for $H$,
 before the law is substituted. Like the functions above, the gradients of $\mathbf{H}$ and
 $H$ take the short form, `(x, p)` and `(x, p, u)`, or the full form, `(t, x, p, v)` and
 `(t, x, p, u, v)`:
 
 ```@example main
-∇H = get_hamiltonian_gradient(f)
+∇H = hamiltonian_gradient(f)
 ∇H(x, p)   # (∇ₓH, ∇ₚH) = ((0, 12), (0, 6))
 ```
 
 ```@example main
-∇Hp = get_pseudo_hamiltonian_gradient(f)
+∇Hp = pseudo_hamiltonian_gradient(f)
 ∇Hp(x, p, u(x, p))   # the same, at u = p₂
 ```
 

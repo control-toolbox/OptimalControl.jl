@@ -7,9 +7,11 @@
 # regression says *which* part of the API moved rather than "Goddard no longer
 # converges".
 #
-# The `constraint=` keyword accepting a `Symbol` is a genuine capability gain
-# and not just a spelling: a constrained flow can reuse the OCP's own declared
-# constraint instead of restating it — one fewer place for the two to disagree.
+# A constraint given to a flow by its label is a genuine capability gain and not
+# just a spelling: a constrained flow can reuse the OCP's own declared constraint
+# instead of restating it — one fewer place for the two to disagree. A constraint
+# and its multiplier are given together, `multipliers=:label => μ`, as for
+# `hamiltonian(ocp, u; multipliers=…)` (control-toolbox/CTFlows.jl#543).
 
 module TestFlowAPI
 
@@ -32,7 +34,7 @@ const VMAX = 1.2
     build_labelled()
 
 Energy double integrator with a **labelled** `:path` constraint, so
-`constraint=:vmax` has something to point at. Built functionally rather than
+`multipliers=:vmax => μ` has something to point at. Built functionally rather than
 taken from the library: the library problems express `v ≤ 1.2` as a state box,
 and the `Symbol` form needs a genuine `:path` entry.
 """
@@ -181,7 +183,7 @@ function test_flow_api()
         end
 
         # ====================================================================
-        # Constrained flows — three spellings of `constraint`
+        # Constrained flows — three ways to give the constraint
         # ====================================================================
 
         Test.@testset "constraint spellings agree" begin
@@ -189,25 +191,30 @@ function test_flow_api()
             μ(x, p) = p[1]
             law(x, p) = 0.0
 
-            f_fun = Flow(ocp, law; constraint=(x, u) -> g(x), multiplier=μ)
-            f_sym = Flow(ocp, law; constraint=:vmax, multiplier=μ)
-            f_obj = Flow(ocp, law; constraint=StateConstraint(g), multiplier=μ)
+            f_fun = Flow(ocp, law; multipliers=((x, u) -> g(x)) => μ)
+            f_sym = Flow(ocp, law; multipliers=:vmax => μ)
+            f_obj = Flow(ocp, law; multipliers=StateConstraint(g) => μ)
+            f_nt = Flow(ocp, law; multipliers=(; vmax=μ))
 
-            # ⚠️ The `Symbol` form takes the constraint from the model, so its
-            # sign convention is the model's (`x₂ ≤ vmax`), not the shooting
-            # convention (`g = vmax − x₂ ≥ 0`). All three must still integrate
-            # the same augmented dynamics, since the multiplier is the same.
-            for f in (f_fun, f_sym, f_obj)
+            # The label takes the constraint from the model with its bound and its
+            # side (`x₂ ≤ vmax` is adjoined as `vmax − x₂ ≥ 0`), so the three give
+            # the same augmented dynamics for the same multiplier.
+            for f in (f_fun, f_sym, f_obj, f_nt)
                 xf, pf = f(T0, X0, P0, TF)
                 Test.@test xf isa AbstractVector
                 Test.@test pf isa AbstractVector
             end
             Test.@test f_fun(T0, X0, P0, TF)[1] ≈ f_obj(T0, X0, P0, TF)[1]
+            Test.@test f_sym(T0, X0, P0, TF)[1] ≈ f_fun(T0, X0, P0, TF)[1]
+            Test.@test f_nt(T0, X0, P0, TF)[1] ≈ f_sym(T0, X0, P0, TF)[1]
+            # the Hamiltonian of the flow is the one of the problem, for the same pairs
+            h = hamiltonian(ocp, law; multipliers=:vmax => μ)
+            Test.@test hamiltonian(f_sym)(X0, P0) ≈ h(X0, P0)
         end
 
         Test.@testset "multiplier accepts a Data object" begin
             f = Flow(
-                ocp, (x, p) -> 0.0; constraint=:vmax, multiplier=Multiplier((x, p) -> p[1])
+                ocp, (x, p) -> 0.0; multipliers=:vmax => Multiplier((x, p) -> p[1])
             )
             Test.@test f(T0, X0, P0, TF) isa Tuple
         end
@@ -216,16 +223,24 @@ function test_flow_api()
             # The whole value of the `Symbol` form is that the model is the
             # single source of truth — so a typo must fail, not fall back.
             Test.@test_throws OptimalControl.IncorrectArgument Flow(
-                ocp, (x, p) -> 0.0; constraint=:nope, multiplier=(x, p) -> p[1]
+                ocp, (x, p) -> 0.0; multipliers=:nope => ((x, p) -> p[1])
             )
         end
 
-        Test.@testset "constraint and multiplier are a pair" begin
+        Test.@testset "the keywords constraint and multiplier are removed" begin
+            # CTFlows 0.20 (CTFlows.jl#543): the error gives the rewrite
+            for kw in ((; constraint=:vmax, multiplier=(x, p) -> p[1]), (; constraint=:vmax))
+                err = try
+                    Flow(ocp, (x, p) -> 0.0; kw...)
+                catch e
+                    e
+                end
+                Test.@test err isa OptimalControl.IncorrectArgument
+                Test.@test occursin("multipliers=:vmax => μ", err.suggestion)
+            end
+            # a constraint without its multiplier is not a pair
             Test.@test_throws OptimalControl.IncorrectArgument Flow(
-                ocp, (x, p) -> 0.0; constraint=:vmax
-            )
-            Test.@test_throws OptimalControl.IncorrectArgument Flow(
-                ocp, (x, p) -> 0.0; multiplier=(x, p) -> p[1]
+                ocp, (x, p) -> 0.0; multipliers=:vmax
             )
         end
 

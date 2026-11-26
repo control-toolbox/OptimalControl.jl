@@ -218,21 +218,17 @@ const API_THEMES = [
             :hamiltonian,
             :hamiltonian_vector_field,
             :vector_field,
-            :get_hamiltonian_gradient,
-            :get_variable_gradient,
-            :get_pseudo_hamiltonian_gradient,
-            :get_pseudo_variable_gradient,
+            :hamiltonian_gradient,
+            :variable_gradient,
+            :pseudo_hamiltonian_gradient,
+            :pseudo_variable_gradient,
             :MultiPhaseFlow,
             :MultiPhaseStateFlow,
             :MultiPhaseHamiltonianFlow,
             :AnyMultiPhaseFlow,
             :n_phases,
-            :get_flow,
-            :get_flows,
-            :get_switching_time,
-            :get_switching_times,
-            :get_jump,
-            :get_jumps,
+            :phase_flows,
+            :jumps,
             :system,
             :integrator,
             :SciML,
@@ -349,7 +345,26 @@ const API_THEMES = [
             Symbol("CTBase.Options.OptionValue"),
         ],
     ),
-    (id="deprecated", title="Deprecated", symbols=[:Lie, Symbol("⋅"), :HamiltonianLift]),
+    (
+        id="deprecated",
+        title="Deprecated",
+        symbols=[
+            :Lie,
+            Symbol("⋅"),
+            :HamiltonianLift,
+            :get_hamiltonian_gradient,
+            :get_variable_gradient,
+            :get_pseudo_hamiltonian_gradient,
+            :get_pseudo_variable_gradient,
+            :get_flow,
+            :get_flows,
+            :get_switching_time,
+            :get_switching_times,
+            :get_jump,
+            :get_jumps,
+            :get_labels,
+        ],
+    ),
 ]
 
 # Symbols exported by `names(OptimalControl)` are checked for full coverage
@@ -608,10 +623,11 @@ function _generate_theme_page(docs_src, theme)
         if theme.id == "deprecated"
             println(
                 io,
-                "Removed v2.0 names, re-introduced as throwing shims: calling one always " *
-                "raises a `PreconditionError` naming its v2.1.0-beta replacement, so a " *
-                "search for the old name lands on an explanation rather than nothing. See " *
-                "[Migrating to v2.1](@ref migration) for the full picture.",
+                "Removed names, kept as throwing shims: calling one always raises a " *
+                "`PreconditionError` naming its replacement, so a search for the old name " *
+                "lands on an explanation rather than nothing. The v2.0 names (`Lie`, `⋅`, " *
+                "`HamiltonianLift`) and the `get_*` accessors of a flow, renamed with " *
+                "CTFlows 0.20. See [Migrating from v2.0](@ref migration) for the full picture.",
             )
             println(io)
             println(

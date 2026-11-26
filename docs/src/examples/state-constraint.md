@@ -136,7 +136,7 @@ f_interior = Flow(ocp, (x, p) -> p[2]; label="interior")
 
 c(x) = v_max - x[2]   # the constraint, c ≥ 0
 μ(x, p) = p[1]        # the multiplier on the boundary arc
-f_boundary = Flow(ocp, (x, p) -> 0; constraint=:v_con, multiplier=μ, label="boundary")
+f_boundary = Flow(ocp, (x, p) -> 0; multipliers=:v_con => μ, label="boundary")
 nothing # hide
 ```
 
@@ -477,7 +477,7 @@ The flow on the boundary arc takes the constraint and its multiplier, here zero:
 
 ```@example main
 f_free = Flow(ocp_arc, (x, p) -> p[2]; label="interior")
-f_arc = Flow(ocp_arc, (x, p) -> 0; constraint=:q_con, multiplier=(x, p) -> 0, label="boundary")
+f_arc = Flow(ocp_arc, (x, p) -> 0; multipliers=:q_con => ((x, p) -> 0), label="boundary")
 
 function shoot_arc!(s, ξ, _)
     p0, t1, t2, Δ1, Δ2 = ξ[1:2], ξ[3], ξ[4], ξ[5], ξ[6]
