@@ -6,10 +6,12 @@ model, with the conventions of [Notation and conventions](@ref modelling-formula
 
 | Object | By hand | From the problem |
 | :--- | :--- | :--- |
-| pseudo-Hamiltonian $H(x, p, u) = p \cdot f(x, u) + p^0 \ell(x, u)$ | `H(x, p, u) = …` | `pseudo_hamiltonian(ocp)` |
-| Hamiltonian of a control law, $h(x, p) = H(x, p, u(x, p))$ | `h(x, p) = …` | `hamiltonian(ocp, u)` |
+| pseudo-Hamiltonian $H(x, p, u) = p \cdot f(x, u) + p^0 f^0(x, u)$ | `H(x, p, u) = …` | `pseudo_hamiltonian(ocp)` |
+| Hamiltonian of a control law, $\mathbf{H}(x, p) = H(x, p, u(x, p))$ | `h(x, p) = …` | `hamiltonian(ocp, u)` |
 | Hamiltonian of a control-free problem | `h(x, p) = …` | `hamiltonian(ocp)` |
-| the same, along an arc on which constraints are active | | `constraints=` and `multipliers=` keywords |
+
+Along an arc on which constraints are active, both take the constraints and their multipliers
+with the keywords `constraints=` and `multipliers=`, see [Constraints](@ref modelling-hamiltonians-constraints).
 
 They are also read back from a flow, see [Accessors](@ref flows-accessors). This page shows
 how to get them, how to call them, and what to do with them: build a flow, write a shooting
@@ -105,10 +107,10 @@ The maximisation of $H$ in $u$ gives the control in feedback form, $u(x, p) = p_
 Hamiltonian of this law is
 
 ```math
-h(x, p) = H(x, p, u(x, p)) = p_1 v + \frac{p_2^2}{2},
+\mathbf{H}(x, p) = H(x, p, u(x, p)) = p_1 v + \frac{p_2^2}{2},
 ```
 
-and `hamiltonian(ocp, u)` builds it:
+and `hamiltonian(ocp, u)` builds it, here named `h` in the code:
 
 ```@example main
 u_max(x, p) = p[2]
@@ -146,7 +148,9 @@ hamiltonian(ocp)
 
 The flow of a problem and its law, `Flow(ocp, u)`, is the flow of the Hamiltonian of the
 law. Building the flow from the Hamiltonian, as in [From Hamiltonians](@ref flows-from-hamiltonians),
-gives the same extremal:
+gives the same extremal. From here on, `p0` is the initial costate, as in the calls of a flow,
+not the keyword `p0` of the cost multiplier $p^0$ above (see
+[The cost multiplier](@ref flows-from-ocp-p0)):
 
 ```@example main
 p0 = [12.0, 6.0]
@@ -165,9 +169,10 @@ hamiltonian(f) === h
 
 A shooting function often needs a Hamiltonian, for instance for the transversality
 condition of a free final time. It is safer to get it from the problem than to write it
-again: the formula is written once, in the model. See [Shooting](@ref flows-shooting),
-where the condition $H(x(t_f), p(t_f), u(t_f), t_f) = -p^0$ uses the pseudo-Hamiltonian of
-the problem.
+again: the formula is written once, in the model. See [Shooting](@ref flows-shooting): for the
+minimum-time problem, written with the Mayer cost $t_f \to \min$, the condition
+$\mathbf{H}(t_f) = -p^0 = 1$ (see [Minimal time](@ref modelling-formulation-conventions)) is
+evaluated with the pseudo-Hamiltonian of the problem, at the control of the last arc.
 
 ### Check the maximum principle
 
@@ -184,10 +189,10 @@ when the control is in the interior of the control set. With `ForwardDiff`:
 The flow of a law can be built in two ways (keyword `hamiltonian_type` of `Flow`, see
 [Total or partial Hamiltonian](@ref flows-from-ocp-total-partial)):
 
-- `:total` differentiates $h(x, p) = H(x, p, u(x, p))$, **through** the law:
+- `:total` differentiates $\mathbf{H}(x, p) = H(x, p, u(x, p))$, **through** the law:
 
   ```math
-  \nabla_p h = \frac{\partial H}{\partial p} + \Big(\frac{\partial u}{\partial p}\Big)^{\!\top}
+  \nabla_p \mathbf{H} = \frac{\partial H}{\partial p} + \Big(\frac{\partial u}{\partial p}\Big)^{\!\top}
   \frac{\partial H}{\partial u};
   ```
 
@@ -228,7 +233,7 @@ partial one freezes it. Both coincide on an optimal arc, where the constraint is
 nothing                                                     # hide
 ```
 
-## Constraints
+## [Constraints](@id modelling-hamiltonians-constraints)
 
 ### Constraints by label
 
@@ -237,10 +242,11 @@ pseudo-Hamiltonian, with their multipliers $\mu$. They are given by their **labe
 the multiplier is an explicit argument, like the control:
 
 ```math
-H(x, p, u, \mu) = p \cdot f(x, u) + p^0 \ell(x, u) + \mu \cdot g(x, u),
+H(x, p, u, \mu) = p \cdot f(x, u) + p^0 f^0(x, u) + \mu \cdot c(x, u),
 ```
 
-where $g \ge 0$ is the constraint on its active side. The example is the
+where $c \ge 0$ is the constraint on its active side, in the normalised form of
+[State constraints](@ref modelling-formulation-conventions). The example is the
 [speed limit](@ref examples-state-constraint-first-order): the velocity of the double
 integrator is bounded by $v_{\max} = 1.2$.
 
@@ -268,7 +274,7 @@ multipliers, in that order. The labels not given are inactive.
 ### [The sign of the multipliers](@id modelling-hamiltonians-sign)
 
 The multipliers follow the sign convention of the **duals** of a solution, so that a dual
-read in a solution of a direct method, `dual(sol, :label)`, has the sign the Hamiltonian
+read in a solution of a direct method, `dual(sol, ocp, :label)`, has the sign the Hamiltonian
 expects. Component by component:
 
 | Bounds | Term adjoined | Multiplier $y$ |
@@ -306,7 +312,7 @@ With a control law, the multipliers of the active constraints are given in feedb
 as `label => μ` pairs, and the Hamiltonian of the arc is
 
 ```math
-h(x, p) = H(x, p, u(x, p), \mu(x, p)).
+\mathbf{H}(x, p) = H(x, p, u(x, p), \mu(x, p)).
 ```
 
 On the boundary arc of the speed limit, $v = v_{\max}$, so $u = 0$; the maximisation
