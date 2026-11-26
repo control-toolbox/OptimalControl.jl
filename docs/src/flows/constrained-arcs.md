@@ -62,8 +62,11 @@ nothing # hide
 Here $c(x) = x - l_b$ and $H = p\,u - x^2 + \mu\,(x - l_b)$. Along a boundary arc,
 $x = l_b$ is constant, so $u = 0$. The maximisation condition with $|u| < 1$ gives $p = 0$ on
 the arc, and differentiating, $\dot p = 2x - \mu = 0$: the multiplier is $\mu = 2x$. The
-solution has three arcs: $u = -1$, the boundary arc, then $u = +1$, with $t_1 = 0.9$,
-$t_2 = 1.6$ and $p(0) \approx -0.982237546583301$.
+solution has three arcs: $u = -1$, the boundary arc, then $u = +1$. On the first arc,
+$x = 1 - t$ reaches $l_b$ at $t_1 = 0.9$; on the last one, $x = l_b + t - t_2$ reaches $1/2$
+at $t_f = 2$, so $t_2 = 1.6$. The costate is continuous at $t_1$, where it vanishes: with
+$\dot p = 2x = 2(1 - t)$ on the first arc, $p(0) = -\int_0^{t_1} 2(1 - t)\,\mathrm{d}t = -0.99$,
+and $p < 0$ before $t_1$, as $u = -1$ requires.
 
 ```@example main
 u_b(x, p) = 0            # the control on the boundary arc
@@ -76,7 +79,7 @@ f_plus = Flow(ocp, (x, p) -> 1; label="u = +1")
 t1, t2 = 0.9, 1.6
 f = f_minus * (t1, f_boundary) * (t2, f_plus)
 
-p0 = -0.982237546583301
+p0 = -0.99
 zf = f(t0, x0, p0, tf)
 ```
 
@@ -101,6 +104,7 @@ $\mu = 2x = 0.2$ on the boundary arc, and $0$ off it. The direct method finds th
 
 ```@example main
 @assert isapprox(zf[1], xf; atol=1e-8)                                  # hide
+@assert abs(f_minus(t0, x0, p0, t1)[2]) < 1e-8                           # hide
 @assert isapprox(objective(sol_d), objective(sol_f); atol=1e-3)         # hide
 @assert μ_f(0.5) == 0 && isapprox(μ_f(1.2), 0.2; atol=1e-8) && μ_f(1.8) == 0   # hide
 @assert isapprox(μ_d(1.2), 0.2; atol=1e-3)                              # hide
@@ -163,10 +167,8 @@ nothing                                                                         
     flow: `dual` throws an error for them. A function is still needed for a constraint that
     is not in the problem.
 
-    The multiplier follows the sign convention of the duals (see
-    [The sign of the multipliers](@ref modelling-hamiltonians-sign)): for a two-sided
-    constraint or an equality, the active side is read on its sign, $y > 0$ on the upper
-    bound and $y < 0$ on the lower one. See also
+    The multiplier follows the sign convention of the duals, see
+    [The sign of the multipliers](@ref modelling-hamiltonians-sign). See also
     [Constraint duals of a flow](https://control-toolbox.org/CTFlows.jl/stable/flows/constrained#Constraint-duals-of-a-flow)
     in the CTFlows documentation.
 
