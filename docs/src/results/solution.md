@@ -306,16 +306,12 @@ nothing                                                                # hide
 !!! note "Sign and scale of the multipliers"
 
     The multipliers follow one sign convention, the same for a box and for a path
-    constraint, and for `→ min` and `→ max` (a problem written `max -J` has the same
-    multipliers as `min J`). The costate and the multipliers of the maximum principle follow
-    the same convention, see [Notation and conventions](@ref modelling-formulation-conventions):
-
-    - a constraint with a **single** finite bound, such as `v(t) ≤ 0.75`, has a
-      non-negative multiplier, positive where it is active;
-    - a constraint with **two** finite bounds, such as `-1 ≤ u(t) ≤ 1`, and an equality
-      have a signed multiplier μ = μ_ub − μ_lb, the difference of the non-negative
-      multipliers of the two sides: μ > 0 where the upper bound is active, μ < 0 where
-      the lower bound is active, μ = 0 where the constraint is inactive.
+    constraint, for `→ min` and `→ max`, and for the multipliers of the maximum principle:
+    see [The sign of the multipliers](@ref modelling-hamiltonians-sign). In short, a
+    constraint with a **single** finite bound, such as `v(t) ≤ 0.75`, has a non-negative
+    multiplier; a constraint with **two** finite bounds, such as `-1 ≤ u(t) ≤ 1`, or an
+    equality, has a signed one, positive where the upper bound is active and negative where
+    the lower bound is.
 
     Above, u = 1 on the first arc, so μ_u > 0, u = −1 on the last one, so μ_u < 0, and the
     speed bound is active while coasting, so μ_v > 0 there.
