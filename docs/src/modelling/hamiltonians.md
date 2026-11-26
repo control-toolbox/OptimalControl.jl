@@ -1,9 +1,5 @@
 # [Hamiltonians of a problem](@id modelling-hamiltonians)
 
-```@meta
-Draft = false
-```
-
 The indirect method works with the Hamiltonians of the maximum principle. They depend only
 on the problem, so they need not be written by hand: OptimalControl builds them from the
 model, with the conventions of [Notation and conventions](@ref modelling-formulation-conventions).

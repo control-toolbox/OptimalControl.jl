@@ -559,11 +559,13 @@ nothing                                                                         
 The three indirect solutions:
 
 ```@example main
-# switching_style=:none and phase_labels=:none remove the switching lines and the phase names
+# switching_style=:none and phase_labels=:none remove the switching lines and the phase names;
+# the groups are given, since only the solution of the boundary arc carries the dual of the constraint
 opt = (switching_style=:none, phase_labels=:none)
-plt_ind = plot(indirect_free; label="a = 0.3", linestyle=:dot, size=(800, 710), legend=false, opt...)
-plot!(plt_ind, indirect_touch; label="a = 0.2", opt...)
-plot!(plt_ind, indirect_arc; label="a = 0.1", linestyle=:dash, opt...)
+groups = (:state, :costate, :control)
+plt_ind = plot(indirect_free, groups...; label="a = 0.3", linestyle=:dot, size=(800, 710), legend=false, opt...)
+plot!(plt_ind, indirect_touch, groups...; label="a = 0.2", opt...)
+plot!(plt_ind, indirect_arc, groups...; label="a = 0.1", linestyle=:dash, opt...)
 plot!(plt_ind; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 

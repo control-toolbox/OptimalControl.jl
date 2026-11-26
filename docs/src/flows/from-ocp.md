@@ -293,6 +293,25 @@ raises an error that asks for a law:
 Flow(ocp)
 ```
 
+## [The cost multiplier $p^0$](@id flows-from-ocp-p0)
+
+The keyword `p0` of `Flow` is the multiplier of the cost, $p^0$ in
+$H = p \cdot f + p^0 f^0$. It is $-1$ for a minimisation and $+1$ for a maximisation by
+default, the normal case; $p^0 = 0$ is the **abnormal** case, where the extremal does not
+depend on the cost. A $p^0$ whose sign contradicts the criterion is rejected (see
+[The sign of $p^0$](@ref modelling-hamiltonians-p0)). Do not mistake it for the initial
+costate, also called `p0` in the point calls of this page: the keyword is given when the flow
+is built, the initial costate when it is called.
+
+```@example main
+f_abnormal = Flow(ocp, (x, p) -> p[2]; p0=0)
+hamiltonian(f_abnormal)([-1, 0], [12, 6])   # p₁v + p₂²: no cost term
+```
+
+```@repl main
+Flow(ocp, (x, p) -> p[2]; p0=1)
+```
+
 ## [Total or partial Hamiltonian](@id flows-from-ocp-total-partial)
 
 The keyword `hamiltonian_type` chooses how the flow is built from $H$ and the law
