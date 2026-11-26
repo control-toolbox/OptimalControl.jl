@@ -272,7 +272,8 @@ pω, -2ω_opt
 
 With the Mayer term $\omega^2$ and $p^0 = -1$, transversality requires
 $p_\omega(t_f) = -2\omega$: the direct solution satisfies it. The flow also reaches
-$q(1) = 0$, and $p_v(1) = 0$ since $v(1)$ is free.
+$q(1) = 0$, and the second component of the costate vanishes at $t = 1$, $p_2(1) = 0$,
+since the velocity $v(1)$ is free.
 
 ```@example main
 @assert isapprox(pω, -2ω_opt; atol=1e-4)   # hide
@@ -315,21 +316,15 @@ Flow(ocp, (x, p) -> p[2]; p0=1)
 ## [Total or partial Hamiltonian](@id flows-from-ocp-total-partial)
 
 The keyword `hamiltonian_type` chooses how the flow is built from $H$ and the law
-$u(x, p)$:
+$u(x, p)$: `:total`, the default, differentiates the Hamiltonian of the law
+$\mathbf{H}(x, p) = H(x, p, u(x, p))$ **through** the law; `:partial` takes the partial
+derivatives of $H$ with the control **frozen** at the value of the law. The formulas, and why
+the two coincide for a law that maximises $H$, are on
+[Partial and total derivatives](@ref modelling-hamiltonians-partial-total).
 
-- `:total`, the default, integrates the Hamiltonian system of
-  $\bar H(x, p) = H(x, p, u(x, p))$, differentiating through the law:
-  $\dot x = \nabla_p H + (\partial_p u)^\top \nabla_u H$ and
-  $\dot p = -\nabla_x H - (\partial_x u)^\top \nabla_u H$;
-- `:partial` takes the partial derivatives of $H$ with the control frozen at the value of the
-  law: $\dot x = \nabla_p H$, $\dot p = -\nabla_x H$, at $u = u(x, p)$.
-
-The two differ by the terms in $\nabla_u H$. These vanish when $\nabla_u H = 0$ along the
-law, as for a control that maximises $H$ inside the control set, and also where the law is
-locally constant, as for bang–bang or saturated controls. So for an optimal control law the
-two give the same flow. For another law, they do not, and the state of `:partial` is the one
-the law actually drives, $\dot x = f(x, u(x, p))$: use `:partial` to simulate a given
-feedback.
+They also coincide where the law is locally constant, as for bang–bang or saturated
+controls. For another law, they differ, and the state of `:partial` is the one the law
+actually drives, $\dot x = f(x, u(x, p))$: use `:partial` to simulate a given feedback.
 
 Take the law $u = p_2 + 1$, which does not maximise $H$:
 
@@ -342,9 +337,9 @@ xf_total, xf_partial
 ```
 
 With `:partial`, the state is driven by $u = p_2 + 1 = 7 - 12t$, which overshoots the target.
-With `:total`, the flow is the one of
-$\bar H = p_1 v + p_2 (p_2 + 1) - (p_2 + 1)^2/2 = p_1 v + p_2^2/2 - 1/2$. It differs from the
-optimal $\mathbf{H} = p_1 v + p_2^2/2$ by a constant, so it has the same Hamiltonian vector
+With `:total`, the flow is the one of the Hamiltonian of this law,
+$\mathbf{H} = p_1 v + p_2 (p_2 + 1) - (p_2 + 1)^2/2 = p_1 v + p_2^2/2 - 1/2$. It differs from the
+Hamiltonian of the optimal law, $p_1 v + p_2^2/2$, by a constant, so it has the same Hamiltonian vector
 field, and it reaches the target as the optimal law does. This is a property of this
 example, not of `:total`.
 
@@ -382,3 +377,5 @@ trajectories: see [What a flow returns](@ref flows-simulation-returns).
   from a flow.
 - [Shooting](@ref flows-shooting): turn a flow into equations for the initial costate.
 - [Control-free problems](@ref modelling-without-control): `Flow(ocp)` in full.
+- [Hamiltonians of a problem](@ref modelling-hamiltonians): the pseudo-Hamiltonian and the
+  Hamiltonian of a law, built from the problem.
