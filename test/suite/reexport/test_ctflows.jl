@@ -44,17 +44,24 @@ function test_ctflows()
         end
 
         Test.@testset "Systems accessors" begin
-            # ⚠️ `control_law` and `pseudo_hamiltonian` also exist in
-            # `CTBase.Data` as *distinct* objects. The CTFlows ones are the
-            # exported pair — siblings of `hamiltonian(sys)`. `isdefined` would
-            # not tell the two apart.
-            for f in (:control_law, :pseudo_hamiltonian)
+            # `pseudo_hamiltonian`, `hamiltonian` and `control_law` are one function each,
+            # owned by `CTBase.Data` and extended by CTModels (on a model) and by
+            # `CTFlows.Systems` (on a system or a flow): `CTFlows.Systems.f` is the
+            # `CTBase.Data` one. They are exported here with the flow accessors.
+            for f in (:control_law, :pseudo_hamiltonian, :hamiltonian)
                 Test.@testset "$f" begin
-                    Test.@test reexports(OptimalControl, f, CTFlows.Systems)
+                    Test.@test reexports(OptimalControl, f, OptimalControl.CTBase.Data)
+                    Test.@test isdefined(CurrentModule, f)
                     Test.@test getfield(OptimalControl, f) === getfield(CTFlows.Systems, f)
-                    Test.@test getfield(OptimalControl, f) !==
+                    Test.@test getfield(OptimalControl, f) ===
                         getfield(OptimalControl.CTBase.Data, f)
                 end
+            end
+
+            # `multiplier` and `freeze_multiplier` are not exported: a user gets them through
+            # `Flow(...; multiplier=…, hamiltonian_type=:partial)`.
+            for f in (:multiplier, :freeze_multiplier)
+                Test.@test !is_exported(OptimalControl, f)
             end
         end
 
@@ -64,7 +71,6 @@ function test_ctflows()
             # CTFlows.Systems but not re-exported here — an inconsistency with their
             # siblings control_law/pseudo_hamiltonian above.
             for f in (
-                :hamiltonian,
                 :hamiltonian_vector_field,
                 :vector_field,
                 :get_hamiltonian_gradient,
