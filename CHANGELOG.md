@@ -25,6 +25,12 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   read a flow with the functions that read its solution; they also read the trajectory of a state
   flow. The indexed `get_flow(f, i)`, `get_switching_time(f, i)`, `get_jump(f, i)` are removed.
   The old names throw a `PreconditionError` that names the replacement.
+- **A trajectory integrated backward is returned in increasing time**
+  ([#1093](https://github.com/control-toolbox/OptimalControl.jl/issues/1093),
+  [CTFlows#547](https://github.com/control-toolbox/CTFlows.jl/issues/547)): `f((tf, t0), x, p)`
+  gives the `Solution` that `f((t0, tf), …)` would give over the same interval — increasing time
+  grid, switching times in increasing order, objective the cost of the arc over `[t0, tf]`. Its
+  time grid used to decrease, and its objective had the wrong sign.
 - **Why**: the same arc was written two ways, and the same notion had two names, on a flow and on
   its solution.
 
@@ -101,6 +107,7 @@ See [BREAKING.md](BREAKING.md).
 
 ### 🐛 Bug Fixes
 
+- **A concatenation of flows integrates any horizon** ([#1093](https://github.com/control-toolbox/OptimalControl.jl/issues/1093), [CTFlows#547](https://github.com/control-toolbox/CTFlows.jl/issues/547)). `(f1 * (t1, f2))(t0, x0, p0, tf)` used to integrate the phases in the order of the concatenation, each up to its switching time, whatever `t0` and `tf`: a horizon starting after `t1`, ending before it, or backward gave a wrong value without an error. Now only the phases the horizon meets are integrated, starting with the one holding `t0`; a jump is applied at a switching time strictly inside the horizon and inverted backward. The Jacobian of a shooting function with respect to a switching time, wrong under ForwardDiff, is right too.
 - **A constant component of the dynamics solves with the default modeler `:adnlp`** ([#481](https://github.com/control-toolbox/OptimalControl.jl/issues/481)). A problem whose dynamics has a component that is a constant, such as the `0` below, used to fail with `Cannot determine ordering of Dual tags` (ADNLPModels 0.8.13 and 0.8.14), and had to be written `0 * u(t)` or solved with `:exa`. Fixed upstream in [ADNLPModels 0.8.15](https://github.com/JuliaSmoothOptimizers/ADNLPModels.jl/releases/tag/v0.8.15):
 
   ```julia
@@ -138,6 +145,7 @@ See [BREAKING.md](BREAKING.md).
 
 ### 📚 Documentation
 
+- **The horizon of a call of a flow** ([#1093](https://github.com/control-toolbox/OptimalControl.jl/issues/1093)): the Multi-phase page says which phases a call integrates, which jumps it applies, and the value at a bound equal to a switching time; the From a problem page has a Backward integration section; the Shooting page says that the Jacobian with respect to a switching time is exact. `test/suite/flows/test_flow_horizon.jl` checks these through the exported names.
 - The docs load `JSON` instead of the deprecated `JSON3` ([#993](https://github.com/control-toolbox/OptimalControl.jl/issues/993)): since CTModels 0.20, `format=:JSON` is enabled by `using JSON`. The Save & load and Installation pages say so, and the docs environment depends on `JSON` (`"1"`).
 - The exceptions of the documentation are shown by `@repl` itself ([#904](https://github.com/control-toolbox/OptimalControl.jl/issues/904)): the 49 `try` / `catch` / `showerror(IOContext(stdout, :color => false), e)` wrappers, needed before DocumenterVitepress 0.3.5, are removed, so the messages appear as in the REPL, `ERROR:` and colors included. The Choosing a method page says that `:exa` accepts the scheme aliases since CTParser 0.9.6 (CTParser#355).
 - `docs/make.jl` takes the deploy decision once and gives it to `MarkdownVitepress` (`SITE13`, [#1042](https://github.com/control-toolbox/OptimalControl.jl/issues/1042)): a pull request without the label `documentation push preview` no longer announces a preview deployment that never happens, and says why it does not deploy.
