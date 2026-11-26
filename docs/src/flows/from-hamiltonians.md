@@ -78,7 +78,7 @@ f_hv(t0, x0, p0, tf)
 ## From a pseudo-Hamiltonian and a control law
 
 Give $H(x, p, u)$ and the law $u(x, p)$: the flow is the one of
-$\bar H(x, p) = H(x, p, u(x, p))$, differentiated through the law by automatic
+$\mathbf{H}(x, p) = H(x, p, u(x, p))$, differentiated through the law by automatic
 differentiation. This is what [From an OCP](@ref flows-from-ocp) does, with the
 pseudo-Hamiltonian read from the problem.
 
