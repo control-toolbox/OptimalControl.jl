@@ -160,12 +160,12 @@ function test_ctsolvers()
                 )
             end
             Test.@testset "ocp_solution" begin
-                # ⚠️ takes a `BuiltModel` (the NLP-side object), not the
-                # `DiscretizedModel` — the old assertion had it wrong.
+                # ⚠️ takes a `BuiltModel` (the NLP-side object) wrapping a
+                # `DiscretizedModel`, not the `DiscretizedModel` itself.
                 Test.@test hasmethod(
                     ocp_solution,
                     Tuple{
-                        OptimalControl.BuiltModel,
+                        OptimalControl.BuiltModel{<:OptimalControl.DiscretizedModel},
                         SolverCore.AbstractExecutionStats,
                         OptimalControl.AbstractNLPModeler,
                     },
