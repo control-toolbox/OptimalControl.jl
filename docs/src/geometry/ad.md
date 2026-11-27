@@ -20,10 +20,9 @@ For the harmonic oscillator, $X(x) = (x_2, -x_1)$, and its energy
 $f(x) = x_1^2 + x_2^2$, $\mathcal{L}_X f = 2x_1 x_2 - 2x_2 x_1 = 0$: the energy is constant
 along the trajectories.
 
-```@example main
-X(x) = [x[2], -x[1]]
-f(x) = x[1]^2 + x[2]^2
-
+```@repl main
+X(x) = [x[2], -x[1]];
+f(x) = x[1]^2 + x[2]^2;
 Xf = ad(X, f)
 Xf([1.0, 2.0])
 ```
@@ -40,9 +39,8 @@ where $X'(x)$ is the Jacobian matrix of $X$ at $x$. With $Y(x) = (x_1^2, x_2^2)$
 $Y' X = (2x_1 x_2, -2x_1 x_2)$ and $X' Y = (x_2^2, -x_1^2)$, so
 $[X, Y](1, 2) = (4 - 4, -4 + 1) = (0, -3)$:
 
-```@example main
-Y(x) = [x[1]^2, x[2]^2]
-
+```@repl main
+Y(x) = [x[1]^2, x[2]^2];
 Z = ad(X, Y)
 Z([1.0, 2.0])
 ```
@@ -57,12 +55,11 @@ nothing                                                 # hide
 On `VectorField`s, `ad` returns a `VectorField`, which can be bracketed again. The bracket
 $[[X, Y], Y]$ at $x = (1, 2)$ is $(4, -2)$:
 
-```@example main
-XV = VectorField(x -> [x[2], -x[1]])
-YV = VectorField(x -> [x[1]^2, x[2]^2])
-
+```@repl main
+XV = VectorField(x -> [x[2], -x[1]]);
+YV = VectorField(x -> [x[1]^2, x[2]^2]);
 ZV = ad(XV, YV)
-ZV isa VectorField, ad(ZV, YV)([1.0, 2.0])
+ad(ZV, YV)([1.0, 2.0])
 ```
 
 ```@example main
@@ -79,10 +76,9 @@ function $f(t, x)$, pass `is_autonomous=false`. With $X(t, x) = (t + x_2, -x_1)$
 $f(t, x) = t + x_1^2 + x_2^2$, $\mathcal{L}_X f = 2x_1(t + x_2) - 2x_2 x_1 = 2 t x_1$, which
 is $2$ at $t = 1$, $x = (1, 2)$:
 
-```@example main
-Xt(t, x) = [t + x[2], -x[1]]
-ft(t, x) = t + x[1]^2 + x[2]^2
-
+```@repl main
+Xt(t, x) = [t + x[2], -x[1]];
+ft(t, x) = t + x[1]^2 + x[2]^2;
 ad(Xt, ft; is_autonomous=false)(1.0, [1.0, 2.0])
 ```
 
@@ -90,10 +86,9 @@ For a vector field $X(x, v)$ and a function $f(x, v)$, pass `is_variable=true`. 
 $X(x, v) = (x_2 + v, -x_1)$ and $f(x, v) = x_1^2 + x_2^2 + v$,
 $\mathcal{L}_X f = 2 x_1 v$:
 
-```@example main
-Xv(x, v) = [x[2] + v, -x[1]]
-fv(x, v) = x[1]^2 + x[2]^2 + v
-
+```@repl main
+Xv(x, v) = [x[2] + v, -x[1]];
+fv(x, v) = x[1]^2 + x[2]^2 + v;
 ad(Xv, fv; is_variable=true)([1.0, 2.0], 1.0)
 ```
 
@@ -122,17 +117,17 @@ time:
 
 With $g(t, x) = t^2 + x_1 x_2$, $\partial_t g = 2t = 6$ at $t = 3$:
 
-```@example main
-g(t, x) = t^2 + x[1] * x[2]
-dg = ∂ₜ(g)
+```@repl main
+g(t, x) = t^2 + x[1] * x[2];
+dg = ∂ₜ(g);
 dg(3.0, [1.0, 2.0])
 ```
 
 `∂ₜ` also applies to a `VectorField` or a `Hamiltonian`. Its result always depends on time,
 even when the input does not, and is then zero:
 
-```@example main
-dXV = ∂ₜ(XV)
+```@repl main
+dXV = ∂ₜ(XV);
 dXV(1.0, [1.0, 2.0])
 ```
 
@@ -147,7 +142,7 @@ extremal (see [Poisson bracket](@ref geometry-poisson-total)).
 ## Errors
 
 | Situation | Exception |
-| --- | --- |
+| :--- | :--- |
 | a `Hamiltonian` given to `ad` | `IncorrectArgument`, pointing to `Poisson` |
 | operands with different dependences on time or on the variable | `PreconditionError` |
 | an in-place `VectorField` | `IncorrectArgument` |

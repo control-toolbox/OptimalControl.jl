@@ -15,11 +15,10 @@ nothing # hide
 
 `f1 * (t1, f2)` follows `f1` until `t1`, then `f2`. The result is itself a flow:
 
-```@example main
-f1 = Flow(VectorField(x -> 0))    # ẋ = 0
-f2 = Flow(VectorField(x -> 1))    # ẋ = 1
-
-f = f1 * (1, f2)
+```@repl main
+f1 = Flow(VectorField(x -> 0));   # ẋ = 0
+f2 = Flow(VectorField(x -> 1));   # ẋ = 1
+f = f1 * (1, f2);
 f(0, 0.0, 2)   # constant until t = 1, then one unit of slope 1
 ```
 
@@ -30,8 +29,8 @@ More arcs are added the same way: `f1 * (t1, f2) * (t2, f3)`.
 A jump at the switching time is given between the time and the second flow. On a flow of the
 state, `f1 * (t1, j, f2)` applies `x ← j(x)`, or `x ← x + j` when `j` is a vector:
 
-```@example main
-fj = f1 * (1, x -> x + 10, f2)
+```@repl main
+fj = f1 * (1, x -> x + 10, f2);
 fj(0, 0.0, 2)   # +10 at t = 1, then one unit of slope 1
 ```
 
@@ -53,14 +52,16 @@ on either:
 On the extremal of the energy problem, a costate jump of $(10, 0)$ at $t = 1/2$ leaves the
 state continuous and shifts $p_1$ from $12$ to $22$:
 
-```@example main
+```@repl main
 h = Flow(
     PseudoHamiltonian((x, p, u) -> p[1] * x[2] + p[2] * u - u^2 / 2),
     DynClosedLoop((x, p) -> p[2]),
-)
-h_jump = h * (0.5, [10, 0], h)
-traj = h_jump((0, 1), [-1, 0], [12, 6])
-state(traj)(0.5 - 1e-9) ≈ state(traj)(0.5 + 1e-9), costate(traj)(0.25), costate(traj)(0.75)
+);
+h_jump = h * (0.5, [10, 0], h);
+traj = h_jump((0, 1), [-1, 0], [12, 6]);
+state(traj)(0.5 - 1e-9) ≈ state(traj)(0.5 + 1e-9)
+costate(traj)(0.25)
+costate(traj)(0.75)
 ```
 
 ```@example main
@@ -70,12 +71,16 @@ nothing                                                                 # hide
 
 ## Inspecting a concatenation
 
-```@example main
-n_phases(f), get_switching_times(f), get_flow(f, 1) === f1
-```
+A concatenation is read with the same functions as the solution it returns (see
+[The switching structure of the solution](@ref flows-multi-phase-switching)):
+`switching_times(f)`, and `phase_labels(f)` for flows built with `label=`. `n_phases(f)`,
+`phase_flows(f)` and `jumps(f)` give the rest:
 
-`get_flows`, `get_switching_time(f, i)`, `get_jump(f, i)` and `get_jumps(f)` read back the
-other parts.
+```@example main
+@show n_phases(f) switching_times(f) (phase_flows(f)[1] === f1) jumps(fj)
+@assert n_phases(f) == 2 && switching_times(f) == [1] && phase_flows(f)[1] === f1   # hide
+nothing # hide
+```
 
 ## The point call returns the pair `(x, p)`
 
@@ -106,14 +111,15 @@ ocp = @def begin
     ẋ(t) == [v(t), u(t)]
     tf → min
 end
+nothing # hide
+```
 
-f_plus = Flow(ocp, (x, p, v) -> 1)
-f_minus = Flow(ocp, (x, p, v) -> -1)
-
-t1, tf = 1, 2
-f_bb = f_plus * (t1, f_minus)
-zf = f_bb(0, [-1, 0], [1, 1], tf; variable=tf)
-xf, pf = zf
+```@repl main
+f_plus = Flow(ocp, (x, p, v) -> 1; label="u = +1");
+f_minus = Flow(ocp, (x, p, v) -> -1; label="u = -1");
+t1, tf = 1, 2;
+f_bb = f_plus * (t1, f_minus);
+xf, pf = f_bb(0, [-1, 0], [1, 1], tf; variable=tf)
 ```
 
 The concatenation reaches the target, with $p(t_f) = (1, -1)$.
@@ -123,9 +129,116 @@ The concatenation reaches the target, with $p(t_f) = (1, -1)$.
 nothing                                                                       # hide
 ```
 
+### [The switching structure of the solution](@id flows-multi-phase-switching)
+
+`label=` names the phase a flow integrates, here `"u = +1"` and `"u = -1"`. It is accepted by
+every `Flow` constructor, and the concatenation keeps the labels in order. The trajectory
+call returns a solution that keeps the structure of the extremal: its switching times, the
+labels of its phases, shown in its summary, and the values on both sides of each switch.
+
+```@repl main
+sol_bb = f_bb((0, tf), [-1, 0], [1, 1]; variable=tf)
+```
+
+```@repl main
+switching_times(sol_bb)
+phase_labels(sol_bb)
+```
+
+`left_limit(sol, :control, i)` and `right_limit(sol, :control, i)` give the values just before
+and just after the `i`-th switch, for `:state`, `:costate` and `:control`. Here the control
+jumps from $+1$ to $-1$, and the state and the costate are continuous:
+
+```@repl main
+left_limit(sol_bb, :control, 1)
+right_limit(sol_bb, :control, 1)
+left_limit(sol_bb, :state, 1)
+right_limit(sol_bb, :state, 1)
+```
+
+```@example main
+@assert has_switching(sol_bb) && switching_times(sol_bb) == [t1]                     # hide
+@assert phase_labels(sol_bb) == ["u = +1", "u = -1"]                                 # hide
+@assert left_limit(sol_bb, :control, 1) ≈ 1 && right_limit(sol_bb, :control, 1) ≈ -1  # hide
+@assert isapprox(left_limit(sol_bb, :state, 1), [-0.5, 1]; atol=1e-8)                 # hide
+@assert isapprox(right_limit(sol_bb, :state, 1), [-0.5, 1]; atol=1e-8)                # hide
+@assert control(sol_bb)(t1) ≈ 1                                                       # hide
+nothing                                                                               # hide
+```
+
+The limits are not read from the time grid. The left limit is the end of the phase that
+finishes at the switch, and the right limit the start of the next phase, after its jump if
+there is one. The control on each side is the law of that phase, evaluated there. The
+functions of time of the solution are continuous on the left: `control(sol_bb)(1)` is the
+value before the switch, $+1$.
+
+The plot draws the switching times as vertical lines, and writes the labels of the phases on
+the control (see [Plot](@ref results-plot-switching) for the keywords that change this):
+
+```@example main
+plot(sol_bb)
+```
+
+The structure is saved and loaded with the solution (see [Save & load](@ref results-save-load)).
+
+### [The horizon of a call](@id flows-multi-phase-horizon)
+
+A concatenation can be called on any horizon $[t_0, t_f]$: it may start after a switching
+time, end before one, lie inside a single phase, or be **backward**, $t_0 > t_f$. Only the
+phases the horizon meets are integrated, each on its part of the horizon, the first phase
+holding before $t_1$ and the last one after the last switching time. The rules:
+
+- a **jump** is applied only at a switching time **strictly inside** the horizon;
+- at a bound equal to a switching time $t_i$, the given and the returned values are **those on
+  the side of the horizon**: `f(tᵢ, x0, p0, tf)` starts the phase after $t_i$ from
+  $(x_0, p_0)$, with no jump, and `f(t0, x0, p0, tᵢ)` returns the end of the phase before
+  $t_i$;
+- on a **backward** horizon, the jumps crossed are **inverted**: a jump given as a vector is
+  subtracted; a jump given as a function has no known inverse, and crossing it backward raises
+  an `IncorrectArgument`;
+- so calling back from $t_f$ with the values reached at $t_f$ gives the initial values back.
+
+On the bang–bang extremal, $p(t) = (1, 1 - t)$, $(q, v)(0.5) = (-0.875, 0.5)$ and
+$(q, v)(1.5) = (-0.125, 0.5)$:
+
+```@example main
+@show f_bb(0, [-1, 0], [1, 1], 0.5; variable=tf)           # the first phase only
+@show f_bb(1.5, [-0.125, 0.5], [1, -0.5], tf; variable=tf)  # the second phase only
+@show f_bb(tf, [0, 0], [1, -1], 0; variable=tf)             # backward, back to the start
+nothing # hide
+```
+
+A trajectory is returned **in increasing time**, whatever the direction of integration: the
+solution of a backward call is the same as the one of the forward call over the same interval,
+with its switching times, the labels of its phases and its objective, the cost of the arc:
+
+```@example main
+sol_back = f_bb((tf, 0), [0, 0], [1, -1]; variable=tf)
+@show time_grid(sol_back)[[1, end]] switching_times(sol_back) phase_labels(sol_back)
+@show objective(sol_back)
+nothing # hide
+```
+
+```@example main
+x05, p05 = f_bb(0, [-1, 0], [1, 1], 0.5; variable=tf)                                # hide
+@assert isapprox(x05, [-0.875, 0.5]; atol=1e-8) && isapprox(p05, [1, 0.5]; atol=1e-8)  # hide
+x2, p2 = f_bb(1.5, [-0.125, 0.5], [1, -0.5], tf; variable=tf)                          # hide
+@assert isapprox(x2, [0, 0]; atol=1e-8) && isapprox(p2, [1, -1]; atol=1e-8)           # hide
+xb, pb = f_bb(tf, [0, 0], [1, -1], 0; variable=tf)                                     # hide
+@assert isapprox(xb, [-1, 0]; atol=1e-8) && isapprox(pb, [1, 1]; atol=1e-8)           # hide
+@assert time_grid(sol_back)[[1, end]] == [0, tf] && switching_times(sol_back) == [t1]   # hide
+@assert phase_labels(sol_back) == ["u = +1", "u = -1"]                                 # hide
+@assert isapprox(objective(sol_back), tf; atol=1e-8)                                   # hide
+@assert isapprox(state(sol_back)(0.5), [-0.875, 0.5]; atol=1e-8)                      # hide
+nothing                                                                                # hide
+```
+
+The costate jumps of a boundary arc are vectors, so the flows of
+[Constrained arcs](@ref flows-constrained-arcs) are integrated backward as well.
+
 ## Example: off arc, then bang
 
-This example comes from the v2.0.4 manual. Minimise the $L^1$ norm of the control,
+Minimise the $L^1$ norm of the control,
 $\int_0^1 |u|$, for $\dot x = -x + u$, $u \in [-1, 1]$, from $x(0) = -1$ to $x(1) = 0$:
 
 ```@example main
@@ -154,16 +267,15 @@ control is $u = 0$ (off arc) until $p$ reaches $1$, at $t_1 = -\ln p_0$, then $u
 p_0 = \frac{1}{x_0 - (x_f - 1)e^{t_f}}, \qquad t_1 = -\ln p_0 .
 ```
 
-```@example main
+```@repl main
 p0 = 1 / (x0 - (xf1 - 1) * exp(tf1))
 t1_l1 = -log(p0)
-
-f_off = Flow(ocp_l1, (x, p) -> 0)    # off arc: u = 0
-f_bang = Flow(ocp_l1, (x, p) -> 1)   # bang arc: u = 1
-
-f_l1 = f_off * (t1_l1, f_bang)
-sol_l1 = f_l1((t0, tf1), x0, p0)
-state(sol_l1)(tf1), objective(sol_l1)
+f_off = Flow(ocp_l1, (x, p) -> 0);    # off arc: u = 0
+f_bang = Flow(ocp_l1, (x, p) -> 1);   # bang arc: u = 1
+f_l1 = f_off * (t1_l1, f_bang);
+sol_l1 = f_l1((t0, tf1), x0, p0);
+state(sol_l1)(tf1)
+objective(sol_l1)
 ```
 
 The flow reaches $x(1) = 0$, and its cost is the length of the bang arc, $t_f - t_1$:

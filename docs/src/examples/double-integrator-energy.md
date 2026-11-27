@@ -1,5 +1,9 @@
 # [Energy minimisation](@id examples-double-integrator-energy)
 
+```@raw html
+<ExampleFacts id="double-integrator-energy" />
+```
+
 A wagon moves along a rail, and we control its acceleration with a force $u$. Its state is
 $x = (q, v)$, where $q$ is the position and $v$ the velocity.
 
@@ -23,19 +27,18 @@ We use OptimalControl to define the problem, NLPModelsIpopt to solve it by a dir
 OrdinaryDiffEqTsit5 and NonlinearSolve for the indirect method, and Plots to see the result.
 
 ```@example main
-using OptimalControl
-using NLPModelsIpopt
-using OrdinaryDiffEqTsit5
-using NonlinearSolve
-using Plots
+using OptimalControl        # define the problem, solve it, build the flows
+using NLPModelsIpopt        # NLP solver of the direct method
+using OrdinaryDiffEqTsit5   # integrator of the flows
+using NonlinearSolve        # solver of the shooting equations
+using Plots                 # plots of the solutions
 ```
 
 ## The problem
 
-```@raw html
-<div class="responsive-columns-left-priority">
-<div>
-```
+:::tabs key:example-problem
+
+== @def
 
 ```@example main
 t0, tf = 0, 1
@@ -56,32 +59,26 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
+== Mathematics
 
 ```math
 \begin{aligned}
-& \text{Minimise} && \frac{1}{2}\int_0^1 u^2(t) \,\mathrm{d}t \\
+& \text{Minimise} && \frac{1}{2}\int_0^1 u^2(t) \,\mathrm{d}t \\[0.5em]
 & \text{subject to} && \dot{x}(t) = (v(t), u(t)), \\[0.5em]
 & && x(0) = (-1, 0), \\[0.5em]
 & && x(1) = (0, 0).
 \end{aligned}
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 See [Abstract syntax (`@def`)](@ref modelling-abstract-syntax) for every form these lines can
 take.
 
 ## Direct method
 
-The direct method[^1] discretises the problem in time and solves the resulting nonlinear
-program, here with Ipopt:
+The [direct method](@ref modelling-discretisation-direct-method) discretises the
+problem in time and solves the resulting nonlinear program, here with Ipopt:
 
 ```@example main
 direct_sol = solve(ocp; display=false)
@@ -89,7 +86,7 @@ objective(direct_sol)
 ```
 
 ```@example main
-plt = plot(direct_sol; label="direct", size=(800, 600))
+plt = plot(direct_sol; label="direct", size=(800, 710), legend=false)
 ```
 
 ## The exact solution
@@ -111,16 +108,13 @@ p(0) = (12, 6), \qquad u(t) = 6 - 12t, \qquad J = \frac12 \int_0^1 (6 - 12t)^2 \
 
 ## Indirect method
 
-The indirect method, [indirect simple shooting](@extref Tutorials tutorial-iss), computes the
-extremal from its initial costate. The flow of the
-Hamiltonian system, with the maximising control in feedback form, integrates $(x, p)$ from
-$(x_0, p_0)$:
+The indirect method, by [shooting](@ref flows-shooting), computes the extremal from its
+initial costate. The flow of the Hamiltonian system, with the maximising control in feedback
+form, integrates $(x, p)$ from $(x_0, p_0)$:
 
 ```@example main
-# maximising control, H(x, p, u) = p₁v + p₂u - u²/2
-u_max(x, p) = p[2]
-
-f = Flow(ocp, u_max)
+u_max(x, p) = p[2]   # maximising control, H(x, p, u) = p₁v + p₂u - u²/2
+f = Flow(ocp, u_max) # Hamiltonian flow: (t0, x0, p0, tf) ↦ (x(tf), p(tf))
 nothing # hide
 ```
 
@@ -135,7 +129,6 @@ We solve $S(p_0) = 0$ with a Newton method, starting from the costate of the dir
 
 ```@example main
 nle!(s, p0, _) = (s .= S(p0))
-
 p0_guess = costate(direct_sol)(t0)
 prob = NonlinearProblem(nle!, p0_guess)
 shooting_sol = NonlinearSolve.solve(prob; show_trace=Val(false))
@@ -154,15 +147,13 @@ The extremal integrated from `p0_sol` is a solution of the problem, with its cos
 
 ```@example main
 indirect_sol = f((t0, tf), x0, p0_sol)
-objective(direct_sol), objective(indirect_sol)
+@show objective(direct_sol) objective(indirect_sol)
+nothing # hide
 ```
 
-For the plot, the flow is built with `saveat`, so that the trajectory has 101 points (see
-[Plotting a flow](@ref results-plot-flow)):
-
 ```@example main
-f_plot = Flow(ocp, u_max; saveat=range(t0, tf, 101), dense=false)
-plot!(plt, f_plot((t0, tf), x0, p0_sol); label="indirect", linestyle=:dash)
+plot!(plt, indirect_sol; label="indirect", linestyle=:dash)
+plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
 The indirect cost is the exact value, $6$. The direct cost differs by the discretisation error
@@ -188,4 +179,11 @@ nothing                                                                         
 - [State constraint](@ref examples-state-constraint) adds a bound on the velocity or the
   position to this problem.
 
-[^1]: J. T. Betts, *Practical methods for optimal control using nonlinear programming*, SIAM, Philadelphia, PA, 2001.
+```@raw html
+<ExampleNav id="double-integrator-energy" />
+```
+
+```@example main
+Main.gallery_thumbnail(plot(indirect_sol, :control; size=(480, 300), legend=false), "double-integrator-energy")  # hide
+nothing  # hide
+```

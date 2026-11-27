@@ -47,10 +47,9 @@ Give $\mathbf{H}(x, p)$; its Hamiltonian vector field
 $\vec{\mathbf{H}} = (\nabla_p \mathbf{H}, -\nabla_x \mathbf{H})$ is computed by automatic
 differentiation:
 
-```@example main
-H(x, p) = p[1] * x[2] + p[2]^2 / 2
-
-f_h = Flow(Hamiltonian(H))
+```@repl main
+H(x, p) = p[1] * x[2] + p[2]^2 / 2;
+f_h = Flow(Hamiltonian(H));
 xf, pf = f_h(t0, x0, p0, tf)
 ```
 
@@ -68,25 +67,23 @@ with `is_variable=true`. Without the declaration, the call fails with a `MethodE
 Give $\vec{\mathbf{H}}$ directly, as a function returning the pair $(\dot x, \dot p)$. No
 automatic differentiation is involved:
 
-```@example main
-Hv(x, p) = ([x[2], p[2]], [0, -p[1]])
-
-f_hv = Flow(HamiltonianVectorField(Hv))
+```@repl main
+Hv(x, p) = ([x[2], p[2]], [0, -p[1]]);
+f_hv = Flow(HamiltonianVectorField(Hv));
 f_hv(t0, x0, p0, tf)
 ```
 
 ## From a pseudo-Hamiltonian and a control law
 
 Give $H(x, p, u)$ and the law $u(x, p)$: the flow is the one of
-$\bar H(x, p) = H(x, p, u(x, p))$, differentiated through the law by automatic
+$\mathbf{H}(x, p) = H(x, p, u(x, p))$, differentiated through the law by automatic
 differentiation. This is what [From an OCP](@ref flows-from-ocp) does, with the
 pseudo-Hamiltonian read from the problem.
 
-```@example main
-Hp(x, p, u) = p[1] * x[2] + p[2] * u - u^2 / 2
-law(x, p) = p[2]
-
-f_hp = Flow(PseudoHamiltonian(Hp), DynClosedLoop(law))
+```@repl main
+Hp(x, p, u) = p[1] * x[2] + p[2] * u - u^2 / 2;
+law(x, p) = p[2];
+f_hp = Flow(PseudoHamiltonian(Hp), DynClosedLoop(law));
 f_hp(t0, x0, p0, tf)
 ```
 
@@ -97,10 +94,9 @@ f_hp(t0, x0, p0, tf)
 
 Give $(\nabla_p H, -\nabla_x H)$ as a function of $(x, p, u)$, and the law:
 
-```@example main
-Hpv(x, p, u) = ([x[2], u], [0, -p[1]])
-
-f_hpv = Flow(PseudoHamiltonianVectorField(Hpv), DynClosedLoop(law))
+```@repl main
+Hpv(x, p, u) = ([x[2], u], [0, -p[1]]);
+f_hpv = Flow(PseudoHamiltonianVectorField(Hpv), DynClosedLoop(law));
 f_hpv(t0, x0, p0, tf)
 ```
 
@@ -126,8 +122,8 @@ A flow of the state alone, $\dot x = f(x)$, or $f(t, x)$ when declared with
 `is_autonomous=false`. With the optimal control $u(t) = 6 - 12t$ written as a function of
 time, the state reaches the target:
 
-```@example main
-f_x = Flow(VectorField((t, x) -> [x[2], 6 - 12t]; is_autonomous=false))
+```@repl main
+f_x = Flow(VectorField((t, x) -> [x[2], 6 - 12t]; is_autonomous=false));
 f_x(t0, x0, tf)
 ```
 
@@ -145,10 +141,9 @@ An `ODEFunction` or an `ODEProblem` of the SciML ecosystem can be used directly,
 `OrdinaryDiffEqTsit5` alone. The parameter `p` of the SciML function `f!(dx, x, p, t)` is the
 **variable** of the flow, passed with the keyword `variable`. Here $\dot x = -p\,x$:
 
-```@example main
-rhs!(dx, x, p, t) = (dx[1] = -p * x[1]; nothing)
-
-f_ode = Flow(ODEFunction(rhs!))
+```@repl main
+rhs!(dx, x, p, t) = (dx[1] = -p * x[1]; nothing);
+f_ode = Flow(ODEFunction(rhs!));
 f_ode(0, [1.0], 1; variable=2)   # exp(-2)
 ```
 
@@ -166,15 +161,15 @@ f_ode(0, [1.0], 1)
 
 An `ODEProblem` works the same way:
 
-```@example main
-f_prob = Flow(ODEProblem(rhs!, [1.0], (0.0, 1.0), 2.0))
+```@repl main
+f_prob = Flow(ODEProblem(rhs!, [1.0], (0.0, 1.0), 2.0));
 f_prob(0, [1.0], 1; variable=2)
 ```
 
 ## Summary
 
 | Constructor | You give | Automatic differentiation | Point call returns |
-| --- | --- | --- | --- |
+| :--- | :--- | :--- | :--- |
 | `Flow(Hamiltonian(H))` | $\mathbf{H}(x, p)$ | yes | `(x(tf), p(tf))` |
 | `Flow(HamiltonianVectorField(Hv))` | $(\nabla_p \mathbf{H}, -\nabla_x \mathbf{H})$ | no | `(x(tf), p(tf))` |
 | `Flow(PseudoHamiltonian(Hp), law)` | $H(x, p, u)$ and $u(x, p)$ | yes | `(x(tf), p(tf))` |

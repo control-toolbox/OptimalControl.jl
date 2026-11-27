@@ -11,6 +11,8 @@ We take the energy-minimal double integrator, whose solution is known in closed 
 u(t) = 6 − 12t, q(t) = −1 + 3t² − 2t³, v(t) = 6t − 6t², and the cost is J = 6 (see
 [Your first problem](@ref getting-started-first-problem)).
 
+::: details The problem used on this page
+
 ```@example main
 using OptimalControl
 using NLPModelsIpopt
@@ -28,19 +30,19 @@ ocp = @def begin
     ẋ(t) == [v(t), u(t)]
     0.5∫(u(t)^2) → min
 end
-
-sol = solve(ocp; display=false)
 nothing # hide
 ```
 
+:::
+
 A solution prints as a summary:
 
-```@example main
-sol
+```@repl main
+sol = solve(ocp; display=false)
 ```
 
 and plots in one line, once a plotting package is loaded (see
-[Plot](@ref results-plot)):
+[Plot with Plots](@ref results-plot)):
 
 ```@example main
 using Plots
@@ -59,11 +61,13 @@ such as "1-D is a scalar". Every function on this page is listed with its signat
 
 `state`, `control` and `costate` return **functions of time**:
 
-```@example main
-x = state(sol)
-u = control(sol)
-p = costate(sol)
-x(0.25), u(0.25), p(0.25)
+```@repl main
+x = state(sol);
+u = control(sol);
+p = costate(sol);
+x(0.25)
+u(0.25)
+p(0.25)
 ```
 
 The closed form gives x(0.25) = (−0.84375, 1.125), u(0.25) = 3 and p₁ = 12.
@@ -79,8 +83,9 @@ These functions interpolate: they can be called anywhere in the time horizon, no
 grid points. `time_grid(sol)` returns the grid (`times(sol)` is the same vector), 251 points
 here since the default `grid_size` is 250 steps:
 
-```@example main
-length(time_grid(sol)), 0.25 ∈ time_grid(sol)
+```@repl main
+length(time_grid(sol))
+0.25 ∈ time_grid(sol)
 ```
 
 ```@example main
@@ -93,14 +98,19 @@ nothing                                    # hide
 vector, as everywhere else on the site ([functional-API callbacks](@ref modelling-functional-api-shapes),
 [abstract syntax](@ref modelling-abstract-syntax-control)):
 
+```@repl main
+u(0.25)
+```
+
 ```@example main
-typeof(u(0.25))
+@assert u(0.25) isa Number   # hide
+nothing                      # hide
 ```
 
 `variable(sol)` is a value, not a function of time: a `Float64` for a 1-D variable, a vector
 otherwise, and an empty vector when the problem has no variable, as here:
 
-```@example main
+```@repl main
 variable(sol)
 ```
 
@@ -111,7 +121,7 @@ variable(sol)
     *middle* of the step. So `p(t)` is close to the exact costate at t + h/2, with h the
     step. Here p₂(t) = 6 − 12t, h = 0.004, and p₂(0.25) is 6 − 12 × 0.252 = 2.976, not 3:
 
-    ```@example main
+    ```@repl main
     p(0.25)[2]
     ```
 
@@ -128,7 +138,7 @@ nothing                                                            # hide
 ```
 
 | Function | Returns |
-| --- | --- |
+| :--- | :--- |
 | `state(sol)` | x(t), a function of time |
 | `control(sol)` | u(t), a function of time |
 | `costate(sol)` | p(t), a function of time |
@@ -140,8 +150,9 @@ nothing                                                            # hide
 `initial_time` and `final_time` read the endpoints back. On a fixed-time problem they give
 what you wrote in the `@def`:
 
-```@example main
-initial_time(sol), final_time(sol)
+```@repl main
+initial_time(sol)
+final_time(sol)
 ```
 
 When a time is an optimisation variable, its value is not in the model: the model only
@@ -165,9 +176,13 @@ ocp_free = @def begin
     ẋ(t) == [v(t), u(t)]
     tf → min
 end
-sol_free = solve(ocp_free; display=false)
+nothing # hide
+```
 
-initial_time(sol_free), final_time(sol_free)
+```@repl main
+sol_free = solve(ocp_free; display=false);
+initial_time(sol_free)
+final_time(sol_free)
 ```
 
 The optimal control accelerates at u = 1 until the speed reaches 0.75 (t = 0.75), coasts at
@@ -175,7 +190,7 @@ that speed, then brakes at u = −1 for 0.75 time units. Accelerating and brakin
 0.75²/2 = 0.28125 of the unit distance, which leaves 0.4375 to coast, in 0.4375/0.75 = 7/12. So
 t_f = 0.75 + 7/12 + 0.75 = 25/12 ≈ 2.0833. The final time is also the variable, here a number:
 
-```@example main
+```@repl main
 variable(sol_free)
 ```
 
@@ -188,7 +203,7 @@ nothing                                                       # hide
 
 ## The objective
 
-```@example main
+```@repl main
 objective(sol)
 ```
 
@@ -205,12 +220,12 @@ nothing                                                                 # hide
 `successful` says whether the solver reported success. `status` and `message` give its
 verdict, `iterations` and `constraints_violation` two figures to judge it by:
 
-```@example main
-successful(sol), status(sol), message(sol)
-```
-
-```@example main
-iterations(sol), constraints_violation(sol)
+```@repl main
+successful(sol)
+status(sol)
+message(sol)
+iterations(sol)
+constraints_violation(sol)
 ```
 
 `infos(sol)` returns a `Dict` of anything else the solver reported (empty with Ipopt).
@@ -236,7 +251,7 @@ What to do when a solve fails (a better initial guess, a finer grid, other toler
 subject of [Initial guess](@ref solve-initial-guess) and [Options](@ref solve-options).
 
 | Function | Returns |
-| --- | --- |
+| :--- | :--- |
 | `objective(sol)` | the value of the cost |
 | `successful(sol)` | `true` if the solver reported success |
 | `status(sol)` | the solver's status, a `Symbol` such as `:first_order` |
@@ -248,24 +263,23 @@ subject of [Initial guess](@ref solve-initial-guess) and [Options](@ref solve-op
 ## [Dual variables](@id results-solution-duals)
 
 The Lagrange multipliers of the constraints measure how much the cost would change if a
-constraint were relaxed. A constraint with a [label](@ref modelling-abstract-syntax) is read
+constraint were relaxed (for `→ max`, the multipliers are those of the equivalent
+minimisation of the opposite cost). A constraint with a [label](@ref modelling-abstract-syntax) is read
 with `dual(sol, ocp, :label)`. For a boundary or a variable constraint, the multiplier is a
 number or a vector:
 
-```@example main
+```@repl main
 dual(sol_free, ocp_free, :tf_pos)
 ```
 
 The constraint t_f ≥ 0 is inactive, so its multiplier is zero.
 
-```@example main
+```@repl main
 dual(sol_free, ocp_free, :start)
 ```
 
 The multiplier of the initial condition x(0) = x₀ is the initial costate p(t₀). Here the
-costate is p(t) = (4/3, 1 − 4t/3) on the first arc, so p(0) = (4/3, 1). This is a more
-accurate value than `costate(sol)(0)`, which is shifted by half a step (see
-[Trajectories](@ref results-solution-trajectories)).
+costate is p(t) = (4/3, 1 − 4t/3) on the first arc, so p(0) = (4/3, 1).
 
 ```@example main
 @assert isapprox(dual(sol_free, ocp_free, :tf_pos), 0; atol=1e-8)       # hide
@@ -276,10 +290,12 @@ nothing                                                                  # hide
 For a path constraint, the multiplier is a function of time. It is nonzero only where the
 constraint is active: the control bound while u = ±1, the speed bound while coasting.
 
-```@example main
-μ_u = dual(sol_free, ocp_free, :u_box)
-μ_v = dual(sol_free, ocp_free, :v_max)
-[(t, μ_u(t), μ_v(t)) for t in (0.3, 1.0, 1.8)]
+```@repl main
+μ_u = dual(sol_free, ocp_free, :u_box);
+μ_v = dual(sol_free, ocp_free, :v_max);
+ts = (0.3, 1.0, 1.8);     # acceleration, coasting, braking
+μ_u.(ts)
+μ_v.(ts)
 ```
 
 ```@example main
@@ -295,15 +311,12 @@ nothing                                                                # hide
 !!! note "Sign and scale of the multipliers"
 
     The multipliers follow one sign convention, the same for a box and for a path
-    constraint, and for `→ min` and `→ max` (a problem written `max -J` has the same
-    multipliers as `min J`):
-
-    - a constraint with a **single** finite bound, such as `v(t) ≤ 0.75`, has a
-      non-negative multiplier, positive where it is active;
-    - a constraint with **two** finite bounds, such as `-1 ≤ u(t) ≤ 1`, and an equality
-      have a signed multiplier μ = μ_ub − μ_lb, the difference of the non-negative
-      multipliers of the two sides: μ > 0 where the upper bound is active, μ < 0 where
-      the lower bound is active, μ = 0 where the constraint is inactive.
+    constraint, for `→ min` and `→ max`, and for the multipliers of the maximum principle:
+    see [The sign of the multipliers](@ref modelling-hamiltonians-sign). In short, a
+    constraint with a **single** finite bound, such as `v(t) ≤ 0.75`, has a non-negative
+    multiplier; a constraint with **two** finite bounds, such as `-1 ≤ u(t) ≤ 1`, or an
+    equality, has a signed one, positive where the upper bound is active and negative where
+    the lower bound is.
 
     Above, u = 1 on the first arc, so μ_u > 0, u = −1 on the last one, so μ_u < 0, and the
     speed bound is active while coasting, so μ_v > 0 there.
@@ -323,18 +336,18 @@ The box multipliers can also be read per group, without a label: one function fo
 bounds and one for the upper bounds, for the state, the control and the variable. For the
 state and the control, they are functions of time, with one entry per component:
 
-```@example main
-state_constraints_lb_dual(sol_free)(1.0), state_constraints_ub_dual(sol_free)(1.0)
-```
-
-```@example main
-control_constraints_lb_dual(sol_free)(1.8), control_constraints_ub_dual(sol_free)(1.8)
+```@repl main
+state_constraints_lb_dual(sol_free)(1.0)
+state_constraints_ub_dual(sol_free)(1.0)
+control_constraints_lb_dual(sol_free)(1.8)
+control_constraints_ub_dual(sol_free)(1.8)
 ```
 
 For the variable, they are values:
 
-```@example main
-variable_constraints_lb_dual(sol_free), variable_constraints_ub_dual(sol_free)
+```@repl main
+variable_constraints_lb_dual(sol_free)
+variable_constraints_ub_dual(sol_free)
 ```
 
 The multipliers of the path constraints (boxes excluded) and of the boundary constraints,
@@ -342,7 +355,7 @@ together:
 `path_constraints_dual(sol)` is a function of time, `boundary_constraints_dual(sol)` a vector,
 here with the 4 boundary conditions of `ocp_free` (x(0) = x₀ counts for two).
 
-```@example main
+```@repl main
 boundary_constraints_dual(sol_free)
 ```
 
@@ -355,7 +368,7 @@ nothing                                                                         
 ```
 
 | Function | Returns |
-| --- | --- |
+| :--- | :--- |
 | `dual(sol, ocp, :label)` | the multiplier of a labelled constraint: a number, a vector, or a function of time |
 | `state_constraints_lb_dual(sol)`, `state_constraints_ub_dual(sol)` | the state box multipliers, functions of time |
 | `control_constraints_lb_dual(sol)`, `control_constraints_ub_dual(sol)` | the control box multipliers, functions of time |
@@ -370,7 +383,7 @@ nothing                                                                         
 `model(sol)` returns the problem the solution was computed from, so everything on
 [Inspect a problem](@ref modelling-inspect) works on it:
 
-```@example main
+```@repl main
 model(sol) === ocp
 ```
 
@@ -381,11 +394,12 @@ state and the costate, returns a `Solution` too (other flows return their own tr
 see [Simulation](@ref flows-simulation)). Here the flow of the energy problem, with the
 control u = p₂ given by the maximum principle, from the initial costate p(0) = (12, 6):
 
-```@example main
+```@repl main
 using OrdinaryDiffEqTsit5
-f = Flow(ocp, (x, p) -> p[2])
-sol_flow = f((t0, tf), x0, [12, 6])
-state(sol_flow)(tf), objective(sol_flow)
+f = Flow(ocp, (x, p) -> p[2]);
+sol_flow = f((t0, tf), x0, [12, 6]);
+state(sol_flow)(tf)
+objective(sol_flow)
 ```
 
 ```@example main
@@ -395,11 +409,13 @@ nothing                                                    # hide
 ```
 
 The trajectories, `objective`, `time_grid`, `model` and `plot` work as above. What comes from a
-solver does not: a flow's solution carries no multipliers, so `dual` raises an error, and
-`iterations` and `constraints_violation` are `NotProvided`.
+solver does not: `iterations` and `constraints_violation` are `NotProvided`, and `dual` raises
+an error, except for a path constraint given to the flow by its label (see
+[Constrained arcs](@ref flows-constrained-arcs)).
 
-```@example main
-iterations(sol_flow), constraints_violation(sol_flow)
+```@repl main
+iterations(sol_flow)
+constraints_violation(sol_flow)
 ```
 
 ```@example main
@@ -407,9 +423,23 @@ iterations(sol_flow), constraints_violation(sol_flow)
 nothing                                                            # hide
 ```
 
+The solution of a concatenation of flows also keeps its switching structure, read with
+`switching_times`, `phase_labels`, `has_switching`, `left_limit` and `right_limit` (see
+[Multi-phase flows](@ref flows-multi-phase-switching)). A single flow, as here, has none:
+
+```@repl main
+has_switching(sol_flow)
+switching_times(sol_flow)
+```
+
+```@example main
+@assert !has_switching(sol_flow) && isempty(switching_times(sol_flow))   # hide
+nothing                                                                   # hide
+```
+
 ## See also
 
 - [Inspect a problem](@ref modelling-inspect): the model-side mirror of this page.
-- [Plot](@ref results-plot): draw everything read here.
+- [Plot with Plots](@ref results-plot): draw everything read here.
 - [Save & load](@ref results-save-load): write a solution to disk and read it back.
 - [Migrating from v2.0](@ref migration): every renamed function, `success` → `successful` included.

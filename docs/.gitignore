@@ -4,3 +4,4 @@ package-lock.json
 Manifest.toml
 src/getting-started/guided-tour.md
 !src/assets/Manifest.toml
+build-preview*/

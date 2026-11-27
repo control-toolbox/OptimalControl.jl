@@ -13,9 +13,9 @@ Pkg.add("OptimalControl")
 
     If you are new to Julia, read [New to Julia: how to use OptimalControl](https://github.com/orgs/control-toolbox/discussions/64).
 
-`OptimalControl` alone is enough to define a problem with [`@def`](@ref modelling-abstract-syntax) and describe [solve strategies](@ref solve-choosing-a-method). The features below are optional: each requires an additional package, which you only need to load when you use that feature.
+`OptimalControl` alone is enough to define a problem with [`@def`](@ref modelling-abstract-syntax) and describe [solve strategies](@ref solve-choosing-a-method). To solve it, you need a solver, which comes in its own package. The other features are optional: each requires an additional package, which you only need to load when you use that feature.
 
-## You will also need a solver
+## A solver, to call `solve`
 
 `solve` requires an NLP solver backend to be loaded. `NLPModelsIpopt` is the default solver and is used throughout this documentation:
 
@@ -26,7 +26,7 @@ using NLPModelsIpopt
 Other solvers are available through their respective packages:
 
 | Solver | Load |
-| --- | --- |
+| :--- | :--- |
 | `:ipopt` (default) | `using NLPModelsIpopt` |
 | `:madnlp` | `using MadNLP` (on GPU, see [below](@ref getting-started-installation-gpu)) |
 | `:uno` | `using UnoSolver` |
@@ -37,17 +37,21 @@ See [Choosing a method](@ref solve-choosing-a-method) to learn how these package
 
 If you call `solve` before loading the appropriate package, it raises an `ExtensionError` that names the missing package and the `using` statement to add:
 
-```julia
-julia> solve(ocp)
-ERROR: ExtensionError → _route_descriptive_options, descriptive_routing.jl:259
-│
-│  missing dependencies to access Ipopt{CPU} options metadata
-│
-│  Missing  NLPModelsIpopt
-│
-│  Context  Load NLPModelsIpopt extension first: using NLPModelsIpopt
-│  Hint     Run: using NLPModelsIpopt
-└─
+```@eval
+Main.CTBase.DevTools.repl_without_extensions(
+    :OptimalControl,
+    "using OptimalControl",
+    """
+    ocp = @def begin
+        t ∈ [0, 1], time
+        x ∈ R, state
+        u ∈ R, control
+        x(0) == 1
+        ẋ(t) == u(t)
+        ∫(u(t)^2) → min
+    end""",
+    "solve(ocp)",
+)
 ```
 
 The same mechanism covers every optional feature described on this page.
@@ -58,7 +62,7 @@ The same mechanism covers every optional feature described on this page.
 using Plots
 ```
 
-Loading this package enables `plot(sol)`. Without it, `plot(sol)` raises an `ExtensionError` that asks for `using Plots`. See [Plot](@ref results-plot).
+Loading this package enables `plot(sol)`. Without it, `plot(sol)` raises an `ExtensionError` that asks for `using Plots`. See [Plot with Plots](@ref results-plot).
 
 [Makie](https://docs.makie.org) is supported too. Load `CairoMakie` for static figures or `GLMakie` for an interactive window, then call `Makie.plot(sol)`. See [Plot with Makie](@ref results-plot-makie).
 
@@ -95,7 +99,7 @@ using CUDA
 using CUDSS
 ```
 
-`CUDSS` is the one people forget: `using MadNLPGPU` does not load it, and the GPU solvers do not work without it. If one of the three is missing, the `ExtensionError` names it. One exception: when `MadNLPGPU` is the missing one, the error first asks for `MadNLP`, and names `MadNLPGPU` only once `MadNLP` is loaded ([CTSolvers#234](https://github.com/control-toolbox/CTSolvers.jl/issues/234)).
+`CUDSS` is the one people forget: `using MadNLPGPU` does not load it, and the GPU solvers do not work without it. If one of the three is missing, the `ExtensionError` names it.
 
 `ExaModels`, the GPU-capable modeler, needs no `using`: it comes with `OptimalControl`, so `:exa` works out of the box.
 

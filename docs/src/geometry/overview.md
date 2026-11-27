@@ -22,7 +22,7 @@ using OptimalControl
 ## Summary
 
 | Operation | Notation | Julia | Page |
-| --- | --- | --- | --- |
+| :--- | :--- | :--- | :--- |
 | Hamiltonian lift | $H_X(x, p) = \langle p, X(x) \rangle$ | `Lift(X)` | [Lift](@ref geometry-lift) |
 | Lie derivative | $(\mathcal{L}_X f)(x) = f'(x) \cdot X(x)$ | `ad(X, f)` | [Lie derivative and Lie bracket](@ref geometry-ad) |
 | Lie bracket | $[X, Y](x) = Y'(x) \cdot X(x) - X'(x) \cdot Y(x)$ | `ad(X, Y)` or `@Lie [X, Y]` | [Lie derivative and Lie bracket](@ref geometry-ad) |
@@ -59,12 +59,12 @@ For $X(x) = (x_1^2, x_2^2)$ and $Y(x) = (x_2, -x_1)$, the bracket is
 $[X, Y](x) = (x_2^2 - 2x_1 x_2,\ 2 x_1 x_2 - x_1^2)$, so at $x = (1, 2)$, $[X, Y] = (0, 3)$,
 and at $p = (3, 4)$ both sides equal $12$:
 
-```@example main
-X(x) = [x[1]^2, x[2]^2]
-Y(x) = [x[2], -x[1]]
-
-x, p = [1.0, 2.0], [3.0, 4.0]
-Poisson(Lift(X), Lift(Y))(x, p), Lift(ad(X, Y))(x, p)
+```@repl main
+X(x) = [x[1]^2, x[2]^2];
+Y(x) = [x[2], -x[1]];
+x, p = [1.0, 2.0], [3.0, 4.0];
+Poisson(Lift(X), Lift(Y))(x, p)
+Lift(ad(X, Y))(x, p)
 ```
 
 ```@example main

@@ -23,10 +23,9 @@ trajectory. The control is given as a function of time (open loop) or of the sta
 Take $\dot x = -x + u$ with the constant control $u(t) = 1$. From $x(0) = 0$, the solution is
 $x(t) = 1 - e^{-t}$:
 
-```@example main
-fc(x, u) = -x + u
-
-f_ol = Flow(ControlledVectorField(fc), OpenLoop(t -> 1))
+```@repl main
+fc(x, u) = -x + u;
+f_ol = Flow(ControlledVectorField(fc), OpenLoop(t -> 1));
 f_ol(0, 0.0, 1)   # 1 - exp(-1)
 ```
 
@@ -37,20 +36,27 @@ nothing                                                     # hide
 
 An open-loop law is always a function of time, `u(t)`, or `u(t, v)` with a variable. A
 function without argument, such as `OpenLoop(() -> 1)`, is accepted when the law is built,
-but the call then fails with a `MethodError`
-([CTBase#570](https://github.com/control-toolbox/CTBase.jl/issues/570)):
+and the call then fails with a `MethodError`:
 
 ```@repl main
 Flow(ControlledVectorField(fc), OpenLoop(() -> 1))(0, 0.0, 1)
 ```
+
+!!! note "Why the law is not checked when it is built"
+
+    A Julia function has no fixed number of arguments: it is a set of methods, which can
+    still grow, and whose argument types are only known at the call. A check at
+    construction would reject valid laws, such as `t::Float64 -> …` or a callable struct.
+    The `MethodError` names the function and its methods: look for the one that takes the
+    time.
 
 ## Closed loop
 
 A feedback is a function of the state, `u(x)`. With $u = x/2$, the system becomes
 $\dot x = -x/2$, so from $x(0) = 1$, $x(1) = e^{-1/2}$:
 
-```@example main
-f_cl = Flow(ControlledVectorField(fc), ClosedLoop(x -> x / 2))
+```@repl main
+f_cl = Flow(ControlledVectorField(fc), ClosedLoop(x -> x / 2));
 f_cl(0, 1.0, 1)   # exp(-1/2)
 ```
 
@@ -72,6 +78,8 @@ Built from an optimal control problem, the simulation also computes the cost of 
 On the energy-minimal double integrator, the optimal control is $u(t) = 6 - 12t$, with
 cost $6$ (see [Your first problem](@ref getting-started-first-problem)):
 
+::: details The problem
+
 ```@example main
 t0, tf = 0, 1
 x0 = [-1, 0]
@@ -85,18 +93,25 @@ ocp = @def begin
     ẋ(t) == [v(t), u(t)]
     0.5∫(u(t)^2) → min
 end
+nothing # hide
+```
 
-f_opt = Flow(ocp, OpenLoop(t -> 6 - 12t))
-traj = f_opt((t0, tf), x0)
-state(traj)(tf), objective(traj)
+:::
+
+```@repl main
+f_opt = Flow(ocp, OpenLoop(t -> 6 - 12t));
+traj = f_opt((t0, tf), x0);
+state(traj)(tf)
+objective(traj)
 ```
 
 The simulation reaches the target with the optimal cost. Another control costs less, but
 misses the target: the constant $u = 1$ costs $1/2$ and ends at $x(1) = (-1/2, 1)$.
 
-```@example main
-traj_1 = Flow(ocp, OpenLoop(t -> 1))((t0, tf), x0)
-state(traj_1)(tf), objective(traj_1)
+```@repl main
+traj_1 = Flow(ocp, OpenLoop(t -> 1))((t0, tf), x0);
+state(traj_1)(tf)
+objective(traj_1)
 ```
 
 ```@example main
@@ -114,8 +129,9 @@ dynamics and the cost from $x_0$. A feedback works the same way, with
 The trajectory is read with the same functions as a [`Solution`](@ref results-solution):
 `state`, `control`, `time_grid`, and `objective` when the flow comes from a problem.
 
-```@example main
-state(traj)(0.5), control(traj)(0.5)
+```@repl main
+state(traj)(0.5)
+control(traj)(0.5)
 ```
 
 ```@example main
@@ -136,7 +152,7 @@ final state and costate), and `f((t0, tf), x0)` returns the trajectory. The traj
 depends on how the flow was built:
 
 | Flow | Trajectory | Costate | Objective |
-| --- | --- | :-: | :-: |
+| :--- | :--- | :-: | :-: |
 | `Flow(ocp, law)`, with a law `u(x, p)` ([From an OCP](@ref flows-from-ocp)) | a [`Solution`](@ref results-solution) | ✓ | ✓ |
 | `Flow(ocp, OpenLoop(…))`, `Flow(ocp, ClosedLoop(…))` | a trajectory of the state | ✗ | ✓ |
 | `Flow(ControlledVectorField(f), law)`, `Flow(VectorField(f))` | a trajectory of the state | ✗ | ✗ |
@@ -162,7 +178,7 @@ types.
 
 ## See also
 
-- [Solution object](@ref results-solution) and [Plot](@ref results-plot): the functions used
+- [Solution object](@ref results-solution) and [Plot with Plots](@ref results-plot): the functions used
   above, in full.
 - [From an OCP](@ref flows-from-ocp): the indirect method, where the law comes from the
   maximum principle.

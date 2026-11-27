@@ -1,0 +1,462 @@
+<div style="display: flex; justify-content: center; margin: 20px 0;">
+    <canvas id="shootingTourCanvas" width="900" height="400" role="img"
+            aria-label="Animation of a ball launched by a slingshot machine, aimed by Newton's method: at each attempt the angle of the rail and the pull-back of the pocket are corrected, and the table lists the residual, the distance from the ball to the hoop at the fixed time T, which shrinks at every attempt."
+            style="border: 1px solid #ddd; border-radius: 8px; max-width: 100%; height: auto; cursor: pointer;"
+            title="Click to pause or resume">
+        Animation: a slingshot machine corrected by Newton's method until the ball reaches the hoop at the fixed time T.
+    </canvas>
+</div>
+<script>
+(function() {
+    const shots = @@shots@@;          // [[angle (rad), pull-back (m)], ...]: the guess, then the Newton iterates
+    const residuals = @@residuals@@;  // length of the residual (m) at each shot
+    const xt = @@xt@@, yt = @@yt@@;   // hoop position (m)
+    const h0 = @@h0@@;                // height of the release point, the fork of the machine (m)
+    const kappa = @@kappa@@;          // launch speed per metre of pull-back (1/s): v0 = kappa * d
+    const g = @@g@@, T = @@T@@;       // gravity (m/s^2), fixed flight time of the shooting function (s)
+    const tol = @@tol@@;              // tolerance of the stopping test
+    const color_main = '@@color@@';
+
+    const canvas = document.getElementById('shootingTourCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const N = shots.length;
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+
+    // ---------------------------------------------------------------- colours
+    // VitePress sets the class `dark` on <html>: the system preference alone must not decide.
+    function getColors() {
+        const dark = document.documentElement.classList.contains('dark');
+        return dark ? {
+            bg: '#1b1b1f', panel: '#26262d', line: '#3a3a44', floor: '#4a4a55', floor_top: '#6b6b78',
+            text: '#e8eaed', text_sec: '#a6adc8', pill: 'rgba(27,27,31,0.88)',
+            board: '#d9dde8', board_edge: '#8a90a2', rim: '#ff8a3d', net: 'rgba(220,225,240,0.7)', pole: '#6b6f80',
+            ball: '#ee8a45', ball_dark: '#b35a1f', seam: '#3a1f0c', past: 'rgba(166,173,200,0.45)',
+            aim: '#f5b041', body: '#4d8fd6', body_dark: '#2f5f99', metal: '#a3acbd', metal_dark: '#6f7890',
+            tyre: '#121216', elastic: '#c39bd3', pocket: '#a8774a',
+            miss: '#ff7b72', ok: '#5fd68a', hl: 'rgba(77,143,214,0.22)'
+        } : {
+            bg: '#ffffff', panel: '#f4f6f8', line: '#d9dde3', floor: '#e9d9bd', floor_top: '#b89b6a',
+            text: '#2c3e50', text_sec: '#6b7785', pill: 'rgba(255,255,255,0.92)',
+            board: '#ffffff', board_edge: '#7f8c8d', rim: '#d35400', net: 'rgba(90,90,90,0.55)', pole: '#8a949c',
+            ball: '#e8793a', ball_dark: '#b35a1f', seam: '#5a2c0f', past: 'rgba(127,140,141,0.55)',
+            aim: '#e67e22', body: '#2f6fb5', body_dark: '#1f4c80', metal: '#8d99a6', metal_dark: '#4f5b66',
+            tyre: '#2c3e50', elastic: '#8e44ad', pocket: '#7a5230',
+            miss: '#c0392b', ok: '#1e8e4f', hl: 'rgba(47,111,181,0.14)'
+        };
+    }
+
+    // ---------------------------------------------------------------- the model
+    // The ball leaves the fork, at (0, h0), with the speed kappa * d along the rail.
+    const ball = (shot, t) => [kappa * shot[1] * Math.cos(shot[0]) * t,
+                               h0 + kappa * shot[1] * Math.sin(shot[0]) * t - 0.5 * g * t * t];
+    const lerp = (a, b, s) => a + (b - a) * s;
+    const smooth = s => s * s * (3 - 2 * s);
+    const RAIL = 1.2;                  // length of the rail behind the fork (m)
+
+    // world extent: the arcs, the hoop and the machine
+    let x_min = -1.25, x_max = xt + 1.3, y_top = Math.max(yt + 1.3, h0 + 0.8);
+    for (const shot of shots) {
+        x_min = Math.min(x_min, -RAIL * Math.cos(shot[0]) - 0.35);
+        for (let i = 0; i <= 40; i++) {
+            const [x, y] = ball(shot, T * i / 40);
+            x_max = Math.max(x_max, x + 0.5); y_top = Math.max(y_top, y + 0.4);
+        }
+    }
+
+    // ---------------------------------------------------------------- formatting
+    const SUP = {'-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+                 '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'};
+    function fmtRes(r) {                 // a length in metres, for the table and the tolerance
+        if (r >= 1e-2) return r.toPrecision(2);
+        const [m, e] = r.toExponential(1).split('e');
+        const sup = String(parseInt(e)).split('').map(c => SUP[c]).join('');
+        return (m === '1.0' ? '10' : m + '·10') + sup;
+    }
+    const two = x => String(Number(x.toPrecision(2)));                  // two significant digits, no exponent
+    function fmtLen(r) {                 // the same length with a unit that reads well
+        if (r >= 1) return two(r) + ' m';
+        if (r >= 1e-2) return two(r * 100) + ' cm';
+        if (r >= 1e-4) return two(r * 1000) + ' mm';
+        return two(r * 1e6) + ' µm';
+    }
+    const deg = a => (a * 180 / Math.PI).toFixed(1) + '°';
+    const cm = d => (d * 100).toFixed(1) + ' cm';
+    const mps = v => v.toFixed(2) + ' m/s';
+
+    // ---------------------------------------------------------------- layout
+    let W, H, side, scene, table, s_px, fs;
+    const sx = x => scene.x + scene.pad + (x - x_min) * s_px;
+    const sy = y => scene.floor - y * s_px;
+    function layout() {
+        const wrap = canvas.parentElement;
+        W = Math.max(300, Math.min(980, Math.floor(wrap.clientWidth || 900)));
+        side = W >= 720;
+        fs = Math.max(0.82, Math.min(1.12, W / 900));
+        const rows = N + 3;                                  // header, the shots, the footer
+        const row_h = Math.round(33 * fs);
+        const table_h = rows * row_h + 20;
+        const head = Math.round(72 * fs), foot = Math.round(22 * fs), strip = 24;
+        if (side) {
+            const sw = Math.floor(W * 0.635);
+            scene = {x: 0, y: 0, w: sw, pad: 18, head: head, strip: strip};
+            s_px = (sw - 2 * scene.pad) / (x_max - x_min);
+            const sh = head + Math.ceil(y_top * s_px) + strip + foot;
+            H = Math.max(sh, table_h + 8);
+            scene.h = H;
+            table = {x: sw + 12, y: 8, w: W - sw - 20, h: H - 16, row_h: row_h};
+        } else {
+            scene = {x: 0, y: 0, w: W, pad: 12, head: head, strip: strip};
+            s_px = (W - 2 * scene.pad) / (x_max - x_min);
+            const sh = head + Math.ceil(y_top * s_px) + strip + foot;
+            scene.h = sh;
+            table = {x: 8, y: sh + 6, w: W - 16, h: table_h, row_h: row_h};
+            H = sh + table_h + 14;
+        }
+        scene.floor = scene.y + scene.h - strip - foot;
+        canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+        canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    }
+
+    // ---------------------------------------------------------------- drawing helpers
+    function rrect(x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+    }
+    function text(str, x, y, o) {
+        ctx.font = (o.weight || 'normal') + ' ' + Math.round((o.size || 13) * fs) + 'px sans-serif';
+        ctx.fillStyle = o.color; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic';
+        ctx.fillText(str, x, y);
+    }
+    function pill(str, cx, cy, o, c) {         // a label on a plate, so that nothing is drawn through it
+        ctx.font = (o.weight || 'bold') + ' ' + Math.round((o.size || 13) * fs) + 'px sans-serif';
+        const w = ctx.measureText(str).width + 14 * fs, h = (o.size || 13) * fs + 9;
+        let x = cx - w / 2, y = cy - h / 2;
+        x = Math.max(scene.x + 4, Math.min(scene.x + scene.w - w - 4, x));
+        y = Math.max(scene.y + scene.head - 6, Math.min(scene.floor - h - 2, y));
+        ctx.fillStyle = c.pill; rrect(x, y, w, h, h / 2); ctx.fill();
+        ctx.strokeStyle = o.border || c.line; ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = o.color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(str, x + w / 2, y + h / 2 + 0.5);
+        return {x: x, y: y, w: w, h: h};
+    }
+    function arrow(x0, y0, x1, y1, color, width, dash) {
+        const a = Math.atan2(y1 - y0, x1 - x0), hl = 10 * fs;
+        ctx.save(); ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width;
+        ctx.setLineDash(dash || []);
+        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1 - 4 * Math.cos(a), y1 - 4 * Math.sin(a)); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.beginPath(); ctx.moveTo(x1, y1);
+        ctx.lineTo(x1 - hl * Math.cos(a - 0.4), y1 - hl * Math.sin(a - 0.4));
+        ctx.lineTo(x1 - hl * Math.cos(a + 0.4), y1 - hl * Math.sin(a + 0.4));
+        ctx.closePath(); ctx.fill(); ctx.restore();
+    }
+    function arc(shot, t_end, style, width, dash) {
+        ctx.save(); ctx.strokeStyle = style; ctx.lineWidth = width; ctx.setLineDash(dash || []);
+        ctx.beginPath();
+        const n = 80;
+        for (let i = 0; i <= n; i++) {
+            const [x, y] = ball(shot, t_end * i / n);
+            i === 0 ? ctx.moveTo(sx(x), sy(y)) : ctx.lineTo(sx(x), sy(y));
+        }
+        ctx.stroke(); ctx.restore();
+    }
+    const ballRadius = () => Math.max(8, 0.16 * s_px);
+
+    function drawBall(bx, by, c) {             // (bx, by) in pixels
+        const r = ballRadius();
+        const gr = ctx.createRadialGradient(bx - r * 0.35, by - r * 0.35, r * 0.1, bx, by, r);
+        gr.addColorStop(0, c.ball); gr.addColorStop(1, c.ball_dark);
+        ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(bx, by, r, 0, 2 * Math.PI); ctx.fill();
+        ctx.strokeStyle = c.seam; ctx.lineWidth = Math.max(1, r * 0.09);
+        ctx.save();                            // the seams stay inside the ball
+        ctx.beginPath(); ctx.arc(bx, by, r, 0, 2 * Math.PI); ctx.clip();
+        ctx.beginPath(); ctx.moveTo(bx - r, by); ctx.lineTo(bx + r, by);
+        ctx.moveTo(bx, by - r); ctx.lineTo(bx, by + r); ctx.stroke();
+        ctx.beginPath(); ctx.ellipse(bx - r * 1.0, by, r * 0.62, r * 0.98, 0, -1.2, 1.2); ctx.stroke();
+        ctx.beginPath(); ctx.ellipse(bx + r * 1.0, by, r * 0.62, r * 0.98, 0, Math.PI - 1.2, Math.PI + 1.2); ctx.stroke();
+        ctx.restore();
+        ctx.beginPath(); ctx.arc(bx, by, r, 0, 2 * Math.PI); ctx.stroke();
+    }
+
+    function drawHoop(c) {
+        const hx = sx(xt), hy = sy(yt), rw = Math.max(22, 0.38 * s_px), rh = rw * 0.26;
+        const bx = sx(xt + 0.55), top = sy(yt + 0.95), bot = sy(yt - 0.15);
+        // support, backboard, and the arm that holds the rim
+        ctx.fillStyle = c.pole; ctx.fillRect(bx + 3, bot, 7, scene.floor - bot);
+        ctx.fillStyle = c.board; ctx.strokeStyle = c.board_edge; ctx.lineWidth = 2;
+        rrect(bx, top, 12, bot - top, 3); ctx.fill(); ctx.stroke();
+        ctx.strokeStyle = c.rim; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(bx, hy); ctx.lineTo(hx + rw, hy); ctx.stroke();
+        // net: strands hung from the front edge of the rim, and rings that follow its curve
+        const nb = hy + Math.max(34, 0.55 * s_px), nw = rw * 0.62;
+        const rimY = (x, w) => hy + rh * Math.sqrt(Math.max(0, 1 - (x / w) ** 2));   // front edge of the ellipse
+        ctx.strokeStyle = c.net; ctx.lineWidth = 1.2;
+        for (let k = -3; k <= 3; k++) {
+            ctx.beginPath(); ctx.moveTo(hx + k * rw / 3, rimY(k * rw / 3, rw));
+            ctx.lineTo(hx + k * nw / 3, nb); ctx.stroke();
+        }
+        for (let j = 1; j <= 3; j++) {
+            const s = j / 4, w = lerp(rw, nw, s);
+            ctx.beginPath();
+            for (let i = 0; i <= 12; i++) {
+                const x = -w + 2 * w * i / 12;
+                const y = lerp(rimY(x * rw / w, rw), nb, s);
+                i === 0 ? ctx.moveTo(hx + x, y) : ctx.lineTo(hx + x, y);
+            }
+            ctx.stroke();
+        }
+        ctx.strokeStyle = c.rim; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.ellipse(hx, hy, rw, rh, 0, 0, 2 * Math.PI); ctx.stroke();
+        return {x: hx, y: hy, rw: rw};
+    }
+
+    // The machine: a cart, a mast up to the fork at (0, h0), and a rail that pivots about the
+    // fork. The pocket slides back along the rail by d (the pull-back); the elastic bands run
+    // from the prongs of the fork to the pocket. Returns the pocket centre, in pixels.
+    function drawMachine(c, th, d, showAngle) {
+        const u = s_px, px = sx(0), py = sy(h0);
+        const f = [Math.cos(th), -Math.sin(th)];             // forward along the rail (screen)
+        const b = [-f[0], -f[1]];                            // backward
+        const n = [f[1], -f[0]];                             // normal, on the upper side of the rail
+        const at = (s, o) => [px + s * u * f[0] + o * n[0], py + s * u * f[1] + o * n[1]];
+        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+        // cart and wheels
+        const cl = sx(-0.75), cr = sx(0.45), ct = sy(0.36), cb = sy(0.12);
+        ctx.fillStyle = c.metal_dark;                        // mast, and a brace from the cart
+        const mw = Math.max(6, 0.09 * u);
+        ctx.fillRect(px - mw / 2, py, mw, ct - py);
+        ctx.strokeStyle = c.metal_dark; ctx.lineWidth = Math.max(3, 0.045 * u);
+        ctx.beginPath(); ctx.moveTo(sx(-0.5), ct); ctx.lineTo(px, sy(0.36 + 0.55 * (h0 - 0.36))); ctx.stroke();
+        ctx.fillStyle = c.body; rrect(cl, ct, cr - cl, cb - ct, Math.max(4, 0.05 * u)); ctx.fill();
+        ctx.fillStyle = c.body_dark; ctx.fillRect(cl + 4, ct + (cb - ct) * 0.58, cr - cl - 8, Math.max(2, 0.03 * u));
+        for (const wx of [-0.5, 0.2]) {
+            const wr = Math.max(6, 0.12 * u), wy = scene.floor - wr;
+            ctx.fillStyle = c.tyre; ctx.beginPath(); ctx.arc(sx(wx), wy, wr, 0, 2 * Math.PI); ctx.fill();
+            ctx.fillStyle = c.metal; ctx.beginPath(); ctx.arc(sx(wx), wy, wr * 0.42, 0, 2 * Math.PI); ctx.fill();
+        }
+
+        // the angle of the launch, measured from the horizontal in front of the fork
+        if (showAngle) {
+            const ra = 0.6 * u;
+            ctx.save(); ctx.strokeStyle = c.text_sec; ctx.lineWidth = 1.2; ctx.setLineDash([4, 4]);
+            ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + 1.0 * u, py); ctx.stroke(); ctx.restore();
+            ctx.strokeStyle = c.aim; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.arc(px, py, ra, -th, 0); ctx.stroke();
+            const la = -th / 2, lr = ra + 12 * fs;
+            text('θ', px + lr * Math.cos(la), py + lr * Math.sin(la),
+                 {size: 15, weight: 'bold', color: c.aim, align: 'center', base: 'middle'});
+        }
+
+        // rail, with a tick every 10 cm
+        const [ex, ey] = at(-RAIL, 0), rw = Math.max(7, 0.1 * u);
+        ctx.strokeStyle = c.metal; ctx.lineWidth = rw;
+        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(ex, ey); ctx.stroke();
+        ctx.strokeStyle = c.metal_dark; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(ex, ey); ctx.stroke();
+        for (let k = 1; k < Math.round(RAIL * 10); k++) {
+            const [x0, y0] = at(-0.1 * k, rw / 2), [x1, y1] = at(-0.1 * k, rw / 2 + (k === 5 ? 8 : 4) * fs);
+            ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+        }
+
+        // fork: the pivot hub and two prongs
+        const hub = Math.max(6, 0.08 * u), pr = Math.max(14, 0.32 * u);
+        ctx.fillStyle = c.metal_dark; ctx.beginPath(); ctx.arc(px, py, hub, 0, 2 * Math.PI); ctx.fill();
+        const tip_up = at(0.07, pr), tip_dn = at(0.07, -pr);
+        ctx.strokeStyle = c.metal_dark; ctx.lineWidth = Math.max(5, 0.07 * u);
+        ctx.beginPath(); ctx.moveTo(tip_up[0], tip_up[1]); ctx.lineTo(px, py); ctx.lineTo(tip_dn[0], tip_dn[1]); ctx.stroke();
+
+        // pocket and elastic bands
+        const r = ballRadius() + 2;
+        const P = at(-d, 0);
+        const E_up = [P[0] + r * (0.45 * b[0] + 0.9 * n[0]), P[1] + r * (0.45 * b[1] + 0.9 * n[1])];
+        const E_dn = [P[0] + r * (0.45 * b[0] - 0.9 * n[0]), P[1] + r * (0.45 * b[1] - 0.9 * n[1])];
+        const C = [P[0] + 2.1 * r * b[0] - (E_up[0] + E_dn[0] - 2 * P[0]) / 2,
+                   P[1] + 2.1 * r * b[1] - (E_up[1] + E_dn[1] - 2 * P[1]) / 2];
+        ctx.strokeStyle = c.elastic; ctx.lineWidth = Math.max(2.5, 0.035 * u);
+        ctx.beginPath(); ctx.moveTo(tip_up[0], tip_up[1]); ctx.lineTo(E_up[0], E_up[1]); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(tip_dn[0], tip_dn[1]); ctx.lineTo(E_dn[0], E_dn[1]); ctx.stroke();
+        ctx.strokeStyle = c.pocket; ctx.lineWidth = Math.max(4, 0.06 * u);
+        ctx.beginPath(); ctx.moveTo(E_up[0], E_up[1]); ctx.quadraticCurveTo(C[0], C[1], E_dn[0], E_dn[1]); ctx.stroke();
+        ctx.lineCap = 'butt'; ctx.lineJoin = 'miter';
+        return {P: P, n: n, f: f};
+    }
+
+    // ---------------------------------------------------------------- the table of the throws
+    function drawTable(c, idx, stage, cur, converged) {
+        const t0 = table;
+        ctx.fillStyle = c.panel; rrect(t0.x, t0.y, t0.w, t0.h, 10); ctx.fill();
+        const pad = 14 * fs, cw = [0.2, 0.24, 0.28, 0.28];                 // column shares
+        const xs = []; let acc = t0.x + pad;
+        for (const f of cw) { xs.push(acc); acc += f * (t0.w - 2 * pad); }
+        const right = k => xs[k] + cw[k] * (t0.w - 2 * pad) - 4;
+        let y = t0.y + t0.row_h * 0.75;
+        text('attempt', xs[0], y, {size: 13, weight: 'bold', color: c.text_sec});
+        text('angle', right(1), y, {size: 13, weight: 'bold', color: c.text_sec, align: 'right'});
+        text('pull-back', right(2), y, {size: 13, weight: 'bold', color: c.text_sec, align: 'right'});
+        text('residual (m)', right(3) + 2, y, {size: 13, weight: 'bold', color: c.text_sec, align: 'right'});
+        ctx.strokeStyle = c.line; ctx.lineWidth = 1; ctx.beginPath();
+        ctx.moveTo(t0.x + pad, y + 8 * fs); ctx.lineTo(t0.x + t0.w - pad, y + 8 * fs); ctx.stroke();
+        for (let i = 0; i < N; i++) {
+            const ry = y + t0.row_h * (i + 1);
+            if (i > idx) continue;
+            const known = i < idx || stage >= 2;                              // the residual of attempt i is known
+            const sel = i === idx && !converged;
+            if (sel) { ctx.fillStyle = c.hl; rrect(t0.x + 6, ry - t0.row_h * 0.68, t0.w - 12, t0.row_h * 0.92, 6); ctx.fill(); }
+            const [a, d] = i === idx ? cur : shots[i];
+            const col = (i === N - 1 && known) ? c.ok : c.text;
+            text(i === 0 ? 'guess' : String(i), xs[0], ry, {size: 15, color: c.text_sec});
+            text(deg(a), right(1), ry, {size: 15, color: col, align: 'right'});
+            text(cm(d), right(2), ry, {size: 15, color: col, align: 'right'});
+            text(known ? fmtRes(residuals[i]) : '…', right(3) + 2, ry,
+                 {size: 15, weight: known ? 'bold' : 'normal', color: known ? col : c.text_sec, align: 'right'});
+        }
+        const fy = y + t0.row_h * (N + 1.05);
+        ctx.strokeStyle = c.line; ctx.beginPath(); ctx.moveTo(t0.x + pad, fy - 14 * fs); ctx.lineTo(t0.x + t0.w - pad, fy - 14 * fs); ctx.stroke();
+        if (converged) text('residual < ' + fmtRes(tol) + ': stop', t0.x + pad, fy + 4 * fs, {size: 14, weight: 'bold', color: c.ok});
+        else text('stop when residual < ' + fmtRes(tol), t0.x + pad, fy + 4 * fs, {size: 14, color: c.text_sec});
+    }
+
+    // ---------------------------------------------------------------- one frame
+    // Each attempt: the rail turns to the new angle, the pocket is pulled back, it is released
+    // (the ball runs up the rail to the fork, where the flight starts at t = 0), the ball flies
+    // for the fixed time T, and the residual is measured.
+    const turn_d = 0.9, pull_d = 0.9, release_d = 0.18, flight_d = 1.5, hold_d = 1.5;
+    const aim_d = turn_d + pull_d + release_d;
+    const per_shot = aim_d + flight_d + hold_d, final_d = 3.0;
+    const total = per_shot * N + final_d;
+
+    function render(elapsed) {
+        const c = getColors();
+        const final_phase = elapsed >= per_shot * N;
+        const idx = Math.min(Math.floor(elapsed / per_shot), N - 1);
+        const ph = final_phase ? per_shot : elapsed - idx * per_shot;
+        const stage = ph < aim_d ? 0 : (ph < aim_d + flight_d ? 1 : 2);     // aiming, flying, measured
+        const prev = shots[Math.max(idx - 1, 0)], now = shots[idx];
+        // the angle turns, then the pocket is pulled back, then released
+        const k_turn = smooth(Math.min(1, ph / turn_d));
+        const th = stage === 0 ? lerp(prev[0], now[0], k_turn) : now[0];
+        let d_pocket = 0, d_shown = now[1];
+        if (stage === 0) {
+            if (ph < turn_d) { d_pocket = 0; d_shown = 0; }
+            else if (ph < turn_d + pull_d) { d_pocket = now[1] * smooth((ph - turn_d) / pull_d); d_shown = d_pocket; }
+            else { const s = (ph - turn_d - pull_d) / release_d; d_pocket = now[1] * (1 - s * s); }
+        }
+        const cur = [th, d_shown];
+        const converged = final_phase || (idx === N - 1 && stage === 2);
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.fillStyle = c.bg; ctx.fillRect(0, 0, W, H);
+
+        // ---- header of the scene
+        const hx0 = scene.x + 16;
+        text(idx === 0 ? 'Initial guess' : 'Correction ' + idx + ' of ' + (N - 1), hx0, scene.y + 26 * fs,
+             {size: 16, weight: 'bold', color: c.text});
+        const pull_txt = 'angle ' + deg(th) + '   pull-back ' + cm(d_shown);
+        text(side ? pull_txt + '   speed ' + mps(kappa * d_shown) : pull_txt, hx0, scene.y + 49 * fs,
+             {size: 13, color: c.text_sec});
+        const t_now = stage === 0 ? 0 : (stage === 1 ? Math.min(1, (ph - aim_d) / flight_d) * T : T);
+        text('t = ' + t_now.toFixed(2) + ' s', scene.x + scene.w - 16, scene.y + 26 * fs,
+             {size: 16, weight: 'bold', color: c.text, align: 'right'});
+        text('fixed time T = ' + T.toFixed(2) + ' s', scene.x + scene.w - 16, scene.y + 49 * fs,
+             {size: 13, color: c.text_sec, align: 'right'});
+
+        // ---- floor
+        ctx.fillStyle = c.floor; ctx.fillRect(scene.x, scene.floor, scene.w, scene.h - scene.floor);
+        ctx.fillStyle = c.floor_top; ctx.fillRect(scene.x, scene.floor, scene.w, 3);
+        ctx.font = Math.round(11 * fs) + 'px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        for (let m = 0; m <= Math.floor(x_max); m += 2) {
+            const x = sx(m); ctx.fillStyle = c.floor_top; ctx.fillRect(x - 0.5, scene.floor, 1.5, 7);
+            ctx.fillStyle = c.text_sec; ctx.fillText(m + ' m', x, scene.floor + 9);
+        }
+
+        ctx.save(); ctx.beginPath(); ctx.rect(scene.x, scene.y + scene.head - 8, scene.w, scene.h); ctx.clip();
+
+        // ---- past attempts: their arcs and where each one was at time T
+        for (let i = 0; i < idx; i++) {
+            arc(shots[i], T, c.past, 1.6, [5, 4]);
+            const [x, y] = ball(shots[i], T);
+            ctx.strokeStyle = c.past; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(sx(x) - 5, sy(y) - 5); ctx.lineTo(sx(x) + 5, sy(y) + 5);
+            ctx.moveTo(sx(x) + 5, sy(y) - 5); ctx.lineTo(sx(x) - 5, sy(y) + 5); ctx.stroke();
+        }
+
+        const hoop = drawHoop(c);
+        const m = drawMachine(c, th, d_pocket, stage === 0);
+
+        // ---- the aim, then the flight, then the measure
+        const r = ballRadius();
+        if (stage === 0) {
+            if (ph < turn_d + pull_d) {                                        // the direction of the launch
+                const len = 1.1 * s_px, ax = sx(0), ay = sy(h0);
+                arrow(ax + (r + 4) * m.f[0], ay + (r + 4) * m.f[1], ax + len * m.f[0], ay + len * m.f[1], c.aim, 2.5, [6, 4]);
+            }
+            drawBall(m.P[0], m.P[1], c);
+            if (ph >= turn_d && ph < turn_d + pull_d)
+                pill('d = ' + cm(d_pocket), m.P[0] + m.n[0] * (r + 26 * fs), m.P[1] + m.n[1] * (r + 26 * fs),
+                     {size: 13, color: c.elastic, border: c.elastic}, c);
+        } else {
+            arc(now, t_now, color_main, 3);
+            const [bx, by] = ball(now, t_now);
+            drawBall(sx(bx), sy(by), c);
+        }
+        if (stage === 2) {
+            const [bx, by] = ball(now, T);
+            const x0 = sx(bx), y0 = sy(by), dx = hoop.x - x0, dy = hoop.y - y0, d = Math.hypot(dx, dy);
+            ctx.strokeStyle = c.miss; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.arc(hoop.x, hoop.y, 5, 0, 2 * Math.PI); ctx.stroke();       // the hoop centre
+            if (d > r + 14) arrow(x0 + dx / d * r, y0 + dy / d * r, hoop.x - dx / d * 6, hoop.y - dy / d * 6, c.miss, 2.5, [5, 4]);
+            const label = 'residual ' + fmtLen(residuals[idx]);
+            const nx = d > 1 ? -dy / d : 0, ny = d > 1 ? dx / d : -1;                          // a normal to the segment
+            const off = d > r + 14 ? 22 * fs : 0;
+            const near = d > r + 14 ? [(x0 + hoop.x) / 2 + nx * off, (y0 + hoop.y) / 2 + ny * off]
+                                    : [hoop.x - 6, hoop.y + Math.max(34, 0.55 * s_px) + 26 * fs];
+            pill(label, near[0], near[1], {size: 13, color: c.miss, border: c.miss}, c);
+        }
+        ctx.restore();
+
+        // ---- the table of the attempts
+        drawTable(c, idx, stage, cur, converged);
+
+        // a hint on the first frames
+        if (elapsed < 2.5 && !paused) text('click to pause', scene.x + scene.w - 16, scene.y + scene.h - 8, {size: 11, color: c.text_sec, align: 'right'});
+    }
+
+    // ---------------------------------------------------------------- the loop
+    let paused = false, running = false, visible = true, clock = 0, last = null;
+    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const still = () => render(per_shot * N + 0.01);
+
+    function frame(now) {
+        if (!canvas.isConnected) return;                  // the page was left: stop for good
+        if (!running) return;
+        if (last !== null && !paused) clock += Math.min(0.1, (now - last) / 1000);
+        last = now;
+        render(clock % total);
+        requestAnimationFrame(frame);
+    }
+    function start() {
+        if (reduced || running || !visible) return;
+        running = true; last = null; requestAnimationFrame(frame);
+    }
+    layout();
+    if (reduced) still(); else { render(0); start(); }
+
+    canvas.addEventListener('click', () => { paused = !paused; if (reduced) still(); });
+    if (window.ResizeObserver) {
+        new ResizeObserver(() => { if (!canvas.isConnected) return; layout(); reduced ? still() : render(clock % total); })
+            .observe(canvas.parentElement);
+    }
+    if (window.IntersectionObserver) {
+        new IntersectionObserver(entries => {
+            visible = entries[0].isIntersecting;
+            if (visible) start(); else running = false;
+        }).observe(canvas);
+    }
+    new MutationObserver(() => { if (canvas.isConnected && !running) reduced ? still() : render(clock % total); })
+        .observe(document.documentElement, {attributes: true, attributeFilter: ['class']});
+})();
+</script>

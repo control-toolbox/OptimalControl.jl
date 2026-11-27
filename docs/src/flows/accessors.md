@@ -14,6 +14,8 @@ We take the flow of the energy-minimal double integrator, built from the problem
 control law $u = p_2$ (see [From an OCP](@ref flows-from-ocp)), and the point
 $x = (-1, 0)$, $p = (12, 6)$: the start of the optimal extremal.
 
+::: details The problem used on this page
+
 ```@example main
 ocp = @def begin
     t ∈ [0, 1], time
@@ -30,15 +32,23 @@ x, p = [-1, 0], [12, 6]
 nothing # hide
 ```
 
+:::
+
 ## The Hamiltonian
 
 `hamiltonian(f)` returns the maximised Hamiltonian
 $\mathbf{H}(x, p) = H(x, p, u(x, p)) = p_1 v + p_2^2/2$:
 
-```@example main
+```@repl main
 H = hamiltonian(f)
 H(x, p)   # 12 × 0 + 6²/2
 ```
+
+This is the Hamiltonian that [`hamiltonian(ocp, u)`](@ref modelling-hamiltonians) builds from
+the problem and the law, and the same object, whichever way the flow takes its derivatives
+(`hamiltonian_type=:total` or `:partial`, see
+[Total or partial Hamiltonian](@ref flows-from-ocp-total-partial)): `:total` and `:partial`
+differ in how the flow differentiates, not in what it holds.
 
 ## The Hamiltonian vector field
 
@@ -46,57 +56,70 @@ H(x, p)   # 12 × 0 + 6²/2
 $\vec{\mathbf{H}} = (\nabla_p \mathbf{H}, -\nabla_x \mathbf{H})$, as the pair
 $(\dot x, \dot p) = ((v, p_2), (0, -p_1))$:
 
-```@example main
+```@repl main
 Hv = hamiltonian_vector_field(f)
 Hv(x, p)
 ```
 
 ## The pseudo-Hamiltonian and the control law
 
-`pseudo_hamiltonian(f)` returns $H(x, p, u) = p_1 v + p_2 u - u^2/2$, and `control_law(f)`
-the law you passed:
+`pseudo_hamiltonian(f)` returns $H(x, p, u) = p_1 v + p_2 u - u^2/2$, the one
+`pseudo_hamiltonian(ocp)` builds from the problem (see
+[Hamiltonians of a problem](@ref modelling-hamiltonians)), and `control_law(f)` the law you
+passed:
 
-```@example main
+```@repl main
 Hp = pseudo_hamiltonian(f)
 u = control_law(f)
-Hp(x, p, u(x, p)), u(x, p)
+u(x, p)
+Hp(x, p, u(x, p))
 ```
 
 ```@example main
 @assert H(x, p) == 18 && Hp(x, p, 6) == 18 && u(x, p) == 6                       # hide
 @assert all(Hv(x, p) .≈ ([0, 6], [0, -12]))                                      # hide
-@assert H(0.0, x, p, Float64[]) == 18 && u(0.0, x, p, Float64[]) == 6            # hide
+@assert H(0.0, x, p, nothing) == 18 && u(0.0, x, p, nothing) == 6            # hide
 nothing                                                                          # hide
 ```
 
 These functions take the short form of their arguments, as above, or the full form with the
 time and the variable: `H(t, x, p, v)`, `Hv(t, x, p, v)`, `Hp(t, x, p, u, v)`,
-`u(t, x, p, v)`, with `v = Float64[]` for a problem without a variable.
+`u(t, x, p, v)`, with `v = nothing` for a problem without a variable: the argument is then
+ignored (see [Notation and conventions](@ref modelling-formulation-conventions)).
 
 ## Gradients
 
-`get_hamiltonian_gradient(f)` returns the gradient of $\mathbf{H}$ with respect to $x$ and
-$p$, and `get_variable_gradient(f)` its gradient with respect to the variable.
-`get_pseudo_hamiltonian_gradient` and `get_pseudo_variable_gradient` do the same for $H$,
-before the law is substituted. They only take the full form `(t, x, p, v)`
-([CTFlows#438](https://github.com/control-toolbox/CTFlows.jl/issues/438)):
+`hamiltonian_gradient(f)` returns the gradient of $\mathbf{H}$ with respect to $x$ and
+$p$, and `variable_gradient(f)` its gradient with respect to the variable.
+`pseudo_hamiltonian_gradient` and `pseudo_variable_gradient` do the same for $H$,
+before the law is substituted. Like the functions above, the gradients of $\mathbf{H}$ and
+$H$ take the short form, `(x, p)` and `(x, p, u)`, or the full form, `(t, x, p, v)` and
+`(t, x, p, u, v)`:
 
-```@example main
-∇H = get_hamiltonian_gradient(f)
-∇H(0.0, x, p, Float64[])   # (∇ₓH, ∇ₚH) = ((0, 12), (0, 6))
+```@repl main
+∇H = hamiltonian_gradient(f);
+∇H(x, p)   # (∇ₓH, ∇ₚH) = ((0, 12), (0, 6))
+```
+
+```@repl main
+∇Hp = pseudo_hamiltonian_gradient(f);
+∇Hp(x, p, u(x, p))   # the same, at u = p₂
 ```
 
 ```@example main
-@assert all(∇H(0.0, x, p, Float64[]) .≈ ([0, 12], [0, 6]))   # hide
-nothing                                                     # hide
+@assert all(∇H(x, p) .≈ ([0, 12], [0, 6]))                    # hide
+@assert all(∇H(0.0, x, p, nothing) .≈ ([0, 12], [0, 6]))    # hide
+@assert all(∇Hp(x, p, 6.0) .≈ ([0, 12], [0, 6]))              # hide
+@assert all(∇Hp(0.0, x, p, 6.0, nothing) .≈ ([0, 12], [0, 6]))   # hide
+nothing                                                       # hide
 ```
 
 ## Without a flow
 
 `hamiltonian_vector_field` also applies to a `Hamiltonian`, without building a flow:
 
-```@example main
-Hv2 = hamiltonian_vector_field(Hamiltonian((x, p) -> p[1] * x[2] + p[2]^2 / 2))
+```@repl main
+Hv2 = hamiltonian_vector_field(Hamiltonian((x, p) -> p[1] * x[2] + p[2]^2 / 2));
 Hv2(x, p)
 ```
 
@@ -105,7 +128,7 @@ Hv2(x, p)
 What a flow can give back depends on what it was built from:
 
 | Flow built from | `hamiltonian` | `hamiltonian_vector_field` | `pseudo_hamiltonian`, `control_law` | `vector_field` |
-| --- | :-: | :-: | :-: | :-: |
+| :--- | :-: | :-: | :-: | :-: |
 | `ocp, law` with a law `u(x, p)`, or `PseudoHamiltonian(Hp), law` | ✓ | ✓ | ✓ | ✓ |
 | `Hamiltonian(H)` | ✓ | ✓ | ✗ | ✓ |
 | `HamiltonianVectorField(Hv)` | ✗ | ✓ | ✗ | ✓ |
@@ -113,31 +136,29 @@ What a flow can give back depends on what it was built from:
 
 On a flow of the state, `vector_field` returns the vector field that is integrated:
 
-```@example main
+```@repl main
 Fx = vector_field(Flow(VectorField(x -> -x)))
 Fx(2.0)
 ```
 
-An accessor that does not apply raises an error. For a Hamiltonian flow, the error says what
-the flow holds and what to use instead:
+An accessor that does not apply raises an error that says what the flow holds and what to
+use instead, on a Hamiltonian flow as on a flow of the state:
 
 ```@repl main
 hamiltonian(Flow(HamiltonianVectorField((x, p) -> ([x[2], p[2]], [0, -p[1]]))))
+hamiltonian(Flow(VectorField(x -> -x)))
 ```
-
-On a flow of the state, it is a `MethodError` for now
-([CTFlows#438](https://github.com/control-toolbox/CTFlows.jl/issues/438)).
 
 ## The system and the integrator
 
 A flow is made of a **system**, the mathematical object it integrates, and an
 **integrator**, returned by `system` and `integrator`:
 
-```@example main
+```@repl main
 integrator(f)
 ```
 
-```@example main
+```@repl main
 system(f)
 ```
 

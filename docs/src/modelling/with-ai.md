@@ -1,257 +1,115 @@
 # [With AI](@id modelling-with-ai)
 
-An AI assistant can learn the syntax of the OptimalControl.jl DSL from its documentation, and
-then translate a problem written in standard mathematics into this DSL. Here is a typical
-prompt, pointing to the [abstract syntax](@ref modelling-abstract-syntax) page:
+An AI assistant can learn the syntax of OptimalControl.jl from this documentation, then
+translate a problem written in mathematics into code that you run. This page gives prompts
+to copy into your assistant: open it, paste the first prompt, then the others as you need
+them, in the same conversation.
+
+## Teach the assistant
+
+Start with this prompt. It points to three pages: the syntax of [`@def`](@ref modelling-abstract-syntax),
+how to [solve](@ref solve-overview) a problem, and how to [read its solution](@ref results-solution).
 
 ```text
-Learn the syntax of OptimalControl.jl DSL described at the link below 
-to translate math into this DSL (Julia language): 
-https://control-toolbox.org/OptimalControl.jl/dev/modelling/abstract-syntax
+Learn the syntax of the OptimalControl.jl DSL (Julia language) to translate math into this DSL,
+and how to solve a problem and read its solution, from these pages:
+https://control-toolbox.org/OptimalControl.jl/stable/modelling/abstract-syntax
+https://control-toolbox.org/OptimalControl.jl/stable/solve/overview
+https://control-toolbox.org/OptimalControl.jl/stable/results/solution
 ```
 
 ```@raw html
-<div style="display:flex; align-items:center; gap:8px; margin:16px 0;">
-  <span style="font-weight:600; color:#666;">Try with:</span>
-  <!-- ChatGPT -->
-  <a href="https://chat.openai.com/?q=Learn+the+syntax+of+OptimalControl.jl+DSL+described+at+the+link+below+to+translate+math+into+this+DSL+(Julia+language):+https://control-toolbox.org/OptimalControl.jl/dev/modelling/abstract-syntax" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#10A37F; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none; transition:opacity 0.3s;">
-    ChatGPT
-  </a>
-
-  <!-- Claude -->
-  <a href="https://claude.ai/new?q=Learn+the+syntax+of+OptimalControl.jl+DSL+described+at+the+link+below+to+translate+math+into+this+DSL+(Julia+language):+https://control-toolbox.org/OptimalControl.jl/dev/modelling/abstract-syntax" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#CC9B7A; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none; transition:opacity 0.3s;">
-    Claude
-  </a>
-
-  <!-- Perplexity -->
-  <a href="https://www.perplexity.ai/search/new?q=Learn+the+syntax+of+OptimalControl.jl+DSL+described+at+the+link+below+to+translate+math+into+this+DSL+(Julia+language):+https://control-toolbox.org/OptimalControl.jl/dev/modelling/abstract-syntax" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#9C4DE2; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none; transition:opacity 0.3s;">
-    Perplexity
-  </a>
-
-  <!-- Mistral AI -->
-  <a href="https://chat.mistral.ai/chat?q=Learn+the+syntax+of+OptimalControl.jl+DSL+described+at+the+link+below+to+translate+math+into+this+DSL+(Julia+language):+https://control-toolbox.org/OptimalControl.jl/dev/modelling/abstract-syntax" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#FF7000; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none; transition:opacity 0.3s;">
-    Mistral
-  </a>
+<style>
+html.dark .ct-ai-chatgpt { background-color:#FAFAFA !important; color:#0F0F0F !important; }
+</style>
+<div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:16px 0;">
+  <span style="font-weight:600;">Open:</span>
+  <a href="https://chatgpt.com/?q=Learn+the+syntax+of+the+OptimalControl.jl+DSL+%28Julia+language%29+to+translate+math+into+this+DSL%2C+and+how+to+solve+a+problem+and+read+its+solution%2C+from+these+pages%3A+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fmodelling%2Fabstract-syntax+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fsolve%2Foverview+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fresults%2Fsolution" target="_blank" rel="nofollow noreferrer noopener" class="ct-ai-chatgpt" style="padding:4px 10px; background-color:#0F0F0F; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none;">ChatGPT</a>
+  <a href="https://claude.ai/new?q=Learn+the+syntax+of+the+OptimalControl.jl+DSL+%28Julia+language%29+to+translate+math+into+this+DSL%2C+and+how+to+solve+a+problem+and+read+its+solution%2C+from+these+pages%3A+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fmodelling%2Fabstract-syntax+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fsolve%2Foverview+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fresults%2Fsolution" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#D97757; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none;">Claude</a>
+  <a href="https://copilot.microsoft.com/?q=Learn+the+syntax+of+the+OptimalControl.jl+DSL+%28Julia+language%29+to+translate+math+into+this+DSL%2C+and+how+to+solve+a+problem+and+read+its+solution%2C+from+these+pages%3A+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fmodelling%2Fabstract-syntax+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fsolve%2Foverview+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fresults%2Fsolution" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#464FEB; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none;">Copilot</a>
+  <a href="https://gemini.google.com/app" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#3186FF; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none;">Gemini</a>
+  <a href="https://chat.mistral.ai/chat?q=Learn+the+syntax+of+the+OptimalControl.jl+DSL+%28Julia+language%29+to+translate+math+into+this+DSL%2C+and+how+to+solve+a+problem+and+read+its+solution%2C+from+these+pages%3A+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fmodelling%2Fabstract-syntax+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fsolve%2Foverview+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fresults%2Fsolution" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#FA500F; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none;">Mistral</a>
+  <a href="https://www.perplexity.ai/search/new?q=Learn+the+syntax+of+the+OptimalControl.jl+DSL+%28Julia+language%29+to+translate+math+into+this+DSL%2C+and+how+to+solve+a+problem+and+read+its+solution%2C+from+these+pages%3A+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fmodelling%2Fabstract-syntax+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fsolve%2Foverview+https%3A%2F%2Fcontrol-toolbox.org%2FOptimalControl.jl%2Fstable%2Fresults%2Fsolution" target="_blank" rel="nofollow noreferrer noopener" style="padding:4px 10px; background-color:#20808D; color:#fff; border-radius:20px; font-size:13px; font-weight:600; text-decoration:none;">Perplexity</a>
 </div>
 ```
 
-Here is an extract of the answer of an assistant (here [claude.ai](https://claude.ai)) to the request below:
+The buttons open an assistant with this prompt filled in, when the assistant accepts it from
+the link; otherwise, or if the message box is empty, paste the prompt above. Some assistants
+ask you to sign in first.
+
+The assistant must be able to open web pages. If it cannot, it answers from what it already
+knows, which may be an older syntax: check that its answer mentions what is on these pages.
+
+## Translate a problem
+
+Give the problem as you would write it on paper:
 
 ```text
 Translate the problem below into this DSL:
 
-    minimise the final time tf 
-    under the constraint q''(t) = u(t) 
-    with -1 <= u(t) <= 1, 
+    minimise the final time tf
+    under the constraint q''(t) = u(t)
+    with -1 <= u(t) <= 1,
     q(0) = 1, q'(0) = -2, q(tf) = 3, q'(tf) = 1, and q'(t) <= 1.
 ```
 
-```@setup ai
-using OptimalControl
-using NLPModelsIpopt
-```
-
-```@example ai
-ocp = @def begin
-    tf ∈ R, variable
-    t ∈ [0, tf], time
-    x = (q, v) ∈ R², state
-    u ∈ R, control
-    
-    # Variable constraint
-    tf ≥ 0
-    
-    # Control constraint
-    -1 ≤ u(t) ≤ 1
-    
-    # Initial conditions
-    q(0) == 1
-    v(0) == -2
-    
-    # Final conditions  
-    q(tf) == 3
-    v(tf) == 1
-    
-    # Path constraint
-    v(t) ≤ 1
-    
-    # Dynamics (q'' = u becomes first-order system)
-    ẋ(t) == [v(t), u(t)]
-    
-    # Objective: minimize final time
-    tf → min
-end
-nothing # hide
-```
-
-The answer is correct: this page builds it when the documentation is built, and it solves:
-
-```@example ai
-sol = solve(ocp; display=false)
-println("tf = ", objective(sol))
-```
-
-The answer can then be refined by further requests, for instance:
+The problem can also be given in LaTeX, or as an image or a PDF attached to the message, if
+your assistant accepts files:
 
 ```text
-Use a form compatible with examodels.
+Translate the problem in the attached image into this DSL.
 ```
 
-The assistant writes the dynamics coordinate by coordinate:
-
-```@example ai
-ocp_exa = @def begin
-    tf ∈ R, variable
-    t ∈ [0, tf], time
-    x = (q, v) ∈ R², state
-    u ∈ R, control
-    
-    # Variable constraint
-    tf ≥ 0
-    
-    # Control constraint
-    -1 ≤ u(t) ≤ 1
-    
-    # Initial conditions
-    q(0) == 1
-    v(0) == -2
-    
-    # Final conditions  
-    q(tf) == 3
-    v(tf) == 1
-    
-    # Path constraint
-    v(t) ≤ 1
-    
-    # Dynamics (coordinate-wise for ExaModels)
-    ∂(q)(t) == v(t)
-    ∂(v)(t) == u(t)
-    
-    # Objective: minimize final time
-    tf → min
-end
-nothing # hide
-```
-
-This form is valid, but it was not needed: the `:exa` modeler (ExaModels) also accepts the
-vector form of the first answer. Both solve with it:
-
-```@example ai
-sol_vector = solve(ocp, :exa; display=false)
-sol_coord = solve(ocp_exa, :exa; display=false)
-println("tf: vector form = ", objective(sol_vector), ", coordinatewise = ", objective(sol_coord))
-```
-
-```@example ai
-@assert isapprox(objective(sol), 6.5; rtol=1e-3)                            # hide
-@assert isapprox(objective(sol_vector), objective(sol); rtol=1e-6)          # hide
-@assert isapprox(objective(sol_coord), objective(sol); rtol=1e-6)           # hide
-nothing                                                                     # hide
-```
-
-It is also possible to feed the model directly with math definitions (here from a snapshot), as in the [example](https://control-toolbox.org/OptimalControlProblems.jl/stable/problems/rocket.html) below:
-
-```text
-translate the problem below into OptimalControl.jl DSL:
-```
+For instance, with the Goddard rocket problem, also solved in the
+[guided tour](@ref getting-started-guided-tour), in this image:
 
 ```@raw html
-<img src="../assets/rocket-def.png" 
-     alt="rocket-def" 
-     style="
-         display: block;
-         margin-left: 30px;
-         margin-right: 30px;
-         margin-top: 20px;
-         margin-bottom: 20px;
-         width: calc(100% - 60px);
-         max-width: 800px;
-         height: auto;
-     ">
-
+<img src="../assets/rocket-def.png" alt="The Goddard rocket problem" style="display:block; margin:16px auto; width:100%; max-width:600px; height:auto;">
 ```
 
-This prompt generates the following code, which is also built and solved here:
+## Ask for more
 
-```@example ai
-# Parameters
-h₀ = 1
-v₀ = 0
-m₀ = 1
-g₀ = 1
-Tc = 3.5
-hc = 500
-vc = 620
-mc = 0.6
+In the same conversation, ask for the rest of the work, for instance:
 
-# Derived constants
-Dc = 0.5 * vc * m₀ / g₀
-mf = mc * m₀
-c = 0.5 * sqrt(g₀ * h₀)
-Tmax = Tc * m₀ * g₀
-
-# Auxiliary functions
-D(h, v) = Dc * v^2 * exp(-hc * (h - h₀) / h₀)
-g(h) = g₀ * (h₀ / h)^2
-
-rocket = @def begin
-    # Variable (free final time)
-    tf ∈ R, variable
-    
-    # Time
-    t ∈ [0, tf], time
-    
-    # State: (altitude, velocity, mass)
-    x = (h, v, m) ∈ R³, state
-    
-    # Control: thrust
-    T ∈ R, control
-    
-    # Dynamics
-    ∂(h)(t) == v(t)
-    ∂(v)(t) == (T(t) - D(h(t), v(t)) - m(t) * g(h(t))) / m(t)
-    ∂(m)(t) == -T(t) / c
-    
-    # Initial conditions
-    h(0) == h₀
-    v(0) == v₀
-    m(0) == m₀
-    
-    # Final condition
-    m(tf) == mf
-    
-    # State constraints
-    h(t) ≥ h₀
-    v(t) ≥ v₀
-    mf ≤ m(t) ≤ m₀
-    
-    # Control constraint
-    0 ≤ T(t) ≤ Tmax
-    
-    # Variable constraint
-    tf ≥ 0
-    
-    # Objective: maximize final altitude h(tf)
-    -h(tf) → min
-end
-nothing # hide
+```text
+Solve the problem with a grid of 500 steps, check that the solver succeeded,
+and print the final time.
 ```
 
-```@example ai
-sol = solve(rocket; display=false)
-println("h(tf) = ", -objective(sol), ", tf = ", variable(sol))
+```text
+Label the constraint q'(t) <= 1, and plot its multiplier.
 ```
 
-```@example ai
-@assert isapprox(-objective(sol), 1.012837; atol=1e-5)   # hide
-nothing                                                   # hide
+```text
+Plot the solution.
 ```
 
-This is the Goddard problem, also solved in the [guided tour](@ref getting-started-guided-tour),
-with the same final altitude.
+```text
+Give me the values you expect for the final time and the cost,
+so that I can compare them with the numerical solution.
+```
+
+## Check the answer
+
+!!! warning "Run the code, and check what the assistant says"
+
+    An assistant does not run the code it writes, and its explanations may be wrong even
+    when its code is right. In our tests, with ChatGPT in November 2026:
+
+    - for the problem above, the code was right, but the assistant announced $t_f = 3$, with
+      $u = 1$ on the whole interval: then $q(3) = -1/2$, not $3$. The solution is
+      $t_f = 6.5$, with a boundary arc where $q' = 1$;
+    - taught with the syntax page only, the assistant forgot to declare the final time,
+      `tf ∈ R, variable`, before using it in `t ∈ [0, tf], time`, and the model did not
+      build: this is why the first prompt gives three pages;
+    - an answer read the solution with `state(sol)[1](t)`, which does not exist: the state
+      is a function of time, so write `state(sol)(t)[1]`.
+
+    Run the code, check `successful(sol)`, compare with a value you know, and plot the
+    solution (see [Solution object](@ref results-solution)).
 
 ## See also
 
-- [Abstract syntax (`@def`)](@ref modelling-abstract-syntax) — what the AI is being taught.
-- [Example gallery](@ref examples-gallery) — more worked problems.
+- [Abstract syntax (`@def`)](@ref modelling-abstract-syntax) — what the assistant learns.
+- [Example gallery](@ref examples-gallery) — worked problems, with their solutions.
 - [Guided tour](@ref getting-started-guided-tour) — the Goddard rocket, solved in depth.

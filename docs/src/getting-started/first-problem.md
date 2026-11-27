@@ -28,13 +28,11 @@ control.
 
 ## Define it
 
-We load `OptimalControl` to write the problem and `NLPModelsIpopt` to solve it (see
-[Installation](@ref getting-started-installation)), then transcribe the formulation with
+We load `OptimalControl`, then transcribe the formulation with
 [`@def`](@ref modelling-abstract-syntax):
 
 ```@example main
 using OptimalControl
-using NLPModelsIpopt
 
 ocp = @def begin
     t ∈ [0, 1], time
@@ -51,7 +49,7 @@ nothing # hide
 Each line mirrors the mathematics:
 
 | Line | Meaning |
-| --- | --- |
+| :--- | :--- |
 | `t ∈ [0, 1], time` | the time variable and its fixed interval |
 | `x = (q, v) ∈ R², state` | a two-dimensional state, whose components are named `q` and `v` |
 | `u ∈ R, control` | a scalar control |
@@ -65,9 +63,11 @@ take.
 ## Solve it
 
 `solve` discretises the problem in time and hands the resulting finite-dimensional problem to
-Ipopt:
+a solver. The default one, Ipopt, comes with the package `NLPModelsIpopt`, loaded first (see
+[Installation](@ref getting-started-installation)):
 
 ```@example main
+using NLPModelsIpopt
 sol = solve(ocp)
 nothing # hide
 ```
@@ -79,7 +79,7 @@ the dynamics are linear and the cost is quadratic.
 
 ## Look at it
 
-`Plots` draws the solution:
+The package `Plots` draws the solution, once loaded:
 
 ```@example main
 using Plots
@@ -95,7 +95,8 @@ predicts (see the energy example below).
 The solution also carries the cost and a few solver diagnostics:
 
 ```@example main
-objective(sol), iterations(sol), successful(sol)
+@show objective(sol) iterations(sol) successful(sol)
+nothing # hide
 ```
 
 The state and the control are functions of time. Because the control is scalar, `control(sol)`
@@ -103,11 +104,12 @@ returns a `Number`, not a length-1 vector (see the
 [note on dimension one](@ref modelling-abstract-syntax-control)):
 
 ```@example main
-state(sol)(0.5), control(sol)(0.25)
+@show state(sol)(0.5) control(sol)(0.25)
+nothing # hide
 ```
 
 See [Solution object](@ref results-solution) for everything else a solution carries, and
-[Plot](@ref results-plot) for what else `plot` can show.
+[Plot with Plots](@ref results-plot) for what else `plot` can show.
 
 ## Check it
 
@@ -116,7 +118,8 @@ mid-time is $x(1/2) = (-1/2, 3/2)$, and the minimal cost is $6$. The numerical s
 matches, up to the discretisation error of the default grid (250 steps):
 
 ```@example main
-objective(sol) - 6
+@show objective(sol) - 6
+nothing # hide
 ```
 
 ```@example main

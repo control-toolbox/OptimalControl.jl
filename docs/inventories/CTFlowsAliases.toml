@@ -1,0 +1,7 @@
+# DocInventory version 1
+project = "CTFlowsAliases"
+version = "0.20.0"
+
+[[jl.function]]
+name = "CTFlows.Systems.pseudo_hamiltonian"
+uri = "api/data#CTBase.Data.pseudo_hamiltonian"

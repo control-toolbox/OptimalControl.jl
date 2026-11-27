@@ -16,14 +16,11 @@ While the syntax will be transparent to those users familiar with Julia expressi
     Every other block is executed when the documentation is built. A problem definition must
     include at least time, state, dynamics and cost (the control declaration is optional —
     see [Problems without a control](@ref modelling-abstract-syntax-control-free)); in the
-    blocks that illustrate a single clause, the other required clauses are present but hidden
-    so that the block still builds a complete model.
+    blocks that illustrate a single clause, the other required clauses are present but hidden,
+    shown as `# ...`, so that the block still builds a complete model.
 
 ```@setup abs
 using OptimalControl
-using Logging: with_logger, ConsoleLogger
-# show warnings without the source location (a local package path)
-quiet_location(f) = with_logger(f, ConsoleLogger(stderr; meta_formatter=(level, args...) -> (:yellow, "Warning:", "")))
 data(t) = 2exp(0.5t)   # observed-data stub (parameter estimation)
 c(t) = 1.0             # damping coefficient (damped integrator)
 ```
@@ -36,9 +33,10 @@ A definition is a `begin … end` block passed to `@def`:
   any), preferably in this order. The variable must come before the time when the time bounds
   use it, as in `t ∈ [0, tf], time`.
 - **Then, in any order:** the dynamics, the constraints and the cost.
-- **Two equivalent forms:** `ocp = @def begin … end` and `@def ocp begin … end` both bind the
-  model to `ocp`. The second form also accepts a trailing `true` that turns on the
-  [trace mode](@ref modelling-abstract-syntax-aliases).
+- **Two equivalent forms:** `ocp = @def begin … end` (recommended) and the legacy
+  `@def ocp begin … end` both bind the model to `ocp`. The legacy form also accepts a
+  trailing `true` that turns on the [trace mode](@ref modelling-abstract-syntax-aliases) —
+  its only advantage.
 - **When names are read:** constants used in the declarations or in the bounds of a
   constraint (`t0`, `tf`, `x0`, …) are read when the model is built, so they must be defined
   *before* the block. Functions called in the dynamics, the constraints or the cost are only
@@ -47,13 +45,58 @@ A definition is a `begin … end` block passed to `@def`:
 The symbols have plain ASCII alternatives:
 
 | Unicode | ASCII |
-| --- | --- |
+| :--- | :--- |
 | `t ∈ [0, 1]` | `t in [0, 1]` |
 | `R²` | `R^2` |
 | `ẋ(t)`, `∂(x)(t)` | `derivative(x)(t)` |
 | `∫(…)` | `integral(…)` |
 | `≤`, `≥` | `<=`, `>=` |
 | `→ min` | `=> min` |
+
+The same problem in both, which give the same model:
+
+:::tabs key:abstract-syntax-symbols
+
+== Unicode
+
+```@example abs
+ocp_unicode = @def begin
+    t ∈ [0, 1], time
+    x ∈ R², state
+    u ∈ R, control
+    -1 ≤ u(t) ≤ 1
+    x(0) == [-1, 0]
+    x(1) == [0, 0]
+    ẋ(t) == [x₂(t), u(t)]
+    ∫(0.5u(t)^2) → min
+end
+nothing # hide
+```
+
+== ASCII
+
+```@example abs
+ocp_ascii = @def begin
+    t in [0, 1], time
+    x in R^2, state
+    u in R, control
+    -1 <= u(t) <= 1
+    x(0) == [-1, 0]
+    x(1) == [0, 0]
+    derivative(x)(t) == [x2(t), u(t)]
+    integral(0.5u(t)^2) => min
+end
+nothing # hide
+```
+
+:::
+
+```@example abs
+using NLPModelsIpopt                                                       # hide
+@assert isapprox(objective(solve(ocp_unicode; display=false)),             # hide
+                 objective(solve(ocp_ascii; display=false)); rtol=1e-10)   # hide
+nothing                                                                    # hide
+```
 
 ## [Variable](@id modelling-abstract-syntax-variable)
 
@@ -66,9 +109,10 @@ A variable (only one is allowed) is a finite dimensional vector of reals that wi
 
 ```@example abs
 @def begin
+    v ∈ R², variable
+    # ...
     t ∈ [0, 1], time            # hide
     x ∈ R, state                # hide
-    v ∈ R², variable
     ẋ(t) == v₁ * x(t) + v₂      # hide
     ∫(x(t)^2) → min             # hide
 end
@@ -79,9 +123,10 @@ Aliases `v₁`, `v₂` (and `v1`, `v2`) are automatically defined and can be use
 
 ```@example abs
 @def begin
+    v = (a, b) ∈ R², variable
+    # ...
     t ∈ [0, 1], time            # hide
     x ∈ R, state                # hide
-    v = (a, b) ∈ R², variable
     ẋ(t) == a * x(t) + b        # hide
     ∫(x(t)^2) → min             # hide
 end
@@ -92,9 +137,10 @@ A one dimensional variable can be declared according to
 
 ```@example abs
 @def begin
+    v ∈ R, variable
+    # ...
     t ∈ [0, 1], time            # hide
     x ∈ R, state                # hide
-    v ∈ R, variable
     ẋ(t) == v * x(t)            # hide
     ∫(x(t)^2) → min             # hide
 end
@@ -117,6 +163,7 @@ t0 = 1
 tf = 5
 @def begin
     t ∈ [t0, tf], time
+    # ...
     x ∈ R, state                # hide
     u ∈ R, control              # hide
     ẋ(t) == u(t)                # hide
@@ -131,6 +178,7 @@ One bound (or both) can be variable, typically for minimum time problems (see [M
 @def begin
     v = (T, λ) ∈ R², variable
     t ∈ [0, T], time
+    # ...
     x ∈ R, state                # hide
     ẋ(t) == λ * x(t)            # hide
     T → min                     # hide
@@ -149,8 +197,10 @@ The state declaration defines the name and the dimension of the state:
 
 ```@example abs
 @def begin
+    # ...
     t ∈ [0, 1], time                       # hide
     x ∈ R⁴, state
+    # ...
     u ∈ R, control                         # hide
     ẋ(t) == [x₂(t), x₃(t), x₄(t), u(t)]    # hide
     ∫(u(t)^2) → min                        # hide
@@ -162,8 +212,10 @@ As for the variable, there are automatic aliases (`x₁` and `x1` for `x[1]`, *e
 
 ```@example abs
 @def begin
+    # ...
     t ∈ [0, 1], time                        # hide
     x = (q₁, q₂, v₁, v₂) ∈ R⁴, state
+    # ...
     u ∈ R², control                         # hide
     ẋ(t) == [v₁(t), v₂(t), u₁(t), u₂(t)]    # hide
     ∫(u₁(t)^2 + u₂(t)^2) → min              # hide
@@ -178,8 +230,10 @@ expression known when the block is evaluated, such as a constant defined before 
 ```@example abs
 n = 3
 @def begin
+    # ...
     t ∈ [0, 1], time                        # hide
     x ∈ R^n, state
+    # ...
     u ∈ R, control                          # hide
     ẋ(t) == [x₂(t), x₃(t), u(t)]            # hide
     ∫(u(t)^2) → min                         # hide
@@ -203,9 +257,11 @@ The control declaration defines the name and the dimension of the control:
 
 ```@example abs
 @def begin
+    # ...
     t ∈ [0, 1], time                # hide
     x ∈ R², state                   # hide
     u ∈ R², control
+    # ...
     ẋ(t) == u(t)                    # hide
     ∫(u₁(t)^2 + u₂(t)^2) → min      # hide
 end
@@ -216,9 +272,11 @@ As before, there are automatic aliases (`u₁` and `u1` for `u[1]`, *etc.*) and 
 
 ```@example abs
 @def begin
+    # ...
     t ∈ [0, 1], time                # hide
     x ∈ R², state                   # hide
     u = (α, β) ∈ R², control
+    # ...
     ẋ(t) == [α(t), β(t)]            # hide
     ∫(α(t)^2 + β(t)^2) → min        # hide
 end
@@ -270,7 +328,7 @@ There is no dedicated syntax for "no control": omitting the control declaration 
 the syntax — do not declare a dummy `u ∈ R, control` with `u(t) == 0`, and never write
 `control!(pre, 0)` on the [functional API](@ref modelling-functional-api), which is rejected
 as an error. See [Control-free problems](@ref modelling-without-control) for the full
-worked examples above, solved both directly and indirectly.
+worked examples above, solved by both the direct and the indirect method.
 
 ## [Dynamics](@id modelling-abstract-syntax-dynamics)
 
@@ -281,11 +339,14 @@ worked examples above, solved both directly and indirectly.
 The dynamics is given in the standard vectorial ODE form:
 
 ```math
-    \dot{x}(t) = f([t, ]x(t)[, u(t)][, v])
+    \dot{x}(t) = f([t,]\; x(t)\; [, u(t)]\; [, v])
 ```
 
-depending on whether it is autonomous / with a variable or not (the parser will detect time and variable dependences,
-which entails that time, state and variable must be declared prior to dynamics - an error will be issued otherwise). The symbol `∂`, or the dotted state name
+where each of `t`, `u(t)` and `v` is optional: the dynamics may be autonomous or not, may
+involve a control or not (see [Problems without a control](@ref modelling-abstract-syntax-control-free)),
+and may use a variable or not. The parser detects these dependences, so time, state — and
+the control and variable when declared — must be declared prior to the dynamics; an error
+is issued otherwise. The symbol `∂`, or the dotted state name
 (`ẋ`), or the keyword `derivative` can be used:
 
 ```@example abs
@@ -499,7 +560,7 @@ nothing # hide
     nothing # hide
     ```
 
-### [Duplicate box constraints](@id modelling-abstract-syntax-box-dedup)
+## [Duplicate box constraints](@id modelling-abstract-syntax-box-dedup)
 
 **Box constraints** are linear range constraints on a single scalar component of the state, control or variable — that is, constraints of the form `lb ≤ x_i(t) ≤ ub`, `u_i(t) ≤ ub`, `v_i ≥ lb`, etc. (nonlinear path constraints are *not* concerned by this section).
 
@@ -514,7 +575,7 @@ When the **same scalar component** is targeted by several box-constraint declara
 For instance,
 
 ```@example abs
-quiet_location() do # hide
+Main.CTBase.DevTools.warnings_without_paths() do # hide
 @def begin
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
@@ -533,7 +594,7 @@ yields the effective constraint `1 ≤ q(t) ≤ 2`, with `aliases = [:q_wide, :q
 Conversely, the following declares an empty feasible set and raises an error at build time:
 
 ```@repl abs
-quiet_location() do # hide
+Main.CTBase.DevTools.warnings_without_paths() do # hide
 @def begin
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
@@ -554,7 +615,7 @@ end # hide
 ```
 
 Mayer costs are defined in a similar way to boundary conditions and follow the same rules. The symbol `→` is used
-to denote minimisation or maximisation, the latter being treated by minimising the opposite cost. (The symbol `=>` can also be used.)
+to denote minimisation or maximisation. A maximisation is equivalent to minimising the opposite cost, and the solution, the costate and the multipliers are the same for both (see [Notation and conventions](@ref modelling-formulation-conventions)). (The symbol `=>` can also be used.)
 
 ```@repl abs
 @def begin
@@ -593,6 +654,7 @@ Lagrange (integral) costs are defined using the symbol `∫`, *with parentheses*
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
     u ∈ R, control
+    # ...
     ẋ(t) == [v(t), u(t)]           # hide
     0.5∫(q(t) + u(t)^2) → min
 end
@@ -606,6 +668,7 @@ or
     t ∈ [0, 1], time
     x = (q, v) ∈ R², state
     u ∈ R, control
+    # ...
     ẋ(t) == [v(t), u(t)]                  # hide
     0.5integral(q(t) + u(t)^2) → min
 end
@@ -649,6 +712,7 @@ Quite readily, Mayer and Lagrange costs can be combined into general Bolza costs
     t ∈ [t0, tf], time
     x = (q, v) ∈ R², state
     u ∈ R, control
+    # ...
     ẋ(t) == [v(t), u(t)]                    # hide
     (tf - t0) + 0.5∫(c(t) * u(t)^2) → min
 end
@@ -707,7 +771,7 @@ nothing # hide
 !!! warning
     Such aliases do *not* define any additional function and are just replaced textually by the parser. In particular, they cannot be used outside the `@def` `begin ... end` block. Conversely, the constants and functions used within the block are ordinary Julia names, defined outside it (see [Structure of a definition](@ref modelling-abstract-syntax-structure) for when).
 
-!!! hint
+!!! tip "Trace mode"
     You can rely on a trace mode for the macro `@def` to look at your code after expansions of the aliases using the `@def ocp ...` syntax and adding `true` after your `begin ... end` block (see [Trace mode](@extref CTParser syntax/trace) in the CTParser documentation):
 
     ```@repl abs
@@ -775,7 +839,7 @@ and the form to write instead. They are either ambiguous or would silently mean 
 else than intended. Each one is explained in the CTParser documentation.
 
 | Rejected | Write instead | Why | CTParser |
-| --- | --- | --- | --- |
+| :--- | :--- | :--- | :--- |
 | `u = (z,) ∈ R, control` | `u ∈ R, control` | a scalar is declared one way, without names | [Declarations](@extref CTParser syntax/declarations) |
 | `ẋ(t) = u(t)` | `ẋ(t) == u(t)` | a single `=` defines an alias, not an equation | [Aliases and equations](@extref CTParser syntax/equations) |
 | `x ∈ Rⁿ`, `x ∈ R²¹` | `x ∈ R^n`, `x ∈ R^21` | only digit exponents up to `²⁰` are recognised | [Dimensions](@extref CTParser syntax/dimensions) |

@@ -1,5 +1,9 @@
 # [Singular control](@id examples-singular-control)
 
+```@raw html
+<ExampleFacts id="singular-control" />
+```
+
 For a control-affine system
 
 ```math
@@ -17,12 +21,14 @@ This page computes a singular control by hand, then with the tools of
 For a simpler case, where the singular control follows from the optimality conditions without
 brackets, see [Turnpike (bang–singular–bang)](@ref examples-turnpike).
 
+We load OptimalControl and the packages that the direct and indirect methods need:
+
 ```@example main
-using OptimalControl
-using NLPModelsIpopt
-using OrdinaryDiffEqTsit5
-using NonlinearSolve
-using Plots
+using OptimalControl        # define the problem, solve it, build the flows
+using NLPModelsIpopt        # NLP solver of the direct method
+using OrdinaryDiffEqTsit5   # integrator of the flows
+using NonlinearSolve        # solver of the shooting equations
+using Plots                 # plots of the solutions
 ```
 
 ## The problem
@@ -38,20 +44,28 @@ $(x, y)$ is the position and $\theta$ the heading, and it turns at a bounded rat
 We look for the fastest transfer from the origin to the point $(1, 0)$, with free initial and
 final headings:
 
+:::tabs key:example-problem
+
+== @def
+
 ```@example main
+t0 = 0
+x0, y0 = 0, 0     # initial position (the heading is free)
+xf, yf = 1, 0     # target position (the heading is free)
+
 ocp = @def begin
     tf ∈ R, variable
-    t ∈ [0, tf], time
+    t ∈ [t0, tf], time
     q = (x, y, θ) ∈ R³, state
     u ∈ R, control
 
     -1 ≤ u(t) ≤ 1
     -π / 2 ≤ θ(t) ≤ π / 2   # helps the direct method
 
-    x(0) == 0
-    y(0) == 0
-    x(tf) == 1
-    y(tf) == 0
+    x(t0) == x0
+    y(t0) == y0
+    x(tf) == xf
+    y(tf) == yf
 
     ∂(q)(t) == [cos(θ(t)), sin(θ(t)) + x(t), u(t)]
 
@@ -59,6 +73,20 @@ ocp = @def begin
 end
 nothing # hide
 ```
+
+== Mathematics
+
+```math
+\begin{aligned}
+& \text{Minimise} && t_f \\[0.5em]
+& \text{subject to} && \dot x(t) = \cos\theta(t), \quad \dot y(t) = \sin\theta(t) + x(t), \quad \dot\theta(t) = u(t), \\[0.5em]
+& && -1 \le u(t) \le 1, \quad -\frac{\pi}{2} \le \theta(t) \le \frac{\pi}{2}, \\[0.5em]
+& && x(0) = 0, \quad y(0) = 0, \\[0.5em]
+& && x(t_f) = 1, \quad y(t_f) = 0.
+\end{aligned}
+```
+
+:::
 
 The bound on $\theta$ keeps the direct method away from trajectories that turn the long way
 round. It is not active at the solution, so the indirect method, which ignores it, finds the
@@ -71,6 +99,8 @@ f_1(q) = \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix}.
 
 ## Direct method
 
+We solve it by the [direct method](@ref modelling-discretisation-direct-method):
+
 ```@example main
 direct_sol = solve(ocp; display=false)
 variable(direct_sol)
@@ -78,7 +108,8 @@ variable(direct_sol)
 
 ```@example main
 opt = (state_bounds_style=:none, control_bounds_style=:none)
-plt = plot(direct_sol; label="direct", size=(800, 800), opt...)
+plt = plot(direct_sol; label="direct", size=(800, 1340), 
+    legend=false, left_margin=10Plots.mm, opt...)
 ```
 
 The control stays strictly inside $[-1, 1]$: the arc is singular.
@@ -90,13 +121,21 @@ With $p = (p_1, p_2, p_3)$ and the Mayer cost $t_f$ (see
 
 ```math
 H(q, p, u) = p_1 \cos\theta + p_2 (\sin\theta + x) + p_3\, u = H_0 + u H_1,
-\qquad H_0 = p_1 \cos\theta + p_2 (\sin\theta + x), \quad H_1 = p_3 .
+```
+
+with
+
+```math
+H_0 = p_1 \cos\theta + p_2 (\sin\theta + x), \quad H_1 = p_3.
 ```
 
 On a singular arc, $H_1 = 0$, and so are its time derivatives. Along an extremal, the time
 derivative of a function $G(q, p)$ is $\{H, G\}$, a Poisson bracket (see
 [Time derivative along an extremal](@ref geometry-poisson-total)), with
-$\{F, G\} = \nabla_p F \cdot \nabla_q G - \nabla_q F \cdot \nabla_p G$.
+
+```math
+\{F, G\} = \nabla_p F \cdot \nabla_q G - \nabla_q F \cdot \nabla_p G.
+```
 
 **First derivative.** Since $\{H_1, H_1\} = 0$,
 
@@ -104,7 +143,7 @@ $\{F, G\} = \nabla_p F \cdot \nabla_q G - \nabla_q F \cdot \nabla_p G$.
 \dot H_1 = \{H_0 + u H_1, H_1\} = \{H_0, H_1\} =: H_{01}.
 ```
 
-$H_1 = p_3$ depends only on $p_3$, so only the pair $(\theta, p_3)$ contributes:
+In $H_1 = p_3$, only the pair $(\theta, p_3)$ contributes:
 
 ```math
 H_{01} = -\frac{\partial H_0}{\partial \theta} \frac{\partial H_1}{\partial p_3}
@@ -126,9 +165,17 @@ u_s = -\frac{H_{001}}{H_{101}} .
 ```
 
 In $H_{001} = \{H_0, H_{01}\}$, only the pair $(x, p_1)$ contributes:
-$H_{001} = -\frac{\partial H_0}{\partial x} \frac{\partial H_{01}}{\partial p_1} = -p_2 \sin\theta$.
+
+```math
+H_{001} = -\frac{\partial H_0}{\partial x} \frac{\partial H_{01}}{\partial p_1} = -p_2 \sin\theta.
+```
+
 In $H_{101} = \{H_1, H_{01}\}$, only the pair $(\theta, p_3)$ contributes:
-$H_{101} = \frac{\partial H_1}{\partial p_3} \frac{\partial H_{01}}{\partial \theta} = p_1 \cos\theta + p_2 \sin\theta$.
+
+```math
+H_{101} = \frac{\partial H_1}{\partial p_3} \frac{\partial H_{01}}{\partial \theta} = p_1 \cos\theta + p_2 \sin\theta.
+```
+
 Therefore
 
 ```math
@@ -161,7 +208,7 @@ control:
 ```@example main
 tg = time_grid(direct_sol)
 θ(t) = state(direct_sol)(t)[3]
-plt_u = plot(direct_sol, :control; label="direct", size=(800, 300), opt...)
+plt_u = plot(direct_sol, :control; label="direct", size=(800, 320), opt...)
 plot!(plt_u, tg, t -> sin(θ(t))^2; label="sin²θ", linestyle=:dash)
 ```
 
@@ -201,7 +248,7 @@ nothing                                                            # hide
 
 ## Indirect method
 
-Here the whole extremal is singular: the headings are free at both ends, so the
+The indirect method is [shooting](@ref flows-shooting). Here the whole extremal is singular: the headings are free at both ends, so the
 transversality conditions give $p_3(0) = p_3(t_f) = 0$, and $H_1 = p_3$ vanishes on the whole
 interval. The flow uses the singular control over the whole horizon:
 
@@ -217,13 +264,11 @@ the headings, and the transversality condition of the final time, $H(t_f) = 1$, 
 $H(t_f) = H_0(t_f)$ since $p_3(t_f) = 0$:
 
 ```@example main
-t0 = 0
-
 function shoot!(s, ξ, _)
     p0, θ0, tf = ξ[1:3], ξ[4], ξ[5]
-    q_tf, p_tf = f(t0, [0, 0, θ0], p0, tf; variable=tf)
-    s[1] = q_tf[1] - 1               # x(tf) = 1
-    s[2] = q_tf[2]                   # y(tf) = 0
+    q_tf, p_tf = f(t0, [x0, y0, θ0], p0, tf; variable=tf)
+    s[1] = q_tf[1] - xf              # x(tf) = xf
+    s[2] = q_tf[2] - yf              # y(tf) = yf
     s[3] = p0[3]                     # free initial heading
     s[4] = p_tf[3]                   # free final heading
     s[5] = H0(q_tf, p_tf) - 1        # free final time
@@ -239,6 +284,8 @@ The direct solution gives the initial guess:
 prob = NonlinearProblem(shoot!, ξ_guess)
 shooting_sol = NonlinearSolve.solve(prob; show_trace=Val(false))
 p0_sol, θ0_sol, tf_sol = shooting_sol.u[1:3], shooting_sol.u[4], shooting_sol.u[5]
+@show p0_sol θ0_sol tf_sol # hide
+nothing # hide
 ```
 
 The residual is zero:
@@ -255,17 +302,14 @@ The two methods find the same final time, up to the discretisation error of the 
 method:
 
 ```@example main
-indirect_sol = f((t0, tf_sol), [0, 0, θ0_sol], p0_sol; variable=tf_sol)
-variable(direct_sol), tf_sol
+indirect_sol = f((t0, tf_sol), [x0, y0, θ0_sol], p0_sol; variable=tf_sol)
+@show variable(direct_sol) tf_sol
+nothing # hide
 ```
 
-For the plot, the flow is built with `saveat`, so that the trajectory has 101 points (see
-[Plotting a flow](@ref results-plot-flow)):
-
 ```@example main
-f_plot = Flow(ocp, (q, p, tf) -> u_s(q); saveat=range(t0, tf_sol, 101), dense=false)
-plot!(plt, f_plot((t0, tf_sol), [0, 0, θ0_sol], p0_sol; variable=tf_sol);
-      label="indirect", linestyle=:dash, opt...)
+plot!(plt, indirect_sol; label="indirect", linestyle=:dash, opt...)
+plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
 Along the extremal, the switching function $H_1 = p_3$ stays zero, $\theta$ stays inside
@@ -295,3 +339,12 @@ nothing                                                                         
 - [Shooting](@ref flows-shooting): the shooting method.
 - The [Goddard tutorial](@extref Tutorials tutorial-goddard): a problem with bang, singular
   and boundary arcs.
+
+```@raw html
+<ExampleNav id="singular-control" />
+```
+
+```@example main
+Main.gallery_thumbnail(plot(indirect_sol, :control; size=(480, 300), legend=false), "singular-control")  # hide
+nothing  # hide
+```

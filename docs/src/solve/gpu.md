@@ -1,8 +1,12 @@
 # [GPU](@id solve-gpu)
 
-GPU support runs through [ExaModels.jl](https://madsuite-org.github.io/ExaModels.jl/stable/) and
-[MadNLPGPU.jl](https://madsuite-org.github.io/MadNLP.jl/stable/), NVIDIA GPUs only, via
-[CUDA.jl](https://github.com/JuliaGPU/CUDA.jl).
+A direct method can run on an NVIDIA GPU: the NLP is built with
+[ExaModels.jl](https://madsuite-org.github.io/ExaModels.jl/stable/), which evaluates it with a
+CUDA backend, and solved with [MadNLP](https://madsuite-org.github.io/MadNLP.jl/stable/),
+which factorises its linear systems on the device with cuDSS, through MadNLPGPU and
+[CUDA.jl](https://github.com/JuliaGPU/CUDA.jl). This page lists what to load, solves a problem
+in descriptive and explicit mode, shows what the `:gpu` token changes, which combinations
+work, and when the GPU pays off.
 
 !!! note "What you are reading depends on the machine that built this page"
 
@@ -12,13 +16,15 @@ GPU support runs through [ExaModels.jl](https://madsuite-org.github.io/ExaModels
 
 ## Prerequisites
 
+The GPU solvers need three packages besides OptimalControl:
+
 ```@example gpu
 using OptimalControl
 using MadNLPGPU
 using CUDA
 using CUDSS
 
-println("CUDA.functional() = ", CUDA.functional())
+CUDA.functional()
 ```
 
 Check `CUDA.functional()` before assuming a `:gpu` solve will actually run on the device.
@@ -55,11 +61,13 @@ ocp = @def begin
     1 ≤ v ≤ 2
     ∫(u(t)^2 + v) → min
 end
+nothing # hide
 ```
 
 ## Descriptive mode
 
-The `:gpu` parameter token selects GPU-optimized defaults:
+The `:gpu` parameter token selects GPU-optimized defaults. The solves of this page are wrapped
+in a `try` block, so that the page builds on a machine without a GPU too:
 
 ```@example gpu
 try
@@ -67,8 +75,6 @@ try
     println("objective  = ", objective(sol))
     println("iterations = ", iterations(sol))
 catch e
-    println("GPU solve failed — no functional device on this machine.")
-    println("CUDA.functional() = ", CUDA.functional())
     println("Exception: ", first(sprint(showerror, e), 400))
 end
 ```
@@ -84,40 +90,40 @@ catch e
 end
 ```
 
-Solver verbosity is a separate concern: `display=false` above silences the OptimalControl-level
-report, and the underlying solver takes its own options — `print_level=MadNLP.ERROR` for
-MadNLP, which needs `using MadNLP` in scope. See [Options](@ref solve-options).
+As on CPU, `display=false` silences both the configuration box and the solver's log (see
+[Options](@ref solve-options)).
 
 ## What `:gpu` changes
 
 `describe(:gpu)` lists every strategy with a GPU variant. It needs nothing GPU-specific and
 runs on CPU alone:
 
-```@example gpu
+```@repl gpu
 describe(:gpu)
 ```
 
-Only `:exa`, `:madnlp` and `:madncl` have one. The parameter changes the defaults of their
+Among the strategies of `solve`, only `:exa`, `:madnlp` and `:madncl` have one; `:di` and
+`:sciml` are used by [flows](@ref flows-overview). The parameter changes the defaults of their
 options. Constructing the strategies does not touch the device, so this runs anywhere:
 
 ```@example gpu
 Base.CoreLogging.disable_logging(Base.CoreLogging.Warn) # hide
-modeler = OptimalControl.Exa{GPU}()
-solver = OptimalControl.MadNLP{GPU}()
-println("Exa{GPU} backend:          ", options(modeler)[:backend])
-println("MadNLP{GPU} linear_solver: ", options(solver)[:linear_solver])
-Base.CoreLogging.disable_logging(Base.CoreLogging.BelowMinLevel) # hide
 nothing # hide
 ```
 
-```@example gpu
-modeler = OptimalControl.Exa()      # same as OptimalControl.Exa{CPU}()
-solver = OptimalControl.MadNLP()    # same as OptimalControl.MadNLP{CPU}()
-println("Exa{CPU} backend:          ", options(modeler)[:backend])
-println("MadNLP{CPU} linear_solver: ", options(solver)[:linear_solver])
+```@repl gpu
+options(OptimalControl.Exa{GPU}())[:backend]
+options(OptimalControl.MadNLP{GPU}())[:linear_solver]
 ```
 
-On the GPU, ExaModels evaluates the model with a CUDA backend, and MadNLP factorizes its linear
+The CPU defaults, for comparison (`Exa()` is `Exa{CPU}()`, and the same for `MadNLP`):
+
+```@repl gpu
+options(OptimalControl.Exa())[:backend]   # nothing: ExaModels' default CPU backend
+options(OptimalControl.MadNLP())[:linear_solver]
+```
+
+On the GPU, ExaModels evaluates the model with a CUDA backend, and MadNLP factorises its linear
 systems with cuDSS instead of MUMPS.
 
 ## Explicit mode
@@ -128,6 +134,7 @@ Constructing the components does not touch the device, so this block runs anywhe
 discretizer = OptimalControl.Collocation(; grid_size=100, scheme=:midpoint)
 modeler = OptimalControl.Exa{GPU}()
 solver = OptimalControl.MadNLP{GPU}()
+Base.CoreLogging.disable_logging(Base.CoreLogging.BelowMinLevel) # hide
 nothing # hide
 ```
 
@@ -145,9 +152,9 @@ end
 ## What combinations work
 
 Only `:exa × {:madnlp, :madncl}` on `:gpu` — the two `:gpu` entries of
-[`methods`](@ref)`()` (see [Choosing a method](@ref solve-choosing-a-method)). Everything else
-is a compile-time or runtime error. These are type-system and routing errors, not
-hardware-dependent ones, so they raise identically on every machine:
+[`methods`](@ref)`()` (see [Choosing a method](@ref solve-choosing-a-method)). Every other
+combination is rejected as soon as the strategy is built, or the description completed. These
+errors do not depend on the hardware: they are the same on every machine.
 
 `ADNLP`'s parameter is constrained to `<:CPU`:
 
@@ -174,26 +181,27 @@ GPU solving is beneficial for:
 
 - **large-scale problems**: thousands of variables and constraints, for instance fine grids;
 - **dense computations**: problems with many nonlinear constraints;
-- **repeated solves**: the GPU initialization overhead is paid once.
+- **repeated solves**: the GPU initialisation overhead is paid once.
 
 For small problems, CPU solving is usually faster.
 
-The idiomatic guard is `CUDA.functional()`: pick the parameter, then solve:
+The idiomatic guard is `CUDA.functional()`: pick the parameter, then solve. This runs on any
+machine, on the GPU when there is one:
 
-```@example gpu
+```@repl gpu
 parameter = CUDA.functional() ? :gpu : :cpu
-println("parameter = ", parameter)
+sol = solve(ocp, :exa, :madnlp, parameter; grid_size=100, display=false);
+objective(sol)
 ```
 
 On a machine with a functional GPU, this block compares the same method on CPU and GPU, on a
 fine grid (each solve is run once first, so that compilation is not timed):
 
 ```@example gpu
-using MadNLP
 if CUDA.functional()
     for p in (:cpu, :gpu)
-        solve(ocp, :exa, :madnlp, p; grid_size=1000, display=false, print_level=MadNLP.ERROR)
-        t = @elapsed solve(ocp, :exa, :madnlp, p; grid_size=1000, display=false, print_level=MadNLP.ERROR)
+        solve(ocp, :exa, :madnlp, p; grid_size=1000, display=false)
+        t = @elapsed solve(ocp, :exa, :madnlp, p; grid_size=1000, display=false)
         println(p, " at grid_size=1000: ", round(t; digits=3), " s")
     end
 else

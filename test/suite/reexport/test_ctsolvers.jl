@@ -49,6 +49,16 @@ function test_ctsolvers()
             end
         end
 
+        Test.@testset "Optimization" begin
+            # Imported, not re-exported: what `ocp_solution` needs (#1077).
+            for name in (:build_model, :BuiltModel)
+                Test.@testset "$name" begin
+                    Test.@test imports(OptimalControl, name, CTSolvers.Optimization)
+                    Test.@test !isdefined(CurrentModule, name)
+                end
+            end
+        end
+
         Test.@testset "Modeler Types" begin
             for T in (:AbstractNLPModeler, :ADNLP, :Exa)
                 Test.@testset "$T" begin
@@ -150,12 +160,12 @@ function test_ctsolvers()
                 )
             end
             Test.@testset "ocp_solution" begin
-                # ⚠️ takes a `BuiltModel` (the NLP-side object), not the
-                # `DiscretizedModel` — the old assertion had it wrong.
+                # ⚠️ takes a `BuiltModel` (the NLP-side object) wrapping a
+                # `DiscretizedModel`, not the `DiscretizedModel` itself.
                 Test.@test hasmethod(
                     ocp_solution,
                     Tuple{
-                        CTSolvers.Optimization.BuiltModel,
+                        OptimalControl.BuiltModel{<:OptimalControl.DiscretizedModel},
                         SolverCore.AbstractExecutionStats,
                         OptimalControl.AbstractNLPModeler,
                     },

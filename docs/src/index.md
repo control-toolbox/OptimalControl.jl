@@ -1,36 +1,60 @@
-# OptimalControl.jl
-
-The OptimalControl.jl package is the root package of the [control-toolbox ecosystem](https://github.com/control-toolbox). The control-toolbox ecosystem gathers Julia packages for mathematical control and applications. It aims to provide tools to model and solve optimal control problems with ordinary differential equations by direct and indirect methods, both on CPU and GPU.
-
 ```@raw html
-<img src="./assets/logo.svg"      alt="OptimalControl.jl logo" class="oc-logo oc-logo--light" />
-<img src="./assets/logo-dark.svg" alt="OptimalControl.jl logo" class="oc-logo oc-logo--dark" />
+---
+layout: home
+
+hero:
+  name: OptimalControl.jl
+  text: Optimal control in Julia
+  tagline: Model a problem as you write it on paper, solve it by direct and indirect methods, on CPU and GPU.
+  image:
+    light: /logo.svg
+    dark: /logo-dark.svg
+    alt: OptimalControl.jl logo
+  actions:
+    - theme: brand
+      text: Get started
+      link: /getting-started/installation
+    - theme: alt
+      text: Examples
+      link: /examples/gallery
+    - theme: alt
+      text: GitHub
+      link: https://github.com/control-toolbox/OptimalControl.jl
+    - theme: alt
+      text: Citing us
+      link: /#home-citing
+
+features:
+  - title: Close to the mathematics
+    details: The <code>@def</code> macro reads like the problem on paper. A functional API builds the same model from plain functions.
+    link: /modelling/abstract-syntax
+  - title: Direct methods
+    details: Discretise, build the NLP with ADNLPModels or ExaModels, and solve it with Ipopt, MadNLP, Knitro and others.
+    link: /solve/overview
+  - title: Indirect methods
+    details: Hamiltonian flows built from the problem, concatenated arc by arc, and shooting started from the direct solution.
+    link: /flows/overview
+  - title: GPU
+    details: The same problem, solved on an NVIDIA GPU with ExaModels and MadNLP.
+    link: /solve/gpu
+  - title: Geometry
+    details: Lifts, Lie and Poisson brackets and the <code>@Lie</code> macro, to compute singular controls.
+    link: /geometry/overview
+  - title: An ecosystem
+    details: Tutorials, a collection of problems, benchmarks, and applications built on the package.
+    link: /#home-beyond
+---
 ```
-
-## Motivation
-
-To our knowledge, OptimalControl.jl is the only Julia package that unifies both direct
-and indirect methods for optimal control within a single, coherent framework. This fills
-a gap in a landscape where existing tools are fragmented across programming languages and
-paradigms, and are usually restricted to a single family of methods.
-
-The package provides a domain-specific language that closely matches mathematical
-notation, together with multiple discretization schemes and shooting methods, and planned
-support for homotopy continuation methods.
-
-Its modeler–solver separation makes it agnostic to the underlying NLP modeling backend
-and optimization solver, and enables seamless execution on both CPU and GPU with minimal
-user intervention.
-
-Combined with an ecosystem of domain-specific applications, tutorials, and benchmarking
-tools, this design targets researchers and engineers working in optimal control, control
-theorists developing new algorithms, and students learning the field through interactive
-tutorials.
 
 ## Installation
 
-See [Installation](@ref getting-started-installation) — one package to add, plus a handful of
-optional pieces (a solver, plotting, flows, saving) loaded only when you use them.
+```julia
+using Pkg
+Pkg.add("OptimalControl")
+```
+
+A solver, plotting and the ODE integrators of the indirect method are separate packages,
+loaded only when you use them: see [Installation](@ref getting-started-installation).
 
 ## Basic usage
 
@@ -57,35 +81,38 @@ plot(sol)
 
 That is the whole program — model, solve, plot. Each step has its own guide:
 
-- For more details about the example, see the [energy minimisation page](@ref examples-double-integrator-energy).  
-- The `@def` macro defines the problem. See the [abstract syntax guide](@ref modelling-abstract-syntax).  
-- The `solve` function has many options. See the [solve overview](@ref solve-overview).  
+- For more details about the example, see the [energy minimisation page](@ref examples-double-integrator-energy).
+- The `@def` macro defines the problem. See the [abstract syntax guide](@ref modelling-abstract-syntax).
+- The `solve` function has many options. See the [solve overview](@ref solve-overview).
 - The `plot` function is flexible. See the [plot guide](@ref results-plot).
 
 ## Where to go next
 
 | Section | What's there |
-| --- | --- |
+| :--- | :--- |
 | [Getting started](@ref getting-started-installation) | Install, solve your first problem, then a longer guided tour covering both the direct and indirect methods. |
-| [Modelling](@ref modelling-formulation) | The `@def` DSL, the macro-free functional API, control-free (parameter estimation) problems, and problem introspection. |
-| [Solve (direct)](@ref solve-overview) | Discretize-and-transcribe methods: choosing a strategy, initial guesses, options, explicit mode, GPU. |
+| [Modelling](@ref modelling-formulation) | The `@def` DSL, the macro-free functional API, control-free (parameter estimation) problems, problem introspection, and the discretised problem and its NLP. |
+| [Solve (direct)](@ref solve-overview) | Discretise-and-transcribe methods: choosing a strategy, initial guesses, options, explicit mode, GPU. |
 | [Results](@ref results-solution) | Read a `Solution` — trajectories, costate, duals, status — plot it, save it, reload it. |
 | [Flows (indirect)](@ref flows-overview) | The Pontryagin Maximum Principle as code: build, integrate, and shoot with Hamiltonian flows. |
 | [Geometry](@ref geometry-overview) | The Lie-theoretic tools (`Lift`, `ad`, `Poisson`, `@Lie`) behind singular-control problems. |
 | [Examples](@ref examples-gallery) | A gallery of complete problems worked end to end, direct and indirect, from energy minimisation to state constraints. |
 | [API reference](@ref api-modelling) | Every re-exported symbol, organised by theme. |
+| [Errors](@ref errors) | The exceptions OptimalControl raises, and how to read them. |
 | [Migrating from v2.0](@ref migration) | What changed since v2.0 and how to update your code. |
+| [About](@ref about) | Why this package, how to contribute, how it is tested, and the environment of this site. |
 
-## Mathematical formulation
+## [Beyond this site](@id home-beyond)
 
-Optimal control problems are stated in Bolza form — a cost functional combining a boundary
-term (Mayer), a pointwise cost evaluated on the initial and final times and states and on
-the optimisation variables, and an integral term (Lagrange) accumulated along the
-trajectory. The problem is subject to dynamics and box/path/boundary constraints, with
-optionally free times and extra optimisation variables. See
-[Formulation](@ref modelling-formulation) for the full mathematical setting.
+| Site | What's there |
+| :--- | :--- |
+| [Tutorials](https://control-toolbox.org/Tutorials.jl/stable/) | Longer worked problems and techniques: continuation, initial guesses, MPC, NLP manipulation, … |
+| [OptimalControlProblems.jl](https://control-toolbox.org/OptimalControlProblems.jl/stable/) | A collection of optimal control problems, each modelled with OptimalControl and JuMP. |
+| [CTBenchmarks.jl](https://control-toolbox.org/CTBenchmarks.jl/stable/) | Benchmarks of solvers and modelling approaches on those problems: timings, memory, solver statistics. |
+| [Applications](https://control-toolbox.org/applications/) | Applications built on the ecosystem, from bacterial growth and MRI to orbit transfer. |
+| [control-toolbox](https://control-toolbox.org) | The ecosystem: every package, and the discussions. |
 
-## Citing us
+## [Citing us](@id home-citing)
 
 If you use OptimalControl.jl in your work, please cite us:
 
@@ -107,72 +134,3 @@ or in bibtex format:
   journal = {Journal of Open Source Software} 
 }
 ```
-
-## Contributing
-
-If you think you found a bug or if you have a feature request / suggestion, feel free to open an [issue](https://github.com/control-toolbox/OptimalControl.jl/issues). Before opening a pull request, please start an issue or a discussion on the topic. 
-
-Contributions are welcomed, check out [how to contribute to a Github project](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project). If it is your first contribution, you can also check [this first contribution tutorial](https://github.com/firstcontributions/first-contributions). You can find first good issues (if any 🙂) [here](https://github.com/control-toolbox/OptimalControl.jl/contribute). You may find other packages to contribute to at the [control-toolbox organization](https://github.com/control-toolbox).
-
-If you want to ask a question, feel free to start a discussion [here](https://github.com/orgs/control-toolbox/discussions). This forum is for general discussion about this repository and the [control-toolbox organization](https://github.com/control-toolbox).
-
-!!! note
-
-    If you want to add an application or a package to the control-toolbox ecosystem, please follow this [set up tutorial](https://github.com/orgs/control-toolbox/discussions/65).
-
-## Testing
-
-OptimalControl.jl is the umbrella package of a multi-repository ecosystem, and testing is
-organized in layers. Each sub-package (`CTBase`, `CTDirect`, `CTFlows`, `CTModels`, `CTLie`,
-`CTSolvers`, `CTParser`) has its own test suite combining unit tests, integration
-tests, and code-quality checks (e.g. with [Aqua.jl](https://github.com/JuliaTesting/Aqua.jl)).
-At the umbrella level, OptimalControl.jl adds strong end-to-end integration tests that
-solve complete optimal control problems with both direct and indirect methods.
-
-Continuous integration runs on Linux, macOS, and Windows, on both CPU and GPU (via a
-self-hosted CUDA runner), through reusable workflows centralized in
-[CTActions](https://github.com/control-toolbox/CTActions). Code coverage is tracked on
-[Codecov](https://codecov.io), and downstream packages are guarded against regressions
-through dedicated breakage tests.
-
-Beta versions are distributed during development via a local registry,
-[ct-registry](https://github.com/control-toolbox/ct-registry). Part of the test code is
-written with the help of AI agents, always under human review.
-
-## Reproducibility
-
-```@setup main
-using Pkg
-using InteractiveUtils
-```
-
-Every page on this site executes its code when the documentation is built, against a
-single pinned environment. You can inspect that environment below, or download it and
-rebuild it locally.
-
-| Download | Contents |
-| --- | --- |
-| [`Project.toml`](assets/Project.toml) | the packages this documentation depends on directly |
-| [`Manifest.toml`](assets/Manifest.toml) | the exact version of every package in the resolved dependency tree |
-
-::: details Environment used to build this documentation
-
-**Julia version and operating system**
-
-```@example main
-versioninfo() # hide
-```
-
-**Direct dependencies**
-
-```@example main
-Pkg.status() # hide
-```
-
-**Full dependency tree**
-
-```@example main
-Pkg.status(; mode = PKGMODE_MANIFEST) # hide
-```
-
-:::

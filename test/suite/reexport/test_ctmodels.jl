@@ -107,9 +107,14 @@ const SOLUTIONS = (
     :successful,
     :constraints_violation,
     :infos,
-    :is_empty,
     :is_empty_time_grid,
     :model,
+    # switching structure
+    :switching_times,
+    :phase_labels,
+    :has_switching,
+    :left_limit,
+    :right_limit,
     # dual constraint accessors
     :path_constraints_dual,
     :boundary_constraints_dual,
@@ -222,6 +227,14 @@ function test_ctmodels()
                     Test.@test getfield(OptimalControl, f) isa Function
                 end
             end
+        end
+
+        Test.@testset "Not re-exported: is_empty" begin
+            # `is_empty` reads the time-grid model inside a solution, not a solution:
+            # `is_empty_time_grid(sol)` is the user-facing form.
+            Test.@test !is_exported(OptimalControl, :is_empty)
+            Test.@test !isdefined(OptimalControl, :is_empty)
+            Test.@test is_exported(OptimalControl, :is_empty_time_grid)
         end
 
         Test.@testset "Solutions accessors" begin

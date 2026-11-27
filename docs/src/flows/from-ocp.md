@@ -6,6 +6,11 @@ Hamiltonian flow it defines. `Flow(ocp, law)` reads the dynamics and the cost fr
 problem, so you only write the law. The notation is the one of
 [Notation and conventions](@ref modelling-formulation-conventions).
 
+The examples use the energy-minimal double integrator of
+[Your first problem](@ref getting-started-first-problem).
+
+::: details The problem used on this page
+
 ```@example main
 using OptimalControl
 using OrdinaryDiffEqTsit5
@@ -26,6 +31,8 @@ end
 nothing # hide
 ```
 
+:::
+
 ## The idea
 
 For this problem, the pseudo-Hamiltonian is $H(x, p, u) = p_1 v + p_2 u + p^0 u^2/2$, with
@@ -35,9 +42,9 @@ Hamiltonian system of $\mathbf{H}(x, p) = H(x, p, u(x, p))$, from an initial sta
 
 ## The simplest form
 
-```@example main
-f = Flow(ocp, (x, p) -> p[2])
-p0 = [12, 6]
+```@repl main
+f = Flow(ocp, (x, p) -> p[2]);
+p0 = [12, 6];
 xf, pf = f(t0, x0, p0, tf)
 ```
 
@@ -55,9 +62,9 @@ nothing                                                                        #
 `Flow(ocp, law)` wraps the function in a `DynClosedLoop` law: a feedback on the state and
 the costate. Writing it explicitly gives the same flow:
 
-```@example main
-f_typed = Flow(ocp, DynClosedLoop((x, p) -> p[2]))
-xf_typed, _ = f_typed(t0, x0, p0, tf)
+```@repl main
+f_typed = Flow(ocp, DynClosedLoop((x, p) -> p[2]));
+xf_typed, _ = f_typed(t0, x0, p0, tf);
 isapprox(xf_typed, xf; atol=1e-12)
 ```
 
@@ -84,9 +91,12 @@ ocp_na = @def begin
     ẋ(t) == u(t) * (1 + tan(t))
     0.5∫(u(t)^2) → min
 end
+nothing # hide
+```
 
-fb = Flow(ocp_na, (t, x, p) -> p * (1 + tan(t)))
-xf_na, pf_na = fb(t0b, x0b, 1, tfb)
+```@repl main
+fb = Flow(ocp_na, (t, x, p) -> p * (1 + tan(t)));
+xf_na, pf_na = fb(t0b, x0b, 1, tfb);
 xf_na - xfb
 ```
 
@@ -130,10 +140,10 @@ law $u = t_f\,p$ then gives the constant costate $p = u/t_f = 2t_f/3$.
 The value of the variable is always passed with the keyword `variable`, even when it is the
 final time:
 
-```@example main
+```@repl main
 tf_val = (3 / 2)^(1 / 4)
-p0c = 2tf_val / 3
-xf_v, pf_v = fc(0, 0, p0c, tf_val; variable=tf_val)
+p0c = 2tf_val / 3;
+xf_v, pf_v = fc(0, 0, p0c, tf_val; variable=tf_val);
 xf_v
 ```
 
@@ -156,6 +166,12 @@ f(t0, x0, p0, tf; variable=1)
 
 ### Two other formulations of a free final time
 
+The final time can also be taken out of the time interval, in two ways.
+
+:::tabs key:free-final-time
+
+== Change of time
+
 Since the variable is the final time, the change of time $t = s\,t_f$ gives a problem on
 $s \in [0, 1]$, where $t_f$ only appears as a parameter: $\mathrm{d}x/\mathrm{d}s = t_f^2\,u$,
 and the cost becomes $t_f + (t_f/2)\int_0^1 u^2\,\mathrm{d}s$. The control law is unchanged:
@@ -172,11 +188,16 @@ ocp_s = @def begin
     ẋ(s) == tf^2 * u(s)
     tf + (0.5 * tf) * ∫(u(s)^2) → min
 end
+nothing # hide
+```
 
-fs = Flow(ocp_s, (x, p, tf) -> tf * p)
-xf_s, _ = fs(0, 0, p0c, 1; variable=tf_val)
+```@repl main
+fs = Flow(ocp_s, (x, p, tf) -> tf * p);
+xf_s, _ = fs(0, 0, p0c, 1; variable=tf_val);
 xf_s
 ```
+
+== Final time as a state
 
 Or $t_f$ becomes a state, with zero dynamics, and the problem has no variable any more. The
 state is $y = (x, t_f)$, its costate $(p, p_{t_f})$, and the control law reads
@@ -192,23 +213,24 @@ ocp_y = @def begin
     ẏ(s) == [tf(s)^2 * u(s), 0]
     tf(1) + 0.5∫(tf(s) * u(s)^2) → min
 end
+nothing # hide
+```
 
-fy = Flow(ocp_y, (y, q) -> y[2] * q[1])
+```@repl main
+fy = Flow(ocp_y, (y, q) -> y[2] * q[1]);
 yf, qf = fy(0, [0, tf_val], [p0c, 0], 1)
 ```
 
 The initial costate of $t_f$ is $0$, since $t_f(0)$ is free, and its final costate is
 $-1$: the transversality condition of the Mayer term $t_f(1)$, with $p^0 = -1$.
 
+:::
+
 ```@example main
 @assert isapprox(xf_s, 1; atol=1e-8)                                       # hide
 @assert isapprox(yf, [1, tf_val]; atol=1e-8) && isapprox(qf[2], -1; atol=1e-8)   # hide
 nothing                                                                    # hide
 ```
-
-The constant `0` in the dynamics is fine for a flow. To solve this problem with the direct
-method and the default modeler, write `0 * u(s)` instead (see
-[Dynamics](@ref modelling-abstract-syntax-dynamics)).
 
 ## [The costate of the variable](@id flows-from-ocp-variable-costate)
 
@@ -235,22 +257,27 @@ ocp_ω = @def begin
 end
 
 sol_ω = solve(ocp_ω; grid_size=500, display=false)
+nothing # hide
+```
+
+```@repl main
 ω_opt = variable(sol_ω)
 p0_ω = dual(sol_ω, ocp_ω, :start)   # the initial costate (see the Solution page)
-ω_opt, p0_ω
 ```
 
 Then integrate the flow from this initial costate, with the costate of $\omega$:
 
-```@example main
-fω = Flow(ocp_ω, (x, p, ω) -> p[2])
-xf_ω, pf_ω, pω = fω(0, [1, 0], p0_ω, 1; variable=ω_opt, variable_costate=true)
-pω, -2ω_opt
+```@repl main
+fω = Flow(ocp_ω, (x, p, ω) -> p[2]);
+xf_ω, pf_ω, pω = fω(0, [1, 0], p0_ω, 1; variable=ω_opt, variable_costate=true);
+pω
+-2ω_opt
 ```
 
 With the Mayer term $\omega^2$ and $p^0 = -1$, transversality requires
 $p_\omega(t_f) = -2\omega$: the direct solution satisfies it. The flow also reaches
-$q(1) = 0$, and $p_v(1) = 0$ since $v(1)$ is free.
+$q(1) = 0$, and the second component of the costate vanishes at $t = 1$, $p_2(1) = 0$,
+since the velocity $v(1)$ is free.
 
 ```@example main
 @assert isapprox(pω, -2ω_opt; atol=1e-4)   # hide
@@ -259,8 +286,7 @@ nothing                                    # hide
 ```
 
 `variable_costate=true` works on the point call only. On a trajectory call
-`fω((0, 1), …)`, it raises a `MethodError` that does not say so yet
-([CTFlows#437](https://github.com/control-toolbox/CTFlows.jl/issues/437)).
+`fω((0, 1), …)`, it raises a `PreconditionError` that says so.
 
 ## Control-free problems
 
@@ -272,39 +298,52 @@ raises an error that asks for a law:
 Flow(ocp)
 ```
 
+## [The cost multiplier $p^0$](@id flows-from-ocp-p0)
+
+The keyword `p0` of `Flow` is the multiplier of the cost, $p^0$ in
+$H = p \cdot f + p^0 f^0$. It is $-1$ for a minimisation and $+1$ for a maximisation by
+default, the normal case; $p^0 = 0$ is the **abnormal** case, where the extremal does not
+depend on the cost. A $p^0$ whose sign contradicts the criterion is rejected (see
+[The sign of $p^0$](@ref modelling-hamiltonians-p0)). Do not mistake it for the initial
+costate, also called `p0` in the point calls of this page: the keyword is given when the flow
+is built, the initial costate when it is called.
+
+```@repl main
+f_abnormal = Flow(ocp, (x, p) -> p[2]; p0=0);
+hamiltonian(f_abnormal)([-1, 0], [12, 6])   # p₁v + p₂²: no cost term
+```
+
+```@repl main
+Flow(ocp, (x, p) -> p[2]; p0=1)
+```
+
 ## [Total or partial Hamiltonian](@id flows-from-ocp-total-partial)
 
 The keyword `hamiltonian_type` chooses how the flow is built from $H$ and the law
-$u(x, p)$:
+$u(x, p)$: `:total`, the default, differentiates the Hamiltonian of the law
+$\mathbf{H}(x, p) = H(x, p, u(x, p))$ **through** the law; `:partial` takes the partial
+derivatives of $H$ with the control **frozen** at the value of the law. The formulas, and why
+the two coincide for a law that maximises $H$, are on
+[Partial and total derivatives](@ref modelling-hamiltonians-partial-total).
 
-- `:total`, the default, integrates the Hamiltonian system of
-  $\bar H(x, p) = H(x, p, u(x, p))$, differentiating through the law:
-  $\dot x = \nabla_p H + (\partial_p u)^\top \nabla_u H$ and
-  $\dot p = -\nabla_x H - (\partial_x u)^\top \nabla_u H$;
-- `:partial` takes the partial derivatives of $H$ with the control frozen at the value of the
-  law: $\dot x = \nabla_p H$, $\dot p = -\nabla_x H$, at $u = u(x, p)$.
-
-The two differ by the terms in $\nabla_u H$. These vanish when $\nabla_u H = 0$ along the
-law, as for a control that maximises $H$ inside the control set, and also where the law is
-locally constant, as for bang–bang or saturated controls. So for an optimal control law the
-two give the same flow. For another law, they do not, and the state of `:partial` is the one
-the law actually drives, $\dot x = f(x, u(x, p))$: use `:partial` to simulate a given
-feedback.
+They also coincide where the law is locally constant, as for bang–bang or saturated
+controls. For another law, they differ, and the state of `:partial` is the one the law
+actually drives, $\dot x = f(x, u(x, p))$: use `:partial` to simulate a given feedback.
 
 Take the law $u = p_2 + 1$, which does not maximise $H$:
 
-```@example main
-law(x, p) = p[2] + 1
-
-xf_total, _ = Flow(ocp, law; hamiltonian_type=:total)(t0, x0, p0, tf)
-xf_partial, _ = Flow(ocp, law; hamiltonian_type=:partial)(t0, x0, p0, tf)
-xf_total, xf_partial
+```@repl main
+law(x, p) = p[2] + 1;
+xf_total, _ = Flow(ocp, law; hamiltonian_type=:total)(t0, x0, p0, tf);
+xf_partial, _ = Flow(ocp, law; hamiltonian_type=:partial)(t0, x0, p0, tf);
+xf_total
+xf_partial
 ```
 
 With `:partial`, the state is driven by $u = p_2 + 1 = 7 - 12t$, which overshoots the target.
-With `:total`, the flow is the one of
-$\bar H = p_1 v + p_2 (p_2 + 1) - (p_2 + 1)^2/2 = p_1 v + p_2^2/2 - 1/2$. It differs from the
-optimal $\mathbf{H} = p_1 v + p_2^2/2$ by a constant, so it has the same Hamiltonian vector
+With `:total`, the flow is the one of the Hamiltonian of this law,
+$\mathbf{H} = p_1 v + p_2 (p_2 + 1) - (p_2 + 1)^2/2 = p_1 v + p_2^2/2 - 1/2$. It differs from the
+Hamiltonian of the optimal law, $p_1 v + p_2^2/2$, by a constant, so it has the same Hamiltonian vector
 field, and it reaches the target as the optimal law does. This is a property of this
 example, not of `:total`.
 
@@ -314,6 +353,38 @@ example, not of `:total`.
 nothing                                              # hide
 ```
 
+## [Backward integration](@id flows-from-ocp-backward)
+
+A flow is integrated backward when $t_f < t_0$: from the state and the costate given at
+$t_0$, down to $t_f$. Here from the end of the extremal, $x(1) = (0, 0)$ and
+$p(1) = (12, -6)$, back to $x(0) = (-1, 0)$ and $p(0) = (12, 6)$:
+
+```@example main
+@show f(tf, [0, 0], [12, -6], t0)
+nothing # hide
+```
+
+The trajectory call returns the solution **in increasing time**, whatever the direction of
+integration: the same solution as the forward call over the same interval, with its time grid
+from $t_f$ to $t_0$, and its objective, the cost of the arc:
+
+```@example main
+sol_back = f((tf, t0), [0, 0], [12, -6])
+@show time_grid(sol_back)[[1, end]] objective(sol_back)
+nothing # hide
+```
+
+```@example main
+xb, pb = f(tf, [0, 0], [12, -6], t0)                                                # hide
+@assert isapprox(xb, x0; atol=1e-8) && isapprox(pb, p0; atol=1e-8)                   # hide
+@assert time_grid(sol_back)[[1, end]] == [t0, tf]                                    # hide
+@assert isapprox(objective(sol_back), 6; atol=1e-8)                                  # hide
+@assert isapprox(state(sol_back)(0.5), state(f((t0, tf), x0, p0))(0.5); atol=1e-8)   # hide
+nothing                                                                              # hide
+```
+
+For a concatenation of flows, see [The horizon of a call](@ref flows-multi-phase-horizon).
+
 ## What comes back
 
 The point call `f(t0, x0, p0, tf)` returns `(xf, pf)`, or `(xf, pf, pvf)` with
@@ -322,8 +393,8 @@ The point call `f(t0, x0, p0, tf)` returns `(xf, pf)`, or `(xf, pf, pvf)` with
 `objective` and `plot` work on it, but it has no multipliers (see
 [Solutions from a flow](@ref results-solution-flows)).
 
-```@example main
-sol = f((t0, tf), x0, p0)
+```@repl main
+sol = f((t0, tf), x0, p0);
 objective(sol)
 ```
 
@@ -342,3 +413,5 @@ trajectories: see [What a flow returns](@ref flows-simulation-returns).
   from a flow.
 - [Shooting](@ref flows-shooting): turn a flow into equations for the initial costate.
 - [Control-free problems](@ref modelling-without-control): `Flow(ocp)` in full.
+- [Hamiltonians of a problem](@ref modelling-hamiltonians): the pseudo-Hamiltonian and the
+  Hamiltonian of a law, built from the problem.

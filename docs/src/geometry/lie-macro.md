@@ -14,10 +14,9 @@ The fields $F_1(x) = (0, -x_3, x_2)$ and $F_2(x) = (x_3, 0, -x_1)$ generate the 
 about the first two axes. Their bracket is $[F_1, F_2](x) = (x_2, -x_1, 0)$, a rotation about
 the third axis:
 
-```@example main
-F1 = VectorField(x -> [0, -x[3], x[2]])
-F2 = VectorField(x -> [x[3], 0, -x[1]])
-
+```@repl main
+F1 = VectorField(x -> [0, -x[3], x[2]]);
+F2 = VectorField(x -> [x[3], 0, -x[1]]);
 F12 = @Lie [F1, F2]
 F12([1.0, 2.0, 3.0])
 ```
@@ -25,10 +24,9 @@ F12([1.0, 2.0, 3.0])
 Brackets nest. A linear vector field commutes with the radial field
 $F_3(x) = x$, so $[[F_1, F_2], F_3] = 0$:
 
-```@example main
-F3 = VectorField(x -> x)
-
-F123 = @Lie [[F1, F2], F3]
+```@repl main
+F3 = VectorField(x -> x);
+F123 = @Lie [[F1, F2], F3];
 F123([1.0, 2.0, 3.0])
 ```
 
@@ -42,15 +40,14 @@ nothing                                                                         
 With $H_0(x, p) = p_1 x_2 - p_2 x_1$ and $H_1(x, p) = p_2$, $\{H_0, H_1\} = -p_1$ and
 $\{H_0, \{H_0, H_1\}\} = -p_2$:
 
-```@example main
-H0(x, p) = p[1] * x[2] - p[2] * x[1]
-H1(x, p) = p[2]
-
+```@repl main
+H0(x, p) = p[1] * x[2] - p[2] * x[1];
+H1(x, p) = p[2];
 H01 = @Lie {H0, H1}
-H001 = @Lie {H0, {H0, H1}}
-
-x, p = [1.0, 2.0], [3.0, 4.0]
-H01(x, p), H001(x, p)
+H001 = @Lie {H0, {H0, H1}};
+x, p = [1.0, 2.0], [3.0, 4.0];
+H01(x, p)
+H001(x, p)
 ```
 
 ```@example main
@@ -68,10 +65,9 @@ On plain functions, give the dependence on time and on the variable with the key
 read from the operands. With $X(t, x) = (t + x_2, -x_1)$ and $Y(t, x) = (x_1, t x_2)$,
 $[X, Y] = (t + x_2 - t x_2,\ x_1 - t x_1)$, which is $(1, 0)$ at $t = 1$, $x = (1, 2)$:
 
-```@example main
-X(t, x) = [t + x[2], -x[1]]
-Y(t, x) = [x[1], t * x[2]]
-
+```@repl main
+X(t, x) = [t + x[2], -x[1]];
+Y(t, x) = [x[1], t * x[2]];
 Z = @Lie [X, Y] is_autonomous=false
 Z(1.0, [1.0, 2.0])
 ```
@@ -96,8 +92,8 @@ nothing                                                                   # hide
 Inside a bracket expression, `[F1, F2](x)` evaluates the bracket at `x`, and the result
 combines with ordinary arithmetic:
 
-```@example main
-y = [1.0, 2.0, 3.0]
+```@repl main
+y = [1.0, 2.0, 3.0];
 @Lie [F1, F2](y) + 4 * [F1, F2](y)
 ```
 
@@ -117,9 +113,7 @@ nothing                                                           # hide
 
 The expansion of `@Lie` uses module-qualified references, so it does not depend on what the
 calling module has in scope: `import OptimalControl` or `using OptimalControl: @Lie` is
-enough. Before CTLie 0.3, the expansion named `CTLie` and `CTBase` and failed with an
-`UndefVarError` outside `using OptimalControl`
-([CTLie#40](https://github.com/control-toolbox/CTLie.jl/issues/40)).
+enough.
 
 ```@example main
 m = Module()                                                                  # hide

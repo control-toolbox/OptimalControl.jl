@@ -17,6 +17,11 @@ import CTSolvers.DOCP: AbstractDiscretizer, DiscretizedModel
 
 @reexport import CTSolvers.DOCP: discretize, ocp_model, nlp_model, ocp_solution
 
+# `ocp_solution` takes the `BuiltModel` that `build_model` returns (the NLP and the
+# cache the modeler needs to read its solution back): both are reached qualified,
+# so a user can solve the NLP of `nlp_model` with a solver of their own (#1077).
+import CTSolvers.Optimization: build_model, BuiltModel
+
 # ---------------------------------------------------------------------------
 # Modelers
 # ---------------------------------------------------------------------------

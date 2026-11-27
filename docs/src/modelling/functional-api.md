@@ -10,7 +10,26 @@ The functional API uses `OptimalControl.PreModel` as a mutable builder, populate
 
 !!! warning "Modeler compatibility"
 
-    Problems built with the functional API can only be solved with the `:adnlp` modeler (the default). The `:exa` modeler (ExaModels, GPU-capable) requires the abstract syntax [`@def`](@ref modelling-abstract-syntax). See [Solve overview](@ref solve-overview) for modeler details.
+    Problems built with the functional API can only be solved with the `:adnlp` modeler (the default). The `:exa` modeler (ExaModels, GPU-capable) requires the abstract syntax [`@def`](@ref modelling-abstract-syntax). Trying it anyway fails with a `PreconditionError` that names the cause and the two remedies:
+
+    ```@setup fapi-exa
+    using OptimalControl
+    using NLPModelsIpopt
+    pre = OptimalControl.PreModel()
+    time!(pre; t0=0.0, tf=1.0)
+    state!(pre, 2)
+    control!(pre, 1)
+    dynamics!(pre, (dx, t, x, u, v) -> begin dx[1] = x[2]; dx[2] = u; nothing end)
+    objective!(pre, :min; lagrange=(t, x, u, v) -> 0.5u^2)
+    time_dependence!(pre; autonomous=true)
+    ocp = build(pre)
+    ```
+
+    ```@repl fapi-exa
+    solve(ocp, :collocation, :exa, :ipopt)
+    ```
+
+    See [Solve overview](@ref solve-overview) for modeler details.
 
 ## When you want this
 
@@ -20,16 +39,25 @@ The functional API uses `OptimalControl.PreModel` as a mutable builder, populate
 
 ## The canvas
 
-The functional API mirrors the [Formulation](@ref modelling-formulation). The correspondence is:
+The functional API mirrors the [Formulation](@ref modelling-formulation): each
+mathematical object maps to one call. The declarations come first — the time, the state
+and the control (`time!`, `state!`, `control!`), plus the variable when there is one
+(`variable!`) — then the dynamics, the cost and the constraints, and the model is frozen
+by [`build`](@ref):
 
 | Math | Functional API |
 | :--- | :--- |
-| Dynamics $f(t, x, u)$ | `dyn!` passed to [`dynamics!`](@ref) |
-| Lagrange integrand $f^0(t, x, u)$ | `lag` passed to [`objective!`](@ref) |
-| Mayer (boundary) cost $g(x_0, x_f)$ | `may` passed to [`objective!`](@ref) |
-| Path constraint $c(t, x, u)$ | `p!` passed to [`constraint!`](@ref CTModels.Building.constraint!)`(pre, :path; ...)` |
-| Boundary constraint $b(x_0, x_f)$ | `b!` passed to [`constraint!`](@ref CTModels.Building.constraint!)`(pre, :boundary; ...)` |
-| Extra variable $v$ | [`variable!`](@ref) (extra argument to all the callbacks above) |
+| Time $t \in [t_0, t_f]$ | [`time!`](@ref) (`ind0`/`indf` for free bounds) |
+| State $x(t) \in \mathbb{R}^n$ | [`state!`](@ref)`(pre, n)` |
+| Control $u(t) \in \mathbb{R}^m$ | [`control!`](@ref)`(pre, m)` — omit for control-free problems |
+| Extra variable $v \in \mathbb{R}^q$ | [`variable!`](@ref)`(pre, q)` — extra argument to all the callbacks below |
+| Dynamics $\dot{x}(t) = f(t, x, u, v)$ | `dyn!` passed to [`dynamics!`](@ref) |
+| Lagrange integrand $f^0(t, x, u, v)$ | `lag` passed to [`objective!`](@ref) |
+| Mayer (boundary) cost $g(x_0, x_f, v)$ | `may` passed to [`objective!`](@ref) |
+| Box constraints on $x$, $u$ or $v$ | [`constraint!`](@ref CTModels.Building.constraint!)`(pre, :state; rg, lb, ub)` (same for `:control`, `:variable`) |
+| Path constraint $c(t, x, u, v)$ | `p!` passed to [`constraint!`](@ref CTModels.Building.constraint!)`(pre, :path; ...)` |
+| Boundary constraint $b(x_0, x_f, v)$ | `b!` passed to [`constraint!`](@ref CTModels.Building.constraint!)`(pre, :boundary; ...)` |
+| Autonomous problem | [`time_dependence!`](@ref)`(pre; autonomous=…)` |
 
 ```julia
 using OptimalControl
@@ -115,24 +143,44 @@ ocp = build(pre)
 
 Seven problems, each shown as [`@def`](@ref) (left) and the equivalent functional API (right). Every one has a full worked story — direct *and* indirect solution — on its [example gallery](@ref examples-gallery) page; here the focus is the model, built both ways and solved once to check the two agree. The callbacks follow the scalar convention of [Shapes in callbacks](@ref modelling-functional-api-shapes): a dimension-1 `x`, `u` or `v` is a `Real`, only the in-place output buffers (`dx`, `val`) are written by index.
 
-### 1. Double integrator — energy minimisation
+The examples load two packages:
+
+```julia
+using OptimalControl   # define the problem and solve it
+using NLPModelsIpopt   # NLP solver of the direct method
+```
+
+Browse the tabs below: each one defines a problem — [`@def`](@ref) and functional API side by side — and solves it once with the direct method. The labels are kept short for the tab bar; each maps to a worked example of the gallery:
+
+- **Energy** — [Energy minimisation](@ref examples-double-integrator-energy)
+- **Time** — [Time minimisation (bang–bang)](@ref examples-double-integrator-time)
+- **No u** — [Parameter estimation without a control](@ref examples-control-free)
+- **u + v** — [Control and variable together](@ref examples-control-and-variable)
+- **Turnpike** — [Turnpike (bang–singular–bang)](@ref examples-turnpike)
+- **Singular** — [Singular control](@ref examples-singular-control)
+- **State box** — [State constraint](@ref examples-state-constraint)
+
+::::tabs key:functional-api-examples
+
+=== 1. Energy
+
+**Energy minimisation**
 
 The simplest case: fixed time interval, boundary constraints, autonomous dynamics, Lagrange cost.
 
-```@example ex-energy
+```@setup ex-energy
 using OptimalControl
 using NLPModelsIpopt
-using Plots
+```
+
+```@example ex-energy
 t0 = 0.0; tf = 1.0; x0 = [-1.0, 0.0]; xf = [0.0, 0.0]
 nothing # hide
 ```
 
-```@raw html
-<div class="responsive-columns-40-60">
-<div>
-```
+:::tabs key:functional-api
 
-**Abstract syntax**
+== @def
 
 ```@example ex-energy
 ocp_macro = @def begin
@@ -152,28 +200,15 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
-
-**Functional API**
+== Functional API
 
 ```@example ex-energy
-pre = OptimalControl.PreModel()
-
-time!(pre; t0=t0, tf=tf)
-# state "x" with components "q" (position) and "v" (velocity)
-state!(pre, 2, "x", ["q", "v"])
-control!(pre, 1)
-
+# the functions of the problem: dynamics, boundary, cost integrand
 function f_energy!(dx, t, x, u, v)
     dx[1] = x[2]
     dx[2] = u
     return nothing
 end
-dynamics!(pre, f_energy!)
-
 function boundary_energy!(b, x0_, xf_, v)
     b[1] = x0_[1] - x0[1]
     b[2] = x0_[2] - x0[2]
@@ -181,28 +216,29 @@ function boundary_energy!(b, x0_, xf_, v)
     b[4] = xf_[2] - xf[2]
     return nothing
 end
+lagrange_energy(t, x, u, v) = 0.5 * u^2
+
+# then the model, built one component at a time
+pre = OptimalControl.PreModel()
+time!(pre; t0=t0, tf=tf)
+state!(pre, 2, "x", ["q", "v"]) # state "x", components "q" and "v"
+control!(pre, 1)
+dynamics!(pre, f_energy!)
 constraint!(pre,
     :boundary;
     f=boundary_energy!,
     lb=zeros(4), ub=zeros(4),
     label=:endpoint
 )
-
-lagrange_energy(t, x, u, v) = 0.5 * u^2
 objective!(pre, :min; lagrange=lagrange_energy)
-
 time_dependence!(pre; autonomous=true)
-
 ocp_func = build(pre)
 nothing # hide
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
-Both formulations produce identical solutions. We solve both and plot them together for verification:
+Both formulations produce identical solutions. We solve both and compare the objectives:
 
 ```@example ex-energy
 sol_macro = solve(ocp_macro; display=false)
@@ -224,16 +260,6 @@ println(
 nothing                                                                  # hide
 ```
 
-```@example ex-energy
-plt = plot(
-    sol_macro, :state, :control; label="Macro", color=1, size=(800, 600)
-)
-plot!(
-    plt, sol_func, :state, :control;
-    label="Functional API", color=2, linestyle=:dash,
-)
-```
-
 The two models are functionally equivalent. The key difference is visible via [`definition`](@ref): the macro records the full DSL expression, whereas the functional API stores an empty definition.
 
 ```@example ex-energy
@@ -246,23 +272,25 @@ has_abstract_definition(ocp_func)
 
 Full worked story (direct + indirect): [Energy minimisation](@ref examples-double-integrator-energy) · [example gallery](@ref examples-gallery).
 
-### 2. Double integrator — time minimisation
+=== 2. Time
+
+**Time minimisation**
 
 The same wagon, transferred as fast as possible: the control is box-bounded and the final time `tf` is a free **variable** (`variable!` before `time!`, then `indf=1`). The cost is a Mayer term (`tf`), not a Lagrange integral.
 
-```@example ex-time
+```@setup ex-time
 using OptimalControl
 using NLPModelsIpopt
+```
+
+```@example ex-time
 t0 = 0.0; x0 = [-1.0, 0.0]; xf = [0.0, 0.0]
 nothing # hide
 ```
 
-```@raw html
-<div class="responsive-columns-40-60">
-<div>
-```
+:::tabs key:functional-api
 
-**Abstract syntax**
+== @def
 
 ```@example ex-time
 ocp_macro = @def begin
@@ -285,28 +313,15 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
-
-**Functional API**
+== Functional API
 
 ```@example ex-time
-pre = OptimalControl.PreModel()
-
-variable!(pre, 1, "tf")            # free final time — before time!
-time!(pre; t0=t0, indf=1)          # tf is variable 1
-state!(pre, 2, "x", ["q", "v"])
-control!(pre, 1)
-
+# the functions of the problem
 function f_time!(dx, t, x, u, v)
     dx[1] = x[2]
     dx[2] = u
     return nothing
 end
-dynamics!(pre, f_time!)
-
 function boundary_time!(b, x0_, xf_, v)
     b[1] = x0_[1] - x0[1]
     b[2] = x0_[2] - x0[2]
@@ -314,24 +329,26 @@ function boundary_time!(b, x0_, xf_, v)
     b[4] = xf_[2] - xf[2]
     return nothing
 end
+
+# then the model, built one component at a time
+pre = OptimalControl.PreModel()
+variable!(pre, 1, "tf")            # free final time — before time!
+time!(pre; t0=t0, indf=1)          # tf is variable 1
+state!(pre, 2, "x", ["q", "v"])
+control!(pre, 1)
+dynamics!(pre, f_time!)
 constraint!(pre,
-    :boundary; f=boundary_time!, lb=zeros(4), ub=zeros(4), label=:endpoint
+    :boundary; f=boundary_time!, 
+    lb=zeros(4), ub=zeros(4), label=:endpoint
 )
-
 constraint!(pre, :control; rg=1:1, lb=[-1.0], ub=[1.0], label=:u_box)
-
 objective!(pre, :min; mayer=(x0_, xf_, v) -> v)
-
 time_dependence!(pre; autonomous=true)
-
 ocp_func = build(pre)
 nothing # hide
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ```@example ex-time
 sol_macro = solve(ocp_macro; grid_size=20, display=false)
@@ -350,14 +367,18 @@ nothing                                                                  # hide
 
 Full worked story (direct + indirect): [Time minimisation (bang–bang)](@ref examples-double-integrator-time) · [example gallery](@ref examples-gallery).
 
-### 3. Parameter estimation — no control
+=== 3. No u
+
+**Parameter estimation — no control**
 
 No control anywhere: `control!` is simply never called (see [Control-free problems](@ref modelling-without-control)). Only a **variable** — the growth rate `λ` — is optimised, fitting the state to data. The Lagrange integrand reads `t` through `data(t)`, so the problem is **non-autonomous**.
 
-```@example ex-control-free
+```@setup ex-control-free
 using OptimalControl
 using NLPModelsIpopt
+```
 
+```@example ex-control-free
 λ_true = 0.5
 x_true(t) = 2 * exp(λ_true * t)
 data(t) = x_true(t) + 0.2 * sin(4π * t)
@@ -366,12 +387,9 @@ t0 = 0.0; tf = 2.0; x0 = 2.0
 nothing # hide
 ```
 
-```@raw html
-<div class="responsive-columns-40-60">
-<div>
-```
+:::tabs key:functional-api
 
-**Abstract syntax**
+== @def
 
 ```@example ex-control-free
 ocp_macro = @def begin
@@ -390,47 +408,36 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
-
-**Functional API**
+== Functional API
 
 ```@example ex-control-free
-pre = OptimalControl.PreModel()
-
-variable!(pre, 1, "λ")
-time!(pre; t0=t0, tf=tf)
-state!(pre, 1, "x")
-# no control! — this problem is control-free
-
+# the functions of the problem
 function f_cf!(dx, t, x, u, v)
-    dx[1] = v * x          # v: the scalar variable λ; x: the scalar state
+    dx[1] = v * x  # v: the scalar variable λ; x: the scalar state
     return nothing
 end
-dynamics!(pre, f_cf!)
-
-objective!(pre, :min; lagrange=(t, x, u, v) -> (x - data(t))^2)
-
 function boundary_cf!(b, x0_, xf_, v)
     b[1] = x0_ - x0        # 1-D state ⇒ x0_ is a scalar
     return nothing
 end
+
+# then the model, built one component at a time
+pre = OptimalControl.PreModel()
+variable!(pre, 1, "λ")
+time!(pre; t0=t0, tf=tf)
+state!(pre, 1, "x")
+# no control! — this problem is control-free
+dynamics!(pre, f_cf!)
+objective!(pre, :min; lagrange=(t, x, u, v) -> (x - data(t))^2)
 constraint!(pre,
     :boundary; f=boundary_cf!, lb=[0.0], ub=[0.0], label=:ic
 )
-
 time_dependence!(pre; autonomous=false)   # data(t) depends on t
-
 ocp_func = build(pre)
 nothing # hide
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ```@example ex-control-free
 sol_macro = solve(ocp_macro; grid_size=20, display=false)
@@ -449,14 +456,18 @@ nothing                                                                   # hide
 
 Full worked story (direct + indirect): [Parameter estimation without a control](@ref examples-control-free), [Control-free problems](@ref modelling-without-control) · [example gallery](@ref examples-gallery).
 
-### 4. Control and variable together
+=== 4. u + v
+
+**Control and variable together**
 
 The growth problem again, now with a control input and a quadratic control cost — a **variable** (`λ`) and a **control** (`u`) optimised at once.
 
-```@example ex-control-variable
+```@setup ex-control-variable
 using OptimalControl
 using NLPModelsIpopt
+```
 
+```@example ex-control-variable
 λ_true = 0.5
 x_true(t) = 2 * exp(λ_true * t)
 data(t) = x_true(t) + 0.2 * sin(4π * t)
@@ -465,12 +476,9 @@ t0 = 0.0; tf = 2.0; x0 = 2.0
 nothing # hide
 ```
 
-```@raw html
-<div class="responsive-columns-40-60">
-<div>
-```
+:::tabs key:functional-api
 
-**Abstract syntax**
+== @def
 
 ```@example ex-control-variable
 ocp_macro = @def begin
@@ -490,49 +498,38 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
-
-**Functional API**
+== Functional API
 
 ```@example ex-control-variable
-pre = OptimalControl.PreModel()
-
-variable!(pre, 1, "λ")
-time!(pre; t0=t0, tf=tf)
-state!(pre, 1, "x")
-control!(pre, 1)
-
+# the functions of the problem
 function f_cv!(dx, t, x, u, v)
     dx[1] = v * x + u
     return nothing
 end
-dynamics!(pre, f_cv!)
-
-objective!(pre, :min;
-    lagrange=(t, x, u, v) -> (x - data(t))^2 + 0.5 * u^2,
-)
-
 function boundary_cv!(b, x0_, xf_, v)
     b[1] = x0_ - x0
     return nothing
 end
+
+# then the model, built one component at a time
+pre = OptimalControl.PreModel()
+variable!(pre, 1, "λ")
+time!(pre; t0=t0, tf=tf)
+state!(pre, 1, "x")
+control!(pre, 1)
+dynamics!(pre, f_cv!)
+objective!(pre, :min;
+    lagrange=(t, x, u, v) -> (x - data(t))^2 + 0.5 * u^2,
+)
 constraint!(pre,
     :boundary; f=boundary_cv!, lb=[0.0], ub=[0.0], label=:ic
 )
-
 time_dependence!(pre; autonomous=false)
-
 ocp_func = build(pre)
 nothing # hide
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ```@example ex-control-variable
 sol_macro = solve(ocp_macro; grid_size=20, display=false)
@@ -550,23 +547,25 @@ nothing                                                                  # hide
 
 Full worked story (direct + indirect): [Control and variable together](@ref examples-control-and-variable) · [example gallery](@ref examples-gallery).
 
-### 5. Turnpike — bang–singular–bang
+=== 5. Turnpike
+
+**Turnpike — bang–singular–bang**
 
 The smallest problem with a singular arc: a scalar state *and* a scalar control, fixed horizon, one control box, a Lagrange cost. Nothing here is a length-1 vector — the callbacks are pure scalar arithmetic.
 
-```@example ex-turnpike
+```@setup ex-turnpike
 using OptimalControl
 using NLPModelsIpopt
+```
+
+```@example ex-turnpike
 t0 = 0.0; tf = 2.0; x0 = 1.0; xf = 0.5
 nothing # hide
 ```
 
-```@raw html
-<div class="responsive-columns-40-60">
-<div>
-```
+:::tabs key:functional-api
 
-**Abstract syntax**
+== @def
 
 ```@example ex-turnpike
 ocp_macro = @def begin
@@ -588,49 +587,38 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
-
-**Functional API**
+== Functional API
 
 ```@example ex-turnpike
-pre = OptimalControl.PreModel()
-
-time!(pre; t0=t0, tf=tf)
-state!(pre, 1, "x")
-control!(pre, 1)
-
+# the functions of the problem
 function f_turnpike!(dx, t, x, u, v)
     dx[1] = u             # x, u both scalars
     return nothing
 end
-dynamics!(pre, f_turnpike!)
-
 function boundary_turnpike!(b, x0_, xf_, v)
     b[1] = x0_ - x0       # 1-D state ⇒ x0_, xf_ are scalars
     b[2] = xf_ - xf
     return nothing
 end
+
+# then the model, built one component at a time
+pre = OptimalControl.PreModel()
+time!(pre; t0=t0, tf=tf)
+state!(pre, 1, "x")
+control!(pre, 1)
+dynamics!(pre, f_turnpike!)
 constraint!(pre,
-    :boundary; f=boundary_turnpike!, lb=zeros(2), ub=zeros(2), label=:endpoint
+    :boundary; f=boundary_turnpike!, 
+    lb=zeros(2), ub=zeros(2), label=:endpoint
 )
-
-constraint!(pre, :control; rg=1:1, lb=[-1.0], ub=[1.0], label=:u_box)
-
+constraint!(pre, :control; rg=1:1, lb=[-1], ub=[1], label=:u_box)
 objective!(pre, :min; lagrange=(t, x, u, v) -> x^2)
-
 time_dependence!(pre; autonomous=true)
-
 ocp_func = build(pre)
 nothing # hide
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ```@example ex-turnpike
 sol_macro = solve(ocp_macro; grid_size=100, display=false)
@@ -648,22 +636,20 @@ nothing                                                                  # hide
 
 Full worked story (direct + indirect): [Turnpike (bang–singular–bang)](@ref examples-turnpike) · [example gallery](@ref examples-gallery).
 
-### 6. Singular control
+=== 6. Singular
+
+**Singular control**
 
 A planar vehicle with drift, time-optimal: three-dimensional state, free final time, and box bounds on both the control and one state component. The optimal control has a singular arc — the example page computes it with the Geometry toolkit.
 
-```@example ex-singular
+```@setup ex-singular
 using OptimalControl
 using NLPModelsIpopt
-nothing # hide
 ```
 
-```@raw html
-<div class="responsive-columns-40-60">
-<div>
-```
+:::tabs key:functional-api
 
-**Abstract syntax**
+== @def
 
 ```@example ex-singular
 ocp_macro = @def begin
@@ -689,29 +675,16 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
-
-**Functional API**
+== Functional API
 
 ```@example ex-singular
-pre = OptimalControl.PreModel()
-
-variable!(pre, 1, "tf")
-time!(pre; t0=0.0, indf=1)
-state!(pre, 3, "q", ["x", "y", "θ"])
-control!(pre, 1)
-
+# the functions of the problem
 function f_singular!(dq, t, q, u, v)
     dq[1] = cos(q[3])
     dq[2] = sin(q[3]) + q[1]
     dq[3] = u
     return nothing
 end
-dynamics!(pre, f_singular!)
-
 function boundary_singular!(b, q0, qf, v)
     b[1] = q0[1]          # x(0) = 0
     b[2] = q0[2]          # y(0) = 0
@@ -719,25 +692,27 @@ function boundary_singular!(b, q0, qf, v)
     b[4] = qf[2]          # y(tf) = 0
     return nothing
 end
+
+# then the model, built one component at a time
+pre = OptimalControl.PreModel()
+variable!(pre, 1, "tf")
+time!(pre; t0=0.0, indf=1)
+state!(pre, 3, "q", ["x", "y", "θ"])
+control!(pre, 1)
+dynamics!(pre, f_singular!)
 constraint!(pre,
-    :boundary; f=boundary_singular!, lb=zeros(4), ub=zeros(4), label=:endpoint
+    :boundary; f=boundary_singular!, 
+    lb=zeros(4), ub=zeros(4), label=:endpoint
 )
-
-constraint!(pre, :control; rg=1:1, lb=[-1.0], ub=[1.0], label=:u_box)
-constraint!(pre, :state; rg=3:3, lb=[-π / 2], ub=[π / 2], label=:θ_box)
-
+constraint!(pre, :control; rg=1:1, lb=[-1], ub=[1], label=:u_box)
+constraint!(pre, :state; rg=3:3, lb=[-π/2], ub=[π/2], label=:θ_box)
 objective!(pre, :min; mayer=(q0, qf, v) -> v)
-
 time_dependence!(pre; autonomous=true)
-
 ocp_func = build(pre)
 nothing # hide
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ```@example ex-singular
 sol_macro = solve(ocp_macro; grid_size=50, display=false)
@@ -755,23 +730,25 @@ nothing                                                                  # hide
 
 Full worked story (direct + indirect): [Singular control](@ref examples-singular-control) · [example gallery](@ref examples-gallery).
 
-### 7. State constraint
+=== 7. State box
+
+**State constraint**
 
 The energy-minimal transfer of problem 1, now with an upper bound on the velocity: a **box** constraint on the state component `v`, with the label `vmax` (its multiplier is then `dual(sol, ocp, :vmax)`, see [Labels](@ref modelling-abstract-syntax-labels)). Without it, the velocity would peak at 1.5.
 
-```@example ex-state-constraint
+```@setup ex-state-constraint
 using OptimalControl
 using NLPModelsIpopt
+```
+
+```@example ex-state-constraint
 t0 = 0.0; tf = 1.0; x0 = [-1.0, 0.0]; xf = [0.0, 0.0]; VMAX = 1.2
 nothing # hide
 ```
 
-```@raw html
-<div class="responsive-columns-40-60">
-<div>
-```
+:::tabs key:functional-api
 
-**Abstract syntax**
+== @def
 
 ```@example ex-state-constraint
 ocp_macro = @def begin
@@ -793,27 +770,15 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
-
-**Functional API**
+== Functional API
 
 ```@example ex-state-constraint
-pre = OptimalControl.PreModel()
-
-time!(pre; t0=t0, tf=tf)
-state!(pre, 2, "x", ["q", "v"])
-control!(pre, 1)
-
+# the functions of the problem
 function f_sc!(dx, t, x, u, v)
     dx[1] = x[2]
     dx[2] = u
     return nothing
 end
-dynamics!(pre, f_sc!)
-
 function boundary_sc!(b, x0_, xf_, v)
     b[1] = x0_[1] - x0[1]
     b[2] = x0_[2] - x0[2]
@@ -821,24 +786,25 @@ function boundary_sc!(b, x0_, xf_, v)
     b[4] = xf_[2] - xf[2]
     return nothing
 end
+
+# then the model, built one component at a time
+pre = OptimalControl.PreModel()
+time!(pre; t0=t0, tf=tf)
+state!(pre, 2, "x", ["q", "v"])
+control!(pre, 1)
+dynamics!(pre, f_sc!)
 constraint!(pre,
-    :boundary; f=boundary_sc!, lb=zeros(4), ub=zeros(4), label=:endpoint
+    :boundary; f=boundary_sc!, 
+    lb=zeros(4), ub=zeros(4), label=:endpoint
 )
-
-constraint!(pre, :state; rg=2:2, lb=[-Inf], ub=[VMAX], label=:vmax)   # v(t) ≤ VMAX
-
+constraint!(pre, :state; rg=2:2, lb=[-Inf], ub=[VMAX], label=:vmax)
 objective!(pre, :min; lagrange=(t, x, u, v) -> 0.5 * u^2)
-
 time_dependence!(pre; autonomous=true)
-
 ocp_func = build(pre)
 nothing # hide
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ```@example ex-state-constraint
 sol_macro = solve(ocp_macro; grid_size=50, display=false)
@@ -856,9 +822,11 @@ nothing                                                                  # hide
 
 Full worked story (direct + indirect): [State constraint](@ref examples-state-constraint) · [example gallery](@ref examples-gallery).
 
+::::
+
 ## [Shapes in callbacks](@id modelling-functional-api-shapes)
 
-The control above is declared with `control!(pre, 1)` — dimension 1 — and inside the callbacks `f_energy!` and `lagrange_energy` it is used as a bare `u`, not `u[1]`. This is not a special case: **1-D state, control and variable components arrive as scalars in every functional-API callback** (`dynamics!`, `objective!`, `constraint!`), exactly as on a solution and exactly as the `@def` convention (see the note on [Control](@ref modelling-abstract-syntax-control)). There is no asymmetry between "inside a callback" and "on a solution" — a dimension-1 quantity is a `Real` everywhere:
+In the first example, the control is declared with `control!(pre, 1)` — dimension 1 — and inside the callbacks `f_energy!` and `lagrange_energy` it is used as a bare `u`, not `u[1]`. This is not a special case: **1-D state, control and variable components arrive as scalars in every functional-API callback** (`dynamics!`, `objective!`, `constraint!`), exactly as on a solution and exactly as the `@def` convention (see the note on [Control](@ref modelling-abstract-syntax-control)). There is no asymmetry between "inside a callback" and "on a solution" — a dimension-1 quantity is a `Real` everywhere:
 
 ```@example ex-energy
 u_macro = control(sol_macro)
@@ -873,15 +841,19 @@ u_macro(t0) isa Real, u_func(t0) isa Real
 The **in-place output buffer is the one exception**: `dx` (dynamics), `val` (boundary/path constraints) is always a vector of its declared length, written by index, even when that length is 1 — a scalar cannot be mutated in place:
 
 ```julia
-f!(r, t, x, u, v) = (r[1] = -x + u; nothing)  # r vector; x,u scalars
+f!(dx, t, x, u, v) = (dx[1] = -x + u; nothing)  # dx vector; x, u scalars
 ```
 
 ## Order and preconditions
 
-- `variable!` → before `time!` when using free-time indices (`indf`, `ind0`)
-- `variable!` → before `dynamics!` and `objective!`
-- `dynamics!` and `objective!` → after `time!` and `state!`
-- `control!` is optional and, when used, has no ordering constraint of its own beyond needing `state!` first (component-count validation) — see [Control-free problems](@ref modelling-without-control) for what omitting it means.
+The setters check only what they strictly need; every other order is accepted. Each
+setter may be called once only, except `constraint!`, which repeats with a distinct `label`:
+
+- `variable!` → before `time!` when using free-time indices (`ind0`, `indf`), and before `dynamics!`, `objective!` and `constraint!(pre, :variable; …)`
+- `dynamics!`, `objective!` and `constraint!` → after `time!` and `state!`
+- `constraint!(pre, :control; …)` → after `control!`
+- `control!` is optional — omitting it *is* the control-free syntax (see [Control-free problems](@ref modelling-without-control)); it has no ordering constraint of its own
+- `build` → last: it requires the time, the state, the dynamics, the objective and the time dependence all set
 
 ## Equivalence
 

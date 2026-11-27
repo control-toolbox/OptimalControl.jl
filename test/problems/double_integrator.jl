@@ -86,8 +86,7 @@ function _di_energy_cons_shoot_builder(ocp, d)
         f_boundary = OptimalControl.Flow(
             ocp,
             (x, p) -> 0.0;
-            constraint=(x, u) -> g(x),
-            multiplier=(x, p) -> μ(p),
+            multipliers=((x, u) -> g(x)) => ((x, p) -> μ(p)),
             hamiltonian_type,
         )
 

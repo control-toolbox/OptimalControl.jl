@@ -1,5 +1,9 @@
 # [Parameter estimation without a control](@id examples-control-free)
 
+```@raw html
+<ExampleFacts id="control-free" />
+```
+
 A problem without a control optimises **constant parameters** of a dynamical system: the
 parameters that make a model fit observed data, or the best parameters for a performance
 criterion. This page solves two such problems, by the direct and the indirect methods: the
@@ -7,27 +11,28 @@ growth rate of an exponential model fitted to data, and the smallest pulsation o
 oscillator that reaches a target. [Control-free problems](@ref modelling-without-control)
 explains how to write them.
 
+We load OptimalControl and the packages that the direct and indirect methods need:
+
 ```@example main
-using OptimalControl
-using NLPModelsIpopt
-using OrdinaryDiffEqTsit5
-using NonlinearSolve
-using Plots
+using OptimalControl        # define the problem, solve it, build the flows
+using NLPModelsIpopt        # NLP solver of the direct method
+using OrdinaryDiffEqTsit5   # integrator of the flows
+using NonlinearSolve        # solver of the shooting equations
+using Plots                 # plots of the solutions
 ```
 
 ## [Growth rate](@id examples-control-free-growth)
 
 ### [The problem](@id examples-control-free-growth-problem)
 
-A quantity grows exponentially, $\dot x(t) = \lambda\, x(t)$, from $x(0) = 2$, at an unknown
+A quantity grows exponentially, $\dot x(t) = \lambda x(t)$, from $x(0) = 2$, at an unknown
 rate $\lambda$. We observe it on $[0, 2]$, and the observations $x_{\text{obs}}$ are the model
 with $\lambda = 0.5$, perturbed by a small oscillation. We estimate $\lambda$ by least
 squares. The estimate is close to $0.5$, but not equal, because of the perturbation.
 
-```@raw html
-<div class="responsive-columns-left-priority">
-<div>
-```
+:::tabs key:example-problem
+
+== @def
 
 ```@example main
 λ_true = 0.5
@@ -49,47 +54,42 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
+== Mathematics
 
 ```math
 \begin{aligned}
-& \text{Minimise} && \int_0^2 \big(x(t) - x_{\text{obs}}(t)\big)^2 \,\mathrm{d}t \\
-& \text{subject to} && \dot x(t) = \lambda\, x(t), \\[0.5em]
+& \text{Minimise} && \int_0^2 \big(x(t) - x_{\text{obs}}(t)\big)^2 \,\mathrm{d}t \\[0.5em]
+& \text{subject to} && \dot x(t) = \lambda x(t), \\[0.5em]
 & && x(0) = 2, \\[0.5em]
 & && \lambda \in \mathbb{R}.
 \end{aligned}
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ### [Direct method](@id examples-control-free-growth-direct)
 
-With a coarse grid of 20 steps:
+With the [direct method](@ref modelling-discretisation-direct-method) on a coarse grid of 20 steps:
 
 ```@example main
 growth_sol = solve(ocp_growth; grid_size=20, display=false)
-variable(growth_sol), objective(growth_sol)
+@show variable(growth_sol) objective(growth_sol)
+nothing # hide
 ```
 
 ```@example main
 t_grid = range(t0, tf, 201)
-plt_growth = plot(growth_sol, :state; label="direct", size=(800, 300))
+plt_growth = plot(growth_sol, :state; label="direct", size=(800, 320))
 plot!(plt_growth, t_grid, x_obs.(t_grid); line=:dot, color=:black, label="data")
 ```
 
 ### [Indirect method](@id examples-control-free-growth-indirect)
 
-The problem has no control, so the maximum principle gives directly the **Hamiltonian**, with
+The indirect method is [shooting](@ref flows-shooting). The problem has no control, so the maximum principle gives directly the **Hamiltonian**, with
 $p^0 = -1$ (see [Notation and conventions](@ref modelling-formulation-conventions)):
 
 ```math
-H(t, x, p, \lambda) = p\, \lambda x - \big(x - x_{\text{obs}}(t)\big)^2 .
+H(t, x, p, \lambda) = p \lambda x - \big(x - x_{\text{obs}}(t)\big)^2 .
 ```
 
 The parameter $\lambda$ is treated as a state with zero dynamics, $\dot\lambda = 0$, and its
@@ -101,7 +101,7 @@ $(p, p_\lambda)$, is
 \dot x &= \frac{\partial H}{\partial p} = \lambda x, &
 \dot p &= -\frac{\partial H}{\partial x} = -p \lambda + 2\big(x - x_{\text{obs}}(t)\big), \\
 \dot \lambda &= 0, &
-\dot p_\lambda &= -\frac{\partial H}{\partial \lambda} = -p\, x .
+\dot p_\lambda &= -\frac{\partial H}{\partial \lambda} = -p x .
 \end{aligned}
 ```
 
@@ -136,6 +136,8 @@ The direct solution gives the initial guess:
 ξ_guess = [costate(growth_sol)(t0), variable(growth_sol)]
 prob_growth = NonlinearProblem(shoot_growth!, ξ_guess)
 p0_growth, λ_sol = NonlinearSolve.solve(prob_growth; show_trace=Val(false)).u
+@show p0_growth λ_sol # hide
+nothing # hide
 ```
 
 ### [Comparison](@id examples-control-free-growth-comparison)
@@ -144,15 +146,12 @@ The two estimates differ in the third decimal: the direct method solves a discre
 problem, on a grid of 20 steps, and the indirect method the problem itself.
 
 ```@example main
-variable(growth_sol), λ_sol
+@show variable(growth_sol) λ_sol
+nothing # hide
 ```
 
-For the plot, the flow is built with `saveat`, so that the trajectory has 201 points (see
-[Plotting a flow](@ref results-plot-flow)):
-
 ```@example main
-f_growth_plot = Flow(ocp_growth; saveat=range(t0, tf, 201), dense=false)
-indirect_growth = f_growth_plot((t0, tf), x0, p0_growth; variable=λ_sol)
+indirect_growth = f_growth((t0, tf), x0, p0_growth; variable=λ_sol)
 plot!(plt_growth, indirect_growth, :state; label="indirect", linestyle=:dash)
 ```
 
@@ -178,10 +177,9 @@ pulsation $\omega$ for which it reaches $q = 0$ at $t = 1$. The solution is
 $q(t) = \cos(\omega t)$, so $\cos\omega = 0$, and the smallest pulsation is $\omega = \pi/2$,
 with $\omega^2 = \pi^2/4 \approx 2.4674$ and $q(t) = \cos(\pi t/2)$.
 
-```@raw html
-<div class="responsive-columns-left-priority">
-<div>
-```
+:::tabs key:example-problem
+
+== @def
 
 ```@example main
 q0, v0 = 1, 0
@@ -203,37 +201,32 @@ end
 nothing # hide
 ```
 
-```@raw html
-</div>
-<div>
-```
+== Mathematics
 
 ```math
 \begin{aligned}
-& \text{Minimise} && \omega^2 \\
+& \text{Minimise} && \omega^2 \\[0.5em]
 & \text{subject to} && \ddot q(t) = -\omega^2 q(t), \\[0.5em]
 & && q(0) = 1, \quad \dot q(0) = 0, \\[0.5em]
 & && q(1) = 0.
 \end{aligned}
 ```
 
-```@raw html
-</div>
-</div>
-```
+:::
 
 ### [Direct method](@id examples-control-free-harmonic-direct)
 
 ```@example main
 harmonic_sol = solve(ocp_harmonic; grid_size=20, display=false)
-variable(harmonic_sol), objective(harmonic_sol)
+@show variable(harmonic_sol) objective(harmonic_sol)
+nothing # hide
 ```
 
 The direct solution is close to the exact one, $q(t) = \cos(\pi t/2)$ and
 $v(t) = -\frac{\pi}{2}\sin(\pi t/2)$:
 
 ```@example main
-plt_harmonic = plot(harmonic_sol, :state; label="direct", size=(800, 300))
+plt_harmonic = plot(harmonic_sol, :state; label="direct", size=(800, 560), legend=false)
 plot!(plt_harmonic, t -> cos(π * t / 2), 0, 1; subplot=1, label="exact", color=:black, line=:dot)
 plot!(plt_harmonic, t -> -π / 2 * sin(π * t / 2), 0, 1; subplot=2, label="exact", color=:black, line=:dot)
 ```
@@ -243,7 +236,7 @@ plot!(plt_harmonic, t -> -π / 2 * sin(π * t / 2), 0, 1; subplot=2, label="exac
 The Hamiltonian has no integral term, since the cost is a Mayer cost:
 
 ```math
-H(x, p, \omega) = p_1 v - p_2\, \omega^2 q .
+H(x, p, \omega) = p_1 v - p_2 \omega^2 q .
 ```
 
 With the state $(q, v, \omega)$ and the costate $(p_1, p_2, p_\omega)$, the augmented system is
@@ -252,7 +245,7 @@ With the state $(q, v, \omega)$ and the costate $(p_1, p_2, p_\omega)$, the augm
 \begin{aligned}
 \dot q &= v, & \dot p_1 &= -\frac{\partial H}{\partial q} = \omega^2 p_2, \\
 \dot v &= -\omega^2 q, & \dot p_2 &= -\frac{\partial H}{\partial v} = -p_1, \\
-\dot \omega &= 0, & \dot p_\omega &= -\frac{\partial H}{\partial \omega} = 2\omega\, q\, p_2 .
+\dot \omega &= 0, & \dot p_\omega &= -\frac{\partial H}{\partial \omega} = 2\omega q p_2 .
 \end{aligned}
 ```
 
@@ -260,9 +253,15 @@ The final velocity is free, so $p_2(t_f) = 0$. For the Mayer cost $g(\omega) = \
 transversality condition of the parameter is $p_\omega(t_f) = p^0 g'(\omega) = -2\omega$,
 with $p_\omega(t_0) = 0$.
 
-At the solution, $\omega = \pi/2$, and the adjoint equations with $p_2(1) = 0$ give
-$p_2 = -A\cos(\pi t/2)$ and $p_1 = -\dot p_2 = -A\frac{\pi}{2}\sin(\pi t/2)$. Then
-$p_\omega(1) = 2\omega \int_0^1 q\,p_2 = -\omega A$, so $A = 2$, and the initial costate is
+At the solution, $\omega = \pi/2$ and $q(t) = \cos(\pi t/2)$. The adjoint equations with
+$p_2(1) = 0$ give $p_2 = -A\cos(\pi t/2)$ and $p_1 = -\dot p_2 = -A\frac{\pi}{2}\sin(\pi t/2)$.
+Since $p_\omega(0) = 0$ and $\dot p_\omega = 2\omega\, q\, p_2$,
+
+```math
+p_\omega(1) = 2\omega \int_0^1 q\,p_2\,\mathrm{d}t = -2\omega A \int_0^1 \cos^2\!\big(\tfrac{\pi t}{2}\big)\,\mathrm{d}t = -\omega A .
+```
+
+The transversality condition $p_\omega(1) = -2\omega$ gives $A = 2$, and the initial costate is
 $p(0) = (0, -2)$.
 
 ```@example main
@@ -281,6 +280,8 @@ end
 prob_harmonic = NonlinearProblem(shoot_harmonic!, ξ_guess_h)
 shooting_harmonic = NonlinearSolve.solve(prob_harmonic; show_trace=Val(false))
 p0_harmonic, ω_sol = shooting_harmonic.u[1:2], shooting_harmonic.u[3]
+@show p0_harmonic ω_sol # hide
+nothing # hide
 ```
 
 ### [Comparison](@id examples-control-free-harmonic-comparison)
@@ -289,13 +290,14 @@ The indirect method finds $\omega = \pi/2$ and $p(0) = (0, -2)$; the direct meth
 on its grid of 20 steps:
 
 ```@example main
-variable(harmonic_sol), ω_sol, π / 2
+@show variable(harmonic_sol) ω_sol π/2
+nothing # hide
 ```
 
 ```@example main
-f_harmonic_plot = Flow(ocp_harmonic; saveat=range(t0h, tfh, 101), dense=false)
-indirect_harmonic = f_harmonic_plot((t0h, tfh), [q0, v0], p0_harmonic; variable=ω_sol)
+indirect_harmonic = f_harmonic((t0h, tfh), [q0, v0], p0_harmonic; variable=ω_sol)
 plot!(plt_harmonic, indirect_harmonic, :state; label="indirect", linestyle=:dash)
+plot!(plt_harmonic; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
 ```@example main
@@ -324,3 +326,12 @@ Problems without a control appear in many contexts:
   with a control.
 - [From an OCP](@ref flows-from-ocp): the flow of a problem without a control, and the costate
   of the variable.
+
+```@raw html
+<ExampleNav id="control-free" />
+```
+
+```@example main
+Main.gallery_thumbnail(plt_growth, "control-free")  # hide
+nothing  # hide
+```

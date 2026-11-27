@@ -178,10 +178,11 @@ font-feature-settings: "calt" off;
   text-align: center;
 }
 
+/* The padding and the margin of the MathJax containers, inline and display, are reset by
+   the shared stylesheet of control-toolbox.org (see ct-conventions, notes on the
+   VitePress backend): nothing to set here. */
 mjx-container {
   display: inline-block;
-  padding: 0.5rem 0;
-  margin: auto 2px -2px;
   overflow: visible !important;  /* Override MathJax's overflow */
   text-align: left;
 }
@@ -336,119 +337,7 @@ mjx-container svg path {
 }
 
 /* ============================================================================
-   Custom layout helpers (two-column layouts used by the examples and the functional API)
-   ============================================================================ */
-
-/* Responsive layout for two-column content */
-.responsive-columns-left-priority {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
-    margin-bottom: 1em;
-}
-
-.responsive-columns-left-priority > div {
-    flex: 1;
-    min-width: 0;
-    transition: opacity 0.5s ease-in-out, flex 0.5s ease-in-out, max-width 0.5s ease-in-out, max-height 0.5s ease-in-out;
-}
-
-.responsive-columns-left-priority > div:last-child {
-    opacity: 1;
-    max-width: 100%;
-    max-height: none;
-}
-
-/* Media query for screens smaller than 700px */
-@media (max-width: 700px) {
-    .responsive-columns-left-priority > div:last-child {
-        opacity: 0;
-        max-width: 0;
-        max-height: 0;
-        flex: 0 0 0;
-        overflow: hidden;
-        margin: 0;
-        padding: 0;
-    }
-    
-    .responsive-columns-left-priority > div:first-child {
-        flex: 1 1 100%;
-    }
-}
-
-/* 50% / 50% two-column layout */
-.responsive-columns-40-60 {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
-    margin-bottom: 1em;
-}
-
-.responsive-columns-40-60 > div:first-child {
-    flex: 4;
-    min-width: 0;
-    transition: opacity 0.5s ease-in-out, flex 0.5s ease-in-out, max-width 0.5s ease-in-out, max-height 0.5s ease-in-out;
-}
-
-.responsive-columns-40-60 > div:last-child {
-    flex: 6;
-    min-width: 0;
-    opacity: 1;
-    max-width: 100%;
-    max-height: none;
-    transition: opacity 0.5s ease-in-out, flex 0.5s ease-in-out, max-width 0.5s ease-in-out, max-height 0.5s ease-in-out;
-}
-
-@media (max-width: 700px) {
-    .responsive-columns-40-60 > div:last-child {
-        opacity: 0;
-        max-width: 0;
-        max-height: 0;
-        flex: 0 0 0;
-        overflow: hidden;
-        margin: 0;
-        padding: 0;
-    }
-
-    .responsive-columns-40-60 > div:first-child {
-        flex: 1 1 100%;
-    }
-}
-
-/* 40 % / 60 % two-column layout (modelling/functional-api.md: the `@def` model beside its
-   functional-API twin). Both columns carry content, so narrow screens stack them rather
-   than hide one, unlike `.responsive-columns-left-priority` above. */
-.responsive-columns-40-60 {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
-    margin-bottom: 1em;
-}
-
-.responsive-columns-40-60 > div:first-child {
-    flex: 4;
-    min-width: 0;
-}
-
-.responsive-columns-40-60 > div:last-child {
-    flex: 6;
-    min-width: 0;
-}
-
-@media (max-width: 700px) {
-    .responsive-columns-40-60 {
-        flex-direction: column;
-    }
-
-    .responsive-columns-40-60 > div:first-child,
-    .responsive-columns-40-60 > div:last-child {
-        flex: 1 1 auto;
-        width: 100%;
-    }
-}
-
-/* ============================================================================
-   Dark mode: navbar logo. The home page swaps an exact light/dark SVG pair, but
+   Dark mode: navbar logo. The home page hero swaps an exact light/dark SVG pair, but
    the navbar logo is a single `<img>` (DocumenterVitepress fills `logo:` with one
    src) at 24px, where the filter's ~10% desaturation is imperceptible. Same
    `invert(0.894) hue-rotate(180deg)` recipe as the figures below.
@@ -476,9 +365,111 @@ mjx-container svg path {
     filter: invert(0.894) hue-rotate(180deg);
 }
 
-/* Logo shown in the page body (home page, logo example): exact light/dark SVG pair */
+/* Logo shown in the page body (logo example): exact light/dark SVG pair */
 .oc-logo { width: 200px; margin: 1.5rem auto; }
 .oc-logo--light { display: block; }
 .oc-logo--dark  { display: none; }
 .dark .oc-logo--light { display: none; }
 .dark .oc-logo--dark  { display: block; }
+
+/* Example gallery (components/ExamplesGallery.vue) and the facts under the title of each
+   example (components/ExampleFacts.vue). VitePress tokens only, so both themes follow. */
+.oc-gallery {
+  display: grid;
+  /* As many columns of at least 340px as fit: two on a laptop, three or more when the
+     content is wide (sidebar collapsed, full width), one on a phone. */
+  grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+.vp-doc a.oc-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+  text-decoration: none;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.vp-doc a.oc-card:hover { border-color: var(--vp-c-brand-1); }
+.oc-card-thumb {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: #ffffff; /* the figures are drawn on white */
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+.dark .oc-card-thumb { filter: invert(0.894) hue-rotate(180deg); } /* as the figures of the pages */
+.oc-card-thumb img {
+  position: absolute; /* the box keeps its ratio, whatever the figure's */
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  margin: 0;
+}
+.oc-card-body { padding: 12px 16px 16px; }
+.oc-card-title { font-weight: 600; line-height: 1.4; }
+.vp-doc .oc-card-story,
+.vp-doc .oc-card-introduces {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--vp-c-text-2);
+}
+.oc-facts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.oc-facts--page { margin: 12px 0 20px; }
+.oc-fact {
+  font-size: 12px;
+  line-height: 1.6;
+  padding: 0 8px;
+  border-radius: 10px;
+  background: var(--vp-c-default-soft);
+  color: var(--vp-c-text-2);
+  white-space: nowrap;
+}
+
+/* Previous example · gallery · next example (components/ExampleNav.vue) */
+.oc-example-nav {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--vp-c-divider);
+}
+.vp-doc a.oc-example-nav-link {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+.vp-doc a.oc-example-nav-link:hover { border-color: var(--vp-c-brand-1); }
+.oc-example-nav-gallery { text-align: center; }
+.oc-example-nav-next { text-align: right; }
+.oc-example-nav-label { font-size: 12px; color: var(--vp-c-text-2); }
+.oc-example-nav-title { font-weight: 500; color: var(--vp-c-brand-1); }
+@media (max-width: 640px) {
+  .oc-example-nav { grid-template-columns: 1fr; }
+  .oc-example-nav > span:empty { display: none; }
+  .oc-example-nav-gallery, .oc-example-nav-next { text-align: left; }
+}
+
+/* Home page hero: VitePress gives the text column at most 592px (about half), so
+   "Optimal control in Julia" wraps; widen it to 60 % of the container, the logo keeps the
+   rest. Selectors one class longer than VPHero's scoped ones, so they win. */
+@media (min-width: 960px) {
+  .VPHome .VPHero.has-image .container .main {
+    width: 60%;
+    max-width: 60%;
+  }
+  .VPHome .VPHero.has-image .heading .name,
+  .VPHome .VPHero.has-image .heading .text,
+  .VPHome .VPHero.has-image .main .tagline {
+    max-width: none;
+  }
+}

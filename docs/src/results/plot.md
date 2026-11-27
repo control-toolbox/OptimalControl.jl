@@ -1,4 +1,4 @@
-# [Plot](@id results-plot)
+# [Plot with Plots](@id results-plot)
 
 A [`Solution`](@ref results-solution) is drawn with `plot` and `plot!`, which extend
 [Plots.jl](https://docs.juliaplots.org). Use `plot` to create a new figure, and `plot!` to add
@@ -36,6 +36,8 @@ your own figure from the trajectories, see [Custom plots](@ref results-plot-cust
 We take the energy-minimal double integrator, whose solution is u(t) = 6 − 12t (see
 [Your first problem](@ref getting-started-first-problem)):
 
+::: details The problem used on this page
+
 ```@example main
 using OptimalControl
 using NLPModelsIpopt
@@ -54,7 +56,12 @@ ocp = @def begin
     ẋ(t) == [x₂(t), u(t)]
     ∫(0.5u(t)^2) → min
 end
+nothing # hide
+```
 
+:::
+
+```@example main
 sol = solve(ocp; display=false)
 nothing # hide
 ```
@@ -68,16 +75,23 @@ plot(sol)
 
 Without Plots, the call raises an error that names the package to load:
 
-```julia
-julia> plot(sol)
-ERROR: ExtensionError
-│
-│  missing dependencies to plot solutions
-│
-│  Missing  Plots
-│
-│  Hint     Run: using Plots
-└─
+```@eval
+Main.CTBase.DevTools.repl_without_extensions(
+    :OptimalControl,
+    "using OptimalControl",
+    "using NLPModelsIpopt",
+    """
+    ocp = @def begin
+        t ∈ [0, 1], time
+        x ∈ R, state
+        u ∈ R, control
+        x(0) == 1
+        ẋ(t) == u(t)
+        ∫(u(t)^2) → min
+    end""",
+    "sol = solve(ocp; display=false)",
+    "plot(sol)",
+)
 ```
 
 ## [What gets drawn](@id results-plot-basic)
@@ -119,8 +133,7 @@ plot(sol, :state, :costate, :control;
 Three attributes are set by `plot` itself, from the names in the problem: `title`,
 `xlabel` and `ylabel`. `xlabel` replaces the x label of the subplots that carry one, and
 `title` replaces the overall title. `ylabel` is ignored with a warning, as there is one name
-per component
-([CTBase#569](https://github.com/control-toolbox/CTBase.jl/issues/569)). To change a y label,
+per component. To change a y label,
 edit the subplot afterwards, for instance `ylabel!(plt[2], "speed")` (see
 [Custom plots](@ref results-plot-custom)).
 
@@ -278,7 +291,7 @@ of the control are drawn on the control panel.
 Switching at t₁ and stopping at t_f = t₁ + v(t₁) requires q(t₁) + v(t₁)²/2 = 0, that is
 t₁ − v₁ + v₁²/2 = 1 with v₁ = 1 − e^{−t₁}. This gives t₁ ≈ 1.47 and t_f ≈ 2.24:
 
-```@example main
+```@repl main
 final_time(sol_c)
 ```
 
@@ -330,8 +343,9 @@ ocp2 = @def begin
 end
 sol2 = solve(ocp2; display=false)
 
-plt = plot(sol, :state, :costate, :control; label="sol1", size=(700, 500))
+plt = plot(sol, :state, :costate, :control; label="sol1", size=(800, 710), legend=false)
 plot!(plt, sol2, :state, :costate, :control; label="sol2", linestyle=:dash)
+plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 ```
 
 ## [Custom plots](@id results-plot-custom)
@@ -383,31 +397,94 @@ sol_flow = f((t0, tf), x0, p0)
 plot(sol_flow)
 ```
 
-The solution of a flow is kept at the steps of the integrator only, which are few on a smooth
-problem ([CTFlows#435](https://github.com/control-toolbox/CTFlows.jl/issues/435)). Here
-there are 5 points, so the curves above are polygons:
+The solution of a flow is sampled on 250 times by default, denser where the curves bend, so
+the curves are smooth even when the integrator takes few steps:
 
-```@example main
-time_grid(sol_flow)
+```@repl main
+length(time_grid(sol_flow))
 ```
 
 ```@example main
 @assert isapprox(state(sol_flow)(tf), xf; atol=1e-8)   # hide
+@assert length(time_grid(sol_flow)) == 250             # hide
 nothing                                                # hide
 ```
 
-For a finer curve, pass `saveat` when you **build** the flow, together with `dense=false`. The
-call itself only accepts `variable`, `unsafe` and `variable_costate`. Do not leave out
-`dense=false`: without it, the call crashes the Julia session
-([CTFlows#434](https://github.com/control-toolbox/CTFlows.jl/issues/434)). Use such a flow for trajectories only: its point call `f(t0, x0, p0, tf)` returns the
-value at the last `saveat` time before `tf`, not at `tf`
-([CTFlows#441](https://github.com/control-toolbox/CTFlows.jl/issues/441)).
+!!! note "How the times are chosen"
+
+    On a smooth problem, the integrator takes few steps, but it can evaluate the solution at
+    any time with its own accuracy. When it returns fewer than 250 times, the flow generates
+    250, placed to draw the curves best: denser where the state, the costate and the control
+    bend, with a uniform share. 250 is the default `grid_size` of the direct methods, so the
+    solutions of a flow and of a direct method have the same size. The times only shape the
+    output: the integration and the objective are the same whatever the grid. See
+    [Output grid and accuracy](https://control-toolbox.org/CTFlows.jl/stable/flows/integrating#Output-grid-and-accuracy)
+    in the CTFlows documentation.
+
+The `grid` keyword of the call changes this: `grid=n` gives `n` evenly spaced times,
+`grid=OptimalControl.AdaptiveGrid(n)` gives `n` times placed as above, and `grid=nothing`
+keeps the steps of the integrator only, here 5, so the curves become polygons:
+
+```@repl main
+sol_steps = f((t0, tf), x0, p0; grid=nothing);
+length(time_grid(sol_steps))
+```
+
+To get the trajectory at given times, call the flow with these times instead of the span,
+`f(range(t0, tf, 11), x0, p0)`, or pass `saveat` when you **build** the flow. The point call
+`f(t0, x0, p0, tf)` of such a flow still returns the value at `tf`:
 
 ```@example main
-fine_grid = range(t0, tf, 100)
-f2 = Flow(ocp, (x, p) -> p[2]; saveat=fine_grid, dense=false)
+f2 = Flow(ocp, (x, p) -> p[2]; saveat=range(t0, tf, 11))
 sol_flow2 = f2((t0, tf), x0, p0)
 plot(sol_flow2)
+```
+
+```@example main
+@assert length(time_grid(sol_steps)) < 20                         # hide
+@assert length(time_grid(sol_flow2)) == 11                        # hide
+@assert isapprox(f2(t0, x0, p0, tf)[1], xf; atol=1e-8)            # hide
+nothing                                                           # hide
+```
+
+## [Switching times and phases](@id results-plot-switching)
+
+The solution of a concatenation of flows keeps its switching times and the labels of its
+phases (see [Multi-phase flows](@ref flows-multi-phase-switching)). Here the bang–bang
+extremal of the time-minimal double integrator, with one switch at $t = 1$:
+
+```@example main
+ocp_bb = @def begin
+    tf ∈ R, variable
+    t ∈ [0, tf], time
+    x = (q, v) ∈ R², state
+    u ∈ R, control
+    -1 ≤ u(t) ≤ 1
+    x(0) == [-1, 0]
+    x(tf) == [0, 0]
+    ẋ(t) == [v(t), u(t)]
+    tf → min
+end
+f_bb = Flow(ocp_bb, (x, p, v) -> 1; label="u = +1") *
+    (1, Flow(ocp_bb, (x, p, v) -> -1; label="u = -1"))
+sol_bb = f_bb((0, 2), [-1, 0], [1, 1]; variable=2)
+plot(sol_bb)
+```
+
+The switching times are drawn as vertical lines, styled like the initial and final times,
+and the labels of the phases are written on the control. A jump of the state, the costate
+or the control is drawn as a vertical segment from its left to its right limit. Four
+keywords change this:
+
+| Keyword | Values |
+| :--- | :--- |
+| `jumps` | `:segment` (default), or `:none` to break the curve at a jump |
+| `switching_style` | a style for the vertical lines, such as `(linestyle=:dot,)`, or `:none` to hide them |
+| `phase_labels` | `:control` (default), `:all` to write them on every cell, or `:none` |
+| `phase_labels_style` | a style for the labels, such as `(color=:red,)` |
+
+```@example main
+plot(sol_bb; jumps=:none, switching_style=:none, phase_labels=:none)
 ```
 
 ## [Reference](@id results-plot-reference)

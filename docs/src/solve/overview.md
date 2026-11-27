@@ -4,6 +4,21 @@
 solver, get a [`Solution`](@ref results-solution) back. This page shows the quickest way to
 call it, how to read what it prints, and the two ways to steer it away from its defaults.
 
+## The direct method
+
+A direct method replaces the optimal control problem by a finite-dimensional one: a grid cuts
+the time interval, the unknowns are the values of the state and of the control on the grid,
+and the dynamics becomes the equations of an integration scheme between consecutive points.
+This gives a nonlinear program (NLP), solved by an NLP solver, Ipopt by default; its
+multipliers give the costate of the solution. The equations are on
+[The direct method](@ref modelling-discretisation-direct-method).
+
+`solve` carries out these steps with three components: a **discretizer** (the grid and the
+scheme), a **modeler** that builds the NLP, and a **solver**. The rest of this section shows
+how to choose and configure them. [Discretisation](@ref modelling-discretisation) runs the
+steps one by one, and keeps the discretised problem and the NLP to inspect them or to hand them
+to another solver.
+
 ## Quick start
 
 ```@example main
@@ -109,9 +124,10 @@ rather than assuming success. Here we stop Ipopt before its first iteration:
 
 ```@example main
 sol = solve(ocp; max_iter=0, display=false, print_level=0)
-println("successful: ", successful(sol))    # did the solver report success?
-println("status:     ", status(sol))        # a Symbol, e.g. :first_order, :max_iter
-println("violation:  ", constraints_violation(sol))
+@show successful(sol)              # did the solver report success?
+@show status(sol)                  # a Symbol, e.g. :first_order, :max_iter
+@show constraints_violation(sol)
+nothing # hide
 ```
 
 ```@example main
@@ -125,9 +141,10 @@ solve reports `successful(sol) == true`, the status `:first_order` and a negligi
 
 ```@example main
 sol = solve(ocp; display=false, print_level=0)
-println("successful: ", successful(sol))
-println("status:     ", status(sol))
-println("violation:  ", constraints_violation(sol))
+@show successful(sol)
+@show status(sol)
+@show constraints_violation(sol)
+nothing # hide
 ```
 
 ```@example main
@@ -143,3 +160,5 @@ nothing                                       # hide
 - [Options](@ref solve-options) — routing, inspection with `describe`, disambiguation.
 - [Explicit mode](@ref solve-explicit-mode) — build and pass typed components directly.
 - [Initial guess](@ref solve-initial-guess) — every way to hand `solve` a starting point.
+- [Discretisation](@ref modelling-discretisation) — the discretised problem and the NLP, step
+  by step.

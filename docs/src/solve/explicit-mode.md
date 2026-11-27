@@ -12,6 +12,11 @@ component's configuration, no completion to guess.
 
 ## Basic usage
 
+The examples use the energy-minimal double integrator of
+[Your first problem](@ref getting-started-first-problem).
+
+::: details The problem used on this page
+
 ```@example explicit
 using OptimalControl
 using NLPModelsIpopt
@@ -29,50 +34,65 @@ ocp = @def begin
     ẋ(t) == [v(t), u(t)]
     0.5∫(u(t)^2) → min
 end
-
-discretizer = OptimalControl.Collocation(grid_size=100, scheme=:trapeze)
-modeler = OptimalControl.ADNLP(backend=:optimized)
-solver = OptimalControl.Ipopt(max_iter=1000, print_level=0)
-
-sol = solve(ocp; discretizer=discretizer, modeler=modeler, solver=solver)
 nothing # hide
 ```
 
-Each component goes with its keyword: `discretizer`, `modeler`, `solver`. The component types
-are not exported, so they are written with the module name: `OptimalControl.Collocation(...)`,
-`OptimalControl.Ipopt(...)`. This needs nothing loaded beyond `using OptimalControl` (and the
-solver package, as always).
+:::
+
+```@repl explicit
+discretizer = OptimalControl.Collocation(grid_size=100, scheme=:trapeze)
+modeler = OptimalControl.ADNLP(backend=:optimized)
+solver = OptimalControl.Ipopt(max_iter=1000, print_level=0)
+sol = solve(ocp; discretizer=discretizer, modeler=modeler, solver=solver);
+```
+
+Each component goes with its keyword: `discretizer`, `modeler`, `solver`. To see what options
+a constructor takes, `describe(:ipopt)` and friends list them with their defaults — see
+[Inspecting a strategy](@ref solve-choosing-a-method-inspect) and
+[What a strategy accepts](@ref solve-options-accepts).
+
+!!! warning "Component types are not exported"
+
+    `Collocation`, `ADNLP`, `Ipopt` and friends are **not** exported by OptimalControl: names
+    like `Ipopt` or `MadNLP` would clash with the solver modules you load alongside
+    (`NLPModelsIpopt` brings its own `Ipopt` module). They are always written qualified —
+    `OptimalControl.Collocation(...)`, `OptimalControl.Ipopt(...)` — which needs nothing
+    beyond `using OptimalControl` (and the solver package, as always).
 
 ## Partial components
 
 Give one component, and the other two are completed the same way descriptive mode completes a
 partial token list — first match, top to bottom in [`methods`](@ref)`()`:
 
-```@example explicit
-methods()[1]  # what a bare solve(ocp) completes to
-```
-
-```@example explicit
+```@repl explicit
+first(methods())  # what a bare solve(ocp) completes to
 sol = solve(
     ocp;
     solver=OptimalControl.Ipopt(max_iter=2000, print_level=0),
     display=true,
-)
-nothing # hide
+);
 ```
 
 `solver=Ipopt(...)` alone completes to `Collocation()` (first discretizer) and `ADNLP()` (first
 modeler compatible with Ipopt) — visible in the printed configuration above. Mixing a custom
 component with defaults works the same way for any subset:
 
-```@example explicit
+```@repl explicit
 sol = solve(ocp;
     discretizer=OptimalControl.Collocation(grid_size=200, scheme=:trapeze),
     solver=OptimalControl.Ipopt(max_iter=100, print_level=0),
     display=false,
-)
-nothing # hide
+);
 ```
+
+!!! warning "Completed components get only default options"
+
+    A component you do not pass is built from the first matching entry of `methods()` — with
+    **all default options**. Unlike [descriptive mode](@ref solve-choosing-a-method), where
+    `solve(ocp, :ipopt; grid_size=100)` routes the keywords to the completed strategies,
+    there is no way to give an option to a component you did not build. If the defaults do
+    not suit you, either construct that component too, or use descriptive mode. `methods()`
+    lists the combinations completion can pick from.
 
 ## Per-component options
 
@@ -80,13 +100,17 @@ Every option a strategy accepts is set when it is constructed, never routed in f
 afterwards, unlike descriptive mode. Here, a fourth-order scheme on a coarser grid, and tighter
 Ipopt tolerances:
 
-```@example explicit
-discretizer = OptimalControl.Collocation(grid_size=50, scheme=:gauss_legendre_2)
-modeler = OptimalControl.ADNLP(backend=:optimized)
-solver = OptimalControl.Ipopt(max_iter=1000, tol=1e-10, acceptable_tol=1e-8, print_level=0)
-
-sol = solve(ocp; discretizer=discretizer, modeler=modeler, solver=solver)
-println("objective = ", objective(sol))   # the exact value is 6
+```@repl explicit
+discretizer = OptimalControl.Collocation(grid_size=50, scheme=:gauss_legendre_2);
+modeler = OptimalControl.ADNLP(backend=:optimized);
+solver = OptimalControl.Ipopt(
+    max_iter=100, 
+    tol=1e-10, 
+    acceptable_tol=1e-8, 
+    print_level=0,
+);
+sol = solve(ocp; discretizer=discretizer, modeler=modeler, solver=solver);
+objective(sol)   # the exact value is 6
 ```
 
 ```@example explicit
@@ -102,13 +126,23 @@ mode — but here it's passed straight into the constructor, not through `route_
 
 ```@example explicit
 solver = OptimalControl.Ipopt(
-    max_iter=500, print_level=0, mumps_print_level=bypass(1)
+    max_iter=500, 
+    print_level=0, 
+    mumps_print_level=bypass(1),
 )
 nothing # hide
 ```
 
+!!! tip "`mode=:permissive` for several undeclared options"
+
+    `bypass` wraps each undeclared option one by one. If several must go through, the
+    constructor's own validation can be relaxed instead:
+    `OptimalControl.Ipopt(mode=:permissive, mumps_print_level=1, …)` stores unknown options
+    with a warning, while declared ones are still type-checked. Use it sparingly — the same
+    caveat as `bypass` applies.
+
 A flat option keyword handed to `solve` itself, rather than to the component constructor, is
-rejected — even one a completed default component would otherwise recognize:
+rejected — even one a completed default component would otherwise recognise:
 
 ```@repl explicit
 solve(
@@ -141,24 +175,47 @@ Pick one: `solve(ocp, :collocation, :adnlp, :ipopt; options...)` or
 
 ## Inspecting the components you built
 
-```@example explicit
+```@repl explicit
 solver = OptimalControl.Ipopt(max_iter=1000, tol=1e-6, print_level=0)
-opts = options(solver)
+opts = options(solver);
 
 is_user(opts, :max_iter)
-```
-
-```@example explicit
 is_default(opts, :mu_strategy)
-```
-
-```@example explicit
 opts[:max_iter]
-```
-
-```@example explicit
 collect(keys(opts))
 ```
+
+## [The stages behind `solve`](@id solve-explicit-mode-stages)
+
+`solve` chains three stages, one per component: the discretizer turns the problem into a
+discretised problem, the modeler builds from it a nonlinear program (NLP) for an initial
+guess, and the solver solves the NLP. `solve` also takes the discretised problem in place of
+the problem, with the initial guess and the two other components:
+
+```@example explicit
+docp = discretize(ocp, OptimalControl.Collocation(grid_size=100, scheme=:trapeze))
+init = build_initial_guess(ocp, nothing)   # the default initial guess
+sol = solve(
+    docp, 
+    init, 
+    OptimalControl.ADNLP(), 
+    OptimalControl.Ipopt(print_level=0);
+    display=false,
+)
+objective(sol)
+```
+
+```@example explicit
+@assert isapprox(objective(sol), 6; rtol=1e-2)   # hide
+nothing                                          # hide
+```
+
+The problem is then discretised once, for as many solves as needed. This `solve` is a
+lower-level method, with no completion and no routing of options: see
+[The discretised problem](@ref modelling-discretisation-docp) for how it differs.
+[Discretisation](@ref modelling-discretisation) runs each stage on its own: it builds the
+NLP, with `ADNLP` or `Exa`, evaluates it, and solves it with a solver called directly before
+turning its output into a solution.
 
 ## See also
 
@@ -167,3 +224,5 @@ collect(keys(opts))
   routing) to per-component construction here.
 - [Choosing a method](@ref solve-choosing-a-method) — the full strategy catalogue these
   constructors build from.
+- [Discretisation](@ref modelling-discretisation) — the stages of `solve` one by one, and the
+  NLP handed to a solver of your own.

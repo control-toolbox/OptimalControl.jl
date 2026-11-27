@@ -186,7 +186,6 @@ const API_THEMES = [
             :infos,
             :model,
             # Emptiness
-            :is_empty,
             :is_empty_time_grid,
             # Duals
             :dual,
@@ -201,6 +200,12 @@ const API_THEMES = [
             :dim_dual_state_constraints_box,
             :dim_dual_control_constraints_box,
             :dim_dual_variable_constraints_box,
+            # Switching structure
+            :switching_times,
+            :phase_labels,
+            :has_switching,
+            :left_limit,
+            :right_limit,
         ],
     ),
     (
@@ -213,21 +218,17 @@ const API_THEMES = [
             :hamiltonian,
             :hamiltonian_vector_field,
             :vector_field,
-            :get_hamiltonian_gradient,
-            :get_variable_gradient,
-            :get_pseudo_hamiltonian_gradient,
-            :get_pseudo_variable_gradient,
+            :hamiltonian_gradient,
+            :variable_gradient,
+            :pseudo_hamiltonian_gradient,
+            :pseudo_variable_gradient,
             :MultiPhaseFlow,
             :MultiPhaseStateFlow,
             :MultiPhaseHamiltonianFlow,
             :AnyMultiPhaseFlow,
             :n_phases,
-            :get_flow,
-            :get_flows,
-            :get_switching_time,
-            :get_switching_times,
-            :get_jump,
-            :get_jumps,
+            :phase_flows,
+            :jumps,
             :system,
             :integrator,
             :SciML,
@@ -313,9 +314,13 @@ const API_THEMES = [
             Symbol("CTSolvers.Solvers.Uno"),
             Symbol("CTSolvers.DOCP.AbstractDiscretizer"),
             Symbol("CTSolvers.DOCP.DiscretizedModel"),
+            Symbol("CTSolvers.Optimization.build_model"),
+            Symbol("CTSolvers.Optimization.BuiltModel"),
             Symbol("CTSolvers.Modelers.AbstractNLPModeler"),
             Symbol("CTSolvers.Solvers.AbstractNLPSolver"),
             :LiftedHamiltonianFunction,
+            Symbol("CTFlows.Configs.UniformGrid"),
+            Symbol("CTFlows.Configs.AdaptiveGrid"),
             Symbol("CTBase.Exceptions.CTException"),
             Symbol("CTBase.Exceptions.IncorrectArgument"),
             Symbol("CTBase.Exceptions.PreconditionError"),
@@ -323,6 +328,7 @@ const API_THEMES = [
             Symbol("CTBase.Exceptions.ParsingError"),
             Symbol("CTBase.Exceptions.AmbiguousDescription"),
             Symbol("CTBase.Exceptions.ExtensionError"),
+            Symbol("CTBase.Exceptions.SolverFailure"),
             Symbol("CTBase.Core.NotProvided"),
             Symbol("CTBase.Core.NotProvidedType"),
             Symbol("CTBase.Core.ctNumber"),
@@ -339,7 +345,26 @@ const API_THEMES = [
             Symbol("CTBase.Options.OptionValue"),
         ],
     ),
-    (id="deprecated", title="Deprecated", symbols=[:Lie, Symbol("⋅"), :HamiltonianLift]),
+    (
+        id="deprecated",
+        title="Deprecated",
+        symbols=[
+            :Lie,
+            Symbol("⋅"),
+            :HamiltonianLift,
+            :get_hamiltonian_gradient,
+            :get_variable_gradient,
+            :get_pseudo_hamiltonian_gradient,
+            :get_pseudo_variable_gradient,
+            :get_flow,
+            :get_flows,
+            :get_switching_time,
+            :get_switching_times,
+            :get_jump,
+            :get_jumps,
+            :get_labels,
+        ],
+    ),
 ]
 
 # Symbols exported by `names(OptimalControl)` are checked for full coverage
@@ -509,7 +534,7 @@ internally. The lists below are generated from the package itself, and each name
 its documentation.
 
 | Level | Reached as | What |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | 1. Exported | `using OptimalControl`, then `name` | the vocabulary of the package: problems, `solve`, solutions, flows, geometry |
 | 2. Qualified | `OptimalControl.Name` | strategies (modelers, solvers, discretizer, AD backend), types, exceptions |
 | 3. Internal | not for users | the modules of the packages OptimalControl builds on |
@@ -568,7 +593,7 @@ its documentation.
         )
         println(io)
         println(io, "| Module | Why OptimalControl binds it |")
-        println(io, "| --- | --- |")
+        println(io, "| :--- | :--- |")
         for (m, role) in MODULE_ROLES
             println(io, "| `$m` | $role |")
         end
@@ -601,10 +626,11 @@ function _generate_theme_page(docs_src, theme)
         if theme.id == "deprecated"
             println(
                 io,
-                "Removed v2.0 names, re-introduced as throwing shims: calling one always " *
-                "raises a `PreconditionError` naming its v2.1.0-beta replacement, so a " *
-                "search for the old name lands on an explanation rather than nothing. See " *
-                "[Migrating to v2.1](@ref migration) for the full picture.",
+                "Removed names, kept as throwing shims: calling one always raises a " *
+                "`PreconditionError` naming its replacement, so a search for the old name " *
+                "lands on an explanation rather than nothing. The v2.0 names (`Lie`, `⋅`, " *
+                "`HamiltonianLift`) and the `get_*` accessors of a flow, renamed with " *
+                "CTFlows 0.20. See [Migrating from v2.0](@ref migration) for the full picture.",
             )
             println(io)
             println(
