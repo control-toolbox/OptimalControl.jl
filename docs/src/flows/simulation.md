@@ -23,10 +23,9 @@ trajectory. The control is given as a function of time (open loop) or of the sta
 Take $\dot x = -x + u$ with the constant control $u(t) = 1$. From $x(0) = 0$, the solution is
 $x(t) = 1 - e^{-t}$:
 
-```@example main
-fc(x, u) = -x + u
-
-f_ol = Flow(ControlledVectorField(fc), OpenLoop(t -> 1))
+```@repl main
+fc(x, u) = -x + u;
+f_ol = Flow(ControlledVectorField(fc), OpenLoop(t -> 1));
 f_ol(0, 0.0, 1)   # 1 - exp(-1)
 ```
 
@@ -56,8 +55,8 @@ Flow(ControlledVectorField(fc), OpenLoop(() -> 1))(0, 0.0, 1)
 A feedback is a function of the state, `u(x)`. With $u = x/2$, the system becomes
 $\dot x = -x/2$, so from $x(0) = 1$, $x(1) = e^{-1/2}$:
 
-```@example main
-f_cl = Flow(ControlledVectorField(fc), ClosedLoop(x -> x / 2))
+```@repl main
+f_cl = Flow(ControlledVectorField(fc), ClosedLoop(x -> x / 2));
 f_cl(0, 1.0, 1)   # exp(-1/2)
 ```
 
@@ -99,18 +98,20 @@ nothing # hide
 
 :::
 
-```@example main
-f_opt = Flow(ocp, OpenLoop(t -> 6 - 12t))
-traj = f_opt((t0, tf), x0)
-state(traj)(tf), objective(traj)
+```@repl main
+f_opt = Flow(ocp, OpenLoop(t -> 6 - 12t));
+traj = f_opt((t0, tf), x0);
+state(traj)(tf)
+objective(traj)
 ```
 
 The simulation reaches the target with the optimal cost. Another control costs less, but
 misses the target: the constant $u = 1$ costs $1/2$ and ends at $x(1) = (-1/2, 1)$.
 
-```@example main
-traj_1 = Flow(ocp, OpenLoop(t -> 1))((t0, tf), x0)
-state(traj_1)(tf), objective(traj_1)
+```@repl main
+traj_1 = Flow(ocp, OpenLoop(t -> 1))((t0, tf), x0);
+state(traj_1)(tf)
+objective(traj_1)
 ```
 
 ```@example main
@@ -128,8 +129,9 @@ dynamics and the cost from $x_0$. A feedback works the same way, with
 The trajectory is read with the same functions as a [`Solution`](@ref results-solution):
 `state`, `control`, `time_grid`, and `objective` when the flow comes from a problem.
 
-```@example main
-state(traj)(0.5), control(traj)(0.5)
+```@repl main
+state(traj)(0.5)
+control(traj)(0.5)
 ```
 
 ```@example main

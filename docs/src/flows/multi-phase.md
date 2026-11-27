@@ -15,11 +15,10 @@ nothing # hide
 
 `f1 * (t1, f2)` follows `f1` until `t1`, then `f2`. The result is itself a flow:
 
-```@example main
-f1 = Flow(VectorField(x -> 0))    # ẋ = 0
-f2 = Flow(VectorField(x -> 1))    # ẋ = 1
-
-f = f1 * (1, f2)
+```@repl main
+f1 = Flow(VectorField(x -> 0));   # ẋ = 0
+f2 = Flow(VectorField(x -> 1));   # ẋ = 1
+f = f1 * (1, f2);
 f(0, 0.0, 2)   # constant until t = 1, then one unit of slope 1
 ```
 
@@ -30,8 +29,8 @@ More arcs are added the same way: `f1 * (t1, f2) * (t2, f3)`.
 A jump at the switching time is given between the time and the second flow. On a flow of the
 state, `f1 * (t1, j, f2)` applies `x ← j(x)`, or `x ← x + j` when `j` is a vector:
 
-```@example main
-fj = f1 * (1, x -> x + 10, f2)
+```@repl main
+fj = f1 * (1, x -> x + 10, f2);
 fj(0, 0.0, 2)   # +10 at t = 1, then one unit of slope 1
 ```
 
@@ -53,14 +52,16 @@ on either:
 On the extremal of the energy problem, a costate jump of $(10, 0)$ at $t = 1/2$ leaves the
 state continuous and shifts $p_1$ from $12$ to $22$:
 
-```@example main
+```@repl main
 h = Flow(
     PseudoHamiltonian((x, p, u) -> p[1] * x[2] + p[2] * u - u^2 / 2),
     DynClosedLoop((x, p) -> p[2]),
-)
-h_jump = h * (0.5, [10, 0], h)
-traj = h_jump((0, 1), [-1, 0], [12, 6])
-state(traj)(0.5 - 1e-9) ≈ state(traj)(0.5 + 1e-9), costate(traj)(0.25), costate(traj)(0.75)
+);
+h_jump = h * (0.5, [10, 0], h);
+traj = h_jump((0, 1), [-1, 0], [12, 6]);
+state(traj)(0.5 - 1e-9) ≈ state(traj)(0.5 + 1e-9)
+costate(traj)(0.25)
+costate(traj)(0.75)
 ```
 
 ```@example main
@@ -110,14 +111,15 @@ ocp = @def begin
     ẋ(t) == [v(t), u(t)]
     tf → min
 end
+nothing # hide
+```
 
-f_plus = Flow(ocp, (x, p, v) -> 1; label="u = +1")
-f_minus = Flow(ocp, (x, p, v) -> -1; label="u = -1")
-
-t1, tf = 1, 2
-f_bb = f_plus * (t1, f_minus)
-zf = f_bb(0, [-1, 0], [1, 1], tf; variable=tf)
-xf, pf = zf
+```@repl main
+f_plus = Flow(ocp, (x, p, v) -> 1; label="u = +1");
+f_minus = Flow(ocp, (x, p, v) -> -1; label="u = -1");
+t1, tf = 1, 2;
+f_bb = f_plus * (t1, f_minus);
+xf, pf = f_bb(0, [-1, 0], [1, 1], tf; variable=tf)
 ```
 
 The concatenation reaches the target, with $p(t_f) = (1, -1)$.
@@ -134,24 +136,24 @@ every `Flow` constructor, and the concatenation keeps the labels in order. The t
 call returns a solution that keeps the structure of the extremal: its switching times, the
 labels of its phases, shown in its summary, and the values on both sides of each switch.
 
-```@example main
+```@repl main
 sol_bb = f_bb((0, tf), [-1, 0], [1, 1]; variable=tf)
 ```
 
-```@example main
-switching_times(sol_bb), phase_labels(sol_bb)
+```@repl main
+switching_times(sol_bb)
+phase_labels(sol_bb)
 ```
 
 `left_limit(sol, :control, i)` and `right_limit(sol, :control, i)` give the values just before
 and just after the `i`-th switch, for `:state`, `:costate` and `:control`. Here the control
 jumps from $+1$ to $-1$, and the state and the costate are continuous:
 
-```@example main
-left_limit(sol_bb, :control, 1), right_limit(sol_bb, :control, 1)
-```
-
-```@example main
-left_limit(sol_bb, :state, 1), right_limit(sol_bb, :state, 1)
+```@repl main
+left_limit(sol_bb, :control, 1)
+right_limit(sol_bb, :control, 1)
+left_limit(sol_bb, :state, 1)
+right_limit(sol_bb, :state, 1)
 ```
 
 ```@example main
@@ -265,16 +267,15 @@ control is $u = 0$ (off arc) until $p$ reaches $1$, at $t_1 = -\ln p_0$, then $u
 p_0 = \frac{1}{x_0 - (x_f - 1)e^{t_f}}, \qquad t_1 = -\ln p_0 .
 ```
 
-```@example main
+```@repl main
 p0 = 1 / (x0 - (xf1 - 1) * exp(tf1))
 t1_l1 = -log(p0)
-
-f_off = Flow(ocp_l1, (x, p) -> 0)    # off arc: u = 0
-f_bang = Flow(ocp_l1, (x, p) -> 1)   # bang arc: u = 1
-
-f_l1 = f_off * (t1_l1, f_bang)
-sol_l1 = f_l1((t0, tf1), x0, p0)
-state(sol_l1)(tf1), objective(sol_l1)
+f_off = Flow(ocp_l1, (x, p) -> 0);    # off arc: u = 0
+f_bang = Flow(ocp_l1, (x, p) -> 1);   # bang arc: u = 1
+f_l1 = f_off * (t1_l1, f_bang);
+sol_l1 = f_l1((t0, tf1), x0, p0);
+state(sol_l1)(tf1)
+objective(sol_l1)
 ```
 
 The flow reaches $x(1) = 0$, and its cost is the length of the bang arc, $t_f - t_1$:

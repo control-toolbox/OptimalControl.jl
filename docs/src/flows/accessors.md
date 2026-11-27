@@ -39,7 +39,7 @@ nothing # hide
 `hamiltonian(f)` returns the maximised Hamiltonian
 $\mathbf{H}(x, p) = H(x, p, u(x, p)) = p_1 v + p_2^2/2$:
 
-```@example main
+```@repl main
 H = hamiltonian(f)
 H(x, p)   # 12 × 0 + 6²/2
 ```
@@ -56,7 +56,7 @@ differ in how the flow differentiates, not in what it holds.
 $\vec{\mathbf{H}} = (\nabla_p \mathbf{H}, -\nabla_x \mathbf{H})$, as the pair
 $(\dot x, \dot p) = ((v, p_2), (0, -p_1))$:
 
-```@example main
+```@repl main
 Hv = hamiltonian_vector_field(f)
 Hv(x, p)
 ```
@@ -68,10 +68,11 @@ Hv(x, p)
 [Hamiltonians of a problem](@ref modelling-hamiltonians)), and `control_law(f)` the law you
 passed:
 
-```@example main
+```@repl main
 Hp = pseudo_hamiltonian(f)
 u = control_law(f)
-Hp(x, p, u(x, p)), u(x, p)
+u(x, p)
+Hp(x, p, u(x, p))
 ```
 
 ```@example main
@@ -95,13 +96,13 @@ before the law is substituted. Like the functions above, the gradients of $\math
 $H$ take the short form, `(x, p)` and `(x, p, u)`, or the full form, `(t, x, p, v)` and
 `(t, x, p, u, v)`:
 
-```@example main
-∇H = hamiltonian_gradient(f)
+```@repl main
+∇H = hamiltonian_gradient(f);
 ∇H(x, p)   # (∇ₓH, ∇ₚH) = ((0, 12), (0, 6))
 ```
 
-```@example main
-∇Hp = pseudo_hamiltonian_gradient(f)
+```@repl main
+∇Hp = pseudo_hamiltonian_gradient(f);
 ∇Hp(x, p, u(x, p))   # the same, at u = p₂
 ```
 
@@ -117,8 +118,8 @@ nothing                                                       # hide
 
 `hamiltonian_vector_field` also applies to a `Hamiltonian`, without building a flow:
 
-```@example main
-Hv2 = hamiltonian_vector_field(Hamiltonian((x, p) -> p[1] * x[2] + p[2]^2 / 2))
+```@repl main
+Hv2 = hamiltonian_vector_field(Hamiltonian((x, p) -> p[1] * x[2] + p[2]^2 / 2));
 Hv2(x, p)
 ```
 
@@ -135,7 +136,7 @@ What a flow can give back depends on what it was built from:
 
 On a flow of the state, `vector_field` returns the vector field that is integrated:
 
-```@example main
+```@repl main
 Fx = vector_field(Flow(VectorField(x -> -x)))
 Fx(2.0)
 ```
@@ -153,11 +154,11 @@ hamiltonian(Flow(VectorField(x -> -x)))
 A flow is made of a **system**, the mathematical object it integrates, and an
 **integrator**, returned by `system` and `integrator`:
 
-```@example main
+```@repl main
 integrator(f)
 ```
 
-```@example main
+```@repl main
 system(f)
 ```
 

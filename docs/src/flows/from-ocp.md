@@ -42,9 +42,9 @@ Hamiltonian system of $\mathbf{H}(x, p) = H(x, p, u(x, p))$, from an initial sta
 
 ## The simplest form
 
-```@example main
-f = Flow(ocp, (x, p) -> p[2])
-p0 = [12, 6]
+```@repl main
+f = Flow(ocp, (x, p) -> p[2]);
+p0 = [12, 6];
 xf, pf = f(t0, x0, p0, tf)
 ```
 
@@ -62,9 +62,9 @@ nothing                                                                        #
 `Flow(ocp, law)` wraps the function in a `DynClosedLoop` law: a feedback on the state and
 the costate. Writing it explicitly gives the same flow:
 
-```@example main
-f_typed = Flow(ocp, DynClosedLoop((x, p) -> p[2]))
-xf_typed, _ = f_typed(t0, x0, p0, tf)
+```@repl main
+f_typed = Flow(ocp, DynClosedLoop((x, p) -> p[2]));
+xf_typed, _ = f_typed(t0, x0, p0, tf);
 isapprox(xf_typed, xf; atol=1e-12)
 ```
 
@@ -91,9 +91,12 @@ ocp_na = @def begin
     ẋ(t) == u(t) * (1 + tan(t))
     0.5∫(u(t)^2) → min
 end
+nothing # hide
+```
 
-fb = Flow(ocp_na, (t, x, p) -> p * (1 + tan(t)))
-xf_na, pf_na = fb(t0b, x0b, 1, tfb)
+```@repl main
+fb = Flow(ocp_na, (t, x, p) -> p * (1 + tan(t)));
+xf_na, pf_na = fb(t0b, x0b, 1, tfb);
 xf_na - xfb
 ```
 
@@ -137,10 +140,10 @@ law $u = t_f\,p$ then gives the constant costate $p = u/t_f = 2t_f/3$.
 The value of the variable is always passed with the keyword `variable`, even when it is the
 final time:
 
-```@example main
+```@repl main
 tf_val = (3 / 2)^(1 / 4)
-p0c = 2tf_val / 3
-xf_v, pf_v = fc(0, 0, p0c, tf_val; variable=tf_val)
+p0c = 2tf_val / 3;
+xf_v, pf_v = fc(0, 0, p0c, tf_val; variable=tf_val);
 xf_v
 ```
 
@@ -185,9 +188,12 @@ ocp_s = @def begin
     ẋ(s) == tf^2 * u(s)
     tf + (0.5 * tf) * ∫(u(s)^2) → min
 end
+nothing # hide
+```
 
-fs = Flow(ocp_s, (x, p, tf) -> tf * p)
-xf_s, _ = fs(0, 0, p0c, 1; variable=tf_val)
+```@repl main
+fs = Flow(ocp_s, (x, p, tf) -> tf * p);
+xf_s, _ = fs(0, 0, p0c, 1; variable=tf_val);
 xf_s
 ```
 
@@ -207,8 +213,11 @@ ocp_y = @def begin
     ẏ(s) == [tf(s)^2 * u(s), 0]
     tf(1) + 0.5∫(tf(s) * u(s)^2) → min
 end
+nothing # hide
+```
 
-fy = Flow(ocp_y, (y, q) -> y[2] * q[1])
+```@repl main
+fy = Flow(ocp_y, (y, q) -> y[2] * q[1]);
 yf, qf = fy(0, [0, tf_val], [p0c, 0], 1)
 ```
 
@@ -248,17 +257,21 @@ ocp_ω = @def begin
 end
 
 sol_ω = solve(ocp_ω; grid_size=500, display=false)
+nothing # hide
+```
+
+```@repl main
 ω_opt = variable(sol_ω)
 p0_ω = dual(sol_ω, ocp_ω, :start)   # the initial costate (see the Solution page)
-ω_opt, p0_ω
 ```
 
 Then integrate the flow from this initial costate, with the costate of $\omega$:
 
-```@example main
-fω = Flow(ocp_ω, (x, p, ω) -> p[2])
-xf_ω, pf_ω, pω = fω(0, [1, 0], p0_ω, 1; variable=ω_opt, variable_costate=true)
-pω, -2ω_opt
+```@repl main
+fω = Flow(ocp_ω, (x, p, ω) -> p[2]);
+xf_ω, pf_ω, pω = fω(0, [1, 0], p0_ω, 1; variable=ω_opt, variable_costate=true);
+pω
+-2ω_opt
 ```
 
 With the Mayer term $\omega^2$ and $p^0 = -1$, transversality requires
@@ -295,8 +308,8 @@ depend on the cost. A $p^0$ whose sign contradicts the criterion is rejected (se
 costate, also called `p0` in the point calls of this page: the keyword is given when the flow
 is built, the initial costate when it is called.
 
-```@example main
-f_abnormal = Flow(ocp, (x, p) -> p[2]; p0=0)
+```@repl main
+f_abnormal = Flow(ocp, (x, p) -> p[2]; p0=0);
 hamiltonian(f_abnormal)([-1, 0], [12, 6])   # p₁v + p₂²: no cost term
 ```
 
@@ -319,12 +332,12 @@ actually drives, $\dot x = f(x, u(x, p))$: use `:partial` to simulate a given fe
 
 Take the law $u = p_2 + 1$, which does not maximise $H$:
 
-```@example main
-law(x, p) = p[2] + 1
-
-xf_total, _ = Flow(ocp, law; hamiltonian_type=:total)(t0, x0, p0, tf)
-xf_partial, _ = Flow(ocp, law; hamiltonian_type=:partial)(t0, x0, p0, tf)
-xf_total, xf_partial
+```@repl main
+law(x, p) = p[2] + 1;
+xf_total, _ = Flow(ocp, law; hamiltonian_type=:total)(t0, x0, p0, tf);
+xf_partial, _ = Flow(ocp, law; hamiltonian_type=:partial)(t0, x0, p0, tf);
+xf_total
+xf_partial
 ```
 
 With `:partial`, the state is driven by $u = p_2 + 1 = 7 - 12t$, which overshoots the target.
@@ -380,8 +393,8 @@ The point call `f(t0, x0, p0, tf)` returns `(xf, pf)`, or `(xf, pf, pvf)` with
 `objective` and `plot` work on it, but it has no multipliers (see
 [Solutions from a flow](@ref results-solution-flows)).
 
-```@example main
-sol = f((t0, tf), x0, p0)
+```@repl main
+sol = f((t0, tf), x0, p0);
 objective(sol)
 ```
 

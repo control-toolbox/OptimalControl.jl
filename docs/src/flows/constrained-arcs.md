@@ -89,19 +89,23 @@ The concatenation reaches $x(2) = 1/2$ (its point call returns `(x, p)`, see
 [Multi-phase flows](@ref flows-multi-phase)). The direct method finds the same boundary arc,
 $[0.9, 1.6]$, and the same cost:
 
-```@example main
-sol_d = solve(ocp; grid_size=400, display=false)
-sol_f = f((t0, tf), x0, p0)
-objective(sol_d), objective(sol_f)
+```@repl main
+sol_d = solve(ocp; grid_size=400, display=false);
+sol_f = f((t0, tf), x0, p0);
+objective(sol_d)
+objective(sol_f)
 ```
 
 Given by its label, the constraint also gets its multiplier in the solution of the flow,
 read with `dual` as for a direct solution (see [Solution](@ref results-solution)):
 $\mu = 2x = 0.2$ on the boundary arc, and $0$ off it. The direct method finds the same:
 
-```@example main
-μ_f, μ_d = dual(sol_f, ocp, :x_con), dual(sol_d, ocp, :x_con)
-(μ_f(0.5), μ_f(1.2), μ_f(1.8)), (μ_d(0.5), μ_d(1.2), μ_d(1.8))
+```@repl main
+μ_f = dual(sol_f, ocp, :x_con);
+μ_d = dual(sol_d, ocp, :x_con);
+ts = (0.5, 1.2, 1.8);
+μ_f.(ts)
+μ_d.(ts)
 ```
 
 ```@example main
@@ -132,20 +136,22 @@ be given as a function `c(x, u) ≥ 0`, or as a typed `StateConstraint` (or `Con
 `MixedConstraint`, `PathConstraint` for constraints that involve the control), with the same
 flow:
 
-```@example main
-c(x, u) = x - lb         # the constraint, c ≥ 0
-f_fun = Flow(ocp, u_b; multipliers=c => μ)
-f_typed = Flow(ocp, u_b; multipliers=StateConstraint(x -> x - lb) => μ)
-f_fun(t1, lb, 0.0, t2), f_typed(t1, lb, 0.0, t2), f_boundary(t1, lb, 0.0, t2)
+```@repl main
+c(x, u) = x - lb;        # the constraint, c ≥ 0
+f_fun = Flow(ocp, u_b; multipliers=c => μ);
+f_typed = Flow(ocp, u_b; multipliers=StateConstraint(x -> x - lb) => μ);
+f_fun(t1, lb, 0.0, t2)
+f_typed(t1, lb, 0.0, t2)
+f_boundary(t1, lb, 0.0, t2)
 ```
 
 Several constraints active on the same arc are given as several pairs, in a tuple, or, for
 labels, in a named tuple `(; a=μa, b=μb)`. An anonymous function in a pair is written in
 parentheses:
 
-```@example main
+```@repl main
 f_two = Flow(ocp, u_b;
-    multipliers=(c => μ, ((x, u) -> 10 - x) => ((x, p) -> 0)))   # x ≤ 10, inactive
+    multipliers=(c => μ, ((x, u) -> 10 - x) => ((x, p) -> 0)));   # x ≤ 10, inactive
 f_two(t1, lb, 0.0, t2)
 ```
 
@@ -216,10 +222,11 @@ zf_bd = f_bd(0, [0, 1], [-18, -6], 1)
 The flow reaches the target $(0, -1)$. Its cost is $4/(9l) = 4$, the value the direct method
 finds too:
 
-```@example main
-sol_bd = solve(ocp_bd; display=false)
-sol_bd_flow = f_bd((0, 1), [0, 1], [-18, -6])
-objective(sol_bd), objective(sol_bd_flow)
+```@repl main
+sol_bd = solve(ocp_bd; display=false);
+sol_bd_flow = f_bd((0, 1), [0, 1], [-18, -6]);
+objective(sol_bd)
+objective(sol_bd_flow)
 ```
 
 The flow can be plotted against the direct solution (see
@@ -245,8 +252,8 @@ plot!(plt; subplot=1, legend=:best)   # one legend, on the first subplot
 arc too. Along an optimal boundary arc, the law and the multiplier make both forms give the
 same flow:
 
-```@example main
-f_partial = Flow(ocp, u_b; multipliers=:x_con => μ, hamiltonian_type=:partial)
+```@repl main
+f_partial = Flow(ocp, u_b; multipliers=:x_con => μ, hamiltonian_type=:partial);
 f_partial(t1, lb, 0.0, t2)
 ```
 

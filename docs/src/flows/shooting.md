@@ -110,7 +110,7 @@ f_blowup(0, 10.0, 1)
 end # hide
 ```
 
-```@example main
+```@repl main
 f_blowup(0, 10.0, 1; unsafe=true)
 ```
 
@@ -146,11 +146,11 @@ on a simpler problem.
 
 ## Solving the shooting equations
 
-```@example main
-prob = NonlinearProblem(shoot!, ξ_guess)
-sol = NonlinearSolve.solve(prob, SimpleNewtonRaphson(); abstol=1e-10, reltol=1e-10)
+```@repl main
+prob = NonlinearProblem(shoot!, ξ_guess);
+sol = NonlinearSolve.solve(prob, SimpleNewtonRaphson(); abstol=1e-10, reltol=1e-10);
+sol.retcode
 p0_s, t1_s, tf_s = sol.u[1:2], sol.u[3], sol.u[4]
-sol.u, sol.retcode
 ```
 
 Newton's method differentiates the shooting function with `ForwardDiff`, through the flows and
@@ -178,8 +178,8 @@ else. A few checks make sure it is an extremal of the problem.
 
 **The residuals vanish.**
 
-```@example main
-s = zeros(4)
+```@repl main
+s = zeros(4);
 shoot!(s, sol.u, nothing)
 s
 ```
@@ -187,9 +187,9 @@ s
 **The concatenation of the arcs reaches the target.** The point call of a concatenation
 returns the pair `(x, p)` (see [Multi-phase flows](@ref flows-multi-phase)):
 
-```@example main
-f_bb = f_max * (t1_s, f_min)
-xf_s, pf_s = f_bb(t0, x0, p0_s, tf_s; variable=tf_s)
+```@repl main
+f_bb = f_max * (t1_s, f_min);
+xf_s, pf_s = f_bb(t0, x0, p0_s, tf_s; variable=tf_s);
 xf_s
 ```
 
@@ -197,18 +197,19 @@ xf_s
 switching function to vanish at $t_1$. The maximisation condition also asks it to have the
 sign of the control on each arc, $p_2 > 0$ where $u = +1$ and $p_2 < 0$ where $u = -1$:
 
-```@example main
-extremal = f_bb((t0, tf_s), x0, p0_s; variable=tf_s)
-p₂(t) = costate(extremal)(t)[2]
-minimum(p₂, range(t0, t1_s; length=100)[1:(end - 1)]),
+```@repl main
+extremal = f_bb((t0, tf_s), x0, p0_s; variable=tf_s);
+p₂(t) = costate(extremal)(t)[2];
+minimum(p₂, range(t0, t1_s; length=100)[1:(end - 1)])
 maximum(p₂, range(t1_s, tf_s; length=100)[2:end])
 ```
 
 **The direct and indirect costs agree.** The final time is the cost, so the indirect and the direct solutions agree when their
 final times do:
 
-```@example main
-tf_s, objective(sol_d)
+```@repl main
+tf_s
+objective(sol_d)
 ```
 
 ```@example main

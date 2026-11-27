@@ -90,15 +90,15 @@ A flow is called in two ways. At a point, it returns the state and the costate a
 time. From the exact initial costate $p(0) = (12, 6)$, it reaches the target $x(1) = (0, 0)$,
 with $p(1) = (12, -6)$:
 
-```@example main
+```@repl main
 xf, pf = f(t0, x0, [12, 6], tf)
 ```
 
 On a time span, it returns the whole trajectory, as a [`Solution`](@ref results-solution)
 that can be read and plotted like the solution of a direct solve:
 
-```@example main
-sol = f((t0, tf), x0, [12, 6])
+```@repl main
+sol = f((t0, tf), x0, [12, 6]);
 objective(sol)
 ```
 
@@ -136,7 +136,7 @@ Main.CTBase.DevTools.repl_without_extensions(
 
 ::: details `describe(:sciml)`
 
-```@example main
+```@repl main
 describe(:sciml)
 ```
 
@@ -152,9 +152,9 @@ grid of a trajectory and `saveat`.
 Another integrator only needs its package. Here the 9th-order Verner method, with tighter
 tolerances:
 
-```@example main
+```@repl main
 using OrdinaryDiffEqVerner
-f9 = Flow(ocp, (x, p) -> p[2]; alg=Vern9(), reltol=1e-12, abstol=1e-12)
+f9 = Flow(ocp, (x, p) -> p[2]; alg=Vern9(), reltol=1e-12, abstol=1e-12);
 f9(t0, x0, [12, 6], tf)
 ```
 
@@ -166,7 +166,7 @@ nothing                                                                         
 
 ::: details `describe(:di)`
 
-```@example main
+```@repl main
 describe(:di)
 ```
 
