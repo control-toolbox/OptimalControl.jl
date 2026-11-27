@@ -223,15 +223,6 @@ $-1$: the transversality condition of the Mayer term $t_f(1)$, with $p^0 = -1$.
 nothing                                                                    # hide
 ```
 
-The constant `0` in the dynamics is fine for a flow. To solve this problem with the direct
-method and the default modeler, write `0 * u(s)` instead (see
-[Dynamics](@ref modelling-abstract-syntax-dynamics)):
-
-```julia
-ẏ(s) == [tf(s)^2 * u(s), 0]          # [!code --]
-ẏ(s) == [tf(s)^2 * u(s), 0 * u(s)]   # [!code ++]
-```
-
 ## [The costate of the variable](@id flows-from-ocp-variable-costate)
 
 With `variable_costate=true`, the point call also integrates the costate of the variable,

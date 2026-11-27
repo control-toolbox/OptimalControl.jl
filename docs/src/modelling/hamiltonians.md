@@ -51,24 +51,19 @@ Its pseudo-Hamiltonian, in the normal case $p^0 = -1$, is
 H(x, p, u) = p_1 v + p_2 u - \frac{u^2}{2}.
 ```
 
-`pseudo_hamiltonian` builds it from the model:
+`pseudo_hamiltonian` builds it from the model, and its display gives the two ways to call it:
 
-```@example main
+```@repl main
 H = pseudo_hamiltonian(ocp)
 ```
 
-It is called with its **natural** signature, which follows the problem: here, an autonomous
-problem without variable, `H(x, p, u)`:
+The **natural** call follows the problem: here, an autonomous problem without variable,
+`H(x, p, u)`. The **uniform** call, `H(t, x, p, u, v)`, takes every argument whatever the
+problem, with `nothing` for a missing variable:
 
-```@example main
-x, p, u = [1.0, 2.0], [3.0, 4.0], 0.5
-H(x, p, u)      # p₁v + p₂u − u²/2 = 6 + 2 − 0.125
-```
-
-The **uniform** signature, `H(t, x, p, u, v)`, takes every argument whatever the problem,
-with `nothing` for a missing variable:
-
-```@example main
+```@repl main
+x, p, u = [1.0, 2.0], [3.0, 4.0], 0.5;
+H(x, p, u)                  # p₁v + p₂u − u²/2 = 6 + 2 − 0.125
 H(0.0, x, p, u, nothing)
 ```
 
@@ -91,13 +86,10 @@ only $p^0$ depends on the criterion. The keyword `p0` gives it:
 | `min` | $p^0 = -1$ | $p^0 = 0$ | $p^0 \le 0$ |
 | `max` | $p^0 = +1$ | $p^0 = 0$ | $p^0 \ge 0$ |
 
-```@example main
-pseudo_hamiltonian(ocp; p0=0)(x, p, u)   # abnormal case: p₁v + p₂u
-```
-
-A $p^0$ whose sign contradicts the criterion is rejected:
+The abnormal case drops the cost; a $p^0$ whose sign contradicts the criterion is rejected:
 
 ```@repl main
+pseudo_hamiltonian(ocp; p0=0)(x, p, u)   # p₁v + p₂u
 pseudo_hamiltonian(ocp; p0=1)
 ```
 
@@ -112,10 +104,10 @@ Hamiltonian of this law is
 
 and `hamiltonian(ocp, u)` builds it, here named `h` in the code:
 
-```@example main
-u_max(x, p) = p[2]
+```@repl main
+u_max(x, p) = p[2];
 h = hamiltonian(ocp, u_max)
-h(x, p)         # p₁v + p₂²/2 = 6 + 8
+h(x, p)                     # p₁v + p₂²/2 = 6 + 8
 ```
 
 The law is a plain function with the natural arity of the problem (`u(x, p)`,
@@ -134,8 +126,15 @@ ocp_cf = @def begin
     ẋ(t) == -x(t)
     ∫(x(t)^2) → min
 end
+nothing # hide
+```
+
+```@repl main
 hamiltonian(ocp_cf)(2.0, 3.0)   # p·(−x) − x² = −6 − 4
 ```
+
+Asking for a pseudo-Hamiltonian of a control-free problem, or for a Hamiltonian without a
+law of a problem with a control, raises an error:
 
 ```@repl main
 pseudo_hamiltonian(ocp_cf)
@@ -152,16 +151,17 @@ gives the same extremal. From here on, `p0` is the initial costate, as in the ca
 not the keyword `p0` of the cost multiplier $p^0$ above (see
 [The cost multiplier](@ref flows-from-ocp-p0)):
 
-```@example main
-p0 = [12.0, 6.0]
-f = Flow(ocp, u_max)
-g = Flow(h)
-f(t0, x0, p0, tf), g(t0, x0, p0, tf)
+```@repl main
+p0 = [12.0, 6.0];
+f = Flow(ocp, u_max);
+g = Flow(h);
+f(t0, x0, p0, tf)
+g(t0, x0, p0, tf)
 ```
 
 Conversely, a flow gives back the Hamiltonian it integrates, the very same object:
 
-```@example main
+```@repl main
 hamiltonian(f) === h
 ```
 
@@ -179,8 +179,8 @@ evaluated with the pseudo-Hamiltonian of the problem, at the control of the last
 The maximisation condition says that $\partial H / \partial u = 0$ along the optimal law,
 when the control is in the interior of the control set. With `ForwardDiff`:
 
-```@example main
-∂uH(x, p, u) = ForwardDiff.derivative(w -> H(x, p, w), u)
+```@repl main
+∂uH(x, p, u) = ForwardDiff.derivative(w -> H(x, p, w), u);
 ∂uH(x, p, u_max(x, p))
 ```
 
@@ -205,7 +205,13 @@ vanishes, so the two coincide:
 ```@example main
 ∇p_total = ForwardDiff.gradient(q -> h(x, q), p)
 ∇p_partial = ForwardDiff.gradient(q -> H(x, q, u_max(x, p)), p)
-∇p_total, ∇p_partial
+@show ∇p_total ∇p_partial
+nothing # hide
+```
+
+```@example main
+@assert ∇p_total ≈ ∇p_partial ≈ [2.0, 4.0]   # hide
+nothing                                     # hide
 ```
 
 For a law that does not maximise $H$, such as $u = p_2 + 1$, it does not: $\partial H /
@@ -216,7 +222,11 @@ the law actually drives.
 ```@example main
 law(x, p) = p[2] + 1
 h_law = hamiltonian(ocp, law)
-∂uH(x, p, law(x, p)), ForwardDiff.gradient(q -> h_law(x, q), p), ForwardDiff.gradient(q -> H(x, q, law(x, p)), p)
+∂uH_law = ∂uH(x, p, law(x, p))
+∇p_total = ForwardDiff.gradient(q -> h_law(x, q), p)
+∇p_partial = ForwardDiff.gradient(q -> H(x, q, law(x, p)), p)
+@show ∂uH_law ∇p_total ∇p_partial
+nothing # hide
 ```
 
 The same holds for the [multipliers](@ref modelling-hamiltonians-feedback) of the
@@ -227,9 +237,9 @@ partial one freezes it. Both coincide on an optimal arc, where the constraint is
 @assert H(x, p, u) ≈ 7.875                                  # hide
 @assert h(x, p) ≈ 14.0                                      # hide
 @assert ∂uH(x, p, u_max(x, p)) == 0                        # hide
-@assert ∇p_total ≈ ∇p_partial ≈ [2.0, 4.0]                  # hide
-@assert ForwardDiff.gradient(q -> h_law(x, q), p) ≈ [2.0, 4.0]                # hide
-@assert ForwardDiff.gradient(q -> H(x, q, law(x, p)), p) ≈ [2.0, 5.0]       # hide
+@assert ∂uH_law == -1                                       # hide
+@assert ∇p_total ≈ [2.0, 4.0]                               # hide
+@assert ∇p_partial ≈ [2.0, 5.0]                             # hide
 nothing                                                     # hide
 ```
 
@@ -262,9 +272,14 @@ ocp_c = @def begin
     ẋ(t) == [v(t), u(t)]
     0.5∫(u(t)^2) → min
 end
+nothing # hide
+```
 
+The multiplier comes right after the control, in the natural and in the uniform call:
+
+```@repl main
 Hc = pseudo_hamiltonian(ocp_c; constraints=:v_con)
-μ = 2.0
+μ = 2.0;
 Hc(x, p, u, μ) - H(x, p, u)     # μ (v_max − v) = 2 (1.2 − 2)
 ```
 
@@ -319,9 +334,9 @@ On the boundary arc of the speed limit, $v = v_{\max}$, so $u = 0$; the maximisa
 condition gives $p_2 = 0$, and the adjoint equation $\dot p_2 = -p_1 + \mu = 0$ gives
 $\mu = p_1$:
 
-```@example main
-μ_b(x, p) = p[1]
-h_b = hamiltonian(ocp_c, (x, p) -> 0; multipliers=:v_con => μ_b)
+```@repl main
+μ_b(x, p) = p[1];
+h_b = hamiltonian(ocp_c, (x, p) -> 0; multipliers=:v_con => μ_b);
 h_b([-0.8, v_max], [38.4, 0.0])   # p₁ v_max on the arc
 ```
 
