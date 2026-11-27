@@ -291,7 +291,7 @@ of the control are drawn on the control panel.
 Switching at t₁ and stopping at t_f = t₁ + v(t₁) requires q(t₁) + v(t₁)²/2 = 0, that is
 t₁ − v₁ + v₁²/2 = 1 with v₁ = 1 − e^{−t₁}. This gives t₁ ≈ 1.47 and t_f ≈ 2.24:
 
-```@example main
+```@repl main
 final_time(sol_c)
 ```
 
@@ -400,7 +400,7 @@ plot(sol_flow)
 The solution of a flow is sampled on 250 times by default, denser where the curves bend, so
 the curves are smooth even when the integrator takes few steps:
 
-```@example main
+```@repl main
 length(time_grid(sol_flow))
 ```
 
@@ -425,8 +425,8 @@ The `grid` keyword of the call changes this: `grid=n` gives `n` evenly spaced ti
 `grid=OptimalControl.AdaptiveGrid(n)` gives `n` times placed as above, and `grid=nothing`
 keeps the steps of the integrator only, here 5, so the curves become polygons:
 
-```@example main
-sol_steps = f((t0, tf), x0, p0; grid=nothing)
+```@repl main
+sol_steps = f((t0, tf), x0, p0; grid=nothing);
 length(time_grid(sol_steps))
 ```
 

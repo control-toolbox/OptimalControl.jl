@@ -54,11 +54,10 @@ the file and the model (dimensions, constraints).
 
 [JLD2](https://github.com/JuliaIO/JLD2.jl) writes a binary file, `solution.jld2`:
 
-```@example main
+```@repl main
 using JLD2
 export_ocp_solution(sol; format=:JLD, filename="solution")
-
-sol_jld = import_ocp_solution(ocp; format=:JLD, filename="solution")
+sol_jld = import_ocp_solution(ocp; format=:JLD, filename="solution");
 objective(sol_jld) == objective(sol)
 ```
 
@@ -67,11 +66,10 @@ objective(sol_jld) == objective(sol)
 [JSON](https://github.com/JuliaIO/JSON.jl) writes a text file, `solution.json`, which other
 languages and tools can read:
 
-```@example main
+```@repl main
 using JSON
 export_ocp_solution(sol; format=:JSON, filename="solution")
-
-sol_json = import_ocp_solution(ocp; format=:JSON, filename="solution")
+sol_json = import_ocp_solution(ocp; format=:JSON, filename="solution");
 objective(sol_json) == objective(sol)
 ```
 
@@ -82,11 +80,12 @@ and costate on that grid, the variable, the multipliers, the solver's status, me
 iteration count, and, for the solution of a concatenation of flows, its
 [switching structure](@ref flows-multi-phase-switching). The model is the one you pass:
 
-```@example main
-tg = time_grid(sol)
-time_grid(sol_json) == tg,
-all(state(sol_json)(t) == state(sol)(t) for t in tg),
-status(sol_json), iterations(sol_json) == iterations(sol),
+```@repl main
+tg = time_grid(sol);
+time_grid(sol_json) == tg
+all(state(sol_json)(t) == state(sol)(t) for t in tg)
+status(sol_json)
+iterations(sol_json) == iterations(sol)
 model(sol_json) === ocp
 ```
 
@@ -104,8 +103,9 @@ nothing                                                                       # 
 So the choice is about the file, not the content. JLD2 is compact (here about 35 kB) but
 readable from Julia only. JSON is about 3 times larger, and readable anywhere.
 
-```@example main
-filesize("solution.jld2"), filesize("solution.json")
+```@repl main
+filesize("solution.jld2")
+filesize("solution.json")
 ```
 
 ## Reloading as an initial guess
@@ -115,9 +115,10 @@ A reloaded solution is a warm start, like a freshly computed one (see
 solution, the solver stops at once, with 0 iterations. From scratch it needs 1 here, since
 this problem is a quadratic program; on a nonlinear problem the saving is larger.
 
-```@example main
-sol_warm = solve(ocp; init=sol_jld, display=false)
-iterations(sol), iterations(sol_warm)
+```@repl main
+sol_warm = solve(ocp; init=sol_jld, display=false);
+iterations(sol)
+iterations(sol_warm)
 ```
 
 ```@example main
@@ -132,7 +133,7 @@ nothing                                                       # hide
 is why the same `filename="solution"` works for both formats above. A name that already ends
 with the extension is used as it is:
 
-```@example main
+```@repl main
 export_ocp_solution(sol; format=:JLD, filename="sol.jld2")
 isfile("sol.jld2")
 ```

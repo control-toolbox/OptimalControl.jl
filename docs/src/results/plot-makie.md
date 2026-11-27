@@ -163,8 +163,8 @@ f
 
 The switching time is read off the control: the first grid point where u becomes positive.
 
-```@example main
-u_bb = control(sol_bb)
+```@repl main
+u_bb = control(sol_bb);
 t_switch = first(t for t in time_grid(sol_bb) if u_bb(t) > 0)
 ```
 
