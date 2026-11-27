@@ -108,8 +108,9 @@ function final_state_or_nothing(x0)
     end
 end
 Base.CoreLogging.with_logger(Base.CoreLogging.NullLogger()) do # hide
-final_state_or_nothing(-1.0), final_state_or_nothing(1.0)
+@show final_state_or_nothing(-1.0) final_state_or_nothing(1.0)
 end # hide
+nothing # hide
 ```
 
 ```@example errors
