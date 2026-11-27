@@ -307,6 +307,14 @@ links = InterLinks(
         joinpath(@__DIR__, "inventories", "Tutorials.toml"),
         "https://control-toolbox.org/Tutorials.jl/stable/objects.inv",
     ),
+    # The CTFlows 0.20 docstrings, rendered on api/flows.md, link to
+    # `CTFlows.Systems.pseudo_hamiltonian`, a name no inventory has: the function is owned by
+    # `CTBase.Data` and only extended by CTFlows. This alias points it to the CTBase entry.
+    # Remove it once CTFlows links to `CTBase.Data.pseudo_hamiltonian`.
+    "CTFlowsAliases" => (
+        "https://control-toolbox.org/CTBase.jl/stable/",
+        joinpath(@__DIR__, "inventories", "CTFlowsAliases.toml"),
+    ),
 )
 
 # ═══════════════════════════════════════════════════════════════════════════════
