@@ -153,6 +153,24 @@ p0_s, t1_s, tf_s = sol.u[1:2], sol.u[3], sol.u[4]
 sol.u, sol.retcode
 ```
 
+Newton's method differentiates the shooting function with `ForwardDiff`, through the flows and
+the switching time $t_1$, which is an unknown: its Jacobian is exact, with respect to the
+switching times and the final time as with respect to the initial costate.
+
+```@example main
+using ForwardDiff: ForwardDiff                                                          # hide
+J = ForwardDiff.jacobian((s, ξ) -> shoot!(s, ξ, nothing), zeros(4), ξ_guess)            # hide
+h = 1e-6                                                                                # hide
+fd = map(1:4) do j                                                                      # hide
+    e = zeros(4); e[j] = h                                                              # hide
+    sp, sm = zeros(4), zeros(4)                                                         # hide
+    shoot!(sp, ξ_guess + e, nothing); shoot!(sm, ξ_guess - e, nothing)                  # hide
+    (sp - sm) / 2h                                                                      # hide
+end                                                                                     # hide
+@assert isapprox(J, reduce(hcat, fd); atol=1e-5)                                        # hide
+nothing                                                                                 # hide
+```
+
 ## Checking the solution
 
 A zero of the shooting function satisfies the conditions that were written, and nothing

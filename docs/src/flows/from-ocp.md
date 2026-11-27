@@ -349,6 +349,38 @@ example, not of `:total`.
 nothing                                              # hide
 ```
 
+## [Backward integration](@id flows-from-ocp-backward)
+
+A flow is integrated backward when $t_f < t_0$: from the state and the costate given at
+$t_0$, down to $t_f$. Here from the end of the extremal, $x(1) = (0, 0)$ and
+$p(1) = (12, -6)$, back to $x(0) = (-1, 0)$ and $p(0) = (12, 6)$:
+
+```@example main
+@show f(tf, [0, 0], [12, -6], t0)
+nothing # hide
+```
+
+The trajectory call returns the solution **in increasing time**, whatever the direction of
+integration: the same solution as the forward call over the same interval, with its time grid
+from $t_f$ to $t_0$, and its objective, the cost of the arc:
+
+```@example main
+sol_back = f((tf, t0), [0, 0], [12, -6])
+@show time_grid(sol_back)[[1, end]] objective(sol_back)
+nothing # hide
+```
+
+```@example main
+xb, pb = f(tf, [0, 0], [12, -6], t0)                                                # hide
+@assert isapprox(xb, x0; atol=1e-8) && isapprox(pb, p0; atol=1e-8)                   # hide
+@assert time_grid(sol_back)[[1, end]] == [t0, tf]                                    # hide
+@assert isapprox(objective(sol_back), 6; atol=1e-8)                                  # hide
+@assert isapprox(state(sol_back)(0.5), state(f((t0, tf), x0, p0))(0.5); atol=1e-8)   # hide
+nothing                                                                              # hide
+```
+
+For a concatenation of flows, see [The horizon of a call](@ref flows-multi-phase-horizon).
+
 ## What comes back
 
 The point call `f(t0, x0, p0, tf)` returns `(xf, pf)`, or `(xf, pf, pvf)` with

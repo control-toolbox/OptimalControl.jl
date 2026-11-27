@@ -179,6 +179,61 @@ plot(sol_bb)
 
 The structure is saved and loaded with the solution (see [Save & load](@ref results-save-load)).
 
+### [The horizon of a call](@id flows-multi-phase-horizon)
+
+A concatenation can be called on any horizon $[t_0, t_f]$: it may start after a switching
+time, end before one, lie inside a single phase, or be **backward**, $t_0 > t_f$. Only the
+phases the horizon meets are integrated, each on its part of the horizon, the first phase
+holding before $t_1$ and the last one after the last switching time. The rules:
+
+- a **jump** is applied only at a switching time **strictly inside** the horizon;
+- at a bound equal to a switching time $t_i$, the given and the returned values are **those on
+  the side of the horizon**: `f(tᵢ, x0, p0, tf)` starts the phase after $t_i$ from
+  $(x_0, p_0)$, with no jump, and `f(t0, x0, p0, tᵢ)` returns the end of the phase before
+  $t_i$;
+- on a **backward** horizon, the jumps crossed are **inverted**: a jump given as a vector is
+  subtracted; a jump given as a function has no known inverse, and crossing it backward raises
+  an `IncorrectArgument`;
+- so calling back from $t_f$ with the values reached at $t_f$ gives the initial values back.
+
+On the bang–bang extremal, $p(t) = (1, 1 - t)$, $(q, v)(0.5) = (-0.875, 0.5)$ and
+$(q, v)(1.5) = (-0.125, 0.5)$:
+
+```@example main
+@show f_bb(0, [-1, 0], [1, 1], 0.5; variable=tf)           # the first phase only
+@show f_bb(1.5, [-0.125, 0.5], [1, -0.5], tf; variable=tf)  # the second phase only
+@show f_bb(tf, [0, 0], [1, -1], 0; variable=tf)             # backward, back to the start
+nothing # hide
+```
+
+A trajectory is returned **in increasing time**, whatever the direction of integration: the
+solution of a backward call is the same as the one of the forward call over the same interval,
+with its switching times, the labels of its phases and its objective, the cost of the arc:
+
+```@example main
+sol_back = f_bb((tf, 0), [0, 0], [1, -1]; variable=tf)
+@show time_grid(sol_back)[[1, end]] switching_times(sol_back) phase_labels(sol_back)
+@show objective(sol_back)
+nothing # hide
+```
+
+```@example main
+x05, p05 = f_bb(0, [-1, 0], [1, 1], 0.5; variable=tf)                                # hide
+@assert isapprox(x05, [-0.875, 0.5]; atol=1e-8) && isapprox(p05, [1, 0.5]; atol=1e-8)  # hide
+x2, p2 = f_bb(1.5, [-0.125, 0.5], [1, -0.5], tf; variable=tf)                          # hide
+@assert isapprox(x2, [0, 0]; atol=1e-8) && isapprox(p2, [1, -1]; atol=1e-8)           # hide
+xb, pb = f_bb(tf, [0, 0], [1, -1], 0; variable=tf)                                     # hide
+@assert isapprox(xb, [-1, 0]; atol=1e-8) && isapprox(pb, [1, 1]; atol=1e-8)           # hide
+@assert time_grid(sol_back)[[1, end]] == [0, tf] && switching_times(sol_back) == [t1]   # hide
+@assert phase_labels(sol_back) == ["u = +1", "u = -1"]                                 # hide
+@assert isapprox(objective(sol_back), tf; atol=1e-8)                                   # hide
+@assert isapprox(state(sol_back)(0.5), [-0.875, 0.5]; atol=1e-8)                      # hide
+nothing                                                                                # hide
+```
+
+The costate jumps of a boundary arc are vectors, so the flows of
+[Constrained arcs](@ref flows-constrained-arcs) are integrated backward as well.
+
 ## Example: off arc, then bang
 
 Minimise the $L^1$ norm of the control,

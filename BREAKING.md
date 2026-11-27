@@ -32,6 +32,21 @@ Flow(ocp, u; multipliers=(:a => μa, :b => μb))
 switching_times(f), phase_flows(f), pseudo_hamiltonian_gradient(f)
 ```
 
+### A trajectory integrated backward is returned in increasing time (CTFlows 0.20)
+
+A trajectory call of a flow with `t0 > tf` returns the `Solution` of the arc in increasing
+time ([#1093](https://github.com/control-toolbox/OptimalControl.jl/issues/1093),
+[CTFlows#547](https://github.com/control-toolbox/CTFlows.jl/issues/547)): the same time grid,
+switching times and objective as the forward call over the same interval. The state at a given
+time is unchanged.
+
+```julia
+# Before
+time_grid(f((1.0, 0.0), x1, p1))   # [1.0, …, 0.0]
+# After
+time_grid(f((1.0, 0.0), x1, p1))   # [0.0, …, 1.0]
+```
+
 ### No module name is exported
 
 `using OptimalControl` used to bring the modules `CTModels`, `ExaModels`, `CTBase`,
