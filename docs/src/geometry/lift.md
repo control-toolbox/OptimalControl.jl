@@ -16,18 +16,18 @@ using OrdinaryDiffEqTsit5
 
 ## From a plain function
 
-```@example main
-X(x) = [x[2], -x[1]]
+```@repl main
+X(x) = [x[2], -x[1]];
 H = Lift(X)
-
-x, p = [1.0, 2.0], [3.0, 4.0]
+x, p = [1.0, 2.0], [3.0, 4.0];
 H(x, p)   # 3 × 2 + 4 × (-1)
 ```
 
 The lift of a plain function is a function, not a `Hamiltonian`:
 
-```@example main
-H isa Function, H isa AbstractHamiltonian
+```@repl main
+H isa Function
+H isa AbstractHamiltonian
 ```
 
 ## From a typed vector field
@@ -35,10 +35,11 @@ H isa Function, H isa AbstractHamiltonian
 The lift of a `VectorField` is a `Hamiltonian`, with the same dependence on time and on the
 variable as the vector field:
 
-```@example main
-XV = VectorField(x -> [x[2], -x[1]])
+```@repl main
+XV = VectorField(x -> [x[2], -x[1]]);
 HV = Lift(XV)
-HV isa AbstractHamiltonian, HV(x, p)
+HV isa AbstractHamiltonian
+HV(x, p)
 ```
 
 ## Time and variable
@@ -46,7 +47,7 @@ HV isa AbstractHamiltonian, HV(x, p)
 For a vector field $X(t, x)$, pass `is_autonomous=false`, and the lift is called as
 $H(t, x, p)$. With $X(t, x) = (t x_2, -x_1)$, $H(2, x, p) = 3 \times 4 + 4 \times (-1) = 8$:
 
-```@example main
+```@repl main
 Ht = Lift((t, x) -> [t * x[2], -x[1]]; is_autonomous=false)
 Ht(2.0, x, p)
 ```
@@ -54,7 +55,7 @@ Ht(2.0, x, p)
 For a vector field $X(x, v)$, pass `is_variable=true`, and the lift is called as
 $H(x, p, v)$. With $X(x, v) = (x_2 + v, -x_1)$, $H(x, p, 1) = 3 \times 3 + 4 \times (-1) = 5$:
 
-```@example main
+```@repl main
 Hv = Lift((x, v) -> [x[2] + v, -x[1]]; is_variable=true)
 Hv(x, p, 1.0)
 ```
@@ -78,8 +79,8 @@ $p(t) = e^{t} p_0$. A `Hamiltonian` is needed to build the flow (see
 [From Hamiltonians](@ref flows-from-hamiltonians)), so lift a `VectorField`, or wrap the
 lift of a function in `Hamiltonian`:
 
-```@example main
-f = Flow(Lift(VectorField(x -> -x)))
+```@repl main
+f = Flow(Lift(VectorField(x -> -x)));
 xf, pf = f(0, x, p, 1)
 ```
 

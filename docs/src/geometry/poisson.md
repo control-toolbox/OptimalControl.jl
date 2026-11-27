@@ -21,32 +21,29 @@ $\nabla_p H = (x_2, x_1)$, $\nabla_x G = (2x_1, 0)$, $\nabla_x H = (p_2, p_1)$ a
 $\nabla_p G = (0, 2p_2)$, so $\{H, G\} = 2x_1 x_2 - 2p_1 p_2$, which is $-20$ at
 $x = (1, 2)$, $p = (3, 4)$:
 
-```@example main
-H(x, p) = p[1] * x[2] + p[2] * x[1]
-G(x, p) = x[1]^2 + p[2]^2
-
-x, p = [1.0, 2.0], [3.0, 4.0]
+```@repl main
+H(x, p) = p[1] * x[2] + p[2] * x[1];
+G(x, p) = x[1]^2 + p[2]^2;
+x, p = [1.0, 2.0], [3.0, 4.0];
 Poisson(H, G)(x, p)
 ```
 
 On `Hamiltonian`s, `Poisson` returns a `Hamiltonian`, which can be bracketed again:
 
-```@example main
-HT = Hamiltonian(H)
-GT = Hamiltonian(G)
-
+```@repl main
+HT = Hamiltonian(H);
+GT = Hamiltonian(G);
 B = Poisson(HT, GT)
-B isa Hamiltonian, Poisson(B, GT)(x, p)   # {{H, G}, G}
+Poisson(B, GT)(x, p)   # {{H, G}, G}
 ```
 
 For functions of $(t, x, p)$, pass `is_autonomous=false`, and for functions of $(x, p, v)$,
 `is_variable=true`. The derivatives are taken with respect to $x$ and $p$ only, so adding
 terms in $t$ does not change the bracket:
 
-```@example main
-Ht(t, x, p) = t + H(x, p)
-Gt(t, x, p) = t^2 + G(x, p)
-
+```@repl main
+Ht(t, x, p) = t + H(x, p);
+Gt(t, x, p) = t^2 + G(x, p);
 Poisson(Ht, Gt; is_autonomous=false)(1.0, x, p)
 ```
 
@@ -76,7 +73,8 @@ leibniz = Poisson((x, p) -> H(x, p) * G(x, p), K)(x, p) -
           (H(x, p) * Poisson(G, K)(x, p) + G(x, p) * Poisson(H, K)(x, p))
 jacobi = Poisson(Poisson(H, G), K)(x, p) + Poisson(Poisson(K, H), G)(x, p) +
          Poisson(Poisson(G, K), H)(x, p)
-antisymmetry, leibniz, jacobi
+@show antisymmetry leibniz jacobi
+nothing # hide
 ```
 
 ```@example main
@@ -119,7 +117,8 @@ t, h = 0.5, 1e-4
 xt, pt = flow(0.0, x, p, t)
 lhs = (G_along(t + h) - G_along(t - h)) / 2h
 rhs = ∂ₜ(Gn)(t, xt, pt) + Poisson(Hn, Gn; is_autonomous=false)(t, xt, pt)
-lhs, rhs
+@show lhs rhs
+nothing # hide
 ```
 
 ```@example main
@@ -172,7 +171,9 @@ H101 = Poisson(H1, H01)
 
 q = [0.3, -0.1, 0.5]
 p_s = [1.7, 1.7 * tan(q[3]), 0]   # a point where H₁ = H₀₁ = 0
-H1(q, p_s), H01(q, p_s), -H001(q, p_s) / H101(q, p_s), sin(q[3])^2
+u_s = -H001(q, p_s) / H101(q, p_s)
+@show H1(q, p_s) H01(q, p_s) u_s sin(q[3])^2
+nothing # hide
 ```
 
 ```@example main

@@ -59,12 +59,12 @@ For $X(x) = (x_1^2, x_2^2)$ and $Y(x) = (x_2, -x_1)$, the bracket is
 $[X, Y](x) = (x_2^2 - 2x_1 x_2,\ 2 x_1 x_2 - x_1^2)$, so at $x = (1, 2)$, $[X, Y] = (0, 3)$,
 and at $p = (3, 4)$ both sides equal $12$:
 
-```@example main
-X(x) = [x[1]^2, x[2]^2]
-Y(x) = [x[2], -x[1]]
-
-x, p = [1.0, 2.0], [3.0, 4.0]
-Poisson(Lift(X), Lift(Y))(x, p), Lift(ad(X, Y))(x, p)
+```@repl main
+X(x) = [x[1]^2, x[2]^2];
+Y(x) = [x[2], -x[1]];
+x, p = [1.0, 2.0], [3.0, 4.0];
+Poisson(Lift(X), Lift(Y))(x, p)
+Lift(ad(X, Y))(x, p)
 ```
 
 ```@example main

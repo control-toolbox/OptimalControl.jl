@@ -9,7 +9,7 @@ using OptimalControl
 
 ## The default
 
-```@example main
+```@repl main
 dg_ad_backend()
 ```
 
@@ -20,7 +20,7 @@ and on the GPU:
 
 ::: details `describe(:di)`
 
-```@example main
+```@repl main
 describe(:di)
 ```
 
@@ -36,32 +36,30 @@ package [DifferentiationInterface](https://github.com/JuliaDiff/DifferentiationI
 re-exports the ADTypes backend types; add it to your environment to use them. For example,
 ForwardDiff with a chunk size of one:
 
-```@example main
+```@repl main
 using DifferentiationInterface: AutoForwardDiff
-
 backend = OptimalControl.DifferentiationInterface(; ad_backend=AutoForwardDiff(chunksize=1))
 ```
 
 Every operation accepts `ad_backend=` for one call:
 
-```@example main
-X(x) = [x[2], -x[1]]
-f(x) = x[1]^2 + x[2]^2 + x[1]
-
+```@repl main
+X(x) = [x[2], -x[1]];
+f(x) = x[1]^2 + x[2]^2 + x[1];
 ad(X, f; ad_backend=backend)([1.0, 2.0])   # 2x₁x₂ - 2x₂x₁ + x₂
 ```
 
 `dg_ad_backend!` changes the default for the rest of the session. Keep the previous one to
 restore it:
 
-```@example main
-previous = dg_ad_backend()
-dg_ad_backend!(backend)
+```@repl main
+previous = dg_ad_backend();
+dg_ad_backend!(backend);
 ad(X, f)([1.0, 2.0])
 ```
 
-```@example main
-dg_ad_backend!(previous)
+```@repl main
+dg_ad_backend!(previous);
 dg_ad_backend()
 ```
 
@@ -77,7 +75,7 @@ nothing                                                # hide
 The GPU backend is built with the parameter `GPU`. Its default is Mooncake, since ForwardDiff
 does not run on GPU arrays:
 
-```@example main
+```@repl main
 OptimalControl.DifferentiationInterface{GPU}()
 ```
 
