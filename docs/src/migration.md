@@ -42,7 +42,7 @@ method, `solve`, does not need it. See [Installation](@ref getting-started-insta
 | `HamiltonianLift` | `Lift(f)` to build; `OptimalControl.LiftedHamiltonianFunction` to name the type | renamed **and** re-parented, see [What changed meaning silently](@ref migration-silent) |
 | `autonomous=`, `variable=`, `inplace=` (constructor keywords) | `is_autonomous=`, `is_variable=`, `is_inplace=` | on `VectorField`, `Hamiltonian`, `@Lie`, and the other constructors |
 | `Flow(f)` with `f::Function` | `Flow(VectorField(f))`, `Flow(Hamiltonian(f))`, `Flow(HamiltonianVectorField(f))` | a function alone does not say which flow to build |
-| `Flow(ocp, u, g, μ)` | `Flow(ocp, u; constraint=g, multiplier=μ)` | two keywords, given together |
+| `Flow(ocp, u, g, μ)` | `Flow(ocp, u; multipliers=g => μ)` | a constraint and its multiplier, as a pair |
 | `f(t0, x0, p0, tf, λ)`, `f(t0, x0, tf, λ)` | `f(t0, x0, p0, tf; variable=λ)`, `f(t0, x0, tf; variable=λ)` | `variable=` is a keyword, required on a problem with a variable |
 | `augment=true` | `variable_costate=true` | returns `(xf, pf, pvf)` |
 | `CTSolvers.Modelers.ADNLP()`, `CTDirect.Collocation()` | `OptimalControl.ADNLP()`, `OptimalControl.Collocation()` | the modules `CTSolvers` and `CTDirect` are not exported |
@@ -72,18 +72,18 @@ f = Flow(ocp, (x, p) -> p[2]; abstol=1e-8)
 f(t0, x0, p0, tf)
 ```
 
-**Constrained flows.** The constraint and the multiplier are keywords, given together:
+**Constrained flows.** The constraint and its multiplier are a keyword, as a pair:
 
 ```julia
-fb = Flow(ocp, u, g, μ)                         # [!code --]
-fb = Flow(ocp, u; constraint=g, multiplier=μ)   # [!code ++]
+fb = Flow(ocp, u, g, μ)                  # [!code --]
+fb = Flow(ocp, u; multipliers=g => μ)    # [!code ++]
 ```
 
-One without the other is an `IncorrectArgument`. `constraint=` accepts a function, a typed
-constraint, or the label of a constraint of the problem, `constraint=:vmax`: a path
-constraint or a box on the state or the control. The label takes the constraint with its
-bound and its side, and the solution of the flow then carries its multiplier: see
-[Constrained arcs](@ref flows-constrained-arcs).
+`multipliers=` takes a constraint and its multiplier as a pair, or several pairs. The
+constraint is a function, a typed constraint, or the label of a constraint of the problem,
+`multipliers=:vmax => μ`: a path constraint or a box on the state or the control. The label
+takes the constraint with its bound and its side, and the solution of the flow then carries
+its multiplier: see [Constrained arcs](@ref flows-constrained-arcs).
 
 **Constructor keywords take an `is_` prefix**, on `VectorField`, `Hamiltonian`, `@Lie`, and the
 other constructors:
@@ -97,6 +97,31 @@ VectorField(f; is_autonomous=false, is_variable=true)   # [!code ++]
 
 The old keyword on `@Lie` raises an `IncorrectArgument` that lists the accepted keywords. On
 `VectorField` and `Hamiltonian`, it raises a `MethodError`, "got unsupported keyword argument".
+
+## [Constrained flows and the accessors of a flow](@id migration-ctflows-0-20)
+
+Two later changes, with CTFlows 0.20, rename what v2.1.0-beta introduced. The old spellings
+throw an error that gives the new one.
+
+**A constraint and its multiplier are one pair**, as for
+[`hamiltonian(ocp, u; multipliers=…)`](@ref modelling-hamiltonians-feedback):
+
+```julia
+Flow(ocp, u; constraint=:c, multiplier=μ)                 # [!code --]
+Flow(ocp, u; constraint=(:a, :b), multiplier=(μa, μb))    # [!code --]
+Flow(ocp, u; multipliers=:c => μ)                         # [!code ++]
+Flow(ocp, u; multipliers=(:a => μa, :b => μb))            # [!code ++]
+```
+
+**The accessors of a flow have no `get_` prefix**, and a flow, its trajectory and its solution
+share `switching_times` and `phase_labels`:
+
+| Before | Now |
+| :--- | :--- |
+| `get_hamiltonian_gradient(f)`, `get_variable_gradient(f)` | `hamiltonian_gradient(f)`, `variable_gradient(f)` |
+| `get_pseudo_hamiltonian_gradient(f)`, `get_pseudo_variable_gradient(f)` | `pseudo_hamiltonian_gradient(f)`, `pseudo_variable_gradient(f)` |
+| `get_switching_times(f)`, `get_flows(f)`, `get_jumps(f)` | `switching_times(f)`, `phase_flows(f)`, `jumps(f)` |
+| `get_switching_time(f, i)`, `get_flow(f, i)`, `get_jump(f, i)` | `switching_times(f)[i]`, `phase_flows(f)[i]`, `jumps(f)[i]` |
 
 ## [What changed meaning silently](@id migration-silent)
 

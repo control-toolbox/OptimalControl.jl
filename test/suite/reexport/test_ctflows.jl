@@ -59,24 +59,22 @@ function test_ctflows()
             end
 
             # `multiplier` and `freeze_multiplier` are not exported: a user gets them through
-            # `Flow(...; multiplier=…, hamiltonian_type=:partial)`.
+            # `Flow(...; multipliers=label => μ, hamiltonian_type=:partial)`.
             for f in (:multiplier, :freeze_multiplier)
                 Test.@test !is_exported(OptimalControl, f)
             end
         end
 
         Test.@testset "Systems accessors — gradients and vocabulary" begin
-            # Added alongside flows/accessors.md: hamiltonian/hamiltonian_vector_field/
-            # vector_field and the four get_*_gradient functions were exported by
-            # CTFlows.Systems but not re-exported here — an inconsistency with their
-            # siblings control_law/pseudo_hamiltonian above.
+            # hamiltonian_vector_field, vector_field and the four gradients, without a
+            # `get_` prefix since CTFlows 0.20 (control-toolbox/CTFlows.jl#544).
             for f in (
                 :hamiltonian_vector_field,
                 :vector_field,
-                :get_hamiltonian_gradient,
-                :get_variable_gradient,
-                :get_pseudo_hamiltonian_gradient,
-                :get_pseudo_variable_gradient,
+                :hamiltonian_gradient,
+                :variable_gradient,
+                :pseudo_hamiltonian_gradient,
+                :pseudo_variable_gradient,
             )
                 Test.@testset "$f" begin
                     Test.@test reexports(OptimalControl, f, CTFlows.Systems)
@@ -93,21 +91,46 @@ function test_ctflows()
             end
         end
 
-        Test.@testset "MultiPhase" begin
-            for f in (
-                :n_phases,
-                :get_flow,
-                :get_flows,
-                :get_jump,
-                :get_jumps,
-                :get_switching_time,
-                :get_switching_times,
+        Test.@testset "Removed accessors (CTFlows.jl#544)" begin
+            # still exported, so that the old spelling names its replacement
+            for (f, M) in (
+                (:get_hamiltonian_gradient, CTFlows.Systems),
+                (:get_variable_gradient, CTFlows.Systems),
+                (:get_pseudo_hamiltonian_gradient, CTFlows.Systems),
+                (:get_pseudo_variable_gradient, CTFlows.Systems),
+                (:get_flow, CTFlows.MultiPhase),
+                (:get_flows, CTFlows.MultiPhase),
+                (:get_jump, CTFlows.MultiPhase),
+                (:get_jumps, CTFlows.MultiPhase),
+                (:get_switching_time, CTFlows.MultiPhase),
+                (:get_switching_times, CTFlows.MultiPhase),
+                (:get_labels, CTFlows.MultiPhase),
             )
+                Test.@testset "$f" begin
+                    Test.@test reexports(OptimalControl, f, M)
+                end
+            end
+        end
+
+        Test.@testset "MultiPhase" begin
+            for f in (:n_phases, :phase_flows, :jumps)
                 Test.@testset "$f" begin
                     Test.@test reexports(OptimalControl, f, CTFlows.MultiPhase)
                     Test.@test isdefined(CurrentModule, f)
                 end
             end
+            # A flow and its solution share the switching functions (CTFlows.jl#544): the
+            # functions exported with the solution accessors read a flow too.
+            for f in (:switching_times, :phase_labels, :has_switching, :left_limit, :right_limit)
+                Test.@testset "$f is the CTModels function" begin
+                    Test.@test getfield(OptimalControl, f) ===
+                        getfield(CTFlows.Trajectories, f)
+                end
+            end
+            Test.@test getfield(OptimalControl, :switching_times) ===
+                getfield(CTFlows.MultiPhase, :switching_times)
+            Test.@test getfield(OptimalControl, :phase_labels) ===
+                getfield(CTFlows.MultiPhase, :phase_labels)
             for T in (
                 :AnyMultiPhaseFlow,
                 :MultiPhaseFlow,

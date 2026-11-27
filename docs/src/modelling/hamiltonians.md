@@ -325,7 +325,7 @@ h_b = hamiltonian(ocp_c, (x, p) -> 0; multipliers=:v_con => μ_b)
 h_b([-0.8, v_max], [38.4, 0.0])   # p₁ v_max on the arc
 ```
 
-The flow of the arc is `Flow(ocp_c, (x, p) -> 0; constraint=:v_con, multiplier=μ_b)`, see
+The flow of the arc takes the same pair, `Flow(ocp_c, (x, p) -> 0; multipliers=:v_con => μ_b)`, see
 [Constrained arcs](@ref flows-constrained-arcs). The
 [speed limit example](@ref examples-state-constraint-first-order) solves the problem by
 shooting, and compares the multiplier with the dual of a direct method.

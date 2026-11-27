@@ -23,9 +23,11 @@ H(x, p, u, \mu) = p \cdot f(x, u) + p^0 f^0(x, u) + \mu\, c(x).
 ```
 
 On the arc, differentiating $c(x(t)) = 0$ gives the control, and the maximisation condition
-then gives the multiplier, both in feedback form. `Flow(ocp, law; constraint=:label,
-multiplier=μ)`, with the label of the constraint in the problem, integrates the corresponding
-Hamiltonian flow. The functions have the signatures
+then gives the multiplier, both in feedback form. `Flow(ocp, law; multipliers=:label => μ)`,
+with the label of the constraint in the problem and its multiplier, integrates the
+corresponding Hamiltonian flow: the same pair as for
+[`hamiltonian(ocp, law; multipliers=…)`](@ref modelling-hamiltonians-feedback). The functions
+have the signatures
 
 ```julia
 u([t, ]x, p[, v])    # the control law on the arc
@@ -73,7 +75,7 @@ u_b(x, p) = 0            # the control on the boundary arc
 μ(x, p) = 2x             # the multiplier on the boundary arc
 
 f_minus = Flow(ocp, (x, p) -> -1; label="u = -1")
-f_boundary = Flow(ocp, u_b; constraint=:x_con, multiplier=μ, label="boundary")
+f_boundary = Flow(ocp, u_b; multipliers=:x_con => μ, label="boundary")
 f_plus = Flow(ocp, (x, p) -> 1; label="u = +1")
 
 t1, t2 = 0.9, 1.6
@@ -116,10 +118,10 @@ nothing                                                                 # hide
 
 [^1]: B. Bonnard, L. Faubourg, G. Launay and E. Trélat, *Optimal control with state constraints and the space shuttle re-entry problem*, J. Dyn. Control Syst. 9 (2003), no. 2, 155–199.
 
-`constraint` and `multiplier` go together: one without the other is rejected.
+A constraint and its multiplier go together, as a pair: a label alone is rejected.
 
 ```@repl main
-Flow(ocp, u_b; constraint=:x_con)
+Flow(ocp, u_b; multipliers=:x_con)
 ```
 
 ## Other ways to give the constraint
@@ -132,18 +134,18 @@ flow:
 
 ```@example main
 c(x, u) = x - lb         # the constraint, c ≥ 0
-f_fun = Flow(ocp, u_b; constraint=c, multiplier=μ)
-f_typed = Flow(ocp, u_b; constraint=StateConstraint(x -> x - lb), multiplier=μ)
+f_fun = Flow(ocp, u_b; multipliers=c => μ)
+f_typed = Flow(ocp, u_b; multipliers=StateConstraint(x -> x - lb) => μ)
 f_fun(t1, lb, 0.0, t2), f_typed(t1, lb, 0.0, t2), f_boundary(t1, lb, 0.0, t2)
 ```
 
-Several constraints active on the same arc are given as tuples, one multiplier per
-constraint:
+Several constraints active on the same arc are given as several pairs, in a tuple, or, for
+labels, in a named tuple `(; a=μa, b=μb)`. An anonymous function in a pair is written in
+parentheses:
 
 ```@example main
 f_two = Flow(ocp, u_b;
-    constraint=(c, (x, u) -> 10 - x),     # a second constraint, x ≤ 10, inactive
-    multiplier=(μ, (x, p) -> 0))
+    multipliers=(c => μ, ((x, u) -> 10 - x) => ((x, p) -> 0)))   # x ≤ 10, inactive
 f_two(t1, lb, 0.0, t2)
 ```
 
@@ -204,8 +206,7 @@ jump acts on the costate (see [Multi-phase flows](@ref flows-multi-phase)):
 
 ```@example main
 f_free = Flow(ocp_bd, (x, p) -> p[2]; label="interior")
-f_arc = Flow(ocp_bd, (x, p) -> 0; constraint=:x_con, multiplier=(x, p) -> 0,
-             label="boundary")
+f_arc = Flow(ocp_bd, (x, p) -> 0; multipliers=:x_con => ((x, p) -> 0), label="boundary")
 
 ν = 18
 f_bd = f_free * (3l, [ν, 0], f_arc) * (1 - 3l, [ν, 0], f_free)
@@ -245,14 +246,14 @@ arc too. Along an optimal boundary arc, the law and the multiplier make both for
 same flow:
 
 ```@example main
-f_partial = Flow(ocp, u_b; constraint=:x_con, multiplier=μ, hamiltonian_type=:partial)
+f_partial = Flow(ocp, u_b; multipliers=:x_con => μ, hamiltonian_type=:partial)
 f_partial(t1, lb, 0.0, t2)
 ```
 
 ## Control-free problems
 
 A problem without a control has no boundary arcs in this sense: its flow rejects
-`constraint` and `multiplier`.
+`multipliers`.
 
 ```@repl main
 ocp_cf = @def begin
@@ -262,7 +263,7 @@ ocp_cf = @def begin
     ẋ(t) == -x(t)
     ∫(x(t)^2) → min
 end;
-Flow(ocp_cf; constraint=(x, u) -> 1, multiplier=(x, p) -> 1)
+Flow(ocp_cf; multipliers=((x, u) -> 1) => ((x, p) -> 1))
 ```
 
 ## See also

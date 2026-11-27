@@ -70,12 +70,16 @@ nothing                                                                 # hide
 
 ## Inspecting a concatenation
 
-```@example main
-n_phases(f), get_switching_times(f), get_flow(f, 1) === f1
-```
+A concatenation is read with the same functions as the solution it returns (see
+[The switching structure of the solution](@ref flows-multi-phase-switching)):
+`switching_times(f)`, and `phase_labels(f)` for flows built with `label=`. `n_phases(f)`,
+`phase_flows(f)` and `jumps(f)` give the rest:
 
-`get_flows`, `get_switching_time(f, i)`, `get_jump(f, i)` and `get_jumps(f)` read back the
-other parts.
+```@example main
+@show n_phases(f) switching_times(f) (phase_flows(f)[1] === f1) jumps(fj)
+@assert n_phases(f) == 2 && switching_times(f) == [1] && phase_flows(f)[1] === f1   # hide
+nothing # hide
+```
 
 ## The point call returns the pair `(x, p)`
 
